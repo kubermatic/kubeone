@@ -1089,6 +1089,7 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 	tests := []struct {
 		name                 string
 		clusterNetworkConfig kubeoneapi.ClusterNetworkConfig
+		provider             kubeoneapi.CloudProviderSpec
 		expectedError        bool
 	}{
 		{
@@ -1098,6 +1099,9 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 				ServiceSubnet:        "192.168.0.0/16",
 				IPFamily:             kubeoneapi.IPFamilyIPv4,
 				NodeCIDRMaskSizeIPv4: ptr(24),
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
 			},
 			expectedError: false,
 		},
@@ -1112,12 +1116,18 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 					Canal: &kubeoneapi.CanalSpec{MTU: 1500},
 				},
 			},
+			provider: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
+			},
 			expectedError: false,
 		},
 		{
 			name:                 "empty network config",
 			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{},
-			expectedError:        true,
+			provider: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
+			},
+			expectedError: true,
 		},
 		{
 			name: "invalid pod subnet",
@@ -1125,6 +1135,9 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 				PodSubnet:     "192.168.1.0",
 				ServiceSubnet: "192.168.0.0/24",
 				IPFamily:      kubeoneapi.IPFamilyIPv4,
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
 			},
 			expectedError: true,
 		},
@@ -1134,6 +1147,9 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 				PodSubnet:     "192.168.1.0/24",
 				ServiceSubnet: "192.168.0.0",
 				IPFamily:      kubeoneapi.IPFamilyIPv4,
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
 			},
 			expectedError: true,
 		},
@@ -1146,16 +1162,23 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 					WeaveNet: &kubeoneapi.WeaveNetSpec{},
 				},
 			},
+			provider: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
+			},
 			expectedError: true,
 		},
 		{
-			name: "valid ipv6 config",
+			name: "valid ipv6 config (currently forbidden)",
 			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
 				IPFamily:             kubeoneapi.IPFamilyIPv6,
 				PodSubnetIPv6:        "fd01::/48",
 				ServiceSubnetIPv6:    "fd02::/120",
 				NodeCIDRMaskSizeIPv6: ptr(64),
 			},
+			provider: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
+			},
+			expectedError: true,
 		},
 		{
 			name: "valid ipv4+ipv6 config",
@@ -1168,9 +1191,27 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 				NodeCIDRMaskSizeIPv4: ptr(24),
 				NodeCIDRMaskSizeIPv6: ptr(64),
 			},
+			provider: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
+			},
 		},
 		{
-			name: "valid ipv6+ipv4 config",
+			name: "valid ipv4+ipv6 config (aws)",
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
+				IPFamily:             kubeoneapi.IPFamilyIPv4IPv6,
+				PodSubnet:            "10.244.0.0/16",
+				PodSubnetIPv6:        "fd01::/48",
+				ServiceSubnet:        "10.96.0.0/12",
+				ServiceSubnetIPv6:    "fd02::/120",
+				NodeCIDRMaskSizeIPv4: ptr(24),
+				NodeCIDRMaskSizeIPv6: ptr(64),
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
+			},
+		},
+		{
+			name: "valid ipv6+ipv4 config (currently forbidden)",
 			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
 				IPFamily:             kubeoneapi.IPFamilyIPv6IPv4,
 				PodSubnet:            "10.244.0.0/16",
@@ -1180,6 +1221,10 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 				NodeCIDRMaskSizeIPv4: ptr(24),
 				NodeCIDRMaskSizeIPv6: ptr(64),
 			},
+			provider: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
+			},
+			expectedError: true,
 		},
 		{
 			name: "invalid ipv6+ipv4 config",
@@ -1189,6 +1234,9 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 				ServiceSubnet:        "10.96.0.0/12,fd02::/120",
 				NodeCIDRMaskSizeIPv4: ptr(24),
 				NodeCIDRMaskSizeIPv6: ptr(64),
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
 			},
 			expectedError: true,
 		},
@@ -1201,6 +1249,9 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 				NodeCIDRMaskSizeIPv4: ptr(16),
 				NodeCIDRMaskSizeIPv6: ptr(48),
 			},
+			provider: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
+			},
 			expectedError: true,
 		},
 		{
@@ -1212,13 +1263,16 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 				NodeCIDRMaskSizeIPv4: ptr(16),
 				NodeCIDRMaskSizeIPv6: ptr(48),
 			},
+			provider: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
+			},
 			expectedError: true,
 		},
 	}
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateClusterNetworkConfig(tc.clusterNetworkConfig, nil)
+			errs := ValidateClusterNetworkConfig(tc.clusterNetworkConfig, tc.provider, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Log(errs)
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
@@ -1379,6 +1433,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 	tests := []struct {
 		name                string
 		dynamicWorkerConfig []kubeoneapi.DynamicWorkerConfig
+		provider            kubeoneapi.CloudProviderSpec
 		expectedError       bool
 	}{
 		{
@@ -1397,12 +1452,18 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 					Replicas: pointer.New(0),
 				},
 			},
+			provider: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
+			},
 			expectedError: false,
 		},
 		{
 			name:                "valid worker config (no worker defined)",
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{},
-			expectedError:       false,
+			provider: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
+			},
+			expectedError: false,
 		},
 		{
 			name: "invalid worker config (replicas not provided)",
@@ -1415,6 +1476,9 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 					Name: "test-2",
 				},
 			},
+			provider: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
+			},
 			expectedError: true,
 		},
 		{
@@ -1423,6 +1487,9 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 				{
 					Replicas: pointer.New(3),
 				},
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
 			},
 			expectedError: true,
 		},
@@ -1437,6 +1504,9 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 					},
 				},
 			},
+			provider: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
+			},
 			expectedError: false,
 		},
 		{
@@ -1449,6 +1519,9 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 						NodeAnnotations: map[string]string{"test": "test"},
 					},
 				},
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
 			},
 			expectedError: false,
 		},
@@ -1464,6 +1537,135 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 					},
 				},
 			},
+			provider: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
+			},
+			expectedError: true,
+		},
+		{
+			name: "ipv4 family (aws)",
+			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
+				{
+					Name:     "test-1",
+					Replicas: pointer.New(3),
+					Config: kubeoneapi.ProviderSpec{
+						Network: &kubeoneapi.ProviderStaticNetworkConfig{
+							IPFamily: kubeoneapi.IPFamilyIPv4,
+						},
+					},
+				},
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
+			},
+			expectedError: false,
+		},
+		{
+			name: "ipv4+ipv6 family (aws)",
+			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
+				{
+					Name:     "test-1",
+					Replicas: pointer.New(3),
+					Config: kubeoneapi.ProviderSpec{
+						Network: &kubeoneapi.ProviderStaticNetworkConfig{
+							IPFamily: kubeoneapi.IPFamilyIPv4IPv6,
+						},
+					},
+				},
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
+			},
+			expectedError: false,
+		},
+		{
+			name: "ipv4+ipv6 family (azure)",
+			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
+				{
+					Name:     "test-1",
+					Replicas: pointer.New(3),
+					Config: kubeoneapi.ProviderSpec{
+						Network: &kubeoneapi.ProviderStaticNetworkConfig{
+							IPFamily: kubeoneapi.IPFamilyIPv4IPv6,
+						},
+					},
+				},
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				Azure: &kubeoneapi.AzureSpec{},
+			},
+			expectedError: true,
+		},
+		{
+			name: "ipv6+ipv4 family (aws)",
+			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
+				{
+					Name:     "test-1",
+					Replicas: pointer.New(3),
+					Config: kubeoneapi.ProviderSpec{
+						Network: &kubeoneapi.ProviderStaticNetworkConfig{
+							IPFamily: kubeoneapi.IPFamilyIPv6IPv4,
+						},
+					},
+				},
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
+			},
+			expectedError: true,
+		},
+		{
+			name: "ipv6+ipv4 family (azure)",
+			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
+				{
+					Name:     "test-1",
+					Replicas: pointer.New(3),
+					Config: kubeoneapi.ProviderSpec{
+						Network: &kubeoneapi.ProviderStaticNetworkConfig{
+							IPFamily: kubeoneapi.IPFamilyIPv6IPv4,
+						},
+					},
+				},
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				Azure: &kubeoneapi.AzureSpec{},
+			},
+			expectedError: true,
+		},
+		{
+			name: "ipv6 family (aws)",
+			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
+				{
+					Name:     "test-1",
+					Replicas: pointer.New(3),
+					Config: kubeoneapi.ProviderSpec{
+						Network: &kubeoneapi.ProviderStaticNetworkConfig{
+							IPFamily: kubeoneapi.IPFamilyIPv6,
+						},
+					},
+				},
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				AWS: &kubeoneapi.AWSSpec{},
+			},
+			expectedError: true,
+		},
+		{
+			name: "ipv6 family (azure)",
+			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
+				{
+					Name:     "test-1",
+					Replicas: pointer.New(3),
+					Config: kubeoneapi.ProviderSpec{
+						Network: &kubeoneapi.ProviderStaticNetworkConfig{
+							IPFamily: kubeoneapi.IPFamilyIPv6,
+						},
+					},
+				},
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				Azure: &kubeoneapi.AzureSpec{},
+			},
 			expectedError: true,
 		},
 	}
@@ -1471,7 +1673,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateDynamicWorkerConfig(tc.dynamicWorkerConfig, nil)
+			errs := ValidateDynamicWorkerConfig(tc.dynamicWorkerConfig, tc.provider, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}

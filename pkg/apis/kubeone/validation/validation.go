@@ -60,11 +60,11 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
 	allErrs = append(allErrs, ValidateKubernetesSupport(c, field.NewPath(""))...)
 	allErrs = append(allErrs, ValidateContainerRuntimeConfig(c.ContainerRuntime, c.Versions, field.NewPath("containerRuntime"))...)
-	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, field.NewPath("clusterNetwork"))...)
+	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, c.CloudProvider, field.NewPath("clusterNetwork"))...)
 	allErrs = append(allErrs, ValidateStaticWorkersConfig(c.StaticWorkers, c.ClusterNetwork, field.NewPath("staticWorkers"))...)
 
 	if c.MachineController != nil && c.MachineController.Deploy {
-		allErrs = append(allErrs, ValidateDynamicWorkerConfig(c.DynamicWorkers, field.NewPath("dynamicWorkers"))...)
+		allErrs = append(allErrs, ValidateDynamicWorkerConfig(c.DynamicWorkers, c.CloudProvider, field.NewPath("dynamicWorkers"))...)
 	} else if len(c.DynamicWorkers) > 0 {
 		allErrs = append(allErrs, field.Forbidden(field.NewPath("dynamicWorkers"),
 			"machine-controller deployment is disabled, but the configuration still contains dynamic workers"))
@@ -358,9 +358,10 @@ func ValidateContainerRuntimeConfig(cr kubeoneapi.ContainerRuntimeConfig, versio
 }
 
 // ValidateClusterNetworkConfig validates the ClusterNetworkConfig structure
-func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
+func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, prov kubeoneapi.CloudProviderSpec, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
+	allErrs = append(allErrs, validateIPFamily(c.IPFamily, prov, fldPath.Child("ipFamily"))...)
 	allErrs = append(allErrs, validateCIDRs(c, fldPath)...)
 	allErrs = append(allErrs, validateNodeCIDRMaskSize(c, fldPath)...)
 
@@ -374,6 +375,19 @@ func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, fldPath *fi
 	}
 	if c.KubeProxy != nil {
 		allErrs = append(allErrs, ValidateKubeProxy(c.KubeProxy, fldPath.Child("kubeProxy"))...)
+	}
+
+	return allErrs
+}
+
+func validateIPFamily(ipFamily kubeoneapi.IPFamily, prov kubeoneapi.CloudProviderSpec, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if ipFamily == kubeoneapi.IPFamilyIPv6 || ipFamily == kubeoneapi.IPFamilyIPv6IPv4 {
+		allErrs = append(allErrs, field.Forbidden(fldPath, "ipv6 and ipv6+ipv4 ip families are currently not supported"))
+	}
+	if ipFamily == kubeoneapi.IPFamilyIPv4IPv6 && prov.AWS == nil && prov.None == nil {
+		allErrs = append(allErrs, field.Forbidden(fldPath, "dualstack is currently supported only on AWS and baremetal (none)"))
 	}
 
 	return allErrs
@@ -528,7 +542,7 @@ func ValidateStaticWorkersConfig(staticWorkers kubeoneapi.StaticWorkersConfig, c
 }
 
 // ValidateDynamicWorkerConfig validates the DynamicWorkerConfig structure
-func ValidateDynamicWorkerConfig(workerset []kubeoneapi.DynamicWorkerConfig, fldPath *field.Path) field.ErrorList {
+func ValidateDynamicWorkerConfig(workerset []kubeoneapi.DynamicWorkerConfig, prov kubeoneapi.CloudProviderSpec, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	for _, w := range workerset {
@@ -540,6 +554,9 @@ func ValidateDynamicWorkerConfig(workerset []kubeoneapi.DynamicWorkerConfig, fld
 		}
 		if len(w.Config.MachineAnnotations) > 0 && len(w.Config.NodeAnnotations) > 0 {
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("machineAnnotations"), w.Config.MachineAnnotations, "machineAnnotations has been replaced with nodeAnnotations, only one of those two can be set"))
+		}
+		if w.Config.Network != nil && w.Config.Network.IPFamily != "" {
+			allErrs = append(allErrs, validateIPFamily(w.Config.Network.IPFamily, prov, fldPath.Child("network", "ipFamily"))...)
 		}
 	}
 
