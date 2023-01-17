@@ -20,11 +20,9 @@ import (
 	"fmt"
 	"io/fs"
 
-	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/semverutil"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
 	"k8c.io/kubeone/pkg/templates/weave"
@@ -33,9 +31,6 @@ import (
 const (
 	// addonLabel is applied to all objects deployed using addons
 	addonLabel = "kubeone.io/addon"
-
-	// greaterThan23Constraint defines a semver constraint that validates Kubernetes versions is greater than 1.23
-	greaterThan23Constraint = ">= 1.23"
 
 	// defaultStorageClass addon defines name of the default-storage-class addon
 	defaultStorageClassAddonName = "default-storage-class"
@@ -71,8 +66,6 @@ var (
 		resources.AddonNodeLocalDNS:           "",
 		resources.AddonOperatingSystemManager: "",
 	}
-
-	greaterThan23 = semverutil.MustParseConstraint(greaterThan23Constraint)
 )
 
 type addonAction struct {
@@ -360,9 +353,6 @@ func DeleteAddonByName(s *state.State, addonName string) error {
 }
 
 func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction {
-	k8sVersion := semver.MustParse(s.Cluster.Versions.Kubernetes)
-	gte23 := greaterThan23.Check(k8sVersion)
-
 	// We deploy available CSI drivers un-conditionally for k8s v1.23+
 	//
 	// CSIMigration, if applicable, for the cloud providers is turned on by default and requires installation of CSI drviers even if we
@@ -370,8 +360,7 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 	// for provision operations is NOT supported by in-tree solution.
 
 	switch {
-	// CSI driver is required for k8s v1.23+
-	case s.Cluster.CloudProvider.AWS != nil && (gte23 || s.Cluster.CloudProvider.External):
+	case s.Cluster.CloudProvider.AWS != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIAwsEBS,
@@ -380,8 +369,7 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 				},
 			},
 		)
-	// CSI driver is required for k8s v1.23+
-	case s.Cluster.CloudProvider.Azure != nil && (gte23 || s.Cluster.CloudProvider.External):
+	case s.Cluster.CloudProvider.Azure != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIAzureDisk,
@@ -393,21 +381,18 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 				name: resources.AddonCSIAzureFile,
 			},
 		)
-		// CSI driver is required for k8s v1.23+
-	case s.Cluster.CloudProvider.GCE != nil && (gte23 || s.Cluster.CloudProvider.External):
+	case s.Cluster.CloudProvider.GCE != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIGCPComputePD,
 			},
 		)
-	// Install CSI driver unconditionally
 	case s.Cluster.CloudProvider.DigitalOcean != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIDigitalOcean,
 			},
 		)
-	// Install CSI driver unconditionally
 	case s.Cluster.CloudProvider.Hetzner != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
@@ -417,21 +402,18 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 				},
 			},
 		)
-	// Install CSI driver unconditionally
 	case s.Cluster.CloudProvider.Nutanix != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSINutanix,
 			},
 		)
-	// Install CSI driver unconditionally
 	case s.Cluster.CloudProvider.Openstack != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIOpenStackCinder,
 			},
 		)
-	// Install CSI driver unconditionally
 	case s.Cluster.CloudProvider.VMwareCloudDirector != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{

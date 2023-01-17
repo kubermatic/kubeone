@@ -65,7 +65,7 @@ func listImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			kubeone config images list --filter optional
 
 			# To see images for a specific Kubernetes version
-			kubeone config images list --kubernetes-version=1.23.0
+			kubeone config images list --kubernetes-version=1.26.0
 
 			# To see images list affected by the registryConfiguration configuration (in case if any)
 			kubeone config images list -m mycluster.yaml
