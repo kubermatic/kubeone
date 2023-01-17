@@ -46,7 +46,7 @@ sudo systemctl force-reload systemd-journald
 
 
 yum_proxy=""
-yum_proxy="proxy=http://my-proxy.tld #kubeone"
+yum_proxy="proxy=http://https.proxy #kubeone"
 
 grep -v '#kubeone' /etc/yum.conf > /tmp/yum.conf || true
 echo -n "${yum_proxy}" >> /tmp/yum.conf
@@ -63,12 +63,6 @@ repo_gpgcheck=0
 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 EOF
 
-source /etc/os-release
-if [ "$ID" == "centos" ] && [ "$VERSION_ID" == "8" ]; then
-	sudo sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-	sudo sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
-fi
-
 
 sudo yum install -y \
 	yum-plugin-versionlock \
@@ -81,18 +75,12 @@ sudo yum install -y \
 	rsync
 
 
-
-sudo yum install -y yum-utils
-sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
-sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true >/dev/null
-
-sudo yum versionlock delete docker-ce docker-ce-cli containerd.io || true
+sudo yum versionlock delete docker containerd || true
 
 sudo yum install -y \
-	docker-ce-'20.10.*' \
-	docker-ce-cli-'20.10.*' \
-	containerd.io-'1.6.*'
-sudo yum versionlock add docker-ce docker-ce-cli containerd.io
+	docker-'20.10.*' \
+	containerd.io-'1.4.*'
+sudo yum versionlock add docker containerd
 
 sudo mkdir -p $(dirname /etc/docker/daemon.json)
 sudo touch /etc/docker/daemon.json
@@ -127,14 +115,60 @@ fi
 
 
 
-sudo yum install -y \
-	kubelet-1.26.0 \
-	kubeadm-1.26.0 \
-	kubectl-1.26.0 \
-	kubernetes-cni-1.1.1
-sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni
+sudo mkdir -p /opt/bin /etc/kubernetes/pki /etc/kubernetes/manifests
+
+rm -rf /tmp/k8s-binaries
+mkdir -p /tmp/k8s-binaries
+cd /tmp/k8s-binaries
+sudo mkdir -p /opt/cni/bin
+curl -L "http://127.0.0.1/cni.tar.gz" | sudo tar -C /opt/cni/bin -xz
+curl -L --output /tmp/k8s-binaries/node.tar.gz http://127.0.0.1/node.tar.gz
+tar xvf node.tar.gz
+sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubelet /opt/bin/kubelet
+sudo ln -sf /opt/bin/kubelet /usr/bin/
+rm /tmp/k8s-binaries/kubernetes/node/bin/kubelet
+
+cat <<EOF | sudo tee /etc/systemd/system/kubelet.service
+[Unit]
+Description=kubelet: The Kubernetes Node Agent
+Documentation=https://kubernetes.io/docs/home/
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/opt/bin/kubelet
+Restart=always
+StartLimitInterval=0
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo mkdir -p /etc/systemd/system/kubelet.service.d
+cat <<EOF | sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+[Service]
+Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf"
+Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml"
+# This is a file that "kubeadm init" and "kubeadm join" generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically
+EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
+# This is a file that the user can use for overrides of the kubelet args as a last resort. Preferably, the user should use
+# the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.
+EnvironmentFile=-/etc/default/kubelet
+ExecStart=
+ExecStart=/opt/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS
+EOF
+sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubeadm /opt/bin/kubeadm
+sudo ln -sf /opt/bin/kubeadm /usr/bin/
+rm /tmp/k8s-binaries/kubernetes/node/bin/kubeadm
+sudo yum install -y cri-tools
+curl -L --output /tmp/k8s-binaries/kubectl http://127.0.0.1/kubectl.tar.gz
+sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubectl /opt/bin/kubectl
+sudo ln -sf /opt/bin/kubectl /usr/bin/
+rm /tmp/k8s-binaries/kubectl
+
+
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet
 sudo systemctl restart kubelet
-

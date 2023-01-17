@@ -12,7 +12,7 @@ OSM is enabled by default starting from KubeOne `v1.5.0`. To fallback to, the no
 apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
 versions:
-  kubernetes: 1.23.6
+  kubernetes: 1.26.0
 addons:
   enable: true
 operatingSystemManager:

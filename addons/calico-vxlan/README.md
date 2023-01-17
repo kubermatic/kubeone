@@ -12,7 +12,7 @@ apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
 
 versions:
-  kubernetes: 1.23.9
+  kubernetes: 1.26.0
 
 clusterNetwork:
   cni:
@@ -34,7 +34,7 @@ apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
 
 versions:
-  kubernetes: 1.23.9
+  kubernetes: 1.26.0
 
 clusterNetwork:
   cni:
