@@ -51,10 +51,6 @@ const (
 	// (see etcdVersionCorruptCheckExtraArgs for more details)
 	fixedEtcdVersion = "3.5.6-0"
 
-	// NB: Currently no Kubernetes version uses 3.5.6, but to avoid deleting the code
-	// we just use some super high version as a fixed version.
-	// fixedEtcd123 defines a semver constraint used to check if Kubernetes 1.23 uses fixed etcd version
-	fixedEtcd123 = ">= 1.23.15, < 1.24"
 	// fixedEtcd124 defines a semver constraint used to check if Kubernetes 1.24 uses fixed etcd version
 	fixedEtcd124 = ">= 1.24.9, < 1.25"
 	// fixedEtcd125 defines a semver constraint used to check if Kubernetes 1.25 uses fixed etcd version
@@ -68,7 +64,6 @@ const (
 )
 
 var (
-	fixedEtcd123Constraint = semverutil.MustParseConstraint(fixedEtcd123)
 	fixedEtcd124Constraint = semverutil.MustParseConstraint(fixedEtcd124)
 	fixedEtcd125Constraint = semverutil.MustParseConstraint(fixedEtcd125)
 	fixedEtcd126Constraint = semverutil.MustParseConstraint(fixedEtcd126)
@@ -522,8 +517,6 @@ func etcdVersionCorruptCheckExtraArgs(kubeVersion *semver.Version, etcdImageTag 
 	switch {
 	case etcdImageTag != "":
 		return etcdImageTag, etcdExtraArgs
-	case fixedEtcd123Constraint.Check(kubeVersion):
-		fallthrough
 	case fixedEtcd124Constraint.Check(kubeVersion):
 		fallthrough
 	case fixedEtcd125Constraint.Check(kubeVersion):

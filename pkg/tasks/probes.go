@@ -56,9 +56,6 @@ const (
 	k8sAppLabel               = "k8s-app"
 	openstackCCMAppLabelValue = "openstack-cloud-controller-manager"
 
-	nodeRoleMaster       = "node-role.kubernetes.io/master"
-	nodeRoleControlPlane = "node-role.kubernetes.io/control-plane"
-
 	provisioningUtilityKey       = "provisioningUtility"
 	provisioningUtilityCloudInit = "cloud-init"
 
@@ -148,86 +145,8 @@ func safeguard(s *state.State) error {
 		}
 	}
 
-	if err := safeguardNodeSelectorsAndTolerations(s); err != nil {
-		return err
-	}
-
 	if err := safeguardFlatcarMachineDeployments(s); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// safeguardNodeSelectorsAndTolerations ensures that there are no pods that have:
-//   - node-role.kubernetes.io/master nodeSelector
-//   - node-role.kubernetes.io/master toleration without node-role.kubernetes.io/control-plane
-//     toleration
-//
-// That's because node-role.kubernetes.io/master label/node role has been completely
-// removed in Kubernetes 1.24. This safeguard is executed only when upgrading
-// from 1.23 to 1.24.
-// This safeguard can be removed when removing support for Kubernetes 1.23.
-func safeguardNodeSelectorsAndTolerations(s *state.State) error {
-	targetVersion, err := semver.NewVersion(s.Cluster.Versions.Kubernetes)
-	if err != nil {
-		return err
-	}
-
-	liveCP := s.LiveCluster.ControlPlane
-	if len(liveCP) == 0 || liveCP[0].Kubelet.Version == nil {
-		return nil
-	}
-
-	// Run safeguard only when upgrading to Kubernetes 1.24.
-	if targetVersion.Minor() == 24 && liveCP[0].Kubelet.Version.Minor() == 23 {
-		var pods corev1.PodList
-		// List pods in all namespaces
-		if err := s.DynamicClient.List(s.Context, &pods, dynclient.InNamespace("")); err != nil {
-			return fail.KubeClient(err, "getting all pods")
-		}
-
-		invalidNodeSelector := []string{}
-		invalidTolerations := []string{}
-
-		for _, pod := range pods.Items {
-			if _, ok := pod.Spec.NodeSelector[nodeRoleMaster]; ok {
-				invalidNodeSelector = append(invalidNodeSelector, pod.Name)
-			}
-			var foundMaster, foundControlPlane bool
-			for _, t := range pod.Spec.Tolerations {
-				if t.Key == nodeRoleMaster {
-					foundMaster = true
-				} else if t.Key == nodeRoleControlPlane {
-					foundControlPlane = true
-				}
-			}
-			// Consider tolerations as invalid only if there's toleration for master role
-			// but no toleration for control-plane role.
-			// If there are both, master toleration would be just ignored, so we don't need
-			// to fail.
-			if foundMaster && !foundControlPlane {
-				invalidTolerations = append(invalidTolerations, pod.Name)
-			}
-		}
-
-		var shouldFail bool
-		if len(invalidNodeSelector) > 0 {
-			shouldFail = true
-			s.Logger.Errorf("Found %d pod(s) that are using NodeSelector %q which is removed in Kubernetes 1.24: %s", len(invalidNodeSelector), nodeRoleMaster, invalidNodeSelector)
-		}
-		if len(invalidTolerations) > 0 {
-			shouldFail = true
-			s.Logger.Errorf("Found %d pod(s) that have toleration removed in Kubernetes 1.24 %q, but not %q toleration: %s", len(invalidTolerations), nodeRoleMaster, nodeRoleControlPlane, invalidTolerations)
-		}
-		if shouldFail {
-			s.Logger.Warn("For pods managed by KubeOne, run 'kubeone apply' with your current/actual Kubernetes version before upgrading to Kubernetes 1.24.")
-
-			return fail.RuntimeError{
-				Err: errors.New("invalid tolerations or nodeSelectors"),
-				Op:  "some pods are using tolerations or nodeSelectors removed in Kubernetes 1.24",
-			}
-		}
 	}
 
 	return nil
