@@ -76,6 +76,7 @@
 - scenario: upgrade_containerd
   initVersion: v1.25.5
   upgradedVersion: v1.26.0
+  initKubeOneVersion: "main"
   infrastructures:
     - name: aws_amzn_stable
     - name: aws_centos_stable
@@ -492,6 +493,7 @@
 - scenario: upgrade_containerd_external
   initVersion: v1.25.5
   upgradedVersion: v1.26.0
+  initKubeOneVersion: "main"
   infrastructures:
     - name: aws_amzn_stable
     - name: aws_centos_stable
