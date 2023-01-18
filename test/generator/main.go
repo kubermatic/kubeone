@@ -40,10 +40,11 @@ type Infrastructure struct {
 }
 
 type KubeoneTest struct {
-	Scenario        string           `json:"scenario"`
-	InitVersion     string           `json:"initVersion"`
-	UpgradedVersion string           `json:"upgradedVersion"`
-	Infrastructures []Infrastructure `json:"infrastructures"`
+	Scenario           string           `json:"scenario"`
+	InitVersion        string           `json:"initVersion"`
+	UpgradedVersion    string           `json:"upgradedVersion"`
+	InitKubeOneVersion string           `json:"initKubeOneVersion"`
+	Infrastructures    []Infrastructure `json:"infrastructures"`
 }
 
 var (
@@ -142,6 +143,10 @@ func main() {
 				versions = append(versions, genTest.UpgradedVersion)
 			}
 			scenario.SetVersions(versions...)
+
+			if scn, ok := scenario.(e2e.ScenarioStable); ok {
+				scn.SetInitKubeOneVersion(genTest.InitKubeOneVersion)
+			}
 
 			cfg := e2e.ProwConfig{
 				AlwaysRun:    genInfra.AlwaysRun,

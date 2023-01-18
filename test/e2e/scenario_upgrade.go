@@ -36,7 +36,6 @@ import (
 )
 
 const (
-	kubeoneStableVersion = "1.5.1" //nolint:deadcode,varcheck
 	kubeoneStableBaseRef = "release/v1.5"
 )
 
@@ -44,8 +43,9 @@ type scenarioUpgrade struct {
 	Name                 string
 	ManifestTemplatePath string
 
-	versions []string
-	infra    Infra
+	versions           []string
+	initKubeOneVersion string
+	infra              Infra
 }
 
 func (scenario scenarioUpgrade) Title() string { return titleize(scenario.Name) }
@@ -56,6 +56,10 @@ func (scenario *scenarioUpgrade) SetInfra(infra Infra) {
 
 func (scenario *scenarioUpgrade) SetVersions(versions ...string) {
 	scenario.versions = versions
+}
+
+func (scenario *scenarioUpgrade) SetInitKubeOneVersion(version string) {
+	scenario.initKubeOneVersion = version
 }
 
 func (scenario *scenarioUpgrade) Run(ctx context.Context, t *testing.T) {
@@ -202,13 +206,18 @@ func (scenario *scenarioUpgrade) GenerateTests(wr io.Writer, generatorType Gener
 
 	cfg.Environ = scenario.infra.environ
 
+	initK1Ver := scenario.initKubeOneVersion
+	if initK1Ver == "" {
+		initK1Ver = kubeoneStableBaseRef
+	}
+
 	prowJobs = append(prowJobs,
 		newProwJob(
 			pullProwJobName(scenario.infra.name, scenario.Name, "from", up.From, "to", up.To),
 			scenario.infra.labels,
 			testTitle,
 			cfg,
-			kubeoneStableProwExtraRefs(kubeoneStableBaseRef),
+			kubeoneStableProwExtraRefs(initK1Ver),
 		),
 	)
 

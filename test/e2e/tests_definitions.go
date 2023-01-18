@@ -1244,6 +1244,10 @@ type Scenario interface {
 	Run(context.Context, *testing.T)
 }
 
+type ScenarioStable interface {
+	SetInitKubeOneVersion(version string)
+}
+
 type ProwConfig struct {
 	AlwaysRun    bool
 	RunIfChanged string
