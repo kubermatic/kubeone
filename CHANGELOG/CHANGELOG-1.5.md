@@ -1,3 +1,13 @@
+# [v1.5.6](https://github.com/kubermatic/kubeone/releases/tag/v1.5.6) - 2023-01-26
+
+## Changelog since v1.5.5
+
+## Changes by Kind
+
+### Feature
+
+- Update kubernetes-cni to v1.2.0 and cri-tools to v1.26.0. This fixes an issue with installing/updating packages when trying to install Kubernetes v1.26.1, v1.25.6, v1.24.10, and v1.23.16 ([#2608](https://github.com/kubermatic/kubeone/pull/2608), [@xmudrii](https://github.com/xmudrii))
+
 # [v1.5.5](https://github.com/kubermatic/kubeone/releases/tag/v1.5.5) - 2023-01-17
 
 ## Changelog since v1.5.4
