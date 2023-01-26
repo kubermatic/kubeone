@@ -24,7 +24,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_containerd
-  initVersion: v1.23.15
+  initVersion: v1.23.16
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -49,7 +49,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_containerd
-  initVersion: v1.24.9
+  initVersion: v1.24.10
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -98,7 +98,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_docker
-  initVersion: v1.23.15
+  initVersion: v1.23.16
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -122,8 +122,8 @@
     - name: vsphere_flatcar
 
 - scenario: upgrade_containerd
-  initVersion: v1.23.15
-  upgradedVersion: v1.24.9
+  initVersion: v1.23.16
+  upgradedVersion: v1.24.10
   infrastructures:
     - name: aws_amzn_stable
     - name: aws_centos_stable
@@ -147,7 +147,7 @@
 
 - scenario: upgrade_containerd
   initVersion: v1.22.17
-  upgradedVersion: v1.23.15
+  upgradedVersion: v1.23.16
   infrastructures:
     - name: aws_amzn_stable
     - name: aws_centos_stable
@@ -195,7 +195,7 @@
 
 - scenario: upgrade_docker
   initVersion: v1.22.17
-  upgradedVersion: v1.23.15
+  upgradedVersion: v1.23.16
   infrastructures:
     - name: aws_amzn_stable
     - name: aws_centos_stable
@@ -391,12 +391,12 @@
     - name: aws_long_timeout_default
 
 - scenario: conformance_containerd
-  initVersion: v1.23.15
+  initVersion: v1.23.16
   infrastructures:
     - name: aws_long_timeout_default
 
 - scenario: conformance_containerd
-  initVersion: v1.24.9
+  initVersion: v1.24.10
   infrastructures:
     - name: aws_long_timeout_default
 
@@ -406,12 +406,12 @@
     - name: aws_long_timeout_default
 
 - scenario: conformance_containerd_external
-  initVersion: v1.23.15
+  initVersion: v1.23.16
   infrastructures:
     - name: aws_long_timeout_default
 
 - scenario: conformance_containerd_external
-  initVersion: v1.24.9
+  initVersion: v1.24.10
   infrastructures:
     - name: aws_long_timeout_default
 
@@ -421,7 +421,7 @@
     - name: aws_default
 
 - scenario: kube_proxy_ipvs
-  initVersion: v1.23.15
+  initVersion: v1.23.16
   infrastructures:
     - name: aws_default
 
@@ -450,7 +450,7 @@
     - name: vsphere_flatcar
 
 - scenario: legacy_machine_controller_containerd
-  initVersion: v1.23.15
+  initVersion: v1.23.16
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -474,7 +474,7 @@
     - name: vsphere_flatcar
 
 - scenario: legacy_machine_controller_containerd
-  initVersion: v1.24.9
+  initVersion: v1.24.10
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -522,7 +522,7 @@
     - name: vsphere_flatcar
 
 - scenario: legacy_machine_controller_docker
-  initVersion: v1.23.15
+  initVersion: v1.23.16
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -546,7 +546,7 @@
     - name: vsphere_flatcar
 
 - scenario: kube_proxy_ipvs
-  initVersion: v1.24.9
+  initVersion: v1.24.10
   infrastructures:
     - name: aws_default
 
@@ -569,7 +569,7 @@
     - name: vsphere_flatcar
 
 - scenario: csi_ccm_migration
-  initVersion: v1.23.15
+  initVersion: v1.23.16
   infrastructures:
     - name: aws_default  
     - name: openstack_default
@@ -587,7 +587,7 @@
     - name: vsphere_flatcar
 
 - scenario: csi_ccm_migration
-  initVersion: v1.24.9
+  initVersion: v1.24.10
   infrastructures:
     - name: aws_default
     - name: openstack_default
@@ -638,7 +638,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_containerd_external
-  initVersion: v1.23.15
+  initVersion: v1.23.16
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -671,7 +671,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_containerd_external
-  initVersion: v1.24.9
+  initVersion: v1.24.10
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -737,7 +737,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_docker_external
-  initVersion: v1.23.15
+  initVersion: v1.23.16
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -804,7 +804,7 @@
 
 - scenario: upgrade_containerd_external
   initVersion: v1.22.17
-  upgradedVersion: v1.23.15
+  upgradedVersion: v1.23.16
   infrastructures:
     - name: aws_amzn_stable
     - name: aws_centos_stable
@@ -836,8 +836,8 @@
     - name: vsphere_flatcar_stable
 
 - scenario: upgrade_containerd_external
-  initVersion: v1.23.15
-  upgradedVersion: v1.24.9
+  initVersion: v1.23.16
+  upgradedVersion: v1.24.10
   infrastructures:
     - name: aws_amzn_stable
     - name: aws_centos_stable
@@ -903,7 +903,7 @@
 
 - scenario: upgrade_docker_external
   initVersion: v1.22.17
-  upgradedVersion: v1.23.15
+  upgradedVersion: v1.23.16
   infrastructures:
     - name: aws_amzn_stable
     - name: aws_centos_stable
@@ -968,7 +968,7 @@
     - name: vsphere_flatcar
 
 - scenario: legacy_machine_controller_containerd_external
-  initVersion: v1.23.15
+  initVersion: v1.23.16
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -1001,7 +1001,7 @@
     - name: vsphere_flatcar
 
 - scenario: legacy_machine_controller_containerd_external
-  initVersion: v1.24.9
+  initVersion: v1.24.10
   infrastructures:
     - name: aws_amzn
     - name: aws_centos
@@ -1048,7 +1048,7 @@
     - name: hetzner_rockylinux
 
 - scenario: legacy_machine_controller_docker_external
-  initVersion: v1.23.15
+  initVersion: v1.23.16
   infrastructures:
     - name: digitalocean_default
     - name: digitalocean_centos
