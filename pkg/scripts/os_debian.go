@@ -72,9 +72,10 @@ sudo apt-get update
 
 kube_ver="{{ .KUBERNETES_VERSION }}*"
 cni_ver="{{ .KUBERNETES_CNI_VERSION }}*"
+cri_ver="{{ .CRITOOLS_VERSION }}*"
 
 {{- if or .FORCE .UPGRADE }}
-sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni
+sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni cri-tools
 {{- end }}
 
 {{ if .INSTALL_DOCKER }}
@@ -101,9 +102,10 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 {{- if .KUBECTL }}
 	kubectl=${kube_ver} \
 {{- end }}
-	kubernetes-cni=${cni_ver}
+	kubernetes-cni=${cni_ver} \
+	cri-tools=${cri_ver}
 
-sudo apt-mark hold kubelet kubeadm kubectl kubernetes-cni
+sudo apt-mark hold kubelet kubeadm kubectl kubernetes-cni cri-tools
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet
@@ -114,12 +116,12 @@ sudo systemctl restart kubelet
 `
 
 	removeBinariesDebianScriptTemplate = `
-sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni
+sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni cri-tools
 sudo apt-get remove --purge -y \
 	kubeadm \
 	kubectl \
 	kubelet
-sudo apt-get remove --purge -y kubernetes-cni || true
+sudo apt-get remove --purge -y kubernetes-cni cri-tools || true
 sudo rm -rf /opt/cni
 sudo rm -f /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 sudo systemctl daemon-reload
@@ -133,6 +135,7 @@ func KubeadmDebian(cluster *kubeoneapi.KubeOneCluster, force bool) (string, erro
 		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CRITOOLS_VERSION":       defaultCriToolsVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
@@ -164,6 +167,7 @@ func UpgradeKubeadmAndCNIDebian(cluster *kubeoneapi.KubeOneCluster) (string, err
 		"KUBEADM":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CRITOOLS_VERSION":       defaultCriToolsVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
@@ -189,6 +193,7 @@ func UpgradeKubeletAndKubectlDebian(cluster *kubeoneapi.KubeOneCluster) (string,
 		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CRITOOLS_VERSION":       defaultCriToolsVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
