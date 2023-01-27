@@ -73,6 +73,7 @@ sudo apt-get update
 
 kube_ver="1.23.9*"
 cni_ver="1.2.0*"
+cri_ver="1.26.0*"
 
 
 
@@ -85,9 +86,10 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	kubelet=${kube_ver} \
 	kubeadm=${kube_ver} \
 	kubectl=${kube_ver} \
-	kubernetes-cni=${cni_ver}
+	kubernetes-cni=${cni_ver} \
+	cri-tools=${cri_ver}
 
-sudo apt-mark hold kubelet kubeadm kubectl kubernetes-cni
+sudo apt-mark hold kubelet kubeadm kubectl kubernetes-cni cri-tools
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet
