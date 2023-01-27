@@ -61,11 +61,11 @@ sudo systemctl force-reload systemd-journald
 
 
 sudo mkdir -p /opt/bin /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
-curl -L "https://github.com/containernetworking/plugins/releases/download/v1.1.1/cni-plugins-linux-${HOST_ARCH}-v1.1.1.tgz" |
+curl -L "https://github.com/containernetworking/plugins/releases/download/v1.2.0/cni-plugins-linux-${HOST_ARCH}-v1.2.0.tgz" |
 	sudo tar -C /opt/cni/bin -xz
 
 RELEASE="v1.17.4"
-CRI_TOOLS_RELEASE="v1.21.0"
+CRI_TOOLS_RELEASE="v1.25.0"
 
 curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_TOOLS_RELEASE}/crictl-${CRI_TOOLS_RELEASE}-linux-${HOST_ARCH}.tar.gz |
 	sudo tar -C /opt/bin -xz

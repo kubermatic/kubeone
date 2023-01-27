@@ -1,9 +1,9 @@
 set -xeuo pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
-sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni || true
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools || true
 sudo yum remove -y \
 	kubelet \
 	kubeadm \
 	kubectl
-sudo yum remove -y kubernetes-cni || true
+sudo yum remove -y kubernetes-cni cri-tools || true
