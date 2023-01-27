@@ -155,6 +155,7 @@ sudo yum install -y \
 {{- end }}
 	kubernetes-cni-{{ .KUBERNETES_CNI_VERSION }} \
 	cri-tools-{{ .CRITOOLS_VERSION }}
+sudo yum downgrade cri-tools-{{ .CRITOOLS_VERSION }} || true
 sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni cri-tools
 {{- end }}
 
