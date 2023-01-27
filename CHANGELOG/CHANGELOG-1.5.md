@@ -1,4 +1,4 @@
-# [v1.5.6](https://github.com/kubermatic/kubeone/releases/tag/v1.5.6) - 2023-01-26
+# [v1.5.6](https://github.com/kubermatic/kubeone/releases/tag/v1.5.6) - 2023-01-27
 
 ## Changelog since v1.5.5
 
