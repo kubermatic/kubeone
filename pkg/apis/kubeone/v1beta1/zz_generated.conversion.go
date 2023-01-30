@@ -63,11 +63,6 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*kubeone.Addon)(nil), (*Addon)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_kubeone_Addon_To_v1beta1_Addon(a.(*kubeone.Addon), b.(*Addon), scope)
-	}); err != nil {
-		return err
-	}
 	if err := s.AddGeneratedConversionFunc((*Addons)(nil), (*kubeone.Addons)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1beta1_Addons_To_kubeone_Addons(a.(*Addons), b.(*kubeone.Addons), scope)
 	}); err != nil {
@@ -493,6 +488,11 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
+	if err := s.AddConversionFunc((*kubeone.Addon)(nil), (*Addon)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_Addon_To_v1beta1_Addon(a.(*kubeone.Addon), b.(*Addon), scope)
+	}); err != nil {
+		return err
+	}
 	if err := s.AddConversionFunc((*kubeone.CloudProviderSpec)(nil), (*CloudProviderSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_kubeone_CloudProviderSpec_To_v1beta1_CloudProviderSpec(a.(*kubeone.CloudProviderSpec), b.(*CloudProviderSpec), scope)
 	}); err != nil {
@@ -540,11 +540,6 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}
 	if err := s.AddConversionFunc((*CloudProviderSpec)(nil), (*kubeone.CloudProviderSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1beta1_CloudProviderSpec_To_kubeone_CloudProviderSpec(a.(*CloudProviderSpec), b.(*kubeone.CloudProviderSpec), scope)
-	}); err != nil {
-		return err
-	}
-	if err := s.AddConversionFunc((*Features)(nil), (*kubeone.Features)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1beta1_Features_To_kubeone_Features(a.(*Features), b.(*kubeone.Features), scope)
 	}); err != nil {
 		return err
 	}
@@ -613,6 +608,7 @@ func Convert_v1beta1_Addon_To_kubeone_Addon(in *Addon, out *kubeone.Addon, s con
 func autoConvert_kubeone_Addon_To_v1beta1_Addon(in *kubeone.Addon, out *Addon, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Params = *(*map[string]string)(unsafe.Pointer(&in.Params))
+	// WARNING: in.DisableTemplating requires manual conversion: does not exist in peer-type
 	out.Delete = in.Delete
 	return nil
 }
@@ -621,7 +617,17 @@ func autoConvert_v1beta1_Addons_To_kubeone_Addons(in *Addons, out *kubeone.Addon
 	out.Enable = in.Enable
 	out.Path = in.Path
 	out.GlobalParams = *(*map[string]string)(unsafe.Pointer(&in.GlobalParams))
-	out.Addons = *(*[]kubeone.Addon)(unsafe.Pointer(&in.Addons))
+	if in.Addons != nil {
+		in, out := &in.Addons, &out.Addons
+		*out = make([]kubeone.Addon, len(*in))
+		for i := range *in {
+			if err := Convert_v1beta1_Addon_To_kubeone_Addon(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Addons = nil
+	}
 	return nil
 }
 
@@ -634,7 +640,17 @@ func autoConvert_kubeone_Addons_To_v1beta1_Addons(in *kubeone.Addons, out *Addon
 	out.Enable = in.Enable
 	out.Path = in.Path
 	out.GlobalParams = *(*map[string]string)(unsafe.Pointer(&in.GlobalParams))
-	out.Addons = *(*[]Addon)(unsafe.Pointer(&in.Addons))
+	if in.Addons != nil {
+		in, out := &in.Addons, &out.Addons
+		*out = make([]Addon, len(*in))
+		for i := range *in {
+			if err := Convert_kubeone_Addon_To_v1beta1_Addon(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Addons = nil
+	}
 	return nil
 }
 
@@ -1349,7 +1365,15 @@ func autoConvert_v1beta1_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneClu
 	if err := Convert_v1beta1_Features_To_kubeone_Features(&in.Features, &out.Features, s); err != nil {
 		return err
 	}
-	out.Addons = (*kubeone.Addons)(unsafe.Pointer(in.Addons))
+	if in.Addons != nil {
+		in, out := &in.Addons, &out.Addons
+		*out = new(kubeone.Addons)
+		if err := Convert_v1beta1_Addons_To_kubeone_Addons(*in, *out, s); err != nil {
+			return err
+		}
+	} else {
+		out.Addons = nil
+	}
 	out.SystemPackages = (*kubeone.SystemPackages)(unsafe.Pointer(in.SystemPackages))
 	if err := Convert_v1beta1_AssetConfiguration_To_kubeone_AssetConfiguration(&in.AssetConfiguration, &out.AssetConfiguration, s); err != nil {
 		return err
@@ -1406,7 +1430,15 @@ func autoConvert_kubeone_KubeOneCluster_To_v1beta1_KubeOneCluster(in *kubeone.Ku
 	if err := Convert_kubeone_Features_To_v1beta1_Features(&in.Features, &out.Features, s); err != nil {
 		return err
 	}
-	out.Addons = (*Addons)(unsafe.Pointer(in.Addons))
+	if in.Addons != nil {
+		in, out := &in.Addons, &out.Addons
+		*out = new(Addons)
+		if err := Convert_kubeone_Addons_To_v1beta1_Addons(*in, *out, s); err != nil {
+			return err
+		}
+	} else {
+		out.Addons = nil
+	}
 	// WARNING: in.HelmReleases requires manual conversion: does not exist in peer-type
 	out.SystemPackages = (*SystemPackages)(unsafe.Pointer(in.SystemPackages))
 	if err := Convert_kubeone_AssetConfiguration_To_v1beta1_AssetConfiguration(&in.AssetConfiguration, &out.AssetConfiguration, s); err != nil {
