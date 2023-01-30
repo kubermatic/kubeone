@@ -96,6 +96,19 @@ metadata:
   namespace: kube-system
 `
 
+	testManifest1WithEmptyLabelAndTemplateDisabled = `apiVersion: v1
+data:
+  foo: bar
+kind: ConfigMap
+metadata:
+  labels:
+    app: test
+    cluster: {{ .Config.Name }}
+    kubeone.io/addon: ""
+  name: test1
+  namespace: kube-system
+`
+
 	testManifest1WithNamedLabel = `apiVersion: v1
 data:
   foo: bar
@@ -203,7 +216,7 @@ func TestEnsureAddonsLabelsOnResources(t *testing.T) {
 				LocalFS:      os.DirFS(addonsDir),
 			}
 
-			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, nil, false, "")
+			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, nil, false, "", false)
 			if err != nil {
 				t.Fatalf("unable to load manifests: %v", err)
 			}
@@ -230,7 +243,7 @@ func TestCombineManifests(t *testing.T) {
 		manifests = append(manifests, bytes.NewBufferString(m))
 	}
 
-	manifest := combineManifests(manifests)
+	manifest := combineManifests(manifests, false)
 
 	if manifest.String() != combinedTestManifest {
 		t.Fatalf("invalid combined manifest returned. expected \n%s, got \n%s", combinedTestManifest, manifest.String())
@@ -286,7 +299,7 @@ func TestImageRegistryParsing(t *testing.T) {
 				LocalFS:      os.DirFS(addonsDir),
 			}
 
-			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, nil, false, overwriteRegistry)
+			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, nil, false, overwriteRegistry, false)
 			if err != nil {
 				t.Fatalf("unable to load manifests: %v", err)
 			}
@@ -600,6 +613,88 @@ func Test_addSecretCSIVolume(t *testing.T) {
 				if !reflect.DeepEqual(kbject.Spec.JobTemplate.Spec.Template.Spec, testdataPodSpec) {
 					t.Errorf("missing volume/volumeMount")
 				}
+			}
+		})
+	}
+}
+
+func TestDisableTemplateForLoadManifests(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name              string
+		addonName         string
+		addonManifest     string
+		expectedManifest  string
+		disableTemplating bool
+	}{
+		{
+			name:              "addon with templatization disabled",
+			addonName:         "",
+			addonManifest:     testManifest1WithoutLabel,
+			expectedManifest:  testManifest1WithEmptyLabelAndTemplateDisabled,
+			disableTemplating: true,
+		},
+		{
+			name:              "addon with registry path and templatization disabled",
+			addonName:         "",
+			addonManifest:     testManifest1WithImage,
+			expectedManifest:  testManifest1WithImage,
+			disableTemplating: true,
+		},
+		{
+			name:              "addon with registry path and templatization enabled",
+			addonName:         "",
+			addonManifest:     testManifest1WithImage,
+			expectedManifest:  testManifest1WithImageParsed,
+			disableTemplating: false,
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			addonsDir := t.TempDir()
+
+			if writeErr := os.WriteFile(path.Join(addonsDir, "testManifest.yaml"), []byte(tc.addonManifest), 0600); writeErr != nil {
+				t.Fatalf("unable to create temporary addon manifest: %v", writeErr)
+			}
+
+			td := templateData{
+				Config: &kubeoneapi.KubeOneCluster{
+					Name: "kubeone-test",
+				},
+			}
+
+			applier := &applier{
+				TemplateData: td,
+				LocalFS:      os.DirFS(addonsDir),
+			}
+
+			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, nil, false, "", tc.disableTemplating)
+			if err != nil {
+				t.Fatalf("unable to load manifests: %v", err)
+			}
+
+			if len(manifests) != 1 {
+				t.Fatalf("expected to load 1 manifest, got %d", len(manifests))
+			}
+
+			b, err := ensureAddonsLabelsOnResources(manifests, tc.addonName)
+			if err != nil {
+				t.Fatalf("unable to ensure labels: %v", err)
+			}
+			manifest := b[0].String()
+
+			if tc.disableTemplating {
+				// When templating is disabled we append "^" to avoid YAML to JSON conversion issues. We revert that change here.
+				manifest = strings.ReplaceAll(manifest, "^{{", "{{")
+				manifest = strings.ReplaceAll(manifest, "}}^", "}}")
+			}
+
+			if manifest != tc.expectedManifest {
+				t.Fatalf("invalid manifest returned. expected \n%s, got \n%s", tc.expectedManifest, manifest)
 			}
 		})
 	}

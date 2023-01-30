@@ -716,6 +716,7 @@ func Convert_kubeone_AWSSpec_To_v1beta2_AWSSpec(in *kubeone.AWSSpec, out *AWSSpe
 func autoConvert_v1beta2_Addon_To_kubeone_Addon(in *Addon, out *kubeone.Addon, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Params = *(*map[string]string)(unsafe.Pointer(&in.Params))
+	out.DisableTemplating = in.DisableTemplating
 	out.Delete = in.Delete
 	return nil
 }
@@ -728,6 +729,7 @@ func Convert_v1beta2_Addon_To_kubeone_Addon(in *Addon, out *kubeone.Addon, s con
 func autoConvert_kubeone_Addon_To_v1beta2_Addon(in *kubeone.Addon, out *Addon, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Params = *(*map[string]string)(unsafe.Pointer(&in.Params))
+	out.DisableTemplating = in.DisableTemplating
 	out.Delete = in.Delete
 	return nil
 }
