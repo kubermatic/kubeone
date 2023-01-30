@@ -947,6 +947,9 @@ type Addon struct {
 	// Params to the addon, to render the addon using text/template, this will override globalParams
 	Params map[string]string `json:"params,omitempty"`
 
+	// DisableTemplating is used to disable templatization for the addon.
+	DisableTemplating bool `json:"disableTemplating,omitempty"`
+
 	// Delete flag to ensure the named addon with all its contents to be deleted
 	Delete bool `json:"delete,omitempty"`
 }

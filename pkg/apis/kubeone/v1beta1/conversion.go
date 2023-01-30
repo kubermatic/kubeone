@@ -101,3 +101,7 @@ func Convert_kubeone_ClusterNetworkConfig_To_v1beta1_ClusterNetworkConfig(in *ku
 func Convert_kubeone_ProviderStaticNetworkConfig_To_v1beta1_ProviderStaticNetworkConfig(in *kubeoneapi.ProviderStaticNetworkConfig, out *ProviderStaticNetworkConfig, s conversion.Scope) error {
 	return autoConvert_kubeone_ProviderStaticNetworkConfig_To_v1beta1_ProviderStaticNetworkConfig(in, out, s)
 }
+
+func Convert_kubeone_Addon_To_v1beta1_Addon(in *kubeoneapi.Addon, out *Addon, s conversion.Scope) error {
+	return autoConvert_kubeone_Addon_To_v1beta1_Addon(in, out, s)
+}

@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-11-30T09:29:15+01:00
+date = 2023-01-30T19:59:26+05:00
 weight = 11
 +++
 ## v1beta2
@@ -98,6 +98,7 @@ Addon config
 | ----- | ----------- | ------ | -------- |
 | name | Name of the addon to configure | string | true |
 | params | Params to the addon, to render the addon using text/template, this will override globalParams | map[string]string | false |
+| disableTemplating | DisableTemplating is used to disable templatization for the addon. | bool | false |
 | delete | Delete flag to ensure the named addon with all its contents to be deleted | bool | false |
 
 [Back to Group](#v1beta2)
