@@ -799,11 +799,6 @@ func (in *HostConfig) DeepCopyInto(out *HostConfig) {
 		*out = make([]string, len(*in))
 		copy(*out, *in)
 	}
-	if in.SSHHostPublicKey != nil {
-		in, out := &in.SSHHostPublicKey, &out.SSHHostPublicKey
-		*out = make([]byte, len(*in))
-		copy(*out, *in)
-	}
 	if in.Taints != nil {
 		in, out := &in.Taints, &out.Taints
 		*out = make([]v1.Taint, len(*in))

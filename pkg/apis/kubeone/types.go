@@ -224,7 +224,7 @@ type HostConfig struct {
 	SSHPrivateKeyFile string `json:"sshPrivateKeyFile,omitempty"`
 
 	// SSHHostPublicKey if not empty, will be used to verify remote host public key
-	SSHHostPublicKey []byte `json:"sshHostPublicKey,omitempty"`
+	SSHHostPublicKey string `json:"sshHostPublicKey,omitempty"`
 
 	// SSHAgentSocket path (or reference to the environment) to the SSH agent unix domain socket.
 	// Default value is "env:SSH_AUTH_SOCK".

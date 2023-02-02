@@ -110,7 +110,7 @@ func sshOpts(host kubeoneapi.HostConfig) Opts {
 		Port:                 host.SSHPort,
 		Hostname:             host.PublicAddress,
 		KeyFile:              privateKeyFile,
-		HostPublicKey:        host.SSHHostPublicKey,
+		HostPublicKey:        []byte(host.SSHHostPublicKey),
 		AgentSocket:          host.SSHAgentSocket,
 		Timeout:              10 * time.Second,
 		Bastion:              host.Bastion,

@@ -1413,7 +1413,7 @@ func autoConvert_v1beta2_HostConfig_To_kubeone_HostConfig(in *HostConfig, out *k
 	out.SSHPort = in.SSHPort
 	out.SSHUsername = in.SSHUsername
 	out.SSHPrivateKeyFile = in.SSHPrivateKeyFile
-	out.SSHHostPublicKey = *(*[]byte)(unsafe.Pointer(&in.SSHHostPublicKey))
+	out.SSHHostPublicKey = in.SSHHostPublicKey
 	out.SSHAgentSocket = in.SSHAgentSocket
 	out.Bastion = in.Bastion
 	out.BastionPort = in.BastionPort
@@ -1443,7 +1443,7 @@ func autoConvert_kubeone_HostConfig_To_v1beta2_HostConfig(in *kubeone.HostConfig
 	out.SSHPort = in.SSHPort
 	out.SSHUsername = in.SSHUsername
 	out.SSHPrivateKeyFile = in.SSHPrivateKeyFile
-	out.SSHHostPublicKey = *(*[]byte)(unsafe.Pointer(&in.SSHHostPublicKey))
+	out.SSHHostPublicKey = in.SSHHostPublicKey
 	out.SSHAgentSocket = in.SSHAgentSocket
 	out.Bastion = in.Bastion
 	out.BastionPort = in.BastionPort

@@ -95,7 +95,7 @@ type hostsSpec struct {
 	SSHPort           int               `json:"ssh_port"`
 	SSHPrivateKeyFile string            `json:"ssh_private_key_file"`
 	SSHAgentSocket    string            `json:"ssh_agent_socket"`
-	SSHHostKeys       [][]byte          `json:"ssh_hosts_keys"`
+	SSHHostKeys       []string          `json:"ssh_hosts_keys"`
 	Bastion           string            `json:"bastion"`
 	BastionPort       int               `json:"bastion_port"`
 	BastionUser       string            `json:"bastion_user"`
@@ -370,7 +370,7 @@ func newHostConfig(publicIP, privateIP string, ipv6addr []string, idx int, spec 
 	}
 
 	if idx < len(spec.SSHHostKeys) {
-		if pubKey := spec.SSHHostKeys[idx]; pubKey != nil {
+		if pubKey := spec.SSHHostKeys[idx]; len(pubKey) > 0 {
 			hostConfig.SSHHostPublicKey = pubKey
 		}
 	}
