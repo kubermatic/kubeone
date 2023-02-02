@@ -780,11 +780,6 @@ func (in *HostConfig) DeepCopyInto(out *HostConfig) {
 		*out = make([]byte, len(*in))
 		copy(*out, *in)
 	}
-	if in.BastionHostPublicKey != nil {
-		in, out := &in.BastionHostPublicKey, &out.BastionHostPublicKey
-		*out = make([]byte, len(*in))
-		copy(*out, *in)
-	}
 	if in.Taints != nil {
 		in, out := &in.Taints, &out.Taints
 		*out = make([]v1.Taint, len(*in))

@@ -243,7 +243,7 @@ type HostConfig struct {
 	BastionUser string `json:"bastionUser,omitempty"`
 
 	// BastionHostPublicKey if not empty, will be used to verify bastion SSH public key
-	BastionHostPublicKey []byte `json:"bastionHostPublicKey,omitempty"`
+	BastionHostPublicKey string `json:"bastionHostPublicKey,omitempty"`
 
 	// Hostname is the hostname(1) of the host.
 	// Default value is populated at the runtime via running `hostname -f` command over ssh.

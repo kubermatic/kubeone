@@ -116,6 +116,6 @@ func sshOpts(host kubeoneapi.HostConfig) Opts {
 		Bastion:              host.Bastion,
 		BastionPort:          host.BastionPort,
 		BastionUser:          host.BastionUser,
-		BastionHostPublicKey: host.BastionHostPublicKey,
+		BastionHostPublicKey: []byte(host.BastionHostPublicKey),
 	}
 }

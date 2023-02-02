@@ -99,7 +99,7 @@ type hostsSpec struct {
 	Bastion           string            `json:"bastion"`
 	BastionPort       int               `json:"bastion_port"`
 	BastionUser       string            `json:"bastion_user"`
-	BastionHostKey    []byte            `json:"bastion_host_key"`
+	BastionHostKey    string            `json:"bastion_host_key"`
 	Kubelet           kubeletSpec       `json:"kubelet,omitempty"`
 	Labels            map[string]string `json:"labels"`
 }
