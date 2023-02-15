@@ -69,10 +69,12 @@ func BuildKubernetesClientset(s *state.State) error {
 		return err
 	}
 
-	s.DynamicClient, err = client.New(s.RESTConfig, client.Options{})
+	dynamicClient, err := client.New(s.RESTConfig, client.Options{})
 	if err != nil {
 		return fail.KubeClient(err, "building dynamic kubernetes client")
 	}
+
+	s.DynamicClient = dynamicClient
 
 	return nil
 }
