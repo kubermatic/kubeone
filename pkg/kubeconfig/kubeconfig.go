@@ -17,7 +17,9 @@ limitations under the License.
 package kubeconfig
 
 import (
+	"context"
 	"io/fs"
+	"net"
 	"os"
 
 	"k8c.io/kubeone/pkg/executor"
@@ -84,12 +86,14 @@ func TunnelRestConfig(s *state.State, rc *rest.Config) error {
 		Deduplicate: true,
 	})
 
-	tunn, err := s.Executor.Tunnel(s.Cluster.RandomHost())
-	if err != nil {
-		return fail.KubeClient(err, "getting SSH tunnel")
-	}
+	rc.Dial = func(ctx context.Context, network, address string) (net.Conn, error) {
+		tunn, err := s.Executor.Tunnel(s.Cluster.RandomHost())
+		if err != nil {
+			return nil, fail.KubeClient(err, "getting SSH tunnel")
+		}
 
-	rc.Dial = tunn.TunnelTo
+		return tunn.TunnelTo(ctx, network, address)
+	}
 
 	return nil
 }

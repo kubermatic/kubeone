@@ -27,7 +27,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
-	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 )
@@ -73,13 +72,6 @@ func setupProxyTunnel(opts *proxyOpts) error {
 		return err
 	}
 
-	// Check if we can authenticate via ssh
-	tunn, err := s.Executor.Tunnel(s.Cluster.RandomHost())
-	if err != nil {
-		return err
-	}
-	defer tunn.Close()
-
 	server := &http.Server{
 		Addr: opts.ListenAddr,
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -89,13 +81,13 @@ func setupProxyTunnel(opts *proxyOpts) error {
 				return
 			}
 
-			if terr := handleTunneling(w, r, s, tunn); terr != nil {
+			if terr := handleTunneling(w, r, s); terr != nil {
 				code := http.StatusInternalServerError
 				var errHTTP *httpError
-				if errors.As(err, &errHTTP) {
+				if errors.As(terr, &errHTTP) {
 					code = errHTTP.code
 				}
-				http.Error(w, err.Error(), code)
+				http.Error(w, terr.Error(), code)
 			}
 		}),
 		ReadHeaderTimeout: 1 * time.Minute,
@@ -116,7 +108,13 @@ func (e *httpError) Error() string {
 	return fmt.Sprintf("error: %s, code: %d", e.err, e.code)
 }
 
-func handleTunneling(w http.ResponseWriter, r *http.Request, s *state.State, tunn executor.Tunneler) error {
+func handleTunneling(w http.ResponseWriter, r *http.Request, s *state.State) error {
+	// Check if we can authenticate via ssh
+	tunn, err := s.Executor.Tunnel(s.Cluster.RandomHost())
+	if err != nil {
+		return &httpError{err: err, code: http.StatusServiceUnavailable}
+	}
+
 	destConn, err := tunn.TunnelTo(s.Context, "tcp4", r.Host)
 	if err != nil {
 		tunn.Close()
