@@ -270,3 +270,9 @@ variable "rhsm_offline_token" {
   type        = string
   sensitive   = true
 }
+
+variable "disable_auto_update" {
+  description = "Disable automatic flatcar updates (and reboot)"
+  type = bool
+  default = false
+}
