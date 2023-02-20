@@ -159,7 +159,7 @@ variable "image_references" {
         publisher = "kinvolk"
         offer     = "flatcar-container-linux"
         sku       = "stable"
-        version   = "3227.2.1"
+        version   = "3374.2.3"
       }
       plan = [{
         name      = "stable"
@@ -269,4 +269,10 @@ variable "rhsm_offline_token" {
   default     = ""
   type        = string
   sensitive   = true
+}
+
+variable "disable_auto_update" {
+  description = "Disable automatic flatcar updates (and reboot)"
+  type = bool
+  default = false
 }

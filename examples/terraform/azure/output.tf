@@ -62,6 +62,7 @@ output "kubeone_workers" {
         operatingSystem = local.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot               = false
+          disableAutoUpdate               = var.disable_auto_update
           rhelSubscriptionManagerUser     = var.rhsm_username
           rhelSubscriptionManagerPassword = var.rhsm_password
           rhsmOfflineToken                = var.rhsm_offline_token

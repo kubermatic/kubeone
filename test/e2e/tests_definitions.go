@@ -357,6 +357,7 @@ var (
 				path: "../../examples/terraform/azure",
 				vars: []string{
 					"disable_kubeapi_loadbalancer=true",
+					"disable_auto_update=true",
 					"os=flatcar",
 				},
 			},
@@ -375,6 +376,7 @@ var (
 				path: "../../../kubeone-stable/examples/terraform/azure",
 				vars: []string{
 					"disable_kubeapi_loadbalancer=true",
+					"disable_auto_update=true",
 					"os=flatcar",
 				},
 			},
