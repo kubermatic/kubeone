@@ -29,6 +29,7 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/apis/kubeone/config"
+	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/test/testexec"
 
@@ -94,23 +95,22 @@ func (k1 *kubeoneBin) RestConfig() (*rest.Config, error) {
 		return nil, err
 	}
 
-	kubeconfig, err := k1.Kubeconfig()
+	konfig, err := k1.Kubeconfig()
 	if err != nil {
 		return nil, err
 	}
 
-	restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeconfig)
+	restConfig, err := clientcmd.RESTConfigFromKubeConfig(konfig)
 	if err != nil {
 		return nil, err
 	}
 
 	connector := ssh.NewConnector(context.Background())
-	tun, err := connector.Tunnel(kubeoneManifest.RandomHost())
-	if err != nil {
-		return nil, err
-	}
+	restConfig.Dial = func(ctx context.Context, network, address string) (net.Conn, error) {
+		dial := kubeconfig.TunnelDialerFactory(connector, kubeoneManifest.RandomHost())
 
-	restConfig.Dial = tun.TunnelTo
+		return dial(ctx, network, address)
+	}
 
 	return restConfig, nil
 }

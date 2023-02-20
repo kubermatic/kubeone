@@ -22,6 +22,7 @@ import (
 	"net"
 	"os"
 
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/executor/executorfs"
 	"k8c.io/kubeone/pkg/fail"
@@ -87,13 +88,28 @@ func TunnelRestConfig(s *state.State, rc *rest.Config) error {
 	})
 
 	rc.Dial = func(ctx context.Context, network, address string) (net.Conn, error) {
-		tunn, err := s.Executor.Tunnel(s.Cluster.RandomHost())
+		dial := TunnelDialerFactory(s.Executor, s.Cluster.RandomHost())
+
+		return dial(ctx, network, address)
+	}
+
+	return nil
+}
+
+func TunnelDialerFactory(adapter executor.Adapter, host kubeoneapi.HostConfig) func(ctx context.Context, network, address string) (net.Conn, error) {
+	return func(ctx context.Context, network, address string) (net.Conn, error) {
+		tunn, err := adapter.Tunnel(host)
 		if err != nil {
 			return nil, fail.KubeClient(err, "getting SSH tunnel")
 		}
 
-		return tunn.TunnelTo(ctx, network, address)
-	}
+		netConn, err := tunn.TunnelTo(ctx, network, address)
+		if err != nil {
+			tunn.Close()
 
-	return nil
+			return nil, err
+		}
+
+		return netConn, err
+	}
 }
