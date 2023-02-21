@@ -17,7 +17,7 @@ type: Opaque
 data:
   password: {{ required "Please provide resticPassword" .Params.resticPassword | b64enc }}
 ---
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: etcd-s3-backup
@@ -52,7 +52,7 @@ spec:
               path: /etc/kubernetes/pki
           initContainers:
           - name: snapshoter
-            image: {{ Registry "registry.k8s.io" }}/etcd:3.5.4-0
+            image: {{ Registry "gcr.io" }}/etcd-development/etcd:v3.5.6
             imagePullPolicy: IfNotPresent
             command:
             - /bin/sh
