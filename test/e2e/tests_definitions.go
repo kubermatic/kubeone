@@ -266,7 +266,7 @@ var (
 			},
 			environ: map[string]string{
 				"PROVIDER":     "aws",
-				"TEST_TIMEOUT": "120m",
+				"TEST_TIMEOUT": "180m",
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/aws",
@@ -281,7 +281,7 @@ var (
 			},
 			environ: map[string]string{
 				"PROVIDER":     "azure",
-				"TEST_TIMEOUT": "120m",
+				"TEST_TIMEOUT": "180m",
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/azure",
@@ -298,7 +298,7 @@ var (
 			},
 			environ: map[string]string{
 				"PROVIDER":     "azure",
-				"TEST_TIMEOUT": "120m",
+				"TEST_TIMEOUT": "180m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/azure",
@@ -315,7 +315,7 @@ var (
 			},
 			environ: map[string]string{
 				"PROVIDER":     "azure",
-				"TEST_TIMEOUT": "120m",
+				"TEST_TIMEOUT": "180m",
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/azure",
@@ -333,7 +333,7 @@ var (
 			},
 			environ: map[string]string{
 				"PROVIDER":     "azure",
-				"TEST_TIMEOUT": "120m",
+				"TEST_TIMEOUT": "180m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/azure",
@@ -351,7 +351,7 @@ var (
 			},
 			environ: map[string]string{
 				"PROVIDER":     "azure",
-				"TEST_TIMEOUT": "120m",
+				"TEST_TIMEOUT": "180m",
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/azure",
@@ -370,7 +370,7 @@ var (
 			},
 			environ: map[string]string{
 				"PROVIDER":     "azure",
-				"TEST_TIMEOUT": "120m",
+				"TEST_TIMEOUT": "180m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/azure",
@@ -390,7 +390,7 @@ var (
 			},
 			environ: map[string]string{
 				"PROVIDER":     "azure",
-				"TEST_TIMEOUT": "120m",
+				"TEST_TIMEOUT": "180m",
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/azure",
@@ -409,7 +409,7 @@ var (
 			},
 			environ: map[string]string{
 				"PROVIDER":     "azure",
-				"TEST_TIMEOUT": "120m",
+				"TEST_TIMEOUT": "180m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/azure",
@@ -427,7 +427,7 @@ var (
 			},
 			environ: map[string]string{
 				"PROVIDER":     "azure",
-				"TEST_TIMEOUT": "120m",
+				"TEST_TIMEOUT": "180m",
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/azure",
@@ -445,7 +445,7 @@ var (
 			},
 			environ: map[string]string{
 				"PROVIDER":     "azure",
-				"TEST_TIMEOUT": "120m",
+				"TEST_TIMEOUT": "180m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/azure",

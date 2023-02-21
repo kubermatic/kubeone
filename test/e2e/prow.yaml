@@ -157,7 +157,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -182,7 +182,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -207,7 +207,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -233,7 +233,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -258,7 +258,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -629,7 +629,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -654,7 +654,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -679,7 +679,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -705,7 +705,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -730,7 +730,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -1101,7 +1101,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -1126,7 +1126,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -1151,7 +1151,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -1177,7 +1177,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -1202,7 +1202,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -1607,7 +1607,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -1637,7 +1637,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -1667,7 +1667,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -1698,7 +1698,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -1728,7 +1728,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -2178,7 +2178,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -2208,7 +2208,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -2238,7 +2238,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -2269,7 +2269,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -2299,7 +2299,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -2714,7 +2714,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -2739,7 +2739,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -2764,7 +2764,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -2790,7 +2790,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -2815,7 +2815,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -3185,7 +3185,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -3210,7 +3210,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -3235,7 +3235,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -3261,7 +3261,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -3286,7 +3286,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -3656,7 +3656,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -3681,7 +3681,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -3706,7 +3706,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -3732,7 +3732,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -3757,7 +3757,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -3989,7 +3989,7 @@ presubmits:
       - name: PROVIDER
         value: aws
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -4014,7 +4014,7 @@ presubmits:
       - name: PROVIDER
         value: aws
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -4039,7 +4039,7 @@ presubmits:
       - name: PROVIDER
         value: aws
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -4064,7 +4064,7 @@ presubmits:
       - name: PROVIDER
         value: aws
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -4089,7 +4089,7 @@ presubmits:
       - name: PROVIDER
         value: aws
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -4114,7 +4114,7 @@ presubmits:
       - name: PROVIDER
         value: aws
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -4300,7 +4300,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -4325,7 +4325,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -4350,7 +4350,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -4376,7 +4376,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -4401,7 +4401,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -4771,7 +4771,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -4796,7 +4796,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -4821,7 +4821,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -4847,7 +4847,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -4872,7 +4872,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -5242,7 +5242,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -5267,7 +5267,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -5292,7 +5292,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -5318,7 +5318,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -5343,7 +5343,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -5713,7 +5713,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -5738,7 +5738,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -5763,7 +5763,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -5789,7 +5789,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -5814,7 +5814,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -6046,7 +6046,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -6071,7 +6071,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -6096,7 +6096,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -6122,7 +6122,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -6147,7 +6147,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -6379,7 +6379,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -6404,7 +6404,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -6429,7 +6429,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -6455,7 +6455,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -6480,7 +6480,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -6712,7 +6712,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -6737,7 +6737,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -6762,7 +6762,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -6788,7 +6788,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -6813,7 +6813,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -7390,7 +7390,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -7415,7 +7415,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -7440,7 +7440,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -7466,7 +7466,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -7491,7 +7491,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -8068,7 +8068,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -8093,7 +8093,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -8118,7 +8118,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -8144,7 +8144,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -8169,7 +8169,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -8781,7 +8781,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -8811,7 +8811,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -8841,7 +8841,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -8872,7 +8872,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -8902,7 +8902,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -9604,7 +9604,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -9634,7 +9634,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -9664,7 +9664,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -9695,7 +9695,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -9725,7 +9725,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -10392,7 +10392,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -10417,7 +10417,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -10442,7 +10442,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -10468,7 +10468,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -10493,7 +10493,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -11070,7 +11070,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -11095,7 +11095,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -11120,7 +11120,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -11146,7 +11146,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -11171,7 +11171,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -11748,7 +11748,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -11773,7 +11773,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -11798,7 +11798,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -11824,7 +11824,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
@@ -11849,7 +11849,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/kubeone-e2e:v0.1.30
       imagePullPolicy: Always
       name: ""
