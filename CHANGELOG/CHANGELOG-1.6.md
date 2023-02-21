@@ -20,7 +20,7 @@ consult the changelog below before upgrading to this minor release.
 
 ### API Change
 
-- Stop applying `node-role.kubernetes.io/master` taint for Kubernetes 1.26+ nodes ([#2604](https://github.com/kubermatic/kubeone/pull/2604), [@xmudrii](https://github.com/xmudrii))
+- Stop applying `node-role.kubernetes.io/master` taint for Kubernetes 1.25+ nodes. The taint will be removed from existing nodes upon upgrading to Kubernetes 1.25 ([#2604](https://github.com/kubermatic/kubeone/pull/2604), [#2688](https://github.com/kubermatic/kubeone/pull/2688), [@xmudrii](https://github.com/xmudrii))
 - Add a new `NodeLocalDNS` field to the KubeOneCluster API used to control should the NodeLocalDNSCache component be deployed or not. Run `kubeone config print --full` for details on how to use this field ([#2356](https://github.com/kubermatic/kubeone/pull/2356), [@kron4eg](https://github.com/kron4eg))
 - Introduce a new `.addons.addons[*].disableTemplating` field to the KubeOneCluster API which can be used to disable templatization for an addon ([#2630](https://github.com/kubermatic/kubeone/pull/2630), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
 - `.cloudProvider.csiConfig` is now a mandatory field for vSphere clusters using the external cloud provider (`.cloudProvider.external: true`) ([#2430](https://github.com/kubermatic/kubeone/pull/2430), [@xmudrii](https://github.com/xmudrii))
