@@ -66,7 +66,7 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 	setDefaultLeader := true
 
 	gteKube124Condition, _ := semver.NewConstraint(">= 1.24")
-	ltKube126Condition, _ := semver.NewConstraint("< 1.26")
+	ltKube125Condition, _ := semver.NewConstraint("< 1.25")
 	actualVer, err := semver.NewVersion(obj.Versions.Kubernetes)
 	if err != nil {
 		return
@@ -82,7 +82,7 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 		obj.ControlPlane.Hosts[idx].ID = idx
 		defaultHostConfig(&obj.ControlPlane.Hosts[idx])
 		if obj.ControlPlane.Hosts[idx].Taints == nil {
-			if ltKube126Condition.Check(actualVer) {
+			if ltKube125Condition.Check(actualVer) {
 				obj.ControlPlane.Hosts[idx].Taints = []corev1.Taint{
 					{
 						Effect: corev1.TaintEffectNoSchedule,
