@@ -148,12 +148,57 @@ func safeguard(s *state.State) error {
 		}
 	}
 
+	if err := safeguardNodeTaints(s); err != nil {
+		return err
+	}
+
 	if err := safeguardNodeSelectorsAndTolerations(s); err != nil {
 		return err
 	}
 
 	if err := safeguardFlatcarMachineDeployments(s); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// safeguardNodeTaints ensures that there are no Nodes running Kubernetes 1.25
+// that have the "node-role.kubernetes.io/master" taint as it's removed in
+// Kubernetes 1.25.
+// This safeguard can be removed when removing support for Kubernetes 1.25.
+func safeguardNodeTaints(s *state.State) error {
+	var nodes corev1.NodeList
+	if err := s.DynamicClient.List(s.Context, &nodes, dynclient.InNamespace("")); err != nil {
+		return fail.KubeClient(err, "getting all nodes")
+	}
+
+	invalidTaints := []string{}
+
+	for _, node := range nodes.Items {
+		version, err := semver.NewVersion(node.Status.NodeInfo.KubeletVersion)
+		if err != nil {
+			return err
+		}
+		if version.Minor() < 25 {
+			continue
+		}
+
+		for _, taint := range node.Spec.Taints {
+			if taint.Key == nodeRoleMaster {
+				invalidTaints = append(invalidTaints, node.Name)
+			}
+		}
+	}
+
+	if len(invalidTaints) > 0 {
+		s.Logger.Errorf("Found %d node(s) that have the %q taint which is removed in Kubernetes 1.25: %s", len(invalidTaints), nodeRoleMaster, invalidTaints)
+		s.Logger.Warnf("Please remove those taints manually with %q before proceeding.", "kubectl taint nodes node-role.kubernetes.io/master- --all")
+
+		return fail.RuntimeError{
+			Err: errors.New("invalid node taints"),
+			Op:  fmt.Sprintf("some nodes have the %q taint removed Kubernetes 1.25", nodeRoleMaster),
+		}
 	}
 
 	return nil
@@ -167,7 +212,7 @@ func safeguard(s *state.State) error {
 // That's because node-role.kubernetes.io/master label/node role has been completely
 // removed in Kubernetes 1.24. This safeguard is executed only when upgrading
 // from 1.23 to 1.24.
-// This safeguard can be removed when removing support for Kubernetes 1.23.
+// This safeguard can be removed when removing support for Kubernetes 1.24.
 func safeguardNodeSelectorsAndTolerations(s *state.State) error {
 	targetVersion, err := semver.NewVersion(s.Cluster.Versions.Kubernetes)
 	if err != nil {

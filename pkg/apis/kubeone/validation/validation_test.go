@@ -25,6 +25,7 @@ import (
 	"k8c.io/kubeone/pkg/pointer"
 	"k8c.io/kubeone/pkg/templates/resources"
 
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 
@@ -398,7 +399,10 @@ func TestValidateControlPlaneConfig(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateControlPlaneConfig(tc.controlPlaneConfig, tc.networkConfig, nil)
+			version := kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.1",
+			}
+			errs := ValidateControlPlaneConfig(tc.controlPlaneConfig, version, tc.networkConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}
@@ -1421,7 +1425,10 @@ func TestValidateStaticWorkersConfig(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateStaticWorkersConfig(tc.staticWorkersConfig, tc.networkConfig, nil)
+			version := kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.1",
+			}
+			errs := ValidateStaticWorkersConfig(tc.staticWorkersConfig, version, tc.networkConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}
@@ -2140,6 +2147,7 @@ func TestValidateHostConfig(t *testing.T) {
 		name          string
 		hostConfig    []kubeoneapi.HostConfig
 		networkConfig kubeoneapi.ClusterNetworkConfig
+		versionConfig kubeoneapi.VersionConfig
 		expectedError bool
 	}{
 		{
@@ -2152,6 +2160,9 @@ func TestValidateHostConfig(t *testing.T) {
 					SSHAgentSocket:    "test",
 					SSHUsername:       "root",
 				},
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.1",
 			},
 			expectedError: false,
 		},
@@ -2166,6 +2177,9 @@ func TestValidateHostConfig(t *testing.T) {
 					SSHUsername:       "root",
 				},
 			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.1",
+			},
 			expectedError: false,
 		},
 		{
@@ -2178,6 +2192,9 @@ func TestValidateHostConfig(t *testing.T) {
 					SSHAgentSocket:    "test",
 					SSHUsername:       "root",
 				},
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.1",
 			},
 			expectedError: true,
 		},
@@ -2192,6 +2209,9 @@ func TestValidateHostConfig(t *testing.T) {
 					SSHUsername:       "root",
 				},
 			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.1",
+			},
 			expectedError: true,
 		},
 		{
@@ -2205,6 +2225,9 @@ func TestValidateHostConfig(t *testing.T) {
 					SSHUsername:       "root",
 				},
 			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.1",
+			},
 			expectedError: true,
 		},
 		{
@@ -2217,6 +2240,9 @@ func TestValidateHostConfig(t *testing.T) {
 					SSHAgentSocket:    "test",
 					SSHUsername:       "",
 				},
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.1",
 			},
 			expectedError: true,
 		},
@@ -2237,6 +2263,9 @@ func TestValidateHostConfig(t *testing.T) {
 					SSHAgentSocket:    "test",
 					SSHUsername:       "",
 				},
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.1",
 			},
 			expectedError: true,
 		},
@@ -2260,6 +2289,9 @@ func TestValidateHostConfig(t *testing.T) {
 					IsLeader:          true,
 				},
 			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.1",
+			},
 			expectedError: true,
 		},
 		{
@@ -2274,6 +2306,9 @@ func TestValidateHostConfig(t *testing.T) {
 					OperatingSystem:   kubeoneapi.OperatingSystemNameCentOS,
 				},
 			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.1",
+			},
 			expectedError: false,
 		},
 		{
@@ -2287,6 +2322,9 @@ func TestValidateHostConfig(t *testing.T) {
 					SSHUsername:       "root",
 					OperatingSystem:   kubeoneapi.OperatingSystemName("non-existing"),
 				},
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.1",
 			},
 			expectedError: true,
 		},
@@ -2304,6 +2342,9 @@ func TestValidateHostConfig(t *testing.T) {
 					},
 				},
 			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.1",
+			},
 			expectedError: false,
 		},
 		{
@@ -2319,6 +2360,9 @@ func TestValidateHostConfig(t *testing.T) {
 						MaxPods: pointer.New(int32(0)),
 					},
 				},
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.1",
 			},
 			expectedError: true,
 		},
@@ -2336,6 +2380,9 @@ func TestValidateHostConfig(t *testing.T) {
 					},
 				},
 			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.1",
+			},
 			expectedError: true,
 		},
 		{
@@ -2351,6 +2398,9 @@ func TestValidateHostConfig(t *testing.T) {
 						"label-to-remove-": "this values has to be empty",
 					},
 				},
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.1",
 			},
 			expectedError: true,
 		},
@@ -2368,14 +2418,128 @@ func TestValidateHostConfig(t *testing.T) {
 					},
 				},
 			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.1",
+			},
 			expectedError: false,
+		},
+		{
+			name: "master taint on 1.24",
+			hostConfig: []kubeoneapi.HostConfig{
+				{
+					PublicAddress:     "192.168.1.1",
+					PrivateAddress:    "192.168.0.1",
+					SSHPrivateKeyFile: "test",
+					SSHAgentSocket:    "test",
+					SSHUsername:       "root",
+					Taints: []corev1.Taint{
+						{
+							Key: "node-role.kubernetes.io/control-plane",
+						},
+						{
+							Key: "node-role.kubernetes.io/master",
+						},
+					},
+				},
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.24.10",
+			},
+			expectedError: false,
+		},
+		{
+			name: "only control-plane taint on 1.24",
+			hostConfig: []kubeoneapi.HostConfig{
+				{
+					PublicAddress:     "192.168.1.1",
+					PrivateAddress:    "192.168.0.1",
+					SSHPrivateKeyFile: "test",
+					SSHAgentSocket:    "test",
+					SSHUsername:       "root",
+					Taints: []corev1.Taint{
+						{
+							Key: "node-role.kubernetes.io/control-plane",
+						},
+					},
+				},
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.24.10",
+			},
+			expectedError: false,
+		},
+		{
+			name: "master taint on 1.25",
+			hostConfig: []kubeoneapi.HostConfig{
+				{
+					PublicAddress:     "192.168.1.1",
+					PrivateAddress:    "192.168.0.1",
+					SSHPrivateKeyFile: "test",
+					SSHAgentSocket:    "test",
+					SSHUsername:       "root",
+					Taints: []corev1.Taint{
+						{
+							Key: "node-role.kubernetes.io/control-plane",
+						},
+						{
+							Key: "node-role.kubernetes.io/master",
+						},
+					},
+				},
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.25.6",
+			},
+			expectedError: true,
+		},
+		{
+			name: "only control-plane taint on 1.25",
+			hostConfig: []kubeoneapi.HostConfig{
+				{
+					PublicAddress:     "192.168.1.1",
+					PrivateAddress:    "192.168.0.1",
+					SSHPrivateKeyFile: "test",
+					SSHAgentSocket:    "test",
+					SSHUsername:       "root",
+					Taints: []corev1.Taint{
+						{
+							Key: "node-role.kubernetes.io/control-plane",
+						},
+					},
+				},
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.25.6",
+			},
+			expectedError: false,
+		},
+		{
+			name: "master taint on 1.26",
+			hostConfig: []kubeoneapi.HostConfig{
+				{
+					PublicAddress:     "192.168.1.1",
+					PrivateAddress:    "192.168.0.1",
+					SSHPrivateKeyFile: "test",
+					SSHAgentSocket:    "test",
+					SSHUsername:       "root",
+					Taints: []corev1.Taint{
+						{
+							Key: "node-role.kubernetes.io/master",
+						},
+					},
+				},
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.1",
+			},
+			expectedError: true,
 		},
 	}
 
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateHostConfig(tc.hostConfig, tc.networkConfig, nil)
+			errs := ValidateHostConfig(tc.hostConfig, tc.versionConfig, tc.networkConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}
