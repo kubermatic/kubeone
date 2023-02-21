@@ -26,4 +26,4 @@ cd $(dirname $0)/..
 
 git remote add origin git@github.com:kubermatic/kubeone.git
 
-goreleaser release
+make goreleaser

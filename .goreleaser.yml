@@ -4,6 +4,7 @@ builds:
       - "-s -w"
       - "-extldflags=-zrelro"
       - "-extldflags=-znow"
+      - "-X k8c.io/kubeone/pkg/cmd.defaultKubeVersion={{ .Env.DEFAULT_STABLE }}"
       - "-X k8c.io/kubeone/pkg/cmd.version={{.Version}}"
       - "-X k8c.io/kubeone/pkg/cmd.commit={{.FullCommit}}"
       - "-X k8c.io/kubeone/pkg/cmd.date={{.Date}}"
