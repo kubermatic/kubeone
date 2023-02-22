@@ -47,7 +47,6 @@ cloudProvider:
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.1.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
-| <a name="provider_template"></a> [template](#provider\_template) | n/a |
 
 ## Modules
 
@@ -78,7 +77,6 @@ No modules.
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
 | [aws_internet_gateway.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/internet_gateway) | data source |
 | [aws_vpc.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
-| [template_file.user_data](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
 
 ## Inputs
 
@@ -104,7 +102,7 @@ No modules.
 | <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | number of replicas per MachineDeployment | `number` | `1` | no |
 | <a name="input_initial_machinedeployment_spotinstances_max_price"></a> [initial\_machinedeployment\_spotinstances\_max\_price](#input\_initial\_machinedeployment\_spotinstances\_max\_price) | used to specify max spot instance price for initial machine-deployment | `number` | `0` | no |
 | <a name="input_internal_api_lb"></a> [internal\_api\_lb](#input\_internal\_api\_lb) | make kubernetes API loadbalancer internal (reachible only from inside the VPC) | `bool` | `false` | no |
-| <a name="input_ip_family"></a> [ip\_family](#input\_ip\_family) | IPFamily of the cluster | `string` | `"IPv4+IPV6"` | no |
+| <a name="input_ip_family"></a> [ip\_family](#input\_ip\_family) | IPFamily of the cluster | `string` | `"IPv4+IPv6"` | no |
 | <a name="input_os"></a> [os](#input\_os) | Operating System to use in AMI filtering and MachineDeployment | `string` | `"ubuntu"` | no |
 | <a name="input_provisioning_utility"></a> [provisioning\_utility](#input\_provisioning\_utility) | provisioning utility to be used for Flatcar worker nodes | `string` | `""` | no |
 | <a name="input_ssh_agent_socket"></a> [ssh\_agent\_socket](#input\_ssh\_agent\_socket) | SSH Agent socket, default to grab from $SSH\_AUTH\_SOCK | `string` | `"env:SSH_AUTH_SOCK"` | no |
