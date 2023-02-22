@@ -168,7 +168,7 @@ spec:
           command: ["cloud-controller-manager"]
           args:
             - "--allocate-node-cidrs=false" # "false" as we use IPAM in kube-controller-manager
-            - "--cloud-config=/etc/kubernetes/cloud-config"
+            - "--cloud-config=/etc/cloud/cloud-config"
             - "--cloud-provider=azure"
             - "--cluster-name={{ .Config.Name }}"
             - "--controllers=*,-cloud-node" # disable cloud-node controller
@@ -193,8 +193,6 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
           volumeMounts:
-            - name: etc-kubernetes
-              mountPath: /etc/kubernetes
             - name: etc-ssl
               mountPath: /etc/ssl
               readOnly: true
@@ -207,10 +205,10 @@ spec:
             - name: msi
               mountPath: /var/lib/waagent/ManagedIdentity-Settings
               readOnly: true
+            - mountPath: /etc/cloud
+              name: cloud-config-volume
+              readOnly: true
       volumes:
-        - name: etc-kubernetes
-          hostPath:
-            path: /etc/kubernetes
         - name: etc-ssl
           hostPath:
             path: /etc/ssl
@@ -223,6 +221,9 @@ spec:
         - name: msi
           hostPath:
             path: /var/lib/waagent/ManagedIdentity-Settings
+        - name: cloud-config-volume
+          secret:
+            secretName: cloud-config
 ---
 apiVersion: v1
 kind: ServiceAccount
