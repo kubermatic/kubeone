@@ -42,11 +42,14 @@ const (
 	lowerVersionConstraint = ">= 1.24"
 	// upperVersionConstraint defines a semver constraint that validates Kubernetes versions against an upper bound
 	upperVersionConstraint = "<= 1.26"
+	// gte125VersionConstraint defines a semver constraint that validates Kubernetes versions >= 1.25
+	gte125VersionConstraint = ">= 1.25"
 )
 
 var (
-	lowerConstraint = semverutil.MustParseConstraint(lowerVersionConstraint)
-	upperConstraint = semverutil.MustParseConstraint(upperVersionConstraint)
+	lowerConstraint  = semverutil.MustParseConstraint(lowerVersionConstraint)
+	upperConstraint  = semverutil.MustParseConstraint(upperVersionConstraint)
+	gte125Constraint = semverutil.MustParseConstraint(gte125VersionConstraint)
 )
 
 // ValidateKubeOneCluster validates the KubeOneCluster object
@@ -54,14 +57,14 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	allErrs = append(allErrs, ValidateName(c.Name, field.NewPath("name"))...)
-	allErrs = append(allErrs, ValidateControlPlaneConfig(c.ControlPlane, c.ClusterNetwork, field.NewPath("controlPlane"))...)
+	allErrs = append(allErrs, ValidateControlPlaneConfig(c.ControlPlane, c.Versions, c.ClusterNetwork, field.NewPath("controlPlane"))...)
 	allErrs = append(allErrs, ValidateAPIEndpoint(c.APIEndpoint, field.NewPath("apiEndpoint"))...)
 	allErrs = append(allErrs, ValidateCloudProviderSpec(c.CloudProvider, c.ClusterNetwork, field.NewPath("provider"))...)
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
 	allErrs = append(allErrs, ValidateKubernetesSupport(c, field.NewPath(""))...)
 	allErrs = append(allErrs, ValidateContainerRuntimeConfig(c.ContainerRuntime, c.Versions, field.NewPath("containerRuntime"))...)
 	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, c.CloudProvider, field.NewPath("clusterNetwork"))...)
-	allErrs = append(allErrs, ValidateStaticWorkersConfig(c.StaticWorkers, c.ClusterNetwork, field.NewPath("staticWorkers"))...)
+	allErrs = append(allErrs, ValidateStaticWorkersConfig(c.StaticWorkers, c.Versions, c.ClusterNetwork, field.NewPath("staticWorkers"))...)
 
 	if c.MachineController != nil && c.MachineController.Deploy {
 		allErrs = append(allErrs, ValidateDynamicWorkerConfig(c.DynamicWorkers, c.CloudProvider, field.NewPath("dynamicWorkers"))...)
@@ -132,11 +135,11 @@ func ValidateName(name string, fldPath *field.Path) field.ErrorList {
 }
 
 // ValidateControlPlaneConfig validates the ControlPlaneConfig structure
-func ValidateControlPlaneConfig(c kubeoneapi.ControlPlaneConfig, clusterNetwork kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
+func ValidateControlPlaneConfig(c kubeoneapi.ControlPlaneConfig, version kubeoneapi.VersionConfig, clusterNetwork kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	if len(c.Hosts) > 0 {
-		allErrs = append(allErrs, ValidateHostConfig(c.Hosts, clusterNetwork, fldPath.Child("hosts"))...)
+		allErrs = append(allErrs, ValidateHostConfig(c.Hosts, version, clusterNetwork, fldPath.Child("hosts"))...)
 	} else {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("hosts"), "",
 			".controlPlane.Hosts is a required field. There must be at least one control plane instance in the cluster."))
@@ -531,11 +534,11 @@ func ValidateCNI(c *kubeoneapi.CNI, fldPath *field.Path) field.ErrorList {
 }
 
 // ValidateStaticWorkersConfig validates the StaticWorkersConfig structure
-func ValidateStaticWorkersConfig(staticWorkers kubeoneapi.StaticWorkersConfig, clusterNetwork kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
+func ValidateStaticWorkersConfig(staticWorkers kubeoneapi.StaticWorkersConfig, version kubeoneapi.VersionConfig, clusterNetwork kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	if len(staticWorkers.Hosts) > 0 {
-		allErrs = append(allErrs, ValidateHostConfig(staticWorkers.Hosts, clusterNetwork, fldPath.Child("hosts"))...)
+		allErrs = append(allErrs, ValidateHostConfig(staticWorkers.Hosts, version, clusterNetwork, fldPath.Child("hosts"))...)
 	}
 
 	return allErrs
@@ -733,8 +736,15 @@ func ValidateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.
 }
 
 // ValidateHostConfig validates the HostConfig structure
-func ValidateHostConfig(hosts []kubeoneapi.HostConfig, clusterNetwork kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
+func ValidateHostConfig(hosts []kubeoneapi.HostConfig, version kubeoneapi.VersionConfig, clusterNetwork kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
+
+	v, err := semver.NewVersion(version.Kubernetes)
+	if err != nil {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), version, ".versions.kubernetes is not a semver string"))
+
+		return allErrs
+	}
 
 	leaderFound := false
 	for _, h := range hosts {
@@ -770,6 +780,13 @@ func ValidateHostConfig(hosts []kubeoneapi.HostConfig, clusterNetwork kubeoneapi
 		for labelKey, labelValue := range h.Labels {
 			if strings.HasSuffix(labelKey, "-") && labelValue != "" {
 				allErrs = append(allErrs, field.Invalid(fldPath.Child("labels"), labelValue, "label to remove cannot have value"))
+			}
+		}
+		if gte125Constraint.Check(v) {
+			for _, taint := range h.Taints {
+				if taint.Key == "node-role.kubernetes.io/master" {
+					allErrs = append(allErrs, field.Forbidden(fldPath.Child("taints"), fmt.Sprintf("%q taint is forbidden for clusters running Kubernetes 1.25+", "node-role.kubernetes.io/master")))
+				}
 			}
 		}
 	}
