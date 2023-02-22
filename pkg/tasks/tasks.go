@@ -510,8 +510,8 @@ func WithCCMCSIMigration(t Tasks) Tasks {
 				return s.CCMMigrationComplete
 			},
 		},
+		{Fn: generateKubeadm, Operation: "generating kubeadm config files"},
 	}...).
-		append(kubernetesConfigFiles()...).
 		append(
 			Task{Fn: ccmMigrationRegenerateControlPlaneManifestsAndKubeletConfig, Operation: "regenerating static pod manifests and kubelet config"},
 			Task{
@@ -524,6 +524,21 @@ func WithCCMCSIMigration(t Tasks) Tasks {
 		).
 		append(WithResources(nil)...).
 		append(
+			// Regenerate files only when finishing the CCM/CSI migration.
+			Task{
+				Fn:        generateConfigurationFiles,
+				Operation: "generating config files",
+				Predicate: func(s *state.State) bool {
+					return s.CCMMigrationComplete
+				},
+			},
+			Task{
+				Fn:        uploadConfigurationFiles,
+				Operation: "uploading config files",
+				Predicate: func(s *state.State) bool {
+					return s.CCMMigrationComplete
+				},
+			},
 			Task{
 				Fn:        migrateOpenStackPVs,
 				Operation: "migrating openstack persistentvolumes",
