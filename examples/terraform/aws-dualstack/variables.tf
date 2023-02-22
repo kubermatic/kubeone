@@ -130,7 +130,7 @@ variable "vpc_id" {
 }
 
 variable "ip_family" {
-  default     = "IPv4+IPV6"
+  default     = "IPv4+IPv6"
   description = "IPFamily of the cluster"
   type        = string
 }
