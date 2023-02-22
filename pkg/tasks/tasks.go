@@ -524,6 +524,21 @@ func WithCCMCSIMigration(t Tasks) Tasks {
 		).
 		append(WithResources(nil)...).
 		append(
+			// Regenerate files only when finishing the CCM/CSI migration.
+			Task{
+				Fn:        generateConfigurationFiles,
+				Operation: "generating config files",
+				Predicate: func(s *state.State) bool {
+					return s.CCMMigrationComplete
+				},
+			},
+			Task{
+				Fn:        uploadConfigurationFiles,
+				Operation: "uploading config files",
+				Predicate: func(s *state.State) bool {
+					return s.CCMMigrationComplete
+				},
+			},
 			Task{
 				Fn:        migrateOpenStackPVs,
 				Operation: "migrating openstack persistentvolumes",
