@@ -510,8 +510,8 @@ func WithCCMCSIMigration(t Tasks) Tasks {
 				return s.CCMMigrationComplete
 			},
 		},
+		{Fn: generateKubeadm, Operation: "generating kubeadm config files"},
 	}...).
-		append(kubernetesConfigFiles()...).
 		append(
 			Task{Fn: ccmMigrationRegenerateControlPlaneManifestsAndKubeletConfig, Operation: "regenerating static pod manifests and kubelet config"},
 			Task{
