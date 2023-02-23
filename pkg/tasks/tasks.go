@@ -364,7 +364,7 @@ func WithContainerDMigration(t Tasks) Tasks {
 			{
 				Fn: func(s *state.State) error {
 					s.Logger.Warn("Now please rolling restart your machineDeployments to get containerd")
-					s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/main/cheat-sheets/rollout-machinedeployment/")
+					s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/v1.6/cheat-sheets/rollout-machinedeployment/")
 
 					return nil
 				},
@@ -547,7 +547,7 @@ func WithCCMCSIMigration(t Tasks) Tasks {
 			Task{
 				Fn: func(s *state.State) error {
 					s.Logger.Warn("Now please rolling restart your machineDeployments to migrate to ccm/csi")
-					s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/main/cheat-sheets/rollout-machinedeployment/")
+					s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/v1.6/cheat-sheets/rollout-machinedeployment/")
 					s.Logger.Warn("Once you're done, please run this command again with the '--complete' flag to finish migration")
 
 					return nil
