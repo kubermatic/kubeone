@@ -926,9 +926,65 @@ func TestValidateKubernetesSupport(t *testing.T) {
 			expectedError: false,
 		},
 		{
-			name: "vSphere 1.26.0 cluster",
+			name: "vSphere 1.24.0 cluster without external CCM/CSI",
 			providerConfig: kubeoneapi.CloudProviderSpec{
-				Vsphere: &kubeoneapi.VsphereSpec{},
+				Vsphere:  &kubeoneapi.VsphereSpec{},
+				External: false,
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.24.0",
+			},
+			expectedError: false,
+		},
+		{
+			name: "vSphere 1.24.0 cluster with external CCM/CSI",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Vsphere:  &kubeoneapi.VsphereSpec{},
+				External: true,
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.24.0",
+			},
+			expectedError: false,
+		},
+		{
+			name: "vSphere 1.25.0 cluster without external CCM/CSI",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Vsphere:  &kubeoneapi.VsphereSpec{},
+				External: false,
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.25.0",
+			},
+			expectedError: true,
+		},
+		{
+			name: "vSphere 1.25.0 cluster with external CCM/CSI",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Vsphere:  &kubeoneapi.VsphereSpec{},
+				External: true,
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.25.0",
+			},
+			expectedError: false,
+		},
+		{
+			name: "vSphere 1.26.0 cluster without external CCM/CSI",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Vsphere:  &kubeoneapi.VsphereSpec{},
+				External: false,
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.0",
+			},
+			expectedError: true,
+		},
+		{
+			name: "vSphere 1.26.0 cluster with external CCM/CSI",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Vsphere:  &kubeoneapi.VsphereSpec{},
+				External: true,
 			},
 			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.26.0",
@@ -938,7 +994,8 @@ func TestValidateKubernetesSupport(t *testing.T) {
 		{
 			name: "vSphere 1.27.0 cluster",
 			providerConfig: kubeoneapi.CloudProviderSpec{
-				Vsphere: &kubeoneapi.VsphereSpec{},
+				Vsphere:  &kubeoneapi.VsphereSpec{},
+				External: true,
 			},
 			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.27.0",

@@ -324,8 +324,19 @@ func ValidateKubernetesSupport(c kubeoneapi.KubeOneCluster, fldPath *field.Path)
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.27.0 and newer are currently not supported for vsphere clusters"))
 	}
 
+	// We require external CCM/CSI on vSphere starting with Kubernetes 1.25
+	// because the in-tree volume plugin requires the CSI driver to be
+	// deployed for Kubernetes 1.25 and newer.
+	// Existing clusters running the in-tree cloud provider must be migrated
+	// to the external CCM/CSI before upgrading to Kubernetes 1.25.
+	if v.Minor() >= 25 && c.CloudProvider.Vsphere != nil && !c.CloudProvider.External {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("cloudProvider").Child("external"), c.CloudProvider.External, "kubernetes 1.25 and newer doesn't support in-tree cloud provider with vsphere"))
+	}
+
+	// The in-tree cloud provider for OpenStack has been removed in
+	// Kubernetes 1.26.
 	if v.Minor() >= 26 && c.CloudProvider.Openstack != nil && !c.CloudProvider.External {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes 1.26 and newer doesn't support in-tree cloud provider with openstack"))
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("cloudProvider").Child("external"), c.CloudProvider.External, "kubernetes 1.26 and newer doesn't support in-tree cloud provider with openstack"))
 	}
 
 	return allErrs
