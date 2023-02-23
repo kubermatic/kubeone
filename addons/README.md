@@ -7,6 +7,6 @@ how to use the KubeOne Addons, consider the [KubeOne documentation][addons-docs]
 
 * [Cluster backups (with Restic)][backups-addon]
 
-[addons-docs]: (https://docs.kubermatic.com/kubeone/main/guides/addons/)
+[addons-docs]: (https://docs.kubermatic.com/kubeone/v1.6/guides/addons/)
 [backups-addon]: (./backups-restic)
 [restic]: (https://restic.net/)
