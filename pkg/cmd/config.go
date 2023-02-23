@@ -795,7 +795,7 @@ addons:
   # available addons.
   # Check out the documentation to find more information about what are embedded
   # addons and how to use them:
-  # https://docs.kubermatic.com/kubeone/main/guides/addons/
+  # https://docs.kubermatic.com/kubeone/v1.6/guides/addons/
   addons:
     # name of the addon to be enabled/deployed (e.g. backups-restic)
     - name: ""
