@@ -2053,9 +2053,54 @@ func TestVsphereFlatcarLegacyMachineControllerContainerdV1_26_1(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestAwsAmznCsiCcmMigrationV1_24_10(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.10")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsCentosCsiCcmMigrationV1_24_10(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.10")
+	scenario.Run(ctx, t)
+}
+
 func TestAwsDefaultCsiCcmMigrationV1_24_10(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.10")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsFlatcarCsiCcmMigrationV1_24_10(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.10")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRhelCsiCcmMigrationV1_24_10(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.24.10")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRockylinuxCsiCcmMigrationV1_24_10(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.24.10")
@@ -2179,9 +2224,54 @@ func TestVsphereFlatcarCsiCcmMigrationV1_24_10(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestAwsAmznCsiCcmMigrationV1_25_6(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.25.6")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsCentosCsiCcmMigrationV1_25_6(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.25.6")
+	scenario.Run(ctx, t)
+}
+
 func TestAwsDefaultCsiCcmMigrationV1_25_6(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.25.6")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsFlatcarCsiCcmMigrationV1_25_6(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.25.6")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRhelCsiCcmMigrationV1_25_6(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.25.6")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRockylinuxCsiCcmMigrationV1_25_6(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.25.6")
@@ -2305,9 +2395,54 @@ func TestVsphereFlatcarCsiCcmMigrationV1_25_6(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestAwsAmznCsiCcmMigrationV1_26_1(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.26.1")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsCentosCsiCcmMigrationV1_26_1(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["aws_centos"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.26.1")
+	scenario.Run(ctx, t)
+}
+
 func TestAwsDefaultCsiCcmMigrationV1_26_1(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.26.1")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsFlatcarCsiCcmMigrationV1_26_1(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.26.1")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRhelCsiCcmMigrationV1_26_1(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["csi_ccm_migration"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.26.1")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRockylinuxCsiCcmMigrationV1_26_1(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.26.1")

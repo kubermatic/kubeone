@@ -991,7 +991,7 @@ var (
 				path:    "../../examples/terraform/vsphere",
 				varFile: "testdata/vsphere.tfvars",
 				vars: []string{
-					"template_name=k1-ubuntu-jammy",
+					"template_name=kubeone-ubuntu-22.04",
 					"worker_os=ubuntu",
 					"ssh_username=ubuntu",
 				},
@@ -1010,7 +1010,7 @@ var (
 				path:    "../../../kubeone-stable/examples/terraform/vsphere",
 				varFile: "testdata/vsphere.tfvars",
 				vars: []string{
-					"template_name=k1-ubuntu-jammy",
+					"template_name=kubeone-ubuntu-22.04",
 					"worker_os=ubuntu",
 					"ssh_username=ubuntu",
 				},
@@ -1029,7 +1029,7 @@ var (
 				path:    "../../examples/terraform/vsphere_centos",
 				varFile: "testdata/vsphere.tfvars",
 				vars: []string{
-					"template_name=k1-centos-7",
+					"template_name=kkp-centos-7",
 					"worker_os=centos",
 					"ssh_username=centos",
 				},
@@ -1048,7 +1048,7 @@ var (
 				path:    "../../../kubeone-stable/examples/terraform/vsphere_centos",
 				varFile: "testdata/vsphere.tfvars",
 				vars: []string{
-					"template_name=k1-centos-7",
+					"template_name=kkp-centos-7",
 					"worker_os=centos",
 					"ssh_username=centos",
 				},
@@ -1067,7 +1067,7 @@ var (
 				path:    "../../examples/terraform/vsphere_flatcar",
 				varFile: "testdata/vsphere.tfvars",
 				vars: []string{
-					"template_name=machine-controller-e2e-flatcar",
+					"template_name=kkp-flatcar-stable",
 				},
 			},
 		},
@@ -1084,7 +1084,7 @@ var (
 				path:    "../../../kubeone-stable/examples/terraform/vsphere_flatcar",
 				varFile: "testdata/vsphere.tfvars",
 				vars: []string{
-					"template_name=machine-controller-e2e-flatcar",
+					"template_name=kkp-flatcar-stable",
 				},
 			},
 		},
