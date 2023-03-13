@@ -96,7 +96,7 @@ type HelmRelease struct {
 	Chart string `json:"chart"`
 
 	// RepoURL is a chart repository URL where to locate the requested chart.
-	RepoURL string `json:"repoURL"`
+	RepoURL string `json:"repoURL,omitempty"`
 
 	// Version is --version flag of the `helm upgrade` command. Specify the exact chart version to use. If this is not
 	// specified, the latest version is used.
