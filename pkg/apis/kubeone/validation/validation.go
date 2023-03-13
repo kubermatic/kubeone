@@ -704,10 +704,6 @@ func ValidateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.
 			allErrs = append(allErrs, field.Required(fldPath.Child("chart"), hr.Chart))
 		}
 
-		if hr.RepoURL == "" {
-			allErrs = append(allErrs, field.Required(fldPath.Child("repoURL"), hr.RepoURL))
-		}
-
 		if hr.Namespace == "" {
 			allErrs = append(allErrs, field.Required(fldPath.Child("namespace"), hr.Namespace))
 		}
