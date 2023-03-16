@@ -97,7 +97,7 @@ func (dr *drainer) drainHelper(ctx context.Context) (*drain.Helper, error) {
 			if !usingEviction {
 				evicted = "deleted"
 			}
-			dr.logger.Infof("pod %q/%q is %s", pod.GetNamespace(), pod.GetName(), evicted)
+			dr.logger.Infof("pod %s/%s is %s", pod.GetNamespace(), pod.GetName(), evicted)
 		},
 	}, nil
 }
