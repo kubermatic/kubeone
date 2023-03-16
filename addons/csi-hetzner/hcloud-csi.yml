@@ -1,4 +1,4 @@
-# Source: https://github.com/hetznercloud/csi-driver/blob/main/deploy/kubernetes/hcloud-csi.yml
+# Source: https://github.com/hetznercloud/csi-driver/blob/v2.2.0/deploy/kubernetes/hcloud-csi.yml
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -159,7 +159,7 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: hcloud-csi
+    app: hcloud-csi-controller
   name: hcloud-csi-controller-metrics
   namespace: kube-system
 spec:
@@ -213,7 +213,9 @@ spec:
         - key: "node-role.kubernetes.io/control-plane"
           effect: NoSchedule
       containers:
-      - image: {{ .InternalImages.Get "HetznerCSIAttacher" }}
+      - args:
+        - --default-fstype=ext4
+        image: {{ .InternalImages.Get "HetznerCSIAttacher" }}
         name: csi-attacher
         volumeMounts:
         - mountPath: /run/csi
@@ -391,7 +393,7 @@ metadata:
   name: csi.hetzner.cloud
 spec:
   attachRequired: true
+  fsGroupPolicy: File
   podInfoOnMount: true
   volumeLifecycleModes:
   - Persistent
-  fsGroupPolicy: File
