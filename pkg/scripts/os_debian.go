@@ -61,7 +61,7 @@ sudo systemctl enable --now iscsid
 {{- end }}
 
 {{- if .CONFIGURE_REPOSITORIES }}
-curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+curl -fsSL https://dl.k8s.io/apt/doc/apt-key.gpg | sudo apt-key add -
 
 # You'd think that kubernetes-$(lsb_release -sc) belongs there instead, but the debian repo
 # contains neither kubeadm nor kubelet, and the docs themselves suggest using xenial repo.
