@@ -40,11 +40,7 @@ func Activate(s *state.State) error {
 		return err
 	}
 
-	if err := installPodNodeSelector(s.Context, s.DynamicClient, s.Cluster.Features.PodNodeSelector); err != nil {
-		return err
-	}
-
-	return nil
+	return installPodNodeSelector(s.Context, s.DynamicClient, s.Cluster.Features.PodNodeSelector)
 }
 
 // UpdateKubeadmClusterConfiguration update additional config options in the kubeadm's

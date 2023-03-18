@@ -122,11 +122,8 @@ func setupProxy(logger *logrus.Entry, s *state.State) error {
 	}
 
 	logger.Infoln("Configuring proxy...")
-	if err := containerRuntimeEnvironment(s); err != nil {
-		return err
-	}
 
-	return nil
+	return containerRuntimeEnvironment(s)
 }
 
 func createEnvironmentFile(s *state.State) error {

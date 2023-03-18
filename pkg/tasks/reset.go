@@ -103,7 +103,7 @@ func resetAllNodes(s *state.State) error {
 	return s.RunTaskOnAllNodes(resetNode, state.RunSequentially)
 }
 
-func resetNode(s *state.State, host *kubeoneapi.HostConfig, conn executor.Interface) error {
+func resetNode(s *state.State, host *kubeoneapi.HostConfig, _ executor.Interface) error {
 	s.Logger.Infoln("Resetting node...")
 
 	cmd, err := scripts.KubeadmReset(s.KubeadmVerboseFlag(), s.WorkDir)
@@ -126,7 +126,7 @@ func removeBinariesAllNodes(s *state.State) error {
 	return s.RunTaskOnAllNodes(removeBinaries, state.RunParallel)
 }
 
-func removeBinaries(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+func removeBinaries(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 	s.Logger.Infoln("Removing Kubernetes binaries")
 	var err error
 

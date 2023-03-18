@@ -179,7 +179,7 @@ func saveCABundleOnControlPlane(s *state.State, _ *kubeoneapi.HostConfig, conn e
 	return fail.SSH(err, "save CABundle")
 }
 
-func restartKubelet(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+func restartKubelet(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 	s.Logger.WithField("node", node.PublicAddress).Debug("Restarting Kubelet to force regenerating CSRs...")
 
 	_, _, err := s.Runner.RunRaw(scripts.RestartKubelet())
@@ -205,7 +205,7 @@ func restartKubeletOnControlPlane(s *state.State) error {
 	return nil
 }
 
-func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 	var csrFound bool
 	sleepTime := 20 * time.Second
 	s.Logger.Infof("Waiting %s for CSRs to approve...", sleepTime)

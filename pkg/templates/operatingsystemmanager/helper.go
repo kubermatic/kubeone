@@ -48,11 +48,7 @@ func WaitReady(s *state.State) error {
 		return err
 	}
 
-	if err := waitForCRDs(s); err != nil {
-		return err
-	}
-
-	return nil
+	return waitForCRDs(s)
 }
 
 // waitForCRDs waits for operating-system-manager CRDs to be created and become established

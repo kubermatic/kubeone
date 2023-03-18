@@ -55,7 +55,7 @@ func joinControlPlaneNodeInternal(s *state.State, node *kubeoneapi.HostConfig, c
 	return approvePendingCSR(s, node, conn)
 }
 
-func kubeadmCertsExecutor(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+func kubeadmCertsExecutor(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 	s.Logger.Infoln("Ensuring Certificates...")
 	cmd, err := scripts.KubeadmCert(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
 	if err != nil {
