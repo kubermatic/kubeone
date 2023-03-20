@@ -37,7 +37,7 @@ variable "allow_insecure" {
 }
 
 variable "logging" {
-  description = "Enable logging of VMware Cloud Director API activites into go-vcloud-director.log"
+  description = "Enable logging of VMware Cloud Director API activities into go-vcloud-director.log"
   default     = false
   type        = bool
 }
