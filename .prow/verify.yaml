@@ -135,7 +135,7 @@ presubmits:
               memory: 1Gi
               cpu: 4
             limits:
-              memory: 2Gi
+              memory: 3Gi
   - name: pull-kubeone-build-image
     always_run: true
     decorate: true
