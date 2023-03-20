@@ -46,7 +46,7 @@ func kubernetesPKIFiles() []string {
 	}
 }
 
-func DownloadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
+func DownloadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, _ executor.Interface) error {
 	sshfs := s.Runner.NewFS()
 
 	for _, fname := range kubernetesPKIFiles() {
@@ -71,7 +71,7 @@ func DownloadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, conn executor.Int
 	return nil
 }
 
-func UploadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
+func UploadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, _ executor.Interface) error {
 	sshfs := s.Runner.NewFS()
 
 	for _, fname := range kubernetesPKIFiles() {

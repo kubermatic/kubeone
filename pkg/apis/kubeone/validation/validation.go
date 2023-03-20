@@ -168,9 +168,8 @@ func ValidateAPIEndpoint(a kubeoneapi.APIEndpoint, fldPath *field.Path) field.Er
 			allErrs = append(allErrs, field.Invalid(fldPath, altName, "duplicates are not allowed in alternative names"))
 
 			break
-		} else {
-			visited[altName] = true
 		}
+		visited[altName] = true
 	}
 
 	return allErrs

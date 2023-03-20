@@ -122,11 +122,8 @@ func GenerateConfigs(opts *GenerateOpts) error {
 	}
 
 	prov := ValidProviders[opts.providerName]
-	if err := createTerraformVars(opts, prov); err != nil {
-		return err
-	}
 
-	return nil
+	return createTerraformVars(opts, prov)
 }
 
 var (
@@ -155,7 +152,7 @@ var (
 		{{ end }}
 		containerRuntime:
 		  containerd: {}
-		
+
 		{{  if .ClusterNetwork.CNI -}}
 		clusterNetwork:
 		  cni:

@@ -102,7 +102,7 @@ func SaveEncryptionProvidersConfig(workdir, fileName string) (string, error) {
 	return result, fail.Runtime(err, "rendering encryptionProvidersConfigTemplate script")
 }
 
-func DeleteEncryptionProvidersConfig(fileName string) string {
+func DeleteEncryptionProvidersConfig() string {
 	return deleteEncryptionProvidersConfigTemplate
 }
 
