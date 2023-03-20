@@ -63,10 +63,26 @@ resource "vcd_vapp" "cluster" {
   name        = var.cluster_name
   description = "vApp for ${var.vcd_vdc_name} cluster"
 
-  metadata = {
-    provisioner  = "Kubeone"
-    cluster_name = "${var.cluster_name}"
-    type         = "Kubernetes Cluster"
+  metadata_entry {
+    key         = "provisioner"
+    value       = "KubeOne"
+    type        = "MetadataStringValue"
+    user_access = "READWRITE"
+    is_system   = false
+  }
+  metadata_entry {
+    key         = "cluster_name"
+    value       = var.cluster_name
+    type        = "MetadataStringValue"
+    user_access = "READWRITE"
+    is_system   = false
+  }
+  metadata_entry {
+    key         = "type"
+    value       = "Kubernetes Cluster"
+    type        = "MetadataStringValue"
+    user_access = "READWRITE"
+    is_system   = false
   }
 
   depends_on = [vcd_network_routed.network]
@@ -97,10 +113,26 @@ resource "vcd_vapp_vm" "control_plane" {
   name          = "${var.cluster_name}-cp-${count.index + 1}"
   computer_name = "${var.cluster_name}-cp-${count.index + 1}"
 
-  metadata = {
-    provisioner  = "Kubeone"
-    cluster_name = "${var.cluster_name}"
-    role         = "control-plane"
+  metadata_entry {
+    key         = "provisioner"
+    value       = "KubeOne"
+    type        = "MetadataStringValue"
+    user_access = "READWRITE"
+    is_system   = false
+  }
+  metadata_entry {
+    key         = "cluster_name"
+    value       = var.cluster_name
+    type        = "MetadataStringValue"
+    user_access = "READWRITE"
+    is_system   = false
+  }
+  metadata_entry {
+    key         = "role"
+    value       = "control-plane"
+    type        = "MetadataStringValue"
+    user_access = "READWRITE"
+    is_system   = false
   }
 
   guest_properties = {
