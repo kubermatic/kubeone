@@ -203,3 +203,13 @@ resource "vcd_nsxv_snat" "rule_internet" {
   original_address   = "${var.gateway_ip}/24"
   translated_address = local.external_network_ip
 }
+
+# Create Hairpin SNAT rule
+resource "vcd_nsxv_snat" "rule_internal" {
+  edge_gateway = data.vcd_edgegateway.edge_gateway.name
+  network_type = "org"
+  network_name = vcd_network_routed.network.name
+
+  original_address   = "${var.gateway_ip}/24"
+  translated_address = var.gateway_ip
+}
