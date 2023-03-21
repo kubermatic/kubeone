@@ -23,6 +23,7 @@ provider "vcd" {
   org                  = var.vcd_org_name
   vdc                  = var.vcd_vdc_name
   allow_unverified_ssl = var.allow_insecure
+  logging              = var.logging
 }
 
 locals {

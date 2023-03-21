@@ -36,6 +36,12 @@ variable "allow_insecure" {
   type        = bool
 }
 
+variable "logging" {
+  description = "Enable logging of VMware Cloud Director API activities into go-vcloud-director.log"
+  default     = false
+  type        = bool
+}
+
 # Cluster specific configuration
 variable "cluster_name" {
   description = "Name of the cluster"
