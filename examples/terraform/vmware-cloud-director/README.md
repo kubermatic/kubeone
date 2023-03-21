@@ -52,6 +52,7 @@ No modules.
 |------|------|
 | [vcd_network_routed.network](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/network_routed) | resource |
 | [vcd_nsxv_firewall_rule.rule_internet](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/nsxv_firewall_rule) | resource |
+| [vcd_nsxv_snat.rule_internal](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/nsxv_snat) | resource |
 | [vcd_nsxv_snat.rule_internet](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/nsxv_snat) | resource |
 | [vcd_vapp.cluster](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/vapp) | resource |
 | [vcd_vapp_org_network.network](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/vapp_org_network) | resource |
