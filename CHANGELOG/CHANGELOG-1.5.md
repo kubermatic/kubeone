@@ -1,3 +1,19 @@
+# [v1.5.7](https://github.com/kubermatic/kubeone/releases/tag/v1.5.7) - 2023-03-23
+
+## Changelog since v1.5.6
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Download GPG key for the `apt` repository from `dl.k8s.io` instead of `packages.cloud.google.com` ([#2725](https://github.com/kubermatic/kubeone/pull/2725), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Updates
+
+#### operating-system-manager
+
+- Update Operating System Manager to v1.1.3. Fix an issue where cloud-init scripts re-ran on machine reboot ([#2717](https://github.com/kubermatic/kubeone/pull/2717), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+
 # [v1.5.6](https://github.com/kubermatic/kubeone/releases/tag/v1.5.6) - 2023-01-27
 
 ## Changelog since v1.5.5
