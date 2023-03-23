@@ -1,3 +1,24 @@
+# [v1.6.1](https://github.com/kubermatic/kubeone/releases/tag/v1.6.1) - 2023-03-23
+
+## Changelog since v1.6.0
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Download GPG key for the `apt` repository from `dl.k8s.io` instead of `packages.cloud.google.com` ([#2727](https://github.com/kubermatic/kubeone/pull/2727), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Make `helmRelease.repoURL` an optional field ([#2716](https://github.com/kubermatic/kubeone/pull/2716), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Updates
+
+#### operating-system-manager
+
+- Update Operating System Manager to v1.2.1. Fix an issue where cloud-init scripts re-ran on machine reboot ([#2718](https://github.com/kubermatic/kubeone/pull/2718), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+
+#### Hetzner
+
+- Update Hetzner CSI to v2.2.0 ([#2726](https://github.com/kubermatic/kubeone/pull/2726), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.6.0](https://github.com/kubermatic/kubeone/releases/tag/v1.6.0) - 2023-02-23
 
 We're happy to announce a new KubeOne minor release — KubeOne 1.6! Please
