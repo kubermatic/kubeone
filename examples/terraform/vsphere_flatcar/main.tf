@@ -103,6 +103,18 @@ resource "vsphere_virtual_machine" "control_plane" {
         ignition = {
           version = "2.2.0"
         }
+        systemd = {
+          units = [
+            {
+              name = "docker.socket"
+              enabled = false
+            },
+            {
+              name = "docker.service"
+              enabled = true
+            }
+          ]
+        },
         storage = {
           files = [
             {
