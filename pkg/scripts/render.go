@@ -141,9 +141,9 @@ var (
 			{{ if .CONFIGURE_REPOSITORIES }}
 			sudo apt-get update
 			sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common lsb-release
-			curl -fsSL https://download.docker.com/linux/ubuntu/gpg |
+			curl -fsSL https://download.docker.com/linux/$(lsb_release -si | tr '[:upper:]' '[:lower:]')/gpg |
 				sudo apt-key add -
-			sudo add-apt-repository "deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+			sudo add-apt-repository "deb https://download.docker.com/linux/$(lsb_release -si | tr '[:upper:]' '[:lower:]') $(lsb_release -cs) stable"
 			{{ end }}
 
 			sudo apt-mark unhold containerd.io || true
