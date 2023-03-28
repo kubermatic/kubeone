@@ -94,7 +94,6 @@ metadata:
   name: csi-vcd-controllerplugin
   namespace: kube-system
 spec:
-  serviceName: csi-vcd-controller-service
   replicas: 1
   selector:
     matchLabels:
