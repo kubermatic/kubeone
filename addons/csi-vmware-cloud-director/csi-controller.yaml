@@ -88,13 +88,12 @@ roleRef:
   name: csi-provisioner-role
   apiGroup: rbac.authorization.k8s.io
 ---
-kind: StatefulSet
+kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: csi-vcd-controllerplugin
   namespace: kube-system
 spec:
-  serviceName: csi-vcd-controller-service
   replicas: 1
   selector:
     matchLabels:
