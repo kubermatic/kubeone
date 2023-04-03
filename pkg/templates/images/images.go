@@ -213,12 +213,13 @@ func FindResource(name string) (Resource, error) {
 
 func baseResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
-		CalicoCNI:              {"*": "quay.io/calico/cni:v3.23.5"},
-		CalicoController:       {"*": "quay.io/calico/kube-controllers:v3.23.5"},
-		CalicoNode:             {"*": "quay.io/calico/node:v3.23.5"},
-		DNSNodeCache:           {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.22.15"},
-		Flannel:                {"*": "quay.io/coreos/flannel:v0.15.1"},
-		MachineController:      {"*": "quay.io/kubermatic/machine-controller:v1.56.0"},
+		CalicoCNI:        {"*": "quay.io/calico/cni:v3.23.5"},
+		CalicoController: {"*": "quay.io/calico/kube-controllers:v3.23.5"},
+		CalicoNode:       {"*": "quay.io/calico/node:v3.23.5"},
+		DNSNodeCache:     {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.22.15"},
+		Flannel:          {"*": "quay.io/coreos/flannel:v0.15.1"},
+		// TODO: Switch to semver image before release.
+		MachineController:      {"*": "quay.io/kubermatic/machine-controller:0598624c5881a79ec440eb582f1550034d23161c"},
 		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.6.2"},
 		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v1.2.0"},
 	}
