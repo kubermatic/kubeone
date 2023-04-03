@@ -81,7 +81,7 @@ const (
 	// VMware Cloud Director Credentials
 	VMwareCloudDirectorUsername     = "VCD_USER"
 	VMwareCloudDirectorPassword     = "VCD_PASSWORD"
-	VMwareCloudDirectorAPIToken     = "VCD_API_TOKEN"
+	VMwareCloudDirectorAPIToken     = "VCD_API_TOKEN" //nolint:gosec
 	VMwareCloudDirectorOrganization = "VCD_ORG"
 	VMwareCloudDirectorURL          = "VCD_URL"
 	VMwareCloudDirectorVDC          = "VCD_VDC"
