@@ -648,7 +648,7 @@ func vmwareCloudDirectorValidationFunc(creds map[string]string) error {
 			Op:       "validating",
 			Provider: "VMware Cloud Director",
 			Err: errors.Errorf(
-				"key %v or %v is required but isn't present",
+				"key %v and %v are required but not present",
 				VMwareCloudDirectorUsername,
 				VMwareCloudDirectorPassword,
 			),
