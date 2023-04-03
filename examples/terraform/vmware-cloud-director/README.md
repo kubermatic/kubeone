@@ -20,27 +20,34 @@ Following environment variables or terraform variables can be used to authentica
 | Environment Variable | Terraform Variable |
 |------|---------|
 | VCD_USER | vcd.user |
-| VCD_PASSWORD | vcd.user |
+| VCD_PASSWORD | vcd.password |
 | VCD_ORG | vcd.org |
 | VCD_URL | vcd.url |
+
+To use access token instead of username and password:
+
+
+| Environment Variable | Terraform Variable |
+|------|---------|
+| VCD_AUTH_TYPE | vcd.auth_type |
+| VCD_API_TOKEN | vcd.api_token |
 
 #### References
 
 - <https://registry.terraform.io/providers/vmware/vcd/latest/docs#connecting-as-sys-admin-with-default-org-and-vdc>
 - <https://registry.terraform.io/providers/vmware/vcd/latest/docs#argument-reference>
-
 ## Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
-| <a name="requirement_vcd"></a> [vcd](#requirement\_vcd) | 3.8.1 |
+| <a name="requirement_vcd"></a> [vcd](#requirement\_vcd) | 3.8.2 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_vcd"></a> [vcd](#provider\_vcd) | 3.8.1 |
+| <a name="provider_vcd"></a> [vcd](#provider\_vcd) | 3.8.2 |
 
 ## Modules
 
@@ -50,16 +57,16 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [vcd_network_routed.network](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/network_routed) | resource |
-| [vcd_nsxv_firewall_rule.rule_internet](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/nsxv_firewall_rule) | resource |
-| [vcd_nsxv_snat.rule_internal](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/nsxv_snat) | resource |
-| [vcd_nsxv_snat.rule_internet](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/nsxv_snat) | resource |
-| [vcd_vapp.cluster](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/vapp) | resource |
-| [vcd_vapp_org_network.network](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/vapp_org_network) | resource |
-| [vcd_vapp_vm.control_plane](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/resources/vapp_vm) | resource |
-| [vcd_catalog.catalog](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/data-sources/catalog) | data source |
-| [vcd_catalog_vapp_template.vapp_template](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/data-sources/catalog_vapp_template) | data source |
-| [vcd_edgegateway.edge_gateway](https://registry.terraform.io/providers/vmware/vcd/3.8.1/docs/data-sources/edgegateway) | data source |
+| [vcd_network_routed.network](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/resources/network_routed) | resource |
+| [vcd_nsxv_firewall_rule.rule_internet](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/resources/nsxv_firewall_rule) | resource |
+| [vcd_nsxv_snat.rule_internal](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/resources/nsxv_snat) | resource |
+| [vcd_nsxv_snat.rule_internet](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/resources/nsxv_snat) | resource |
+| [vcd_vapp.cluster](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/resources/vapp) | resource |
+| [vcd_vapp_org_network.network](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/resources/vapp_org_network) | resource |
+| [vcd_vapp_vm.control_plane](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/resources/vapp_vm) | resource |
+| [vcd_catalog.catalog](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/data-sources/catalog) | data source |
+| [vcd_catalog_vapp_template.vapp_template](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/data-sources/catalog_vapp_template) | data source |
+| [vcd_edgegateway.edge_gateway](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/data-sources/edgegateway) | data source |
 
 ## Inputs
 

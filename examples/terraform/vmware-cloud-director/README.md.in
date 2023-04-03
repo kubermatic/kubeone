@@ -20,12 +20,19 @@ Following environment variables or terraform variables can be used to authentica
 | Environment Variable | Terraform Variable |
 |------|---------|
 | VCD_USER | vcd.user |
-| VCD_PASSWORD | vcd.user |
+| VCD_PASSWORD | vcd.password |
 | VCD_ORG | vcd.org |
 | VCD_URL | vcd.url |
+
+To use access token instead of username and password:
+
+
+| Environment Variable | Terraform Variable |
+|------|---------|
+| VCD_AUTH_TYPE | vcd.auth_type |
+| VCD_API_TOKEN | vcd.api_token |
 
 #### References
 
 - <https://registry.terraform.io/providers/vmware/vcd/latest/docs#connecting-as-sys-admin-with-default-org-and-vdc>
 - <https://registry.terraform.io/providers/vmware/vcd/latest/docs#argument-reference>
-
