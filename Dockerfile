@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM docker.io/golang:1.19.6 as builder
+FROM docker.io/golang:1.20.3 as builder
 
 ARG GOPROXY=
 ENV GOPROXY=$GOPROXY
