@@ -14,7 +14,7 @@
 
 # building image
 
-FROM golang:1.19.6 as builder
+FROM golang:1.19.8 as builder
 
 RUN apt-get update && apt-get install -y \
     unzip
@@ -27,18 +27,18 @@ RUN curl -fL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terra
 RUN chmod +x /usr/local/bin/terraform
 
 # Source: https://github.com/vmware-tanzu/sonobuoy
-ENV SONOBUOY_VERSION "0.56.15"
+ENV SONOBUOY_VERSION "0.56.16"
 RUN curl -fL https://github.com/vmware-tanzu/sonobuoy/releases/download/v${SONOBUOY_VERSION}/sonobuoy_${SONOBUOY_VERSION}_linux_amd64.tar.gz | tar vxz
 RUN chmod +x sonobuoy
 
 # Source: https://dl.k8s.io/release/stable-1.25.txt
-ENV KUBECTL_VERSION="v1.25.6"
+ENV KUBECTL_VERSION="v1.25.8"
 RUN curl --fail -Lo kubectl https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl
 RUN chmod +x kubectl
 
 # resulting image
 
-FROM golang:1.19.6
+FROM golang:1.19.8
 
 ARG version
 
