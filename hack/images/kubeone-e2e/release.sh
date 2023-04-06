@@ -16,7 +16,7 @@
 
 set -euox pipefail
 
-TAG=v0.1.31
+TAG=v0.1.31-go-1.19.8
 
 docker build --build-arg version=${TAG} --pull -t quay.io/kubermatic/kubeone-e2e:${TAG} .
 docker push quay.io/kubermatic/kubeone-e2e:${TAG}

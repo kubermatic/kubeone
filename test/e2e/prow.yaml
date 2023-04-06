@@ -17,7 +17,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -40,7 +40,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -64,7 +64,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -87,7 +87,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -110,7 +110,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -133,7 +133,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -158,7 +158,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -183,7 +183,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -208,7 +208,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -234,7 +234,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -259,7 +259,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -282,7 +282,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -305,7 +305,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -328,7 +328,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -351,7 +351,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -374,7 +374,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -397,7 +397,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -420,7 +420,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -443,7 +443,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -466,7 +466,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -489,7 +489,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -512,7 +512,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -536,7 +536,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -559,7 +559,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -582,7 +582,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -605,7 +605,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -630,7 +630,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -655,7 +655,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -680,7 +680,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -706,7 +706,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -731,7 +731,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -754,7 +754,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -777,7 +777,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -800,7 +800,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -823,7 +823,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -846,7 +846,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -869,7 +869,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -892,7 +892,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -915,7 +915,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -938,7 +938,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -961,7 +961,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -984,7 +984,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1008,7 +1008,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1031,7 +1031,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1054,7 +1054,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1077,7 +1077,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1102,7 +1102,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1127,7 +1127,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1152,7 +1152,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1178,7 +1178,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1203,7 +1203,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1226,7 +1226,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1249,7 +1249,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1272,7 +1272,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1295,7 +1295,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1318,7 +1318,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1341,7 +1341,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1364,7 +1364,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1387,7 +1387,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1410,7 +1410,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1438,7 +1438,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1466,7 +1466,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1494,7 +1494,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1522,7 +1522,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1550,7 +1550,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1578,7 +1578,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1608,7 +1608,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1638,7 +1638,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1668,7 +1668,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1699,7 +1699,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1729,7 +1729,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1757,7 +1757,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1785,7 +1785,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1813,7 +1813,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1841,7 +1841,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1869,7 +1869,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1897,7 +1897,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1925,7 +1925,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1953,7 +1953,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1981,7 +1981,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2009,7 +2009,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2037,7 +2037,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2065,7 +2065,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2093,7 +2093,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2121,7 +2121,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2149,7 +2149,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2179,7 +2179,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2209,7 +2209,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2239,7 +2239,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2270,7 +2270,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2300,7 +2300,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2328,7 +2328,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2356,7 +2356,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2384,7 +2384,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2412,7 +2412,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2440,7 +2440,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2468,7 +2468,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2496,7 +2496,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2524,7 +2524,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2552,7 +2552,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2575,7 +2575,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2598,7 +2598,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2621,7 +2621,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2644,7 +2644,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2667,7 +2667,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2690,7 +2690,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2715,7 +2715,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2740,7 +2740,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2765,7 +2765,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2791,7 +2791,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2816,7 +2816,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2839,7 +2839,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2862,7 +2862,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2885,7 +2885,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2908,7 +2908,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2931,7 +2931,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2954,7 +2954,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2977,7 +2977,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3000,7 +3000,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3023,7 +3023,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3046,7 +3046,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3069,7 +3069,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3092,7 +3092,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3115,7 +3115,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3138,7 +3138,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3161,7 +3161,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3186,7 +3186,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3211,7 +3211,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3236,7 +3236,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3262,7 +3262,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3287,7 +3287,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3310,7 +3310,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3333,7 +3333,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3356,7 +3356,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3379,7 +3379,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3402,7 +3402,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3425,7 +3425,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3448,7 +3448,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3471,7 +3471,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3494,7 +3494,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3517,7 +3517,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3540,7 +3540,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3563,7 +3563,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3586,7 +3586,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3609,7 +3609,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3632,7 +3632,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3657,7 +3657,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3682,7 +3682,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3707,7 +3707,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3733,7 +3733,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3758,7 +3758,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3781,7 +3781,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3804,7 +3804,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3827,7 +3827,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3850,7 +3850,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3873,7 +3873,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3896,7 +3896,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3919,7 +3919,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3942,7 +3942,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3965,7 +3965,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3990,7 +3990,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4015,7 +4015,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4040,7 +4040,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4065,7 +4065,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4090,7 +4090,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4115,7 +4115,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4138,7 +4138,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4161,7 +4161,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4184,7 +4184,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4207,7 +4207,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4230,7 +4230,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4253,7 +4253,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4276,7 +4276,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4301,7 +4301,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4326,7 +4326,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4351,7 +4351,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4377,7 +4377,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4402,7 +4402,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4425,7 +4425,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4448,7 +4448,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4471,7 +4471,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4494,7 +4494,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4517,7 +4517,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4540,7 +4540,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4563,7 +4563,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4586,7 +4586,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4609,7 +4609,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4632,7 +4632,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4655,7 +4655,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4678,7 +4678,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4701,7 +4701,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4724,7 +4724,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4747,7 +4747,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4772,7 +4772,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4797,7 +4797,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4822,7 +4822,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4848,7 +4848,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4873,7 +4873,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4896,7 +4896,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4919,7 +4919,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4942,7 +4942,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4965,7 +4965,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4988,7 +4988,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5011,7 +5011,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5034,7 +5034,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5057,7 +5057,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5080,7 +5080,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5103,7 +5103,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5126,7 +5126,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5149,7 +5149,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5172,7 +5172,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5195,7 +5195,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5218,7 +5218,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5243,7 +5243,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5268,7 +5268,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5293,7 +5293,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5319,7 +5319,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5344,7 +5344,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5367,7 +5367,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5390,7 +5390,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5413,7 +5413,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5436,7 +5436,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5459,7 +5459,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5482,7 +5482,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5505,7 +5505,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5528,7 +5528,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5551,7 +5551,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5574,7 +5574,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5597,7 +5597,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5620,7 +5620,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5643,7 +5643,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5666,7 +5666,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5689,7 +5689,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5712,7 +5712,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5735,7 +5735,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5758,7 +5758,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5781,7 +5781,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5804,7 +5804,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5829,7 +5829,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5854,7 +5854,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5879,7 +5879,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5905,7 +5905,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5930,7 +5930,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5953,7 +5953,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5976,7 +5976,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5999,7 +5999,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6022,7 +6022,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6045,7 +6045,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6068,7 +6068,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6091,7 +6091,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6114,7 +6114,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6137,7 +6137,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6160,7 +6160,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6183,7 +6183,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6206,7 +6206,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6229,7 +6229,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6252,7 +6252,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6277,7 +6277,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6302,7 +6302,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6327,7 +6327,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6353,7 +6353,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6378,7 +6378,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6401,7 +6401,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6424,7 +6424,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6447,7 +6447,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6470,7 +6470,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6493,7 +6493,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6516,7 +6516,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6539,7 +6539,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6562,7 +6562,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6585,7 +6585,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6608,7 +6608,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6631,7 +6631,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6654,7 +6654,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6677,7 +6677,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6700,7 +6700,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6725,7 +6725,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6750,7 +6750,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6775,7 +6775,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6801,7 +6801,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6826,7 +6826,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6849,7 +6849,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6872,7 +6872,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6895,7 +6895,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6918,7 +6918,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6941,7 +6941,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6964,7 +6964,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6987,7 +6987,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7010,7 +7010,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7033,7 +7033,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7058,7 +7058,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7083,7 +7083,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7108,7 +7108,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7134,7 +7134,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7159,7 +7159,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7182,7 +7182,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7205,7 +7205,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7228,7 +7228,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7251,7 +7251,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7274,7 +7274,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7297,7 +7297,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7320,7 +7320,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7343,7 +7343,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7366,7 +7366,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7389,7 +7389,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7412,7 +7412,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7435,7 +7435,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7458,7 +7458,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7481,7 +7481,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7504,7 +7504,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7527,7 +7527,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7550,7 +7550,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7573,7 +7573,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7596,7 +7596,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7619,7 +7619,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7642,7 +7642,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7665,7 +7665,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7688,7 +7688,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7711,7 +7711,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7736,7 +7736,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7761,7 +7761,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7786,7 +7786,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7812,7 +7812,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7837,7 +7837,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7860,7 +7860,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7883,7 +7883,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7906,7 +7906,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7929,7 +7929,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7952,7 +7952,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7975,7 +7975,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7998,7 +7998,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8021,7 +8021,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8044,7 +8044,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8067,7 +8067,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8090,7 +8090,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8113,7 +8113,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8136,7 +8136,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8159,7 +8159,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8182,7 +8182,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8205,7 +8205,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8228,7 +8228,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8251,7 +8251,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8274,7 +8274,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8297,7 +8297,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8320,7 +8320,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8343,7 +8343,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8366,7 +8366,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8389,7 +8389,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8414,7 +8414,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8439,7 +8439,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8464,7 +8464,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8490,7 +8490,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8515,7 +8515,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8538,7 +8538,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8561,7 +8561,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8584,7 +8584,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8607,7 +8607,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8630,7 +8630,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8653,7 +8653,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8676,7 +8676,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8699,7 +8699,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8722,7 +8722,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8745,7 +8745,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8768,7 +8768,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8791,7 +8791,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8814,7 +8814,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8837,7 +8837,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8860,7 +8860,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8883,7 +8883,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8906,7 +8906,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8929,7 +8929,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8957,7 +8957,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8985,7 +8985,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9013,7 +9013,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9041,7 +9041,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9069,7 +9069,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9097,7 +9097,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9127,7 +9127,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9157,7 +9157,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9187,7 +9187,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9218,7 +9218,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9248,7 +9248,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9276,7 +9276,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9304,7 +9304,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9332,7 +9332,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9360,7 +9360,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9388,7 +9388,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9416,7 +9416,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9444,7 +9444,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9472,7 +9472,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9500,7 +9500,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9528,7 +9528,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9556,7 +9556,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9584,7 +9584,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9612,7 +9612,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9640,7 +9640,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9668,7 +9668,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9696,7 +9696,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9724,7 +9724,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9752,7 +9752,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9780,7 +9780,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9808,7 +9808,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9836,7 +9836,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9864,7 +9864,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9892,7 +9892,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9920,7 +9920,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9950,7 +9950,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9980,7 +9980,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10010,7 +10010,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10041,7 +10041,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10071,7 +10071,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10099,7 +10099,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10127,7 +10127,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10155,7 +10155,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10183,7 +10183,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10211,7 +10211,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10239,7 +10239,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10267,7 +10267,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10295,7 +10295,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10323,7 +10323,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10351,7 +10351,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10379,7 +10379,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10407,7 +10407,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10435,7 +10435,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10463,7 +10463,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10491,7 +10491,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10519,7 +10519,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10547,7 +10547,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10575,7 +10575,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10598,7 +10598,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10621,7 +10621,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10644,7 +10644,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10667,7 +10667,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10690,7 +10690,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10713,7 +10713,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10738,7 +10738,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10763,7 +10763,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10788,7 +10788,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10814,7 +10814,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10839,7 +10839,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10862,7 +10862,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10885,7 +10885,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10908,7 +10908,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10931,7 +10931,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10954,7 +10954,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10977,7 +10977,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11000,7 +11000,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11023,7 +11023,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11046,7 +11046,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11069,7 +11069,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11092,7 +11092,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11115,7 +11115,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11138,7 +11138,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11161,7 +11161,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11184,7 +11184,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11207,7 +11207,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11230,7 +11230,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11253,7 +11253,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11276,7 +11276,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11299,7 +11299,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11322,7 +11322,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11345,7 +11345,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11368,7 +11368,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11391,7 +11391,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11416,7 +11416,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11441,7 +11441,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11466,7 +11466,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11492,7 +11492,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11517,7 +11517,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11540,7 +11540,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11563,7 +11563,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11586,7 +11586,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11609,7 +11609,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11632,7 +11632,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11655,7 +11655,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11678,7 +11678,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11701,7 +11701,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11724,7 +11724,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11747,7 +11747,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11770,7 +11770,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11793,7 +11793,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11816,7 +11816,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11839,7 +11839,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11862,7 +11862,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11885,7 +11885,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11908,7 +11908,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11931,7 +11931,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11954,7 +11954,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -11977,7 +11977,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12000,7 +12000,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12023,7 +12023,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12046,7 +12046,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12069,7 +12069,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12094,7 +12094,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12119,7 +12119,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12144,7 +12144,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12170,7 +12170,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12195,7 +12195,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12218,7 +12218,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12241,7 +12241,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12264,7 +12264,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12287,7 +12287,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12310,7 +12310,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12333,7 +12333,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12356,7 +12356,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12379,7 +12379,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12402,7 +12402,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12425,7 +12425,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12448,7 +12448,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12471,7 +12471,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12494,7 +12494,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12517,7 +12517,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12540,7 +12540,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12563,7 +12563,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12586,7 +12586,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
@@ -12609,7 +12609,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
-      image: quay.io/kubermatic/kubeone-e2e:v0.1.30
+      image: quay.io/kubermatic/kubeone-e2e:v0.1.31-go-1.19.8
       imagePullPolicy: Always
       name: ""
       resources:
