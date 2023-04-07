@@ -124,6 +124,10 @@ func WithFullInstall(t Tasks) Tasks {
 	}...).
 		append(kubernetesConfigFiles()...).
 		append(Tasks{
+			{
+				Fn:        kubeadmPreflightChecks,
+				Operation: "kubeadm preflight checks",
+			},
 			{Fn: prePullImages, Operation: "pre-pull images"},
 			{
 				Fn: func(s *state.State) error {

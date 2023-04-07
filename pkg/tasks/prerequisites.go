@@ -42,6 +42,26 @@ func installPrerequisites(s *state.State) error {
 	return s.RunTaskOnAllNodes(installPrerequisitesOnNode, state.RunParallel)
 }
 
+func kubeadmPreflightChecks(s *state.State) error {
+	s.Logger.Info("Running kubeadm preflight checks...")
+
+	return s.RunTaskOnControlPlane(
+		func(ctx *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+			ctx.Logger.Info("	preflight...")
+			_, _, err := ctx.Runner.Run(heredoc.Docf(`
+				sudo kubeadm init phase preflight \
+					--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+			`), runner.TemplateVariables{
+				"NODE_ID":  node.ID,
+				"WORK_DIR": s.WorkDir,
+			})
+
+			return fail.SSH(err, "kubeadm preflight check")
+		},
+		state.RunParallel,
+	)
+}
+
 func prePullImages(s *state.State) error {
 	return s.RunTaskOnControlPlane(func(ctx *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 		ctx.Logger.Info("Pre-pull images")
