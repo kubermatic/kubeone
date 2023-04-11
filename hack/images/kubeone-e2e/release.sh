@@ -18,5 +18,7 @@ set -euox pipefail
 
 TAG=v0.1.31
 
+export DOCKER_DEFAULT_PLATFORM=linux/amd64
+
 docker build --build-arg version=${TAG} --pull -t quay.io/kubermatic/kubeone-e2e:${TAG} .
 docker push quay.io/kubermatic/kubeone-e2e:${TAG}
