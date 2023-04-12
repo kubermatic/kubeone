@@ -43,6 +43,8 @@ Acquire::http::Proxy "{{ .HTTP_PROXY }}";
 {{- end }}
 EOF
 
+# make sure that no other update process is running in the background
+lsof -t /var/lib/apt/lists/lock | xargs -r sudo kill
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
 	apt-transport-https \
@@ -67,6 +69,8 @@ curl -fsSL https://dl.k8s.io/apt/doc/apt-key.gpg | sudo apt-key add -
 # contains neither kubeadm nor kubelet, and the docs themselves suggest using xenial repo.
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
+# make sure that no other update process is running in the background
+lsof -t /var/lib/apt/lists/lock | xargs -r sudo kill
 sudo apt-get update
 {{- end }}
 
