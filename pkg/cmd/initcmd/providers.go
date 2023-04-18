@@ -118,7 +118,7 @@ var (
 					Name:         "os",
 					Description:  "Operating system to use for this cluster",
 					DefaultValue: osUbuntu.Name,
-					Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinu, osOracleLinux, osRHEL, osFlatcar},
+					Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osOracleLinux, osRHEL, osFlatcar},
 				},
 			},
 		},
@@ -234,7 +234,7 @@ var (
 					Name:         "worker_os",
 					Description:  "Operating system of the provided image",
 					DefaultValue: osUbuntu.Name,
-					Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osRHEL, osFlatcar, osAmazonLinux2},
+					Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osOracleLinux, osRHEL, osFlatcar, osAmazonLinux2},
 				},
 			},
 			cloudConfig: heredoc.Doc(`
