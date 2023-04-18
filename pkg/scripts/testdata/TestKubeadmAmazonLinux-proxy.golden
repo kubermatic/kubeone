@@ -157,7 +157,6 @@ EOF
 sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubeadm /opt/bin/kubeadm
 sudo ln -sf /opt/bin/kubeadm /usr/bin/
 rm /tmp/k8s-binaries/kubernetes/node/bin/kubeadm
-sudo yum install -y cri-tools
 curl -L --output /tmp/k8s-binaries/kubectl http://127.0.0.1/kubectl.tar.gz
 sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubectl /opt/bin/kubectl
 sudo ln -sf /opt/bin/kubectl /usr/bin/
