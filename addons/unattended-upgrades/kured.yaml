@@ -96,6 +96,7 @@ spec:
                 - centos
                 - rhel
                 - rockylinux
+                - ol
                 - ubuntu
             - matchExpressions:
               - key: v1.kubeone.io/operating-system
@@ -106,6 +107,7 @@ spec:
                 - debian
                 - rhel
                 - rockylinux
+                - ol
                 - ubuntu
       serviceAccountName: kured
       tolerations:

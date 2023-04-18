@@ -40,6 +40,7 @@ variable "worker_os" {
   # * rhel
   # * amzn2
   # * rockylinux
+  # * ol
   default = ""
   type    = string
 }

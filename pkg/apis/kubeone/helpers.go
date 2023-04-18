@@ -104,6 +104,7 @@ func (osName OperatingSystemName) IsValid() bool {
 	case OperatingSystemNameCentOS:
 	case OperatingSystemNameRHEL:
 	case OperatingSystemNameRockyLinux:
+	case OperatingSystemNameOracleLinux:
 	case OperatingSystemNameAmazon:
 	case OperatingSystemNameFlatcar:
 	case OperatingSystemNameUnknown:
