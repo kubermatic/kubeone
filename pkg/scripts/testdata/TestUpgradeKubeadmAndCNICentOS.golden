@@ -105,12 +105,13 @@ sudo systemctl enable --now docker
 
 
 
-sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni || true
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools || true
 
 sudo yum install -y \
 	kubeadm-1.17.4 \
-	kubernetes-cni-0.8.7
-sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni
+	kubernetes-cni-0.8.7 \
+	cri-tools-1.25.0
+sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni cri-tools
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet

@@ -1,9 +1,12 @@
 set -xeu pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
-sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni
+sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni cri-tools
 sudo apt-get remove --purge -y \
 	kubeadm \
 	kubectl \
 	kubelet
-sudo apt-get remove --purge -y kubernetes-cni || true
+sudo apt-get remove --purge -y kubernetes-cni cri-tools || true
+sudo rm -rf /opt/cni
+sudo rm -f /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+sudo systemctl daemon-reload
