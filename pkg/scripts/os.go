@@ -25,7 +25,7 @@ import (
 
 const (
 	defaultKubernetesCNIVersion = "1.1.1"
-	defaultCriToolsVersion      = "1.21.0"
+	defaultCriToolsVersion      = "1.25.0"
 )
 
 var migrateToContainerdScriptTemplate = heredoc.Doc(`
