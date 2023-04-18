@@ -71,7 +71,7 @@ sudo yum install -y \
 {{ end }}
 
 {{- if or .FORCE .UPGRADE }}
-sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni || true
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools || true
 {{- end }}
 
 sudo yum install -y \
@@ -84,8 +84,9 @@ sudo yum install -y \
 {{- if .KUBECTL }}
 	kubectl-{{ .KUBERNETES_VERSION }} \
 {{- end }}
-	kubernetes-cni-{{ .KUBERNETES_CNI_VERSION }}
-sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni
+	kubernetes-cni-{{ .KUBERNETES_CNI_VERSION }} \
+	cri-tools-{{ .CRITOOLS_VERSION }}
+sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni cri-tools
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet
@@ -94,12 +95,15 @@ sudo systemctl restart kubelet
 {{ end }}
 `
 	removeBinariesCentOSScriptTemplate = `
-sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni || true
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools || true
 sudo yum remove -y \
 	kubelet \
 	kubeadm \
 	kubectl
-sudo yum remove -y kubernetes-cni || true
+sudo yum remove -y kubernetes-cni cri-tools || true
+sudo rm -rf /opt/cni
+sudo rm -f /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+sudo systemctl daemon-reload
 `
 	disableNMCloudSetup = `
 if systemctl status 'nm-cloud-setup.timer' 2> /dev/null | grep -Fq "Active:"; then
@@ -123,6 +127,7 @@ func KubeadmCentOS(cluster *kubeone.KubeOneCluster, force bool) (string, error) 
 		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CRITOOLS_VERSION":       defaultCriToolsVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                  proxy,
@@ -147,6 +152,7 @@ func UpgradeKubeadmAndCNICentOS(cluster *kubeone.KubeOneCluster) (string, error)
 		"KUBEADM":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CRITOOLS_VERSION":       defaultCriToolsVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                  proxy,
@@ -167,6 +173,7 @@ func UpgradeKubeletAndKubectlCentOS(cluster *kubeone.KubeOneCluster) (string, er
 		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CRITOOLS_VERSION":       defaultCriToolsVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                  proxy,
