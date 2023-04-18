@@ -191,7 +191,7 @@ const (
 	OperatingSystemNameCentOS      OperatingSystemName = "centos"
 	OperatingSystemNameRHEL        OperatingSystemName = "rhel"
 	OperatingSystemNameRockyLinux  OperatingSystemName = "rockylinux"
-	OperatingSystenNameOracleLinux OperatingSystemName = "ol"
+	OperatingSystemNameOracleLinux OperatingSystemName = "ol"
 	OperatingSystemNameAmazon      OperatingSystemName = "amzn"
 	OperatingSystemNameFlatcar     OperatingSystemName = "flatcar"
 	OperatingSystemNameUnknown     OperatingSystemName = ""
