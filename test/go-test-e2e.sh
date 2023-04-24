@@ -183,21 +183,8 @@ EOL
   esac
 }
 
-install_protokol() {
-  local version=0.5.5
-
-  if ! [ -x "$(command -v protokol)" ]; then
-    echo "Installing protokol $version..."
-    wget -q https://github.com/xrstf/protokol/releases/download/v$version/protokol_${version}_linux_amd64.zip
-    unzip -oq protokol_${version}_linux_amd64.zip protokol
-
-    mv protokol /usr/local/bin/protokol
-  fi
-}
-
 generate_ssh_key "${SSH_PRIVATE_KEY_FILE}"
 ssh_agent "${SSH_PRIVATE_KEY_FILE}"
-install_protokol
 
 if [ -n "${RUNNING_IN_CI}" ]; then
   setup_ci_environment_vars

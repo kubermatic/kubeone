@@ -20,6 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 
 	"k8c.io/kubeone/test/testexec"
@@ -30,13 +31,13 @@ type protokolBin struct {
 	outputDir  string
 }
 
-func (p *protokolBin) Start(ctx context.Context, kubeconfigPath string, proxyURL string) error {
+func (p *protokolBin) Start(ctx context.Context, kubeconfigPath string, proxyURL string) (func(), error) {
 	if err := ctx.Err(); err != nil {
-		return fmt.Errorf("protokol start: %w", err)
+		return nil, fmt.Errorf("protokol start: %w", err)
 	}
 
 	if len(p.namespaces) == 0 {
-		return errors.New("refusing to dump *everything*, please specify namespaces")
+		return nil, errors.New("refusing to dump *everything*, please specify namespaces")
 	}
 
 	args := []string{"--output", p.outputDir, "--kubeconfig", kubeconfigPath}
@@ -44,17 +45,15 @@ func (p *protokolBin) Start(ctx context.Context, kubeconfigPath string, proxyURL
 		args = append(args, "--namespace", ns)
 	}
 
-	exe := p.build(proxyURL, args...).BuildCmd(ctx)
+	protocolCtx, cancel := context.WithCancel(ctx)
+	exe := p.build(proxyURL, args...).BuildCmd(protocolCtx)
 
 	if err := exe.Start(); err != nil {
-		return err
+		cancel()
+		return nil, err
 	}
 
-	if err := ctx.Err(); err != nil {
-		return fmt.Errorf("protokol apply: %w", err)
-	}
-
-	return nil
+	return cancel, nil
 }
 
 func (p *protokolBin) build(proxyURL string, args ...string) *testexec.Exec {
@@ -70,6 +69,6 @@ func (p *protokolBin) build(proxyURL string, args ...string) *testexec.Exec {
 	return testexec.NewExec("protokol",
 		testexec.WithArgs(args...),
 		testexec.WithEnv(env),
-		testexec.StderrDebug,
+		testexec.StderrTo(io.Discard),
 	)
 }

@@ -150,12 +150,14 @@ func (scenario *scenarioInstall) test(ctx context.Context, t *testing.T) {
 
 	kubeconfigPath, err := k1.kubeconfigPath(t.TempDir())
 	if err != nil {
-		t.Fatalf("fetching kubeconfig failed")
+		t.Fatalf("fetching kubeconfig failed: %v", err)
 	}
 
-	if err := scenario.infra.protokol.Start(ctx, kubeconfigPath, proxyURL); err != nil {
+	stopProtokol, err := scenario.infra.protokol.Start(ctx, kubeconfigPath, proxyURL)
+	if err != nil {
 		t.Fatalf("protokol start failed: %v", err)
 	}
+	defer stopProtokol()
 
 	waitKubeOneNodesReady(ctx, t, k1)
 
