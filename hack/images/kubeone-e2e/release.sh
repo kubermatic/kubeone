@@ -16,7 +16,7 @@
 
 set -euox pipefail
 
-TAG=v0.1.31
+TAG=v0.1.32
 
 export DOCKER_DEFAULT_PLATFORM=linux/amd64
 

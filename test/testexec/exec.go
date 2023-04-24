@@ -68,7 +68,7 @@ func (e *Exec) Run() error {
 
 func (e *Exec) BuildCmd(ctx context.Context) *exec.Cmd {
 	cmd := exec.CommandContext(ctx, e.Command, e.Args...) //nolint:gosec
-	// getach child processes from OS signals from outside
+	// detach child processes from OS signals from outside
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Setpgid: true,
 		Pgid:    0,
