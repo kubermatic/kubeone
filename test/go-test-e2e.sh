@@ -112,7 +112,7 @@ EOL
     export GOOGLE_CREDENTIALS
     export TF_VAR_project="kubeone-terraform-test"
 
-    CREDENTIALS_FILE_PATH="${BUILD_DIR}/credentials.yaml"    
+    CREDENTIALS_FILE_PATH="${BUILD_DIR}/credentials.yaml"
     cat > "${CREDENTIALS_FILE_PATH}" << EOL
 cloudConfig: |
   [global]
@@ -165,9 +165,9 @@ csiConfig: |
   password = "${VSPHERE_PASSWORD}"
   port = "443"
   insecure-flag = "1"
-  
+
   [VirtualCenter "${VSPHERE_SERVER}"]
-  
+
   [Workspace]
   server = "${VSPHERE_SERVER}"
   datacenter = "Hamburg"
@@ -183,8 +183,21 @@ EOL
   esac
 }
 
+install_protokol() {
+  local version=0.5.5
+
+  if ! [ -x "$(command -v protokol)" ]; then
+    echo "Installing protokol $version..."
+    wget -q https://github.com/xrstf/protokol/releases/download/v$version/protokol_${version}_linux_amd64.zip
+    unzip -oq protokol_${version}_linux_amd64.zip protokol
+
+    mv protokol /usr/local/bin/protokol
+  fi
+}
+
 generate_ssh_key "${SSH_PRIVATE_KEY_FILE}"
 ssh_agent "${SSH_PRIVATE_KEY_FILE}"
+install_protokol
 
 if [ -n "${RUNNING_IN_CI}" ]; then
   setup_ci_environment_vars
