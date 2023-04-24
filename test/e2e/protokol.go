@@ -50,6 +50,7 @@ func (p *protokolBin) Start(ctx context.Context, kubeconfigPath string, proxyURL
 
 	if err := exe.Start(); err != nil {
 		cancel()
+
 		return nil, err
 	}
 
