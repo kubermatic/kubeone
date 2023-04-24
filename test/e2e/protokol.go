@@ -30,7 +30,7 @@ type protokolBin struct {
 	outputDir  string
 }
 
-func (p *protokolBin) Start(ctx context.Context, kubeconfigPath string) error {
+func (p *protokolBin) Start(ctx context.Context, kubeconfigPath string, proxyURL string) error {
 	if err := ctx.Err(); err != nil {
 		return fmt.Errorf("protokol start: %w", err)
 	}
@@ -44,7 +44,7 @@ func (p *protokolBin) Start(ctx context.Context, kubeconfigPath string) error {
 		args = append(args, "--namespace", ns)
 	}
 
-	exe := p.build(args...).BuildCmd(ctx)
+	exe := p.build(proxyURL, args...).BuildCmd(ctx)
 
 	if err := exe.Start(); err != nil {
 		return err
@@ -57,10 +57,19 @@ func (p *protokolBin) Start(ctx context.Context, kubeconfigPath string) error {
 	return nil
 }
 
-func (p *protokolBin) build(args ...string) *testexec.Exec {
+func (p *protokolBin) build(proxyURL string, args ...string) *testexec.Exec {
+	env := os.Environ()
+
+	if proxyURL != "" {
+		env = append(env,
+			fmt.Sprintf("HTTPS_PROXY=%s", proxyURL),
+			fmt.Sprintf("HTTP_PROXY=%s", proxyURL),
+		)
+	}
+
 	return testexec.NewExec("protokol",
 		testexec.WithArgs(args...),
-		testexec.WithEnv(os.Environ()),
+		testexec.WithEnv(env),
 		testexec.StderrDebug,
 	)
 }

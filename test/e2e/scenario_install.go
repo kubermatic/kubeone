@@ -99,15 +99,6 @@ func (scenario *scenarioInstall) install(ctx context.Context, t *testing.T) {
 	if err := k1.Apply(ctx); err != nil {
 		t.Fatalf("kubeone apply failed: %v", err)
 	}
-
-	kubeconfigPath, err := k1.kubeconfigPath(t.TempDir())
-	if err != nil {
-		t.Fatalf("fetching kubeconfig failed")
-	}
-
-	if err := scenario.infra.protokol.Start(ctx, kubeconfigPath); err != nil {
-		t.Fatalf("protokol start failed: %v", err)
-	}
 }
 
 func (scenario *scenarioInstall) kubeone(t *testing.T) *kubeoneBin {
@@ -156,6 +147,15 @@ func (scenario *scenarioInstall) test(ctx context.Context, t *testing.T) {
 	// let kubeone proxy start and open the port
 	time.Sleep(5 * time.Second)
 	t.Logf("kubeone proxy is running on %s", proxyURL)
+
+	kubeconfigPath, err := k1.kubeconfigPath(t.TempDir())
+	if err != nil {
+		t.Fatalf("fetching kubeconfig failed")
+	}
+
+	if err := scenario.infra.protokol.Start(ctx, kubeconfigPath, proxyURL); err != nil {
+		t.Fatalf("protokol start failed: %v", err)
+	}
 
 	waitKubeOneNodesReady(ctx, t, k1)
 
