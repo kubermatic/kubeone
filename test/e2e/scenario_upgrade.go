@@ -149,12 +149,12 @@ func (scenario *scenarioUpgrade) test(ctx context.Context, t *testing.T) {
 
 	kubeconfigPath, err := k1.kubeconfigPath(t.TempDir())
 	if err != nil {
-		t.Fatalf("fetching kubeconfig failed: %v", err)
+		t.Fatalf("fetching kubeconfig: %v", err)
 	}
 
 	stopProtokol, err := scenario.infra.protokol.Start(ctx, kubeconfigPath, proxyURL)
 	if err != nil {
-		t.Fatalf("protokol start failed: %v", err)
+		t.Fatalf("starting protokol: %v", err)
 	}
 	defer stopProtokol()
 

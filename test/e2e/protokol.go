@@ -33,7 +33,7 @@ type protokolBin struct {
 
 func (p *protokolBin) Start(ctx context.Context, kubeconfigPath string, proxyURL string) (func(), error) {
 	if err := ctx.Err(); err != nil {
-		return nil, fmt.Errorf("protokol start: %w", err)
+		return nil, fmt.Errorf("starting protokol: %w", err)
 	}
 
 	if len(p.namespaces) == 0 {
