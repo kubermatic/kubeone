@@ -52,7 +52,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 	gnupg \
 	lsb-release \
 	rsync
-curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+curl -fsSL https://dl.k8s.io/apt/doc/apt-key.gpg | sudo apt-key add -
 
 # You'd think that kubernetes-$(lsb_release -sc) belongs there instead, but the debian repo
 # contains neither kubeadm nor kubelet, and the docs themselves suggest using xenial repo.
@@ -62,7 +62,8 @@ sudo apt-get update
 
 kube_ver="1.17.4*"
 cni_ver="0.8.7*"
-sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni
+cri_ver="1.25.0*"
+sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni cri-tools
 
 
 
@@ -114,9 +115,10 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	--no-install-recommends \
 	-y \
 	kubeadm=${kube_ver} \
-	kubernetes-cni=${cni_ver}
+	kubernetes-cni=${cni_ver} \
+	cri-tools=${cri_ver}
 
-sudo apt-mark hold kubelet kubeadm kubectl kubernetes-cni
+sudo apt-mark hold kubelet kubeadm kubectl kubernetes-cni cri-tools
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet

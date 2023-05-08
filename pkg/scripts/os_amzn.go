@@ -138,7 +138,7 @@ rm /tmp/k8s-binaries/kubectl
 
 {{ if .USE_KUBERNETES_REPO }}
 {{- if or .FORCE .UPGRADE }}
-sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni || true
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools || true
 {{- end }}
 
 sudo yum install -y \
@@ -151,8 +151,9 @@ sudo yum install -y \
 {{- if .KUBECTL }}
 	kubectl-{{ .KUBERNETES_VERSION }} \
 {{- end }}
-	kubernetes-cni-{{ .KUBERNETES_CNI_VERSION }}
-sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni
+	kubernetes-cni-{{ .KUBERNETES_CNI_VERSION }} \
+	cri-tools-{{ .CRITOOLS_VERSION }}
+sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni cri-tools
 {{- end }}
 
 sudo systemctl daemon-reload
@@ -166,12 +167,13 @@ sudo systemctl restart kubelet
 	removeBinariesAmazonLinuxScriptTemplate = `
 sudo systemctl stop kubelet || true
 
-sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools || true
 sudo yum remove -y \
 	kubelet \
 	kubeadm \
 	kubectl \
-	kubernetes-cni
+	kubernetes-cni \
+	cri-tools
 
 # Stop kubelet
 # Remove CNI and binaries
@@ -203,6 +205,7 @@ func KubeadmAmazonLinux(cluster *kubeone.KubeOneCluster, force bool) (string, er
 		"KUBECTL_URL":            cluster.AssetConfiguration.Kubectl.URL,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CRITOOLS_VERSION":       defaultCriToolsVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                  proxy,
@@ -232,6 +235,7 @@ func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeone.KubeOneCluster) (string, e
 		"CNI_URL":                cluster.AssetConfiguration.CNI.URL,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CRITOOLS_VERSION":       defaultCriToolsVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                  proxy,
@@ -257,6 +261,7 @@ func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeone.KubeOneCluster) (strin
 		"KUBECTL_URL":            cluster.AssetConfiguration.Kubectl.URL,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CRITOOLS_VERSION":       defaultCriToolsVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"INSECURE_REGISTRY":      cluster.RegistryConfiguration.InsecureRegistryAddress(),
 		"PROXY":                  proxy,
