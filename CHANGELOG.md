@@ -1,5 +1,17 @@
 # Changelog
 
+# [v1.4.14](https://github.com/kubermatic/kubeone/releases/tag/v1.4.14) - 2023-05-08
+
+**This is an out-of-band patch release to fix issues with installing and upgrading Kubernetes on clusters running containerd 1.5.**
+
+## Changelog since v1.4.13
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Update and bind cri-tools to v1.25.0. This fixes an issue with installing/upgrading Kubernetes due to crictl v1.26.0 not being able to communicate with containerd 1.5 ([#2772](https://github.com/kubermatic/kubeone/pull/2772), [@kron4eg](https://github.com/kron4eg))
+
 # [v1.4.13](https://github.com/kubermatic/kubeone/releases/tag/v1.4.13) - 2023-01-17
 
 ## Changelog since v1.4.12
