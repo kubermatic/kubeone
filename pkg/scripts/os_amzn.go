@@ -129,7 +129,6 @@ EOF
 sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubeadm /opt/bin/kubeadm
 sudo ln -sf /opt/bin/kubeadm /usr/bin/
 rm /tmp/k8s-binaries/kubernetes/node/bin/kubeadm
-sudo yum install -y cri-tools
 {{- end }}
 
 {{- if and .KUBECTL .KUBECTL_URL }}
@@ -141,7 +140,7 @@ rm /tmp/k8s-binaries/kubectl
 
 {{ if .USE_KUBERNETES_REPO }}
 {{- if or .FORCE .UPGRADE }}
-sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni || true
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools || true
 {{- end }}
 
 sudo yum install -y \
@@ -154,8 +153,9 @@ sudo yum install -y \
 {{- if .KUBECTL }}
 	kubectl-{{ .KUBERNETES_VERSION }} \
 {{- end }}
-	kubernetes-cni-{{ .KUBERNETES_CNI_VERSION }}
-sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni
+	kubernetes-cni-{{ .KUBERNETES_CNI_VERSION }} \
+	cri-tools-{{ .CRITOOLS_VERSION }}
+sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni cri-tools
 {{- end }}
 
 sudo systemctl daemon-reload
@@ -169,12 +169,13 @@ sudo systemctl restart kubelet
 	removeBinariesAmazonLinuxScriptTemplate = `
 sudo systemctl stop kubelet || true
 
-sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools || true
 sudo yum remove -y \
 	kubelet \
 	kubeadm \
 	kubectl \
-	kubernetes-cni
+	kubernetes-cni \
+	cri-tools
 
 # Stop kubelet
 # Remove CNI and binaries
@@ -204,6 +205,7 @@ func KubeadmAmazonLinux(cluster *kubeoneapi.KubeOneCluster, force bool) (string,
 		"KUBECTL_URL":            cluster.AssetConfiguration.Kubectl.URL,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CRITOOLS_VERSION":       defaultCriToolsVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 		"FORCE":                  force,
@@ -237,6 +239,7 @@ func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeoneapi.KubeOneCluster) (string
 		"CNI_URL":                cluster.AssetConfiguration.CNI.URL,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CRITOOLS_VERSION":       defaultCriToolsVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
@@ -266,6 +269,7 @@ func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeoneapi.KubeOneCluster) (st
 		"KUBECTL_URL":            cluster.AssetConfiguration.Kubectl.URL,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"CRITOOLS_VERSION":       defaultCriToolsVersion,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
