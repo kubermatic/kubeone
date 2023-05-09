@@ -1,3 +1,25 @@
+# [v1.6.2](https://github.com/kubermatic/kubeone/releases/tag/v1.6.2) - 2023-04-14
+
+## Changelog since v1.6.1
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Explicitly start Docker in Terraform configs for Flatcar on vSphere ([#2766](https://github.com/kubermatic/kubeone/pull/2766), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Updates
+
+#### machine-controller and operating-system-manager
+
+- Update machine-controller to v1.56.2 ([#2761](https://github.com/kubermatic/kubeone/pull/2761), [@pkprzekwas](https://github.com/pkprzekwas))
+- Update machine-controller to v1.56.1 ([#2753](https://github.com/kubermatic/kubeone/pull/2753), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+- Update operating-system-manager (OSM) to v1.2.2 ([#2761](https://github.com/kubermatic/kubeone/pull/2761), [@pkprzekwas](https://github.com/pkprzekwas))
+
+#### Go
+
+- KubeOne is now built using Go v1.19.8 ([#2758](https://github.com/kubermatic/kubeone/pull/2758), [@pkprzekwas](https://github.com/pkprzekwas))
+
 # [v1.6.1](https://github.com/kubermatic/kubeone/releases/tag/v1.6.1) - 2023-03-23
 
 ## Changelog since v1.6.0

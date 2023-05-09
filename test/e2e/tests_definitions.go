@@ -40,6 +40,10 @@ var (
 				path:    "../../examples/terraform/aws",
 				varFile: "testdata/aws_small.tfvars",
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"aws_default_stable": {
 			name: "aws_default_stable",
@@ -53,6 +57,10 @@ var (
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/aws",
 				varFile: "testdata/aws_stable_small.tfvars",
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"aws_centos": {
@@ -71,6 +79,10 @@ var (
 					"os=centos",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"aws_centos_stable": {
 			name: "aws_centos_stable",
@@ -87,6 +99,10 @@ var (
 				vars: []string{
 					"os=centos",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"aws_rhel": {
@@ -105,6 +121,10 @@ var (
 					"worker_volume_size=50",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"aws_rhel_stable": {
 			name: "aws_rhel_stable",
@@ -118,6 +138,10 @@ var (
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/aws",
 				varFile: "testdata/aws_rhel.tfvars",
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"aws_rockylinux": {
@@ -136,6 +160,10 @@ var (
 					"os=rockylinux",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"aws_rockylinux_stable": {
 			name: "aws_rockylinux_stable",
@@ -152,6 +180,10 @@ var (
 				vars: []string{
 					"os=rockylinux",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"aws_flatcar": {
@@ -170,6 +202,10 @@ var (
 					"os=flatcar",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"aws_flatcar_stable": {
 			name: "aws_flatcar_stable",
@@ -186,6 +222,10 @@ var (
 				vars: []string{
 					"os=flatcar",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"aws_flatcar_cloud_init": {
@@ -205,6 +245,10 @@ var (
 					"worker_deploy_ssh_key=false",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"aws_flatcar_cloud_init_stable": {
 			name: "aws_flatcar_cloud_init_stable",
@@ -223,6 +267,10 @@ var (
 					"worker_deploy_ssh_key=false",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"aws_amzn": {
 			name: "aws_amzn",
@@ -239,6 +287,10 @@ var (
 				vars: []string{
 					"os=amzn",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"aws_amzn_stable": {
@@ -257,6 +309,10 @@ var (
 					"os=amzn",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"aws_long_timeout_default": {
 			name: "aws_long_timeout_default",
@@ -271,6 +327,10 @@ var (
 			terraform: terraformBin{
 				path:    "../../examples/terraform/aws",
 				varFile: "testdata/aws_medium.tfvars",
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"azure_default": {
@@ -289,6 +349,10 @@ var (
 					"disable_kubeapi_loadbalancer=true",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"azure_default_stable": {
 			name: "azure_default_stable",
@@ -305,6 +369,10 @@ var (
 				vars: []string{
 					"disable_kubeapi_loadbalancer=true",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"azure_centos": {
@@ -324,6 +392,10 @@ var (
 					"os=centos",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"azure_centos_stable": {
 			name: "azure_centos_stable",
@@ -341,6 +413,10 @@ var (
 					"disable_kubeapi_loadbalancer=true",
 					"os=centos",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"azure_flatcar": {
@@ -361,6 +437,10 @@ var (
 					"os=flatcar",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"azure_flatcar_stable": {
 			name: "azure_flatcar_stable",
@@ -379,6 +459,10 @@ var (
 					"disable_auto_update=true",
 					"os=flatcar",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"azure_rhel": {
@@ -399,6 +483,10 @@ var (
 					"os=rhel",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"azure_rhel_stable": {
 			name: "azure_rhel_stable",
@@ -418,6 +506,10 @@ var (
 					"os=rhel",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"azure_rockylinux": {
 			name: "azure_rockylinux",
@@ -435,6 +527,10 @@ var (
 					"disable_kubeapi_loadbalancer=true",
 					"os=rockylinux",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"azure_rockylinux_stable": {
@@ -454,6 +550,10 @@ var (
 					"os=rockylinux",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"digitalocean_default": {
 			name: "digitalocean_default",
@@ -469,6 +569,10 @@ var (
 				vars: []string{
 					"disable_kubeapi_loadbalancer=true",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"digitalocean_default_stable": {
@@ -486,6 +590,10 @@ var (
 					"disable_kubeapi_loadbalancer=true",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"digitalocean_centos": {
 			name: "digitalocean_centos",
@@ -502,6 +610,10 @@ var (
 					"disable_kubeapi_loadbalancer=true",
 					"os=centos",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"digitalocean_centos_stable": {
@@ -521,6 +633,10 @@ var (
 					"worker_os=centos",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"digitalocean_rockylinux": {
 			name: "digitalocean_rockylinux",
@@ -537,6 +653,10 @@ var (
 					"disable_kubeapi_loadbalancer=true",
 					"os=rockylinux",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"digitalocean_rockylinux_stable": {
@@ -556,6 +676,10 @@ var (
 					"worker_os=rockylinux",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"equinixmetal_default": {
 			name: "equinixmetal_default",
@@ -568,6 +692,10 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/equinixmetal",
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"equinixmetal_default_stable": {
@@ -586,6 +714,10 @@ var (
 					"lb_operating_system=ubuntu_20_04",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"equinixmetal_centos": {
 			name: "equinixmetal_centos",
@@ -602,6 +734,10 @@ var (
 					"os=centos",
 					"lb_operating_system=centos_7",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"equinixmetal_centos_stable": {
@@ -621,6 +757,10 @@ var (
 					"worker_os=centos",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"equinixmetal_rockylinux": {
 			name: "equinixmetal_rockylinux",
@@ -637,6 +777,10 @@ var (
 					"os=rockylinux",
 					"lb_operating_system=rocky_8",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"equinixmetal_rockylinux_stable": {
@@ -656,6 +800,10 @@ var (
 					"worker_os=rockylinux",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"equinixmetal_flatcar": {
 			name: "equinixmetal_flatcar",
@@ -671,6 +819,10 @@ var (
 				vars: []string{
 					"os=flatcar",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"equinixmetal_flatcar_stable": {
@@ -690,6 +842,10 @@ var (
 					"ssh_username=core",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"gce_default": {
 			name: "gce_default",
@@ -705,6 +861,10 @@ var (
 				vars: []string{
 					"disable_kubeapi_loadbalancer=true",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"gce_default_stable": {
@@ -722,6 +882,10 @@ var (
 					"disable_kubeapi_loadbalancer=true",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"hetzner_default": {
 			name: "hetzner_default",
@@ -737,6 +901,10 @@ var (
 				vars: []string{
 					"disable_kubeapi_loadbalancer=true",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"hetzner_default_stable": {
@@ -754,6 +922,10 @@ var (
 					"disable_kubeapi_loadbalancer=true",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"hetzner_centos": {
 			name: "hetzner_centos",
@@ -770,6 +942,10 @@ var (
 					"disable_kubeapi_loadbalancer=true",
 					"os=centos",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"hetzner_centos_stable": {
@@ -789,6 +965,10 @@ var (
 					"worker_os=centos",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"hetzner_rockylinux": {
 			name: "hetzner_rockylinux",
@@ -805,6 +985,10 @@ var (
 					"disable_kubeapi_loadbalancer=true",
 					"os=rockylinux",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"hetzner_rockylinux_stable": {
@@ -824,6 +1008,10 @@ var (
 					"worker_os=rockylinux",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"openstack_default": {
 			name: "openstack_default",
@@ -837,6 +1025,10 @@ var (
 			terraform: terraformBin{
 				path:    "../../examples/terraform/openstack",
 				varFile: "testdata/openstack_ubuntu.tfvars",
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"openstack_default_stable": {
@@ -852,6 +1044,10 @@ var (
 				path:    "../../../kubeone-stable/examples/terraform/openstack",
 				varFile: "testdata/openstack_ubuntu.tfvars",
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"openstack_centos": {
 			name: "openstack_centos",
@@ -865,6 +1061,10 @@ var (
 			terraform: terraformBin{
 				path:    "../../examples/terraform/openstack",
 				varFile: "testdata/openstack_centos.tfvars",
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"openstack_centos_stable": {
@@ -880,6 +1080,10 @@ var (
 				path:    "../../../kubeone-stable/examples/terraform/openstack",
 				varFile: "testdata/openstack_centos.tfvars",
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"openstack_rockylinux": {
 			name: "openstack_rockylinux",
@@ -893,6 +1097,10 @@ var (
 			terraform: terraformBin{
 				path:    "../../examples/terraform/openstack",
 				varFile: "testdata/openstack_rockylinux.tfvars",
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"openstack_rockylinux_stable": {
@@ -908,6 +1116,10 @@ var (
 				path:    "../../../kubeone-stable/examples/terraform/openstack",
 				varFile: "testdata/openstack_rockylinux.tfvars",
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"openstack_rhel": {
 			name: "openstack_rhel",
@@ -921,6 +1133,10 @@ var (
 			terraform: terraformBin{
 				path:    "../../examples/terraform/openstack",
 				varFile: "testdata/openstack_rhel.tfvars",
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"openstack_rhel_stable": {
@@ -936,6 +1152,10 @@ var (
 				path:    "../../../kubeone-stable/examples/terraform/openstack",
 				varFile: "testdata/openstack_rhel.tfvars",
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"openstack_flatcar": {
 			name: "openstack_flatcar",
@@ -949,6 +1169,10 @@ var (
 			terraform: terraformBin{
 				path:    "../../examples/terraform/openstack",
 				varFile: "testdata/openstack_flatcar.tfvars",
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"openstack_flatcar_stable": {
@@ -964,6 +1188,10 @@ var (
 				path:    "../../../kubeone-stable/examples/terraform/openstack",
 				varFile: "testdata/openstack_flatcar.tfvars",
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		// "vcd_default": {
 		// 	name: "vcd_default",
@@ -976,6 +1204,10 @@ var (
 		// 	},
 		// 	terraform: terraformBin{
 		// 		path: "../../examples/terraform/vmware-cloud-director",
+		// 	},
+		// 	protokol: protokolBin{
+		// 		namespaces: []string{"kube-system"},
+		// 		outputDir:  "/logs/artifacts/logs",
 		// 	},
 		// },
 		"vsphere_default": {
@@ -996,6 +1228,10 @@ var (
 					"ssh_username=ubuntu",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"vsphere_default_stable": {
 			name: "vsphere_default_stable",
@@ -1014,6 +1250,10 @@ var (
 					"worker_os=ubuntu",
 					"ssh_username=ubuntu",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		"vsphere_centos": {
@@ -1034,6 +1274,10 @@ var (
 					"ssh_username=centos",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"vsphere_centos_stable": {
 			name: "vsphere_centos_stable",
@@ -1053,6 +1297,10 @@ var (
 					"ssh_username=centos",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"vsphere_flatcar": {
 			name: "vsphere_flatcar",
@@ -1070,6 +1318,10 @@ var (
 					"template_name=kkp-flatcar-stable",
 				},
 			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
 		},
 		"vsphere_flatcar_stable": {
 			name: "vsphere_flatcar_stable",
@@ -1086,6 +1338,10 @@ var (
 				vars: []string{
 					"template_name=kkp-flatcar-stable",
 				},
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
 			},
 		},
 		// TODO
@@ -1225,6 +1481,7 @@ type Infra struct {
 	name      string
 	environ   map[string]string
 	terraform terraformBin
+	protokol  protokolBin
 	labels    map[string]string
 }
 

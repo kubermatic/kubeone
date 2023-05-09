@@ -147,6 +147,17 @@ func (scenario *scenarioUpgrade) test(ctx context.Context, t *testing.T) {
 	time.Sleep(5 * time.Second)
 	t.Logf("kubeone proxy is running on %s", proxyURL)
 
+	kubeconfigPath, err := k1.kubeconfigPath(t.TempDir())
+	if err != nil {
+		t.Fatalf("fetching kubeconfig: %v", err)
+	}
+
+	stopProtokol, err := scenario.infra.protokol.Start(ctx, kubeconfigPath, proxyURL)
+	if err != nil {
+		t.Fatalf("starting protokol: %v", err)
+	}
+	defer stopProtokol()
+
 	client := dynamicClientRetriable(t, k1)
 
 	labelNodesSkipEviction(t, client)

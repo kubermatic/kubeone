@@ -112,7 +112,7 @@ EOL
     export GOOGLE_CREDENTIALS
     export TF_VAR_project="kubeone-terraform-test"
 
-    CREDENTIALS_FILE_PATH="${BUILD_DIR}/credentials.yaml"    
+    CREDENTIALS_FILE_PATH="${BUILD_DIR}/credentials.yaml"
     cat > "${CREDENTIALS_FILE_PATH}" << EOL
 cloudConfig: |
   [global]
@@ -165,9 +165,9 @@ csiConfig: |
   password = "${VSPHERE_PASSWORD}"
   port = "443"
   insecure-flag = "1"
-  
+
   [VirtualCenter "${VSPHERE_SERVER}"]
-  
+
   [Workspace]
   server = "${VSPHERE_SERVER}"
   datacenter = "Hamburg"

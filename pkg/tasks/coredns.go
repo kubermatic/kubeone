@@ -29,7 +29,7 @@ import (
 )
 
 func patchCoreDNS(s *state.State) error {
-	s.Logger.Infoln("Patching coreDNS...")
+	s.Logger.Infoln("Patching CoreDNS...")
 
 	if s.DynamicClient == nil {
 		return fail.NoKubeClient()

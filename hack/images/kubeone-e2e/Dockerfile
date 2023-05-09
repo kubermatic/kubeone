@@ -36,6 +36,11 @@ ENV KUBECTL_VERSION="v1.25.8"
 RUN curl --fail -Lo kubectl https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl
 RUN chmod +x kubectl
 
+# Source: https://github.com/xrstf/protokol
+ENV PROTOKOL_VERSION "0.5.5"
+RUN curl --fail -LO https://github.com/xrstf/protokol/releases/download/v$PROTOKOL_VERSION/protokol_${PROTOKOL_VERSION}_linux_amd64.zip
+RUN unzip -o protokol_*.zip
+
 # resulting image
 
 FROM golang:1.20.3
@@ -75,3 +80,4 @@ COPY htoprc /root/.config/htop/htoprc
 COPY --from=builder /usr/local/bin/terraform /usr/local/bin/terraform
 COPY --from=builder /download/sonobuoy /usr/local/bin/sonobuoy
 COPY --from=builder /download/kubectl /usr/local/bin/kubectl
+COPY --from=builder /download/protokol /usr/local/bin/protokol
