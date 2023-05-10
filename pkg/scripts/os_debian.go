@@ -49,7 +49,7 @@ if [ ! -z "$update_pid" ]; then
 	lsof -t /var/lib/apt/lists/lock | xargs -r sudo kill
 fi
 
-sudo apt-get update
+sudo apt-get -oDebug::pkgAcquire::Worker=1 update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
 	apt-transport-https \
 	ca-certificates \
@@ -97,7 +97,7 @@ if [ ! -z "$update_pid" ]; then
 	lsof -t /var/lib/apt/lists/lock | xargs -r sudo kill
 fi
 
-sudo apt-get update
+sudo apt-get -oDebug::pkgAcquire::Worker=1 update
 {{- end }}
 
 kube_ver="{{ .KUBERNETES_VERSION }}*"

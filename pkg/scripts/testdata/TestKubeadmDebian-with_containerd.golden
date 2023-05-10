@@ -55,7 +55,7 @@ if [ ! -z "$update_pid" ]; then
 	lsof -t /var/lib/apt/lists/lock | xargs -r sudo kill
 fi
 
-sudo apt-get update
+sudo apt-get -oDebug::pkgAcquire::Worker=1 update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
 	apt-transport-https \
 	ca-certificates \
@@ -93,7 +93,7 @@ if [ ! -z "$update_pid" ]; then
 	lsof -t /var/lib/apt/lists/lock | xargs -r sudo kill
 fi
 
-sudo apt-get update
+sudo apt-get -oDebug::pkgAcquire::Worker=1 update
 
 kube_ver="1.26.0*"
 cni_ver="1.2.0*"
@@ -103,7 +103,7 @@ cri_ver="1.26.0*"
 
 
 
-sudo apt-get update
+sudo apt-get -oDebug::pkgAcquire::Worker=1 update
 sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common lsb-release
 curl -fsSL https://download.docker.com/linux/$(lsb_release -si | tr '[:upper:]' '[:lower:]')/gpg |
 	sudo apt-key add -

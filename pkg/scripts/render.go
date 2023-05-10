@@ -59,7 +59,7 @@ var (
 			# Therefore, we use bionic repo which has all Docker versions.
 			echo "deb https://download.docker.com/linux/ubuntu bionic stable" |
 				sudo tee /etc/apt/sources.list.d/docker.list
-			sudo apt-get update
+			sudo apt-get -oDebug::pkgAcquire::Worker=1 update
 			{{ end }}
 
 			sudo apt-mark unhold docker-ce docker-ce-cli containerd.io || true
@@ -139,7 +139,7 @@ var (
 
 		"apt-containerd": heredoc.Docf(`
 			{{ if .CONFIGURE_REPOSITORIES }}
-			sudo apt-get update
+			sudo apt-get -oDebug::pkgAcquire::Worker=1 update
 			sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common lsb-release
 			curl -fsSL https://download.docker.com/linux/$(lsb_release -si | tr '[:upper:]' '[:lower:]')/gpg |
 				sudo apt-key add -
