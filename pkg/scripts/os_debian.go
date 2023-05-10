@@ -43,7 +43,7 @@ Acquire::http::Proxy "{{ .HTTP_PROXY }}";
 {{- end }}
 EOF
 
-update_pid="$(lsof | grep /var/lib/apt/lists/lock || true)"
+update_pid="$(lsof | grep ' /var/lib/apt/lists/lock' || true)"
 if [ ! -z "$update_pid" ]; then
 	# make sure that no other update process is running in the background
 	lsof -t /var/lib/apt/lists/lock | xargs -r sudo kill
@@ -91,7 +91,7 @@ fi
 # contains neither kubeadm nor kubelet, and the docs themselves suggest using xenial repo.
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
-update_pid="$(lsof | grep /var/lib/apt/lists/lock || true)"
+update_pid="$(lsof | grep ' /var/lib/apt/lists/lock' || true)"
 if [ ! -z "$update_pid" ]; then
 	# make sure that no other update process is running in the background
 	lsof -t /var/lib/apt/lists/lock | xargs -r sudo kill
