@@ -67,18 +67,14 @@ sudo systemctl enable --now iscsid
 {{- end }}
 
 {{- if .CONFIGURE_REPOSITORIES }}
-get_return_code_from_uri() {
-	return $((curl -s -o /dev/null -w "%{http_code}" $1))
-}
-
 primary_k8s_apt_key_uri="https://packages.cloud.google.com/apt/doc/apt-key.gpg"
 backup_k8s_apt_key_uri="https://dl.k8s.io/apt/doc/apt-key.gpg"
 
-if [ "$(get_return_code_from_uri $primary_k8s_apt_key_uri)" != "200" ]; then
+if [ "$(curl -s -o /dev/null -w '%{http_code}' $primary_k8s_apt_key_uri)" == "200" ]; then
 	echo "Add $primary_k8s_apt_key_uri to apt key store"
 	curl -fsSL $primary_k8s_apt_key_uri | sudo apt-key add -
 else
-	if [ "$(get_return_code_from_uri $backup_k8s_apt_key_uri)" != "200" ]; then
+	if [ "$(curl -s -o /dev/null -w '%{http_code}' $backup_k8s_apt_key_uri)" == "200" ]; then
 		echo "Add $backup_k8s_apt_key_uri to apt key store"
 		curl -fsSL $backup_k8s_apt_key_uri | sudo apt-key add -
 	else
