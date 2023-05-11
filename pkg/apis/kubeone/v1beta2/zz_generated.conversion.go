@@ -873,6 +873,7 @@ func Convert_kubeone_CiliumSpec_To_v1beta2_CiliumSpec(in *kubeone.CiliumSpec, ou
 
 func autoConvert_v1beta2_CloudProviderSpec_To_kubeone_CloudProviderSpec(in *CloudProviderSpec, out *kubeone.CloudProviderSpec, s conversion.Scope) error {
 	out.External = in.External
+	out.DisableBundledCSIDriver = in.DisableBundledCSIDriver
 	out.CloudConfig = in.CloudConfig
 	out.CSIConfig = in.CSIConfig
 	out.SecretProviderClassName = in.SecretProviderClassName
@@ -897,6 +898,7 @@ func Convert_v1beta2_CloudProviderSpec_To_kubeone_CloudProviderSpec(in *CloudPro
 
 func autoConvert_kubeone_CloudProviderSpec_To_v1beta2_CloudProviderSpec(in *kubeone.CloudProviderSpec, out *CloudProviderSpec, s conversion.Scope) error {
 	out.External = in.External
+	out.DisableBundledCSIDriver = in.DisableBundledCSIDriver
 	out.CloudConfig = in.CloudConfig
 	out.CSIConfig = in.CSIConfig
 	out.SecretProviderClassName = in.SecretProviderClassName

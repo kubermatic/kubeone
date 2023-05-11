@@ -176,89 +176,89 @@ func ValidateAPIEndpoint(a kubeoneapi.APIEndpoint, fldPath *field.Path) field.Er
 }
 
 // ValidateCloudProviderSpec validates the CloudProviderSpec structure
-func ValidateCloudProviderSpec(p kubeoneapi.CloudProviderSpec, networkConfig kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
+func ValidateCloudProviderSpec(providerSpec kubeoneapi.CloudProviderSpec, networkConfig kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	providerFound := false
-	if p.AWS != nil {
-		if networkConfig.IPFamily.IsDualstack() && p.External && len(p.CloudConfig) == 0 {
+	if providerSpec.AWS != nil {
+		if networkConfig.IPFamily.IsDualstack() && providerSpec.External && len(providerSpec.CloudConfig) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), "cloudConfig is required for dualstack clusters for aws provider"))
 		}
 		providerFound = true
 	}
-	if p.Azure != nil {
+	if providerSpec.Azure != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("azure"), "only one provider can be used at the same time"))
 		}
-		if len(p.CloudConfig) == 0 {
+		if len(providerSpec.CloudConfig) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), ".cloudProvider.cloudConfig is required for azure provider"))
 		}
 		providerFound = true
 	}
-	if p.DigitalOcean != nil {
+	if providerSpec.DigitalOcean != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("digitalocean"), "only one provider can be used at the same time"))
 		}
 		providerFound = true
 	}
-	if p.GCE != nil {
+	if providerSpec.GCE != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("gce"), "only one provider can be used at the same time"))
 		}
 		providerFound = true
 	}
-	if p.Hetzner != nil {
+	if providerSpec.Hetzner != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("hetzner"), "only one provider can be used at the same time"))
 		}
 		providerFound = true
 	}
-	if p.Nutanix != nil {
+	if providerSpec.Nutanix != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("nutanix"), "only one provider can be used at the same time"))
 		}
 		providerFound = true
-		if p.External {
+		if providerSpec.External {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("external"), "external is not supported on nutanix clusters"))
 		}
 	}
-	if p.Openstack != nil {
+	if providerSpec.Openstack != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("openstack"), "only one provider can be used at the same time"))
 		}
-		if len(p.CloudConfig) == 0 {
+		if len(providerSpec.CloudConfig) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), ".cloudProvider.cloudConfig is required for openstack provider"))
 		}
 		providerFound = true
 	}
-	if p.EquinixMetal != nil {
+	if providerSpec.EquinixMetal != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("equinixmetal"), "only one provider can be used at the same time"))
 		}
 		providerFound = true
 	}
-	if p.VMwareCloudDirector != nil {
+	if providerSpec.VMwareCloudDirector != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("vmwareCloudDirector"), "only one provider can be used at the same time"))
 		}
 		providerFound = true
-		if p.External {
+		if providerSpec.External {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("external"), "external cloud provider is not supported for VMware Cloud Director clusters"))
 		}
 	}
-	if p.Vsphere != nil {
+	if providerSpec.Vsphere != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("vsphere"), "only one provider can be used at the same time"))
 		}
-		if len(p.CloudConfig) == 0 {
+		if len(providerSpec.CloudConfig) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), ".cloudProvider.cloudConfig is required for vSphere provider"))
 		}
-		if p.External && len(p.CSIConfig) == 0 {
+		if providerSpec.External && !providerSpec.DisableBundledCSIDriver && len(providerSpec.CSIConfig) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath.Child("csiConfig"), ".cloudProvider.csiConfig is required for vSphere provider"))
 		}
 		providerFound = true
 	}
-	if p.None != nil {
+	if providerSpec.None != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("none"), "only one provider can be used at the same time"))
 		}
@@ -269,7 +269,7 @@ func ValidateCloudProviderSpec(p kubeoneapi.CloudProviderSpec, networkConfig kub
 		allErrs = append(allErrs, field.Invalid(fldPath, "", "provider must be specified"))
 	}
 
-	if p.Vsphere == nil && len(p.CSIConfig) > 0 {
+	if providerSpec.Vsphere == nil && len(providerSpec.CSIConfig) > 0 {
 		allErrs = append(allErrs, field.Forbidden(fldPath.Child("csiConfig"), ".cloudProvider.csiConfig is currently supported only for vsphere clusters"))
 	}
 

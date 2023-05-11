@@ -36,37 +36,35 @@ const (
 	defaultStorageClassAddonName = "default-storage-class"
 )
 
-var (
-	// embeddedAddons is a list of addons that are embedded in the KubeOne
-	// binary. Those addons are skipped when applying a user-provided addon with the same name.
-	embeddedAddons = map[string]string{
-		resources.AddonCCMAws:                 "",
-		resources.AddonCCMAzure:               "",
-		resources.AddonCCMDigitalOcean:        "",
-		resources.AddonCCMHetzner:             "",
-		resources.AddonCCMOpenStack:           "",
-		resources.AddonCCMEquinixMetal:        "",
-		resources.AddonCCMPacket:              "",
-		resources.AddonCCMVsphere:             "",
-		resources.AddonCNICanal:               "",
-		resources.AddonCNICilium:              "",
-		resources.AddonCNIWeavenet:            "",
-		resources.AddonCSIAwsEBS:              "",
-		resources.AddonCSIAzureDisk:           "",
-		resources.AddonCSIAzureFile:           "",
-		resources.AddonCSIDigitalOcean:        "",
-		resources.AddonCSIHetzner:             "",
-		resources.AddonCSIGCPComputePD:        "",
-		resources.AddonCSINutanix:             "",
-		resources.AddonCSIOpenStackCinder:     "",
-		resources.AddonCSIVMwareCloudDirector: "",
-		resources.AddonCSIVsphere:             "",
-		resources.AddonMachineController:      "",
-		resources.AddonMetricsServer:          "",
-		resources.AddonNodeLocalDNS:           "",
-		resources.AddonOperatingSystemManager: "",
-	}
-)
+// embeddedAddons is a list of addons that are embedded in the KubeOne
+// binary. Those addons are skipped when applying a user-provided addon with the same name.
+var embeddedAddons = map[string]string{
+	resources.AddonCCMAws:                 "",
+	resources.AddonCCMAzure:               "",
+	resources.AddonCCMDigitalOcean:        "",
+	resources.AddonCCMHetzner:             "",
+	resources.AddonCCMOpenStack:           "",
+	resources.AddonCCMEquinixMetal:        "",
+	resources.AddonCCMPacket:              "",
+	resources.AddonCCMVsphere:             "",
+	resources.AddonCNICanal:               "",
+	resources.AddonCNICilium:              "",
+	resources.AddonCNIWeavenet:            "",
+	resources.AddonCSIAwsEBS:              "",
+	resources.AddonCSIAzureDisk:           "",
+	resources.AddonCSIAzureFile:           "",
+	resources.AddonCSIDigitalOcean:        "",
+	resources.AddonCSIHetzner:             "",
+	resources.AddonCSIGCPComputePD:        "",
+	resources.AddonCSINutanix:             "",
+	resources.AddonCSIOpenStackCinder:     "",
+	resources.AddonCSIVMwareCloudDirector: "",
+	resources.AddonCSIVsphere:             "",
+	resources.AddonMachineController:      "",
+	resources.AddonMetricsServer:          "",
+	resources.AddonNodeLocalDNS:           "",
+	resources.AddonOperatingSystemManager: "",
+}
 
 type addonAction struct {
 	name      string
@@ -130,7 +128,9 @@ func collectAddons(s *state.State) []addonAction {
 		})
 	}
 
-	addonsToDeploy = ensureCSIAddons(s, addonsToDeploy)
+	if !s.Cluster.CloudProvider.DisableBundledCSIDriver {
+		addonsToDeploy = ensureCSIAddons(s, addonsToDeploy)
+	}
 
 	if s.Cluster.CloudProvider.External {
 		addonsToDeploy = ensureCCMAddons(s, addonsToDeploy)

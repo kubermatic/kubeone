@@ -319,6 +319,9 @@ type CloudProviderSpec struct {
 	// External
 	External bool `json:"external,omitempty"`
 
+	// DisableBundledCSIDriver used to cancel automatic deploy of bundled CSI drivers
+	DisableBundledCSIDriver bool `json:"disableBundledCSIDriver"`
+
 	// CloudConfig
 	CloudConfig string `json:"cloudConfig,omitempty"`
 
