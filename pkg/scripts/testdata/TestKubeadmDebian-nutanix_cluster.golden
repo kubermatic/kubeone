@@ -66,21 +66,22 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 	nfs-common \
 	rsync
 sudo systemctl enable --now iscsid
-primary_k8s_apt_key_uri="https://packages.cloud.google.com/apt/doc/apt-key.gpg"
-backup_k8s_apt_key_uri="https://dl.k8s.io/apt/doc/apt-key.gpg"
+k8s_apt_key_path=/etc/apt/keyrings/kubernetes-archive-keyring.gpg
+successfully_added_k8s_apt_key=false
 
-if [ "$(curl -s -o /dev/null -w '%{http_code}' $primary_k8s_apt_key_uri)" == "200" ]; then
-	echo "Add $primary_k8s_apt_key_uri to apt key store"
-	curl -fsSL $primary_k8s_apt_key_uri | sudo apt-key add -
-else
-	if [ "$(curl -s -o /dev/null -w '%{http_code}' $backup_k8s_apt_key_uri)" == "200" ]; then
-		echo "Add $backup_k8s_apt_key_uri to apt key store"
-		curl -fsSL $backup_k8s_apt_key_uri | sudo apt-key add -
-	else
-		echo "We can not reach '$primary_k8s_apt_key_uri' and '$backup_k8s_apt_key_uri'"
-		exit 1
+# Thank to fucking Hetzner :-)
+while [ "$successfully_added_k8s_apt_key" != "true" ]
+do
+	sudo curl -fsSLo $k8s_apt_key_path https://packages.cloud.google.com/apt/doc/apt-key.gpg || true
+
+	if [ -f $k8s_apt_key_path ]; then
+		echo "Add $k8s_apt_key_path to apt key store"
+		sudo apt-key add $k8s_apt_key_path
+		successfully_added_k8s_apt_key=true
 	fi
-fi
+done
+
+echo "deb [signed-by=$k8s_apt_key_path] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 # You'd think that kubernetes-$(lsb_release -sc) belongs there instead, but the debian repo
 # contains neither kubeadm nor kubelet, and the docs themselves suggest using xenial repo.
