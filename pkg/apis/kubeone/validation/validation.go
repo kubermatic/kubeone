@@ -271,6 +271,10 @@ func ValidateCloudProviderSpec(providerSpec kubeoneapi.CloudProviderSpec, networ
 		allErrs = append(allErrs, field.Invalid(fldPath, "", "provider must be specified"))
 	}
 
+	if providerSpec.DisableBundledCSIDrivers && len(providerSpec.CSIConfig) > 0 {
+		allErrs = append(allErrs, field.Forbidden(fldPath.Child("csiConfig"), ".cloudProvider.csiConfig is mutually exclusive with .cloudProvider.disableBundledCSIDrivers"))
+	}
+
 	if providerSpec.Vsphere == nil && len(providerSpec.CSIConfig) > 0 {
 		allErrs = append(allErrs, field.Forbidden(fldPath.Child("csiConfig"), ".cloudProvider.csiConfig is currently supported only for vsphere clusters"))
 	}
