@@ -176,6 +176,8 @@ func ValidateAPIEndpoint(a kubeoneapi.APIEndpoint, fldPath *field.Path) field.Er
 }
 
 // ValidateCloudProviderSpec validates the CloudProviderSpec structure
+//
+//nolint:gocyclo
 func ValidateCloudProviderSpec(providerSpec kubeoneapi.CloudProviderSpec, networkConfig kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
