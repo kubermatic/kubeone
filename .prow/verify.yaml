@@ -65,7 +65,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.20-node-18-4
+        - image: quay.io/kubermatic/build:go-1.20-node-18-6
           command:
             - make
           args:
@@ -145,7 +145,7 @@ presubmits:
       preset-docker-mirror: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.20-node-18-kind-0.18-4
+        - image: quay.io/kubermatic/build:go-1.20-node-18-kind-0.18-6
           command:
             - /bin/bash
             - -c
