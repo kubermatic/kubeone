@@ -255,7 +255,7 @@ func ValidateCloudProviderSpec(providerSpec kubeoneapi.CloudProviderSpec, networ
 		if len(providerSpec.CloudConfig) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), ".cloudProvider.cloudConfig is required for vSphere provider"))
 		}
-		if providerSpec.External && !providerSpec.DisableBundledCSIDriver && len(providerSpec.CSIConfig) == 0 {
+		if providerSpec.External && !providerSpec.DisableBundledCSIDrivers && len(providerSpec.CSIConfig) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath.Child("csiConfig"), ".cloudProvider.csiConfig is required for vSphere provider"))
 		}
 		providerFound = true

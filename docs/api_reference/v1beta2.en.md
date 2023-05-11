@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2023-05-11T11:41:40+03:00
+date = 2023-05-11T15:41:46+03:00
 weight = 11
 +++
 ## v1beta2
@@ -177,7 +177,7 @@ Only one cloud provider must be defined at the single time.
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | external | External | bool | false |
-| disableBundledCSIDriver | DisableBundledCSIDriver used to cancel automatic deploy of bundled CSI drivers | bool | true |
+| disableBundledCSIDrivers | DisableBundledCSIDrivers used to cancel automatic deploy of bundled CSI drivers | bool | true |
 | cloudConfig | CloudConfig | string | false |
 | csiConfig | CSIConfig | string | false |
 | secretProviderClassName | SecretProviderClassName | string | false |

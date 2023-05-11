@@ -128,7 +128,7 @@ func collectAddons(s *state.State) []addonAction {
 		})
 	}
 
-	if !s.Cluster.CloudProvider.DisableBundledCSIDriver {
+	if !s.Cluster.CloudProvider.DisableBundledCSIDrivers {
 		addonsToDeploy = ensureCSIAddons(s, addonsToDeploy)
 	}
 
