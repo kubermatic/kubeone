@@ -322,6 +322,9 @@ type CloudProviderSpec struct {
 	// External
 	External bool `json:"external,omitempty"`
 
+	// DisableBundledCSIDrivers disables automatic deployment of CSI drivers bundled with KubeOne
+	DisableBundledCSIDrivers bool `json:"disableBundledCSIDrivers"`
+
 	// CloudConfig
 	CloudConfig string `json:"cloudConfig,omitempty"`
 

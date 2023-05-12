@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2023-03-13T11:51:05+02:00
+date = 2023-05-11T15:48:17+03:00
 weight = 11
 +++
 ## v1beta2
@@ -177,6 +177,7 @@ Only one cloud provider must be defined at the single time.
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | external | External | bool | false |
+| disableBundledCSIDrivers | DisableBundledCSIDrivers disables automatic deployment of CSI drivers bundled with KubeOne | bool | true |
 | cloudConfig | CloudConfig | string | false |
 | csiConfig | CSIConfig | string | false |
 | secretProviderClassName | SecretProviderClassName | string | false |

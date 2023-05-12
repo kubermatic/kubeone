@@ -849,6 +849,7 @@ func autoConvert_v1beta1_CloudProviderSpec_To_kubeone_CloudProviderSpec(in *Clou
 
 func autoConvert_kubeone_CloudProviderSpec_To_v1beta1_CloudProviderSpec(in *kubeone.CloudProviderSpec, out *CloudProviderSpec, s conversion.Scope) error {
 	out.External = in.External
+	// WARNING: in.DisableBundledCSIDrivers requires manual conversion: does not exist in peer-type
 	out.CloudConfig = in.CloudConfig
 	out.CSIConfig = in.CSIConfig
 	// WARNING: in.SecretProviderClassName requires manual conversion: does not exist in peer-type

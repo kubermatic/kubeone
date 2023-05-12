@@ -698,6 +698,27 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 			expectedError: true,
 		},
 		{
+			name: "vSphere provider config without csiConfig (external enabled & bundled CSI disabled)",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Vsphere:                  &kubeoneapi.VsphereSpec{},
+				External:                 true,
+				DisableBundledCSIDrivers: true,
+				CloudConfig:              "test",
+			},
+			expectedError: false,
+		},
+		{
+			name: "provider config with csiConfig CSI bundle disabled",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS:                      &kubeoneapi.AWSSpec{},
+				External:                 true,
+				DisableBundledCSIDrivers: true,
+				CSIConfig:                "dummy CSI config",
+				CloudConfig:              "test",
+			},
+			expectedError: true,
+		},
+		{
 			name: "vSphere provider config with csiConfig",
 			providerConfig: kubeoneapi.CloudProviderSpec{
 				Vsphere:     &kubeoneapi.VsphereSpec{},
