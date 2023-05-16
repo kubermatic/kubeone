@@ -87,6 +87,8 @@ spec:
             - -v=4
             - -listen-address=0.0.0.0:9876
             - -namespace=kube-system
+            - -tls-cert-path=/tmp/cert/cert.pem
+            - -tls-key-path=/tmp/cert/tls.key
             {{ if .Config.CloudProvider.External }}
             - -node-external-cloud-provider
             {{ end }}
