@@ -43,8 +43,6 @@ spec:
           command:
             - /usr/local/bin/machine-controller
           args:
-            - -logtostderr
-            - -v=4
             - -health-probe-address=0.0.0.0:8085
             - -metrics-address=0.0.0.0:8080
             {{ if .Config.Features.NodeLocalDNS.Deploy -}}
