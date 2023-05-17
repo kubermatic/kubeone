@@ -83,8 +83,6 @@ spec:
           command:
             - /usr/local/bin/webhook
           args:
-            - -logtostderr
-            - -v=4
             - -listen-address=0.0.0.0:9876
             - -namespace=kube-system
             - -tls-cert-path=/tmp/cert/cert.pem
