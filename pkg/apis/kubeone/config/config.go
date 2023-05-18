@@ -355,4 +355,9 @@ func checkClusterFeatures(cluster kubeoneapi.KubeOneCluster, logger logrus.Field
 	if cluster.CloudProvider.Vsphere != nil && !cluster.CloudProvider.External && len(cluster.CloudProvider.CSIConfig) > 0 {
 		logger.Warnf(".cloudProvider.csiConfig is provided, but is ignored when used with the in-tree cloud provider")
 	}
+
+	if kubeoneapi.IsOpenBuildServiceEnabled() {
+		logger.Warnf("!!! EXPERIMENTAL/UNSUPPORTED !!!")
+		logger.Warnf("Using OpenBuildService is not supported and in very experimental phase!!!")
+	}
 }

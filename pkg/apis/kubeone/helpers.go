@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"fmt"
 	"math/rand"
+	"os"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -499,4 +500,19 @@ func (c IPFamily) IsDualstack() bool {
 
 func (c IPFamily) IsIPv6Primary() bool {
 	return c == IPFamilyIPv6 || c == IPFamilyIPv6IPv4
+}
+
+func IsOpenBuildServiceEnabled() bool {
+	if e := os.Getenv("KUBEONE_EXPERIMENTAL_USE_OBS"); e == "true" {
+		return true
+	}
+
+	return false
+}
+
+func (v VersionConfig) KubernetesMajorMinorVersion() string {
+	// Ignoring the error is safe because we already validated it
+	ver, _ := semver.NewVersion(v.Kubernetes)
+
+	return fmt.Sprintf("%d.%d", ver.Major(), ver.Minor())
 }
