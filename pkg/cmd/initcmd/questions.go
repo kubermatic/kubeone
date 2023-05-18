@@ -187,7 +187,7 @@ var (
 			qs = append(qs, &survey.Question{
 				Name: "workerNodesCount",
 				Prompt: &survey.Input{
-					Message: "How many control plane nodes do you want PER Availability Zone?",
+					Message: "How many worker nodes do you want PER Availability Zone?",
 					Help:    "KubeOne by default creates worker nodes in three availability zones. For example, if you choose 1 here, you'll have 3 worker nodes (one in each AZ). This can be any positive integer.",
 					Default: "1",
 				},
@@ -197,7 +197,7 @@ var (
 			qs = append(qs, &survey.Question{
 				Name: "workerNodesCount",
 				Prompt: &survey.Input{
-					Message: "How many control plane nodes do you want in your cluster?",
+					Message: "How many worker nodes do you want in your cluster?",
 					Help:    "This can be any positive integer. We recommend at least 2 worker nodes.",
 					Default: "2",
 				},
