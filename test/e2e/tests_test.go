@@ -505,6 +505,15 @@ func TestGceDefaultInstallContainerdV1_27_3(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestAwsDefaultObsInstallContainerdV1_27_4(t *testing.T) {
+	ctx := NewSignalContext()
+	infra := Infrastructures["aws_default_obs"]
+	scenario := Scenarios["install_containerd"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.4")
+	scenario.Run(ctx, t)
+}
+
 func TestAzureDefaultStableUpgradeContainerdFromV1_26_6_ToV1_27_3(t *testing.T) {
 	ctx := NewSignalContext()
 	infra := Infrastructures["azure_default_stable"]

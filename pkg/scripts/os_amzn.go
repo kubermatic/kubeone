@@ -226,12 +226,9 @@ func KubeadmAmazonLinux(cluster *kubeoneapi.KubeOneCluster, force bool) (string,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"USE_KUBERNETES_REPO":    cluster.AssetConfiguration.NodeBinaries.URL == "",
 		"CILIUM":                 ciliumCNI(cluster),
-<<<<<<< HEAD
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
-=======
 		"USE_OBS":                kubeoneapi.IsOpenBuildServiceEnabled(),
 		"OBS_VERSION":            cluster.Versions.KubernetesMajorMinorVersion(),
->>>>>>> 2807ff3c (Add experimental OBS support)
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {

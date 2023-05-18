@@ -72,6 +72,11 @@
     - name: azure_rockylinux
     - name: gce_default
 
+- scenario: install_containerd
+  initVersion: v1.27.4
+  infrastructures:
+    - name: aws_default_obs
+
 - scenario: upgrade_containerd
   initVersion: v1.26.6
   upgradedVersion: v1.27.3

@@ -333,6 +333,25 @@ var (
 				outputDir:  "/logs/artifacts/logs",
 			},
 		},
+		"aws_default_obs": {
+			name: "aws_default_obs",
+			labels: map[string]string{
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER":                     "aws",
+				"KUBEONE_EXPERIMENTAL_USE_OBS": "true",
+			},
+			terraform: terraformBin{
+				path:    "../../examples/terraform/aws",
+				varFile: "testdata/aws_small.tfvars",
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
+		},
 		"azure_default": {
 			name: "azure_default",
 			labels: map[string]string{

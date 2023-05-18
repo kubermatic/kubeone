@@ -1315,6 +1315,31 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-default-obs-install-containerd-v1.27.4
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsDefaultObsInstallContainerdV1_27_4
+      env:
+      - name: KUBEONE_EXPERIMENTAL_USE_OBS
+        value: "true"
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.20-node-18-8
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
   extra_refs:
   - base_ref: main
     org: kubermatic
