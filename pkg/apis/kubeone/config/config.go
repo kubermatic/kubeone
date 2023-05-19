@@ -238,6 +238,10 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 
 	// Source cloud-config from the credentials file if it's present
 	if cc, ok := credentials["cloudConfig"]; ok {
+		if cluster.CloudProvider.CloudConfig != "" {
+			return fail.NewConfigError("dynamic cloud config", "found cloudConfig in credentials file, in addition to already set in the manifest")
+		}
+
 		cluster.CloudProvider.CloudConfig = cc
 	}
 	// Source csi-config from the credentials file if it's present
