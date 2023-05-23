@@ -147,7 +147,7 @@ An anti-affinity rule places a control_plane machines across different hosts wit
 
 resource "vsphere_compute_cluster_vm_anti_affinity_rule" "vm_anti_affinity_rule" {
   count               = var.is_vsphere_enterprise_plus_license ? 1 : 0
-  name                = "vm-anti-affinity-rule"
+  name                = "${var.cluster_name}-cp-vm-anti-affinity"
   compute_cluster_id  = data.vsphere_compute_cluster.cluster.id
   virtual_machine_ids = vsphere_virtual_machine.control_plane.*.id
 }
