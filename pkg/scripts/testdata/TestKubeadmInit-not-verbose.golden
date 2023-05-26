@@ -6,3 +6,4 @@ if [[ -f /etc/kubernetes/admin.conf ]]; then
 fi
 
 sudo kubeadm  init --config=test-wd/cfg/master_0.yaml
+sudo find /etc/kubernetes/pki/ -name *.crt -exec chown 600 {} \;
