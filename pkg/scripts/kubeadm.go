@@ -28,6 +28,7 @@ var (
 
 		sudo kubeadm {{ .VERBOSE }} join \
 			--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+		sudo find /etc/kubernetes/pki/ -name *.crt -exec chmod 600 {} \;
 	`)
 
 	kubeadmWorkerJoinScriptTemplate = heredoc.Doc(`
@@ -35,11 +36,13 @@ var (
 
 		sudo kubeadm {{ .VERBOSE }} join \
 			--config={{ .WORK_DIR }}/cfg/worker_{{ .NODE_ID }}.yaml
+		sudo find /etc/kubernetes/pki/ -name *.crt -exec chmod 600 {} \;
 	`)
 
 	kubeadmCertScriptTemplate = heredoc.Doc(`
 		sudo kubeadm {{ .VERBOSE }} init phase certs all \
 			--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+		sudo find /etc/kubernetes/pki/ -name *.crt -exec chmod 600 {} \;
 	`)
 
 	kubeadmInitScriptTemplate = heredoc.Doc(`
@@ -49,6 +52,7 @@ var (
 		fi
 
 		sudo kubeadm {{ .VERBOSE }} init {{ if .SKIP_PHASE }}--skip-phases={{ .SKIP_PHASE }} {{ end}}--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+		sudo find /etc/kubernetes/pki/ -name *.crt -exec chmod 600 {} \;
 	`)
 
 	kubeadmResetScriptTemplate = heredoc.Doc(`
@@ -63,6 +67,7 @@ var (
 
 	kubeadmUpgradeScriptTemplate = heredoc.Doc(`
 		sudo {{ .KUBEADM_UPGRADE }}{{ if .LEADER }} --config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml{{ end }}
+		sudo find /etc/kubernetes/pki/ -name *.crt -exec chmod 600 {} \;
 	`)
 
 	kubeadmPauseImageVersionScriptTemplate = heredoc.Doc(`
