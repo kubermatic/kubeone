@@ -182,7 +182,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 					"endpoint-reconciler-type":      "lease",
 					"kubelet-certificate-authority": "/etc/kubernetes/pki/ca.crt",
 					"profiling":                     "false",
-					"request-timeout":               "300s",
+					"request-timeout":               "1m",
 					"service-node-port-range":       cluster.ClusterNetwork.NodePortRange,
 					"tls-cipher-suites":             safeTLSCiphers(),
 				},
@@ -194,7 +194,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			ExtraArgs: map[string]string{
 				"flex-volume-plugin-dir":      "/var/lib/kubelet/volumeplugins",
 				"profiling":                   "false",
-				"terminated-pod-gc-threshold": "100",
+				"terminated-pod-gc-threshold": "1000",
 			},
 			ExtraVolumes: []kubeadmv1beta3.HostPathMount{},
 		},
