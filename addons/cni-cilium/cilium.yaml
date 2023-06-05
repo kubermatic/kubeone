@@ -1,5 +1,5 @@
 # Generated from:
-#   helm template cilium cilium/cilium --version 1.12.0 --namespace kube-system --set operator.replicas=1 \
+#   helm template cilium cilium/cilium --version 1.13.3 --namespace kube-system --set operator.replicas=1 \
 #     --set hubble.tls.auto.method=cronJob --set hubble.relay.enabled=true --set hubble.ui.enabled=true \
 #     --set kubeProxyReplacement=strict --set k8sServiceHost=CHANGEME --set k8sServicePort=CHANGEME
 #
@@ -65,6 +65,8 @@ data:
   #   the kvstore by commenting out the identity-allocation-mode below, or
   #   setting it to "kvstore".
   identity-allocation-mode: crd
+  identity-heartbeat-timeout: "30m0s"
+  identity-gc-interval: "15m0s"
   cilium-endpoint-gc-interval: "5m0s"
   nodes-gc-interval: "5m0s"
   skip-cnp-status-startup-clean: "false"
@@ -73,9 +75,10 @@ data:
 
   # If you want to run cilium in debug mode change this value to true
   debug: "false"
+  debug-verbose: ""
   # The agent can be put into the following three policy enforcement modes
   # default, always and never.
-  # https://docs.cilium.io/en/latest/policy/intro/#policy-enforcement-modes
+  # https://docs.cilium.io/en/latest/security/policy/intro/#policy-enforcement-modes
   enable-policy: "default"
 
   # Enable IPv4 addressing. If enabled, all endpoints are allocated an IPv4
@@ -102,14 +105,14 @@ data:
   # notification events for each allowed connection.
   #
   # Only effective when monitor aggregation is set to "medium" or higher.
-  monitor-aggregation-interval: 5s
+  monitor-aggregation-interval: "5s"
 
   # The monitor aggregation flags determine which TCP flags which, upon the
   # first observation, cause monitor notifications to be generated.
   #
   # Only effective when monitor aggregation is set to "medium" or higher.
   monitor-aggregation-flags: all
-  # Specifies the ratio (0.0-1.0) of total system memory to use for dynamic
+  # Specifies the ratio (0.0-1.0] of total system memory to use for dynamic
   # sizing of the TCP CT, non-TCP CT, NAT and policy BPF maps.
   bpf-map-dynamic-size-ratio: "0.0025"
   # bpf-policy-map-max specifies the maximum number of entries in endpoint
@@ -118,8 +121,6 @@ data:
   # bpf-lb-map-max specifies the maximum number of entries in bpf lb service,
   # backend and affinity maps.
   bpf-lb-map-max: "65536"
-  # bpf-lb-bypass-fib-lookup instructs Cilium to enable the FIB lookup bypass
-  # optimization for nodeport reverse NAT handling.
   bpf-lb-external-clusterip: "false"
 
   # Pre-allocation of map entries allows per-packet latency to be reduced, at
@@ -159,10 +160,10 @@ data:
   enable-l7-proxy: "true"
 
   enable-ipv4-masquerade: "true"
+  enable-ipv6-big-tcp: "false"
   enable-ipv6-masquerade: "true"
 
   enable-xt-socket-fallback: "true"
-  install-iptables-rules: "true"
   install-no-conntrack-iptables-rules: "false"
 
   auto-direct-node-routes: "false"
@@ -181,6 +182,7 @@ data:
   enable-svc-source-range-check: "true"
   enable-l2-neigh-discovery: "true"
   arping-refresh-period: "30s"
+  cni-uninstall: "true"
   enable-endpoint-health-checking: "true"
   enable-health-checking: "true"
   enable-well-known-identities: "false"
@@ -221,6 +223,7 @@ data:
   bpf-root: "/sys/fs/bpf"
   cgroup-root: "/run/cilium/cgroupv2"
   enable-k8s-terminating-endpoint: "true"
+  enable-sctp: "false"
   remove-cilium-node-taints: "true"
   set-cilium-is-up-condition: "true"
   unmanaged-pod-watcher-interval: "15"
@@ -261,13 +264,7 @@ metadata:
   name: hubble-ui-nginx
   namespace: kube-system
 data:
-# The only difference between those two configs is that non-IPv6 config
-# doesn't have `listen       [::]:8081;`
-{{ if eq $hubble_ipv6 "true" }}
-  nginx.conf: "server {\n    listen       8081;\n    listen       [::]:8081;\n    server_name  localhost;\n    root /app;\n    index index.html;\n    client_max_body_size 1G;\n\n    location / {\n        proxy_set_header Host $host;\n        proxy_set_header X-Real-IP $remote_addr;\n\n        # CORS\n        add_header Access-Control-Allow-Methods \"GET, POST, PUT, HEAD, DELETE, OPTIONS\";\n        add_header Access-Control-Allow-Origin *;\n        add_header Access-Control-Max-Age 1728000;\n        add_header Access-Control-Expose-Headers content-length,grpc-status,grpc-message;\n        add_header Access-Control-Allow-Headers range,keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout;\n        if ($request_method = OPTIONS) {\n            return 204;\n        }\n        # /CORS\n\n        location /api {\n            proxy_http_version 1.1;\n            proxy_pass_request_headers on;\n            proxy_hide_header Access-Control-Allow-Origin;\n            proxy_pass http://127.0.0.1:8090;\n        }\n\n        location / {\n            try_files $uri $uri/ /index.html;\n        }\n    }\n}"
-{{ else }}
-  nginx.conf: "server {\n    listen       8081;\n    server_name  localhost;\n    root /app;\n    index index.html;\n    client_max_body_size 1G;\n\n    location / {\n        proxy_set_header Host $host;\n        proxy_set_header X-Real-IP $remote_addr;\n\n        # CORS\n        add_header Access-Control-Allow-Methods \"GET, POST, PUT, HEAD, DELETE, OPTIONS\";\n        add_header Access-Control-Allow-Origin *;\n        add_header Access-Control-Max-Age 1728000;\n        add_header Access-Control-Expose-Headers content-length,grpc-status,grpc-message;\n        add_header Access-Control-Allow-Headers range,keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout;\n        if ($request_method = OPTIONS) {\n            return 204;\n        }\n        # /CORS\n\n        location /api {\n            proxy_http_version 1.1;\n            proxy_pass_request_headers on;\n            proxy_hide_header Access-Control-Allow-Origin;\n            proxy_pass http://127.0.0.1:8090;\n        }\n\n        location / {\n            try_files $uri $uri/ /index.html;\n        }\n    }\n}"
-{{ end }}
+  nginx.conf: "server {\n    listen       8081;\n    listen       [::]:8081;\n    server_name  localhost;\n    root /app;\n    index index.html;\n    client_max_body_size 1G;\n\n    location / {\n        proxy_set_header Host $host;\n        proxy_set_header X-Real-IP $remote_addr;\n\n        # CORS\n        add_header Access-Control-Allow-Methods \"GET, POST, PUT, HEAD, DELETE, OPTIONS\";\n        add_header Access-Control-Allow-Origin *;\n        add_header Access-Control-Max-Age 1728000;\n        add_header Access-Control-Expose-Headers content-length,grpc-status,grpc-message;\n        add_header Access-Control-Allow-Headers range,keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout;\n        if ($request_method = OPTIONS) {\n            return 204;\n        }\n        # /CORS\n\n        location /api {\n            proxy_http_version 1.1;\n            proxy_pass_request_headers on;\n            proxy_hide_header Access-Control-Allow-Origin;\n            proxy_pass http://127.0.0.1:8090;\n        }\n        location / {\n            # double `/index.html` is required here \n            try_files $uri $uri/ /index.html /index.html;\n        }\n    }\n}"
 ---
 {{ end }}
 # Source: cilium/templates/cilium-agent/clusterrole.yaml
@@ -275,6 +272,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: cilium
+  labels:
+    app.kubernetes.io/part-of: cilium
 rules:
 - apiGroups:
   - networking.k8s.io
@@ -318,12 +317,11 @@ rules:
 - apiGroups:
   - cilium.io
   resources:
-  - ciliumbgploadbalancerippools
+  - ciliumloadbalancerippools
   - ciliumbgppeeringpolicies
   - ciliumclusterwideenvoyconfigs
   - ciliumclusterwidenetworkpolicies
   - ciliumegressgatewaypolicies
-  - ciliumegressnatpolicies
   - ciliumendpoints
   - ciliumendpointslices
   - ciliumenvoyconfigs
@@ -331,6 +329,7 @@ rules:
   - ciliumlocalredirectpolicies
   - ciliumnetworkpolicies
   - ciliumnodes
+  - ciliumnodeconfigs
   verbs:
   - list
   - watch
@@ -379,6 +378,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: cilium-operator
+  labels:
+    app.kubernetes.io/part-of: cilium
 rules:
 - apiGroups:
   - ""
@@ -422,6 +423,7 @@ rules:
   - services/status
   verbs:
   - update
+  - patch
 - apiGroups:
   - ""
   resources:
@@ -512,6 +514,7 @@ rules:
   - list
   - watch
   - delete
+  - patch
 - apiGroups:
   - apiextensions.k8s.io
   resources:
@@ -528,12 +531,11 @@ rules:
   verbs:
   - update
   resourceNames:
-  - ciliumbgploadbalancerippools.cilium.io
+  - ciliumloadbalancerippools.cilium.io
   - ciliumbgppeeringpolicies.cilium.io
   - ciliumclusterwideenvoyconfigs.cilium.io
   - ciliumclusterwidenetworkpolicies.cilium.io
   - ciliumegressgatewaypolicies.cilium.io
-  - ciliumegressnatpolicies.cilium.io
   - ciliumendpoints.cilium.io
   - ciliumendpointslices.cilium.io
   - ciliumenvoyconfigs.cilium.io
@@ -542,6 +544,21 @@ rules:
   - ciliumlocalredirectpolicies.cilium.io
   - ciliumnetworkpolicies.cilium.io
   - ciliumnodes.cilium.io
+  - ciliumnodeconfigs.cilium.io
+- apiGroups:
+  - cilium.io
+  resources:
+  - ciliumloadbalancerippools
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - cilium.io
+  resources:
+  - ciliumloadbalancerippools/status
+  verbs:
+  - patch
 # For cilium-operator running in HA mode.
 #
 # Cilium operator running in HA mode requires the use of ResourceLock for Leader Election
@@ -557,12 +574,49 @@ rules:
   - get
   - update
 ---
+# Source: cilium/templates/cilium-agent/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cilium-config-agent
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/part-of: cilium
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+---
+# Source: cilium/templates/cilium-agent/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cilium-config-agent
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/part-of: cilium
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cilium-config-agent
+subjects:
+  - kind: ServiceAccount
+    name: "cilium"
+    namespace: kube-system
+---
 {{ if .Config.ClusterNetwork.CNI.Cilium.EnableHubble }}
 # Source: cilium/templates/hubble-ui/clusterrole.yaml
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: hubble-ui
+  labels:
+    app.kubernetes.io/part-of: cilium
 rules:
 - apiGroups:
   - networking.k8s.io
@@ -607,6 +661,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: hubble-generate-certs
+  labels:
+    app.kubernetes.io/part-of: cilium
 rules:
   - apiGroups:
       - ""
@@ -641,6 +697,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: cilium
+  labels:
+    app.kubernetes.io/part-of: cilium
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -655,6 +713,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: cilium-operator
+  labels:
+    app.kubernetes.io/part-of: cilium
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -670,6 +730,8 @@ kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: hubble-ui
+  labels:
+    app.kubernetes.io/part-of: cilium
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -684,6 +746,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: hubble-generate-certs
+  labels:
+    app.kubernetes.io/part-of: cilium
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -701,6 +765,8 @@ metadata:
   namespace: kube-system
   labels:
     k8s-app: hubble-relay
+    app.kubernetes.io/name: hubble-relay
+    app.kubernetes.io/part-of: cilium
 spec:
   type: "ClusterIP"
   selector:
@@ -718,6 +784,8 @@ metadata:
   namespace: kube-system
   labels:
     k8s-app: hubble-ui
+    app.kubernetes.io/name: hubble-ui
+    app.kubernetes.io/part-of: cilium
 spec:
   type: "ClusterIP"
   selector:
@@ -735,6 +803,8 @@ metadata:
   namespace: kube-system
   labels:
     k8s-app: cilium
+    app.kubernetes.io/part-of: cilium
+    app.kubernetes.io/name: hubble-peer
 spec:
   selector:
     k8s-app: cilium
@@ -754,6 +824,8 @@ metadata:
   namespace: kube-system
   labels:
     k8s-app: cilium
+    app.kubernetes.io/part-of: cilium
+    app.kubernetes.io/name: cilium-agent
 spec:
   selector:
     matchLabels:
@@ -774,6 +846,8 @@ spec:
         container.apparmor.security.beta.kubernetes.io/apply-sysctl-overwrites: "unconfined"
       labels:
         k8s-app: cilium
+        app.kubernetes.io/name: cilium-agent
+        app.kubernetes.io/part-of: cilium
     spec:
       containers:
       - name: cilium-agent
@@ -856,46 +930,28 @@ spec:
           postStart:
             exec:
               command:
-              - "/cni-install.sh"
-              - "--enable-debug=false"
-              - "--cni-exclusive=true"
-              - "--log-file=/var/run/cilium/cilium-cni.log"
+              - "bash"
+              - "-c"
+              - |
+                /cni-install.sh --enable-debug=false --cni-exclusive=false --log-file=/var/run/cilium/cilium-cni.log
           preStop:
             exec:
               command:
               - /cni-uninstall.sh
         securityContext:
           seLinuxOptions:
-            level: 's0'
-            # Running with spc_t since we have removed the privileged mode.
-            # Users can change it to a different type as long as they have the
-            # type available on the system.
-            type: 'spc_t'
+            level: s0
+            type: spc_t
           capabilities:
             add:
-              # Use to set socket permission
               - CHOWN
-              # Used to terminate envoy child process
               - KILL
-              # Used since cilium modifies routing tables, etc...
               - NET_ADMIN
-              # Used since cilium creates raw sockets, etc...
               - NET_RAW
-              # Used since cilium monitor uses mmap
               - IPC_LOCK
-              # Used in iptables. Consider removing once we are iptables-free
               - SYS_MODULE
-              # We need it for now but might not need it for >= 5.11 specially
-              # for the 'SYS_RESOURCE'.
-              # In >= 5.8 there's already BPF and PERMON capabilities
               - SYS_ADMIN
-              # Could be an alternative for the SYS_ADMIN for the RLIMIT_NPROC
               - SYS_RESOURCE
-              # Both PERFMON and BPF requires kernel 5.8, container runtime
-              # cri-o >= v1.22.0 or containerd >= v1.5.0.
-              # If available, SYS_ADMIN can be removed.
-              #- PERFMON
-              #- BPF
               - DAC_OVERRIDE
               - FOWNER
               - SETGID
@@ -921,15 +977,10 @@ spec:
           mountPropagation: HostToContainer
         - name: cilium-run
           mountPath: /var/run/cilium
-        - name: cni-path
-          mountPath: /host/opt/cni/bin
         - name: etc-cni-netd
           mountPath: /host/etc/cni/net.d
         - name: clustermesh-secrets
           mountPath: /var/lib/cilium/clustermesh
-          readOnly: true
-        - name: cilium-config-path
-          mountPath: /tmp/cilium/config-map
           readOnly: true
           # Needed to be able to load kernel modules
         - name: lib-modules
@@ -940,7 +991,36 @@ spec:
         - name: hubble-tls
           mountPath: /var/lib/cilium/tls/hubble
           readOnly: true
+        - name: tmp
+          mountPath: /tmp
       initContainers:
+      - name: config
+        image: {{ .InternalImages.Get "Cilium" }}
+        imagePullPolicy: IfNotPresent
+        command:
+        - cilium
+        - build-config
+        env:
+        - name: K8S_NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        - name: CILIUM_K8S_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        {{ if eq .Config.ClusterNetwork.CNI.Cilium.KubeProxyReplacement "strict" }}
+        - name: KUBERNETES_SERVICE_HOST
+          value: "{{ .Config.APIEndpoint.Host }}"
+        - name: KUBERNETES_SERVICE_PORT
+          value: "{{ .Config.APIEndpoint.Port }}"
+        {{ end }}
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        terminationMessagePolicy: FallbackToLogsOnError
       # Required to mount cgroup2 filesystem on the underlying Kubernetes node.
       # We use nsenter command with host's cgroup and mount namespaces enabled.
       - name: mount-cgroup
@@ -971,20 +1051,15 @@ spec:
         terminationMessagePolicy: FallbackToLogsOnError
         securityContext:
           seLinuxOptions:
-            level: 's0'
-            # Running with spc_t since we have removed the privileged mode.
-            # Users can change it to a different type as long as they have the
-            # type available on the system.
-            type: 'spc_t'
+            level: s0
+            type: spc_t
           capabilities:
-            drop:
-              - ALL
             add:
-              # Only used for 'mount' cgroup
               - SYS_ADMIN
-              # Used for nsenter
               - SYS_CHROOT
               - SYS_PTRACE
+            drop:
+              - ALL
       - name: apply-sysctl-overwrites
         image: {{ .InternalImages.Get "Cilium" }}
         imagePullPolicy: IfNotPresent
@@ -1011,20 +1086,15 @@ spec:
         terminationMessagePolicy: FallbackToLogsOnError
         securityContext:
           seLinuxOptions:
-            level: 's0'
-            # Running with spc_t since we have removed the privileged mode.
-            # Users can change it to a different type as long as they have the
-            # type available on the system.
-            type: 'spc_t'
+            level: s0
+            type: spc_t
           capabilities:
-            drop:
-              - ALL
             add:
-              # Required in order to access host's /etc/sysctl.d dir
               - SYS_ADMIN
-              # Used for nsenter
               - SYS_CHROOT
               - SYS_PTRACE
+            drop:
+              - ALL
       # Mount the bpf fs if it is not mounted. We will perform this task
       # from a privileged container because the mount propagation bidirectional
       # only works from privileged containers.
@@ -1071,32 +1141,14 @@ spec:
         terminationMessagePolicy: FallbackToLogsOnError
         securityContext:
           seLinuxOptions:
-            level: 's0'
-            # Running with spc_t since we have removed the privileged mode.
-            # Users can change it to a different type as long as they have the
-            # type available on the system.
-            type: 'spc_t'
+            level: s0
+            type: spc_t
           capabilities:
-            # Most of the capabilities here are the same ones used in the
-            # cilium-agent's container because this container can be used to
-            # uninstall all Cilium resources, and therefore it is likely that
-            # will need the same capabilities.
             add:
-              # Used since cilium modifies routing tables, etc...
               - NET_ADMIN
-              # Used in iptables. Consider removing once we are iptables-free
               - SYS_MODULE
-              # We need it for now but might not need it for >= 5.11 specially
-              # for the 'SYS_RESOURCE'.
-              # In >= 5.8 there's already BPF and PERMON capabilities
               - SYS_ADMIN
-              # Could be an alternative for the SYS_ADMIN for the RLIMIT_NPROC
               - SYS_RESOURCE
-              # Both PERFMON and BPF requires kernel 5.8, container runtime
-              # cri-o >= v1.22.0 or containerd >= v1.5.0.
-              # If available, SYS_ADMIN can be removed.
-              #- PERFMON
-              #- BPF
             drop:
               - ALL
         volumeMounts:
@@ -1112,10 +1164,32 @@ spec:
           requests:
             cpu: 100m
             memory: 100Mi # wait-for-kube-proxy
+      # Install the CNI binaries in an InitContainer so we don't have a writable host mount in the agent
+      - name: install-cni-binaries
+        image: "quay.io/cilium/cilium:v1.13.3@sha256:77176464a1e11ea7e89e984ac7db365e7af39851507e94f137dcf56c87746314"
+        imagePullPolicy: IfNotPresent
+        command:
+          - "/install-plugin.sh"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 10Mi
+        securityContext:
+          seLinuxOptions:
+            level: s0
+            type: spc_t
+          capabilities:
+            drop:
+              - ALL
+        terminationMessagePolicy: FallbackToLogsOnError
+        volumeMounts:
+          - name: cni-path
+            mountPath: /host/opt/cni/bin
       restartPolicy: Always
       priorityClassName: system-node-critical
       serviceAccount: "cilium"
       serviceAccountName: "cilium"
+      automountServiceAccountToken: true
       terminationGracePeriodSeconds: 1
       hostNetwork: true
       affinity:
@@ -1130,6 +1204,9 @@ spec:
       tolerations:
         - operator: Exists
       volumes:
+        # For sharing configuration between the "config" initContainer and the agent
+      - name: tmp
+        emptyDir: {}
         # To keep state between restarts / upgrades
       - name: cilium-run
         hostPath:
@@ -1176,10 +1253,6 @@ spec:
           # note: the leading zero means this number is in octal representation: do not remove it
           defaultMode: 0400
           optional: true
-        # To read the configuration from the config map
-      - name: cilium-config-path
-        configMap:
-          name: cilium-config
       - name: host-proc-sys-net
         hostPath:
           path: /proc/sys/net
@@ -1213,6 +1286,8 @@ metadata:
   labels:
     io.cilium/app: operator
     name: cilium-operator
+    app.kubernetes.io/part-of: cilium
+    app.kubernetes.io/name: cilium-operator
 spec:
   # See docs on ServerCapabilities.LeasesResourceLock in file pkg/k8s/version/version.go
   # for more details.
@@ -1232,6 +1307,8 @@ spec:
       labels:
         io.cilium/app: operator
         name: cilium-operator
+        app.kubernetes.io/part-of: cilium
+        app.kubernetes.io/name: cilium-operator
     spec:
       containers:
       - name: cilium-operator
@@ -1284,6 +1361,7 @@ spec:
       priorityClassName: system-cluster-critical
       serviceAccount: "cilium-operator"
       serviceAccountName: "cilium-operator"
+      automountServiceAccountToken: true
       # In HA mode, cilium-operator pods must not be scheduled on the same
       # node as they will clash with each other.
       affinity:
@@ -1312,6 +1390,8 @@ metadata:
   namespace: kube-system
   labels:
     k8s-app: hubble-relay
+    app.kubernetes.io/name: hubble-relay
+    app.kubernetes.io/part-of: cilium
 spec:
   replicas: 1
   selector:
@@ -1326,6 +1406,8 @@ spec:
       annotations:
       labels:
         k8s-app: hubble-relay
+        app.kubernetes.io/name: hubble-relay
+        app.kubernetes.io/part-of: cilium
     spec:
       containers:
         - name: hubble-relay
@@ -1397,16 +1479,24 @@ metadata:
   namespace: kube-system
   labels:
     k8s-app: hubble-ui
+    app.kubernetes.io/name: hubble-ui
+    app.kubernetes.io/part-of: cilium
 spec:
   replicas: 1
   selector:
     matchLabels:
       k8s-app: hubble-ui
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
   template:
     metadata:
       annotations:
       labels:
         k8s-app: hubble-ui
+        app.kubernetes.io/name: hubble-ui
+        app.kubernetes.io/part-of: cilium
     spec:
       securityContext:
         fsGroup: 1001
@@ -1415,6 +1505,7 @@ spec:
       priorityClassName: 
       serviceAccount: "hubble-ui"
       serviceAccountName: "hubble-ui"
+      automountServiceAccountToken: true
       containers:
       - name: frontend
         image: {{ .InternalImages.Get "HubbleUI" }}
@@ -1423,11 +1514,11 @@ spec:
         - name: http
           containerPort: 8081
         volumeMounts:
-          - name: hubble-ui-nginx-conf
-            mountPath: /etc/nginx/conf.d/default.conf
-            subPath: nginx.conf
-          - name: tmp-dir
-            mountPath: /tmp
+        - name: hubble-ui-nginx-conf
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: nginx.conf
+        - name: tmp-dir
+          mountPath: /tmp
         terminationMessagePolicy: FallbackToLogsOnError
       - name: backend
         image: {{ .InternalImages.Get "HubbleUIBackend" }}
@@ -1456,10 +1547,12 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: hubble-generate-certs-394f790584
+  name: hubble-generate-certs-c26869f410
   namespace: kube-system
   labels:
     k8s-app: hubble-generate-certs
+    app.kubernetes.io/name: hubble-generate-certs
+    app.kubernetes.io/part-of: cilium
 spec:
   template:
     metadata:
@@ -1487,6 +1580,7 @@ spec:
       hostNetwork: true
       serviceAccount: "hubble-generate-certs"
       serviceAccountName: "hubble-generate-certs"
+      automountServiceAccountToken: true
       restartPolicy: OnFailure
   ttlSecondsAfterFinished: 1800
 ---
@@ -1498,6 +1592,8 @@ metadata:
   namespace: kube-system
   labels:
     k8s-app: hubble-generate-certs
+    app.kubernetes.io/name: hubble-generate-certs
+    app.kubernetes.io/part-of: cilium
 spec:
   schedule: "0 0 1 */4 *"
   concurrencyPolicy: Forbid
@@ -1529,6 +1625,7 @@ spec:
           hostNetwork: true
           serviceAccount: "hubble-generate-certs"
           serviceAccountName: "hubble-generate-certs"
+          automountServiceAccountToken: true
           restartPolicy: OnFailure
       ttlSecondsAfterFinished: 1800
 {{ end }}
