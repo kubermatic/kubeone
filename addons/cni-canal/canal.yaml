@@ -1,4 +1,41 @@
-# Source: https://projectcalico.docs.tigera.io/archive/v3.23/manifests/canal.yaml
+# Source: https://github.com/projectcalico/calico/blob/v3.26.0/manifests/canal.yaml
+---
+# Source: calico/templates/calico-kube-controllers.yaml
+# This manifest creates a Pod Disruption Budget for Controller to allow K8s Cluster Autoscaler to evict
+
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: calico-kube-controllers
+  namespace: kube-system
+  labels:
+    k8s-app: calico-kube-controllers
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      k8s-app: calico-kube-controllers
+---
+# Source: calico/templates/calico-kube-controllers.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: calico-kube-controllers
+  namespace: kube-system
+---
+# Source: calico/templates/calico-node.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: canal
+  namespace: kube-system
+---
+# Source: calico/templates/calico-node.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: calico-cni-plugin
+  namespace: kube-system
 ---
 # Source: calico/templates/calico-config.yaml
 # This ConfigMap is used to configure a self-hosted Canal installation.
@@ -41,18 +78,7 @@ data:
           "mtu": __CNI_MTU__,
           "ipam": {
               "type": "host-local",
-              {{ if and .Config.ClusterNetwork.HasIPv4 .Config.ClusterNetwork.HasIPv6 }}
-              "ranges": [
-                  [{"subnet": "usePodCidr"}],
-                  [{"subnet": "usePodCidrIPv6"}]
-              ]
-              {{ else }}
-              {{ if .Config.ClusterNetwork.HasIPv6 }}
-              "subnet": "usePodCidrIPv6"
-              {{ else }}
               "subnet": "usePodCidr"
-              {{ end }}
-              {{ end }}
           },
           "policy": {
               "type": "k8s"
@@ -87,10 +113,8 @@ data:
         "Type": "vxlan"
       }
     }
-
 ---
 # Source: calico/templates/kdd-crds.yaml
-
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -102,8 +126,8 @@ spec:
     listKind: BGPConfigurationList
     plural: bgpconfigurations
     singular: bgpconfiguration
-  scope: Cluster
   preserveUnknownFields: false
+  scope: Cluster
   versions:
   - name: v1
     schema:
@@ -155,6 +179,12 @@ spec:
                       pattern: ^(\d+):(\d+)$|^(\d+):(\d+):(\d+)$
                       type: string
                   type: object
+                type: array
+              ignoredInterfaces:
+                description: IgnoredInterfaces indicates the network interfaces that
+                  needs to be excluded when reading device routes.
+                items:
+                  type: string
                 type: array
               listenPort:
                 description: ListenPort is the port where BGP protocol should listen.
@@ -270,8 +300,132 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
 ---
+# Source: calico/templates/kdd-crds.yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: (devel)
+  creationTimestamp: null
+  name: bgpfilters.crd.projectcalico.org
+spec:
+  group: crd.projectcalico.org
+  names:
+    kind: BGPFilter
+    listKind: BGPFilterList
+    plural: bgpfilters
+    singular: bgpfilter
+  scope: Cluster
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: BGPFilterSpec contains the IPv4 and IPv6 filter rules of
+              the BGP Filter.
+            properties:
+              exportV4:
+                description: The ordered set of IPv4 BGPFilter rules acting on exporting
+                  routes to a peer.
+                items:
+                  description: BGPFilterRuleV4 defines a BGP filter rule consisting
+                    a single IPv4 CIDR block and a filter action for this CIDR.
+                  properties:
+                    action:
+                      type: string
+                    cidr:
+                      type: string
+                    matchOperator:
+                      type: string
+                  required:
+                  - action
+                  - cidr
+                  - matchOperator
+                  type: object
+                type: array
+              exportV6:
+                description: The ordered set of IPv6 BGPFilter rules acting on exporting
+                  routes to a peer.
+                items:
+                  description: BGPFilterRuleV6 defines a BGP filter rule consisting
+                    a single IPv6 CIDR block and a filter action for this CIDR.
+                  properties:
+                    action:
+                      type: string
+                    cidr:
+                      type: string
+                    matchOperator:
+                      type: string
+                  required:
+                  - action
+                  - cidr
+                  - matchOperator
+                  type: object
+                type: array
+              importV4:
+                description: The ordered set of IPv4 BGPFilter rules acting on importing
+                  routes from a peer.
+                items:
+                  description: BGPFilterRuleV4 defines a BGP filter rule consisting
+                    a single IPv4 CIDR block and a filter action for this CIDR.
+                  properties:
+                    action:
+                      type: string
+                    cidr:
+                      type: string
+                    matchOperator:
+                      type: string
+                  required:
+                  - action
+                  - cidr
+                  - matchOperator
+                  type: object
+                type: array
+              importV6:
+                description: The ordered set of IPv6 BGPFilter rules acting on importing
+                  routes from a peer.
+                items:
+                  description: BGPFilterRuleV6 defines a BGP filter rule consisting
+                    a single IPv6 CIDR block and a filter action for this CIDR.
+                  properties:
+                    action:
+                      type: string
+                    cidr:
+                      type: string
+                    matchOperator:
+                      type: string
+                  required:
+                  - action
+                  - cidr
+                  - matchOperator
+                  type: object
+                type: array
+            type: object
+        type: object
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+---
+# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -283,8 +437,8 @@ spec:
     listKind: BGPPeerList
     plural: bgppeers
     singular: bgppeer
-  scope: Cluster
   preserveUnknownFields: false
+  scope: Cluster
   versions:
   - name: v1
     schema:
@@ -309,6 +463,11 @@ spec:
                 description: The AS Number of the peer.
                 format: int32
                 type: integer
+              filters:
+                description: The ordered set of BGPFilters applied on this BGP peer.
+                items:
+                  type: string
+                type: array
               keepOriginalNextHop:
                 description: Option to keep the original nexthop field when routes
                   are sent to a BGP Peer. Setting "true" configures the selected BGP
@@ -374,12 +533,23 @@ spec:
                   remote AS number comes from the remote node's NodeBGPSpec.ASNumber,
                   or the global default if that is not set.
                 type: string
+              reachableBy:
+                description: Add an exact, i.e. /32, static route toward peer IP in
+                  order to prevent route flapping. ReachableBy contains the address
+                  of the gateway which peer can be reached by.
+                type: string
               sourceAddress:
                 description: Specifies whether and how to configure a source address
                   for the peerings generated by this BGPPeer resource.  Default value
                   "UseNodeIP" means to configure the node IP as the source address.  "None"
                   means not to configure a source address.
                 type: string
+              ttlSecurity:
+                description: TTLSecurity enables the generalized TTL security mechanism
+                  (GTSM) which protects against spoofed packets by ignoring received
+                  packets with a smaller than expected TTL value. The provided value
+                  is the number of hops (edges) between the peers.
+                type: integer
             type: object
         type: object
     served: true
@@ -390,8 +560,8 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
 ---
+# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -403,8 +573,8 @@ spec:
     listKind: BlockAffinityList
     plural: blockaffinities
     singular: blockaffinity
-  scope: Cluster
   preserveUnknownFields: false
+  scope: Cluster
   versions:
   - name: v1
     schema:
@@ -452,8 +622,8 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
 ---
+# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -468,8 +638,8 @@ spec:
     listKind: CalicoNodeStatusList
     plural: caliconodestatuses
     singular: caliconodestatus
-  scope: Cluster
   preserveUnknownFields: false
+  scope: Cluster
   versions:
   - name: v1
     schema:
@@ -716,8 +886,8 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
 ---
+# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -729,8 +899,8 @@ spec:
     listKind: ClusterInformationList
     plural: clusterinformations
     singular: clusterinformation
-  scope: Cluster
   preserveUnknownFields: false
+  scope: Cluster
   versions:
   - name: v1
     schema:
@@ -781,8 +951,8 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
 ---
+# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -794,8 +964,8 @@ spec:
     listKind: FelixConfigurationList
     plural: felixconfigurations
     singular: felixconfiguration
-  scope: Cluster
   preserveUnknownFields: false
+  scope: Cluster
   versions:
   - name: v1
     schema:
@@ -844,6 +1014,13 @@ spec:
                   connections.  The only reason to disable it is for debugging purposes.  [Default:
                   true]'
                 type: boolean
+              bpfDSROptoutCIDRs:
+                description: BPFDSROptoutCIDRs is a list of CIDRs which are excluded
+                  from DSR. That is, clients in those CIDRs will accesses nodeports
+                  as if BPFExternalServiceMode was set to Tunnel.
+                items:
+                  type: string
+                type: array
               bpfDataIfacePattern:
                 description: BPFDataIfacePattern is a regular expression that controls
                   which interfaces Felix should attach BPF programs to in order to
@@ -864,15 +1041,16 @@ spec:
                   [Default: false]'
                 type: boolean
               bpfEnforceRPF:
-                description: 'BPFEnforceRPF enforce strict RPF on all interfaces with
-                  BPF programs regardless of what is the per-interfaces or global
-                  setting. Possible values are Disabled or Strict. [Default: Strict]'
+                description: 'BPFEnforceRPF enforce strict RPF on all host interfaces
+                  with BPF programs regardless of what is the per-interfaces or global
+                  setting. Possible values are Disabled, Strict or Loose. [Default:
+                  Loose]'
                 type: string
               bpfExtToServiceConnmark:
                 description: 'BPFExtToServiceConnmark in BPF mode, control a 32bit
                   mark that is set on connections from an external client to a local
                   service. This mark allows us to control how packets of that connection
-                  are routed within the host and how is routing intepreted by RPF
+                  are routed within the host and how is routing interpreted by RPF
                   check. [Default: 0]'
                 type: integer
               bpfExternalServiceMode:
@@ -906,6 +1084,14 @@ spec:
                   kube-proxy.  Lower values give reduced set-up latency.  Higher values
                   reduce Felix CPU usage by batching up more work.  [Default: 1s]'
                 type: string
+              bpfL3IfacePattern:
+                description: BPFL3IfacePattern is a regular expression that allows
+                  to list tunnel devices like wireguard or vxlan (i.e., L3 devices)
+                  in addition to BPFDataIfacePattern. That is, tunnel interfaces not
+                  created by Calico, that Calico workload traffic flows over as well
+                  as any interfaces that handle incoming traffic to nodeports and
+                  services from outside the cluster.
+                type: string
               bpfLogLevel:
                 description: 'BPFLogLevel controls the log level of the BPF programs
                   when in BPF dataplane mode.  One of "Off", "Info", or "Debug".  The
@@ -924,6 +1110,11 @@ spec:
                   matched by every selector in the source/destination matches in network
                   policy.  Selectors such as "all()" can result in large numbers of
                   entries (one entry per endpoint in that case).
+                type: integer
+              bpfMapSizeIfState:
+                description: BPFMapSizeIfState sets the size for ifstate map.  The
+                  ifstate map must be large enough to hold an entry for each device
+                  (host + workloads) on a host.
                 type: integer
               bpfMapSizeNATAffinity:
                 type: integer
@@ -949,14 +1140,19 @@ spec:
                 - type: string
                 description: 'BPFPSNATPorts sets the range from which we randomly
                   pick a port if there is a source port collision. This should be
-                  within the ephemeral range as defined by RFC 6056 (1024â€“65535) and
+                  within the ephemeral range as defined by RFC 6056 (1024–65535) and
                   preferably outside the  ephemeral ranges used by common operating
-                  systems. Linux uses 32768â€“60999, while others mostly use the IANA
-                  defined range 49152â€“65535. It is not necessarily a problem if this
+                  systems. Linux uses 32768–60999, while others mostly use the IANA
+                  defined range 49152–65535. It is not necessarily a problem if this
                   range overlaps with the operating systems. Both ends of the range
                   are inclusive. [Default: 20000:29999]'
                 pattern: ^.*
                 x-kubernetes-int-or-string: true
+              bpfPolicyDebugEnabled:
+                description: BPFPolicyDebugEnabled when true, Felix records detailed
+                  information about the BPF policy programs, which can be examined
+                  with the calico-bpf command-line tool.
+                type: boolean
               chainInsertMode:
                 description: 'ChainInsertMode controls whether Felix hooks the kernel''s
                   top-level iptables chains by inserting a rule at the top of the
@@ -971,11 +1167,12 @@ spec:
                   to use.  Only used if UseInternalDataplaneDriver is set to false.
                 type: string
               dataplaneWatchdogTimeout:
-                description: 'DataplaneWatchdogTimeout is the readiness/liveness timeout
-                  used for Felix''s (internal) dataplane driver. Increase this value
+                description: "DataplaneWatchdogTimeout is the readiness/liveness timeout
+                  used for Felix's (internal) dataplane driver. Increase this value
                   if you experience spurious non-ready or non-live events when Felix
                   is under heavy load. Decrease the value to get felix to report non-live
-                  or non-ready more quickly. [Default: 90s]'
+                  or non-ready more quickly. [Default: 90s] \n Deprecated: replaced
+                  by the generic HealthTimeoutOverrides."
                 type: string
               debugDisableLogDropping:
                 type: boolean
@@ -1079,15 +1276,21 @@ spec:
                   type: object
                 type: array
               featureDetectOverride:
-                description: FeatureDetectOverride is used to override the feature
-                  detection. Values are specified in a comma separated list with no
-                  spaces, example; "SNATFullyRandom=true,MASQFullyRandom=false,RestoreSupportsLock=".
-                  "true" or "false" will force the feature, empty or omitted values
-                  are auto-detected.
+                description: FeatureDetectOverride is used to override feature detection
+                  based on auto-detected platform capabilities.  Values are specified
+                  in a comma separated list with no spaces, example; "SNATFullyRandom=true,MASQFullyRandom=false,RestoreSupportsLock=".  "true"
+                  or "false" will force the feature, empty or omitted values are auto-detected.
+                type: string
+              featureGates:
+                description: FeatureGates is used to enable or disable tech-preview
+                  Calico features. Values are specified in a comma separated list
+                  with no spaces, example; "BPFConnectTimeLoadBalancingWorkaround=enabled,XyZ=false".
+                  This is used to enable features that are not fully production ready.
                 type: string
               floatingIPs:
                 description: FloatingIPs configures whether or not Felix will program
-                  floating IP addresses.
+                  non-OpenStack floating IP addresses.  (OpenStack-derived floating
+                  IPs are always programmed, regardless of this setting.)
                 enum:
                 - Enabled
                 - Disabled
@@ -1104,6 +1307,23 @@ spec:
                 type: string
               healthPort:
                 type: integer
+              healthTimeoutOverrides:
+                description: HealthTimeoutOverrides allows the internal watchdog timeouts
+                  of individual subcomponents to be overridden.  This is useful for
+                  working around "false positive" liveness timeouts that can occur
+                  in particularly stressful workloads or if CPU is constrained.  For
+                  a list of active subcomponents, see Felix's logs.
+                items:
+                  properties:
+                    name:
+                      type: string
+                    timeout:
+                      type: string
+                  required:
+                  - name
+                  - timeout
+                  type: object
+                type: array
               interfaceExclude:
                 description: 'InterfaceExclude is a comma-separated list of interfaces
                   that Felix should exclude when monitoring for host endpoints. The
@@ -1145,9 +1365,15 @@ spec:
                 type: string
               iptablesBackend:
                 description: IptablesBackend specifies which backend of iptables will
-                  be used. The default is legacy.
+                  be used. The default is Auto.
                 type: string
               iptablesFilterAllowAction:
+                type: string
+              iptablesFilterDenyAction:
+                description: IptablesFilterDenyAction controls what happens to traffic
+                  that is denied by network policy. By default Calico blocks traffic
+                  with an iptables "DROP" action. If you want to use "REJECT" action
+                  instead you can configure it in here.
                 type: string
               iptablesLockFilePath:
                 description: 'IptablesLockFilePath is the location of the iptables
@@ -1347,6 +1573,10 @@ spec:
                   information. - WorkloadIPs: use workload endpoints to construct
                   routes. - CalicoIPAM: the default - use IPAM data to construct routes.'
                 type: string
+              routeSyncDisabled:
+                description: RouteSyncDisabled will disable all operations performed
+                  on the route table. Set to true to run in network-policy mode only.
+                type: boolean
               routeTableRange:
                 description: Deprecated in favor of RouteTableRanges. Calico programs
                   additional Linux route tables for various purposes. RouteTableRange
@@ -1424,7 +1654,13 @@ spec:
               vxlanVNI:
                 type: integer
               wireguardEnabled:
-                description: 'WireguardEnabled controls whether Wireguard is enabled.
+                description: 'WireguardEnabled controls whether Wireguard is enabled
+                  for IPv4 (encapsulating IPv4 traffic over an IPv4 underlay network).
+                  [Default: false]'
+                type: boolean
+              wireguardEnabledV6:
+                description: 'WireguardEnabledV6 controls whether Wireguard is enabled
+                  for IPv6 (encapsulating IPv6 traffic over an IPv6 underlay network).
                   [Default: false]'
                 type: boolean
               wireguardHostEncryptionEnabled:
@@ -1433,7 +1669,11 @@ spec:
                 type: boolean
               wireguardInterfaceName:
                 description: 'WireguardInterfaceName specifies the name to use for
-                  the Wireguard interface. [Default: wg.calico]'
+                  the IPv4 Wireguard interface. [Default: wireguard.cali]'
+                type: string
+              wireguardInterfaceNameV6:
+                description: 'WireguardInterfaceNameV6 specifies the name to use for
+                  the IPv6 Wireguard interface. [Default: wg-v6.cali]'
                 type: string
               wireguardKeepAlive:
                 description: 'WireguardKeepAlive controls Wireguard PersistentKeepalive
@@ -1441,11 +1681,19 @@ spec:
                 type: string
               wireguardListeningPort:
                 description: 'WireguardListeningPort controls the listening port used
-                  by Wireguard. [Default: 51820]'
+                  by IPv4 Wireguard. [Default: 51820]'
+                type: integer
+              wireguardListeningPortV6:
+                description: 'WireguardListeningPortV6 controls the listening port
+                  used by IPv6 Wireguard. [Default: 51821]'
                 type: integer
               wireguardMTU:
-                description: 'WireguardMTU controls the MTU on the Wireguard interface.
-                  See Configuring MTU [Default: 1420]'
+                description: 'WireguardMTU controls the MTU on the IPv4 Wireguard
+                  interface. See Configuring MTU [Default: 1440]'
+                type: integer
+              wireguardMTUV6:
+                description: 'WireguardMTUV6 controls the MTU on the IPv6 Wireguard
+                  interface. See Configuring MTU [Default: 1420]'
                 type: integer
               wireguardRoutingRulePriority:
                 description: 'WireguardRoutingRulePriority controls the priority value
@@ -1477,8 +1725,8 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
 ---
+# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -1490,8 +1738,8 @@ spec:
     listKind: GlobalNetworkPolicyList
     plural: globalnetworkpolicies
     singular: globalnetworkpolicy
-  scope: Cluster
   preserveUnknownFields: false
+  scope: Cluster
   versions:
   - name: v1
     schema:
@@ -2333,8 +2581,8 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
 ---
+# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -2346,8 +2594,8 @@ spec:
     listKind: GlobalNetworkSetList
     plural: globalnetworksets
     singular: globalnetworkset
-  scope: Cluster
   preserveUnknownFields: false
+  scope: Cluster
   versions:
   - name: v1
     schema:
@@ -2387,8 +2635,8 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
 ---
+# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -2400,8 +2648,8 @@ spec:
     listKind: HostEndpointList
     plural: hostendpoints
     singular: hostendpoint
-  scope: Cluster
   preserveUnknownFields: false
+  scope: Cluster
   versions:
   - name: v1
     schema:
@@ -2496,8 +2744,8 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
 ---
+# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -2509,8 +2757,8 @@ spec:
     listKind: IPAMBlockList
     plural: ipamblocks
     singular: ipamblock
-  scope: Cluster
   preserveUnknownFields: false
+  scope: Cluster
   versions:
   - name: v1
     schema:
@@ -2616,8 +2864,8 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
 ---
+# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -2629,8 +2877,8 @@ spec:
     listKind: IPAMConfigList
     plural: ipamconfigs
     singular: ipamconfig
-  scope: Cluster
   preserveUnknownFields: false
+  scope: Cluster
   versions:
   - name: v1
     schema:
@@ -2657,6 +2905,8 @@ spec:
               maxBlocksPerHost:
                 description: MaxBlocksPerHost, if non-zero, is the max number of blocks
                   that can be affine to each host.
+                maximum: 2147483647
+                minimum: 0
                 type: integer
               strictAffinity:
                 type: boolean
@@ -2673,8 +2923,8 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
 ---
+# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -2686,8 +2936,8 @@ spec:
     listKind: IPAMHandleList
     plural: ipamhandles
     singular: ipamhandle
-  scope: Cluster
   preserveUnknownFields: false
+  scope: Cluster
   versions:
   - name: v1
     schema:
@@ -2730,8 +2980,8 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
 ---
+# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -2743,8 +2993,8 @@ spec:
     listKind: IPPoolList
     plural: ippools
     singular: ippool
-  scope: Cluster
   preserveUnknownFields: false
+  scope: Cluster
   versions:
   - name: v1
     schema:
@@ -2815,7 +3065,7 @@ spec:
                   for internal use only.'
                 type: boolean
               natOutgoing:
-                description: When nat-outgoing is true, packets sent from Calico networked
+                description: When natOutgoing is true, packets sent from Calico networked
                   containers in this pool to destinations outside of this pool will
                   be masqueraded.
                 type: boolean
@@ -2840,8 +3090,8 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
 ---
+# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -2856,8 +3106,8 @@ spec:
     listKind: IPReservationList
     plural: ipreservations
     singular: ipreservation
-  scope: Cluster
   preserveUnknownFields: false
+  scope: Cluster
   versions:
   - name: v1
     schema:
@@ -2895,8 +3145,8 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
 ---
+# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -2908,8 +3158,8 @@ spec:
     listKind: KubeControllersConfigurationList
     plural: kubecontrollersconfigurations
     singular: kubecontrollersconfiguration
-  scope: Cluster
   preserveUnknownFields: false
+  scope: Cluster
   versions:
   - name: v1
     schema:
@@ -3149,8 +3399,8 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
 ---
+# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -3162,8 +3412,8 @@ spec:
     listKind: NetworkPolicyList
     plural: networkpolicies
     singular: networkpolicy
-  scope: Namespaced
   preserveUnknownFields: false
+  scope: Namespaced
   versions:
   - name: v1
     schema:
@@ -3986,8 +4236,8 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
 ---
+# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -3999,8 +4249,8 @@ spec:
     listKind: NetworkSetList
     plural: networksets
     singular: networkset
-  scope: Namespaced
   preserveUnknownFields: false
+  scope: Namespaced
   versions:
   - name: v1
     schema:
@@ -4038,11 +4288,8 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
----
 ---
 # Source: calico/templates/calico-kube-controllers-rbac.yaml
-
 # Include a clusterrole for the kube-controllers component,
 # and bind it to the calico-kube-controllers serviceaccount.
 kind: ClusterRole
@@ -4125,21 +4372,6 @@ rules:
       # watch for changes
       - watch
 ---
-kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: calico-kube-controllers
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: calico-kube-controllers
-subjects:
-- kind: ServiceAccount
-  name: calico-kube-controllers
-  namespace: kube-system
----
-
----
 # Source: calico/templates/calico-node-rbac.yaml
 # Include a clusterrole for the calico-node DaemonSet,
 # and bind it to the calico-node serviceaccount.
@@ -4154,6 +4386,7 @@ rules:
       - serviceaccounts/token
     resourceNames:
       - canal
+      - calico-cni-plugin
     verbs:
       - create
   # The CNI plugin needs to get pods, nodes, and namespaces.
@@ -4170,7 +4403,7 @@ rules:
     resources:
       - endpointslices
     verbs:
-      - watch 
+      - watch
       - list
   - apiGroups: [""]
     resources:
@@ -4224,6 +4457,7 @@ rules:
       - globalfelixconfigs
       - felixconfigurations
       - bgppeers
+      - bgpfilters
       - globalbgpconfigs
       - bgpconfigurations
       - ippools
@@ -4273,8 +4507,28 @@ rules:
     verbs:
       - create
       - update
-
 ---
+# Source: calico/templates/calico-node-rbac.yaml
+# CNI cluster role
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: calico-cni-plugin
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+      - nodes
+      - namespaces
+    verbs:
+      - get
+  - apiGroups: [""]
+    resources:
+      - pods/status
+    verbs:
+      - patch
+---
+# Source: calico/templates/calico-node-rbac.yaml
 # Flannel ClusterRole
 # Pulled from https://github.com/coreos/flannel/blob/master/Documentation/kube-flannel-rbac.yml
 kind: ClusterRole
@@ -4299,6 +4553,21 @@ rules:
     verbs:
       - patch
 ---
+# Source: calico/templates/calico-kube-controllers-rbac.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: calico-kube-controllers
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: calico-kube-controllers
+subjects:
+- kind: ServiceAccount
+  name: calico-kube-controllers
+  namespace: kube-system
+---
+# Source: calico/templates/calico-node-rbac.yaml
 # Bind the flannel ClusterRole to the canal ServiceAccount.
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -4313,6 +4582,7 @@ subjects:
   name: canal
   namespace: kube-system
 ---
+# Source: calico/templates/calico-node-rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -4325,7 +4595,20 @@ subjects:
 - kind: ServiceAccount
   name: canal
   namespace: kube-system
-
+---
+# Source: calico/templates/calico-node-rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: calico-cni-plugin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: calico-cni-plugin
+subjects:
+- kind: ServiceAccount
+  name: calico-cni-plugin
+  namespace: kube-system
 ---
 # Source: calico/templates/calico-node.yaml
 # This manifest installs the canal container, as well
@@ -4373,6 +4656,7 @@ spec:
         # and CNI network config file on each node.
         - name: install-cni
           image: {{ .InternalImages.Get "CalicoCNI" }}
+          imagePullPolicy: IfNotPresent
           command: ["/opt/cni/bin/install"]
           envFrom:
           - configMapRef:
@@ -4421,6 +4705,7 @@ spec:
         # in best effort fashion, i.e. no failure for errors, to not disrupt pod creation in iptable mode.
         - name: "mount-bpffs"
           image: {{ .InternalImages.Get "CalicoNode" }}
+          imagePullPolicy: IfNotPresent
           command: ["calico-node", "-init", "-best-effort"]
           volumeMounts:
             - mountPath: /sys/fs
@@ -4446,6 +4731,7 @@ spec:
         # host.
         - name: calico-node
           image: {{ .InternalImages.Get "CalicoNode" }}
+          imagePullPolicy: IfNotPresent
           envFrom:
           - configMapRef:
               # Allow KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT to be overridden for eBPF mode.
@@ -4570,6 +4856,7 @@ spec:
         # for allocating subnets.
         - name: kube-flannel
           image: {{ .InternalImages.Get "Flannel" }}
+          imagePullPolicy: IfNotPresent
           command: [ "/opt/bin/flanneld", "--ip-masq", "--kube-subnet-mgr" ]
           securityContext:
             privileged: true
@@ -4652,14 +4939,6 @@ spec:
             type: DirectoryOrCreate
             path: /var/run/nodeagent
 ---
-
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: canal
-  namespace: kube-system
-
----
 # Source: calico/templates/calico-kube-controllers.yaml
 # See https://github.com/projectcalico/kube-controllers
 apiVersion: apps/v1
@@ -4690,15 +4969,16 @@ spec:
         # Mark the pod as a critical add-on for rescheduling.
         - key: CriticalAddonsOnly
           operator: Exists
-        - key: node-role.kubernetes.io/control-plane
-          effect: NoSchedule
         - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/control-plane
           effect: NoSchedule
       serviceAccountName: calico-kube-controllers
       priorityClassName: system-cluster-critical
       containers:
         - name: calico-kube-controllers
           image: {{ .InternalImages.Get "CalicoController" }}
+          imagePullPolicy: IfNotPresent
           env:
             # Choose which controllers to run.
             - name: ENABLED_CONTROLLERS
@@ -4720,38 +5000,3 @@ spec:
               - /usr/bin/check-status
               - -r
             periodSeconds: 10
-
----
-
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: calico-kube-controllers
-  namespace: kube-system
-
----
-
-# This manifest creates a Pod Disruption Budget for Controller to allow K8s Cluster Autoscaler to evict
-
-apiVersion: policy/v1
-kind: PodDisruptionBudget
-metadata:
-  name: calico-kube-controllers
-  namespace: kube-system
-  labels:
-    k8s-app: calico-kube-controllers
-spec:
-  maxUnavailable: 1
-  selector:
-    matchLabels:
-      k8s-app: calico-kube-controllers
-
----
-# Source: calico/templates/calico-etcd-secrets.yaml
-
----
-# Source: calico/templates/calico-typha.yaml
-
----
-# Source: calico/templates/configure-canal.yaml
-

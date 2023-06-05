@@ -213,11 +213,11 @@ func FindResource(name string) (Resource, error) {
 
 func baseResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
-		CalicoCNI:        {"*": "quay.io/calico/cni:v3.23.5"},
-		CalicoController: {"*": "quay.io/calico/kube-controllers:v3.23.5"},
-		CalicoNode:       {"*": "quay.io/calico/node:v3.23.5"},
+		CalicoCNI:        {"*": "quay.io/calico/cni:v3.26.0"},
+		CalicoController: {"*": "quay.io/calico/kube-controllers:v3.26.0"},
+		CalicoNode:       {"*": "quay.io/calico/node:v3.26.0"},
 		DNSNodeCache:     {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.22.15"},
-		Flannel:          {"*": "quay.io/coreos/flannel:v0.15.1"},
+		Flannel:          {"*": "quay.io/coreos/flannel:v0.21.3"},
 		// TODO: Switch to semver image before release.
 		MachineController:      {"*": "quay.io/kubermatic/machine-controller:8e5884837711fb0fc6b568d734f09a7b809fc28e"},
 		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.6.2"},
