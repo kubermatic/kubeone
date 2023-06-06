@@ -1166,7 +1166,7 @@ spec:
             memory: 100Mi # wait-for-kube-proxy
       # Install the CNI binaries in an InitContainer so we don't have a writable host mount in the agent
       - name: install-cni-binaries
-        image: "quay.io/cilium/cilium:v1.13.3@sha256:77176464a1e11ea7e89e984ac7db365e7af39851507e94f137dcf56c87746314"
+        image: {{ .InternalImages.Get "Cilium" }}
         imagePullPolicy: IfNotPresent
         command:
           - "/install-plugin.sh"
@@ -1547,7 +1547,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: hubble-generate-certs-c26869f410
+  name: hubble-generate-certs-394f790584
   namespace: kube-system
   labels:
     k8s-app: hubble-generate-certs
