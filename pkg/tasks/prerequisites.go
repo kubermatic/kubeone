@@ -50,6 +50,7 @@ func kubeadmPreflightChecks(s *state.State) error {
 			ctx.Logger.Info("	preflight...")
 			_, _, err := ctx.Runner.Run(heredoc.Docf(`
 				sudo kubeadm init phase preflight \
+					--ignore-preflight-errors=DirAvailable--var-lib-etcd,FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml,FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml,FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml,FileAvailable--etc-kubernetes-manifests-etcd.yaml,Port-6443,Port-10259,Port-10257,Port-10250,Port-2379,Port-2380 \
 					--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
 			`), runner.TemplateVariables{
 				"NODE_ID":  node.ID,
