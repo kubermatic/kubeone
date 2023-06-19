@@ -249,3 +249,17 @@ variable "is_vsphere_enterprise_plus_license" {
   type        = bool
   default     = true
 }
+
+variable "ip_family" {
+  description = "IPFamily of the cluster. Defaults to IPv4."
+
+  # valid choices are:
+  # * IPv4
+  # * IPv4+IPv6 (dual-stack)
+  default = "IPv4"
+  type    = string
+  validation {
+    condition     = can(regex("^(IPv4|IPv4\\+IPv6)$", var.ip_family))
+    error_message = "Unsupported IP Family specified."
+  }
+}

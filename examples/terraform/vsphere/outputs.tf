@@ -32,7 +32,8 @@ output "kubeone_hosts" {
       cloud_provider       = "vsphere"
       private_address      = []
       hostnames            = local.hostnames
-      public_address       = vsphere_virtual_machine.control_plane.*.default_ip_address
+      public_address       = vsphere_virtual_machine.control_plane.*.guest_ip_addresses.0
+      ipv6_addresses       = var.ip_family == "IPv4+IPv6" ? vsphere_virtual_machine.control_plane.*.guest_ip_addresses.1 : null
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file
@@ -97,6 +98,9 @@ output "kubeone_workers" {
           vmNetName      = var.network_name
           resourcePool   = var.resource_pool_name
           folder         = var.folder_name
+        }
+        network = {
+          ipFamily = var.ip_family
         }
       }
     }

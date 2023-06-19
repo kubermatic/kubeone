@@ -33,7 +33,11 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 [docs-infrastructure]: https://docs.kubermatic.com/kubeone/v1.6/guides/using-terraform-configs/
 [docs-tf-loadbalancer]: https://docs.kubermatic.com/kubeone/v1.6/examples/ha-load-balancing/
 
-## Requirements
+## Networking
+
+KubeOne supports both IPv4 only and IPv4+IPv6 dual-stack clusters. With the given terraform configuration it is assumed that DHCP is supported and enabled on the network. If you want to use static IPs, you need to modify the terraform configuration accordingly.
+
+Based on IP assignment in terraform, we assume that the first IP would be IPv4 and the second IP would be IPv6. As for IP assignment, the first address or the default address is the first IPv4 address that is reachable through the default gateway configured on the machine, then the first reachable IPv6 address, and then the first general discovered address if neither exist.## Requirements
 
 | Name | Version |
 |------|---------|
@@ -92,6 +96,7 @@ No modules.
 | <a name="input_folder_name"></a> [folder\_name](#input\_folder\_name) | folder name | `string` | `"kubeone"` | no |
 | <a name="input_initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployments, only applicable if operating-system-manager addon is enabled.<br>If not specified, the default value will be added by machine-controller addon. | `string` | `""` | no |
 | <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | Number of replicas per MachineDeployment | `number` | `2` | no |
+| <a name="input_ip_family"></a> [ip\_family](#input\_ip\_family) | IPFamily of the cluster. Defaults to IPv4. | `string` | `"IPv4"` | no |
 | <a name="input_is_vsphere_enterprise_plus_license"></a> [is\_vsphere\_enterprise\_plus\_license](#input\_is\_vsphere\_enterprise\_plus\_license) | toggle on/off based on your vsphere enterprise license | `bool` | `true` | no |
 | <a name="input_network_name"></a> [network\_name](#input\_network\_name) | network name | `string` | `"public"` | no |
 | <a name="input_resource_pool_name"></a> [resource\_pool\_name](#input\_resource\_pool\_name) | cluster resource pool name | `string` | `""` | no |
