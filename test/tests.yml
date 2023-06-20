@@ -154,6 +154,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_default_dual_stack
     - name: vsphere_centos
     - name: vsphere_flatcar
 
@@ -197,6 +198,7 @@
     - name: openstack_rhel
     - name: openstack_flatcar
     - name: vsphere_default
+    - name: vsphere_default_dual_stack
     - name: vsphere_centos
     - name: vsphere_flatcar
 
