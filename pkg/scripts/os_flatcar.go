@@ -201,6 +201,7 @@ func KubeadmFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"CILIUM":                 ciliumCNI(cluster),
+		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {

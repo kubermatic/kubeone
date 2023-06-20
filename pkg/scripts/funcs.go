@@ -60,6 +60,13 @@ var (
 		net.bridge.bridge-nf-call-ip6tables = 1
 		net.bridge.bridge-nf-call-iptables  = 1
 		net.ipv4.ip_forward                 = 1
+		{{- if .IPV6_ENABLED }}
+		net.ipv6.conf.all.forwarding 		= 1
+		# Configure Linux to accept router advertisements to ensure the default
+		# IPv6 route is not removed from the routing table when the Docker service starts.
+		# For more information: https://github.com/docker/for-linux/issues/844
+		net.ipv6.conf.eth0.accept_ra		= 2
+		{{ end }}
 		net.netfilter.nf_conntrack_max      = 1000000
 		vm.overcommit_memory                = 1
 		EOF
