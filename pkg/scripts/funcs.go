@@ -65,7 +65,7 @@ var (
 		# Configure Linux to accept router advertisements to ensure the default
 		# IPv6 route is not removed from the routing table when the Docker service starts.
 		# For more information: https://github.com/docker/for-linux/issues/844
-		net.ipv6.conf.eth0.accept_ra		= 2
+		net.ipv6.conf.all.accept_ra		= 2
 		{{ end }}
 		net.netfilter.nf_conntrack_max      = 1000000
 		vm.overcommit_memory                = 1

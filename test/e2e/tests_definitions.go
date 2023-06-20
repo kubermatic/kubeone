@@ -1256,30 +1256,6 @@ var (
 				outputDir:  "/logs/artifacts/logs",
 			},
 		},
-		"vsphere_default_dual_stack": {
-			name: "vsphere_default_dual_stack",
-			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-vsphere": "true",
-			},
-			environ: map[string]string{
-				"PROVIDER": "vsphere",
-			},
-			terraform: terraformBin{
-				path:    "../../examples/terraform/vsphere",
-				varFile: "testdata/vsphere.tfvars",
-				vars: []string{
-					"template_name=kubeone-ubuntu-22.04",
-					"worker_os=ubuntu",
-					"ssh_username=ubuntu",
-					"ip_family=IPv6+IPv4",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
 		"vsphere_centos": {
 			name: "vsphere_centos",
 			labels: map[string]string{

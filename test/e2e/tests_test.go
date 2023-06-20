@@ -874,92 +874,7 @@ func TestGceDefaultCalicoContainerdV1_27_3(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-<<<<<<< HEAD
 func TestAwsAmznCalicoContainerdExternalV1_27_3(t *testing.T) {
-=======
-func TestOpenstackDefaultCalicoContainerdV1_26_1(t *testing.T) {
-	ctx := NewSignalContext()
-	infra := Infrastructures["openstack_default"]
-	scenario := Scenarios["calico_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.26.1")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosCalicoContainerdV1_26_1(t *testing.T) {
-	ctx := NewSignalContext()
-	infra := Infrastructures["openstack_centos"]
-	scenario := Scenarios["calico_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.26.1")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackRockylinuxCalicoContainerdV1_26_1(t *testing.T) {
-	ctx := NewSignalContext()
-	infra := Infrastructures["openstack_rockylinux"]
-	scenario := Scenarios["calico_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.26.1")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackRhelCalicoContainerdV1_26_1(t *testing.T) {
-	ctx := NewSignalContext()
-	infra := Infrastructures["openstack_rhel"]
-	scenario := Scenarios["calico_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.26.1")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackFlatcarCalicoContainerdV1_26_1(t *testing.T) {
-	ctx := NewSignalContext()
-	infra := Infrastructures["openstack_flatcar"]
-	scenario := Scenarios["calico_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.26.1")
-	scenario.Run(ctx, t)
-}
-
-func TestVsphereDefaultCalicoContainerdV1_26_1(t *testing.T) {
-	ctx := NewSignalContext()
-	infra := Infrastructures["vsphere_default"]
-	scenario := Scenarios["calico_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.26.1")
-	scenario.Run(ctx, t)
-}
-
-func TestVsphereDefaultDualStackCalicoContainerdV1_26_1(t *testing.T) {
-	ctx := NewSignalContext()
-	infra := Infrastructures["vsphere_default_dual_stack"]
-	scenario := Scenarios["calico_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.26.1")
-	scenario.Run(ctx, t)
-}
-
-func TestVsphereCentosCalicoContainerdV1_26_1(t *testing.T) {
-	ctx := NewSignalContext()
-	infra := Infrastructures["vsphere_centos"]
-	scenario := Scenarios["calico_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.26.1")
-	scenario.Run(ctx, t)
-}
-
-func TestVsphereFlatcarCalicoContainerdV1_26_1(t *testing.T) {
-	ctx := NewSignalContext()
-	infra := Infrastructures["vsphere_flatcar"]
-	scenario := Scenarios["calico_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.26.1")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsAmznWeaveContainerdV1_26_1(t *testing.T) {
->>>>>>> db7592a8 (Add E2E tests for vSphere dualstack)
 	ctx := NewSignalContext()
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["calico_containerd_external"]
@@ -1391,20 +1306,7 @@ func TestVsphereDefaultCiliumContainerdExternalV1_27_3(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-<<<<<<< HEAD
 func TestVsphereCentosCiliumContainerdExternalV1_27_3(t *testing.T) {
-=======
-func TestVsphereDefaultDualStackCiliumContainerdV1_26_1(t *testing.T) {
-	ctx := NewSignalContext()
-	infra := Infrastructures["vsphere_default_dual_stack"]
-	scenario := Scenarios["cilium_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.26.1")
-	scenario.Run(ctx, t)
-}
-
-func TestVsphereCentosCiliumContainerdV1_26_1(t *testing.T) {
->>>>>>> db7592a8 (Add E2E tests for vSphere dualstack)
 	ctx := NewSignalContext()
 	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["cilium_containerd_external"]
