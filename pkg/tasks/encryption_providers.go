@@ -147,7 +147,7 @@ func uploadEncryptionConfigurationWithoutOldKey(s *state.State) error {
 	return s.RunTaskOnControlPlane(pushEncryptionConfigurationOnNode, state.RunParallel)
 }
 
-func pushEncryptionConfigurationOnNode(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+func pushEncryptionConfigurationOnNode(s *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
 	err := s.Configuration.UploadTo(conn, s.WorkDir)
 	if err != nil {
 		return err
@@ -193,9 +193,7 @@ func removeEncryptionProviderFile(s *state.State) error {
 	s.Logger.Infof("Removing EncryptionProviders configuration file...")
 
 	return s.RunTaskOnControlPlane(func(s *state.State, _ *kubeoneapi.HostConfig, _ executor.Interface) error {
-		cmd := scripts.DeleteEncryptionProvidersConfig(s.GetEncryptionProviderConfigName())
-
-		_, _, err := s.Runner.RunRaw(cmd)
+		_, _, err := s.Runner.RunRaw(scripts.DeleteEncryptionProvidersConfig())
 
 		return fail.SSH(err, "deleting encryption providers config")
 	}, state.RunParallel)

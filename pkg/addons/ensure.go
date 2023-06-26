@@ -163,11 +163,7 @@ func Ensure(s *state.State) error {
 		}
 	}
 
-	if err := cleanupAddons(s); err != nil {
-		return err
-	}
-
-	return nil
+	return cleanupAddons(s)
 }
 
 // EnsureUserAddons deploys addons that are provided by the user and that are
@@ -264,11 +260,7 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 				continue
 			}
 			if a.Name() == addonName {
-				if err := applier.loadAndApplyAddon(s, applier.LocalFS, a.Name()); err != nil {
-					return err
-				}
-
-				return nil
+				return applier.loadAndApplyAddon(s, applier.LocalFS, a.Name())
 			}
 		}
 	}
@@ -283,11 +275,7 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 			continue
 		}
 		if a.Name() == addonName {
-			if err := applier.loadAndApplyAddon(s, applier.EmbeddedFS, a.Name()); err != nil {
-				return err
-			}
-
-			return nil
+			return applier.loadAndApplyAddon(s, applier.EmbeddedFS, a.Name())
 		}
 	}
 
@@ -319,11 +307,7 @@ func DeleteAddonByName(s *state.State, addonName string) error {
 				continue
 			}
 			if a.Name() == addonName {
-				if err := applier.loadAndDeleteAddon(s, applier.LocalFS, a.Name()); err != nil {
-					return err
-				}
-
-				return nil
+				return applier.loadAndDeleteAddon(s, applier.LocalFS, a.Name())
 			}
 		}
 	}
@@ -338,11 +322,7 @@ func DeleteAddonByName(s *state.State, addonName string) error {
 			continue
 		}
 		if a.Name() == addonName {
-			if err := applier.loadAndDeleteAddon(s, applier.EmbeddedFS, a.Name()); err != nil {
-				return err
-			}
-
-			return nil
+			return applier.loadAndDeleteAddon(s, applier.EmbeddedFS, a.Name())
 		}
 	}
 
