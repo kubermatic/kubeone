@@ -24,7 +24,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: golang:1.19.8
+        - image: golang:1.19.10
           command:
             - make
           args:
@@ -45,7 +45,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: golang:1.19.8
+        - image: golang:1.19.10
           command:
             - make
           args:
@@ -85,7 +85,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: golang:1.19.8
+        - image: golang:1.19.10
           command:
             - make
           args:
@@ -105,7 +105,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: golang:1.19.8
+        - image: golang:1.19.10
           command:
             - make
           args:
@@ -135,7 +135,7 @@ presubmits:
               memory: 1Gi
               cpu: 4
             limits:
-              memory: 2Gi
+              memory: 3Gi
   - name: pull-kubeone-build-image
     always_run: true
     decorate: true
@@ -145,7 +145,7 @@ presubmits:
       preset-docker-mirror: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.19-node-18-kind-0.17-9
+        - image: quay.io/kubermatic/build:go-1.19-node-18-kind-0.17-16
           command:
             - /bin/bash
             - -c

@@ -37,13 +37,13 @@ type localAdapter struct {
 	ctx context.Context
 }
 
-func (la *localAdapter) Open(host kubeoneapi.HostConfig) (Interface, error) {
+func (la *localAdapter) Open(_ kubeoneapi.HostConfig) (Interface, error) {
 	ctx, cancel := context.WithCancel(la.ctx)
 
 	return &localExec{ctx: ctx, cancelFn: cancel}, nil
 }
 
-func (la *localAdapter) Tunnel(host kubeoneapi.HostConfig) (Tunneler, error) {
+func (la *localAdapter) Tunnel(_ kubeoneapi.HostConfig) (Tunneler, error) {
 	ctx, cancel := context.WithCancel(la.ctx)
 
 	return &localExec{ctx: ctx, cancelFn: cancel}, nil
