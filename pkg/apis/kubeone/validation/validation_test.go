@@ -1518,7 +1518,7 @@ func TestValidateFeatures(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateFeatures(tc.features, tc.versions, nil)
+			errs := ValidateFeatures(tc.features, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}

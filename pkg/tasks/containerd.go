@@ -82,7 +82,7 @@ func migrateToContainerd(s *state.State) error {
 	return s.RunTaskOnAllNodes(migrateToContainerdTask, state.RunSequentially)
 }
 
-func migrateToContainerdTask(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+func migrateToContainerdTask(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 	s.Logger.Info("Migrating container runtime to containerd")
 
 	err := updateRemoteFile(s, kubeadmEnvFlagsFile, func(content []byte) ([]byte, error) {

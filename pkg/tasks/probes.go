@@ -152,11 +152,7 @@ func safeguard(s *state.State) error {
 		return err
 	}
 
-	if err := safeguardFlatcarMachineDeployments(s); err != nil {
-		return err
-	}
-
-	return nil
+	return safeguardFlatcarMachineDeployments(s)
 }
 
 // safeguardNodeSelectorsAndTolerations ensures that there are no pods that have:
