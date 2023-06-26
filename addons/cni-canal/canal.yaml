@@ -78,7 +78,18 @@ data:
           "mtu": __CNI_MTU__,
           "ipam": {
               "type": "host-local",
+              {{ if and .Config.ClusterNetwork.HasIPv4 .Config.ClusterNetwork.HasIPv6 }}
+              "ranges": [
+                  [{"subnet": "usePodCidr"}],
+                  [{"subnet": "usePodCidrIPv6"}]
+              ]
+              {{ else }}
+              {{ if .Config.ClusterNetwork.HasIPv6 }}
+              "subnet": "usePodCidrIPv6"
+              {{ else }}
               "subnet": "usePodCidr"
+              {{ end }}
+              {{ end }}
           },
           "policy": {
               "type": "k8s"
