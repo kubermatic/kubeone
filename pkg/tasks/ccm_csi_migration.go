@@ -151,11 +151,8 @@ func ccmMigrationRegenerateControlPlaneManifestsAndKubeletConfigInternal(s *stat
 	}
 
 	logger.Infoln("Uncordoning node...")
-	if err := drainer.Cordon(s.Context, node.Hostname, false); err != nil {
-		return err
-	}
 
-	return nil
+	return drainer.Cordon(s.Context, node.Hostname, false)
 }
 
 func ccmMigrationUpdateStaticWorkersKubeletConfig(s *state.State) error {
@@ -201,11 +198,8 @@ func ccmMigrationUpdateStaticWorkersKubeletConfigInternal(s *state.State, node *
 	}
 
 	logger.Infoln("Uncordoning node...")
-	if err := drainer.Cordon(s.Context, node.Hostname, false); err != nil {
-		return err
-	}
 
-	return nil
+	return drainer.Cordon(s.Context, node.Hostname, false)
 }
 
 func ccmMigrationUpdateKubeletConfigFile(s *state.State) error {

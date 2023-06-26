@@ -27,55 +27,56 @@ set -o monitor
 
 source $(dirname $0)/../lib.sh
 
-DOCKER_REPO="${DOCKER_REPO:-quay.io/kubermatic}"
+IMAGE="${IMAGE:-quay.io/kubermatic/kubeone}"
 ARCHITECTURES=${ARCHITECTURES:-amd64 arm64}
 NOMOCK=${NOMOCK:-false}
 
 PRIMARY_TAG="$(git rev-parse HEAD | tr -d '\n')"
 TAGS=${TAGS:-}
 
-gocaches="$(mktemp -d)"
+gocaches="./gocaches"
 for ARCH in ${ARCHITECTURES}; do
   cacheDir="$gocaches/$ARCH"
   mkdir -p "$cacheDir"
  
   # try to get a gocache for this arch; this can "fail" but still exit with 0
-  echodate "Attempting to fetch gocache for $ARCH..."
-  TARGET_DIRECTORY="$cacheDir" GOARCH="$ARCH" ./hack/ci/download-gocache.sh
+  echodate "Attempting to fetch gocache for ${ARCH}..."
+  TARGET_DIRECTORY="$cacheDir" GOARCH="${ARCH}" ./hack/ci/download-gocache.sh
 done
 
-echodate "Building ${DOCKER_REPO}/kubeone:${PRIMARY_TAG}"
+echodate "Building ${IMAGE}:${PRIMARY_TAG}"
 
 # build multi-arch images
-buildah manifest create "${DOCKER_REPO}/kubeone:${PRIMARY_TAG}"
-for ARCH in ${ARCHITECTURES}; do
-  echodate "Building a KubeOne image for $ARCH..."
+docker buildx rm k8c-k1-release || true
+docker buildx create --use --name=k8c-k1-release
 
-  # Building via buildah does not use the gocache, but that's okay, because we
-  # wouldn't want to cache arm64 stuff anyway, as it would just blow up the
-  # cache size and force every e2e test to download gigabytes worth of unneeded
-  # arm64 stuff. We might need to change this once we run e2e tests on arm64.
-  buildah bud \
-    --tag="${DOCKER_REPO}/kubeone-${ARCH}:${PRIMARY_TAG}" \
+for ARCH in ${ARCHITECTURES}; do
+  echodate "Building a KubeOne image for ${ARCH}..."
+
+  docker buildx build \
+    --load \
+    --progress=plain \
+    --platform="linux/${ARCH}" \
     --build-arg="GOPROXY=${GOPROXY:-}" \
-    --build-arg="GOCACHE=/gocache" \
-    --arch="$ARCH" \
-    --override-arch="$ARCH" \
-    --format=docker \
-    --file Dockerfile \
-    --volume "$gocaches/$ARCH:/gocache" \
-    .
-  buildah manifest add "${DOCKER_REPO}/kubeone:${PRIMARY_TAG}" "${DOCKER_REPO}/kubeone-${ARCH}:${PRIMARY_TAG}"
+    --build-arg="GOCACHE=/go/src/k8c.io/kubeone/gocaches/${ARCH}" \
+    --file="Dockerfile" \
+    --tag "${IMAGE}:${PRIMARY_TAG}-${ARCH}" .
 done
 
 if [ "$NOMOCK" = true ]; then
-  echodate "Pushing ${DOCKER_REPO}/kubeone:${PRIMARY_TAG}..."
-  buildah manifest push --all "${DOCKER_REPO}/kubeone:${PRIMARY_TAG}" "docker://${DOCKER_REPO}/kubeone:${PRIMARY_TAG}"
+  for ARCH in ${ARCHITECTURES}; do
+    echodate "Pushing ${IMAGE}:${PRIMARY_TAG}-${ARCH}..."
+    docker push "${IMAGE}:${PRIMARY_TAG}-${ARCH}"
+  done
+
+  docker manifest create --amend "${IMAGE}:${PRIMARY_TAG}" $(echo "${ARCHITECTURES}" | sed -e "s~[^ ]*~${IMAGE}:${PRIMARY_TAG}\-&~g")
+  for ARCH in ${ARCHITECTURES}; do docker manifest annotate --arch "${ARCH}" "${IMAGE}:${PRIMARY_TAG}" "${IMAGE}:${PRIMARY_TAG}-${ARCH}"; done
+  docker manifest push --purge "${IMAGE}:${PRIMARY_TAG}"
 
   for TAG in ${TAGS}; do
-    echodate "Pushing ${DOCKER_REPO}/kubeone:${TAG}..."
-    buildah tag "${DOCKER_REPO}/kubeone:${PRIMARY_TAG}" "${DOCKER_REPO}/kubeone:${TAG}"
-    buildah manifest push --all "${DOCKER_REPO}/kubeone:${TAG}" "docker://${DOCKER_REPO}/kubeone:${TAG}"
+    docker manifest create --amend "${IMAGE}:${TAG}" $(echo "${ARCHITECTURES}" | sed -e "s~[^ ]*~${IMAGE}:${PRIMARY_TAG}\-&~g")
+    for ARCH in ${ARCHITECTURES}; do docker manifest annotate --arch "${ARCH}" "${IMAGE}:${TAG}" "${IMAGE}:${PRIMARY_TAG}-${ARCH}"; done
+    docker manifest push --purge "${IMAGE}:${TAG}"
   done
 fi
 

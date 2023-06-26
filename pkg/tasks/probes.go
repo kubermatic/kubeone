@@ -156,11 +156,7 @@ func safeguard(s *state.State) error {
 		return err
 	}
 
-	if err := safeguardFlatcarMachineDeployments(s); err != nil {
-		return err
-	}
-
-	return nil
+	return safeguardFlatcarMachineDeployments(s)
 }
 
 // safeguardNodeTaints ensures that there are no Nodes running Kubernetes 1.25

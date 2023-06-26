@@ -24,9 +24,5 @@ import (
 
 func Convert_kubeone_KubeOneCluster_To_v1beta2_KubeOneCluster(in *kubeoneapi.KubeOneCluster, out *KubeOneCluster, scope conversion.Scope) error {
 	// AssetsConfiguration has been removed in the v1beta2 API
-	if err := autoConvert_kubeone_KubeOneCluster_To_v1beta2_KubeOneCluster(in, out, scope); err != nil {
-		return err
-	}
-
-	return nil
+	return autoConvert_kubeone_KubeOneCluster_To_v1beta2_KubeOneCluster(in, out, scope)
 }

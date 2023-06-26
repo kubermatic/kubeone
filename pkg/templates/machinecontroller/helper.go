@@ -59,11 +59,7 @@ func WaitReady(s *state.State) error {
 		return err
 	}
 
-	if err := waitForCRDs(s); err != nil {
-		return err
-	}
-
-	return nil
+	return waitForCRDs(s)
 }
 
 // waitForCRDs waits for machine-controller CRDs to be created and become established

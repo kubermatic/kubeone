@@ -35,7 +35,7 @@ func determinePauseImage(s *state.State) error {
 	})
 }
 
-func determinePauseImageExecutor(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+func determinePauseImageExecutor(s *state.State, _ *kubeoneapi.HostConfig, _ executor.Interface) error {
 	cmd, err := scripts.KubeadmPauseImageVersion(s.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return err
