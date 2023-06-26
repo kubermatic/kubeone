@@ -60,22 +60,22 @@ for ARCH in ${ARCHITECTURES}; do
     --build-arg="GOPROXY=${GOPROXY:-}" \
     --build-arg="GOCACHE=/go/src/k8c.io/kubeone/gocaches/${ARCH}" \
     --file="Dockerfile" \
-    --tag "${IMAGE}-${ARCH}:${PRIMARY_TAG}" .
+    --tag "${IMAGE}:${PRIMARY_TAG}-${ARCH}" .
 done
 
 if [ "$NOMOCK" = true ]; then
   for ARCH in ${ARCHITECTURES}; do
-    echodate "Pushing ${IMAGE}-${ARCH}:${PRIMARY_TAG}..."
-    docker push "${IMAGE}-${ARCH}:${PRIMARY_TAG}"
+    echodate "Pushing ${IMAGE}:${PRIMARY_TAG}-${ARCH}..."
+    docker push "${IMAGE}:${PRIMARY_TAG}-${ARCH}"
   done
 
-  docker manifest create --amend "${IMAGE}:${PRIMARY_TAG}" $(echo "${ARCHITECTURES}" | sed -e "s~[^ ]*~${IMAGE}\-&:${PRIMARY_TAG}~g")
-  for ARCH in ${ARCHITECTURES}; do docker manifest annotate --arch "${ARCH}" "${IMAGE}:${PRIMARY_TAG}" "${IMAGE}-${ARCH}:${PRIMARY_TAG}"; done
+  docker manifest create --amend "${IMAGE}:${PRIMARY_TAG}" $(echo "${ARCHITECTURES}" | sed -e "s~[^ ]*~${IMAGE}:${PRIMARY_TAG}\-&~g")
+  for ARCH in ${ARCHITECTURES}; do docker manifest annotate --arch "${ARCH}" "${IMAGE}:${PRIMARY_TAG}" "${IMAGE}:${PRIMARY_TAG}-${ARCH}"; done
   docker manifest push --purge "${IMAGE}:${PRIMARY_TAG}"
 
   for TAG in ${TAGS}; do
-    docker manifest create --amend "${IMAGE}:${TAG}" $(echo "${ARCHITECTURES}" | sed -e "s~[^ ]*~${IMAGE}\-&:${PRIMARY_TAG}~g")
-    for ARCH in ${ARCHITECTURES}; do docker manifest annotate --arch "${ARCH}" "${IMAGE}:${TAG}" "${IMAGE}-${ARCH}:${PRIMARY_TAG}"; done
+    docker manifest create --amend "${IMAGE}:${TAG}" $(echo "${ARCHITECTURES}" | sed -e "s~[^ ]*~${IMAGE}:${PRIMARY_TAG}\-&~g")
+    for ARCH in ${ARCHITECTURES}; do docker manifest annotate --arch "${ARCH}" "${IMAGE}:${TAG}" "${IMAGE}:${PRIMARY_TAG}-${ARCH}"; done
     docker manifest push --purge "${IMAGE}:${TAG}"
   done
 fi
