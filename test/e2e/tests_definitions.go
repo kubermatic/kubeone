@@ -1429,6 +1429,10 @@ var (
 			Name:                 "calico_containerd",
 			ManifestTemplatePath: "testdata/containerd_calico.yaml",
 		},
+		"calico_containerd_external": &scenarioInstall{
+			Name:                 "calico_containerd_external",
+			ManifestTemplatePath: "testdata/containerd_calico_external.yaml",
+		},
 		"calico_docker": &scenarioInstall{
 			Name:                 "calico_docker",
 			ManifestTemplatePath: "testdata/docker_calico.yaml",
@@ -1445,13 +1449,17 @@ var (
 			Name:                 "cilium_containerd",
 			ManifestTemplatePath: "testdata/containerd_cilium.yaml",
 		},
+		"cilium_containerd_external": &scenarioInstall{
+			Name:                 "cilium_containerd_external",
+			ManifestTemplatePath: "testdata/containerd_cilium_external.yaml",
+		},
 		"cilium_docker": &scenarioInstall{
 			Name:                 "cilium_docker",
 			ManifestTemplatePath: "testdata/docker_cilium.yaml",
 		},
-		"kube_proxy_ipvs": &scenarioInstall{
-			Name:                 "kube_proxy_ipvs",
-			ManifestTemplatePath: "testdata/kube_proxy_ipvs.yaml",
+		"kube_proxy_ipvs_external": &scenarioInstall{
+			Name:                 "kube_proxy_ipvs_external",
+			ManifestTemplatePath: "testdata/kube_proxy_ipvs_external.yaml",
 		},
 		"legacy_machine_controller_containerd": &scenarioInstall{
 			Name:                 "legacy_machine_controller_containerd",

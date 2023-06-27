@@ -344,6 +344,12 @@ func ValidateKubernetesSupport(c kubeoneapi.KubeOneCluster, fldPath *field.Path)
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("cloudProvider").Child("external"), c.CloudProvider.External, "kubernetes 1.26 and newer doesn't support in-tree cloud provider with openstack"))
 	}
 
+	// The in-tree cloud provider for AWS has been removed in
+	// Kubernetes 1.26.
+	if v.Minor() >= 27 && c.CloudProvider.AWS != nil && !c.CloudProvider.External {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("cloudProvider").Child("external"), c.CloudProvider.External, "kubernetes 1.27 and newer doesn't support in-tree cloud provider with aws"))
+	}
+
 	return allErrs
 }
 

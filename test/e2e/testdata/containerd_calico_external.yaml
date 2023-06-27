@@ -8,11 +8,14 @@ containerRuntime:
   containerd: {}
 
 clusterNetwork:
-  kubeProxy:
-    ipvs:
-      scheduler: sed
+  cni:
+    external: {}
+
+cloudProvider:
+  external: true
 
 addons:
   enable: true
   addons:
   - name: default-storage-class
+  - name: calico-vxlan
