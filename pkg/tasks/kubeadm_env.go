@@ -20,52 +20,29 @@ import (
 	"strconv"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
-	"k8c.io/kubeone/pkg/semverutil"
 	"k8c.io/kubeone/pkg/state"
-)
-
-var (
-	version124 = semverutil.MustParseConstraint("1.24.*")
-	version123 = semverutil.MustParseConstraint("1.23.*")
 )
 
 type kubeadmFlagsModifier func(flags map[string]string)
 
 func updateKubeadmFlagsEnv(s *state.State, node *kubeoneapi.HostConfig) error {
 	modifiers := []kubeadmFlagsModifier{
+		removeDeprecatedKubeletFlags(),
 		updateKubeletNodeValues(node),
-	}
-	if m := removeNetworkPluginFlagKubelet(s, node); m != nil {
-		modifiers = append(modifiers, m)
 	}
 
 	return updateKubeadmFlagsEnvFile(s, modifiers...)
 }
 
-// removeNetworkPluginFlagKubelet removes --network-plugin flag from Kubelet
-// config because it has been removed in Kubernetes 1.24.
-// This function is executed only when upgrading cluster from 1.23 to 1.24.
-// TODO: Remove this function after dropping support for Kubernetes 1.23.
-func removeNetworkPluginFlagKubelet(s *state.State, node *kubeoneapi.HostConfig) kubeadmFlagsModifier {
-	needed := false
-	if !version124.Check(s.LiveCluster.ExpectedVersion) {
-		return nil
-	}
-	for _, cp := range s.LiveCluster.ControlPlane {
-		if cp.Config.Hostname == node.Hostname && version123.Check(cp.Kubelet.Version) {
-			needed = true
-
-			break
-		}
-	}
-	if !needed {
-		return nil
-	}
-
+// removeDeprecatedKubeletFlags removes kubelet flags that are deprecated.
+func removeDeprecatedKubeletFlags() kubeadmFlagsModifier {
 	return func(flags map[string]string) {
 		// --network-plugin flag is not used with containerd and has been
 		// removed in Kubernetes 1.24
 		delete(flags, networkPluginFlag)
+		// --container-runtime flag has only one valid value (runtime) since
+		// Kubernetes 1.24 and is removed in Kubernetes 1.27
+		delete(flags, containerRuntimeFlag)
 	}
 }
 

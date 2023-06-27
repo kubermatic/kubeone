@@ -41,7 +41,7 @@ const (
 	// lowerVersionConstraint defines a semver constraint that validates Kubernetes versions against a lower bound
 	lowerVersionConstraint = ">= 1.24"
 	// upperVersionConstraint defines a semver constraint that validates Kubernetes versions against an upper bound
-	upperVersionConstraint = "<= 1.26"
+	upperVersionConstraint = "<= 1.27"
 	// gte125VersionConstraint defines a semver constraint that validates Kubernetes versions >= 1.25
 	gte125VersionConstraint = ">= 1.25"
 )

@@ -219,9 +219,9 @@ func baseResources() map[Resource]map[string]string {
 		DNSNodeCache:     {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.22.23"},
 		Flannel:          {"*": "docker.io/flannel/flannel:v0.21.3"},
 		// TODO: Switch to semver image before release.
-		MachineController:      {"*": "quay.io/kubermatic/machine-controller:8e5884837711fb0fc6b568d734f09a7b809fc28e"},
+		MachineController:      {"*": "quay.io/kubermatic/machine-controller:v1.57.0"},
 		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.6.3"},
-		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v1.2.2"},
+		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v1.3.0"},
 	}
 }
 
