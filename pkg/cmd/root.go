@@ -51,7 +51,11 @@ func Execute() {
 	}
 
 	rootCmd := newRoot()
+
 	if err := rootCmd.Execute(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
+		exitCode := fail.ExitCode(err)
+
 		debug, _ := rootCmd.PersistentFlags().GetBool(longFlagName(&globalOptions{}, "Debug"))
 		if debug {
 			var formatterErr fmt.Formatter
@@ -62,7 +66,6 @@ func Execute() {
 			}
 		}
 
-		exitCode := fail.ExitCode(err)
 		os.Exit(exitCode)
 	}
 }
