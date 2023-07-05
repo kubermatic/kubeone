@@ -17,7 +17,6 @@ limitations under the License.
 package v1beta3
 
 import (
-	"crypto/tls"
 	"fmt"
 	"path/filepath"
 	"strconv"
@@ -184,7 +183,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 					"profiling":                     "false",
 					"request-timeout":               "1m",
 					"service-node-port-range":       cluster.ClusterNetwork.NodePortRange,
-					"tls-cipher-suites":             safeTLSCiphers(),
+					"tls-cipher-suites":             strings.Join(kubernetesconfigs.SafeTLSCiphers(), ","),
 				},
 				ExtraVolumes: []kubeadmv1beta3.HostPathMount{},
 			},
@@ -379,34 +378,6 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 	}
 
 	return []runtime.Object{initConfig, joinConfig, clusterConfig, kubeletConfig, kubeproxyConfig}, nil
-}
-
-func safeTLSCiphers() string {
-	cipherSuites := []string{
-		tls.CipherSuiteName(tls.TLS_AES_128_GCM_SHA256),
-		tls.CipherSuiteName(tls.TLS_AES_256_GCM_SHA384),
-		tls.CipherSuiteName(tls.TLS_CHACHA20_POLY1305_SHA256),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_AES_128_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_AES_128_GCM_SHA256),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_AES_256_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_AES_256_GCM_SHA384),
-	}
-
-	return strings.Join(cipherSuites, ",")
 }
 
 func addControllerManagerNetworkArgs(m map[string]string, clusterNetwork kubeoneapi.ClusterNetworkConfig) {
