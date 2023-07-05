@@ -220,7 +220,7 @@ func baseResources() map[Resource]map[string]string {
 		Flannel:          {"*": "docker.io/flannel/flannel:v0.21.3"},
 		// TODO: Switch to semver image before release.
 		MachineController:      {"*": "quay.io/kubermatic/machine-controller:8e5884837711fb0fc6b568d734f09a7b809fc28e"},
-		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.6.2"},
+		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.6.3"},
 		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v1.2.2"},
 	}
 }
