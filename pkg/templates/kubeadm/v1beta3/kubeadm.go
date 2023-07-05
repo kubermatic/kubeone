@@ -225,6 +225,13 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
 		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = cluster.AssetConfiguration.Pause.ImageRepository + "/pause:" + cluster.AssetConfiguration.Pause.ImageTag
+	} else {
+		sandboxImage, serr := cluster.Versions.SandboxImage()
+		if serr != nil {
+			return nil, serr
+		}
+
+		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = sandboxImage
 	}
 
 	if s.ShouldEnableInTreeCloudProvider() {
@@ -475,6 +482,13 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
 		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = cluster.AssetConfiguration.Pause.ImageRepository + "/pause:" + cluster.AssetConfiguration.Pause.ImageTag
+	} else {
+		sandboxImage, serr := cluster.Versions.SandboxImage()
+		if serr != nil {
+			return nil, serr
+		}
+
+		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = sandboxImage
 	}
 
 	if s.ShouldEnableInTreeCloudProvider() {
@@ -542,7 +556,7 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 	return kubeadmv1beta3.NodeRegistrationOptions{
 		Name:             host.Hostname,
 		Taints:           host.Taints,
-		CRISocket:        s.Cluster.ContainerRuntime.CRISocket(),
+		CRISocket:        fmt.Sprintf("unix://%s", s.Cluster.ContainerRuntime.CRISocket()),
 		KubeletExtraArgs: kubeletCLIFlags,
 	}
 }

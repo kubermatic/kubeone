@@ -37,7 +37,7 @@ export CGO_ENABLED=0
 export GOPROXY?=https://proxy.golang.org
 export GO111MODULE=on
 export GOFLAGS?=-mod=readonly -trimpath
-export DEFAULT_STABLE=$(shell curl -SsL https://dl.k8s.io/release/stable-1.26.txt)
+export DEFAULT_STABLE=$(shell curl -SsL https://dl.k8s.io/release/stable-1.27.txt)
 
 BUILD_DATE=$(shell if hash gdate 2>/dev/null; then gdate --rfc-3339=seconds | sed 's/ /T/'; else date --rfc-3339=seconds | sed 's/ /T/'; fi)
 GITCOMMIT=$(shell git log -1 --pretty=format:"%H")

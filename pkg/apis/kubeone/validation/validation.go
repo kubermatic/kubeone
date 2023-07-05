@@ -41,7 +41,7 @@ const (
 	// lowerVersionConstraint defines a semver constraint that validates Kubernetes versions against a lower bound
 	lowerVersionConstraint = ">= 1.24"
 	// upperVersionConstraint defines a semver constraint that validates Kubernetes versions against an upper bound
-	upperVersionConstraint = "<= 1.26"
+	upperVersionConstraint = "<= 1.27"
 	// gte125VersionConstraint defines a semver constraint that validates Kubernetes versions >= 1.25
 	gte125VersionConstraint = ">= 1.25"
 )
@@ -342,6 +342,12 @@ func ValidateKubernetesSupport(c kubeoneapi.KubeOneCluster, fldPath *field.Path)
 	// Kubernetes 1.26.
 	if v.Minor() >= 26 && c.CloudProvider.Openstack != nil && !c.CloudProvider.External {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("cloudProvider").Child("external"), c.CloudProvider.External, "kubernetes 1.26 and newer doesn't support in-tree cloud provider with openstack"))
+	}
+
+	// The in-tree cloud provider for AWS has been removed in
+	// Kubernetes 1.26.
+	if v.Minor() >= 27 && c.CloudProvider.AWS != nil && !c.CloudProvider.External {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("cloudProvider").Child("external"), c.CloudProvider.External, "kubernetes 1.27 and newer doesn't support in-tree cloud provider with aws"))
 	}
 
 	return allErrs

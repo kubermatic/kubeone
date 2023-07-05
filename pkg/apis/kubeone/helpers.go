@@ -24,13 +24,21 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 
 	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/semverutil"
 )
 
 const (
 	credentialSecretName = "kube-system/kubeone-registry-credentials" //nolint:gosec
+)
+
+var (
+	v124Constraint         = semverutil.MustParseConstraint(">= 1.24.0, < 1.25.0")
+	v125Constraint         = semverutil.MustParseConstraint(">= 1.25.0, < 1.26.0")
+	v126AndNewerConstraint = semverutil.MustParseConstraint(">= 1.26.0")
 )
 
 // Leader returns the first configured host. Only call this after
@@ -233,6 +241,24 @@ func (crc ContainerRuntimeConfig) CRISocket() string {
 	return ""
 }
 
+func (v VersionConfig) SandboxImage() (string, error) {
+	kubeSemVer, err := semver.NewVersion(v.Kubernetes)
+	if err != nil {
+		return "", fail.Config(err, "parsing kubernetes semver")
+	}
+
+	switch {
+	case v124Constraint.Check(kubeSemVer):
+		return "registry.k8s.io/pause:3.7", nil
+	case v125Constraint.Check(kubeSemVer):
+		return "registry.k8s.io/pause:3.8", nil
+	case v126AndNewerConstraint.Check(kubeSemVer):
+		fallthrough
+	default:
+		return "registry.k8s.io/pause:3.9", nil
+	}
+}
+
 // CloudProviderName returns name of the cloud provider
 func (p CloudProviderSpec) CloudProviderName() string {
 	switch {
@@ -304,13 +330,10 @@ func (c KubeOneCluster) csiMigrationFeatureGates(complete bool) (map[string]bool
 
 	switch {
 	case c.CloudProvider.AWS != nil:
-		featureGates["CSIMigrationAWS"] = true
 		if complete {
 			featureGates["InTreePluginAWSUnregister"] = true
 		}
 	case c.CloudProvider.Azure != nil:
-		featureGates["CSIMigrationAzureDisk"] = true
-		featureGates["CSIMigrationAzureFile"] = true
 		if complete {
 			featureGates["InTreePluginAzureDiskUnregister"] = true
 			featureGates["InTreePluginAzureFileUnregister"] = true

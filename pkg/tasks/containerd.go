@@ -31,13 +31,13 @@ import (
 )
 
 const (
-	kubeadmCRISocket  = "kubeadm.alpha.kubernetes.io/cri-socket"
-	networkPluginFlag = "--network-plugin"
+	kubeadmCRISocket     = "kubeadm.alpha.kubernetes.io/cri-socket"
+	networkPluginFlag    = "--network-plugin"
+	containerRuntimeFlag = "--container-runtime"
 )
 
 var (
 	containerdKubeletFlags = map[string]string{
-		"--container-runtime":          "remote",
 		"--container-runtime-endpoint": "unix:///run/containerd/containerd.sock",
 	}
 )
@@ -94,6 +94,7 @@ func migrateToContainerdTask(s *state.State, node *kubeoneapi.HostConfig, _ exec
 		// --network-plugin flag is not used with containerd and has been
 		// removed in Kubernetes 1.24
 		delete(kubeletFlags, networkPluginFlag)
+		delete(kubeletFlags, containerRuntimeFlag)
 
 		for k, v := range containerdKubeletFlags {
 			kubeletFlags[k] = v

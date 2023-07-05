@@ -1089,6 +1089,39 @@ func TestValidateKubernetesSupport(t *testing.T) {
 			},
 			expectedError: false,
 		},
+		{
+			name: "AWS 1.26.0 cluster with in-tree cloud provider",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS:      &kubeoneapi.AWSSpec{},
+				External: false,
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.26.0",
+			},
+			expectedError: false,
+		},
+		{
+			name: "AWS 1.27.0 cluster with in-tree cloud provider",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS:      &kubeoneapi.AWSSpec{},
+				External: false,
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.27.0",
+			},
+			expectedError: true,
+		},
+		{
+			name: "AWS 1.28.0 cluster with in-tree cloud provider",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				AWS:      &kubeoneapi.AWSSpec{},
+				External: false,
+			},
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.28.0",
+			},
+			expectedError: true,
+		},
 	}
 	for _, tc := range tests {
 		tc := tc
