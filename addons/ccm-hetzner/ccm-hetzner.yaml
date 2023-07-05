@@ -1,10 +1,12 @@
 ---
+# Source: hcloud-cloud-controller-manager/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: cloud-controller-manager
   namespace: kube-system
 ---
+# Source: hcloud-cloud-controller-manager/templates/clusterrolebinding.yaml
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -18,6 +20,7 @@ subjects:
     name: cloud-controller-manager
     namespace: kube-system
 ---
+# Source: hcloud-cloud-controller-manager/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -36,54 +39,58 @@ spec:
       annotations:
         "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
     spec:
-      priorityClassName: system-cluster-critical
       serviceAccountName: cloud-controller-manager
       dnsPolicy: Default
       tolerations:
-        # this taint is set by all kubelets running `--cloud-provider=external`
-        # so we should tolerate it to schedule the cloud controller manager
+        # Allow HCCM itself to schedule on nodes that have not yet been initialized by HCCM.
         - key: "node.cloudprovider.kubernetes.io/uninitialized"
           value: "true"
           effect: "NoSchedule"
         - key: "CriticalAddonsOnly"
           operator: "Exists"
-        # cloud controller manages should be able to run on masters
+
+        # Allow HCCM to schedule on control plane nodes.
         - key: "node-role.kubernetes.io/master"
           effect: NoSchedule
           operator: Exists
         - key: "node-role.kubernetes.io/control-plane"
           effect: NoSchedule
           operator: Exists
+
         - key: "node.kubernetes.io/not-ready"
-          effect: "NoSchedule"
+          effect: "NoExecute"
       hostNetwork: true
       containers:
         - image: {{ .InternalImages.Get "HetznerCCM" }}
           name: hcloud-cloud-controller-manager
           command:
             - "/bin/hcloud-cloud-controller-manager"
+            - "--allow-untagged-cloud"
             - "--cloud-provider=hcloud"
             - "--leader-elect=false"
-            - "--allow-untagged-cloud"
             - "--allocate-node-cidrs=false" # "false" as we use IPAM in kube-controller-manager
             - "--configure-cloud-routes=false" # "false" because we use VXLAN overlay
-          resources:
-            requests:
-              cpu: 100m
-              memory: 50Mi
           env:
+            - name: HCLOUD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: HZ_TOKEN
+                  name: kubeone-ccm-credentials
             - name: NODE_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-            - name: HCLOUD_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: kubeone-ccm-credentials
-                  key: HZ_TOKEN
-            {{ if .Config.CloudProvider.Hetzner.NetworkID -}}
+            {{ with .Config.CloudProvider.Hetzner.NetworkID -}}
             - name: HCLOUD_LOAD_BALANCERS_USE_PRIVATE_IP
               value: "true"
             - name: HCLOUD_NETWORK
-              value: "{{ .Config.CloudProvider.Hetzner.NetworkID }}"
+              value: "{{ . }}"
             {{- end }}
+          ports:
+            - name: metrics
+              containerPort: 8233
+          resources:
+            requests:
+              cpu: 100m
+              memory: 50Mi
+      priorityClassName: system-cluster-critical
