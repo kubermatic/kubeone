@@ -12,6 +12,11 @@ To find out what admission controllers are enabled by default, you can run
 kube-apiserver --help and search for the --enable-admission-plugins flag.
 The easiest way to run kube-apiserver is using Docker such as:
 docker run --rm registry.k8s.io/kube-apiserver:v1.2x.0 kube-apiserver -h
+
+Update `pause` image version in `pkg/apis/kubeone`  if needed:
+The pause image version used by kubeadm can be found here
+(search for PauseVersion):
+https://github.com/kubernetes/kubernetes/blob/master/cmd/kubeadm/app/constants/constants.go
 -->
 
 This is a collector issue for Kubernetes 1.2x support in KubeOne. The following tasks should be taken care of:
@@ -20,6 +25,7 @@ This is a collector issue for Kubernetes 1.2x support in KubeOne. The following 
 * [ ] Update the `build` image to update Sonobuoy (and other dependencies if needed)
 * [ ] Update the latest supported Kubernetes version in [the API validation](https://github.com/kubermatic/kubeone/blob/main/pkg/apis/kubeone/validation/validation.go#L40-L41) <!-- (link to the PR) -->
 * [ ] Update [default admission controllers](https://github.com/kubermatic/kubeone/blob/main/pkg/kubeflags/data.go) if needed <!-- (link to the PR) -->
+* [ ] Update `pause` image version in `pkg/apis/kubeone`  if needed <!-- (link to the PR) -->
 * [ ] Update [the stable version marker in Makefile](https://github.com/kubermatic/kubeone/blob/5273f9a372736569c6b09b38f2959019d29e4d6a/Makefile#L24) <!-- (link to the PR) -->
 * [ ] Update [machine-controller and operating-system-manager](https://github.com/kubermatic/kubeone/blob/a5c3a14725bf135cb2682c4ec96d5872b165b98f/pkg/templates/images/images.go#L222-L224) <!-- (link to the PR) -->
 * [ ] Add E2E tests <!-- (link to the PR) -->
