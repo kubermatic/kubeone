@@ -80,8 +80,10 @@ data "aws_ami" "ami" {
   }
 }
 
+resource "aws_default_vpc" "default" {}
+
 data "aws_vpc" "selected" {
-  id = var.vpc_id
+  id = var.vpc_id == "default" ? aws_default_vpc.default.id : var.vpc_id
 }
 
 data "aws_internet_gateway" "default" {
