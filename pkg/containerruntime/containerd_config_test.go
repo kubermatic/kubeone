@@ -85,6 +85,9 @@ type clusterOpts func(*kubeoneapi.KubeOneCluster)
 
 func genCluster(opts ...clusterOpts) *kubeoneapi.KubeOneCluster {
 	cls := &kubeoneapi.KubeOneCluster{
+		Versions: kubeoneapi.VersionConfig{
+			Kubernetes: "1.27.0",
+		},
 		RegistryConfiguration: nil,
 		ContainerRuntime: kubeoneapi.ContainerRuntimeConfig{
 			Containerd: &kubeoneapi.ContainerRuntimeContainerd{},
