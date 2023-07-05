@@ -20,7 +20,7 @@ metadata:
   name: ntnx-secret
   namespace: kube-system
 data:
-  # base64 encoded prism-ip:prism-port:admin:password. 
+  # base64 encoded prism-ip:prism-port:admin:password.
   # E.g.: echo -n "10.83.0.91:9440:admin:mypassword" | base64
   key: {{ printf "%s:%s:%s:%s" .Credentials.NUTANIX_PE_ENDPOINT .Credentials.NUTANIX_PORT .Credentials.NUTANIX_PE_USERNAME .Credentials.NUTANIX_PE_PASSWORD | b64enc }}
 ---
@@ -129,7 +129,7 @@ roleRef:
 ---
 # Source: nutanix-csi-storage/templates/service-prometheus-csi.yaml
 # Copyright 2021 Nutanix Inc
-# 
+#
 # example usage: kubectl create -f <this_file>
 #
 
@@ -171,7 +171,7 @@ spec:
   updateStrategy:
     type: "RollingUpdate"
     rollingUpdate:
-      maxUnavailable: 1
+      maxUnavailable: 10%
   template:
     metadata:
       labels:
@@ -199,12 +199,9 @@ spec:
                 fieldRef:
                   fieldPath: spec.nodeName
           resources:
-            limits:
-              cpu: 100m
-              memory: 200Mi
             requests:
               cpu: 100m
-              memory: 200Mi
+              memory: 20Mi
           volumeMounts:
             - name: plugin-dir
               mountPath: /csi/
@@ -235,9 +232,6 @@ spec:
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
           resources:
-            limits:
-              cpu: 100m
-              memory: 200Mi
             requests:
               cpu: 100m
               memory: 200Mi
@@ -273,6 +267,10 @@ spec:
             periodSeconds: 2
             failureThreshold: 3
         - name: liveness-probe
+          resources:
+            requests:
+              cpu: 5m
+              memory: 20Mi
           volumeMounts:
             - mountPath: /csi
               name: plugin-dir
@@ -374,9 +372,6 @@ spec:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
           resources:
-            limits:
-              cpu: 100m
-              memory: 200Mi
             requests:
               cpu: 100m
               memory: 200Mi
@@ -397,6 +392,10 @@ spec:
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          resources:
+            requests:
+              cpu: 5m
+              memory: 30Mi
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
@@ -411,6 +410,10 @@ spec:
           env:
           - name: ADDRESS
             value: /csi/csi.sock
+          resources:
+            requests:
+              cpu: 5m
+              memory: 30Mi
           volumeMounts:
           - name: socket-dir
             mountPath: /csi
@@ -435,9 +438,6 @@ spec:
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
           resources:
-            limits:
-              cpu: 100m
-              memory: 200Mi
             requests:
               cpu: 100m
               memory: 200Mi
@@ -463,6 +463,10 @@ spec:
             periodSeconds: 2
             failureThreshold: 3
         - name: liveness-probe
+          resources:
+            requests:
+              cpu: 5m
+              memory: 20Mi
           volumeMounts:
             - mountPath: /csi
               name: socket-dir
