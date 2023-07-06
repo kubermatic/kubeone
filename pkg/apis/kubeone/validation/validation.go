@@ -220,9 +220,6 @@ func ValidateCloudProviderSpec(providerSpec kubeoneapi.CloudProviderSpec, networ
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("nutanix"), "only one provider can be used at the same time"))
 		}
 		providerFound = true
-		if providerSpec.External {
-			allErrs = append(allErrs, field.Forbidden(fldPath.Child("external"), "external is not supported on nutanix clusters"))
-		}
 	}
 	if providerSpec.Openstack != nil {
 		if providerFound {
