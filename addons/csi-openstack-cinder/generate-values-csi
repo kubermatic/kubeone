@@ -1,0 +1,12 @@
+logVerbosityLevel: 1
+
+secret:
+  enabled: true
+  create: false
+  filename: "cloud-config"
+  name: "cloud-config"
+
+priorityClassName: "system-cluster-critical"
+
+storageClass:
+  enabled: false

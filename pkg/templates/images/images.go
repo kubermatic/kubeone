@@ -308,29 +308,39 @@ func optionalResources() map[Resource]map[string]string {
 
 		// OpenStack CSI
 		OpenstackCSI: {
-			"1.24.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.24.5",
-			"1.25.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.25.3",
-			">= 1.26.0": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.26.0",
+			"1.25.x": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.25.6",
+			"1.26.x": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.26.3",
+			"1.27.x": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.27.1",
 		},
 		OpenstackCSINodeDriverRegistar: {
-			"< 1.26.0":  "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.5.1",
-			">= 1.26.0": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.6.2",
+			"1.25.x": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.5.1",
+			"1.26.x": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.6.2",
+			"1.27.x": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.6.2",
 		},
 		OpenstackCSILivenessProbe: {
-			"< 1.26.0":  "registry.k8s.io/sig-storage/livenessprobe:v2.7.0",
-			">= 1.26.0": "registry.k8s.io/sig-storage/livenessprobe:v2.8.0",
+			"1.25.x": "registry.k8s.io/sig-storage/livenessprobe:v2.7.0",
+			"1.26.x": "registry.k8s.io/sig-storage/livenessprobe:v2.8.0",
+			"1.27.x": "registry.k8s.io/sig-storage/livenessprobe:v2.9.0",
 		},
 		OpenstackCSIAttacher: {
-			"< 1.26.0":  "registry.k8s.io/sig-storage/csi-attacher:v3.4.0",
-			">= 1.26.0": "registry.k8s.io/sig-storage/csi-attacher:v4.0.0",
+			"1.25.x": "registry.k8s.io/sig-storage/csi-attacher:v3.4.0",
+			"1.26.x": "registry.k8s.io/sig-storage/csi-attacher:v4.0.0",
+			"1.27.x": "registry.k8s.io/sig-storage/csi-attacher:v4.2.0",
 		},
 		OpenstackCSIProvisioner: {
-			"< 1.26.0":  "registry.k8s.io/sig-storage/csi-provisioner:v3.1.0",
-			">= 1.26.0": "registry.k8s.io/sig-storage/csi-provisioner:v3.4.0",
+			"1.25.x": "registry.k8s.io/sig-storage/csi-provisioner:v3.1.0",
+			"1.26.x": "registry.k8s.io/sig-storage/csi-provisioner:v3.4.0",
+			"1.27.x": "registry.k8s.io/sig-storage/csi-provisioner:v3.4.1",
 		},
 		OpenstackCSIResizer: {
-			"< 1.26.0":  "registry.k8s.io/sig-storage/csi-resizer:v1.4.0",
-			">= 1.26.0": "registry.k8s.io/sig-storage/csi-resizer:v1.6.0",
+			"1.25.x": "registry.k8s.io/sig-storage/csi-resizer:v1.4.0",
+			"1.26.x": "registry.k8s.io/sig-storage/csi-resizer:v1.6.0",
+			"1.27.x": "registry.k8s.io/sig-storage/csi-resizer:v1.7.0",
+		},
+		OpenstackCSISnapshotter: {
+			"1.25.x": "registry.k8s.io/sig-storage/csi-snapshotter:v5.0.1",
+			"1.26.x": "registry.k8s.io/sig-storage/csi-snapshotter:v6.1.0",
+			"1.27.x": "registry.k8s.io/sig-storage/csi-snapshotter:v6.2.1",
 		},
 		OpenstackCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v6.1.0"},
 		OpenstackCSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v6.1.0"},
