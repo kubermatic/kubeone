@@ -370,6 +370,7 @@ spec:
       priorityClassName: system-cluster-critical
 ---
 # Source: openstack-cinder-csi/templates/controllerplugin-deployment.yaml
+{{ $kubernetesVersion := semver .Config.Versions.Kubernetes }}
 kind: Deployment
 apiVersion: apps/v1
 metadata:
@@ -412,7 +413,9 @@ spec:
             - "--csi-address=$(ADDRESS)"
             - "--timeout=3m"
             - "--leader-election=true"
+            {{ if ge $kubernetesVersion.Minor 26 }}
             - "--default-fstype=ext4"
+            {{ end }}
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
@@ -502,7 +505,7 @@ spec:
             - name: CLOUD_CONFIG
               value: /etc/kubernetes/cloud-config
             - name: CLUSTER_NAME
-              value: "{{ .Config.Name }}"
+              value: {{ default "kubernetes" .CCMClusterName }}
 {{ if .Config.CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
@@ -551,7 +554,10 @@ spec:
       nodeSelector:
         {}
       tolerations:
-        []
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
       priorityClassName: system-cluster-critical
 ---
 # Source: openstack-cinder-csi/templates/cinder-csi-driver.yaml
