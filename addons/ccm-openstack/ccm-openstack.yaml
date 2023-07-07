@@ -5,14 +5,12 @@ kind: ServiceAccount
 metadata:
   name: openstack-cloud-controller-manager
   namespace: kube-system
-  annotations:
 ---
 # Source: openstack-cloud-controller-manager/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: system:openstack-cloud-controller-manager
-  annotations:
 rules:
 - apiGroups:
   - coordination.k8s.io
@@ -108,7 +106,6 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: system:openstack-cloud-controller-manager
-  annotations:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -130,7 +127,6 @@ metadata:
     app.kubernetes.io/instance: openstack-ccm
     app.kubernetes.io/version: "v1.27.1"
     app.kubernetes.io/managed-by: Helm
-  annotations:
 spec:
   selector:
     matchLabels:
@@ -153,6 +149,13 @@ spec:
     spec:
       securityContext:
         runAsUser: 1001
+      tolerations:
+        - effect: NoSchedule
+          key: node.cloudprovider.kubernetes.io/uninitialized
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/controlplane
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
       serviceAccountName: openstack-cloud-controller-manager
       containers:
         - name: openstack-cloud-controller-manager
@@ -182,6 +185,9 @@ spec:
             - mountPath: /usr/share/ca-certificates
               name: usr-ca-certs
               readOnly: true
+{{ if .Config.CABundle }}
+{{ caBundleVolumeMount | indent 12 }}
+{{ end }}
           env:
             - name: CLOUD_CONFIG
               value: /etc/config/cloud-conf

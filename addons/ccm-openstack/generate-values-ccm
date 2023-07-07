@@ -38,3 +38,11 @@ extraVolumeMounts:
   - name: usr-ca-certs
     mountPath: /usr/share/ca-certificates
     readOnly: true
+
+tolerations:
+  - key: node.cloudprovider.kubernetes.io/uninitialized
+    effect: NoSchedule
+  - key: node-role.kubernetes.io/controlplane
+    effect: NoSchedule
+  - key: "node-role.kubernetes.io/master"
+    effect: NoSchedule
