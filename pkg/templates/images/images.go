@@ -350,7 +350,6 @@ func optionalResources() map[Resource]map[string]string {
 			"1.26.x":    "registry.k8s.io/sig-storage/csi-snapshotter:v6.1.0",
 			">= 1.27.0": "registry.k8s.io/sig-storage/csi-snapshotter:v6.2.1",
 		},
-		OpenstackCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v6.1.0"},
 		OpenstackCSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v6.1.0"},
 		OpenstackCSISnapshotWebhook:    {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v6.1.0"},
 
