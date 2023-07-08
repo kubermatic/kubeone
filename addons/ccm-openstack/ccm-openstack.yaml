@@ -153,7 +153,7 @@ spec:
         - effect: NoSchedule
           key: node.cloudprovider.kubernetes.io/uninitialized
         - effect: NoSchedule
-          key: node-role.kubernetes.io/controlplane
+          key: node-role.kubernetes.io/control-plane
         - effect: NoSchedule
           key: node-role.kubernetes.io/master
       serviceAccountName: openstack-cloud-controller-manager
