@@ -228,10 +228,21 @@ func baseResources() map[Resource]map[string]string {
 func optionalResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
 		AwsCCM: {
-			"1.24.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.24.3",
-			"1.25.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.25.1",
-			">= 1.26.0": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.26.0",
+			"1.24.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.24.4",
+			"1.25.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.25.3",
+			"1.26.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.26.1",
+			">= 1.27.0": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.27.1",
 		},
+
+		// AWS EBS CSI driver
+		AwsEbsCSI:                    {"*": "public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.20.0"},
+		AwsEbsCSIAttacher:            {"*": "public.ecr.aws/eks-distro/kubernetes-csi/external-attacher:v4.3.0-eks-1-27-3"},
+		AwsEbsCSILivenessProbe:       {"*": "public.ecr.aws/eks-distro/kubernetes-csi/livenessprobe:v2.10.0-eks-1-27-3"},
+		AwsEbsCSINodeDriverRegistrar: {"*": "public.ecr.aws/eks-distro/kubernetes-csi/node-driver-registrar:v2.8.0-eks-1-27-3"},
+		AwsEbsCSIProvisioner:         {"*": "public.ecr.aws/eks-distro/kubernetes-csi/external-provisioner:v3.5.0-eks-1-27-3"},
+		AwsEbsCSIResizer:             {"*": "public.ecr.aws/eks-distro/kubernetes-csi/external-resizer:v1.8.0-eks-1-27-3"},
+		AwsEbsCSISnapshotter:         {"*": "public.ecr.aws/eks-distro/kubernetes-csi/external-snapshotter/csi-snapshotter:v6.2.1-eks-1-27-3"},
+		AwsEbsCSISnapshotController:  {"*": "registry.k8s.io/sig-storage/snapshot-controller:v6.2.1"},
 
 		// Azure CCM
 		AzureCCM: {
@@ -244,16 +255,6 @@ func optionalResources() map[Resource]map[string]string {
 			"1.25.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.25.5",
 			">= 1.26.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.26.0",
 		},
-
-		// AWS EBS CSI driver
-		AwsEbsCSI:                    {"*": "public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.14.0"},
-		AwsEbsCSIAttacher:            {"*": "registry.k8s.io/sig-storage/csi-attacher:v3.4.0"},
-		AwsEbsCSILivenessProbe:       {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.6.0"},
-		AwsEbsCSINodeDriverRegistrar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.5.1"},
-		AwsEbsCSIProvisioner:         {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.1.0"},
-		AwsEbsCSIResizer:             {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.4.0"},
-		AwsEbsCSISnapshotter:         {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v6.0.1"},
-		AwsEbsCSISnapshotController:  {"*": "registry.k8s.io/sig-storage/snapshot-controller:v6.0.1"},
 
 		// AzureFile CSI driver
 		AzureFileCSI:                      {"*": "mcr.microsoft.com/oss/kubernetes-csi/azurefile-csi:v1.24.0"},
