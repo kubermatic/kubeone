@@ -344,24 +344,9 @@ func optionalResources() map[Resource]map[string]string {
 			"1.26.x":    "registry.k8s.io/sig-storage/csi-resizer:v1.6.0",
 			">= 1.27.0": "registry.k8s.io/sig-storage/csi-resizer:v1.7.0",
 		},
-		OpenstackCSISnapshotter: {
-			"1.24.x":    "registry.k8s.io/sig-storage/csi-snapshotter:v5.0.1",
-			"1.25.x":    "registry.k8s.io/sig-storage/csi-snapshotter:v5.0.1",
-			"1.26.x":    "registry.k8s.io/sig-storage/csi-snapshotter:v6.1.0",
-			">= 1.27.0": "registry.k8s.io/sig-storage/csi-snapshotter:v6.2.1",
-		},
-		OpenstackCSISnapshotController: {
-			"1.24.x":    "registry.k8s.io/sig-storage/snapshot-controller:v5.0.1",
-			"1.25.x":    "registry.k8s.io/sig-storage/snapshot-controller:v5.0.1",
-			"1.26.x":    "registry.k8s.io/sig-storage/snapshot-controller:v6.1.0",
-			">= 1.27.0": "registry.k8s.io/sig-storage/snapshot-controller:v6.2.1",
-		},
-		OpenstackCSISnapshotWebhook: {
-			"1.24.x":    "registry.k8s.io/sig-storage/snapshot-validation-webhook:v5.0.1",
-			"1.25.x":    "registry.k8s.io/sig-storage/snapshot-validation-webhook:v5.0.1",
-			"1.26.x":    "registry.k8s.io/sig-storage/snapshot-validation-webhook:v6.1.0",
-			">= 1.27.0": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v6.2.1",
-		},
+		OpenstackCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v6.2.2"},
+		OpenstackCSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v6.2.2"},
+		OpenstackCSISnapshotWebhook:    {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v6.2.2"},
 
 		// Equinix Metal CCM
 		EquinixMetalCCM: {"*": "ghcr.io/equinix/cloud-provider-equinix-metal:v3.5.0"},
