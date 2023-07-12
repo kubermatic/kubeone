@@ -190,7 +190,7 @@ spec:
             - --cloud-config=/etc/cloud/cloud-config
           env:
             - name: ENABLE_ALPHA_DUAL_STACK
-              value: "{{ .Config.ClusterNetwork.IPFamily.IsDualStack }}"
+              value: "{{ .Config.ClusterNetwork.IPFamily.IsDualstack }}"
 {{ if .Config.CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
