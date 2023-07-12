@@ -188,8 +188,10 @@ spec:
           args:
             - --cloud-provider=vsphere
             - --cloud-config=/etc/cloud/cloud-config
-{{ if .Config.CABundle }}
           env:
+            - name: ENABLE_ALPHA_DUAL_STACK
+              value: "{{ .Config.ClusterNetwork.IPFamily.IsDualstack }}"
+{{ if .Config.CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
           volumeMounts:

@@ -144,6 +144,7 @@ func KubeadmDebian(cluster *kubeoneapi.KubeOneCluster, force bool) (string, erro
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
 		"CILIUM":                 ciliumCNI(cluster),
+		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
@@ -175,6 +176,7 @@ func UpgradeKubeadmAndCNIDebian(cluster *kubeoneapi.KubeOneCluster) (string, err
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
 		"CILIUM":                 ciliumCNI(cluster),
+		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
@@ -201,6 +203,7 @@ func UpgradeKubeletAndKubectlDebian(cluster *kubeoneapi.KubeOneCluster) (string,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
 		"CILIUM":                 ciliumCNI(cluster),
+		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
