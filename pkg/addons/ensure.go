@@ -392,6 +392,9 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIOpenStackCinder,
+				supportFn: func() error {
+					return migrateOpenStackCSIDriver(s)
+				},
 			},
 		)
 	case s.Cluster.CloudProvider.VMwareCloudDirector != nil:
@@ -447,6 +450,9 @@ func ensureCCMAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCCMOpenStack,
+				supportFn: func() error {
+					return migrateOpenStackCCM(s)
+				},
 			},
 		)
 
