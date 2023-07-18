@@ -1,57 +1,22 @@
 ---
+# Source: vsphere-cpi/templates/service-account.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: cloud-controller-manager
   labels:
+    app: vsphere-cpi
     vsphere-cpi-infra: service-account
     component: cloud-controller-manager
   namespace: kube-system
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: servicecatalog.k8s.io:apiserver-authentication-reader
-  labels:
-    vsphere-cpi-infra: role-binding
-    component: cloud-controller-manager
-  namespace: kube-system
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: extension-apiserver-authentication-reader
-subjects:
-  - apiGroup: ""
-    kind: ServiceAccount
-    name: cloud-controller-manager
-    namespace: kube-system
-  - apiGroup: ""
-    kind: User
-    name: cloud-controller-manager
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: system:cloud-controller-manager
-  labels:
-    vsphere-cpi-infra: cluster-role-binding
-    component: cloud-controller-manager
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: system:cloud-controller-manager
-subjects:
-  - kind: ServiceAccount
-    name: cloud-controller-manager
-    namespace: kube-system
-  - kind: User
-    name: cloud-controller-manager
----
+# Source: vsphere-cpi/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: system:cloud-controller-manager
+  name: cloud-controller-manager
   labels:
+    app: vsphere-cpi
     vsphere-cpi-infra: role
     component: cloud-controller-manager
 rules:
@@ -138,73 +103,80 @@ rules:
       - watch
       - update
 ---
+# Source: vsphere-cpi/templates/daemonset.yaml
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: vsphere-cloud-controller-manager
+  name: vsphere-cpi
   labels:
-    k8s-app: vsphere-cloud-controller-manager
+    app: vsphere-cpi
+    vsphere-cpi-infra: daemonset
     component: cloud-controller-manager
     tier: control-plane
   namespace: kube-system
+  annotations:
 spec:
   selector:
     matchLabels:
-      k8s-app: vsphere-cloud-controller-manager
+      app: vsphere-cpi
   updateStrategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        k8s-app: vsphere-cloud-controller-manager
+        app: vsphere-cpi
         component: cloud-controller-manager
         tier: control-plane
+        release: vsphere-cpi
+        vsphere-cpi-infra: daemonset
       annotations:
         "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
         "kubeone.k8c.io/cloudconfig-hash": "{{ .Config.CloudProvider.CloudConfig | sha256sum }}"
     spec:
-      nodeSelector:
-        node-role.kubernetes.io/control-plane: ""
       tolerations:
-        - key: node.cloudprovider.kubernetes.io/uninitialized
-          value: "true"
-          effect: NoSchedule
-        - key: node-role.kubernetes.io/master
-          effect: NoSchedule
-          operator: Exists
-        - key: node-role.kubernetes.io/control-plane
-          effect: NoSchedule
-          operator: Exists
-        - key: node.kubernetes.io/not-ready
-          effect: NoSchedule
-          operator: Exists
+      - key: node.cloudprovider.kubernetes.io/uninitialized
+        value: "true"
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+        operator: Exists
+      - key: node-role.kubernetes.io/control-plane
+        effect: NoSchedule
+        operator: Exists
+      - key: node.kubernetes.io/not-ready
+        effect: NoSchedule
+        operator: Exists
+      - key: CriticalAddonsOnly
+        effect: NoExecute
+        operator: Exists
       securityContext:
+        fsGroup: 1001
         runAsUser: 1001
       serviceAccountName: cloud-controller-manager
+      hostNetwork: true
+      dnsPolicy: ClusterFirst
       priorityClassName: system-node-critical
       containers:
-        - name: vsphere-cloud-controller-manager
-          image: {{ .InternalImages.Get "VsphereCCM" }}
-          args:
-            - --cloud-provider=vsphere
-            - --cloud-config=/etc/cloud/cloud-config
+      - name: vsphere-cpi
+        image: {{ .InternalImages.Get "VsphereCCM" }}
+        imagePullPolicy: IfNotPresent
+        args:
+          - --cloud-provider=vsphere
+          - --v=2
+          - --cloud-config=/etc/cloud/cloud-config
           env:
             - name: ENABLE_ALPHA_DUAL_STACK
               value: "{{ .Config.ClusterNetwork.IPFamily.IsDualstack }}"
 {{ if .Config.CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
-          volumeMounts:
-            - mountPath: /etc/cloud
-              name: vsphere-config-volume
-              readOnly: true
+        volumeMounts:
+          - mountPath: /etc/cloud
+            name: vsphere-config-volume
+            readOnly: true
 {{ if .Config.CABundle }}
-{{ caBundleVolumeMount | indent 12 }}
+{{ caBundleVolumeMount | indent 10 }}
 {{ end }}
-          resources:
-            requests:
-              cpu: 200m
-      hostNetwork: true
       volumes:
         - name: vsphere-config-volume
           secret:
@@ -212,3 +184,58 @@ spec:
 {{ if .Config.CABundle }}
 {{ caBundleVolume | indent 8 }}
 {{ end }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: node-role.kubernetes.io/control-plane
+                operator: Exists
+            - matchExpressions:
+              - key: node-role.kubernetes.io/master
+                operator: Exists
+---
+# Source: vsphere-cpi/templates/role-binding.yaml
+apiVersion: v1
+kind: List
+metadata: {}
+items:
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: servicecatalog.k8s.io:apiserver-authentication-reader
+    labels:
+      app: vsphere-cpi
+      vsphere-cpi-infra: role-binding
+      component: cloud-controller-manager
+    namespace: kube-system
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: extension-apiserver-authentication-reader
+  subjects:
+  - apiGroup: ""
+    kind: ServiceAccount
+    name: cloud-controller-manager
+    namespace: kube-system
+  - apiGroup: ""
+    kind: User
+    name: cloud-controller-manager
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRoleBinding
+  metadata:
+    name: cloud-controller-manager
+    labels:
+      app: vsphere-cpi
+      vsphere-cpi-infra: cluster-role-binding
+      component: cloud-controller-manager
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: cloud-controller-manager
+  subjects:
+  - kind: ServiceAccount
+    name: cloud-controller-manager
+    namespace: kube-system
+  - kind: User
+    name: cloud-controller-manager

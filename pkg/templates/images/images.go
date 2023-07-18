@@ -354,8 +354,11 @@ func optionalResources() map[Resource]map[string]string {
 
 		// vSphere CCM
 		VsphereCCM: {
-			"1.24.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.24.2",
-			">= 1.25.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.25.0",
+			"1.24.x": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.24.2",
+			"1.25.x": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.25.0",
+			"1.26.x": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.26.0",
+			// at the moment of writing this the 1.27 release of vSphere CPI was no available
+			">= 1.27.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.26.0",
 		},
 
 		// VMware Cloud Director CSI
