@@ -3,21 +3,21 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: cloud-controller-manager
+  name: hcloud-cloud-controller-manager
   namespace: kube-system
 ---
 # Source: hcloud-cloud-controller-manager/templates/clusterrolebinding.yaml
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: system:cloud-controller-manager
+  name: "system:hcloud-cloud-controller-manager"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: cluster-admin
 subjects:
   - kind: ServiceAccount
-    name: cloud-controller-manager
+    name: hcloud-cloud-controller-manager
     namespace: kube-system
 ---
 # Source: hcloud-cloud-controller-manager/templates/deployment.yaml
@@ -31,15 +31,17 @@ spec:
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      app: hcloud-cloud-controller-manager
+      app.kubernetes.io/instance: 'hccm'
+      app.kubernetes.io/name: 'hcloud-cloud-controller-manager'
   template:
     metadata:
       labels:
-        app: hcloud-cloud-controller-manager
+        app.kubernetes.io/instance: 'hccm'
+        app.kubernetes.io/name: 'hcloud-cloud-controller-manager'
       annotations:
         "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
     spec:
-      serviceAccountName: cloud-controller-manager
+      serviceAccountName: hcloud-cloud-controller-manager
       dnsPolicy: Default
       tolerations:
         # Allow HCCM itself to schedule on nodes that have not yet been initialized by HCCM.
@@ -59,17 +61,16 @@ spec:
 
         - key: "node.kubernetes.io/not-ready"
           effect: "NoExecute"
-      hostNetwork: true
       containers:
-        - image: {{ .InternalImages.Get "HetznerCCM" }}
-          name: hcloud-cloud-controller-manager
+        - name: hcloud-cloud-controller-manager
           command:
             - "/bin/hcloud-cloud-controller-manager"
+            - "--allocate-node-cidrs=false"
             - "--allow-untagged-cloud"
             - "--cloud-provider=hcloud"
-            - "--leader-elect=false"
-            - "--allocate-node-cidrs=false" # "false" as we use IPAM in kube-controller-manager
-            - "--configure-cloud-routes=false" # "false" because we use VXLAN overlay
+            - "--configure-cloud-routes=false"
+            - "--leader-elect=true"
+            - "--route-reconciliation-period=30s"
           env:
             - name: HCLOUD_TOKEN
               valueFrom:
@@ -86,6 +87,7 @@ spec:
             - name: HCLOUD_NETWORK
               value: "{{ . }}"
             {{- end }}
+          image: {{ .InternalImages.Get "HetznerCCM" }}
           ports:
             - name: metrics
               containerPort: 8233
