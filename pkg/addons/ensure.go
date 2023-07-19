@@ -444,6 +444,9 @@ func ensureCCMAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCCMHetzner,
+				supportFn: func() error {
+					return migrateHetznerCCM(s)
+				},
 			},
 		)
 	case s.Cluster.CloudProvider.Openstack != nil:

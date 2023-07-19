@@ -168,6 +168,18 @@ func migrateHetznerCSIDriver(s *state.State) error {
 	return clientutil.DeleteIfExists(s.Context, s.DynamicClient, hetznerDiskCSIDriver())
 }
 
+func migrateHetznerCCM(s *state.State) error {
+	key := client.ObjectKey{
+		Name:      "hcloud-cloud-controller-manager",
+		Namespace: metav1.NamespaceSystem,
+	}
+
+	return migrateDeploymentIfPodSelectorDifferent(s, key, map[string]string{
+		"app.kubernetes.io/instance": "hccm",
+		"app.kubernetes.io/name":     "hcloud-cloud-controller-manager",
+	})
+}
+
 func hetznerDiskCSIDriver() *storagev1.CSIDriver {
 	return &storagev1.CSIDriver{
 		ObjectMeta: metav1.ObjectMeta{
