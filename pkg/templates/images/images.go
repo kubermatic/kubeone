@@ -354,9 +354,9 @@ func optionalResources() map[Resource]map[string]string {
 
 		// vSphere CCM
 		VsphereCCM: {
-			"1.24.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.24.2",
-			"1.25.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.25.0",
-			"1.26.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.26.0",
+			"1.24.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.24.4",
+			"1.25.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.25.3",
+			"1.26.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.26.2",
 			">= 1.27.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.27.0",
 		},
 
