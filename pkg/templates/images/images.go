@@ -367,16 +367,16 @@ func optionalResources() map[Resource]map[string]string {
 		VMwareCloudDirectorCSINodeDriverRegistrar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.2.0"},
 
 		// vSphere CSI
-		VsphereCSIDriver:                    {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v2.7.0"},
-		VsphereCSISyncer:                    {"*": "gcr.io/cloud-provider-vsphere/csi/release/syncer:v2.7.0"},
-		VsphereCSIAttacher:                  {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.0.0"},
-		VsphereCSILivenessProbe:             {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.7.0"},
-		VsphereCSINodeDriverRegistar:        {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.5.1"},
-		VsphereCSIProvisioner:               {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.2.1"},
-		VsphereCSIResizer:                   {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.6.0"},
-		VsphereCSISnapshotter:               {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v6.0.1"},
-		VsphereCSISnapshotController:        {"*": "registry.k8s.io/sig-storage/snapshot-controller:v6.0.1"},
-		VsphereCSISnapshotValidationWebhook: {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v6.0.1"},
+		VsphereCSIDriver:                    {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v3.0.2"},
+		VsphereCSISyncer:                    {"*": "gcr.io/cloud-provider-vsphere/csi/release/syncer:v3.0.2"},
+		VsphereCSIAttacher:                  {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.2.0"},
+		VsphereCSILivenessProbe:             {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.9.0"},
+		VsphereCSINodeDriverRegistar:        {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.7.0"},
+		VsphereCSIProvisioner:               {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.4.0"},
+		VsphereCSIResizer:                   {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.7.0"},
+		VsphereCSISnapshotter:               {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v6.2.1"},
+		VsphereCSISnapshotController:        {"*": "registry.k8s.io/sig-storage/snapshot-controller:v6.2.1"},
+		VsphereCSISnapshotValidationWebhook: {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v6.2.1"},
 
 		// Nutanix CSI
 		NutanixCSI:                          {"*": "quay.io/karbon/ntnx-csi:v2.6.3"},
