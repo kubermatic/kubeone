@@ -166,13 +166,13 @@ roleRef:
 ---
 apiVersion: v1
 data:
-  "csi-migration": "true"
+  "csi-migration": "{{ .CSIMigration }}"
   "csi-auth-check": "true"
   "online-volume-extend": "true"
   "trigger-csi-fullsync": "false"
   "async-query-volume": "true"
   "block-volume-snapshot": "true"
-  "csi-windows-support": "true"
+  "csi-windows-support": "false"
   "use-csinode-id": "true"
   "list-volumes": "true"
   "pv-to-backingdiskobjectid-mapping": "false"
