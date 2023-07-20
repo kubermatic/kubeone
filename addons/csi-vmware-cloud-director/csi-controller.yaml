@@ -87,6 +87,7 @@ roleRef:
   kind: ClusterRole
   name: csi-provisioner-role
   apiGroup: rbac.authorization.k8s.io
+
 ---
 kind: Deployment
 apiVersion: apps/v1
@@ -161,12 +162,27 @@ spec:
               mountPath: /dev
               mountPropagation: HostToContainer
             - name: pv-dir
-              mountPath: /var/lib/kubelet/plugins/kubernetes.io/csi/pv
+              mountPath: /var/lib/kubelet/plugins/kubernetes.io/csi
               mountPropagation: "Bidirectional"
             - name: vcloud-csi-config-volume
               mountPath: /etc/kubernetes/vcloud
             - name: vcloud-basic-auth-volume
               mountPath: /etc/kubernetes/vcloud/basic-auth
+      tolerations:
+        - key: "CriticalAddonsOnly"
+          operator: "Exists"
+        - key: node-role.kubernetes.io/control-plane
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              preference:
+                matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: "Exists"
       volumes:
         - name: socket-dir
           emptyDir: {}
@@ -176,7 +192,7 @@ spec:
             type: Directory
         - name: pv-dir
           hostPath:
-            path: /var/lib/kubelet/plugins/kubernetes.io/csi/pv
+            path: /var/lib/kubelet/plugins/kubernetes.io/csi
             type: DirectoryOrCreate
         - name: vcloud-csi-config-volume
           configMap:
@@ -184,4 +200,3 @@ spec:
         - name: vcloud-basic-auth-volume
           secret:
             secretName: vcloud-basic-auth
----
