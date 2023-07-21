@@ -1,10 +1,22 @@
-{{ $version := semver .Config.Versions.Kubernetes }}
+---
+# Source: cloud-provider-azure/templates/cloud-provider-azure.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: cloud-controller-manager
   namespace: kube-system
 ---
+# Source: cloud-provider-azure/templates/cloud-provider-azure.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    k8s-app: cloud-node-manager
+    kubernetes.io/cluster-service: "true"
+  name: cloud-node-manager
+  namespace: kube-system
+---
+# Source: cloud-provider-azure/templates/cloud-provider-azure.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -98,6 +110,23 @@ rules:
       - create
       - update
 ---
+# Source: cloud-provider-azure/templates/cloud-provider-azure.yaml
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: cloud-node-manager
+  labels:
+    k8s-app: cloud-node-manager
+    kubernetes.io/cluster-service: "true"
+rules:
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["watch", "list", "get", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["nodes/status"]
+    verbs: ["patch"]
+---
+# Source: cloud-provider-azure/templates/cloud-provider-azure.yaml
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -113,6 +142,24 @@ subjects:
   - kind: User
     name: cloud-controller-manager
 ---
+# Source: cloud-provider-azure/templates/cloud-provider-azure.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cloud-node-manager
+  labels:
+    k8s-app: cloud-node-manager
+    kubernetes.io/cluster-service: "true"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cloud-node-manager
+subjects:
+  - kind: ServiceAccount
+    name: cloud-node-manager
+    namespace: kube-system
+---
+# Source: cloud-provider-azure/templates/cloud-provider-azure.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -130,37 +177,102 @@ subjects:
     kind: User
     name: cloud-controller-manager
 ---
+# Source: cloud-provider-azure/templates/cloud-provider-azure.yaml
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
-  name: azure-cloud-controller-manager
+  name: cloud-node-manager
   namespace: kube-system
   labels:
-    component: azure-cloud-controller-manager
+    component: cloud-node-manager
+    kubernetes.io/cluster-service: "true"
 spec:
-  replicas: 1
   selector:
     matchLabels:
-      component: azure-cloud-controller-manager
-  strategy:
-    type: Recreate
+      k8s-app: cloud-node-manager
   template:
     metadata:
-      name: azure-cloud-controller-manager
-      namespace: kube-system
       labels:
-        component: azure-cloud-controller-manager
+        k8s-app: cloud-node-manager
+      annotations:
+        cluster-autoscaler.kubernetes.io/daemonset-pod: "true"
     spec:
       priorityClassName: system-node-critical
-      hostNetwork: true
-      serviceAccountName: cloud-controller-manager
+      serviceAccountName: cloud-node-manager
+      hostNetwork: true # required to fetch correct hostname
       nodeSelector:
-        node-role.kubernetes.io/control-plane: ""
+        kubernetes.io/os: linux
       tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
         - key: node-role.kubernetes.io/master
           effect: NoSchedule
         - key: node-role.kubernetes.io/control-plane
           effect: NoSchedule
+        - operator: "Exists"
+          effect: NoExecute
+        - operator: "Exists"
+          effect: NoSchedule
+      containers:
+        - name: cloud-node-manager
+          image: "{{ .InternalImages.Get "AzureCNM" }}"
+          imagePullPolicy: IfNotPresent
+          command: ["cloud-node-manager"]
+          args:
+            - --node-name=$(NODE_NAME)
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          resources:
+            requests:
+              cpu: 50m
+              memory: 50Mi
+            limits:
+              cpu: 2
+              memory: 512Mi
+---
+# Source: cloud-provider-azure/templates/cloud-provider-azure.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-controller-manager
+  namespace: kube-system
+  labels:
+    component: cloud-controller-manager
+spec:
+  selector:
+    matchLabels:
+      tier: control-plane
+      component: cloud-controller-manager
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: cloud-controller-manager
+        tier: control-plane
+    spec:
+      priorityClassName: system-node-critical
+      hostNetwork: true
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      serviceAccountName: cloud-controller-manager
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+        - effect: NoExecute
+          key: node-role.kubernetes.io/etcd
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            tier: control-plane
+            component: cloud-controller-manager
       containers:
         - name: cloud-controller-manager
           image: "{{ .InternalImages.Get "AzureCCM" }}"
@@ -171,29 +283,31 @@ spec:
             - "--cloud-config=/etc/cloud/cloud-config"
             - "--cloud-provider=azure"
             - "--cluster-name={{ .Config.Name }}"
-            - "--controllers=*,-cloud-node" # disable cloud-node controller
             - "--configure-cloud-routes=false" # "false" because we use VXLAN overlay
+            - "--controllers=*,-cloud-node"
             - "--leader-elect=true"
             - "--route-reconciliation-period=10s"
-            - "--v=4"
-            - "--secure-port=10267"
+            - "--secure-port=10268"
+            - "--v=2"
           resources:
             requests:
               cpu: 100m
               memory: 128Mi
             limits:
-              cpu: "4"
+              cpu: 4
               memory: 2Gi
           livenessProbe:
             httpGet:
               path: /healthz
-              port: 10267
+              port: 10268
               scheme: HTTPS
             initialDelaySeconds: 20
             periodSeconds: 10
             timeoutSeconds: 5
           volumeMounts:
-            - name: etc-ssl
+            - name: etc-kubernetes
+              mountPath: /etc/kubernetes
+            - name: ssl-mount
               mountPath: /etc/ssl
               readOnly: true
             - name: etc-pki
@@ -209,7 +323,10 @@ spec:
               name: cloud-config-volume
               readOnly: true
       volumes:
-        - name: etc-ssl
+        - name: etc-kubernetes
+          hostPath:
+            path: /etc/kubernetes
+        - name: ssl-mount
           hostPath:
             path: /etc/ssl
         - name: etc-pki
@@ -224,107 +341,3 @@ spec:
         - name: cloud-config-volume
           secret:
             secretName: cloud-config
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  labels:
-    k8s-app: cloud-node-manager
-    kubernetes.io/cluster-service: "true"
-    addonmanager.kubernetes.io/mode: Reconcile
-  name: cloud-node-manager
-  namespace: kube-system
----
-kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: cloud-node-manager
-  labels:
-    k8s-app: cloud-node-manager
-    kubernetes.io/cluster-service: "true"
-    addonmanager.kubernetes.io/mode: Reconcile
-rules:
-- apiGroups: [""]
-  resources: ["nodes"]
-  verbs: ["watch","list","get","update", "patch"]
-- apiGroups: [""]
-  resources: ["nodes/status"]
-  verbs: ["patch"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: cloud-node-manager
-  labels:
-    k8s-app: cloud-node-manager
-    kubernetes.io/cluster-service: "true"
-    addonmanager.kubernetes.io/mode: Reconcile
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cloud-node-manager
-subjects:
-- kind: ServiceAccount
-  name: cloud-node-manager
-  namespace: kube-system
----
-apiVersion: apps/v1
-kind: DaemonSet
-metadata:
-  name: cloud-node-manager
-  namespace: kube-system
-  labels:
-    component: cloud-node-manager
-    kubernetes.io/cluster-service: "true"
-    addonmanager.kubernetes.io/mode: Reconcile
-spec:
-  selector:
-    matchLabels:
-      k8s-app: cloud-node-manager
-  template:
-    metadata:
-      labels:
-        k8s-app: cloud-node-manager
-      annotations:
-        cluster-autoscaler.kubernetes.io/daemonset-pod: "true"
-    spec:
-      priorityClassName: system-node-critical
-      serviceAccountName: cloud-node-manager
-      hostNetwork: true   # required to fetch correct hostname
-      nodeSelector:
-        kubernetes.io/os: linux
-      tolerations:
-      - key: CriticalAddonsOnly
-        operator: Exists
-      - key: node-role.kubernetes.io/master
-        operator: Equal
-        value: "true"
-        effect: NoSchedule
-      - key: node-role.kubernetes.io/control-plane
-        operator: Equal
-        value: "true"
-        effect: NoSchedule
-      - operator: "Exists"
-        effect: NoExecute
-      - operator: "Exists"
-        effect: NoSchedule
-      containers:
-      - name: cloud-node-manager
-        image: "{{ .InternalImages.Get "AzureCNM" }}"
-        imagePullPolicy: IfNotPresent
-        command:
-        - cloud-node-manager
-        - --node-name=$(NODE_NAME)
-        - --wait-routes=true   # only set to true when --configure-cloud-routes=true in cloud-controller-manager.
-        env:
-        - name: NODE_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
-        resources:
-          requests:
-            cpu: 50m
-            memory: 50Mi
-          limits:
-            cpu: 2000m
-            memory: 512Mi
