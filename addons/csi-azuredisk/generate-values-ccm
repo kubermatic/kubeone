@@ -1,7 +1,5 @@
 snapshot:
   enabled: true
-  VolumeSnapshotClass:
-    enabled: true
 
 windows:
   enabled: false

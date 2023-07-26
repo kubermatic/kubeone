@@ -15,4 +15,6 @@ controller:
 
 node:
   cloudConfigSecretName: cloud-config
-  name: "csi-azurefile-nodemanager"
+
+linux:
+  dsName: "csi-azurefile-nodemanager"

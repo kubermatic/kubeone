@@ -1118,10 +1118,10 @@ roleRef:
 kind: DaemonSet
 apiVersion: apps/v1
 metadata:
-  name: csi-azurefile-node
+  name: csi-azurefile-nodemanager
   namespace: kube-system
   labels:
-    app: csi-azurefile-node
+    app: csi-azurefile-nodemanager
     app.kubernetes.io/name: azurefile-csi-driver
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/component: csi-driver
@@ -1136,13 +1136,13 @@ spec:
     type: RollingUpdate
   selector:
     matchLabels:
-      app: csi-azurefile-node
+      app: csi-azurefile-nodemanager
       app.kubernetes.io/name: azurefile-csi-driver
       app.kubernetes.io/instance: release-name
   template:
     metadata:
       labels:
-        app: csi-azurefile-node
+        app: csi-azurefile-nodemanager
         app.kubernetes.io/name: azurefile-csi-driver
         app.kubernetes.io/instance: release-name
         app.kubernetes.io/component: csi-driver

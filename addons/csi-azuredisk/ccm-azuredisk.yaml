@@ -1501,18 +1501,3 @@ spec:
   attachRequired: true
   podInfoOnMount: false
   fsGroupPolicy: File
----
-# Source: azuredisk-csi-driver/templates/csi-snapshot-controller.yaml
-kind: VolumeSnapshotClass
-apiVersion: snapshot.storage.k8s.io/v1
-metadata:
-  name: csi-azuredisk-vsc
-  annotations:
-    # This is what defines this resource as a hook. Without this line, the
-    # job is considered part of the release.
-    "helm.sh/hook": post-install
-driver: disk.csi.azure.com
-deletionPolicy: Delete
-parameters:
-  incremental: "true"
-  tags:
