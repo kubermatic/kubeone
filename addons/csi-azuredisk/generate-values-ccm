@@ -1,0 +1,12 @@
+snapshot:
+  enabled: true
+
+windows:
+  enabled: false
+
+controller:
+  runOnControlPlane: true
+  cloudConfigSecretName: cloud-config
+
+node:
+  cloudConfigSecretName: cloud-config
