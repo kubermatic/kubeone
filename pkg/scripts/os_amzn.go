@@ -49,9 +49,9 @@ cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
 type=rpm-md
-baseurl=https://download.opensuse.org/repositories/isv:/kubernetes:/core:/stable:/v{{ .OBS_VERSION }}:/rpm_stream/
+baseurl=https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v{{ .OBS_VERSION }}:/rpm/
 gpgcheck=1
-gpgkey=https://download.opensuse.org/repositories/isv:/kubernetes:/core:/stable:/v{{ .OBS_VERSION}}:/rpm_stream/repodata/repomd.xml.key
+gpgkey=https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v{{ .OBS_VERSION}}:/rpm/repodata/repomd.xml.key
 enabled=1
 EOF
 {{ else }}

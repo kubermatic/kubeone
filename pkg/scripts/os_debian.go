@@ -62,9 +62,9 @@ sudo systemctl enable --now iscsid
 
 {{- if .CONFIGURE_REPOSITORIES }}
 {{- if .USE_OBS }}
-echo 'deb http://download.opensuse.org/repositories/isv:/kubernetes:/core:/stable:/v{{ .OBS_VERSION }}/deb/ /' | sudo tee /etc/apt/sources.list.d/isv:kubernetes:core:stable:v{{ .OBS_VERSION }}.list
+echo 'deb http://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v{{ .OBS_VERSION }}/deb/ /' | sudo tee /etc/apt/sources.list.d/isv:kubernetes:core:stable:v{{ .OBS_VERSION }}.list
 
-curl -fsSL https://download.opensuse.org/repositories/isv:kubernetes:core:stable:v{{ .OBS_VERSION }}/deb/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/isv_kubernetes_core_stable_v{{ .OBS_VERSION }}.gpg > /dev/null
+curl -fsSL https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v{{ .OBS_VERSION }}/deb/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/kubernetes-apt-trusted.gpg > /dev/null
 {{- else }}
 curl -fsSL https://dl.k8s.io/apt/doc/apt-key.gpg | sudo apt-key add -
 
