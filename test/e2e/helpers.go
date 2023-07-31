@@ -172,7 +172,7 @@ func downloadKubeone(t *testing.T, version string) string { //nolint:deadcode,un
 	}
 	defer resp.Body.Close()
 
-	zipBin, err := os.OpenFile(zipPath, os.O_CREATE|os.O_RDWR, 0600)
+	zipBin, err := os.OpenFile(zipPath, os.O_CREATE|os.O_RDWR, 0o600)
 	if err != nil {
 		t.Fatalf("open kubeone destination file: %v", err)
 	}
@@ -199,7 +199,7 @@ func downloadKubeone(t *testing.T, version string) string { //nolint:deadcode,un
 	}
 	defer unzipK1Bin.Close()
 
-	k1Bin, err := os.OpenFile(binPath, os.O_CREATE|os.O_WRONLY, 0750)
+	k1Bin, err := os.OpenFile(binPath, os.O_CREATE|os.O_WRONLY, 0o750)
 	if err != nil {
 		t.Fatalf("open kubeone destination file: %v", err)
 	}
@@ -281,7 +281,7 @@ func renderManifest(t *testing.T, templatePath string, data manifestData) string
 	defer manifest.Close()
 
 	manifestPath := manifest.Name()
-	if err := os.WriteFile(manifestPath, outBuf.Bytes(), 0600); err != nil {
+	if err := os.WriteFile(manifestPath, outBuf.Bytes(), 0o600); err != nil {
 		t.Fatal(err)
 	}
 
@@ -292,7 +292,7 @@ func waitForNodesReady(ctx context.Context, t *testing.T, client ctrlruntimeclie
 	waitTimeout := 20 * time.Minute
 	t.Logf("waiting maximum %s for %d nodes to be ready", waitTimeout, expectedNumberOfNodes)
 
-	return wait.Poll(5*time.Second, waitTimeout, func() (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 5*time.Second, waitTimeout, false, func(ctx context.Context) (bool, error) {
 		if err := ctx.Err(); err != nil {
 			return false, fmt.Errorf("wait for nodes ready: %w", err)
 		}
@@ -474,9 +474,7 @@ func dynamicClientRetriable(t *testing.T, k1 *kubeoneBin) ctrlruntimeclient.Clie
 func labelNodesSkipEviction(t *testing.T, client ctrlruntimeclient.Client) {
 	ctx := context.Background()
 
-	var (
-		nodeList corev1.NodeList
-	)
+	var nodeList corev1.NodeList
 
 	err := retryFn(func() error {
 		return client.List(ctx, &nodeList, ctrlruntimeclient.HasLabels{"machine-controller/owned-by"})
@@ -518,7 +516,7 @@ func waitMachinesHasNodes(t *testing.T, k1 *kubeoneBin, client ctrlruntimeclient
 		}
 	}
 
-	waitErr := wait.Poll(15*time.Second, 20*time.Minute, func() (bool, error) {
+	waitErr := wait.PollUntilContextTimeout(ctx, 15*time.Second, 20*time.Minute, false, func(ctx context.Context) (bool, error) {
 		var (
 			machineList              clusterv1alpha1.MachineList
 			someMachinesLacksTheNode bool

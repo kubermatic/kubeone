@@ -17,7 +17,6 @@ limitations under the License.
 package tasks
 
 import (
-	"errors"
 	"time"
 
 	"k8c.io/kubeone/pkg/state"
@@ -66,7 +65,8 @@ func (t *Task) Run(s *state.State) error {
 
 		return true, nil
 	})
-	if errors.Is(err, wait.ErrWaitTimeout) {
+
+	if wait.Interrupted(err) {
 		err = lastError
 	}
 

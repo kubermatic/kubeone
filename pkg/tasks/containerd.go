@@ -17,6 +17,7 @@ limitations under the License.
 package tasks
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -36,11 +37,9 @@ const (
 	containerRuntimeFlag = "--container-runtime"
 )
 
-var (
-	containerdKubeletFlags = map[string]string{
-		"--container-runtime-endpoint": "unix:///run/containerd/containerd.sock",
-	}
-)
+var containerdKubeletFlags = map[string]string{
+	"--container-runtime-endpoint": "unix:///run/containerd/containerd.sock",
+}
 
 func validateContainerdInConfig(s *state.State) error {
 	if s.Cluster.ContainerRuntime.Containerd == nil {
@@ -119,10 +118,10 @@ func migrateToContainerdTask(s *state.State, node *kubeoneapi.HostConfig, _ exec
 	}
 
 	s.Logger.Infof("Waiting all pods on %q to became Ready...", node.Hostname)
-	err = wait.Poll(10*time.Second, 10*time.Minute, func() (bool, error) {
+	err = wait.PollUntilContextTimeout(s.Context, 10*time.Second, 10*time.Minute, false, func(ctx context.Context) (bool, error) {
 		var podsList corev1.PodList
 
-		if perr := s.DynamicClient.List(s.Context, &podsList); perr != nil {
+		if perr := s.DynamicClient.List(ctx, &podsList); perr != nil {
 			return false, fail.KubeClient(err, "getting %T", podsList)
 		}
 

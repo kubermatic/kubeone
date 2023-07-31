@@ -61,9 +61,7 @@ const (
 	cpTestTimeout    = 10 * time.Minute
 )
 
-var (
-	cloudProviderPodLabels = map[string]string{"app": "test-cp"}
-)
+var cloudProviderPodLabels = map[string]string{"app": "test-cp"}
 
 type cloudProviderTests struct {
 	ctx      context.Context
@@ -201,11 +199,11 @@ func (c *cloudProviderTests) createStatefulSetWithStorage(t *testing.T) {
 func (c *cloudProviderTests) validateStatefulSetReadiness(t *testing.T) {
 	t.Log("Waiting until the StatefulSet is ready...")
 
-	err := wait.Poll(cpTestPollPeriod, cpTestTimeout, func() (done bool, err error) {
+	err := wait.PollUntilContextTimeout(context.TODO(), cpTestPollPeriod, cpTestTimeout, false, func(ctx context.Context) (done bool, err error) {
 		currentSet := &appsv1.StatefulSet{}
 		name := types.NamespacedName{Namespace: cpTestNamespaceName, Name: cpTestStatefulSetName}
 
-		if err := c.client.Get(c.ctx, name, currentSet); err != nil {
+		if err := c.client.Get(ctx, name, currentSet); err != nil {
 			t.Logf("Failed to fetch StatefulSet %s/%s: %v", cpTestNamespaceName, cpTestStatefulSetName, err)
 
 			return false, nil
@@ -270,11 +268,11 @@ func (c *cloudProviderTests) validateLoadBalancerReadiness(t *testing.T) {
 
 	var svcAddr string
 
-	err := wait.Poll(cpTestPollPeriod, cpTestTimeout, func() (done bool, err error) {
+	err := wait.PollUntilContextTimeout(c.ctx, cpTestPollPeriod, cpTestTimeout, false, func(ctx context.Context) (done bool, err error) {
 		currentSvc := &corev1.Service{}
 		name := types.NamespacedName{Namespace: cpTestNamespaceName, Name: cpTestServiceName}
 
-		if err := c.client.Get(c.ctx, name, currentSvc); err != nil {
+		if err := c.client.Get(ctx, name, currentSvc); err != nil {
 			t.Logf("Failed to fetch Service %s/%s: %v", cpTestNamespaceName, cpTestServiceName, err)
 
 			return false, nil
@@ -302,7 +300,7 @@ func (c *cloudProviderTests) validateLoadBalancerReadiness(t *testing.T) {
 		svcAddr = "http://" + svcAddr
 	}
 
-	err = wait.Poll(cpTestPollPeriod, cpTestTimeout, func() (done bool, err error) {
+	err = wait.PollUntilContextTimeout(c.ctx, cpTestPollPeriod, cpTestTimeout, false, func(ctx context.Context) (done bool, err error) {
 		resp, err := http.Get(svcAddr) //nolint:gosec,noctx
 		if err != nil {
 			t.Logf("error testing service endpoint: %v", err)
@@ -327,11 +325,11 @@ func (c *cloudProviderTests) validateLoadBalancerReadiness(t *testing.T) {
 func (c *cloudProviderTests) cleanUp(t *testing.T) {
 	t.Log("Cleaning up Load Balancer...")
 
-	err := wait.Poll(cpTestPollPeriod, cpTestTimeout, func() (done bool, err error) {
+	err := wait.PollUntilContextTimeout(c.ctx, cpTestPollPeriod, cpTestTimeout, false, func(ctx context.Context) (done bool, err error) {
 		currentSvc := &corev1.Service{}
 		name := types.NamespacedName{Namespace: cpTestNamespaceName, Name: cpTestServiceName}
 
-		if err := c.client.Get(c.ctx, name, currentSvc); err != nil {
+		if err := c.client.Get(ctx, name, currentSvc); err != nil {
 			if k8serrors.IsNotFound(err) {
 				return true, nil
 			}
@@ -344,7 +342,7 @@ func (c *cloudProviderTests) cleanUp(t *testing.T) {
 		}
 
 		if currentSvc.ObjectMeta.DeletionTimestamp == nil {
-			if err := c.client.Delete(c.ctx, currentSvc); err != nil {
+			if err := c.client.Delete(ctx, currentSvc); err != nil {
 				// Make error transient so that we try to remove it again and
 				// not leak any resources
 				t.Logf("error removing load balancer service: %v", err)
@@ -361,11 +359,11 @@ func (c *cloudProviderTests) cleanUp(t *testing.T) {
 
 	t.Log("Cleaning up StatefulSet...")
 
-	err = wait.Poll(cpTestPollPeriod, cpTestTimeout, func() (done bool, err error) {
+	err = wait.PollUntilContextTimeout(c.ctx, cpTestPollPeriod, cpTestTimeout, false, func(ctx context.Context) (done bool, err error) {
 		currentSts := &appsv1.StatefulSet{}
 		name := types.NamespacedName{Namespace: cpTestNamespaceName, Name: cpTestStatefulSetName}
 
-		if err := c.client.Get(c.ctx, name, currentSts); err != nil {
+		if err := c.client.Get(ctx, name, currentSts); err != nil {
 			if k8serrors.IsNotFound(err) {
 				return true, nil
 			}
@@ -378,7 +376,7 @@ func (c *cloudProviderTests) cleanUp(t *testing.T) {
 		}
 
 		if currentSts.ObjectMeta.DeletionTimestamp == nil {
-			if err := c.client.Delete(c.ctx, currentSts); err != nil {
+			if err := c.client.Delete(ctx, currentSts); err != nil {
 				// Make error transient so that we try to remove it again and
 				// not leak any resources
 				t.Logf("error removing statefulset: %v", err)
@@ -395,9 +393,9 @@ func (c *cloudProviderTests) cleanUp(t *testing.T) {
 
 	t.Log("Cleaning up PVC...")
 
-	err = wait.Poll(cpTestPollPeriod, cpTestTimeout, func() (done bool, err error) {
+	err = wait.PollUntilContextTimeout(c.ctx, cpTestPollPeriod, cpTestTimeout, false, func(ctx context.Context) (done bool, err error) {
 		var pvcs corev1.PersistentVolumeClaimList
-		if err := c.client.List(c.ctx, &pvcs, ctrlruntimeclient.InNamespace(cpTestNamespaceName)); err != nil {
+		if err := c.client.List(ctx, &pvcs, ctrlruntimeclient.InNamespace(cpTestNamespaceName)); err != nil {
 			t.Error(err)
 		}
 
@@ -411,7 +409,7 @@ func (c *cloudProviderTests) cleanUp(t *testing.T) {
 				continue
 			}
 
-			if err := c.client.Delete(c.ctx, &p); err != nil {
+			if err := c.client.Delete(ctx, &p); err != nil {
 				// Make error transient so that we try to remove it again and
 				// not leak any resources
 				t.Logf("error removing pvc %q: %v", p.Name, err)

@@ -54,7 +54,7 @@ func WaitReady(s *state.State) error {
 // waitForCRDs waits for operating-system-manager CRDs to be created and become established
 func waitForCRDs(s *state.State) error {
 	condFn := clientutil.CRDsReadyCondition(s.Context, s.DynamicClient, CRDNames())
-	err := wait.Poll(5*time.Second, 3*time.Minute, condFn)
+	err := wait.PollUntilContextTimeout(s.Context, 5*time.Second, 3*time.Minute, false, condFn.WithContext())
 
 	return fail.KubeClient(err, "waiting for OSM CRDs to became ready")
 }
@@ -68,7 +68,7 @@ func waitForController(ctx context.Context, client dynclient.Client) error {
 		}),
 	})
 
-	return fail.KubeClient(wait.Poll(5*time.Second, 3*time.Minute, condFn), "waiting for OSM controller to became ready")
+	return fail.KubeClient(wait.PollUntilContextTimeout(ctx, 5*time.Second, 3*time.Minute, false, condFn.WithContext()), "waiting for OSM controller to became ready")
 }
 
 // waitForWebhook waits for operating-system-manager-webhook to become running
@@ -80,7 +80,7 @@ func waitForWebhook(ctx context.Context, client dynclient.Client) error {
 		}),
 	})
 
-	return fail.KubeClient(wait.Poll(5*time.Second, 3*time.Minute, condFn), "waiting for OSM webhook to became ready")
+	return fail.KubeClient(wait.PollUntilContextTimeout(ctx, 5*time.Second, 3*time.Minute, false, condFn.WithContext()), "waiting for OSM webhook to became ready")
 }
 
 func CRDNames() []string {

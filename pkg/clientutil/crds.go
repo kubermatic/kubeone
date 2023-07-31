@@ -20,13 +20,14 @@ import (
 	"context"
 
 	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	"k8s.io/apimachinery/pkg/util/wait"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // CRDsReadyCondition generate a k8s.io/apimachinery/pkg/util/wait.ConditionFunc function to be used in
 // k8s.io/apimachinery/pkg/util/wait.Poll* family of functions. It will check all provided GKs (GroupKinds) to exists
 // and have Established status
-func CRDsReadyCondition(ctx context.Context, client dynclient.Client, names []string) func() (bool, error) {
+func CRDsReadyCondition(ctx context.Context, client dynclient.Client, names []string) wait.ConditionFunc {
 	return func() (bool, error) {
 		var establishedNum int
 
