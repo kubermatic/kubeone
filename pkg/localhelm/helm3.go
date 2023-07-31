@@ -294,7 +294,6 @@ func newHelmInstallClient(cfg *helmaction.Configuration, release kubeoneapi.Helm
 	helmInstall := helmaction.NewInstall(cfg)
 	helmInstall.DependencyUpdate = true
 	helmInstall.CreateNamespace = true
-	helmInstall.IncludeCRDs = true
 	helmInstall.Namespace = release.Namespace
 	helmInstall.ReleaseName = release.ReleaseName
 	helmInstall.RepoURL = release.RepoURL
