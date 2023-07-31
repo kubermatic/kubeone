@@ -1338,6 +1338,7 @@ func Convert_kubeone_GCESpec_To_v1beta2_GCESpec(in *kubeone.GCESpec, out *GCESpe
 func autoConvert_v1beta2_HelmRelease_To_kubeone_HelmRelease(in *HelmRelease, out *kubeone.HelmRelease, s conversion.Scope) error {
 	out.Chart = in.Chart
 	out.RepoURL = in.RepoURL
+	out.ChartURL = in.ChartURL
 	out.Version = in.Version
 	out.ReleaseName = in.ReleaseName
 	out.Namespace = in.Namespace
@@ -1353,6 +1354,7 @@ func Convert_v1beta2_HelmRelease_To_kubeone_HelmRelease(in *HelmRelease, out *ku
 func autoConvert_kubeone_HelmRelease_To_v1beta2_HelmRelease(in *kubeone.HelmRelease, out *HelmRelease, s conversion.Scope) error {
 	out.Chart = in.Chart
 	out.RepoURL = in.RepoURL
+	out.ChartURL = in.ChartURL
 	out.Version = in.Version
 	out.ReleaseName = in.ReleaseName
 	out.Namespace = in.Namespace

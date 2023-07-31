@@ -22,13 +22,14 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/util/wait"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // PodsReadyCondition generate a k8s.io/apimachinery/pkg/util/wait.ConditionFunc function to be used in
 // k8s.io/apimachinery/pkg/util/wait.Poll* family of functions. It will check all selected pods to have PodReady
 // condition and phase PodRunning.
-func PodsReadyCondition(ctx context.Context, c dynclient.Client, listOpts dynclient.ListOptions) func() (bool, error) {
+func PodsReadyCondition(ctx context.Context, c dynclient.Client, listOpts dynclient.ListOptions) wait.ConditionFunc {
 	return func() (bool, error) {
 		podsList := corev1.PodList{}
 

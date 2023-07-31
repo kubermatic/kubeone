@@ -17,6 +17,7 @@ limitations under the License.
 package tasks
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 	"time"
@@ -251,7 +252,7 @@ func waitForStaticPodReady(s *state.State, timeout time.Duration, podName, podNa
 		return fail.KubeClient(fmt.Errorf("static pod name and namespace are required"), "waiting for static pods")
 	}
 
-	return wait.PollImmediate(5*time.Second, timeout, func() (bool, error) {
+	return wait.PollUntilContextTimeout(s.Context, 5*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		if s.Verbose {
 			s.Logger.Debugf("Waiting for pod %q to become healthy...", podName)
 		}
@@ -303,7 +304,7 @@ func waitForStaticPodReady(s *state.State, timeout time.Duration, podName, podNa
 }
 
 func waitForKubeletReady(conn executor.Interface, timeout time.Duration) error {
-	err := wait.PollImmediate(5*time.Second, timeout, func() (bool, error) {
+	err := wait.PollUntilContextTimeout(context.Background(), 5*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		kubeletStatus, sErr := systemdStatus(conn, "kubelet")
 		if sErr != nil {
 			return false, sErr

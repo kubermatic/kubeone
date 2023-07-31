@@ -65,7 +65,7 @@ func WaitReady(s *state.State) error {
 // waitForCRDs waits for machine-controller CRDs to be created and become established
 func waitForCRDs(s *state.State) error {
 	condFn := clientutil.CRDsReadyCondition(s.Context, s.DynamicClient, CRDNames())
-	err := wait.Poll(5*time.Second, 3*time.Minute, condFn)
+	err := wait.PollUntilContextTimeout(s.Context, 5*time.Second, 3*time.Minute, false, condFn.WithContext())
 
 	return fail.KubeClient(err, "waiting for machine-controller CRDs to became ready")
 }
@@ -173,9 +173,8 @@ func DestroyWorkers(s *state.State) error {
 // WaitDestroy waits for all Machines to be deleted
 func WaitDestroy(s *state.State) error {
 	s.Logger.Info("Waiting for all machines to get deleted...")
-	ctx := context.Background()
 
-	return wait.Poll(5*time.Second, 5*time.Minute, func() (bool, error) {
+	return wait.PollUntilContextTimeout(s.Context, 5*time.Second, 5*time.Minute, false, func(ctx context.Context) (bool, error) {
 		list := &clusterv1alpha1.MachineList{}
 		if err := s.DynamicClient.List(ctx, list, dynclient.InNamespace(resources.MachineControllerNameSpace)); err != nil {
 			return false, fail.KubeClient(err, "getting %T", list)
@@ -197,7 +196,7 @@ func waitForMachineController(ctx context.Context, client dynclient.Client) erro
 		}),
 	})
 
-	return fail.KubeClient(wait.Poll(5*time.Second, 3*time.Minute, condFn), "waiting for machine-controller to became ready")
+	return fail.KubeClient(wait.PollUntilContextTimeout(ctx, 5*time.Second, 3*time.Minute, false, condFn.WithContext()), "waiting for machine-controller to became ready")
 }
 
 // waitForWebhook waits for machine-controller-webhook to become running
@@ -209,7 +208,7 @@ func waitForWebhook(ctx context.Context, client dynclient.Client) error {
 		}),
 	})
 
-	return fail.KubeClient(wait.Poll(5*time.Second, 3*time.Minute, condFn), "waiting for machine-controller webhook to became ready")
+	return fail.KubeClient(wait.PollUntilContextTimeout(ctx, 5*time.Second, 3*time.Minute, false, condFn.WithContext()), "waiting for machine-controller webhook to became ready")
 }
 
 func cleanupStaleResources(ctx context.Context, client dynclient.Client) error {

@@ -271,7 +271,7 @@ func upgradeRelease(
 	helmUpgrade.RepoURL = release.RepoURL
 	helmUpgrade.Version = release.Version
 
-	chartRequested, err := getChart(release.Chart, helmUpgrade.ChartPathOptions, helmSettings, providers)
+	chartRequested, err := getChart(release, helmUpgrade.ChartPathOptions, helmSettings, providers)
 	if err != nil {
 		return err
 	}
@@ -336,7 +336,7 @@ func runInstallRelease(
 	providers getter.Providers,
 	vals map[string]interface{},
 ) (*helmrelease.Release, error) {
-	chartRequested, err := getChart(release.Chart, client.ChartPathOptions, helmSettings, providers)
+	chartRequested, err := getChart(release, client.ChartPathOptions, helmSettings, providers)
 	if err != nil {
 		return nil, err
 	}
@@ -395,11 +395,16 @@ func addReleaseSecretLabels(ctx context.Context, releaseNamespacedName ctrlrunti
 }
 
 func getChart(
-	chartName string,
+	release kubeoneapi.HelmRelease,
 	chartPathOpts helmaction.ChartPathOptions,
 	helmSettings *helmcli.EnvSettings,
 	providers getter.Providers,
 ) (*chart.Chart, error) {
+	chartName := release.Chart
+	if release.ChartURL != "" {
+		chartName = release.ChartURL
+	}
+
 	chartPath, err := chartPathOpts.LocateChart(chartName, helmSettings)
 	if err != nil {
 		return nil, fail.Runtime(err, "locating helm chart")
