@@ -59,10 +59,6 @@ const (
 )
 
 func Deploy(st *state.State) error {
-	if len(st.Cluster.HelmReleases) == 0 {
-		return nil
-	}
-
 	konfigBuf, err := kubeconfig.Download(st)
 	if err != nil {
 		return err
@@ -294,7 +290,6 @@ func newHelmInstallClient(cfg *helmaction.Configuration, release kubeoneapi.Helm
 	helmInstall := helmaction.NewInstall(cfg)
 	helmInstall.DependencyUpdate = true
 	helmInstall.CreateNamespace = true
-	helmInstall.IncludeCRDs = true
 	helmInstall.Namespace = release.Namespace
 	helmInstall.ReleaseName = release.ReleaseName
 	helmInstall.RepoURL = release.RepoURL
