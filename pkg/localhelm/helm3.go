@@ -59,10 +59,6 @@ const (
 )
 
 func Deploy(st *state.State) error {
-	if len(st.Cluster.HelmReleases) == 0 {
-		return nil
-	}
-
 	konfigBuf, err := kubeconfig.Download(st)
 	if err != nil {
 		return err
