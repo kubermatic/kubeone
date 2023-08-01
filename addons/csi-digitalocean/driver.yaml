@@ -370,10 +370,6 @@ spec:
             - "--v=5"
             - "--csi-address=$(ADDRESS)"
             - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"
-          lifecycle:
-            preStop:
-              exec:
-                command: ["/bin/sh", "-c", "rm -rf /registration/dobs.csi.digitalocean.com /registration/dobs.csi.digitalocean.com-reg.sock"]
           env:
             - name: ADDRESS
               value: /csi/csi.sock
