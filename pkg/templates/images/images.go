@@ -352,7 +352,7 @@ func optionalResources() map[Resource]map[string]string {
 		OpenstackCSISnapshotWebhook:    {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v6.2.2"},
 
 		// Equinix Metal CCM
-		EquinixMetalCCM: {"*": "ghcr.io/equinix/cloud-provider-equinix-metal:v3.5.0"},
+		EquinixMetalCCM: {"*": "ghcr.io/equinix/cloud-provider-equinix-metal:v3.6.2"},
 
 		// vSphere CCM
 		VsphereCCM: {
