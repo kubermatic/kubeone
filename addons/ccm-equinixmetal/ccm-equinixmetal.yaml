@@ -150,7 +150,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  # reason: so ccm can read and update configmap/metallb-system:config
+  # reason: so ccm can read and update configmap for MetalLB <= 0.12.1
   - ""
   resources:
   - configmaps
@@ -185,6 +185,20 @@ rules:
   - watch
   - update
   - patch
+- apiGroups:
+  # reason: so ccm can manage CRDs for MetalLB v0.13.2+
+  - metallb.io
+  resources:
+  - ipaddresspools
+  - bgppeers
+  - bgpadvertisements
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
