@@ -1,0 +1,84 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: kube-system
+
+resources:
+  - https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver/deploy/kubernetes/base/controller?ref=v1.10.5
+  - https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver/deploy/kubernetes/base/node_linux?ref=v1.10.5
+
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: |-
+          {{ .InternalImages.Get "GCPComputeCSIProvisioner" }}
+      - op: replace
+        path: /spec/template/spec/containers/1/image
+        value: |-
+          {{ .InternalImages.Get "GCPComputeCSIAttacher" }}
+      - op: replace
+        path: /spec/template/spec/containers/2/image
+        value: |-
+          {{ .InternalImages.Get "GCPComputeCSIResizer" }}
+      - op: replace
+        path: /spec/template/spec/containers/3/image
+        value: |-
+          {{ .InternalImages.Get "GCPComputeCSISnapshotter" }}
+      - op: replace
+        path: /spec/template/spec/containers/4/image
+        value: |-
+          {{ .InternalImages.Get "GCPComputeCSIDriver" }}
+      - op: add
+        path: /spec/template/spec/containers/1/args/-
+        value: "--default-fstype=ext4"
+      - op: add
+        path: /spec/template/metadata/annotations
+        value:
+          kubeone.k8c.io/credentials-hash: "{{ .CredentialsCCMHash }}"
+      - op: add
+        path: /spec/template/spec/nodeSelector/node-role.kubernetes.io~1control-plane
+        value: ""
+      - op: add
+        path: /spec/template/spec/tolerations
+        value:
+          - key: CriticalAddonsOnly
+            operator: Exists
+          - key: node-role.kubernetes.io/master
+            operator: Exists
+            effect: NoSchedule
+          - key: node-role.kubernetes.io/control-plane
+            operator: Exists
+            effect: NoSchedule
+          - operator: Exists
+            effect: NoExecute
+            tolerationSeconds: 300
+      - op: replace
+        path: /spec/template/spec/volumes/1
+        value:
+          name: cloud-sa-volume
+          secret:
+            secretName: kubeone-ccm-credentials
+            items:
+              - key: GOOGLE_SERVICE_ACCOUNT
+                path: cloud-sa.json
+    target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: csi-gce-pd-controller
+
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: |-
+          {{ .InternalImages.Get "GCPComputeCSINodeDriverRegistrar" }}
+      - op: replace
+        path: /spec/template/spec/containers/1/image
+        value: |-
+          {{ .InternalImages.Get "GCPComputeCSIDriver" }}
+    target:
+      group: apps
+      version: v1
+      kind: DaemonSet
+      name: csi-gce-pd-node
