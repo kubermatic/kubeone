@@ -215,10 +215,6 @@ metadata:
   name: flatcar-linux-update-agent
   namespace: reboot-coordinator
 spec:
-  updateStrategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1
   selector:
     matchLabels:
       app: flatcar-linux-update-agent
@@ -291,3 +287,7 @@ spec:
       - hostPath:
           path: /etc/os-release
         name: etc-os-release
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
