@@ -320,7 +320,7 @@ func (scenario *scenarioUpgrade) upgradeMachineDeployments(t *testing.T, client 
 const upgradeScenarioTemplate = `
 {{- range . }}
 func {{ .TestTitle }}(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["{{ .Infra }}"]
 	scenario := Scenarios["{{ .Scenario }}"]
 	scenario.SetInfra(infra)

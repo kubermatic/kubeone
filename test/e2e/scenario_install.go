@@ -102,7 +102,7 @@ func (scenario *scenarioInstall) install(ctx context.Context, t *testing.T) {
 }
 
 func (scenario *scenarioInstall) kubeone(t *testing.T) *kubeoneBin {
-	var k1Opts = []kubeoneBinOpts{
+	k1Opts := []kubeoneBinOpts{
 		withKubeoneBin(scenario.KubeonePath()),
 	}
 
@@ -239,7 +239,7 @@ func (scenario *scenarioInstall) GenerateTests(wr io.Writer, generatorType Gener
 const installScenarioTemplate = `
 {{- range . }}
 func {{.TestTitle}}(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["{{.Infra}}"]
 	scenario := Scenarios["{{.Scenario}}"]
 	scenario.SetInfra(infra)
