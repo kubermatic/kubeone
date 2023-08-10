@@ -626,10 +626,16 @@ func NewSignalContext() context.Context {
 	// but `sonobuoy wait` will continue running until the ProwJob doesn't
 	// timeout. This also means, because the main process has been terminated,
 	// there will be NO cleanup, so we'll leak resources.
-	//
-	// 55 minutes has been chosen on basis of default test timeout of 1 hour.
+	testTimeout := time.Hour
+	if timeout, ok := os.LookupEnv("TEST_TIMEOUT"); ok {
+		if parsedDuration, err := time.ParseDuration(timeout); err == nil {
+			testTimeout = parsedDuration
+		}
+	}
+
 	// We allow 5 minutes for tests to clean up after themselves.
-	ctx, _ := context.WithTimeout(context.Background(), 55*time.Minute) //nolint:govet
+	testTimeout = testTimeout - 5*time.Minute
+	ctx, _ := context.WithTimeout(context.Background(), testTimeout) //nolint:govet
 	sCtx, _ := signal.NotifyContext(ctx, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)
 
 	return sCtx
