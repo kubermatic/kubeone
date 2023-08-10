@@ -199,7 +199,7 @@ func (c *cloudProviderTests) createStatefulSetWithStorage(t *testing.T) {
 func (c *cloudProviderTests) validateStatefulSetReadiness(t *testing.T) {
 	t.Log("Waiting until the StatefulSet is ready...")
 
-	err := wait.PollUntilContextTimeout(context.TODO(), cpTestPollPeriod, cpTestTimeout, false, func(ctx context.Context) (done bool, err error) {
+	err := wait.PollUntilContextTimeout(c.ctx, cpTestPollPeriod, cpTestTimeout, false, func(ctx context.Context) (done bool, err error) {
 		currentSet := &appsv1.StatefulSet{}
 		name := types.NamespacedName{Namespace: cpTestNamespaceName, Name: cpTestStatefulSetName}
 
