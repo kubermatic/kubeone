@@ -11,7 +11,7 @@ func TestStub(t *testing.T) {
 	t.Skip("stub is skipped")
 }
 func TestAwsAmznInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -20,7 +20,7 @@ func TestAwsAmznInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAwsCentosInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -29,7 +29,7 @@ func TestAwsCentosInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAwsDefaultInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -38,7 +38,7 @@ func TestAwsDefaultInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAwsFlatcarInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -47,7 +47,7 @@ func TestAwsFlatcarInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAwsRhelInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -56,7 +56,7 @@ func TestAwsRhelInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAwsRockylinuxInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -65,7 +65,7 @@ func TestAwsRockylinuxInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAzureDefaultInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -74,7 +74,7 @@ func TestAzureDefaultInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAzureCentosInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -83,7 +83,7 @@ func TestAzureCentosInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAzureFlatcarInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -92,7 +92,7 @@ func TestAzureFlatcarInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAzureRhelInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -101,7 +101,7 @@ func TestAzureRhelInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAzureRockylinuxInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -110,7 +110,7 @@ func TestAzureRockylinuxInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestGceDefaultInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -119,7 +119,7 @@ func TestGceDefaultInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestOpenstackDefaultInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -128,7 +128,7 @@ func TestOpenstackDefaultInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestOpenstackCentosInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -137,7 +137,7 @@ func TestOpenstackCentosInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestOpenstackRockylinuxInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -146,7 +146,7 @@ func TestOpenstackRockylinuxInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestOpenstackRhelInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -155,7 +155,7 @@ func TestOpenstackRhelInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestOpenstackFlatcarInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -164,7 +164,7 @@ func TestOpenstackFlatcarInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestVsphereDefaultInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -173,7 +173,7 @@ func TestVsphereDefaultInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestVsphereCentosInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -182,7 +182,7 @@ func TestVsphereCentosInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestVsphereFlatcarInstallContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -191,7 +191,7 @@ func TestVsphereFlatcarInstallContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAwsAmznInstallContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -200,7 +200,7 @@ func TestAwsAmznInstallContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAwsCentosInstallContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -209,7 +209,7 @@ func TestAwsCentosInstallContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAwsDefaultInstallContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -218,7 +218,7 @@ func TestAwsDefaultInstallContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAwsFlatcarInstallContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -227,7 +227,7 @@ func TestAwsFlatcarInstallContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAwsRhelInstallContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -236,7 +236,7 @@ func TestAwsRhelInstallContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAwsRockylinuxInstallContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -245,7 +245,7 @@ func TestAwsRockylinuxInstallContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAzureDefaultInstallContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -254,7 +254,7 @@ func TestAzureDefaultInstallContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAzureCentosInstallContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -263,7 +263,7 @@ func TestAzureCentosInstallContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAzureFlatcarInstallContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -272,7 +272,7 @@ func TestAzureFlatcarInstallContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAzureRhelInstallContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -281,7 +281,7 @@ func TestAzureRhelInstallContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAzureRockylinuxInstallContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -290,7 +290,7 @@ func TestAzureRockylinuxInstallContainerdV1_25_11(t *testing.T) {
 }
 
 func TestGceDefaultInstallContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -299,7 +299,7 @@ func TestGceDefaultInstallContainerdV1_25_11(t *testing.T) {
 }
 
 func TestOpenstackDefaultInstallContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -308,7 +308,7 @@ func TestOpenstackDefaultInstallContainerdV1_25_11(t *testing.T) {
 }
 
 func TestOpenstackCentosInstallContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -317,7 +317,7 @@ func TestOpenstackCentosInstallContainerdV1_25_11(t *testing.T) {
 }
 
 func TestOpenstackRockylinuxInstallContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -326,7 +326,7 @@ func TestOpenstackRockylinuxInstallContainerdV1_25_11(t *testing.T) {
 }
 
 func TestOpenstackRhelInstallContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -335,7 +335,7 @@ func TestOpenstackRhelInstallContainerdV1_25_11(t *testing.T) {
 }
 
 func TestOpenstackFlatcarInstallContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -344,7 +344,7 @@ func TestOpenstackFlatcarInstallContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAwsAmznInstallContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -353,7 +353,7 @@ func TestAwsAmznInstallContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAwsCentosInstallContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -362,7 +362,7 @@ func TestAwsCentosInstallContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAwsDefaultInstallContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -371,7 +371,7 @@ func TestAwsDefaultInstallContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAwsFlatcarInstallContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -380,7 +380,7 @@ func TestAwsFlatcarInstallContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAwsRhelInstallContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -389,7 +389,7 @@ func TestAwsRhelInstallContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAwsRockylinuxInstallContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -398,7 +398,7 @@ func TestAwsRockylinuxInstallContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAzureDefaultInstallContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -407,7 +407,7 @@ func TestAzureDefaultInstallContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAzureCentosInstallContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -416,7 +416,7 @@ func TestAzureCentosInstallContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAzureFlatcarInstallContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -425,7 +425,7 @@ func TestAzureFlatcarInstallContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAzureRhelInstallContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -434,7 +434,7 @@ func TestAzureRhelInstallContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAzureRockylinuxInstallContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -443,7 +443,7 @@ func TestAzureRockylinuxInstallContainerdV1_26_6(t *testing.T) {
 }
 
 func TestGceDefaultInstallContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -452,7 +452,7 @@ func TestGceDefaultInstallContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAzureDefaultInstallContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -461,7 +461,7 @@ func TestAzureDefaultInstallContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureCentosInstallContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -470,7 +470,7 @@ func TestAzureCentosInstallContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureFlatcarInstallContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -479,7 +479,7 @@ func TestAzureFlatcarInstallContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureRhelInstallContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -488,7 +488,7 @@ func TestAzureRhelInstallContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureRockylinuxInstallContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -497,7 +497,7 @@ func TestAzureRockylinuxInstallContainerdV1_27_3(t *testing.T) {
 }
 
 func TestGceDefaultInstallContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
@@ -506,7 +506,7 @@ func TestGceDefaultInstallContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureDefaultStableUpgradeContainerdFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -515,7 +515,7 @@ func TestAzureDefaultStableUpgradeContainerdFromV1_26_6_ToV1_27_3(t *testing.T) 
 }
 
 func TestAzureCentosStableUpgradeContainerdFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -524,7 +524,7 @@ func TestAzureCentosStableUpgradeContainerdFromV1_26_6_ToV1_27_3(t *testing.T) {
 }
 
 func TestAzureFlatcarStableUpgradeContainerdFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -533,7 +533,7 @@ func TestAzureFlatcarStableUpgradeContainerdFromV1_26_6_ToV1_27_3(t *testing.T) 
 }
 
 func TestAzureRhelStableUpgradeContainerdFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -542,7 +542,7 @@ func TestAzureRhelStableUpgradeContainerdFromV1_26_6_ToV1_27_3(t *testing.T) {
 }
 
 func TestAzureRockylinuxStableUpgradeContainerdFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -551,7 +551,7 @@ func TestAzureRockylinuxStableUpgradeContainerdFromV1_26_6_ToV1_27_3(t *testing.
 }
 
 func TestGceDefaultStableUpgradeContainerdFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["gce_default_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -560,7 +560,7 @@ func TestGceDefaultStableUpgradeContainerdFromV1_26_6_ToV1_27_3(t *testing.T) {
 }
 
 func TestAwsAmznStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -569,7 +569,7 @@ func TestAwsAmznStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
 }
 
 func TestAwsCentosStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -578,7 +578,7 @@ func TestAwsCentosStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
 }
 
 func TestAwsDefaultStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -587,7 +587,7 @@ func TestAwsDefaultStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
 }
 
 func TestAwsFlatcarStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -596,7 +596,7 @@ func TestAwsFlatcarStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
 }
 
 func TestAwsRhelStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -605,7 +605,7 @@ func TestAwsRhelStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
 }
 
 func TestAwsRockylinuxStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -614,7 +614,7 @@ func TestAwsRockylinuxStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T
 }
 
 func TestAzureDefaultStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -623,7 +623,7 @@ func TestAzureDefaultStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T)
 }
 
 func TestAzureCentosStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -632,7 +632,7 @@ func TestAzureCentosStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) 
 }
 
 func TestAzureFlatcarStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -641,7 +641,7 @@ func TestAzureFlatcarStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T)
 }
 
 func TestAzureRhelStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -650,7 +650,7 @@ func TestAzureRhelStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
 }
 
 func TestAzureRockylinuxStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -659,7 +659,7 @@ func TestAzureRockylinuxStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing
 }
 
 func TestGceDefaultStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["gce_default_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -668,7 +668,7 @@ func TestGceDefaultStableUpgradeContainerdFromV1_25_11_ToV1_26_6(t *testing.T) {
 }
 
 func TestAwsAmznStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -677,7 +677,7 @@ func TestAwsAmznStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
 }
 
 func TestAwsCentosStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -686,7 +686,7 @@ func TestAwsCentosStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
 }
 
 func TestAwsDefaultStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -695,7 +695,7 @@ func TestAwsDefaultStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) 
 }
 
 func TestAwsFlatcarStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -704,7 +704,7 @@ func TestAwsFlatcarStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) 
 }
 
 func TestAwsRhelStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -713,7 +713,7 @@ func TestAwsRhelStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
 }
 
 func TestAwsRockylinuxStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -722,7 +722,7 @@ func TestAwsRockylinuxStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.
 }
 
 func TestAzureDefaultStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -731,7 +731,7 @@ func TestAzureDefaultStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T
 }
 
 func TestAzureCentosStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -740,7 +740,7 @@ func TestAzureCentosStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T)
 }
 
 func TestAzureFlatcarStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -749,7 +749,7 @@ func TestAzureFlatcarStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T
 }
 
 func TestAzureRhelStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -758,7 +758,7 @@ func TestAzureRhelStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
 }
 
 func TestAzureRockylinuxStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -767,7 +767,7 @@ func TestAzureRockylinuxStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testin
 }
 
 func TestGceDefaultStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["gce_default_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -776,7 +776,7 @@ func TestGceDefaultStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) 
 }
 
 func TestOpenstackDefaultStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -785,7 +785,7 @@ func TestOpenstackDefaultStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testi
 }
 
 func TestOpenstackCentosStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -794,7 +794,7 @@ func TestOpenstackCentosStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testin
 }
 
 func TestOpenstackRockylinuxUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -803,7 +803,7 @@ func TestOpenstackRockylinuxUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.
 }
 
 func TestOpenstackRhelStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -812,7 +812,7 @@ func TestOpenstackRhelStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.
 }
 
 func TestOpenstackFlatcarStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
@@ -821,7 +821,7 @@ func TestOpenstackFlatcarStableUpgradeContainerdFromV1_24_15_ToV1_25_11(t *testi
 }
 
 func TestAzureDefaultCalicoContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
@@ -830,7 +830,7 @@ func TestAzureDefaultCalicoContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureCentosCalicoContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
@@ -839,7 +839,7 @@ func TestAzureCentosCalicoContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureFlatcarCalicoContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
@@ -848,7 +848,7 @@ func TestAzureFlatcarCalicoContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureRhelCalicoContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
@@ -857,7 +857,7 @@ func TestAzureRhelCalicoContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureRockylinuxCalicoContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
@@ -866,7 +866,7 @@ func TestAzureRockylinuxCalicoContainerdV1_27_3(t *testing.T) {
 }
 
 func TestGceDefaultCalicoContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["calico_containerd"]
 	scenario.SetInfra(infra)
@@ -875,7 +875,7 @@ func TestGceDefaultCalicoContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAwsAmznCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -884,7 +884,7 @@ func TestAwsAmznCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsCentosCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -893,7 +893,7 @@ func TestAwsCentosCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsDefaultCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -902,7 +902,7 @@ func TestAwsDefaultCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsFlatcarCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -911,7 +911,7 @@ func TestAwsFlatcarCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsRhelCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -920,7 +920,7 @@ func TestAwsRhelCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsRockylinuxCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -929,7 +929,7 @@ func TestAwsRockylinuxCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAzureDefaultCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -938,7 +938,7 @@ func TestAzureDefaultCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAzureCentosCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -947,7 +947,7 @@ func TestAzureCentosCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAzureFlatcarCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -956,7 +956,7 @@ func TestAzureFlatcarCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAzureRhelCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -965,7 +965,7 @@ func TestAzureRhelCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAzureRockylinuxCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -974,7 +974,7 @@ func TestAzureRockylinuxCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestOpenstackDefaultCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -983,7 +983,7 @@ func TestOpenstackDefaultCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestOpenstackCentosCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -992,7 +992,7 @@ func TestOpenstackCentosCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestOpenstackRockylinuxCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1001,7 +1001,7 @@ func TestOpenstackRockylinuxCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestOpenstackRhelCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1010,7 +1010,7 @@ func TestOpenstackRhelCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestOpenstackFlatcarCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1019,7 +1019,7 @@ func TestOpenstackFlatcarCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestVsphereDefaultCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1028,7 +1028,7 @@ func TestVsphereDefaultCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestVsphereCentosCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1037,7 +1037,7 @@ func TestVsphereCentosCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestVsphereFlatcarCalicoContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1046,7 +1046,7 @@ func TestVsphereFlatcarCalicoContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAzureDefaultWeaveContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
@@ -1055,7 +1055,7 @@ func TestAzureDefaultWeaveContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureCentosWeaveContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
@@ -1064,7 +1064,7 @@ func TestAzureCentosWeaveContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureFlatcarWeaveContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
@@ -1073,7 +1073,7 @@ func TestAzureFlatcarWeaveContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureRhelWeaveContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
@@ -1082,7 +1082,7 @@ func TestAzureRhelWeaveContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureRockylinuxWeaveContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
@@ -1091,7 +1091,7 @@ func TestAzureRockylinuxWeaveContainerdV1_27_3(t *testing.T) {
 }
 
 func TestGceDefaultWeaveContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["weave_containerd"]
 	scenario.SetInfra(infra)
@@ -1100,7 +1100,7 @@ func TestGceDefaultWeaveContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureDefaultCiliumContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["cilium_containerd"]
 	scenario.SetInfra(infra)
@@ -1109,7 +1109,7 @@ func TestAzureDefaultCiliumContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureCentosCiliumContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["cilium_containerd"]
 	scenario.SetInfra(infra)
@@ -1118,7 +1118,7 @@ func TestAzureCentosCiliumContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureFlatcarCiliumContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["cilium_containerd"]
 	scenario.SetInfra(infra)
@@ -1127,7 +1127,7 @@ func TestAzureFlatcarCiliumContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureRhelCiliumContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["cilium_containerd"]
 	scenario.SetInfra(infra)
@@ -1136,7 +1136,7 @@ func TestAzureRhelCiliumContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureRockylinuxCiliumContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["cilium_containerd"]
 	scenario.SetInfra(infra)
@@ -1145,7 +1145,7 @@ func TestAzureRockylinuxCiliumContainerdV1_27_3(t *testing.T) {
 }
 
 func TestGceDefaultCiliumContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["cilium_containerd"]
 	scenario.SetInfra(infra)
@@ -1154,7 +1154,7 @@ func TestGceDefaultCiliumContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAwsAmznCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1163,7 +1163,7 @@ func TestAwsAmznCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsCentosCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1172,7 +1172,7 @@ func TestAwsCentosCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsDefaultCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1181,7 +1181,7 @@ func TestAwsDefaultCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsFlatcarCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1190,7 +1190,7 @@ func TestAwsFlatcarCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsRhelCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1199,7 +1199,7 @@ func TestAwsRhelCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsRockylinuxCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1208,7 +1208,7 @@ func TestAwsRockylinuxCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAzureDefaultCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1217,7 +1217,7 @@ func TestAzureDefaultCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAzureCentosCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1226,7 +1226,7 @@ func TestAzureCentosCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAzureFlatcarCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1235,7 +1235,7 @@ func TestAzureFlatcarCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAzureRhelCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1244,7 +1244,7 @@ func TestAzureRhelCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAzureRockylinuxCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1253,7 +1253,7 @@ func TestAzureRockylinuxCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestOpenstackDefaultCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1262,7 +1262,7 @@ func TestOpenstackDefaultCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestOpenstackCentosCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1271,7 +1271,7 @@ func TestOpenstackCentosCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestOpenstackRockylinuxCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1280,7 +1280,7 @@ func TestOpenstackRockylinuxCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestOpenstackRhelCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1289,7 +1289,7 @@ func TestOpenstackRhelCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestOpenstackFlatcarCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1298,7 +1298,7 @@ func TestOpenstackFlatcarCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestVsphereDefaultCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1307,7 +1307,7 @@ func TestVsphereDefaultCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestVsphereCentosCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1316,7 +1316,7 @@ func TestVsphereCentosCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestVsphereFlatcarCiliumContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1325,7 +1325,7 @@ func TestVsphereFlatcarCiliumContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsLongTimeoutDefaultConformanceContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd"]
 	scenario.SetInfra(infra)
@@ -1334,7 +1334,7 @@ func TestAwsLongTimeoutDefaultConformanceContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAwsLongTimeoutDefaultConformanceContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd"]
 	scenario.SetInfra(infra)
@@ -1343,7 +1343,7 @@ func TestAwsLongTimeoutDefaultConformanceContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAwsLongTimeoutDefaultConformanceContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd"]
 	scenario.SetInfra(infra)
@@ -1352,7 +1352,7 @@ func TestAwsLongTimeoutDefaultConformanceContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1361,7 +1361,7 @@ func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_24_15(t *testing.T
 }
 
 func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1370,7 +1370,7 @@ func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_25_11(t *testing.T
 }
 
 func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1379,7 +1379,7 @@ func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_26_6(t *testing.T)
 }
 
 func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1388,7 +1388,7 @@ func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_27_3(t *testing.T)
 }
 
 func TestAwsDefaultKubeProxyIpvsExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["kube_proxy_ipvs_external"]
 	scenario.SetInfra(infra)
@@ -1397,7 +1397,7 @@ func TestAwsDefaultKubeProxyIpvsExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsAmznLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1406,7 +1406,7 @@ func TestAwsAmznLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAwsCentosLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1415,7 +1415,7 @@ func TestAwsCentosLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAwsDefaultLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1424,7 +1424,7 @@ func TestAwsDefaultLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAwsFlatcarLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1433,7 +1433,7 @@ func TestAwsFlatcarLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAwsRhelLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1442,7 +1442,7 @@ func TestAwsRhelLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAwsRockylinuxLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1451,7 +1451,7 @@ func TestAwsRockylinuxLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAzureDefaultLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1460,7 +1460,7 @@ func TestAzureDefaultLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAzureCentosLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1469,7 +1469,7 @@ func TestAzureCentosLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAzureFlatcarLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1478,7 +1478,7 @@ func TestAzureFlatcarLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAzureRhelLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1487,7 +1487,7 @@ func TestAzureRhelLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAzureRockylinuxLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1496,7 +1496,7 @@ func TestAzureRockylinuxLegacyMachineControllerContainerdV1_24_15(t *testing.T) 
 }
 
 func TestGceDefaultLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1505,7 +1505,7 @@ func TestGceDefaultLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
 }
 
 func TestOpenstackDefaultLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1514,7 +1514,7 @@ func TestOpenstackDefaultLegacyMachineControllerContainerdV1_24_15(t *testing.T)
 }
 
 func TestOpenstackCentosLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1523,7 +1523,7 @@ func TestOpenstackCentosLegacyMachineControllerContainerdV1_24_15(t *testing.T) 
 }
 
 func TestOpenstackRockylinuxLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1532,7 +1532,7 @@ func TestOpenstackRockylinuxLegacyMachineControllerContainerdV1_24_15(t *testing
 }
 
 func TestOpenstackRhelLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1541,7 +1541,7 @@ func TestOpenstackRhelLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
 }
 
 func TestOpenstackFlatcarLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1550,7 +1550,7 @@ func TestOpenstackFlatcarLegacyMachineControllerContainerdV1_24_15(t *testing.T)
 }
 
 func TestVsphereDefaultLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1559,7 +1559,7 @@ func TestVsphereDefaultLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
 }
 
 func TestVsphereCentosLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1568,7 +1568,7 @@ func TestVsphereCentosLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
 }
 
 func TestVsphereFlatcarLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1577,7 +1577,7 @@ func TestVsphereFlatcarLegacyMachineControllerContainerdV1_24_15(t *testing.T) {
 }
 
 func TestAwsAmznLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1586,7 +1586,7 @@ func TestAwsAmznLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAwsCentosLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1595,7 +1595,7 @@ func TestAwsCentosLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAwsDefaultLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1604,7 +1604,7 @@ func TestAwsDefaultLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAwsFlatcarLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1613,7 +1613,7 @@ func TestAwsFlatcarLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAwsRhelLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1622,7 +1622,7 @@ func TestAwsRhelLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAwsRockylinuxLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1631,7 +1631,7 @@ func TestAwsRockylinuxLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAzureDefaultLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1640,7 +1640,7 @@ func TestAzureDefaultLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAzureCentosLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1649,7 +1649,7 @@ func TestAzureCentosLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAzureFlatcarLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1658,7 +1658,7 @@ func TestAzureFlatcarLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAzureRhelLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1667,7 +1667,7 @@ func TestAzureRhelLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
 }
 
 func TestAzureRockylinuxLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1676,7 +1676,7 @@ func TestAzureRockylinuxLegacyMachineControllerContainerdV1_25_11(t *testing.T) 
 }
 
 func TestGceDefaultLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1685,7 +1685,7 @@ func TestGceDefaultLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
 }
 
 func TestOpenstackDefaultLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1694,7 +1694,7 @@ func TestOpenstackDefaultLegacyMachineControllerContainerdV1_25_11(t *testing.T)
 }
 
 func TestOpenstackCentosLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1703,7 +1703,7 @@ func TestOpenstackCentosLegacyMachineControllerContainerdV1_25_11(t *testing.T) 
 }
 
 func TestOpenstackRockylinuxLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1712,7 +1712,7 @@ func TestOpenstackRockylinuxLegacyMachineControllerContainerdV1_25_11(t *testing
 }
 
 func TestOpenstackRhelLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1721,7 +1721,7 @@ func TestOpenstackRhelLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
 }
 
 func TestOpenstackFlatcarLegacyMachineControllerContainerdV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1730,7 +1730,7 @@ func TestOpenstackFlatcarLegacyMachineControllerContainerdV1_25_11(t *testing.T)
 }
 
 func TestAwsAmznLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1739,7 +1739,7 @@ func TestAwsAmznLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAwsCentosLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1748,7 +1748,7 @@ func TestAwsCentosLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAwsDefaultLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1757,7 +1757,7 @@ func TestAwsDefaultLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAwsFlatcarLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1766,7 +1766,7 @@ func TestAwsFlatcarLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAwsRhelLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1775,7 +1775,7 @@ func TestAwsRhelLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAwsRockylinuxLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1784,7 +1784,7 @@ func TestAwsRockylinuxLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAzureDefaultLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1793,7 +1793,7 @@ func TestAzureDefaultLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAzureCentosLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1802,7 +1802,7 @@ func TestAzureCentosLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAzureFlatcarLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1811,7 +1811,7 @@ func TestAzureFlatcarLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAzureRhelLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1820,7 +1820,7 @@ func TestAzureRhelLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAzureRockylinuxLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1829,7 +1829,7 @@ func TestAzureRockylinuxLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
 }
 
 func TestGceDefaultLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1838,7 +1838,7 @@ func TestGceDefaultLegacyMachineControllerContainerdV1_26_6(t *testing.T) {
 }
 
 func TestAzureDefaultLegacyMachineControllerContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1847,7 +1847,7 @@ func TestAzureDefaultLegacyMachineControllerContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureCentosLegacyMachineControllerContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1856,7 +1856,7 @@ func TestAzureCentosLegacyMachineControllerContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureFlatcarLegacyMachineControllerContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1865,7 +1865,7 @@ func TestAzureFlatcarLegacyMachineControllerContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureRhelLegacyMachineControllerContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1874,7 +1874,7 @@ func TestAzureRhelLegacyMachineControllerContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAzureRockylinuxLegacyMachineControllerContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1883,7 +1883,7 @@ func TestAzureRockylinuxLegacyMachineControllerContainerdV1_27_3(t *testing.T) {
 }
 
 func TestGceDefaultLegacyMachineControllerContainerdV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd"]
 	scenario.SetInfra(infra)
@@ -1892,7 +1892,7 @@ func TestGceDefaultLegacyMachineControllerContainerdV1_27_3(t *testing.T) {
 }
 
 func TestAwsAmznCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -1901,7 +1901,7 @@ func TestAwsAmznCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestAwsCentosCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -1910,7 +1910,7 @@ func TestAwsCentosCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestAwsDefaultCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -1919,7 +1919,7 @@ func TestAwsDefaultCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestAwsFlatcarCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -1928,7 +1928,7 @@ func TestAwsFlatcarCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestAwsRhelCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -1937,7 +1937,7 @@ func TestAwsRhelCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestAwsRockylinuxCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -1946,7 +1946,7 @@ func TestAwsRockylinuxCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestOpenstackDefaultCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -1955,7 +1955,7 @@ func TestOpenstackDefaultCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestOpenstackCentosCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -1964,7 +1964,7 @@ func TestOpenstackCentosCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestOpenstackRockylinuxCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -1973,7 +1973,7 @@ func TestOpenstackRockylinuxCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestOpenstackRhelCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -1982,7 +1982,7 @@ func TestOpenstackRhelCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestOpenstackFlatcarCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -1991,7 +1991,7 @@ func TestOpenstackFlatcarCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestAzureDefaultCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2000,7 +2000,7 @@ func TestAzureDefaultCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestAzureCentosCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2009,7 +2009,7 @@ func TestAzureCentosCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestAzureFlatcarCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2018,7 +2018,7 @@ func TestAzureFlatcarCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestAzureRhelCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2027,7 +2027,7 @@ func TestAzureRhelCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestAzureRockylinuxCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2036,7 +2036,7 @@ func TestAzureRockylinuxCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestVsphereDefaultCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2045,7 +2045,7 @@ func TestVsphereDefaultCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestVsphereCentosCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2054,7 +2054,7 @@ func TestVsphereCentosCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestVsphereFlatcarCsiCcmMigrationV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2063,7 +2063,7 @@ func TestVsphereFlatcarCsiCcmMigrationV1_24_15(t *testing.T) {
 }
 
 func TestAwsAmznCsiCcmMigrationV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2072,7 +2072,7 @@ func TestAwsAmznCsiCcmMigrationV1_25_11(t *testing.T) {
 }
 
 func TestAwsCentosCsiCcmMigrationV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2081,7 +2081,7 @@ func TestAwsCentosCsiCcmMigrationV1_25_11(t *testing.T) {
 }
 
 func TestAwsDefaultCsiCcmMigrationV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2090,7 +2090,7 @@ func TestAwsDefaultCsiCcmMigrationV1_25_11(t *testing.T) {
 }
 
 func TestAwsFlatcarCsiCcmMigrationV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2099,7 +2099,7 @@ func TestAwsFlatcarCsiCcmMigrationV1_25_11(t *testing.T) {
 }
 
 func TestAwsRhelCsiCcmMigrationV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2108,7 +2108,7 @@ func TestAwsRhelCsiCcmMigrationV1_25_11(t *testing.T) {
 }
 
 func TestAwsRockylinuxCsiCcmMigrationV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2117,7 +2117,7 @@ func TestAwsRockylinuxCsiCcmMigrationV1_25_11(t *testing.T) {
 }
 
 func TestOpenstackDefaultCsiCcmMigrationV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2126,7 +2126,7 @@ func TestOpenstackDefaultCsiCcmMigrationV1_25_11(t *testing.T) {
 }
 
 func TestOpenstackCentosCsiCcmMigrationV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2135,7 +2135,7 @@ func TestOpenstackCentosCsiCcmMigrationV1_25_11(t *testing.T) {
 }
 
 func TestOpenstackRockylinuxCsiCcmMigrationV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2144,7 +2144,7 @@ func TestOpenstackRockylinuxCsiCcmMigrationV1_25_11(t *testing.T) {
 }
 
 func TestOpenstackRhelCsiCcmMigrationV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2153,7 +2153,7 @@ func TestOpenstackRhelCsiCcmMigrationV1_25_11(t *testing.T) {
 }
 
 func TestOpenstackFlatcarCsiCcmMigrationV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2162,7 +2162,7 @@ func TestOpenstackFlatcarCsiCcmMigrationV1_25_11(t *testing.T) {
 }
 
 func TestAzureDefaultCsiCcmMigrationV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2171,7 +2171,7 @@ func TestAzureDefaultCsiCcmMigrationV1_25_11(t *testing.T) {
 }
 
 func TestAzureCentosCsiCcmMigrationV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2180,7 +2180,7 @@ func TestAzureCentosCsiCcmMigrationV1_25_11(t *testing.T) {
 }
 
 func TestAzureFlatcarCsiCcmMigrationV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2189,7 +2189,7 @@ func TestAzureFlatcarCsiCcmMigrationV1_25_11(t *testing.T) {
 }
 
 func TestAzureRhelCsiCcmMigrationV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2198,7 +2198,7 @@ func TestAzureRhelCsiCcmMigrationV1_25_11(t *testing.T) {
 }
 
 func TestAzureRockylinuxCsiCcmMigrationV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2207,7 +2207,7 @@ func TestAzureRockylinuxCsiCcmMigrationV1_25_11(t *testing.T) {
 }
 
 func TestAwsAmznCsiCcmMigrationV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2216,7 +2216,7 @@ func TestAwsAmznCsiCcmMigrationV1_26_6(t *testing.T) {
 }
 
 func TestAwsCentosCsiCcmMigrationV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2225,7 +2225,7 @@ func TestAwsCentosCsiCcmMigrationV1_26_6(t *testing.T) {
 }
 
 func TestAwsDefaultCsiCcmMigrationV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2234,7 +2234,7 @@ func TestAwsDefaultCsiCcmMigrationV1_26_6(t *testing.T) {
 }
 
 func TestAwsFlatcarCsiCcmMigrationV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2243,7 +2243,7 @@ func TestAwsFlatcarCsiCcmMigrationV1_26_6(t *testing.T) {
 }
 
 func TestAwsRhelCsiCcmMigrationV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2252,7 +2252,7 @@ func TestAwsRhelCsiCcmMigrationV1_26_6(t *testing.T) {
 }
 
 func TestAwsRockylinuxCsiCcmMigrationV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2261,7 +2261,7 @@ func TestAwsRockylinuxCsiCcmMigrationV1_26_6(t *testing.T) {
 }
 
 func TestAzureDefaultCsiCcmMigrationV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2270,7 +2270,7 @@ func TestAzureDefaultCsiCcmMigrationV1_26_6(t *testing.T) {
 }
 
 func TestAzureCentosCsiCcmMigrationV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2279,7 +2279,7 @@ func TestAzureCentosCsiCcmMigrationV1_26_6(t *testing.T) {
 }
 
 func TestAzureFlatcarCsiCcmMigrationV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2288,7 +2288,7 @@ func TestAzureFlatcarCsiCcmMigrationV1_26_6(t *testing.T) {
 }
 
 func TestAzureRhelCsiCcmMigrationV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2297,7 +2297,7 @@ func TestAzureRhelCsiCcmMigrationV1_26_6(t *testing.T) {
 }
 
 func TestAzureRockylinuxCsiCcmMigrationV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2306,7 +2306,7 @@ func TestAzureRockylinuxCsiCcmMigrationV1_26_6(t *testing.T) {
 }
 
 func TestAzureDefaultCsiCcmMigrationV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2315,7 +2315,7 @@ func TestAzureDefaultCsiCcmMigrationV1_27_3(t *testing.T) {
 }
 
 func TestAzureCentosCsiCcmMigrationV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2324,7 +2324,7 @@ func TestAzureCentosCsiCcmMigrationV1_27_3(t *testing.T) {
 }
 
 func TestAzureFlatcarCsiCcmMigrationV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2333,7 +2333,7 @@ func TestAzureFlatcarCsiCcmMigrationV1_27_3(t *testing.T) {
 }
 
 func TestAzureRhelCsiCcmMigrationV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2342,7 +2342,7 @@ func TestAzureRhelCsiCcmMigrationV1_27_3(t *testing.T) {
 }
 
 func TestAzureRockylinuxCsiCcmMigrationV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
@@ -2351,7 +2351,7 @@ func TestAzureRockylinuxCsiCcmMigrationV1_27_3(t *testing.T) {
 }
 
 func TestAwsAmznInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2360,7 +2360,7 @@ func TestAwsAmznInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestAwsCentosInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2369,7 +2369,7 @@ func TestAwsCentosInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestAwsDefaultInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2378,7 +2378,7 @@ func TestAwsDefaultInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestAwsFlatcarInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2387,7 +2387,7 @@ func TestAwsFlatcarInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestAwsRhelInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2396,7 +2396,7 @@ func TestAwsRhelInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestAwsRockylinuxInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2405,7 +2405,7 @@ func TestAwsRockylinuxInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestAzureDefaultInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2414,7 +2414,7 @@ func TestAzureDefaultInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestAzureCentosInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2423,7 +2423,7 @@ func TestAzureCentosInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestAzureFlatcarInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2432,7 +2432,7 @@ func TestAzureFlatcarInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestAzureRhelInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2441,7 +2441,7 @@ func TestAzureRhelInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestAzureRockylinuxInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2450,7 +2450,7 @@ func TestAzureRockylinuxInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestDigitaloceanDefaultInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2459,7 +2459,7 @@ func TestDigitaloceanDefaultInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestDigitaloceanCentosInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2468,7 +2468,7 @@ func TestDigitaloceanCentosInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestDigitaloceanRockylinuxInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2477,7 +2477,7 @@ func TestDigitaloceanRockylinuxInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestEquinixmetalDefaultInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2486,7 +2486,7 @@ func TestEquinixmetalDefaultInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestEquinixmetalCentosInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2495,7 +2495,7 @@ func TestEquinixmetalCentosInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestEquinixmetalRockylinuxInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2504,7 +2504,7 @@ func TestEquinixmetalRockylinuxInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestEquinixmetalFlatcarInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2513,7 +2513,7 @@ func TestEquinixmetalFlatcarInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestHetznerDefaultInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2522,7 +2522,7 @@ func TestHetznerDefaultInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestHetznerCentosInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2531,7 +2531,7 @@ func TestHetznerCentosInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestHetznerRockylinuxInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2540,7 +2540,7 @@ func TestHetznerRockylinuxInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestOpenstackDefaultInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2549,7 +2549,7 @@ func TestOpenstackDefaultInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestOpenstackCentosInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2558,7 +2558,7 @@ func TestOpenstackCentosInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestOpenstackRockylinuxInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2567,7 +2567,7 @@ func TestOpenstackRockylinuxInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestOpenstackRhelInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2576,7 +2576,7 @@ func TestOpenstackRhelInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestOpenstackFlatcarInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2585,7 +2585,7 @@ func TestOpenstackFlatcarInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestVsphereDefaultInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2594,7 +2594,7 @@ func TestVsphereDefaultInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestVsphereCentosInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2603,7 +2603,7 @@ func TestVsphereCentosInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestVsphereFlatcarInstallContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2612,7 +2612,7 @@ func TestVsphereFlatcarInstallContainerdExternalV1_24_15(t *testing.T) {
 }
 
 func TestAwsAmznInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2621,7 +2621,7 @@ func TestAwsAmznInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestAwsCentosInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2630,7 +2630,7 @@ func TestAwsCentosInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestAwsDefaultInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2639,7 +2639,7 @@ func TestAwsDefaultInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestAwsFlatcarInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2648,7 +2648,7 @@ func TestAwsFlatcarInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestAwsRhelInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2657,7 +2657,7 @@ func TestAwsRhelInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestAwsRockylinuxInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2666,7 +2666,7 @@ func TestAwsRockylinuxInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestAzureDefaultInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2675,7 +2675,7 @@ func TestAzureDefaultInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestAzureCentosInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2684,7 +2684,7 @@ func TestAzureCentosInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestAzureFlatcarInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2693,7 +2693,7 @@ func TestAzureFlatcarInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestAzureRhelInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2702,7 +2702,7 @@ func TestAzureRhelInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestAzureRockylinuxInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2711,7 +2711,7 @@ func TestAzureRockylinuxInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestDigitaloceanDefaultInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2720,7 +2720,7 @@ func TestDigitaloceanDefaultInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestDigitaloceanCentosInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2729,7 +2729,7 @@ func TestDigitaloceanCentosInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestDigitaloceanRockylinuxInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2738,7 +2738,7 @@ func TestDigitaloceanRockylinuxInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestEquinixmetalDefaultInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2747,7 +2747,7 @@ func TestEquinixmetalDefaultInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestEquinixmetalCentosInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2756,7 +2756,7 @@ func TestEquinixmetalCentosInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestEquinixmetalRockylinuxInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2765,7 +2765,7 @@ func TestEquinixmetalRockylinuxInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestEquinixmetalFlatcarInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2774,7 +2774,7 @@ func TestEquinixmetalFlatcarInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestHetznerDefaultInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2783,7 +2783,7 @@ func TestHetznerDefaultInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestHetznerCentosInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2792,7 +2792,7 @@ func TestHetznerCentosInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestHetznerRockylinuxInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2801,7 +2801,7 @@ func TestHetznerRockylinuxInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestOpenstackDefaultInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2810,7 +2810,7 @@ func TestOpenstackDefaultInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestOpenstackCentosInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2819,7 +2819,7 @@ func TestOpenstackCentosInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestOpenstackRockylinuxInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2828,7 +2828,7 @@ func TestOpenstackRockylinuxInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestOpenstackRhelInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2837,7 +2837,7 @@ func TestOpenstackRhelInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestOpenstackFlatcarInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2846,7 +2846,7 @@ func TestOpenstackFlatcarInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestVsphereDefaultInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2855,7 +2855,7 @@ func TestVsphereDefaultInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestVsphereCentosInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2864,7 +2864,7 @@ func TestVsphereCentosInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestVsphereFlatcarInstallContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2873,7 +2873,7 @@ func TestVsphereFlatcarInstallContainerdExternalV1_25_11(t *testing.T) {
 }
 
 func TestAwsAmznInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2882,7 +2882,7 @@ func TestAwsAmznInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestAwsCentosInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2891,7 +2891,7 @@ func TestAwsCentosInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestAwsDefaultInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2900,7 +2900,7 @@ func TestAwsDefaultInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestAwsFlatcarInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2909,7 +2909,7 @@ func TestAwsFlatcarInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestAwsRhelInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2918,7 +2918,7 @@ func TestAwsRhelInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestAwsRockylinuxInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2927,7 +2927,7 @@ func TestAwsRockylinuxInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestAzureDefaultInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2936,7 +2936,7 @@ func TestAzureDefaultInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestAzureCentosInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2945,7 +2945,7 @@ func TestAzureCentosInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestAzureFlatcarInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2954,7 +2954,7 @@ func TestAzureFlatcarInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestAzureRhelInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2963,7 +2963,7 @@ func TestAzureRhelInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestAzureRockylinuxInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2972,7 +2972,7 @@ func TestAzureRockylinuxInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestDigitaloceanDefaultInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2981,7 +2981,7 @@ func TestDigitaloceanDefaultInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestDigitaloceanCentosInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2990,7 +2990,7 @@ func TestDigitaloceanCentosInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestDigitaloceanRockylinuxInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2999,7 +2999,7 @@ func TestDigitaloceanRockylinuxInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestEquinixmetalDefaultInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3008,7 +3008,7 @@ func TestEquinixmetalDefaultInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestEquinixmetalCentosInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3017,7 +3017,7 @@ func TestEquinixmetalCentosInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestEquinixmetalRockylinuxInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3026,7 +3026,7 @@ func TestEquinixmetalRockylinuxInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestEquinixmetalFlatcarInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3035,7 +3035,7 @@ func TestEquinixmetalFlatcarInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestHetznerDefaultInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3044,7 +3044,7 @@ func TestHetznerDefaultInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestHetznerCentosInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3053,7 +3053,7 @@ func TestHetznerCentosInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestHetznerRockylinuxInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3062,7 +3062,7 @@ func TestHetznerRockylinuxInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestOpenstackDefaultInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3071,7 +3071,7 @@ func TestOpenstackDefaultInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestOpenstackCentosInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3080,7 +3080,7 @@ func TestOpenstackCentosInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestOpenstackRockylinuxInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3089,7 +3089,7 @@ func TestOpenstackRockylinuxInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestOpenstackRhelInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3098,7 +3098,7 @@ func TestOpenstackRhelInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestOpenstackFlatcarInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3107,7 +3107,7 @@ func TestOpenstackFlatcarInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestVsphereDefaultInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3116,7 +3116,7 @@ func TestVsphereDefaultInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestVsphereCentosInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3125,7 +3125,7 @@ func TestVsphereCentosInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestVsphereFlatcarInstallContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3134,7 +3134,7 @@ func TestVsphereFlatcarInstallContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestAwsAmznInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3143,7 +3143,7 @@ func TestAwsAmznInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsCentosInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3152,7 +3152,7 @@ func TestAwsCentosInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsDefaultInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3161,7 +3161,7 @@ func TestAwsDefaultInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsFlatcarInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3170,7 +3170,7 @@ func TestAwsFlatcarInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsRhelInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3179,7 +3179,7 @@ func TestAwsRhelInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsRockylinuxInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3188,7 +3188,7 @@ func TestAwsRockylinuxInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAzureDefaultInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3197,7 +3197,7 @@ func TestAzureDefaultInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAzureCentosInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3206,7 +3206,7 @@ func TestAzureCentosInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAzureFlatcarInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3215,7 +3215,7 @@ func TestAzureFlatcarInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAzureRhelInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3224,7 +3224,7 @@ func TestAzureRhelInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAzureRockylinuxInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3233,7 +3233,7 @@ func TestAzureRockylinuxInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestDigitaloceanDefaultInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3242,7 +3242,7 @@ func TestDigitaloceanDefaultInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestDigitaloceanCentosInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3251,7 +3251,7 @@ func TestDigitaloceanCentosInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestDigitaloceanRockylinuxInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3260,7 +3260,7 @@ func TestDigitaloceanRockylinuxInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestEquinixmetalDefaultInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3269,7 +3269,7 @@ func TestEquinixmetalDefaultInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestEquinixmetalCentosInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3278,7 +3278,7 @@ func TestEquinixmetalCentosInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestEquinixmetalRockylinuxInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3287,7 +3287,7 @@ func TestEquinixmetalRockylinuxInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestEquinixmetalFlatcarInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3296,7 +3296,7 @@ func TestEquinixmetalFlatcarInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestHetznerDefaultInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3305,7 +3305,7 @@ func TestHetznerDefaultInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestHetznerCentosInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3314,7 +3314,7 @@ func TestHetznerCentosInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestHetznerRockylinuxInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3323,7 +3323,7 @@ func TestHetznerRockylinuxInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestOpenstackDefaultInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3332,7 +3332,7 @@ func TestOpenstackDefaultInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestOpenstackCentosInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3341,7 +3341,7 @@ func TestOpenstackCentosInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestOpenstackRockylinuxInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3350,7 +3350,7 @@ func TestOpenstackRockylinuxInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestOpenstackRhelInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3359,7 +3359,7 @@ func TestOpenstackRhelInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestOpenstackFlatcarInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3368,7 +3368,7 @@ func TestOpenstackFlatcarInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestVsphereDefaultInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3377,7 +3377,7 @@ func TestVsphereDefaultInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestVsphereCentosInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3386,7 +3386,7 @@ func TestVsphereCentosInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestVsphereFlatcarInstallContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3395,7 +3395,7 @@ func TestVsphereFlatcarInstallContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsAmznStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3404,7 +3404,7 @@ func TestAwsAmznStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testin
 }
 
 func TestAwsCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3413,7 +3413,7 @@ func TestAwsCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *test
 }
 
 func TestAwsDefaultStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3422,7 +3422,7 @@ func TestAwsDefaultStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *tes
 }
 
 func TestAwsFlatcarStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3431,7 +3431,7 @@ func TestAwsFlatcarStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *tes
 }
 
 func TestAwsRhelStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3440,7 +3440,7 @@ func TestAwsRhelStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testin
 }
 
 func TestAwsRockylinuxStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3449,7 +3449,7 @@ func TestAwsRockylinuxStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *
 }
 
 func TestAzureDefaultStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3458,7 +3458,7 @@ func TestAzureDefaultStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *t
 }
 
 func TestAzureCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3467,7 +3467,7 @@ func TestAzureCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *te
 }
 
 func TestAzureFlatcarStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3476,7 +3476,7 @@ func TestAzureFlatcarStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *t
 }
 
 func TestAzureRhelStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3485,7 +3485,7 @@ func TestAzureRhelStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *test
 }
 
 func TestAzureRockylinuxStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3494,7 +3494,7 @@ func TestAzureRockylinuxStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t
 }
 
 func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3503,7 +3503,7 @@ func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_
 }
 
 func TestDigitaloceanCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3512,7 +3512,7 @@ func TestDigitaloceanCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_1
 }
 
 func TestDigitaloceanRockylinuxStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3521,7 +3521,7 @@ func TestDigitaloceanRockylinuxStableUpgradeContainerdExternalFromV1_24_15_ToV1_
 }
 
 func TestEquinixmetalDefaultStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3530,7 +3530,7 @@ func TestEquinixmetalDefaultStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_
 }
 
 func TestEquinixmetalCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3539,7 +3539,7 @@ func TestEquinixmetalCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_1
 }
 
 func TestEquinixmetalRockylinuxStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3548,7 +3548,7 @@ func TestEquinixmetalRockylinuxStableUpgradeContainerdExternalFromV1_24_15_ToV1_
 }
 
 func TestEquinixmetalFlatcarStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3557,7 +3557,7 @@ func TestEquinixmetalFlatcarStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_
 }
 
 func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3566,7 +3566,7 @@ func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t 
 }
 
 func TestHetznerCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3575,7 +3575,7 @@ func TestHetznerCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *
 }
 
 func TestHetznerRockylinuxStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3584,7 +3584,7 @@ func TestHetznerRockylinuxStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11
 }
 
 func TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3593,7 +3593,7 @@ func TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(
 }
 
 func TestOpenstackCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3602,7 +3602,7 @@ func TestOpenstackCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t
 }
 
 func TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3611,7 +3611,7 @@ func TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *
 }
 
 func TestOpenstackRhelStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3620,7 +3620,7 @@ func TestOpenstackRhelStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *
 }
 
 func TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3629,7 +3629,7 @@ func TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(
 }
 
 func TestVsphereDefaultStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3638,7 +3638,7 @@ func TestVsphereDefaultStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t 
 }
 
 func TestVsphereCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3647,7 +3647,7 @@ func TestVsphereCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *
 }
 
 func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3656,7 +3656,7 @@ func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11(t 
 }
 
 func TestAwsAmznStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3665,7 +3665,7 @@ func TestAwsAmznStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing
 }
 
 func TestAwsCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3674,7 +3674,7 @@ func TestAwsCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testi
 }
 
 func TestAwsDefaultStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3683,7 +3683,7 @@ func TestAwsDefaultStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *test
 }
 
 func TestAwsFlatcarStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3692,7 +3692,7 @@ func TestAwsFlatcarStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *test
 }
 
 func TestAwsRhelStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3701,7 +3701,7 @@ func TestAwsRhelStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing
 }
 
 func TestAwsRockylinuxStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3710,7 +3710,7 @@ func TestAwsRockylinuxStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *t
 }
 
 func TestAzureDefaultStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3719,7 +3719,7 @@ func TestAzureDefaultStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *te
 }
 
 func TestAzureCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3728,7 +3728,7 @@ func TestAzureCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *tes
 }
 
 func TestAzureFlatcarStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3737,7 +3737,7 @@ func TestAzureFlatcarStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *te
 }
 
 func TestAzureRhelStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3746,7 +3746,7 @@ func TestAzureRhelStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testi
 }
 
 func TestAzureRockylinuxStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3755,7 +3755,7 @@ func TestAzureRockylinuxStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t 
 }
 
 func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3764,7 +3764,7 @@ func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_
 }
 
 func TestDigitaloceanCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3773,7 +3773,7 @@ func TestDigitaloceanCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6
 }
 
 func TestDigitaloceanRockylinuxStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3782,7 +3782,7 @@ func TestDigitaloceanRockylinuxStableUpgradeContainerdExternalFromV1_25_11_ToV1_
 }
 
 func TestEquinixmetalDefaultStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3791,7 +3791,7 @@ func TestEquinixmetalDefaultStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_
 }
 
 func TestEquinixmetalCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3800,7 +3800,7 @@ func TestEquinixmetalCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6
 }
 
 func TestEquinixmetalRockylinuxStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3809,7 +3809,7 @@ func TestEquinixmetalRockylinuxStableUpgradeContainerdExternalFromV1_25_11_ToV1_
 }
 
 func TestEquinixmetalFlatcarStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3818,7 +3818,7 @@ func TestEquinixmetalFlatcarStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_
 }
 
 func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3827,7 +3827,7 @@ func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *
 }
 
 func TestHetznerCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3836,7 +3836,7 @@ func TestHetznerCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *t
 }
 
 func TestHetznerRockylinuxStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3845,7 +3845,7 @@ func TestHetznerRockylinuxStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(
 }
 
 func TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3854,7 +3854,7 @@ func TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t
 }
 
 func TestOpenstackCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3863,7 +3863,7 @@ func TestOpenstackCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t 
 }
 
 func TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3872,7 +3872,7 @@ func TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *t
 }
 
 func TestOpenstackRhelStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3881,7 +3881,7 @@ func TestOpenstackRhelStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *t
 }
 
 func TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3890,7 +3890,7 @@ func TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t
 }
 
 func TestVsphereDefaultStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3899,7 +3899,7 @@ func TestVsphereDefaultStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *
 }
 
 func TestVsphereCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3908,7 +3908,7 @@ func TestVsphereCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *t
 }
 
 func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3917,7 +3917,7 @@ func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6(t *
 }
 
 func TestAwsAmznStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3926,7 +3926,7 @@ func TestAwsAmznStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.
 }
 
 func TestAwsCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3935,7 +3935,7 @@ func TestAwsCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testin
 }
 
 func TestAwsDefaultStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3944,7 +3944,7 @@ func TestAwsDefaultStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testi
 }
 
 func TestAwsFlatcarStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3953,7 +3953,7 @@ func TestAwsFlatcarStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testi
 }
 
 func TestAwsRhelStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3962,7 +3962,7 @@ func TestAwsRhelStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.
 }
 
 func TestAwsRockylinuxStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3971,7 +3971,7 @@ func TestAwsRockylinuxStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *te
 }
 
 func TestAzureDefaultStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3980,7 +3980,7 @@ func TestAzureDefaultStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *tes
 }
 
 func TestAzureCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3989,7 +3989,7 @@ func TestAzureCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *test
 }
 
 func TestAzureFlatcarStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -3998,7 +3998,7 @@ func TestAzureFlatcarStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *tes
 }
 
 func TestAzureRhelStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4007,7 +4007,7 @@ func TestAzureRhelStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testin
 }
 
 func TestAzureRockylinuxStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4016,7 +4016,7 @@ func TestAzureRockylinuxStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *
 }
 
 func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4025,7 +4025,7 @@ func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3
 }
 
 func TestDigitaloceanCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4034,7 +4034,7 @@ func TestDigitaloceanCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(
 }
 
 func TestDigitaloceanRockylinuxStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4043,7 +4043,7 @@ func TestDigitaloceanRockylinuxStableUpgradeContainerdExternalFromV1_26_6_ToV1_2
 }
 
 func TestEquinixmetalDefaultStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4052,7 +4052,7 @@ func TestEquinixmetalDefaultStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3
 }
 
 func TestEquinixmetalCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4061,7 +4061,7 @@ func TestEquinixmetalCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(
 }
 
 func TestEquinixmetalRockylinuxStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4070,7 +4070,7 @@ func TestEquinixmetalRockylinuxStableUpgradeContainerdExternalFromV1_26_6_ToV1_2
 }
 
 func TestEquinixmetalFlatcarStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4079,7 +4079,7 @@ func TestEquinixmetalFlatcarStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3
 }
 
 func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4088,7 +4088,7 @@ func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *t
 }
 
 func TestHetznerCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4097,7 +4097,7 @@ func TestHetznerCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *te
 }
 
 func TestHetznerRockylinuxStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4106,7 +4106,7 @@ func TestHetznerRockylinuxStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t
 }
 
 func TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4115,7 +4115,7 @@ func TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t 
 }
 
 func TestOpenstackCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4124,7 +4124,7 @@ func TestOpenstackCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *
 }
 
 func TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4133,7 +4133,7 @@ func TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *te
 }
 
 func TestOpenstackRhelStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4142,7 +4142,7 @@ func TestOpenstackRhelStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *te
 }
 
 func TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4151,7 +4151,7 @@ func TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t 
 }
 
 func TestVsphereDefaultStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4160,7 +4160,7 @@ func TestVsphereDefaultStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *t
 }
 
 func TestVsphereCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4169,7 +4169,7 @@ func TestVsphereCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *te
 }
 
 func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4178,7 +4178,7 @@ func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3(t *t
 }
 
 func TestAwsAmznLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4187,7 +4187,7 @@ func TestAwsAmznLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) 
 }
 
 func TestAwsCentosLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4196,7 +4196,7 @@ func TestAwsCentosLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T
 }
 
 func TestAwsDefaultLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4205,7 +4205,7 @@ func TestAwsDefaultLegacyMachineControllerContainerdExternalV1_24_15(t *testing.
 }
 
 func TestAwsFlatcarLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4214,7 +4214,7 @@ func TestAwsFlatcarLegacyMachineControllerContainerdExternalV1_24_15(t *testing.
 }
 
 func TestAwsRhelLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4223,7 +4223,7 @@ func TestAwsRhelLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) 
 }
 
 func TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4232,7 +4232,7 @@ func TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_24_15(t *testi
 }
 
 func TestAzureDefaultLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4241,7 +4241,7 @@ func TestAzureDefaultLegacyMachineControllerContainerdExternalV1_24_15(t *testin
 }
 
 func TestAzureCentosLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4250,7 +4250,7 @@ func TestAzureCentosLegacyMachineControllerContainerdExternalV1_24_15(t *testing
 }
 
 func TestAzureFlatcarLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4259,7 +4259,7 @@ func TestAzureFlatcarLegacyMachineControllerContainerdExternalV1_24_15(t *testin
 }
 
 func TestAzureRhelLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4268,7 +4268,7 @@ func TestAzureRhelLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T
 }
 
 func TestAzureRockylinuxLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4277,7 +4277,7 @@ func TestAzureRockylinuxLegacyMachineControllerContainerdExternalV1_24_15(t *tes
 }
 
 func TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4286,7 +4286,7 @@ func TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_24_15(t 
 }
 
 func TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4295,7 +4295,7 @@ func TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_24_15(t *
 }
 
 func TestDigitaloceanRockylinuxLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4304,7 +4304,7 @@ func TestDigitaloceanRockylinuxLegacyMachineControllerContainerdExternalV1_24_15
 }
 
 func TestEquinixmetalDefaultLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4313,7 +4313,7 @@ func TestEquinixmetalDefaultLegacyMachineControllerContainerdExternalV1_24_15(t 
 }
 
 func TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4322,7 +4322,7 @@ func TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_24_15(t *
 }
 
 func TestEquinixmetalRockylinuxLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4331,7 +4331,7 @@ func TestEquinixmetalRockylinuxLegacyMachineControllerContainerdExternalV1_24_15
 }
 
 func TestEquinixmetalFlatcarLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4340,7 +4340,7 @@ func TestEquinixmetalFlatcarLegacyMachineControllerContainerdExternalV1_24_15(t 
 }
 
 func TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4349,7 +4349,7 @@ func TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_24_15(t *test
 }
 
 func TestHetznerCentosLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4358,7 +4358,7 @@ func TestHetznerCentosLegacyMachineControllerContainerdExternalV1_24_15(t *testi
 }
 
 func TestHetznerRockylinuxLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4367,7 +4367,7 @@ func TestHetznerRockylinuxLegacyMachineControllerContainerdExternalV1_24_15(t *t
 }
 
 func TestOpenstackDefaultLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4376,7 +4376,7 @@ func TestOpenstackDefaultLegacyMachineControllerContainerdExternalV1_24_15(t *te
 }
 
 func TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4385,7 +4385,7 @@ func TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_24_15(t *tes
 }
 
 func TestOpenstackRockylinuxLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4394,7 +4394,7 @@ func TestOpenstackRockylinuxLegacyMachineControllerContainerdExternalV1_24_15(t 
 }
 
 func TestOpenstackRhelLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4403,7 +4403,7 @@ func TestOpenstackRhelLegacyMachineControllerContainerdExternalV1_24_15(t *testi
 }
 
 func TestOpenstackFlatcarLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4412,7 +4412,7 @@ func TestOpenstackFlatcarLegacyMachineControllerContainerdExternalV1_24_15(t *te
 }
 
 func TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4421,7 +4421,7 @@ func TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_24_15(t *test
 }
 
 func TestVsphereCentosLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4430,7 +4430,7 @@ func TestVsphereCentosLegacyMachineControllerContainerdExternalV1_24_15(t *testi
 }
 
 func TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_24_15(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4439,7 +4439,7 @@ func TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_24_15(t *test
 }
 
 func TestAwsAmznLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4448,7 +4448,7 @@ func TestAwsAmznLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) 
 }
 
 func TestAwsCentosLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4457,7 +4457,7 @@ func TestAwsCentosLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T
 }
 
 func TestAwsDefaultLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4466,7 +4466,7 @@ func TestAwsDefaultLegacyMachineControllerContainerdExternalV1_25_11(t *testing.
 }
 
 func TestAwsFlatcarLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4475,7 +4475,7 @@ func TestAwsFlatcarLegacyMachineControllerContainerdExternalV1_25_11(t *testing.
 }
 
 func TestAwsRhelLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4484,7 +4484,7 @@ func TestAwsRhelLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) 
 }
 
 func TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4493,7 +4493,7 @@ func TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_25_11(t *testi
 }
 
 func TestAzureDefaultLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4502,7 +4502,7 @@ func TestAzureDefaultLegacyMachineControllerContainerdExternalV1_25_11(t *testin
 }
 
 func TestAzureCentosLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4511,7 +4511,7 @@ func TestAzureCentosLegacyMachineControllerContainerdExternalV1_25_11(t *testing
 }
 
 func TestAzureFlatcarLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4520,7 +4520,7 @@ func TestAzureFlatcarLegacyMachineControllerContainerdExternalV1_25_11(t *testin
 }
 
 func TestAzureRhelLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4529,7 +4529,7 @@ func TestAzureRhelLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T
 }
 
 func TestAzureRockylinuxLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4538,7 +4538,7 @@ func TestAzureRockylinuxLegacyMachineControllerContainerdExternalV1_25_11(t *tes
 }
 
 func TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4547,7 +4547,7 @@ func TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_25_11(t 
 }
 
 func TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4556,7 +4556,7 @@ func TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_25_11(t *
 }
 
 func TestDigitaloceanRockylinuxLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4565,7 +4565,7 @@ func TestDigitaloceanRockylinuxLegacyMachineControllerContainerdExternalV1_25_11
 }
 
 func TestEquinixmetalDefaultLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4574,7 +4574,7 @@ func TestEquinixmetalDefaultLegacyMachineControllerContainerdExternalV1_25_11(t 
 }
 
 func TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4583,7 +4583,7 @@ func TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_25_11(t *
 }
 
 func TestEquinixmetalRockylinuxLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4592,7 +4592,7 @@ func TestEquinixmetalRockylinuxLegacyMachineControllerContainerdExternalV1_25_11
 }
 
 func TestEquinixmetalFlatcarLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4601,7 +4601,7 @@ func TestEquinixmetalFlatcarLegacyMachineControllerContainerdExternalV1_25_11(t 
 }
 
 func TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4610,7 +4610,7 @@ func TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_25_11(t *test
 }
 
 func TestHetznerCentosLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4619,7 +4619,7 @@ func TestHetznerCentosLegacyMachineControllerContainerdExternalV1_25_11(t *testi
 }
 
 func TestHetznerRockylinuxLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4628,7 +4628,7 @@ func TestHetznerRockylinuxLegacyMachineControllerContainerdExternalV1_25_11(t *t
 }
 
 func TestOpenstackDefaultLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4637,7 +4637,7 @@ func TestOpenstackDefaultLegacyMachineControllerContainerdExternalV1_25_11(t *te
 }
 
 func TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4646,7 +4646,7 @@ func TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_25_11(t *tes
 }
 
 func TestOpenstackRockylinuxLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4655,7 +4655,7 @@ func TestOpenstackRockylinuxLegacyMachineControllerContainerdExternalV1_25_11(t 
 }
 
 func TestOpenstackRhelLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4664,7 +4664,7 @@ func TestOpenstackRhelLegacyMachineControllerContainerdExternalV1_25_11(t *testi
 }
 
 func TestOpenstackFlatcarLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4673,7 +4673,7 @@ func TestOpenstackFlatcarLegacyMachineControllerContainerdExternalV1_25_11(t *te
 }
 
 func TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4682,7 +4682,7 @@ func TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_25_11(t *test
 }
 
 func TestVsphereCentosLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4691,7 +4691,7 @@ func TestVsphereCentosLegacyMachineControllerContainerdExternalV1_25_11(t *testi
 }
 
 func TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_25_11(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4700,7 +4700,7 @@ func TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_25_11(t *test
 }
 
 func TestAwsAmznLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4709,7 +4709,7 @@ func TestAwsAmznLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestAwsCentosLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4718,7 +4718,7 @@ func TestAwsCentosLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T)
 }
 
 func TestAwsDefaultLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4727,7 +4727,7 @@ func TestAwsDefaultLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T
 }
 
 func TestAwsFlatcarLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4736,7 +4736,7 @@ func TestAwsFlatcarLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T
 }
 
 func TestAwsRhelLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4745,7 +4745,7 @@ func TestAwsRhelLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
 }
 
 func TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4754,7 +4754,7 @@ func TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_26_6(t *testin
 }
 
 func TestAzureDefaultLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4763,7 +4763,7 @@ func TestAzureDefaultLegacyMachineControllerContainerdExternalV1_26_6(t *testing
 }
 
 func TestAzureCentosLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4772,7 +4772,7 @@ func TestAzureCentosLegacyMachineControllerContainerdExternalV1_26_6(t *testing.
 }
 
 func TestAzureFlatcarLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4781,7 +4781,7 @@ func TestAzureFlatcarLegacyMachineControllerContainerdExternalV1_26_6(t *testing
 }
 
 func TestAzureRhelLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4790,7 +4790,7 @@ func TestAzureRhelLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T)
 }
 
 func TestAzureRockylinuxLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4799,7 +4799,7 @@ func TestAzureRockylinuxLegacyMachineControllerContainerdExternalV1_26_6(t *test
 }
 
 func TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4808,7 +4808,7 @@ func TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_26_6(t *
 }
 
 func TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4817,7 +4817,7 @@ func TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_26_6(t *t
 }
 
 func TestDigitaloceanRockylinuxLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4826,7 +4826,7 @@ func TestDigitaloceanRockylinuxLegacyMachineControllerContainerdExternalV1_26_6(
 }
 
 func TestEquinixmetalDefaultLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4835,7 +4835,7 @@ func TestEquinixmetalDefaultLegacyMachineControllerContainerdExternalV1_26_6(t *
 }
 
 func TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4844,7 +4844,7 @@ func TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_26_6(t *t
 }
 
 func TestEquinixmetalRockylinuxLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4853,7 +4853,7 @@ func TestEquinixmetalRockylinuxLegacyMachineControllerContainerdExternalV1_26_6(
 }
 
 func TestEquinixmetalFlatcarLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4862,7 +4862,7 @@ func TestEquinixmetalFlatcarLegacyMachineControllerContainerdExternalV1_26_6(t *
 }
 
 func TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4871,7 +4871,7 @@ func TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_26_6(t *testi
 }
 
 func TestHetznerCentosLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4880,7 +4880,7 @@ func TestHetznerCentosLegacyMachineControllerContainerdExternalV1_26_6(t *testin
 }
 
 func TestHetznerRockylinuxLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4889,7 +4889,7 @@ func TestHetznerRockylinuxLegacyMachineControllerContainerdExternalV1_26_6(t *te
 }
 
 func TestOpenstackDefaultLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4898,7 +4898,7 @@ func TestOpenstackDefaultLegacyMachineControllerContainerdExternalV1_26_6(t *tes
 }
 
 func TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4907,7 +4907,7 @@ func TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_26_6(t *test
 }
 
 func TestOpenstackRockylinuxLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4916,7 +4916,7 @@ func TestOpenstackRockylinuxLegacyMachineControllerContainerdExternalV1_26_6(t *
 }
 
 func TestOpenstackRhelLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4925,7 +4925,7 @@ func TestOpenstackRhelLegacyMachineControllerContainerdExternalV1_26_6(t *testin
 }
 
 func TestOpenstackFlatcarLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4934,7 +4934,7 @@ func TestOpenstackFlatcarLegacyMachineControllerContainerdExternalV1_26_6(t *tes
 }
 
 func TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4943,7 +4943,7 @@ func TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_26_6(t *testi
 }
 
 func TestVsphereCentosLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4952,7 +4952,7 @@ func TestVsphereCentosLegacyMachineControllerContainerdExternalV1_26_6(t *testin
 }
 
 func TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_26_6(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4961,7 +4961,7 @@ func TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_26_6(t *testi
 }
 
 func TestAwsAmznLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4970,7 +4970,7 @@ func TestAwsAmznLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsCentosLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4979,7 +4979,7 @@ func TestAwsCentosLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T)
 }
 
 func TestAwsDefaultLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4988,7 +4988,7 @@ func TestAwsDefaultLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T
 }
 
 func TestAwsFlatcarLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -4997,7 +4997,7 @@ func TestAwsFlatcarLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T
 }
 
 func TestAwsRhelLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5006,7 +5006,7 @@ func TestAwsRhelLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
 }
 
 func TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5015,7 +5015,7 @@ func TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_27_3(t *testin
 }
 
 func TestAzureDefaultLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5024,7 +5024,7 @@ func TestAzureDefaultLegacyMachineControllerContainerdExternalV1_27_3(t *testing
 }
 
 func TestAzureCentosLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5033,7 +5033,7 @@ func TestAzureCentosLegacyMachineControllerContainerdExternalV1_27_3(t *testing.
 }
 
 func TestAzureFlatcarLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5042,7 +5042,7 @@ func TestAzureFlatcarLegacyMachineControllerContainerdExternalV1_27_3(t *testing
 }
 
 func TestAzureRhelLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5051,7 +5051,7 @@ func TestAzureRhelLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T)
 }
 
 func TestAzureRockylinuxLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5060,7 +5060,7 @@ func TestAzureRockylinuxLegacyMachineControllerContainerdExternalV1_27_3(t *test
 }
 
 func TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5069,7 +5069,7 @@ func TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_27_3(t *
 }
 
 func TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5078,7 +5078,7 @@ func TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_27_3(t *t
 }
 
 func TestDigitaloceanRockylinuxLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5087,7 +5087,7 @@ func TestDigitaloceanRockylinuxLegacyMachineControllerContainerdExternalV1_27_3(
 }
 
 func TestEquinixmetalDefaultLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5096,7 +5096,7 @@ func TestEquinixmetalDefaultLegacyMachineControllerContainerdExternalV1_27_3(t *
 }
 
 func TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5105,7 +5105,7 @@ func TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_27_3(t *t
 }
 
 func TestEquinixmetalRockylinuxLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5114,7 +5114,7 @@ func TestEquinixmetalRockylinuxLegacyMachineControllerContainerdExternalV1_27_3(
 }
 
 func TestEquinixmetalFlatcarLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["equinixmetal_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5123,7 +5123,7 @@ func TestEquinixmetalFlatcarLegacyMachineControllerContainerdExternalV1_27_3(t *
 }
 
 func TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5132,7 +5132,7 @@ func TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_27_3(t *testi
 }
 
 func TestHetznerCentosLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5141,7 +5141,7 @@ func TestHetznerCentosLegacyMachineControllerContainerdExternalV1_27_3(t *testin
 }
 
 func TestHetznerRockylinuxLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5150,7 +5150,7 @@ func TestHetznerRockylinuxLegacyMachineControllerContainerdExternalV1_27_3(t *te
 }
 
 func TestOpenstackDefaultLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5159,7 +5159,7 @@ func TestOpenstackDefaultLegacyMachineControllerContainerdExternalV1_27_3(t *tes
 }
 
 func TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5168,7 +5168,7 @@ func TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_27_3(t *test
 }
 
 func TestOpenstackRockylinuxLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5177,7 +5177,7 @@ func TestOpenstackRockylinuxLegacyMachineControllerContainerdExternalV1_27_3(t *
 }
 
 func TestOpenstackRhelLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5186,7 +5186,7 @@ func TestOpenstackRhelLegacyMachineControllerContainerdExternalV1_27_3(t *testin
 }
 
 func TestOpenstackFlatcarLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5195,7 +5195,7 @@ func TestOpenstackFlatcarLegacyMachineControllerContainerdExternalV1_27_3(t *tes
 }
 
 func TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5204,7 +5204,7 @@ func TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_27_3(t *testi
 }
 
 func TestVsphereCentosLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
@@ -5213,7 +5213,7 @@ func TestVsphereCentosLegacyMachineControllerContainerdExternalV1_27_3(t *testin
 }
 
 func TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_27_3(t *testing.T) {
-	ctx := NewSignalContext()
+	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
