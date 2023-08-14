@@ -1021,7 +1021,7 @@ func TestValidateKubernetesSupport(t *testing.T) {
 			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.27.0",
 			},
-			expectedError: true,
+			expectedError: false,
 		},
 		{
 			name: "OpenStack 1.25.5 cluster with in-tree cloud provider",
