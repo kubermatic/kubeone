@@ -321,11 +321,6 @@ func ValidateKubernetesSupport(c kubeoneapi.KubeOneCluster, fldPath *field.Path)
 		return append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, ".versions.kubernetes is not a semver string"))
 	}
 
-	// vSphere CCM v1.25 supports Kubernetes 1.25 and 1.26.
-	if v.Minor() >= 27 && c.CloudProvider.Vsphere != nil {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.27.0 and newer are currently not supported for vsphere clusters"))
-	}
-
 	// We require external CCM/CSI on vSphere starting with Kubernetes 1.25
 	// because the in-tree volume plugin requires the CSI driver to be
 	// deployed for Kubernetes 1.25 and newer.
