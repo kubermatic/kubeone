@@ -145,6 +145,7 @@ resource "azurerm_public_ip" "lbip" {
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Dynamic"
+  sku                 = "Basic"
 
   tags = {
     environment = "kubeone"
@@ -159,6 +160,7 @@ resource "azurerm_public_ip" "control_plane" {
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Dynamic"
+  sku                 = "Basic"
 
   tags = {
     environment = "kubeone"

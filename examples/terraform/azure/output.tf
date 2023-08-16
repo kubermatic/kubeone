@@ -87,10 +87,10 @@ output "kubeone_workers" {
           location      = var.location
           resourceGroup = azurerm_resource_group.rg.name
           # vnetResourceGroup     = ""
-          vmSize     = var.worker_vm_size
-          vnetName   = azurerm_virtual_network.vpc.name
-          subnetName = azurerm_subnet.subnet.name
-          # loadBalancerSku       = ""
+          vmSize          = var.worker_vm_size
+          vnetName        = azurerm_virtual_network.vpc.name
+          subnetName      = azurerm_subnet.subnet.name
+          loadBalancerSku = "Basic"
           routeTableName  = azurerm_route_table.rt.name
           availabilitySet = azurerm_availability_set.avset_workers.name
           # assignAvailabilitySet = true/false
