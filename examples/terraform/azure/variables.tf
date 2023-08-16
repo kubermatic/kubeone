@@ -106,6 +106,11 @@ variable "disable_kubeapi_loadbalancer" {
 
 # Provider specific settings
 
+variable "ip_sku" {
+  default = "Basic"
+  description = "SKU to use for IP addresses"
+}
+
 variable "location" {
   description = "Azure datacenter to use"
   default     = "westeurope"
