@@ -122,6 +122,8 @@ func Ensure(s *state.State) error {
 			return err
 		}
 
+		s.Cluster.CloudProvider.CloudConfig = cloudConfig
+
 		cloudCfgSecret := cloudConfigSecret(cloudConfig)
 		if err := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, cloudCfgSecret); err != nil {
 			return err

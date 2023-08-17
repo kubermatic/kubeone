@@ -89,6 +89,7 @@ cloudConfig: |
     "location": "westeurope",
     "subnetName": "${TF_VAR_cluster_name}-subnet",
     "routeTableName": "",
+    "loadBalancerSku": "Basic",
     "securityGroupName": "${TF_VAR_cluster_name}-sg",
     "vnetName": "${TF_VAR_cluster_name}-vpc",
     "primaryAvailabilitySetName": "${TF_VAR_cluster_name}-avset-workers",
