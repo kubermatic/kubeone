@@ -3,14 +3,14 @@
 The AWS EBS CSI manifest is generated from the [official Helm chart][helm-chart].
 
 ```shell
-helm repo add aws-cloud-controller-manager https://kubernetes.github.io/cloud-provider-aws
+helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver
 helm repo update
 
 helm template \
     --namespace="kube-system" \
     --values="generated-values-csi" \
     --skip-tests \
-    aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver
+    aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver > csi-aws-ebs.yaml
 ```
 
 Required manual modifications include:
