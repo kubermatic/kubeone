@@ -957,6 +957,7 @@ spec:
               fieldPath: metadata.namespace
         - name: CILIUM_CLUSTERMESH_CONFIG
           value: /var/lib/cilium/clustermesh/
+        {{ if eq .Config.ClusterNetwork.CNI.Cilium.KubeProxyReplacement "strict" }}
         - name: KUBERNETES_SERVICE_HOST
           value: "{{ .Config.APIEndpoint.Host }}"
         - name: KUBERNETES_SERVICE_PORT
