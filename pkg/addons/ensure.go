@@ -458,7 +458,6 @@ func ensureCCMAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 				},
 			},
 		)
-
 	case s.Cluster.CloudProvider.Vsphere != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{

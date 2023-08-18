@@ -143,6 +143,7 @@ spec:
       labels:
         component: controllermanager
         app: openstack-cloud-controller-manager
+        k8s-app: openstack-cloud-controller-manager
         release: openstack-ccm
         chart: openstack-cloud-controller-manager-2.27.1
         heritage: Helm
@@ -152,6 +153,7 @@ spec:
       tolerations:
         - effect: NoSchedule
           key: node.cloudprovider.kubernetes.io/uninitialized
+          value: "true"
         - effect: NoSchedule
           key: node-role.kubernetes.io/control-plane
         - effect: NoSchedule
@@ -190,7 +192,7 @@ spec:
 {{ end }}
           env:
             - name: CLOUD_CONFIG
-              value: /etc/config/cloud-conf
+              value: /etc/config/cloud-config
             - name: CLUSTER_NAME
               value: {{ default "kubernetes" .CCMClusterName }}
 {{ if .Config.CABundle }}
