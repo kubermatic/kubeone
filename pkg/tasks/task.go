@@ -17,6 +17,7 @@ limitations under the License.
 package tasks
 
 import (
+	"strings"
 	"time"
 
 	"k8c.io/kubeone/pkg/state"
@@ -58,7 +59,7 @@ func (t *Task) Run(s *state.State) error {
 
 		lastError = t.Fn(s)
 		if lastError != nil {
-			s.Logger.Warnf("Task failed, error was: %s", lastError)
+			s.Logger.Warnf("Task failed, error was: %s", strings.ReplaceAll(lastError.Error(), "\\n", "\n"))
 
 			return false, nil
 		}
