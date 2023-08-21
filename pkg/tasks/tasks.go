@@ -275,16 +275,16 @@ func WithResources(t Tasks) Tasks {
 				Predicate:   func(s *state.State) bool { return s.Cluster.CABundle != "" },
 			},
 			{
-				Fn:          addons.EnsureUserAddons,
-				Operation:   "applying addons",
-				Description: "ensure custom addons",
-				Predicate:   func(s *state.State) bool { return s.Cluster.Addons != nil && s.Cluster.Addons.Enable },
-			},
-			{
 				Fn:          externalccm.Ensure,
 				Operation:   "ensuring external CCM",
 				Description: "ensure external CCM",
 				Predicate:   func(s *state.State) bool { return s.Cluster.CloudProvider.External },
+			},
+			{
+				Fn:          addons.EnsureUserAddons,
+				Operation:   "applying addons",
+				Description: "ensure custom addons",
+				Predicate:   func(s *state.State) bool { return s.Cluster.Addons != nil && s.Cluster.Addons.Enable },
 			},
 			{
 				Fn:        joinStaticWorkerNodes,
@@ -421,11 +421,13 @@ func WithDisableEncryptionProviders(t Tasks, customConfig bool) Tasks {
 		{
 			Fn:          fetchEncryptionProvidersFile,
 			Operation:   "fetching EncryptionProviders config",
-			Description: "fetch current Encryption Providers configuration file "},
+			Description: "fetch current Encryption Providers configuration file ",
+		},
 		{
 			Fn:          uploadIdentityFirstEncryptionConfiguration,
 			Operation:   "uploading encryption providers configuration",
-			Description: "upload updated Encryption Providers configuration file"},
+			Description: "upload updated Encryption Providers configuration file",
+		},
 		{
 			Fn:          ensureRestartKubeAPIServer,
 			Operation:   "restarting kube-apiserver pods",
