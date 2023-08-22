@@ -161,8 +161,15 @@ func WithFullInstall(t Tasks) Tasks {
 				},
 				Operation: "provisioning certificates on the followers",
 			},
-			{Fn: initKubernetesLeader, Operation: "initializing kubernetes on leader"},
-			{Fn: kubeconfig.BuildKubernetesClientset, Operation: "building kubernetes clientset"},
+			{
+				Fn:        initKubernetesLeader,
+				Operation: "initializing kubernetes on leader",
+				Retries:   1,
+			},
+			{
+				Fn:        kubeconfig.BuildKubernetesClientset,
+				Operation: "building kubernetes clientset",
+			},
 			{
 				Fn: func(s *state.State) error {
 					return s.RunTaskOnLeader(approvePendingCSR)

@@ -20,8 +20,7 @@ provider "openstack" {
 locals {
   cluster_autoscaler_min_replicas = var.cluster_autoscaler_min_replicas > 0 ? var.cluster_autoscaler_min_replicas : var.initial_machinedeployment_replicas
   cluster_autoscaler_max_replicas = var.cluster_autoscaler_max_replicas > 0 ? var.cluster_autoscaler_max_replicas : var.initial_machinedeployment_replicas
-
-  rendered_lb_config = templatefile("./etc_gobetween.tpl", {
+  rendered_lb_config = templatefile("./etc_haproxy.tpl", {
     lb_targets = openstack_compute_instance_v2.control_plane.*.access_ip_v4,
   })
 }
@@ -145,7 +144,7 @@ resource "openstack_compute_instance_v2" "lb" {
   }
 
   provisioner "remote-exec" {
-    script = "gobetween.sh"
+    script = "haproxy.sh"
   }
 }
 
@@ -200,14 +199,13 @@ resource "null_resource" "lb_config" {
 
   provisioner "file" {
     content     = local.rendered_lb_config
-    destination = "/tmp/gobetween.toml"
+    destination = "/tmp/haproxy.cfg"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo mv /tmp/gobetween.toml /etc/gobetween.toml",
-      "sudo systemctl restart gobetween",
+      "sudo mv /tmp/haproxy.cfg /etc/haproxy/haproxy.cfg",
+      "sudo systemctl restart haproxy",
     ]
   }
 }
-
