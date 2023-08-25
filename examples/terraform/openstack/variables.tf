@@ -115,7 +115,7 @@ variable "worker_flavor" {
   type        = string
 }
 
-variable "lb_flavor" {
+variable "bastion_flavor" {
   default     = "m1.tiny"
   description = "OpenStack instance flavor for the LoadBalancer node"
   type        = string

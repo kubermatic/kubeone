@@ -17,14 +17,13 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
-| <a name="requirement_openstack"></a> [openstack](#requirement\_openstack) | ~> 1.47.0 |
+| <a name="requirement_openstack"></a> [openstack](#requirement\_openstack) | ~> 1.52.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_null"></a> [null](#provider\_null) | n/a |
-| <a name="provider_openstack"></a> [openstack](#provider\_openstack) | ~> 1.47.0 |
+| <a name="provider_openstack"></a> [openstack](#provider\_openstack) | ~> 1.52.0 |
 
 ## Modules
 
@@ -34,15 +33,21 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [null_resource.lb_config](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [openstack_compute_instance_v2.bastion](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/compute_instance_v2) | resource |
 | [openstack_compute_instance_v2.control_plane](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/compute_instance_v2) | resource |
-| [openstack_compute_instance_v2.lb](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/compute_instance_v2) | resource |
 | [openstack_compute_keypair_v2.deployer](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/compute_keypair_v2) | resource |
-| [openstack_networking_floatingip_associate_v2.lb](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/networking_floatingip_associate_v2) | resource |
-| [openstack_networking_floatingip_v2.lb](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/networking_floatingip_v2) | resource |
+| [openstack_lb_listener_v2.kube_apiserver](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/lb_listener_v2) | resource |
+| [openstack_lb_loadbalancer_v2.kube_apiserver](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/lb_loadbalancer_v2) | resource |
+| [openstack_lb_member_v2.kube_apiserver](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/lb_member_v2) | resource |
+| [openstack_lb_monitor_v2.lb_monitor_tcp](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/lb_monitor_v2) | resource |
+| [openstack_lb_pool_v2.kube_apiservers](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/lb_pool_v2) | resource |
+| [openstack_networking_floatingip_associate_v2.bastion](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/networking_floatingip_associate_v2) | resource |
+| [openstack_networking_floatingip_associate_v2.kube_apiserver](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/networking_floatingip_associate_v2) | resource |
+| [openstack_networking_floatingip_v2.bastion](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/networking_floatingip_v2) | resource |
+| [openstack_networking_floatingip_v2.kube_apiserver](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/networking_floatingip_v2) | resource |
 | [openstack_networking_network_v2.network](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/networking_network_v2) | resource |
+| [openstack_networking_port_v2.bastion](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/networking_port_v2) | resource |
 | [openstack_networking_port_v2.control_plane](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/networking_port_v2) | resource |
-| [openstack_networking_port_v2.lb](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/networking_port_v2) | resource |
 | [openstack_networking_router_interface_v2.router_subnet_link](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/networking_router_interface_v2) | resource |
 | [openstack_networking_router_v2.router](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/networking_router_v2) | resource |
 | [openstack_networking_secgroup_rule_v2.nodeports](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/networking_secgroup_rule_v2) | resource |
@@ -59,6 +64,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_apiserver_alternative_names"></a> [apiserver\_alternative\_names](#input\_apiserver\_alternative\_names) | subject alternative names for the API Server signing cert. | `list(string)` | `[]` | no |
+| <a name="input_bastion_flavor"></a> [bastion\_flavor](#input\_bastion\_flavor) | OpenStack instance flavor for the LoadBalancer node | `string` | `"m1.tiny"` | no |
 | <a name="input_bastion_host_key"></a> [bastion\_host\_key](#input\_bastion\_host\_key) | Bastion SSH host public key | `string` | `null` | no |
 | <a name="input_bastion_port"></a> [bastion\_port](#input\_bastion\_port) | Bastion SSH port | `number` | `22` | no |
 | <a name="input_bastion_user"></a> [bastion\_user](#input\_bastion\_user) | Bastion SSH username | `string` | `"ubuntu"` | no |
@@ -72,7 +78,6 @@ No modules.
 | <a name="input_image_properties_query"></a> [image\_properties\_query](#input\_image\_properties\_query) | in absence of var.image, this will be used to query API for the image | `map(any)` | <pre>{<br>  "os_distro": "ubuntu",<br>  "os_version": "22.04"<br>}</pre> | no |
 | <a name="input_initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployments, only applicable if operating-system-manager addon is enabled.<br>If not specified, the default value will be added by machine-controller addon. | `string` | `""` | no |
 | <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | Number of replicas per MachineDeployment | `number` | `2` | no |
-| <a name="input_lb_flavor"></a> [lb\_flavor](#input\_lb\_flavor) | OpenStack instance flavor for the LoadBalancer node | `string` | `"m1.tiny"` | no |
 | <a name="input_ssh_agent_socket"></a> [ssh\_agent\_socket](#input\_ssh\_agent\_socket) | SSH Agent socket, default to grab from $SSH\_AUTH\_SOCK | `string` | `"env:SSH_AUTH_SOCK"` | no |
 | <a name="input_ssh_hosts_keys"></a> [ssh\_hosts\_keys](#input\_ssh\_hosts\_keys) | A list of SSH hosts public keys to verify | `list(string)` | `null` | no |
 | <a name="input_ssh_port"></a> [ssh\_port](#input\_ssh\_port) | SSH port to be used to provision instances | `number` | `22` | no |
