@@ -46,7 +46,13 @@ func supportsStorageTests(provider string) bool {
 func supportsLoadBalancerTests(provider string) bool {
 	switch provider {
 	// our openstack provider where we run e2e does not support loadbalancers
-	case "aws", "azure", "digitalocean", "gce", "hetzner":
+	case
+		"aws",
+		"azure",
+		"digitalocean",
+		"gce",
+		"hetzner",
+		"openstack":
 		return true
 	default:
 		return false
