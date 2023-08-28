@@ -49,7 +49,7 @@ curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_TOO
 {{ end }}
 
 cd /opt/bin
-k8s_rel_baseurl=https://storage.googleapis.com/kubernetes-release/release
+k8s_rel_baseurl=https://dl.k8s.io
 for binary in kubeadm kubelet kubectl; do
 	curl -L --output /tmp/$binary \
 		$k8s_rel_baseurl/${RELEASE}/bin/linux/${HOST_ARCH}/$binary
@@ -125,7 +125,7 @@ RELEASE="v{{ .KUBERNETES_VERSION }}"
 sudo mkdir -p /var/tmp/kube-binaries
 cd /var/tmp/kube-binaries
 sudo curl -L --remote-name-all \
-	https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/${HOST_ARCH}/kubeadm
+	https://dl.k8s.io/${RELEASE}/bin/linux/${HOST_ARCH}/kubeadm
 
 sudo mkdir -p /opt/bin
 cd /opt/bin
@@ -150,7 +150,7 @@ RELEASE="v{{ .KUBERNETES_VERSION }}"
 sudo mkdir -p /var/tmp/kube-binaries
 cd /var/tmp/kube-binaries
 sudo curl -L --remote-name-all \
-	https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/${HOST_ARCH}/{kubelet,kubectl}
+	https://dl.k8s.io/${RELEASE}/bin/linux/${HOST_ARCH}/{kubelet,kubectl}
 sudo mkdir -p /opt/bin
 cd /opt/bin
 sudo systemctl stop kubelet
@@ -197,7 +197,7 @@ func KubeadmFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	data := Data{
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       defaultCriToolsVersion,
+		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"CILIUM":                 ciliumCNI(cluster),
