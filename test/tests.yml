@@ -75,7 +75,6 @@
 - scenario: upgrade_containerd
   initVersion: v1.26.6
   upgradedVersion: v1.27.3
-  initKubeOneVersion: "main"
   infrastructures:
     - name: azure_default_stable
     - name: azure_centos_stable
@@ -87,7 +86,6 @@
 - scenario: upgrade_containerd
   initVersion: v1.25.11
   upgradedVersion: v1.26.6
-  initKubeOneVersion: "main"
   infrastructures:
     - name: aws_amzn_stable
     - name: aws_centos_stable
