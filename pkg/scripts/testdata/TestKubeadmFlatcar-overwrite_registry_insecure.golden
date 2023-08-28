@@ -102,7 +102,7 @@ fi
 
 
 cd /opt/bin
-k8s_rel_baseurl=https://storage.googleapis.com/kubernetes-release/release
+k8s_rel_baseurl=https://dl.k8s.io
 for binary in kubeadm kubelet kubectl; do
 	curl -L --output /tmp/$binary \
 		$k8s_rel_baseurl/${RELEASE}/bin/linux/${HOST_ARCH}/$binary
