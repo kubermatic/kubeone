@@ -85,7 +85,7 @@ const (
 	VMwareCloudDirectorOrganization = "VCD_ORG"
 	VMwareCloudDirectorURL          = "VCD_URL"
 	VMwareCloudDirectorVDC          = "VCD_VDC"
-	VMwareCloudDirectorSkipTLS      = "VCD_ALLOW_UNVERIFIED_SSL"
+	VMwareCloudDirectorSkipTLS      = "VCD_ALLOW_UNVERIFIED_SSL" //nolint:gosec
 
 	// Variables that machine-controller expects
 	AzureClientIDMC           = "AZURE_CLIENT_ID"
@@ -100,50 +100,48 @@ const (
 	VSphereUsernameMC         = "VSPHERE_USERNAME"
 )
 
-var (
-	allKeys = []string{
-		AWSAccessKeyID,
-		AWSSecretAccessKey,
-		AzureClientID,
-		AzureClientSecret,
-		AzureTenantID,
-		AzureSubscriptionID,
-		DigitalOceanTokenKey,
-		GoogleServiceAccountKey,
-		HetznerTokenKey,
-		NutanixEndpoint,
-		NutanixPort,
-		NutanixUsername,
-		NutanixPassword,
-		NutanixInsecure,
-		NutanixProxyURL,
-		NutanixClusterName,
-		NutanixPEEndpoint,
-		NutanixPEUsername,
-		NutanixPEPassword,
-		OpenStackAuthURL,
-		OpenStackDomainName,
-		OpenStackPassword,
-		OpenStackRegionName,
-		OpenStackTenantID,
-		OpenStackTenantName,
-		OpenStackUserName,
-		EquinixMetalAuthToken,
-		EquinixMetalProjectID,
-		PacketAPIKey,
-		PacketProjectID,
-		VSphereAddress,
-		VSpherePassword,
-		VSphereUsername,
-		VMwareCloudDirectorUsername,
-		VMwareCloudDirectorPassword,
-		VMwareCloudDirectorAPIToken,
-		VMwareCloudDirectorOrganization,
-		VMwareCloudDirectorURL,
-		VMwareCloudDirectorVDC,
-		VMwareCloudDirectorSkipTLS,
-	}
-)
+var allKeys = []string{
+	AWSAccessKeyID,
+	AWSSecretAccessKey,
+	AzureClientID,
+	AzureClientSecret,
+	AzureTenantID,
+	AzureSubscriptionID,
+	DigitalOceanTokenKey,
+	GoogleServiceAccountKey,
+	HetznerTokenKey,
+	NutanixEndpoint,
+	NutanixPort,
+	NutanixUsername,
+	NutanixPassword,
+	NutanixInsecure,
+	NutanixProxyURL,
+	NutanixClusterName,
+	NutanixPEEndpoint,
+	NutanixPEUsername,
+	NutanixPEPassword,
+	OpenStackAuthURL,
+	OpenStackDomainName,
+	OpenStackPassword,
+	OpenStackRegionName,
+	OpenStackTenantID,
+	OpenStackTenantName,
+	OpenStackUserName,
+	EquinixMetalAuthToken,
+	EquinixMetalProjectID,
+	PacketAPIKey,
+	PacketProjectID,
+	VSphereAddress,
+	VSpherePassword,
+	VSphereUsername,
+	VMwareCloudDirectorUsername,
+	VMwareCloudDirectorPassword,
+	VMwareCloudDirectorAPIToken,
+	VMwareCloudDirectorOrganization,
+	VMwareCloudDirectorURL,
+	VMwareCloudDirectorVDC,
+	VMwareCloudDirectorSkipTLS,
+}
 
 // ProviderEnvironmentVariable is used to match environment variable used by KubeOne to environment variable used by
 // machine-controller.
@@ -587,7 +585,8 @@ func vmwareCloudDirectorValidationFunc(creds map[string]string) error {
 	alwaysRequired := []string{
 		VMwareCloudDirectorOrganization,
 		VMwareCloudDirectorURL,
-		VMwareCloudDirectorVDC}
+		VMwareCloudDirectorVDC,
+	}
 
 	for _, key := range alwaysRequired {
 		if v, ok := creds[key]; !ok || len(v) == 0 {

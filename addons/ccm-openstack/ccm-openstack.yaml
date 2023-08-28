@@ -5,12 +5,14 @@ kind: ServiceAccount
 metadata:
   name: openstack-cloud-controller-manager
   namespace: kube-system
+  annotations:
 ---
 # Source: openstack-cloud-controller-manager/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: system:openstack-cloud-controller-manager
+  annotations:
 rules:
 - apiGroups:
   - coordination.k8s.io
@@ -106,6 +108,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: system:openstack-cloud-controller-manager
+  annotations:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -127,6 +130,7 @@ metadata:
     app.kubernetes.io/instance: openstack-ccm
     app.kubernetes.io/version: "v1.27.1"
     app.kubernetes.io/managed-by: Helm
+  annotations:
 spec:
   selector:
     matchLabels:
@@ -147,6 +151,7 @@ spec:
         release: openstack-ccm
         chart: openstack-cloud-controller-manager-2.27.1
         heritage: Helm
+      annotations:
     spec:
       securityContext:
         runAsUser: 1001
@@ -168,7 +173,6 @@ spec:
             - --cloud-config=$(CLOUD_CONFIG)
             - --cluster-name=$(CLUSTER_NAME)
             - --cloud-provider=openstack
-            - --use-service-account-credentials=true
             - --controllers=cloud-node,cloud-node-lifecycle,route,service
             - --bind-address=127.0.0.1
           volumeMounts:

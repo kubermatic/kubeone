@@ -55,20 +55,20 @@ type sonobuoyBin struct {
 	proxyURL   string
 }
 
-func (sbb *sonobuoyBin) Run(mode sonobuoyMode) error {
-	return sbb.run(context.Background(), "run", fmt.Sprintf("--mode=%s", mode))
+func (sbb *sonobuoyBin) Run(ctx context.Context, mode sonobuoyMode) error {
+	return sbb.run(ctx, "run", fmt.Sprintf("--mode=%s", mode))
 }
 
 func (sbb *sonobuoyBin) Wait(ctx context.Context) error {
 	return sbb.run(ctx, "wait")
 }
 
-func (sbb *sonobuoyBin) Retrieve() error {
-	return sbb.run(context.Background(), "retrieve", "--filename", sonobuoyResultsFile)
+func (sbb *sonobuoyBin) Retrieve(ctx context.Context) error {
+	return sbb.run(ctx, "retrieve", "--filename", sonobuoyResultsFile)
 }
 
-func (sbb *sonobuoyBin) Results() ([]sonobuoyReport, error) {
-	ctx, cancel := context.WithCancel(context.Background())
+func (sbb *sonobuoyBin) Results(ctx context.Context) ([]sonobuoyReport, error) {
+	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	rpipe, wpipe, err := os.Pipe()

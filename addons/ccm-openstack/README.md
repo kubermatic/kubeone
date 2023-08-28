@@ -10,6 +10,7 @@ helm repo update
 helm template openstack-ccm cpo/openstack-cloud-controller-manager \
     --namespace=kube-system \
     --values=generate-values-ccm \
+    --version=2.27.1 \
     > ccm-openstack.yaml
 ```
 

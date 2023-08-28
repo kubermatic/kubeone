@@ -14,17 +14,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+locals {
+  cluster_autoscaler_min_replicas = var.cluster_autoscaler_min_replicas > 0 ? var.cluster_autoscaler_min_replicas : var.initial_machinedeployment_replicas
+  cluster_autoscaler_max_replicas = var.cluster_autoscaler_max_replicas > 0 ? var.cluster_autoscaler_max_replicas : var.initial_machinedeployment_replicas
+}
+
 output "kubeone_api" {
   description = "kube-apiserver LB endpoint"
 
   value = {
-    endpoint                    = openstack_networking_floatingip_v2.lb.address
+    endpoint                    = openstack_networking_floatingip_v2.kube_apiserver.address
     apiserver_alternative_names = var.apiserver_alternative_names
   }
 }
 
 output "ssh_commands" {
-  value = formatlist("ssh -J ${var.bastion_user}@${openstack_networking_floatingip_v2.lb.address} ${var.ssh_username}@%s", openstack_compute_instance_v2.control_plane.*.access_ip_v4)
+  value = formatlist("ssh -J ${var.bastion_user}@${openstack_networking_floatingip_v2.bastion.address} ${var.ssh_username}@%s", openstack_compute_instance_v2.control_plane.*.access_ip_v4)
 }
 
 output "kubeone_hosts" {
@@ -40,7 +45,7 @@ output "kubeone_hosts" {
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file
       ssh_user             = var.ssh_username
-      bastion              = openstack_networking_floatingip_v2.lb.address
+      bastion              = openstack_networking_floatingip_v2.bastion.address
       bastion_port         = var.bastion_port
       bastion_user         = var.bastion_user
       ssh_hosts_keys       = var.ssh_hosts_keys

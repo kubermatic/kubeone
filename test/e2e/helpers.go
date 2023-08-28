@@ -587,20 +587,25 @@ func sonobuoyRun(ctx context.Context, t *testing.T, k1 *kubeoneBin, mode sonobuo
 		proxyURL:   proxyURL,
 	}
 
-	if err = sb.Run(mode); err != nil {
+	if err = retryFn(func() error { return sb.Run(ctx, mode) }); err != nil {
 		t.Fatalf("sonobuoy run failed: %v", err)
 	}
 
-	if err = sb.Wait(ctx); err != nil {
+	if err = retryFn(func() error { return sb.Wait(ctx) }); err != nil {
 		t.Fatalf("sonobuoy wait failed: %v", err)
 	}
 
-	err = retryFn(sb.Retrieve)
+	err = retryFn(func() error { return sb.Retrieve(ctx) })
 	if err != nil {
 		t.Fatalf("sonobuoy retrieve failed: %v", err)
 	}
 
-	report, err := sb.Results()
+	var report []sonobuoyReport
+	err = retryFn(func() error {
+		report, err = sb.Results(ctx)
+
+		return err
+	})
 	if err != nil {
 		t.Fatalf("sonobuoy results failed: %v", err)
 	}
