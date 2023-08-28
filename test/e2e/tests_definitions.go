@@ -1038,7 +1038,8 @@ var (
 				"preset-openstack": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "openstack",
+				"PROVIDER":     "openstack",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/openstack",
@@ -1056,7 +1057,8 @@ var (
 				"preset-openstack": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "openstack",
+				"PROVIDER":     "openstack",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/openstack",
@@ -1074,7 +1076,8 @@ var (
 				"preset-openstack": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "openstack",
+				"PROVIDER":     "openstack",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/openstack",
@@ -1092,7 +1095,8 @@ var (
 				"preset-openstack": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "openstack",
+				"PROVIDER":     "openstack",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/openstack",
@@ -1110,7 +1114,8 @@ var (
 				"preset-openstack": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "openstack",
+				"PROVIDER":     "openstack",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/openstack",
@@ -1128,7 +1133,8 @@ var (
 				"preset-openstack": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "openstack",
+				"PROVIDER":     "openstack",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/openstack",
@@ -1146,7 +1152,8 @@ var (
 				"preset-openstack": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "openstack",
+				"PROVIDER":     "openstack",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/openstack",
@@ -1164,7 +1171,8 @@ var (
 				"preset-openstack": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "openstack",
+				"PROVIDER":     "openstack",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/openstack",
@@ -1182,7 +1190,8 @@ var (
 				"preset-openstack": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "openstack",
+				"PROVIDER":     "openstack",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/openstack",
