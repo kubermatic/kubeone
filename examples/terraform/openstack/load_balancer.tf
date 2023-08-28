@@ -48,10 +48,9 @@ resource "openstack_lb_monitor_v2" "lb_monitor_tcp" {
 }
 
 resource "openstack_lb_member_v2" "kube_apiserver" {
-  count   = length(openstack_compute_instance_v2.control_plane)
-  name    = "${var.cluster_name}-kube_apiserver-${openstack_compute_instance_v2.control_plane[count.index].access_ip_v4}"
-  pool_id = openstack_lb_pool_v2.kube_apiservers.id
-  # subnet_id =
+  count         = length(openstack_compute_instance_v2.control_plane)
+  name          = "${var.cluster_name}-kube_apiserver-${openstack_compute_instance_v2.control_plane[count.index].access_ip_v4}"
+  pool_id       = openstack_lb_pool_v2.kube_apiservers.id
   address       = openstack_compute_instance_v2.control_plane[count.index].access_ip_v4
   protocol_port = 6443
 }
