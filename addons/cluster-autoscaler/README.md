@@ -100,14 +100,16 @@ kubectl annotate machinedeployment -n kube-system <machinedeployment-name> clust
 
 You need to replace the following values with the actual ones:
 
-* `AUTOSCALER_VERSION` needs to be replaced with the appropriate Cluster
-  Autoscaler version
+* `CLUSTER_AUTOSCALER_IMAGE` can be used to replace the Cluster Autoscaler image
   * The minor versions of Cluster Autoscaler and Kubernetes cluster should
     match, as per
     [Cluster Autoscaler recommendations][recommended-autoscaler-versions]
   * You can find the available Cluster Autoscaler versions by searching for
     Cluster Autoscaler in the
     [autoscaler GitHub repository][autoscaler-releases]
+* `CLUSTER_AUTOSCALER_SKIP_LOCAL_STORAGE` can be used to define the value of `--skip-nodes-with-local-storage=`.
+  * Possible values are `"true"`or `"false"`
+  * Default is `"false"`, as described in the [FAQ][autoscaler-faq].
 
 You can find more information about deploying addons in the
 [Addons document][using-addons].
@@ -120,3 +122,4 @@ You can find more information about deploying addons in the
 [recommended-autoscaler-versions]: https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler#releases
 [autoscaler-releases]: https://github.com/kubernetes/autoscaler/releases
 [using-addons]: https://docs.kubermatic.com/kubeone/v1.6/guides/addons/
+[autoscaler-faq]: https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md
