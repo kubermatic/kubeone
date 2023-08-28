@@ -47,11 +47,10 @@ sudo mv /tmp/yum.conf /etc/yum.conf
 cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+baseurl=https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/rpm/
 enabled=1
 gpgcheck=1
-repo_gpgcheck=0
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+gpgkey=https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/rpm/repodata/repomd.xml.key
 EOF
 {{ end }}
 
@@ -205,8 +204,9 @@ func KubeadmAmazonLinux(cluster *kubeoneapi.KubeOneCluster, force bool) (string,
 		"CNI_URL":                cluster.AssetConfiguration.CNI.URL,
 		"KUBECTL_URL":            cluster.AssetConfiguration.Kubectl.URL,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       defaultCriToolsVersion,
+		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 		"FORCE":                  force,
@@ -243,8 +243,9 @@ func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeoneapi.KubeOneCluster) (string
 		"NODE_BINARIES_URL":      cluster.AssetConfiguration.NodeBinaries.URL,
 		"CNI_URL":                cluster.AssetConfiguration.CNI.URL,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       defaultCriToolsVersion,
+		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
@@ -275,8 +276,9 @@ func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeoneapi.KubeOneCluster) (st
 		"NODE_BINARIES_URL":      cluster.AssetConfiguration.NodeBinaries.URL,
 		"KUBECTL_URL":            cluster.AssetConfiguration.Kubectl.URL,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       defaultCriToolsVersion,
+		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,

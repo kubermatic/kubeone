@@ -47,11 +47,10 @@ sudo mv /tmp/yum.conf /etc/yum.conf
 cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+baseurl=https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/rpm/
 enabled=1
 gpgcheck=1
-repo_gpgcheck=0
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+gpgkey=https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/rpm/repodata/repomd.xml.key
 EOF
 
 source /etc/os-release
@@ -143,8 +142,9 @@ func KubeadmCentOS(cluster *kubeoneapi.KubeOneCluster, force bool) (string, erro
 		"KUBEADM":                true,
 		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       defaultCriToolsVersion,
+		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 		"FORCE":                  force,
@@ -179,8 +179,9 @@ func UpgradeKubeadmAndCNICentOS(cluster *kubeoneapi.KubeOneCluster) (string, err
 		"UPGRADE":                true,
 		"KUBEADM":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       defaultCriToolsVersion,
+		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
@@ -209,8 +210,9 @@ func UpgradeKubeletAndKubectlCentOS(cluster *kubeoneapi.KubeOneCluster) (string,
 		"KUBELET":                true,
 		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       defaultCriToolsVersion,
+		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
