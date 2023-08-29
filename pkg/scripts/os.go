@@ -18,7 +18,7 @@ package scripts
 
 import (
 	"github.com/MakeNowJust/heredoc/v2"
-	"github.com/blang/semver/v4"
+	"github.com/Masterminds/semver/v3"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/containerruntime"
@@ -74,7 +74,7 @@ func criToolsVersion(cluster *kubeoneapi.KubeOneCluster) string {
 	// Validation passed at this point so we know that version is valid
 	kubeSemVer := semver.MustParse(cluster.Versions.Kubernetes)
 
-	switch kubeSemVer.Minor {
+	switch kubeSemVer.Minor() {
 	case 24:
 		fallthrough
 	case 25:
