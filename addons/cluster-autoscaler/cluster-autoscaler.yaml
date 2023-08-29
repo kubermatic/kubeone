@@ -179,7 +179,7 @@ spec:
         args:
         - --cloud-provider=clusterapi
         - --namespace=kube-system
-        - --skip-nodes-with-local-storage={{ default "false" .Params.CLUSTER_AUTOSCALER_SKIP_LOCAL_STORAGE }}
+        - --skip-nodes-with-local-storage={{ default "true" .Params.CLUSTER_AUTOSCALER_SKIP_LOCAL_STORAGE }}
         - --logtostderr=true
         - --stderrthreshold=info
         - --v=4
