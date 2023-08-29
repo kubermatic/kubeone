@@ -126,7 +126,11 @@ shfmt:
 prowfmt:
 	yq --inplace eval .prow.yaml
 
-fmt: shfmt prowfmt
+.PHONY: tffmt
+tffmt:
+	terraform fmt -write=true -recursive .
+
+fmt: shfmt prowfmt tffmt
 
 gogenerate:
 	go generate ./pkg/...
