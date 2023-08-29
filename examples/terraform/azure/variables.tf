@@ -107,7 +107,7 @@ variable "disable_kubeapi_loadbalancer" {
 # Provider specific settings
 
 variable "ip_sku" {
-  default = "Basic"
+  default     = "Basic"
   description = "SKU to use for IP addresses"
 }
 
@@ -278,6 +278,6 @@ variable "rhsm_offline_token" {
 
 variable "disable_auto_update" {
   description = "Disable automatic flatcar updates (and reboot)"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }

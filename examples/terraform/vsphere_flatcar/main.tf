@@ -106,11 +106,11 @@ resource "vsphere_virtual_machine" "control_plane" {
         systemd = {
           units = [
             {
-              name = "docker.socket"
+              name    = "docker.socket"
               enabled = false
             },
             {
-              name = "docker.service"
+              name    = "docker.service"
               enabled = true
             }
           ]
