@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+# Cluster Variables
 variable "cluster_name" {
   description = "Name of the cluster"
   type        = string
@@ -30,21 +31,118 @@ variable "apiserver_alternative_names" {
   type        = list(string)
 }
 
+variable "image" {
+  description = "image name to use"
+  default     = ""
+  type        = string
+}
+
+variable "image_properties_query" {
+  description = "in absence of var.image, this will be used to query API for the image"
+  default = {
+    os_distro  = "ubuntu"
+    os_version = "22.04"
+  }
+  type = map(any)
+}
+
+# Network Variables
+variable "subnet_cidr" {
+  default     = "192.168.1.0/24"
+  description = "OpenStack subnet cidr"
+  type        = string
+
+  validation {
+    condition     = can(cidrhost(var.subnet_cidr, 32))
+    error_message = "Must be valid IPv4 CIDR."
+  }
+}
+
+variable "external_network_name" {
+  description = "OpenStack external network name"
+  type        = string
+}
+
+variable "subnet_dns_servers" {
+  type    = list(string)
+  default = ["8.8.8.8", "8.8.4.4"]
+
+  validation {
+    condition = alltrue([
+      for a in var.subnet_dns_servers : can(regex("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", a))
+    ])
+    error_message = "All elements must be a valid IPv4 address."
+  }
+}
+
+# Controlplane Variables
+variable "control_plane_vm_count" {
+  description = "number of control plane instances"
+  default     = 3
+  type        = number
+}
+
+variable "control_plane_flavor" {
+  description = "OpenStack instance flavor for the control plane nodes"
+  default     = "m1.small"
+  type        = string
+}
+
+# Worker Node Variables
 variable "worker_os" {
   description = "OS to run on worker machines"
+  default     = "ubuntu"
+  type        = string
+}
 
-  # valid choices are:
-  # * ubuntu
-  # * centos
-  # * rockylinux
-  default = "ubuntu"
-  type    = string
+variable "worker_flavor" {
+  description = "OpenStack instance flavor for the worker nodes"
+  default     = "m1.small"
+  type        = string
+}
+
+# Bastion Variables
+variable "bastion_port" {
+  description = "Bastion SSH port"
+  default     = 22
+  type        = number
+}
+
+variable "bastion_user" {
+  description = "Bastion SSH username"
+  default     = "ubuntu"
+  type        = string
+}
+
+variable "bastion_host_key" {
+  description = "Bastion SSH host public key"
+  default     = null
+  type        = string
+}
+
+variable "bastion_flavor" {
+  description = "OpenStack instance flavor for the LoadBalancer node"
+  default     = "m1.tiny"
+  type        = string
+}
+
+# SSH Variables
+variable "ssh_private_key_file" {
+  description = "SSH private key file used to access instances"
+  default     = ""
+  type        = string
 }
 
 variable "ssh_public_key_file" {
   description = "SSH public key file"
   default     = "~/.ssh/id_rsa.pub"
   type        = string
+}
+
+variable "ssh_hosts_keys" {
+  description = "A list of SSH hosts public keys to verify"
+  default     = null
+  type        = list(string)
 }
 
 variable "ssh_port" {
@@ -59,99 +157,13 @@ variable "ssh_username" {
   type        = string
 }
 
-variable "ssh_private_key_file" {
-  description = "SSH private key file used to access instances"
-  default     = ""
-  type        = string
-}
-
 variable "ssh_agent_socket" {
   description = "SSH Agent socket, default to grab from $SSH_AUTH_SOCK"
   default     = "env:SSH_AUTH_SOCK"
   type        = string
 }
 
-variable "bastion_port" {
-  description = "Bastion SSH port"
-  default     = 22
-  type        = number
-}
-
-variable "bastion_user" {
-  description = "Bastion SSH username"
-  default     = "ubuntu"
-  type        = string
-}
-
-variable "ssh_hosts_keys" {
-  default     = null
-  description = "A list of SSH hosts public keys to verify"
-  type        = list(string)
-}
-
-variable "bastion_host_key" {
-  description = "Bastion SSH host public key"
-  default     = null
-  type        = string
-}
-
-variable "control_plane_vm_count" {
-  description = "number of control plane instances"
-  default     = 3
-  type        = number
-}
-
-# Provider specific settings
-
-variable "control_plane_flavor" {
-  default     = "m1.small"
-  description = "OpenStack instance flavor for the control plane nodes"
-  type        = string
-}
-
-variable "worker_flavor" {
-  default     = "m1.small"
-  description = "OpenStack instance flavor for the worker nodes"
-  type        = string
-}
-
-variable "bastion_flavor" {
-  default     = "m1.tiny"
-  description = "OpenStack instance flavor for the LoadBalancer node"
-  type        = string
-}
-
-variable "image" {
-  default     = ""
-  description = "image name to use"
-  type        = string
-}
-
-variable "image_properties_query" {
-  default = {
-    os_distro  = "ubuntu"
-    os_version = "22.04"
-  }
-  description = "in absence of var.image, this will be used to query API for the image"
-  type        = map(any)
-}
-
-variable "subnet_cidr" {
-  default     = "192.168.1.0/24"
-  description = "OpenStack subnet cidr"
-  type        = string
-}
-
-variable "external_network_name" {
-  description = "OpenStack external network name"
-  type        = string
-}
-
-variable "subnet_dns_servers" {
-  type    = list(string)
-  default = ["8.8.8.8", "8.8.4.4"]
-}
-
+# Machine Deployment Variables
 variable "initial_machinedeployment_replicas" {
   description = "Number of replicas per MachineDeployment"
   default     = 2

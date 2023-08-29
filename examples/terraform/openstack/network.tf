@@ -34,7 +34,7 @@ resource "openstack_networking_subnet_v2" "subnet" {
 
 resource "openstack_networking_router_v2" "router" {
   name                = "${var.cluster_name}-cluster"
-  admin_state_up      = "true"
+  admin_state_up      = true
   external_network_id = data.openstack_networking_network_v2.external_network.id
 }
 

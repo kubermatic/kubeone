@@ -14,26 +14,30 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+resource "openstack_networking_port_v2" "control_plane" {
+  count = var.control_plane_vm_count
+  name  = "${var.cluster_name}-control_plane-${count.index}"
+
+  admin_state_up     = "true"
+  network_id         = openstack_networking_network_v2.network.id
+  security_group_ids = [openstack_networking_secgroup_v2.securitygroup.id]
+
+  fixed_ip {
+    subnet_id = openstack_networking_subnet_v2.subnet.id
+  }
+}
+
 resource "openstack_compute_instance_v2" "control_plane" {
-  count           = var.control_plane_vm_count
-  name            = "${var.cluster_name}-cp-${count.index}"
+  count = var.control_plane_vm_count
+  name  = "${var.cluster_name}-cp-${count.index}"
+
   image_name      = data.openstack_images_image_v2.image.name
   flavor_name     = var.control_plane_flavor
   key_pair        = openstack_compute_keypair_v2.deployer.name
   security_groups = [openstack_networking_secgroup_v2.securitygroup.name]
 
   network {
-    port = element(openstack_networking_port_v2.control_plane.*.id, count.index)
+    port = element(openstack_networking_port_v2.control_plane[*].id, count.index)
   }
 }
 
-resource "openstack_networking_port_v2" "control_plane" {
-  count              = var.control_plane_vm_count
-  name               = "${var.cluster_name}-control_plane-${count.index}"
-  admin_state_up     = "true"
-  network_id         = openstack_networking_network_v2.network.id
-  security_group_ids = [openstack_networking_secgroup_v2.securitygroup.id]
-  fixed_ip {
-    subnet_id = openstack_networking_subnet_v2.subnet.id
-  }
-}
