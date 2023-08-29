@@ -1858,7 +1858,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1886,7 +1886,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1914,7 +1914,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1942,7 +1942,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1970,7 +1970,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1998,7 +1998,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2026,7 +2026,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2056,7 +2056,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2086,7 +2086,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2116,7 +2116,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2147,7 +2147,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2177,7 +2177,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2205,7 +2205,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2235,7 +2235,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2265,7 +2265,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2295,7 +2295,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2325,7 +2325,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9215,7 +9215,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9243,7 +9243,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9271,7 +9271,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9299,7 +9299,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9327,7 +9327,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9355,7 +9355,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9383,7 +9383,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9413,7 +9413,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9443,7 +9443,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9473,7 +9473,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9504,7 +9504,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9534,7 +9534,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9562,7 +9562,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9590,7 +9590,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9618,7 +9618,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9646,7 +9646,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9674,7 +9674,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9702,7 +9702,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9730,7 +9730,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9758,7 +9758,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9786,7 +9786,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9814,7 +9814,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9844,7 +9844,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9874,7 +9874,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9904,7 +9904,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9934,7 +9934,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9964,7 +9964,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -9992,7 +9992,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -10020,7 +10020,7 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   extra_refs:
-  - base_ref: release/v1.5
+  - base_ref: release/v1.6
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone

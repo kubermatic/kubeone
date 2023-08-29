@@ -185,7 +185,7 @@ func (k1 *kubeoneBin) kubeconfigPath(tmpDir string) (string, error) {
 		return "", err
 	}
 
-	if err := os.WriteFile(kubeconfig.Name(), buf, 0600); err != nil {
+	if err := os.WriteFile(kubeconfig.Name(), buf, 0o600); err != nil {
 		return "", err
 	}
 
