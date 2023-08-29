@@ -109,7 +109,7 @@ You need to replace the following values with the actual ones:
     [autoscaler GitHub repository][autoscaler-releases]
 * `CLUSTER_AUTOSCALER_SKIP_LOCAL_STORAGE` can be used to define the value of `--skip-nodes-with-local-storage=`.
   * Possible values are `"true"`or `"false"`
-  * Default is `"false"`, as described in the [FAQ][autoscaler-faq].
+  * Default is `"true"`, as described in the [FAQ][autoscaler-faq].
 
 You can find more information about deploying addons in the
 [Addons document][using-addons].
