@@ -28,11 +28,11 @@ output "kubeone_hosts" {
 
   value = {
     control_plane = {
-      cluster_name         = var.cluster_name
-      cloud_provider       = "vsphere"
-      private_address      = []
-      hostnames            = local.hostnames
-      public_address       = vsphere_virtual_machine.control_plane.*.guest_ip_addresses.0
+      cluster_name    = var.cluster_name
+      cloud_provider  = "vsphere"
+      private_address = []
+      hostnames       = local.hostnames
+      public_address  = vsphere_virtual_machine.control_plane.*.guest_ip_addresses.0
       # KubeOne expects an array of array for IPv6 addresses since a single host/node can have multiple IPv6 addresses.
       ipv6_addresses       = var.ip_family == "IPv4+IPv6" ? [for ip in vsphere_virtual_machine.control_plane.*.guest_ip_addresses.1 : [ip]] : null
       ssh_agent_socket     = var.ssh_agent_socket

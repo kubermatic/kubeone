@@ -29,7 +29,7 @@ output "kubeone_api" {
 }
 
 output "ssh_commands" {
-  value = formatlist("ssh -J ${var.bastion_user}@${openstack_networking_floatingip_v2.bastion.address} ${var.ssh_username}@%s", openstack_compute_instance_v2.control_plane.*.access_ip_v4)
+  value = formatlist("ssh -J ${var.bastion_user}@${openstack_networking_floatingip_v2.bastion.address} ${var.ssh_username}@%s", openstack_compute_instance_v2.control_plane[*].access_ip_v4)
 }
 
 output "kubeone_hosts" {
@@ -39,8 +39,8 @@ output "kubeone_hosts" {
     control_plane = {
       cluster_name         = var.cluster_name
       cloud_provider       = "openstack"
-      private_address      = openstack_compute_instance_v2.control_plane.*.access_ip_v4
-      hostnames            = openstack_compute_instance_v2.control_plane.*.name
+      private_address      = openstack_compute_instance_v2.control_plane[*].access_ip_v4
+      hostnames            = openstack_compute_instance_v2.control_plane[*].name
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file
