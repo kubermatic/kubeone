@@ -24,6 +24,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 
 	"k8c.io/kubeone/pkg/fail"
