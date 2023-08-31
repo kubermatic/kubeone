@@ -61,11 +61,9 @@ sudo systemctl enable --now iscsid
 {{- end }}
 
 {{- if .CONFIGURE_REPOSITORIES }}
-curl -fsSL https://dl.k8s.io/apt/doc/apt-key.gpg | sudo apt-key add -
+curl -fsSL https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/deb/Release.key | sudo apt-key add -
 
-# You'd think that kubernetes-$(lsb_release -sc) belongs there instead, but the debian repo
-# contains neither kubeadm nor kubelet, and the docs themselves suggest using xenial repo.
-echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+echo "deb https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 sudo apt-get update
 {{- end }}
@@ -134,8 +132,9 @@ func KubeadmDebian(cluster *kubeoneapi.KubeOneCluster, force bool) (string, erro
 		"KUBEADM":                true,
 		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       defaultCriToolsVersion,
+		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
@@ -167,8 +166,9 @@ func UpgradeKubeadmAndCNIDebian(cluster *kubeoneapi.KubeOneCluster) (string, err
 		"UPGRADE":                true,
 		"KUBEADM":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       defaultCriToolsVersion,
+		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
@@ -194,8 +194,9 @@ func UpgradeKubeletAndKubectlDebian(cluster *kubeoneapi.KubeOneCluster) (string,
 		"KUBELET":                true,
 		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
+		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       defaultCriToolsVersion,
+		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,

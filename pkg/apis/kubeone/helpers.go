@@ -500,3 +500,10 @@ func (c IPFamily) IsDualstack() bool {
 func (c IPFamily) IsIPv6Primary() bool {
 	return c == IPFamilyIPv6 || c == IPFamilyIPv6IPv4
 }
+
+func (v VersionConfig) KubernetesMajorMinorVersion() string {
+	// Validation passed at this point so we know that version is valid
+	kubeSemVer := semver.MustParse(v.Kubernetes)
+
+	return fmt.Sprintf("v%d.%d", kubeSemVer.Major(), kubeSemVer.Minor())
+}
