@@ -72,7 +72,7 @@ RELEASE="v1.26.0"
 sudo mkdir -p /var/tmp/kube-binaries
 cd /var/tmp/kube-binaries
 sudo curl -L --remote-name-all \
-	https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/${HOST_ARCH}/kubeadm
+	https://dl.k8s.io/${RELEASE}/bin/linux/${HOST_ARCH}/kubeadm
 
 sudo mkdir -p /opt/bin
 cd /opt/bin

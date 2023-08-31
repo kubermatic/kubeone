@@ -63,11 +63,9 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 	gnupg \
 	lsb-release \
 	rsync
-curl -fsSL https://dl.k8s.io/apt/doc/apt-key.gpg | sudo apt-key add -
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.26/deb/Release.key | sudo apt-key add -
 
-# You'd think that kubernetes-$(lsb_release -sc) belongs there instead, but the debian repo
-# contains neither kubeadm nor kubelet, and the docs themselves suggest using xenial repo.
-echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+echo "deb https://pkgs.k8s.io/core:/stable:/v1.26/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 sudo apt-get update
 
