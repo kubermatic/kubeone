@@ -1462,6 +1462,14 @@ var (
 			Name:                 "cilium_containerd_external",
 			ManifestTemplatePath: "testdata/containerd_cilium_external.yaml",
 		},
+		"upgrade_cilium_containerd": &scenarioUpgrade{
+			Name:                 "upgrade_cilium_containerd",
+			ManifestTemplatePath: "testdata/containerd_cilium.yaml",
+		},
+		"upgrade_cilium_containerd_external": &scenarioUpgrade{
+			Name:                 "upgrade_cilium_containerd_external",
+			ManifestTemplatePath: "testdata/containerd_cilium_external.yaml",
+		},
 		"cilium_docker": &scenarioInstall{
 			Name:                 "cilium_docker",
 			ManifestTemplatePath: "testdata/docker_cilium.yaml",
