@@ -283,20 +283,20 @@ func newCredsFinder(credentialsFilePath string, credentialsType Type) (lookupFun
 		switch {
 		case credentialsType != TypeUniversal:
 			typedName := string(credentialsType) + "_" + name
-			if val := os.Getenv(typedName); val != "" {
+			if val, ok := staticMap[typedName]; ok && val != "" {
 				return val
 			}
-			if val, ok := staticMap[typedName]; ok && val != "" {
+			if val := os.Getenv(typedName); val != "" {
 				return val
 			}
 
 			fallthrough
 		default:
-			if val := os.Getenv(name); val != "" {
+			if val := staticMap[name]; val != "" {
 				return val
 			}
 
-			return staticMap[name]
+			return os.Getenv(name)
 		}
 	}
 
