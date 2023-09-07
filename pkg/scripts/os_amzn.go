@@ -227,7 +227,6 @@ func KubeadmAmazonLinux(cluster *kubeoneapi.KubeOneCluster, force bool) (string,
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"USE_KUBERNETES_REPO":    cluster.AssetConfiguration.NodeBinaries.URL == "",
-		"CILIUM":                 ciliumCNI(cluster),
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
 	}
 
@@ -266,7 +265,6 @@ func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeoneapi.KubeOneCluster) (string
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"USE_KUBERNETES_REPO":    cluster.AssetConfiguration.NodeBinaries.URL == "",
-		"CILIUM":                 ciliumCNI(cluster),
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
 	}
 
@@ -300,7 +298,6 @@ func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeoneapi.KubeOneCluster) (st
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"USE_KUBERNETES_REPO":    cluster.AssetConfiguration.NodeBinaries.URL == "",
-		"CILIUM":                 ciliumCNI(cluster),
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
 	}
 
