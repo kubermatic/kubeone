@@ -1,3 +1,32 @@
+# [v1.6.3](https://github.com/kubermatic/kubeone/releases/tag/v1.6.3) - 2023-09-07
+
+## Changelog since v1.6.2
+
+## Urgent Upgrade Notes 
+
+### (No, really, you MUST read this before you upgrade)
+
+- Migrate from the legacy package repositories (`apt.kubernetes.io` and `yum.kubernetes.io`) to the Kubernetes community-hosted package repositories (`pkgs.k8s.io`). The legacy repositories [have been deprecated as of August 31, 2023 and will be frozen starting from September 13, 2023](https://kubernetes.io/blog/2023/08/31/legacy-package-repository-deprecation/). Upgrading to KubeOne v1.7.0+ or v1.6.3+ is required in order to install or upgrade to Kubernetes version newer than v1.27.6, v1.26.9, and v1.25.14. **If IP-based or URL-based filtering is in place**, you may need to mirror the release packages to a local package repository that you have strict control over. See [the official announcement](https://kubernetes.io/blog/2023/08/15/pkgs-k8s-io-introduction/) for more details ([#2878](https://github.com/kubermatic/kubeone/pull/2878), [@xmudrii](https://github.com/xmudrii))
+- Migrate from the Kubernetes release bucket (`https://storage.googleapis.com/kubernetes-release/release`) to `dl.k8s.io` for downloading binaries. This change only affects Flatcar-based clusters. **If IP-based or URL-based filtering is in place**, you need to allow the appropriate IP addresses and domains as described in [the official `dl.k8s.io` announcement](https://kubernetes.io/blog/2023/06/09/dl-adopt-cdn/) ([#2878](https://github.com/kubermatic/kubeone/pull/2878), [@xmudrii](https://github.com/xmudrii))
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Fix installing Helm charts containing CRDs ([#2882](https://github.com/kubermatic/kubeone/pull/2882), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix defaulting for `vpc_id` in the example Terraform configs for AWS with dual-stack networking ([#2883](https://github.com/kubermatic/kubeone/pull/2883), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Updates
+
+#### Equinix Metal
+
+- Update the Equinix Metal CCM to v3.6.2 ([#2871](https://github.com/kubermatic/kubeone/pull/2871), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Other (Cleanup or Flake)
+
+- Rename anti-affinity rule for the control plane nodes in the example Terraform configs for vSphere to include the cluster name ([#2884](https://github.com/kubermatic/kubeone/pull/2884), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Use `buildx` instead of Buildah to create multi-architecture KubeOne container images ([#2809](https://github.com/kubermatic/kubeone/pull/2809), [@xmudrii](https://github.com/xmudrii))
+
 # [v1.6.2](https://github.com/kubermatic/kubeone/releases/tag/v1.6.2) - 2023-04-14
 
 ## Changelog since v1.6.1
