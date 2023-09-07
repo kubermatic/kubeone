@@ -18,6 +18,10 @@
 
 ### Updates
 
+#### machine-controller
+
+- Update machine-controller to v1.56.4 ([#2889](https://github.com/kubermatic/kubeone/pull/2889), [@xmudrii](https://github.com/xmudrii))
+
 #### Equinix Metal
 
 - Update the Equinix Metal CCM to v3.6.2 ([#2871](https://github.com/kubermatic/kubeone/pull/2871), [@kubermatic-bot](https://github.com/kubermatic-bot))
