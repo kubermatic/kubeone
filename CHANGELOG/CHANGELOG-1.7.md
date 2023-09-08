@@ -14,6 +14,7 @@
 
 ### API Change
 
+- The minimum Kubernetes version has been increased to v1.25.0. If you're using an earlier Kubernetes version, please upgrade to at least v1.25 before upgrading to KubeOne v1.7. See [the Kubernetes compatibility matrix](https://docs.kubermatic.com/kubeone/v1.7/architecture/compatibility/supported-versions/) for more information about supported Kubernetes versions ([#2897](https://github.com/kubermatic/kubeone/pull/2897), [@xmudrii](https://github.com/xmudrii))
 - Add `.cloudProvider.disableBundledCSIDrivers` boolean field to the API. When set to `true`, the built-in CSI driver will not be deployed to the cluster. If enabled for an existing cluster, the CSI driver and relevant volumes must be removed manually ([#2784](https://github.com/kubermatic/kubeone/pull/2784), [@kron4eg](https://github.com/kron4eg))
 - Add support for referencing credentials exposed via environment variables or credentials file in cloudConfig (`.cloudProvider.cloudConfig`). Credentials are referenced like `{{ .Credentials.ENVIRONMENT_VARIABLE_NAME }}` ([#2789](https://github.com/kubermatic/kubeone/pull/2789), [@kron4eg](https://github.com/kron4eg))
 - Add `.helmReleases.*.chartURL` field to the API. This field can be used to provide a direct chart URL location ([#2836](https://github.com/kubermatic/kubeone/pull/2836), [@kron4eg](https://github.com/kron4eg))
