@@ -66,10 +66,6 @@ func installISCSIAndNFS(cluster *kubeoneapi.KubeOneCluster) bool {
 	return cluster.CloudProvider.Nutanix != nil
 }
 
-func ciliumCNI(cluster *kubeoneapi.KubeOneCluster) bool {
-	return cluster.ClusterNetwork.CNI != nil && cluster.ClusterNetwork.CNI.Cilium != nil
-}
-
 func criToolsVersion(cluster *kubeoneapi.KubeOneCluster) string {
 	// Validation passed at this point so we know that version is valid
 	kubeSemVer := semver.MustParse(cluster.Versions.Kubernetes)

@@ -200,7 +200,6 @@ func KubeadmFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-		"CILIUM":                 ciliumCNI(cluster),
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
 	}
 
