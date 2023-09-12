@@ -135,23 +135,23 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-  {{ if .Config.CABundle }}
-  {{ caBundleEnvVar | indent 12 }}
-  {{ end }}
-volumeMounts:
-  - mountPath: /run/secrets/tls
-    name: webhook-certs
-    readOnly: true
-  {{ if .Config.CABundle }}
-  {{ caBundleVolumeMount | indent 12 }}
-  {{ end }}
-volumes:
-  - name: socket-dir
-    emptyDir: {}
-  - name: webhook-certs
-    secret:
-      secretName: vsphere-webhook-certs
-  {{ if .Config.CABundle }}
-  {{ caBundleVolume | indent 8 }}
-  {{ end }}
-  {{ end }}
+{{ if .Config.CABundle }}
+{{ caBundleEnvVar | indent 12 }}
+{{ end }}
+          volumeMounts:
+            - mountPath: /run/secrets/tls
+              name: webhook-certs
+              readOnly: true
+{{ if .Config.CABundle }}
+{{ caBundleVolumeMount | indent 12 }}
+{{ end }}
+      volumes:
+        - name: socket-dir
+          emptyDir: {}
+        - name: webhook-certs
+          secret:
+            secretName: vsphere-webhook-certs
+{{ if .Config.CABundle }}
+{{ caBundleVolume | indent 8 }}
+{{ end }}
+{{ end }}
