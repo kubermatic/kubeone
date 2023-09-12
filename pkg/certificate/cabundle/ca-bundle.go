@@ -57,11 +57,11 @@ func Inject(caBundle string, podTpl *corev1.PodTemplateSpec) {
 	}
 }
 
-func ConfigMap(caBundle string) *corev1.ConfigMap {
+func ConfigMap(caBundle, namespace string) *corev1.ConfigMap {
 	cm := corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      ConfigMapName,
-			Namespace: metav1.NamespaceSystem,
+			Namespace: namespace,
 		},
 		Data: map[string]string{
 			FileName: caBundle,
