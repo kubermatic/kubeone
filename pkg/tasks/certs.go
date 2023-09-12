@@ -34,6 +34,7 @@ import (
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/resources"
 
 	certificatesv1 "k8s.io/api/certificates/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -153,7 +154,24 @@ func ensureCABundleConfigMap(s *state.State) error {
 	}
 
 	s.Logger.Infoln("Creating ca-bundle configMap...")
-	cm := cabundle.ConfigMap(s.Cluster.CABundle)
+
+	cm := cabundle.ConfigMap(s.Cluster.CABundle, metav1.NamespaceSystem)
+
+	return clientutil.CreateOrUpdate(s.Context, s.DynamicClient, cm)
+}
+
+func ensureVsphereCSICABundleConfigMap(s *state.State) error {
+	if s.DynamicClient == nil {
+		return fail.NoKubeClient()
+	}
+
+	// CSI driver is installed only if external cloud provider is used and bundled CSI drivers are not disabled.
+	if s.Cluster.CloudProvider.Vsphere == nil || !s.Cluster.CloudProvider.External || s.Cluster.CloudProvider.DisableBundledCSIDrivers {
+		return nil
+	}
+	s.Logger.Infoln("Creating ca-bundle configmap for vSphere CSI...")
+
+	cm := cabundle.ConfigMap(s.Cluster.CABundle, resources.VsphereCSINamespace)
 
 	return clientutil.CreateOrUpdate(s.Context, s.DynamicClient, cm)
 }

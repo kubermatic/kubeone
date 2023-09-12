@@ -287,6 +287,14 @@ func WithResources(t Tasks) Tasks {
 				Predicate:   func(s *state.State) bool { return s.Cluster.Addons != nil && s.Cluster.Addons.Enable },
 			},
 			{
+				Fn:          ensureVsphereCSICABundleConfigMap,
+				Operation:   "ensure vSphere CSI caBundle configMap",
+				Description: "ensure vSphere CSI caBundle configMap",
+				Predicate: func(s *state.State) bool {
+					return s.Cluster.CABundle != "" && s.Cluster.CloudProvider.Vsphere != nil && s.Cluster.CloudProvider.External && !s.Cluster.CloudProvider.DisableBundledCSIDrivers
+				},
+			},
+			{
 				Fn:        joinStaticWorkerNodes,
 				Operation: "joining static worker nodes to the cluster",
 			},
