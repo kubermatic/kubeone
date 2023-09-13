@@ -283,6 +283,14 @@ func WithResources(t Tasks) Tasks {
 				Predicate:   func(s *state.State) bool { return s.Cluster.CloudProvider.External },
 			},
 			{
+				Fn:          ensureVsphereCSICABundleConfigMap,
+				Operation:   "ensure vSphere CSI caBundle configMap",
+				Description: "ensure vSphere CSI caBundle configMap",
+				Predicate: func(s *state.State) bool {
+					return s.Cluster.CABundle != "" && s.Cluster.CloudProvider.Vsphere != nil && s.Cluster.CloudProvider.External
+				},
+			},
+			{
 				Fn:        joinStaticWorkerNodes,
 				Operation: "joining static worker nodes to the cluster",
 			},
