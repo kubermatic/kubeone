@@ -289,6 +289,9 @@ spec:
             - "--route-reconciliation-period=10s"
             - "--secure-port=10268"
             - "--v=2"
+            {{- with .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
+            - --concurrent-service-syncs={{ . }}
+            {{- end }}
           resources:
             requests:
               cpu: 100m
