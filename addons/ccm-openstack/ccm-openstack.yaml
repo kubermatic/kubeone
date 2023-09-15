@@ -175,6 +175,9 @@ spec:
             - --cloud-provider=openstack
             - --controllers=cloud-node,cloud-node-lifecycle,route,service
             - --bind-address=127.0.0.1
+            {{- with .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
+            - --concurrent-service-syncs={{ . }}
+            {{- end }}
           volumeMounts:
             - mountPath: /etc/config
               name: cloud-config-volume

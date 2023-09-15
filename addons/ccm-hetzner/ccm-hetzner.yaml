@@ -71,6 +71,9 @@ spec:
             - "--configure-cloud-routes=false"
             - "--leader-elect=true"
             - "--route-reconciliation-period=30s"
+            {{- with .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
+            - --concurrent-service-syncs={{ . }}
+            {{- end }}
           env:
             - name: HCLOUD_TOKEN
               valueFrom:
