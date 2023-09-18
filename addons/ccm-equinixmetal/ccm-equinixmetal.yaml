@@ -67,6 +67,9 @@ spec:
           - "--leader-elect=true"
           - "--authentication-skip-lookup=true"
           - "--cloud-config=/etc/cloud-sa/cloud-sa.json"
+          {{- with .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
+          - --concurrent-service-syncs={{ . }}
+          {{- end }}
         resources:
           requests:
             cpu: 100m

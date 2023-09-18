@@ -164,6 +164,9 @@ spec:
           - --cloud-provider=vsphere
           - --v=2
           - --cloud-config=/etc/cloud/cloud-config
+          {{- with .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
+          - --concurrent-service-syncs={{ . }}
+          {{- end }}
         env:
           - name: ENABLE_ALPHA_DUAL_STACK
             value: "{{ .Config.ClusterNetwork.IPFamily.IsDualstack }}"
