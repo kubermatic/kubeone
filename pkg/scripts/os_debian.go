@@ -61,9 +61,11 @@ sudo systemctl enable --now iscsid
 {{- end }}
 
 {{- if .CONFIGURE_REPOSITORIES }}
-curl -fsSL https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/deb/Release.key | sudo apt-key add -
+sudo install -m 0755 -d /etc/apt/keyrings
 
-echo "deb https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+curl -fsSL https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/deb/Release.key | sudo gpg --dearmor --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 sudo apt-get update
 {{- end }}
