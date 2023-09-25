@@ -53,11 +53,12 @@ var (
 
 		"apt-docker-ce": heredoc.Docf(`
 			{{ if .CONFIGURE_REPOSITORIES }}
-			curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+			sudo install -m 0755 -d /etc/apt/keyrings
+			curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 			# Docker provides two different apt repos for ubuntu, bionic and focal. The focal repo currently
 			# contains only Docker 19.03.14, which is not validated for all Kubernetes version.
 			# Therefore, we use bionic repo which has all Docker versions.
-			echo "deb https://download.docker.com/linux/ubuntu bionic stable" |
+			echo "deb [signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu bionic stable" |
 				sudo tee /etc/apt/sources.list.d/docker.list
 			sudo apt-get update
 			{{ end }}
