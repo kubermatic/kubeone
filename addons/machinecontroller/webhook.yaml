@@ -20,7 +20,7 @@ metadata:
   namespace: kube-system
 data:
 {{ range .RegistryCredentials }}
-  {{ .RegistryName }}: |
+  {{ .RegistryName | quote }}: |
 {{ mustToRawJson .Auth | b64enc | indent 4 }}
 {{ end }}
 {{ end }}
