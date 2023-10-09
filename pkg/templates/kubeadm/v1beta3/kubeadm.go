@@ -225,7 +225,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
 		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = cluster.AssetConfiguration.Pause.ImageRepository + "/pause:" + cluster.AssetConfiguration.Pause.ImageTag
 	} else {
-		sandboxImage, serr := cluster.Versions.SandboxImage()
+		sandboxImage, serr := cluster.Versions.SandboxImage(cluster.RegistryConfiguration.ImageRegistry)
 		if serr != nil {
 			return nil, serr
 		}
@@ -454,7 +454,7 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
 		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = cluster.AssetConfiguration.Pause.ImageRepository + "/pause:" + cluster.AssetConfiguration.Pause.ImageTag
 	} else {
-		sandboxImage, serr := cluster.Versions.SandboxImage()
+		sandboxImage, serr := cluster.Versions.SandboxImage(s.Cluster.RegistryConfiguration.ImageRegistry)
 		if serr != nil {
 			return nil, serr
 		}
