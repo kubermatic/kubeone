@@ -241,21 +241,23 @@ func (crc ContainerRuntimeConfig) CRISocket() string {
 	return ""
 }
 
-func (v VersionConfig) SandboxImage() (string, error) {
+func (v VersionConfig) SandboxImage(imageRegistry func(string) string) (string, error) {
 	kubeSemVer, err := semver.NewVersion(v.Kubernetes)
 	if err != nil {
 		return "", fail.Config(err, "parsing kubernetes semver")
 	}
 
+	registry := imageRegistry("registry.k8s.io")
+
 	switch {
 	case v124Constraint.Check(kubeSemVer):
-		return "registry.k8s.io/pause:3.7", nil
+		return fmt.Sprintf("%s/pause:3.7", registry), nil
 	case v125Constraint.Check(kubeSemVer):
-		return "registry.k8s.io/pause:3.8", nil
+		return fmt.Sprintf("%s/pause:3.8", registry), nil
 	case v126AndNewerConstraint.Check(kubeSemVer):
 		fallthrough
 	default:
-		return "registry.k8s.io/pause:3.9", nil
+		return fmt.Sprintf("%s/pause:3.9", registry), nil
 	}
 }
 

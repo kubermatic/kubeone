@@ -81,7 +81,7 @@ type containerdRegistryTLSConfig struct {
 }
 
 func marshalContainerdConfig(cluster *kubeoneapi.KubeOneCluster) (string, error) {
-	sandboxImage, serr := cluster.Versions.SandboxImage()
+	sandboxImage, serr := cluster.Versions.SandboxImage(cluster.RegistryConfiguration.ImageRegistry)
 	if serr != nil {
 		return "", serr
 	}
