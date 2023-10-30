@@ -22,5 +22,3 @@ exceptions:
   - github.com/hashicorp/go-version # MPL-2.0
   - github.com/hashicorp/golang-lru # MPL-2.0
   - github.com/hashicorp/golang-lru/simplelru # MPL-2.0
-  - github.com/yvasiyarov/go-metrics # BSD-2-Clause-Views required for https://github.com/distribution/distribution (used by Helm)
-  - github.com/bugsnag/osext # Zlib required for https://github.com/distribution/distribution (used by Helm)

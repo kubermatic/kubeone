@@ -10,7 +10,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/aws/aws-sdk-go v1.46.6
 	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be
-	github.com/distribution/distribution/v3 v3.0.0-20221208165359-362910506bc2
+	github.com/distribution/reference v0.5.0
 	github.com/dominodatalab/os-release v0.0.0-20190522011736-bcdb4a3e3c2f
 	github.com/google/go-cmp v0.6.0
 	github.com/iancoleman/orderedmap v0.3.0
@@ -48,7 +48,11 @@ require (
 	sigs.k8s.io/yaml v1.4.0
 )
 
-require github.com/imdario/mergo v0.3.13 // indirect
+require (
+	github.com/distribution/distribution/v3 v3.0.0-20231026153941-6c694cbcf607 // indirect
+	github.com/imdario/mergo v0.3.13 // indirect
+	go.opentelemetry.io/otel/metric v1.16.0 // indirect
+)
 
 require (
 	dario.cat/mergo v1.0.0
@@ -107,7 +111,7 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
-	github.com/klauspost/compress v1.16.0 // indirect
+	github.com/klauspost/compress v1.16.5 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
 	github.com/lib/pq v1.10.9 // indirect
@@ -145,8 +149,8 @@ require (
 	github.com/xlab/treeprint v1.2.0 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.10 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.10 // indirect
-	go.opentelemetry.io/otel v1.14.0 // indirect
-	go.opentelemetry.io/otel/trace v1.14.0 // indirect
+	go.opentelemetry.io/otel v1.16.0 // indirect
+	go.opentelemetry.io/otel/trace v1.16.0 // indirect
 	go.starlark.net v0.0.0-20230525235612-a134d8f9ddca // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
