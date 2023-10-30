@@ -79,5 +79,5 @@ func NewKubeletConfiguration(cluster *kubeoneapi.KubeOneCluster, featureGates ma
 		kubeletConfig.ClusterDNS = []string{resources.NodeLocalDNSVirtualIP}
 	}
 
-	return dropFields(kubeletConfig, []string{"logging"})
+	return dropFields(kubeletConfig, []string{"logging"}, []string{"containerRuntimeEndpoint"})
 }
