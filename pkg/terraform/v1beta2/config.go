@@ -22,7 +22,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/imdario/mergo"
+	"dario.cat/mergo"
 
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/pkg/fail"
