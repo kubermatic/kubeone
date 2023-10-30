@@ -1,27 +1,27 @@
 module k8c.io/kubeone
 
-go 1.20
+go 1.21
 
 require (
-	github.com/AlecAivazis/survey/v2 v2.3.6
-	github.com/BurntSushi/toml v1.2.1
+	github.com/AlecAivazis/survey/v2 v2.3.7
+	github.com/BurntSushi/toml v1.3.2
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/Masterminds/sprig/v3 v3.2.3
-	github.com/aws/aws-sdk-go v1.44.168
+	github.com/aws/aws-sdk-go v1.46.6
 	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be
 	github.com/distribution/distribution/v3 v3.0.0-20221208165359-362910506bc2
 	github.com/dominodatalab/os-release v0.0.0-20190522011736-bcdb4a3e3c2f
-	github.com/google/go-cmp v0.5.9
-	github.com/iancoleman/orderedmap v0.2.0
+	github.com/google/go-cmp v0.6.0
+	github.com/iancoleman/orderedmap v0.3.0
 	github.com/imdario/mergo v0.3.13
 	github.com/koron-go/prefixw v1.0.0
 	github.com/kubermatic/machine-controller v1.57.3
 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
 	github.com/pkg/errors v0.9.1
 	github.com/pmezard/go-difflib v1.0.0
-	github.com/sirupsen/logrus v1.9.0
-	github.com/spf13/cobra v1.6.1
+	github.com/sirupsen/logrus v1.9.3
+	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5
 	go.etcd.io/etcd/client/v3 v3.5.7
 	golang.org/x/crypto v0.14.0
@@ -44,9 +44,9 @@ require (
 	k8s.io/kube-proxy v0.27.4
 	k8s.io/kubectl v0.27.4
 	k8s.io/kubelet v0.27.4
-	k8s.io/utils v0.0.0-20230220204549-a5ecb0141aa5
+	k8s.io/utils v0.0.0-20230726121419-3b25d923346b
 	sigs.k8s.io/controller-runtime v0.14.6
-	sigs.k8s.io/yaml v1.3.0
+	sigs.k8s.io/yaml v1.4.0
 )
 
 require (
@@ -100,6 +100,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/huandu/xstrings v1.4.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/jmoiron/sqlx v1.3.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
