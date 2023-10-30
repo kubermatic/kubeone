@@ -38,33 +38,27 @@ func TestEtcdVersionCorruptCheckExtraArgs(t *testing.T) {
 		expectedEtcdArgs     map[string]string
 	}{
 		{
-			name:                 "unfixed 1.23",
-			kubeVersion:          semver.MustParse("1.23.999"),
-			expectedEtcdImageTag: installFixedEtcdVersion,
-			expectedEtcdArgs:     etcdExtraArgs,
-		},
-		{
 			name:                 "unfixed 1.24",
 			kubeVersion:          semver.MustParse("1.24.999"),
-			expectedEtcdImageTag: installFixedEtcdVersion,
+			expectedEtcdImageTag: fixedEtcdVersion,
 			expectedEtcdArgs:     etcdExtraArgs,
 		},
 		{
 			name:                 "unfixed 1.25",
 			kubeVersion:          semver.MustParse("1.25.14"),
-			expectedEtcdImageTag: installFixedEtcdVersion,
+			expectedEtcdImageTag: fixedEtcdVersion,
 			expectedEtcdArgs:     etcdExtraArgs,
 		},
 		{
 			name:                 "unfixed 1.26",
 			kubeVersion:          semver.MustParse("1.26.9"),
-			expectedEtcdImageTag: installFixedEtcdVersion,
+			expectedEtcdImageTag: fixedEtcdVersion,
 			expectedEtcdArgs:     etcdExtraArgs,
 		},
 		{
 			name:                 "unfixed 1.27",
 			kubeVersion:          semver.MustParse("1.27.6"),
-			expectedEtcdImageTag: installFixedEtcdVersion,
+			expectedEtcdImageTag: fixedEtcdVersion,
 			expectedEtcdArgs:     etcdExtraArgs,
 		},
 		{
@@ -89,13 +83,6 @@ func TestEtcdVersionCorruptCheckExtraArgs(t *testing.T) {
 			name:                 "fixed 1.28+",
 			kubeVersion:          semver.MustParse("1.28.0"),
 			expectedEtcdImageTag: "",
-			expectedEtcdArgs:     etcdExtraArgs,
-		},
-		{
-			name:                 "unfixed 1.23, but tag is overwritten",
-			kubeVersion:          semver.MustParse("1.23.17"),
-			etcdImageTag:         "9.9.9-0",
-			expectedEtcdImageTag: "9.9.9-0",
 			expectedEtcdArgs:     etcdExtraArgs,
 		},
 		{
@@ -143,6 +130,13 @@ func TestEtcdVersionCorruptCheckExtraArgs(t *testing.T) {
 		{
 			name:                 "fixed 1.27, but tag is overwritten",
 			kubeVersion:          semver.MustParse("1.27.7"),
+			etcdImageTag:         "9.9.9-0",
+			expectedEtcdImageTag: "9.9.9-0",
+			expectedEtcdArgs:     etcdExtraArgs,
+		},
+		{
+			name:                 "fixed 1.28, but tag is overwritten",
+			kubeVersion:          semver.MustParse("1.28.0"),
 			etcdImageTag:         "9.9.9-0",
 			expectedEtcdImageTag: "9.9.9-0",
 			expectedEtcdArgs:     etcdExtraArgs,

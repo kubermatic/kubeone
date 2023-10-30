@@ -47,10 +47,9 @@ const (
 )
 
 const (
-	// minimumFixedEtcdVersion is an etcd version that doesn't have known data integrity, durability or security bugs
+	// fixedEtcdVersion is an etcd version that doesn't have known data integrity, durability or security bugs
 	// (see etcdVersionCorruptCheckExtraArgs for more details)
-	minimumFixedEtcdVersion = "3.5.8-0" // at least this version has to be installed
-	installFixedEtcdVersion = "3.5.10-0" // if minimum fixed version is not detected, install this version
+	fixedEtcdVersion = "3.5.10-0" // if minimum fixed version "3.5.8-0" is not detected, install this version
 
 	// Kubernetes 1.25.15+/1.26.10+/1.27.7+/1.28+ uses DefaultEtcdVersion = "3.5.9-0", but to avoid deleting the code
 	// we just use some super high version as a fixed version.
@@ -560,7 +559,7 @@ func etcdVersionCorruptCheckExtraArgs(kubeVersion *semver.Version, etcdImageTag 
 	case fixedEtcd128Constraint.Check(kubeVersion):
 		return "", etcdExtraArgs
 	default:
-		return installFixedEtcdVersion, etcdExtraArgs
+		return fixedEtcdVersion, etcdExtraArgs
 	}
 }
 
