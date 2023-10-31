@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/imdario/mergo"
+	"dario.cat/mergo"
 
 	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
 	"k8c.io/kubeone/pkg/fail"
