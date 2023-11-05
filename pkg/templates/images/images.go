@@ -219,7 +219,7 @@ func baseResources() map[Resource]map[string]string {
 		DNSNodeCache:           {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.22.23"},
 		Flannel:                {"*": "docker.io/flannel/flannel:v0.21.3"},
 		MachineController:      {"*": "quay.io/kubermatic/machine-controller:v1.57.3"},
-		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.6.3"},
+		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.6.4"},
 		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v1.3.3"},
 	}
 }
@@ -420,10 +420,10 @@ func optionalResources() map[Resource]map[string]string {
 
 		// Cluster-autoscaler addon
 		ClusterAutoscaler: {
-			"1.24.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.24.2",
-			"1.25.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.25.2",
-			"1.26.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.26.3",
-			">= 1.27.0": "registry.k8s.io/autoscaling/cluster-autoscaler:v1.27.2",
+			"1.25.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.25.3",
+			"1.26.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.26.4",
+			"1.27.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.27.3",
+			">= 1.28.0": "registry.k8s.io/autoscaling/cluster-autoscaler:v1.28.0",
 		},
 
 		// CSI Vault Secret Provider
