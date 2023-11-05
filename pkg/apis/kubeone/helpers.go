@@ -241,6 +241,12 @@ func (crc ContainerRuntimeConfig) CRISocket() string {
 	return ""
 }
 
+// SandboxImage is used to determine the pause image version that should be used,
+// depending on the desired Kubernetes version. It's important to use the same
+// pause image version for both container runtime and kubeadm to avoid issues.
+// Values come from:
+//   - https://github.com/kubernetes/kubernetes/blob/master/cmd/kubeadm/app/constants/constants.go#L423
+//   - https://github.com/containerd/containerd/blob/main/pkg/cri/config/config_unix.go#L90
 func (v VersionConfig) SandboxImage(imageRegistry func(string) string) (string, error) {
 	kubeSemVer, err := semver.NewVersion(v.Kubernetes)
 	if err != nil {
