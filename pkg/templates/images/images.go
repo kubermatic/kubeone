@@ -408,9 +408,9 @@ func optionalResources() map[Resource]map[string]string {
 		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.14.1@sha256:e061de0a930534c7e3f8feda8330976367971238ccafff42659f104effd4b5f7"},
 
 		// Calico VXLAN
-		CalicoVXLANCNI:        {"*": "quay.io/calico/cni:v3.26.1"},
-		CalicoVXLANController: {"*": "quay.io/calico/kube-controllers:v3.26.1"},
-		CalicoVXLANNode:       {"*": "quay.io/calico/node:v3.26.1"},
+		CalicoVXLANCNI:        {"*": "quay.io/calico/cni:v3.26.3"},
+		CalicoVXLANController: {"*": "quay.io/calico/kube-controllers:v3.26.3"},
+		CalicoVXLANNode:       {"*": "quay.io/calico/node:v3.26.3"},
 
 		// Hubble
 		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.14.1@sha256:db30e85a7abc10589ce2a97d61ee18696a03dc5ea04d44b4d836d88bd75b59d8"},
