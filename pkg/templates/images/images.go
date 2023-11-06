@@ -213,13 +213,13 @@ func FindResource(name string) (Resource, error) {
 
 func baseResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
-		CalicoCNI:              {"*": "quay.io/calico/cni:v3.26.1"},
-		CalicoController:       {"*": "quay.io/calico/kube-controllers:v3.26.1"},
-		CalicoNode:             {"*": "quay.io/calico/node:v3.26.1"},
+		CalicoCNI:              {"*": "quay.io/calico/cni:v3.26.3"},
+		CalicoController:       {"*": "quay.io/calico/kube-controllers:v3.26.3"},
+		CalicoNode:             {"*": "quay.io/calico/node:v3.26.3"},
 		DNSNodeCache:           {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.22.23"},
 		Flannel:                {"*": "docker.io/flannel/flannel:v0.21.3"},
 		MachineController:      {"*": "quay.io/kubermatic/machine-controller:v1.57.3"},
-		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.6.3"},
+		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.6.4"},
 		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v1.3.3"},
 	}
 }
@@ -404,26 +404,26 @@ func optionalResources() map[Resource]map[string]string {
 		WeaveNetCNINPC:  {"*": "docker.io/weaveworks/weave-npc:2.8.1"},
 
 		// Cilium
-		Cilium:         {"*": "quay.io/cilium/cilium:v1.14.1@sha256:edc1d05ea1365c4a8f6ac6982247d5c145181704894bb698619c3827b6963a72"},
-		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.14.1@sha256:e061de0a930534c7e3f8feda8330976367971238ccafff42659f104effd4b5f7"},
+		Cilium:         {"*": "quay.io/cilium/cilium:v1.14.3@sha256:e5ca22526e01469f8d10c14e2339a82a13ad70d9a359b879024715540eef4ace"},
+		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.14.3@sha256:c9613277b72103ed36e9c0d16b9a17cafd507461d59340e432e3e9c23468b5e2"},
 
 		// Calico VXLAN
-		CalicoVXLANCNI:        {"*": "quay.io/calico/cni:v3.26.1"},
-		CalicoVXLANController: {"*": "quay.io/calico/kube-controllers:v3.26.1"},
-		CalicoVXLANNode:       {"*": "quay.io/calico/node:v3.26.1"},
+		CalicoVXLANCNI:        {"*": "quay.io/calico/cni:v3.26.3"},
+		CalicoVXLANController: {"*": "quay.io/calico/kube-controllers:v3.26.3"},
+		CalicoVXLANNode:       {"*": "quay.io/calico/node:v3.26.3"},
 
 		// Hubble
-		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.14.1@sha256:db30e85a7abc10589ce2a97d61ee18696a03dc5ea04d44b4d836d88bd75b59d8"},
-		HubbleUI:        {"*": "quay.io/cilium/hubble-ui:v0.12.0@sha256:1c876cfa1d5e35bc91e1025c9314f922041592a88b03313c22c1f97a5d2ba88f"},
-		HubbleUIBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.12.0@sha256:8a79a1aad4fc9c2aa2b3e4379af0af872a89fcec9d99e117188190671c66fc2e"},
-		CiliumCertGen:   {"*": "quay.io/cilium/certgen:v0.1.8@sha256:4a456552a5f192992a6edcec2febb1c54870d665173a33dc7d876129b199ddbd"},
+		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.14.3@sha256:3f5c425faca4f8a38e29d4f86db2aadd8f33c9f05debd78a2bb2a24dd9e565d8"},
+		HubbleUI:        {"*": "quay.io/cilium/hubble-ui:v0.12.1@sha256:9e5f81ee747866480ea1ac4630eb6975ff9227f9782b7c93919c081c33f38267"},
+		HubbleUIBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.12.1@sha256:1f86f3400827a0451e6332262467f894eeb7caf0eb8779bd951e2caa9d027cbe"},
+		CiliumCertGen:   {"*": "quay.io/cilium/certgen:v0.1.9@sha256:89a0847753686444daabde9474b48340993bd19c7bea66a46e45b2974b82041f"},
 
 		// Cluster-autoscaler addon
 		ClusterAutoscaler: {
-			"1.24.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.24.2",
-			"1.25.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.25.2",
-			"1.26.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.26.3",
-			">= 1.27.0": "registry.k8s.io/autoscaling/cluster-autoscaler:v1.27.2",
+			"1.24.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.24.3",
+			"1.25.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.25.3",
+			"1.26.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.26.4",
+			">= 1.27.0": "registry.k8s.io/autoscaling/cluster-autoscaler:v1.27.3",
 		},
 
 		// CSI Vault Secret Provider
