@@ -1,4 +1,4 @@
-# Source: https://github.com/projectcalico/calico/blob/v3.26.1/manifests/canal.yaml
+# Source: https://github.com/projectcalico/calico/blob/v3.26.3/manifests/canal.yaml
 ---
 # Source: calico/templates/calico-kube-controllers.yaml
 # This manifest creates a Pod Disruption Budget for Controller to allow K8s Cluster Autoscaler to evict
