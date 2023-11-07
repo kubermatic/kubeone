@@ -68,9 +68,9 @@ echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.
 
 sudo apt-get update
 
-kube_ver="1.26.0*"
-cni_ver="1.2.0*"
-cri_ver="1.26.0*"
+kube_ver="1.26.0-*"
+cni_ver="1.2.0-*"
+cri_ver="1.26.0-*"
 
 
 
