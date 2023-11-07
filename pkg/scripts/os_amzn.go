@@ -157,7 +157,14 @@ rm /tmp/k8s-binaries/kubectl
 sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools || true
 {{- end }}
 
-sudo yum install -y \
+# Amazon Linux 2 repos include the cri-tools package. These AL2 repos have higher
+# priority over the Kubernetes repos, so it's not possible to install cri-tools
+# from the Kubenretes repos at all, even if the cri-tools version in the
+# Kubernetes repos is newer. This is a problem because recent Kubernetes
+# versions require cri-tools versions that are newer than the latest available
+# cri-tools in the AL2 repos. We disable the priorities plugin  to allow yum
+# to install cri-tools from the Kubernetes repos.
+sudo yum install -y --disableplugin=priorities \
 {{- if .KUBELET }}
 	kubelet-{{ .KUBERNETES_VERSION }} \
 {{- end }}
