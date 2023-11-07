@@ -23,7 +23,7 @@ import (
 	"sort"
 
 	"github.com/Masterminds/semver/v3"
-	"github.com/distribution/distribution/v3/reference"
+	"github.com/distribution/reference"
 
 	"k8c.io/kubeone/pkg/fail"
 )
