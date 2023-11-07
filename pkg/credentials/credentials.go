@@ -85,7 +85,7 @@ const (
 	VMwareCloudDirectorOrganization = "VCD_ORG"
 	VMwareCloudDirectorURL          = "VCD_URL"
 	VMwareCloudDirectorVDC          = "VCD_VDC"
-	VMwareCloudDirectorSkipTLS      = "VCD_ALLOW_UNVERIFIED_SSL" //nolint:gosec
+	VMwareCloudDirectorSkipTLS      = "VCD_ALLOW_UNVERIFIED_SSL"
 
 	// Variables that machine-controller expects
 	AzureClientIDMC           = "AZURE_CLIENT_ID"
