@@ -70,9 +70,9 @@ echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.
 sudo apt-get update
 {{- end }}
 
-kube_ver="{{ .KUBERNETES_VERSION }}*"
-cni_ver="{{ .KUBERNETES_CNI_VERSION }}*"
-cri_ver="{{ .CRITOOLS_VERSION }}*"
+kube_ver="{{ .KUBERNETES_VERSION }}-*"
+cni_ver="{{ .KUBERNETES_CNI_VERSION }}-*"
+cri_ver="{{ .CRITOOLS_VERSION }}-*"
 
 {{- if or .FORCE .UPGRADE }}
 sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni cri-tools
