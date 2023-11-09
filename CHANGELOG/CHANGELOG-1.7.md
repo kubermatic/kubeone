@@ -1,3 +1,43 @@
+# [v1.7.1](https://github.com/kubermatic/kubeone/releases/tag/v1.7.1) - 2023-11-09
+
+## Changelog since v1.7.0
+
+## Changes by Kind
+
+### Feature
+
+- Allow setting `CCM_CONCURRENT_SERVICE_SYNCS` parameter on CCM addons to configure number of concurrent `LoadBalancer` service reconciles ([#2918](https://github.com/kubermatic/kubeone/pull/2918), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Support for customizing `vAppName` for VMware Cloud Director CSI driver ([#2956](https://github.com/kubermatic/kubeone/pull/2956), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Bug or Regression
+
+- Fix a bug with the VMware Cloud Director CSI driver addon where it would crash if no `VCD_API_TOKEN` is set ([#2956](https://github.com/kubermatic/kubeone/pull/2956), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix a bug where wildcard registry name provided to the machine-controller-webhook Deployment is not properly escaped ([#2928](https://github.com/kubermatic/kubeone/pull/2928), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix a bug where `kubeadm init` and `kubeadm join` report that the `containerRuntimeEndpoint` field in `KubeletConfiguration` doesn't exist for clusters running Kubernetes versions prior to 1.27 ([#2940](https://github.com/kubermatic/kubeone/pull/2940), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix a bug where `registryConfiguration.OverrideRegistry` wasn't correctly applied to the pause image configured for control plane and static worker nodes ([#2930](https://github.com/kubermatic/kubeone/pull/2930), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix a bug where the CA bundle was not propagated to the vSphere CSI driver ([#2907](https://github.com/kubermatic/kubeone/pull/2907), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix a globbing issue for `apt-get install` causing KubeOne to install wrong Kubernetes version in some circumstances ([#2959](https://github.com/kubermatic/kubeone/pull/2959), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix incorrect validation that made `VCD_API_TOKEN` unusable for VMware Cloud Director ([#2946](https://github.com/kubermatic/kubeone/pull/2946), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Updates
+
+#### Core Components
+
+- Update metrics-server and cluster-autoscaler to the latest patch releases ([#2957](https://github.com/kubermatic/kubeone/pull/2957), [@xmudrii](https://github.com/xmudrii))
+- Update Canal to v3.26.3 ([#2957](https://github.com/kubermatic/kubeone/pull/2957), [@xmudrii](https://github.com/xmudrii))
+- Update Calico VXLAN to v3.26.3 ([#2957](https://github.com/kubermatic/kubeone/pull/2957), [@xmudrii](https://github.com/xmudrii))
+- Update Cilium to v1.14.3 ([#2957](https://github.com/kubermatic/kubeone/pull/2957), [@xmudrii](https://github.com/xmudrii))
+
+#### Go
+
+- KubeOne is now built with Go 1.21.3 ([#2954](https://github.com/kubermatic/kubeone/pull/2954), [@xmudrii](https://github.com/xmudrii))
+
+### Other (Cleanup or Flake)
+
+- Store GPG keys for package repositories in `/etc/apt/keyrings` instead of deprecated `apt-key-add` command ([#2920](https://github.com/kubermatic/kubeone/pull/2920), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Download cri-tools from the Kubernetes package repositories instead of the Amazon Linux 2 package repositories on instances running Amazon Linux 2 ([#2951](https://github.com/kubermatic/kubeone/pull/2951), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Update CRDs for the operating-system-manager (OSM) addon ([#2935](https://github.com/kubermatic/kubeone/pull/2935), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.7.0](https://github.com/kubermatic/kubeone/releases/tag/v1.7.0) - 2023-09-08
 
 ## Changelog since v1.6.0
