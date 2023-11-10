@@ -1,3 +1,19 @@
+# [v1.6.4](https://github.com/kubermatic/kubeone/releases/tag/v1.6.4) - 2023-11-10
+
+## Changelog since v1.6.3
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Fix a bug where wildcard registry name provided to the machine-controller-webhook Deployment is not properly escaped ([#2929](https://github.com/kubermatic/kubeone/pull/2929), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix a globbing issue for `apt-get install` causing KubeOne to install wrong Kubernetes version in some circumstances ([#2960](https://github.com/kubermatic/kubeone/pull/2960), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix a bug where the CA bundle was not propagated to the vSphere CSI driver ([#2906](https://github.com/kubermatic/kubeone/pull/2906), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+
+### Other (Cleanup or Flake)
+
+- Store GPG keys for package repositories in `/etc/apt/keyrings` instead of deprecated `apt-key-add` command ([#2921](https://github.com/kubermatic/kubeone/pull/2921), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.6.3](https://github.com/kubermatic/kubeone/releases/tag/v1.6.3) - 2023-09-07
 
 ## Changelog since v1.6.2
