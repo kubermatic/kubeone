@@ -1,4 +1,4 @@
-# [v1.7.1](https://github.com/kubermatic/kubeone/releases/tag/v1.7.1) - 2023-11-09
+# [v1.7.1](https://github.com/kubermatic/kubeone/releases/tag/v1.7.1) - 2023-11-10
 
 ## Changelog since v1.7.0
 
