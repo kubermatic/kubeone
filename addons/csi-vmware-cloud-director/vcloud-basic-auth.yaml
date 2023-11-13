@@ -5,6 +5,6 @@ metadata:
   name: vcloud-basic-auth
   namespace: kube-system
 data:
-  username: {{ .Credentials.VCD_USER | b64enc }}
-  password: {{ .Credentials.VCD_PASSWORD | b64enc }}
+  username: {{ default "" .Credentials.VCD_USER | b64enc }}
+  password: {{ default "" .Credentials.VCD_PASSWORD | b64enc }}
   refreshToken: {{ default "" .Credentials.VCD_API_TOKEN | b64enc }}
