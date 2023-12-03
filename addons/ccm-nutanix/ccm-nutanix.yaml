@@ -1,3 +1,5 @@
+---
+# Source: nutanix-cloud-provider/templates/secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -10,21 +12,21 @@ stringData:
         "type": "basic_auth", 
         "data": { 
           "prismCentral":{
-            "username": "{{ .Credentials.NUTANIX_USERNAME }}", 
-            "password": "{{ .Credentials.NUTANIX_PASSWORD }}"
+            "username": "$NUTANIX_USERNAME", 
+            "password": "$NUTANIX_PASSWORD"
           },
           "prismElements": null
         }
       }
     ]
 ---
+# Source: nutanix-cloud-provider/templates/rbac.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: cloud-controller-manager
   namespace: kube-system
 ---
-# Source: nutanix-cloud-provider/templates/rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -111,6 +113,7 @@ subjects:
     namespace: kube-system
 ---
 # Source: nutanix-cloud-provider/templates/cm.yaml
+---
 kind: ConfigMap
 apiVersion: v1
 metadata:
@@ -120,18 +123,18 @@ data:
   nutanix_config.json: |-
     {
       "prismCentral": {
-        "address": "{{ .Credentials.NUTANIX_ENDPOINT }}",
-        "port": {{ .Credentials.NUTANIX_PORT }},
-        "insecure": {{ .Credentials.NUTANIX_INSECURE }},
+        "address": "${NUTANIX_ENDPOINT}",
+        "port": ${NUTANIX_PORT},
+        "insecure": ${NUTANIX_INSECURE},
         "credentialRef": {
           "kind": "secret",
           "name": "nutanix-creds"
         }
       },
-      "enableCustomLabeling": true,
+      "enableCustomLabeling": false,
       "topologyDiscovery": {
-            "type": "Prism"
-          }
+        "type": "Prism"
+      }
     }
 ---
 # Source: nutanix-cloud-provider/templates/cloud-provider-nutanix-deployment.yaml
@@ -189,7 +192,7 @@ spec:
           key: node.kubernetes.io/not-ready
           operator: Exists
       containers:
-        - image: {{ .InternalImages.Get "NutanixCCM" }}
+        - image: ${IMG}
           imagePullPolicy: Always
           name: nutanix-cloud-controller-manager
           args:
@@ -203,6 +206,11 @@ spec:
             - mountPath: /etc/cloud
               name: nutanix-config-volume
               readOnly: true
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
       volumes:
         - name: nutanix-config-volume
           configMap:
