@@ -20,11 +20,9 @@ import (
 	"fmt"
 	"io/fs"
 
-	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/semverutil"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
 	"k8c.io/kubeone/pkg/templates/weave"
@@ -34,54 +32,48 @@ const (
 	// addonLabel is applied to all objects deployed using addons
 	addonLabel = "kubeone.io/addon"
 
-	// greaterThan23Constraint defines a semver constraint that validates Kubernetes versions is greater than 1.23
-	greaterThan23Constraint = ">= 1.23"
-
 	// defaultStorageClass addon defines name of the default-storage-class addon
 	defaultStorageClassAddonName = "default-storage-class"
 )
 
-var (
-	// embeddedAddons is a list of addons that are embedded in the KubeOne
-	// binary. Those addons are skipped when applying a user-provided addon with the same name.
-	embeddedAddons = map[string]string{
-		resources.AddonCCMAws:                 "",
-		resources.AddonCCMAzure:               "",
-		resources.AddonCCMDigitalOcean:        "",
-		resources.AddonCCMHetzner:             "",
-		resources.AddonCCMOpenStack:           "",
-		resources.AddonCCMEquinixMetal:        "",
-		resources.AddonCCMPacket:              "",
-		resources.AddonCCMVsphere:             "",
-		resources.AddonCNICanal:               "",
-		resources.AddonCNICilium:              "",
-		resources.AddonCNIWeavenet:            "",
-		resources.AddonCSIAwsEBS:              "",
-		resources.AddonCSIAzureDisk:           "",
-		resources.AddonCSIAzureFile:           "",
-		resources.AddonCSIDigitalOcean:        "",
-		resources.AddonCSIHetzner:             "",
-		resources.AddonCSIGCPComputePD:        "",
-		resources.AddonCSINutanix:             "",
-		resources.AddonCSIOpenStackCinder:     "",
-		resources.AddonCSIVMwareCloudDirector: "",
-		resources.AddonCSIVsphere:             "",
-		resources.AddonMachineController:      "",
-		resources.AddonMetricsServer:          "",
-		resources.AddonNodeLocalDNS:           "",
-		resources.AddonOperatingSystemManager: "",
-	}
-
-	greaterThan23 = semverutil.MustParseConstraint(greaterThan23Constraint)
-)
+// embeddedAddons is a list of addons that are embedded in the KubeOne
+// binary. Those addons are skipped when applying a user-provided addon with the same name.
+var embeddedAddons = map[string]string{
+	resources.AddonCCMAws:                 "",
+	resources.AddonCCMAzure:               "",
+	resources.AddonCCMDigitalOcean:        "",
+	resources.AddonCCMHetzner:             "",
+	resources.AddonCCMOpenStack:           "",
+	resources.AddonCCMEquinixMetal:        "",
+	resources.AddonCCMPacket:              "",
+	resources.AddonCCMVsphere:             "",
+	resources.AddonCNICanal:               "",
+	resources.AddonCNICilium:              "",
+	resources.AddonCNIWeavenet:            "",
+	resources.AddonCSIAwsEBS:              "",
+	resources.AddonCSIAzureDisk:           "",
+	resources.AddonCSIAzureFile:           "",
+	resources.AddonCSIDigitalOcean:        "",
+	resources.AddonCSIHetzner:             "",
+	resources.AddonCSIGCPComputePD:        "",
+	resources.AddonCSINutanix:             "",
+	resources.AddonCSIOpenStackCinder:     "",
+	resources.AddonCSIVMwareCloudDirector: "",
+	resources.AddonCSIVsphere:             "",
+	resources.AddonMachineController:      "",
+	resources.AddonMetricsServer:          "",
+	resources.AddonNodeLocalDNS:           "",
+	resources.AddonOperatingSystemManager: "",
+}
 
 type addonAction struct {
 	name      string
 	supportFn func() error
 }
 
-//nolint:nakedret
-func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
+func collectAddons(s *state.State) []addonAction {
+	var addonsToDeploy []addonAction
+
 	if *s.Cluster.Features.CoreDNS.DeployPodDisruptionBudget {
 		addonsToDeploy = append(addonsToDeploy, addonAction{
 			name: resources.AddonCoreDNSPDB,
@@ -118,9 +110,11 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 		})
 	}
 
-	addonsToDeploy = append(addonsToDeploy, addonAction{
-		name: resources.AddonNodeLocalDNS,
-	})
+	if s.Cluster.Features.NodeLocalDNS.Deploy {
+		addonsToDeploy = append(addonsToDeploy, addonAction{
+			name: resources.AddonNodeLocalDNS,
+		})
+	}
 
 	if s.Cluster.MachineController.Deploy {
 		addonsToDeploy = append(addonsToDeploy, addonAction{
@@ -128,19 +122,31 @@ func collectAddons(s *state.State) (addonsToDeploy []addonAction) {
 		})
 	}
 
-	if s.Cluster.OperatingSystemManagerEnabled() {
+	if s.Cluster.OperatingSystemManager.Deploy {
 		addonsToDeploy = append(addonsToDeploy, addonAction{
 			name: resources.AddonOperatingSystemManager,
 		})
 	}
 
-	addonsToDeploy = ensureCSIAddons(s, addonsToDeploy)
+	if !s.Cluster.CloudProvider.DisableBundledCSIDrivers {
+		addonsToDeploy = ensureCSIAddons(s, addonsToDeploy)
+	}
 
 	if s.Cluster.CloudProvider.External {
 		addonsToDeploy = ensureCCMAddons(s, addonsToDeploy)
 	}
 
-	return
+	return addonsToDeploy
+}
+
+func cleanupAddons(s *state.State) error {
+	if !*s.Cluster.Features.CoreDNS.DeployPodDisruptionBudget {
+		if err := DeleteAddonByName(s, resources.AddonCoreDNSPDB); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func Ensure(s *state.State) error {
@@ -157,7 +163,7 @@ func Ensure(s *state.State) error {
 		}
 	}
 
-	return nil
+	return cleanupAddons(s)
 }
 
 // EnsureUserAddons deploys addons that are provided by the user and that are
@@ -254,11 +260,7 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 				continue
 			}
 			if a.Name() == addonName {
-				if err := applier.loadAndApplyAddon(s, applier.LocalFS, a.Name()); err != nil {
-					return err
-				}
-
-				return nil
+				return applier.loadAndApplyAddon(s, applier.LocalFS, a.Name())
 			}
 		}
 	}
@@ -273,11 +275,7 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 			continue
 		}
 		if a.Name() == addonName {
-			if err := applier.loadAndApplyAddon(s, applier.EmbeddedFS, a.Name()); err != nil {
-				return err
-			}
-
-			return nil
+			return applier.loadAndApplyAddon(s, applier.EmbeddedFS, a.Name())
 		}
 	}
 
@@ -309,11 +307,7 @@ func DeleteAddonByName(s *state.State, addonName string) error {
 				continue
 			}
 			if a.Name() == addonName {
-				if err := applier.loadAndDeleteAddon(s, applier.LocalFS, a.Name()); err != nil {
-					return err
-				}
-
-				return nil
+				return applier.loadAndDeleteAddon(s, applier.LocalFS, a.Name())
 			}
 		}
 	}
@@ -328,11 +322,7 @@ func DeleteAddonByName(s *state.State, addonName string) error {
 			continue
 		}
 		if a.Name() == addonName {
-			if err := applier.loadAndDeleteAddon(s, applier.EmbeddedFS, a.Name()); err != nil {
-				return err
-			}
-
-			return nil
+			return applier.loadAndDeleteAddon(s, applier.EmbeddedFS, a.Name())
 		}
 	}
 
@@ -343,9 +333,6 @@ func DeleteAddonByName(s *state.State, addonName string) error {
 }
 
 func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction {
-	k8sVersion := semver.MustParse(s.Cluster.Versions.Kubernetes)
-	gte23 := greaterThan23.Check(k8sVersion)
-
 	// We deploy available CSI drivers un-conditionally for k8s v1.23+
 	//
 	// CSIMigration, if applicable, for the cloud providers is turned on by default and requires installation of CSI drviers even if we
@@ -353,15 +340,16 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 	// for provision operations is NOT supported by in-tree solution.
 
 	switch {
-	// CSI driver is required for k8s v1.23+
-	case s.Cluster.CloudProvider.AWS != nil && (gte23 || s.Cluster.CloudProvider.External):
+	case s.Cluster.CloudProvider.AWS != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIAwsEBS,
+				supportFn: func() error {
+					return migrateAWSCSIDriver(s)
+				},
 			},
 		)
-	// CSI driver is required for k8s v1.23+
-	case s.Cluster.CloudProvider.Azure != nil && (gte23 || s.Cluster.CloudProvider.External):
+	case s.Cluster.CloudProvider.Azure != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIAzureDisk,
@@ -373,42 +361,42 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 				name: resources.AddonCSIAzureFile,
 			},
 		)
-		// CSI driver is required for k8s v1.23+
-	case s.Cluster.CloudProvider.GCE != nil && (gte23 || s.Cluster.CloudProvider.External):
+	case s.Cluster.CloudProvider.GCE != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIGCPComputePD,
 			},
 		)
-	// Install CSI driver unconditionally
 	case s.Cluster.CloudProvider.DigitalOcean != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIDigitalOcean,
 			},
 		)
-	// Install CSI driver unconditionally
 	case s.Cluster.CloudProvider.Hetzner != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIHetzner,
+				supportFn: func() error {
+					return migrateHetznerCSIDriver(s)
+				},
 			},
 		)
-	// Install CSI driver unconditionally
 	case s.Cluster.CloudProvider.Nutanix != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSINutanix,
 			},
 		)
-	// Install CSI driver unconditionally
 	case s.Cluster.CloudProvider.Openstack != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIOpenStackCinder,
+				supportFn: func() error {
+					return migrateOpenStackCSIDriver(s)
+				},
 			},
 		)
-	// Install CSI driver unconditionally
 	case s.Cluster.CloudProvider.VMwareCloudDirector != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
@@ -456,15 +444,20 @@ func ensureCCMAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCCMHetzner,
+				supportFn: func() error {
+					return migrateHetznerCCM(s)
+				},
 			},
 		)
 	case s.Cluster.CloudProvider.Openstack != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCCMOpenStack,
+				supportFn: func() error {
+					return migrateOpenStackCCM(s)
+				},
 			},
 		)
-
 	case s.Cluster.CloudProvider.Vsphere != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{

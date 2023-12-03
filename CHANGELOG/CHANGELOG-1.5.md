@@ -1,3 +1,169 @@
+# [v1.5.8](https://github.com/kubermatic/kubeone/releases/tag/v1.5.8) - 2023-04-14
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Explicitly start Docker in Terraform configs for Flatcar on vSphere ([#2767](https://github.com/kubermatic/kubeone/pull/2767), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Updates
+
+#### machine-controller and operating-system-manager
+
+- Update machine-controller to v1.54.6 ([#2754](https://github.com/kubermatic/kubeone/pull/2754), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+
+#### Go
+
+- KubeOne is now built using Go v1.19.8 ([#2760](https://github.com/kubermatic/kubeone/pull/2760), [@pkprzekwas](https://github.com/pkprzekwas))
+
+# [v1.5.7](https://github.com/kubermatic/kubeone/releases/tag/v1.5.7) - 2023-03-23
+
+## Changelog since v1.5.6
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Download GPG key for the `apt` repository from `dl.k8s.io` instead of `packages.cloud.google.com` ([#2725](https://github.com/kubermatic/kubeone/pull/2725), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Updates
+
+#### operating-system-manager
+
+- Update Operating System Manager to v1.1.3. Fix an issue where cloud-init scripts re-ran on machine reboot ([#2717](https://github.com/kubermatic/kubeone/pull/2717), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+
+# [v1.5.6](https://github.com/kubermatic/kubeone/releases/tag/v1.5.6) - 2023-01-27
+
+## Changelog since v1.5.5
+
+## Changes by Kind
+
+### Feature
+
+- Update kubernetes-cni to v1.2.0 and cri-tools to v1.26.0. This fixes an issue with installing/updating packages when trying to install Kubernetes v1.26.1, v1.25.6, v1.24.10, and v1.23.16 ([#2608](https://github.com/kubermatic/kubeone/pull/2608), [@xmudrii](https://github.com/xmudrii))
+
+# [v1.5.5](https://github.com/kubermatic/kubeone/releases/tag/v1.5.5) - 2023-01-17
+
+## Changelog since v1.5.4
+
+## Changes by Kind
+
+### Feature
+
+- Update Terraform provider for VMware Cloud Director to v3.8.1 ([#2584](https://github.com/kubermatic/kubeone/pull/2584), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+- Add support for insecure HTTPS connection to the VMware Cloud Director API in example Terraform configs ([#2584](https://github.com/kubermatic/kubeone/pull/2584), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+
+### Bug or Regression
+
+- Fix AMI filter for CentOS 7 in Terraform configs for AWS ([#2559](https://github.com/kubermatic/kubeone/pull/2559), [@xmudrii](https://github.com/xmudrii))
+- Fix an issue where custom CA bundle was not being propagated to machine-controller-webhook ([#2587](https://github.com/kubermatic/kubeone/pull/2587), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Remove the leftover `/tmp/k1-etc-environment` file. This fixes an issue with `kubeone apply` failing if the username is changed ([#2563](https://github.com/kubermatic/kubeone/pull/2563), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Run kubeadm with increased verbosity unconditionally. This only changes the behavior if KubeOne is run without the verbose flag but kubeadm fails, in which case kubeadm is going to print more information about the issue ([#2565](https://github.com/kubermatic/kubeone/pull/2565), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+# [v1.5.4](https://github.com/kubermatic/kubeone/releases/tag/v1.5.4) - 2022-12-12
+
+## Important Registry Change Information
+
+In November, we announced that we are changing all image references from `k8s.gcr.io` to `registry.k8s.io` to keep up with [the latest upstream changes](https://github.com/kubernetes/enhancements/tree/master/keps/sig-release/3000-artifact-distribution). **This patch release includes this change. Please ensure that any mirrors you use are able to host `registry.k8s.io` and/or that firewall rules are going to allow access to `registry.k8s.io` to pull images before upgrading to this KubeOne patch release.**
+
+The December Kubernetes patch releases (1.25.5, 1.24.9, 1.23.15, and 1.22.17) are enforcing `registry.k8s.io` by default. Please keep this in mind if you're using an older KubeOne patch release with the latest Kubernetes patch releases. We strongly advise that you use KubeOne v1.5.4 or newer with the latest Kubernetes patch releases.
+
+## Changelog since v1.5.3
+
+## Changes by Kind
+
+### API Change
+
+- Image references are changed from `k8s.gcr.io` to `registry.k8s.io`. This is done to keep up with [the latest upstream changes](https://github.com/kubernetes/enhancements/tree/master/keps/sig-release/3000-artifact-distribution). Please ensure that any mirrors you use are able to host `registry.k8s.io` and/or that firewall rules are going to allow access to `registry.k8s.io` to pull images before applying the next KubeOne patch releases. ([#2505](https://github.com/kubermatic/kubeone/pull/2505), [@xmudrii](https://github.com/xmudrii))
+
+### Feature
+
+- KubeOne is now built using Go 1.19.4 ([#2526](https://github.com/kubermatic/kubeone/pull/2526), [@xmudrii](https://github.com/xmudrii))
+- Update Canal to v3.23.5. This Canal release is supposed to fix an issue where Calico pods are crashing after upgrading from an older Calico version to a newer one (see the [Known Issues](https://docs.kubermatic.com/kubeone/v1.5/known-issues/) document for more details) ([#2539](https://github.com/kubermatic/kubeone/pull/2539), [@xmudrii](https://github.com/xmudrii))
+- Update Cilium to v1.12.3 ([#2534](https://github.com/kubermatic/kubeone/pull/2534), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Update etcd to 3.5.6 which includes a fix for [the recently reported data inconsistency issue for a case when etcd crashes during processing defragmentation operation](https://groups.google.com/a/kubernetes.io/g/dev/c/sEVopPxKPDo/m/9ME3CzicBwAJ) ([#2499](https://github.com/kubermatic/kubeone/pull/2499), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Enable compact hash checks as per [the recommendations from etcd for detecting data corruption](https://etcd.io/docs/v3.5/op-guide/data_corruption/#enabling-data-corruption-detection) ([#2499](https://github.com/kubermatic/kubeone/pull/2499), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Validate support for Kubernetes patch releases 1.24.9, 1.23.15, and 1.22.17. Upgrading to Kubernetes 1.24.9 is strongly advised because it's built with Go 1.18.9 which includes fixes for [CVE-2022-41720 and CVE-2022-41717](https://groups.google.com/g/golang-announce/c/L_3rmdT0BMU/m/yZDrXjIiBQAJ) ([#2532](https://github.com/kubermatic/kubeone/pull/2532), [@xmudrii](https://github.com/xmudrii))
+
+### Bug or Regression
+
+- Fix NPE in probes ([#2484](https://github.com/kubermatic/kubeone/pull/2484), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix a panic (NPE) when determining if it is safe to repair a cluster when there's no kubelet or kubelet systemd unit on the node ([#2495](https://github.com/kubermatic/kubeone/pull/2495), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Use the pause image from `registry.k8s.io` for all Kubernetes releases ([#2529](https://github.com/kubermatic/kubeone/pull/2529), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+# [v1.5.3](https://github.com/kubermatic/kubeone/releases/tag/v1.5.3) - 2022-11-11
+
+## Important Registry Change Information
+
+For the next series of KubeOne and KKP patch releases, image references will move from `k8s.gcr.io` to `registry.k8s.io`. This will be done to keep up with [the latest upstream changes](https://github.com/kubernetes/enhancements/tree/master/keps/sig-release/3000-artifact-distribution). Please ensure that any mirrors you use are able to host `registry.k8s.io` and/or that firewall rules are going to allow access to `registry.k8s.io` to pull images before applying the next KubeOne patch releases. **This is not included in this patch release but just a notification of future changes.**
+
+## Important Security Information
+
+**Kubernetes releases prior to 1.25.4, 1.24.8, 1.23.14, and 1.22.16 are affected by two Medium CVEs in kube-apiserver**: [CVE-2022-3162 (Unauthorized read of Custom Resources)](https://groups.google.com/g/kubernetes-announce/c/oR2PUBiODNA/m/tShPgvpUDQAJ) and [CVE-2022-3294 (Node address isn't always verified when proxying)](https://groups.google.com/g/kubernetes-announce/c/eR0ghAXy2H8/m/sCuQQZlVDQAJ). We **strongly recommend** upgrading to 1.25.4, 1.24.8, 1.23.14, or 1.22.16 **as soon as possible**.
+
+## Changelog since v1.5.2
+
+## Changes by Kind
+
+### API Change
+
+- `.cloudProvider.csiConfig` is now a mandatory field for vSphere clusters using the external cloud provider (`.cloudProvider.external: true`). `.cloudProvider.csiConfig` can be specified even if the in-tree provider is used, but the provided CSIConfig is ignored in such cases (a warning about this is printed) ([#2447](https://github.com/kubermatic/kubeone/pull/2447), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Feature
+
+- Add `allow_insecure` variable (default `false`) to Terraform configs for vSphere. The value of this variable is propagated to the MachineDeployment template in `output.tf` ([#2449](https://github.com/kubermatic/kubeone/pull/2449), [@xmudrii](https://github.com/xmudrii))
+- Add a new addon parameter called `HubbleIPv6` (`true`/`false`, default: `true`) for Cilium CNI used to enable/disable Hubble UI listening on an IPv6 interface ([#2451](https://github.com/kubermatic/kubeone/pull/2451), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Update OpenStack CCM and CSI to v1.24.5 and v1.22.2 ([#2445](https://github.com/kubermatic/kubeone/pull/2445), [@xmudrii](https://github.com/xmudrii))
+- Update etcd to 3.5.5 or use the version provided by kubeadm if it's newer ([#2443](https://github.com/kubermatic/kubeone/pull/2443), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Other (Cleanup or Flake)
+
+- Expose machine-controller metrics port (8080/TCP), so Prometheus ServiceMonitor can be used for scraping ([#2439](https://github.com/kubermatic/kubeone/pull/2439), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Make volume size for worker nodes configurable in Terraform configs for AWS (50 GB by default) ([#2450](https://github.com/kubermatic/kubeone/pull/2450), [@xmudrii](https://github.com/xmudrii))
+
+### Chore
+
+- Rename `generate-internal-groups` Make target to `update-codegen` ([#2450](https://github.com/kubermatic/kubeone/pull/2450), [@xmudrii](https://github.com/xmudrii))
+- KubeOne is now built using Go 1.19.3 ([#2462](https://github.com/kubermatic/kubeone/pull/2462), [@xmudrii](https://github.com/xmudrii))
+- The `kubeone-e2e` image is moved from Docker Hub to Quay (`quay.io/kubermatic/kubeone-e2e`) ([#2464](https://github.com/kubermatic/kubeone/pull/2464), [@xmudrii](https://github.com/xmudrii))
+
+# [v1.5.2](https://github.com/kubermatic/kubeone/releases/tag/v1.5.2) - 2022-10-20
+
+## Changelog since v1.5.1
+
+## Changes by Kind
+
+### Feature
+
+- Add support for Ubuntu 22.04 ([#2383](https://github.com/kubermatic/kubeone/pull/2383), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+
+### Updates
+
+- Update containerd to 1.6. This change affects control plane nodes, static worker nodes, and nodes managed by machine-controller/OSM ([#2388](https://github.com/kubermatic/kubeone/pull/2388), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+- Update to machine-controller v1.54.1 ([#2383](https://github.com/kubermatic/kubeone/pull/2383), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+- Update Operating System Manager (OSM) to 1.1.1 ([#2388](https://github.com/kubermatic/kubeone/pull/2388), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+
+# [v1.5.1](https://github.com/kubermatic/kubeone/releases/tag/v1.5.1) - 2022-09-26
+
+## Changelog since v1.5.0
+
+## Changes by Kind
+
+### Feature
+
+- Add a new `NodeLocalDNS` field to the KubeOneCluster API used to control should the NodeLocalDNSCache component be deployed or not. Run `kubeone config print --full` for details on how to use this field ([#2377](https://github.com/kubermatic/kubeone/pull/2377), [@kron4eg](https://github.com/kron4eg))
+- Upgrade Cilium from v1.12.0 to v1.12.2 ([#2376](https://github.com/kubermatic/kubeone/pull/2376), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+
+### Bug or Regression
+
+- Automatically delete the CoreDNS PodDistruptionBudget if the feature is disabled ([#2365](https://github.com/kubermatic/kubeone/pull/2365), [@xmudrii](https://github.com/xmudrii))
+- Fix NPE when machine-controller deployment is disabled ([#2357](https://github.com/kubermatic/kubeone/pull/2357), [@kron4eg](https://github.com/kron4eg))
+- Fix NPE with Operating System Manager (OSM) when the KubeOneCluster v1beta1 API is used ([#2357](https://github.com/kubermatic/kubeone/pull/2357), [@kron4eg](https://github.com/kron4eg))
+- Explicitly disable Operating System Manager (OSM) when the KubeOneCluster v1beta1 is used ([#2357](https://github.com/kubermatic/kubeone/pull/2357), [@kron4eg](https://github.com/kron4eg))
+- Recreate SSH connection in the case of errors with session ([#2357](https://github.com/kubermatic/kubeone/pull/2357), [@kron4eg](https://github.com/kron4eg))
+- Update the `kubernetes-cni` package from 0.8.7 to 1.1.1 to support the latest Kubernetes patch releases ([#2357](https://github.com/kubermatic/kubeone/pull/2357), [@kron4eg](https://github.com/kron4eg))
+- Use `vmware-system-csi` namespace when generating certs for the vSphere CSI webhooks ([#2374](https://github.com/kubermatic/kubeone/pull/2374), [@xmudrii](https://github.com/xmudrii))
+
 # [v1.5.0](https://github.com/kubermatic/kubeone/releases/tag/v1.5.0) - 2022-08-30
 
 We're happy to announce a new KubeOne minor release — KubeOne 1.5! Please
@@ -9,7 +175,7 @@ upgrading:
 
 ## Changelog since v1.4.0
 
-## Urgent Upgrade Notes 
+## Urgent Upgrade Notes
 
 ### (No, really, you MUST read this before you upgrade)
 
@@ -263,13 +429,13 @@ upgrading:
 
 ### Other
 
-- Remove changelog from the release archive. Changelogs can be found on GitHub in the [CHANGELOG directory](https://github.com/kubermatic/kubeone/tree/master/CHANGELOG) ([#2213](https://github.com/kubermatic/kubeone/pull/2213), [@xmudrii](https://github.com/xmudrii))
+- Remove changelog from the release archive. Changelogs can be found on GitHub in the [CHANGELOG directory](https://github.com/kubermatic/kubeone/tree/main/CHANGELOG) ([#2213](https://github.com/kubermatic/kubeone/pull/2213), [@xmudrii](https://github.com/xmudrii))
 
 # [v1.5.0-rc.0](https://github.com/kubermatic/kubeone/releases/tag/v1.5.0-rc.0) - 2022-08-25
 
 ## Changelog since v1.5.0-beta.0
 
-## Urgent Upgrade Notes 
+## Urgent Upgrade Notes
 
 ### (No, really, you MUST read this before you upgrade)
 
@@ -332,7 +498,7 @@ upgrading:
 
 ## Changelog since v1.4.0
 
-## Urgent Upgrade Notes 
+## Urgent Upgrade Notes
 
 ### (No, really, you MUST read this before you upgrade)
 
@@ -554,4 +720,4 @@ upgrading:
 
 ### Other
 
-- Remove changelog from the release archive. Changelogs can be found on GitHub in the [CHANGELOG directory](https://github.com/kubermatic/kubeone/tree/master/CHANGELOG) ([#2213](https://github.com/kubermatic/kubeone/pull/2213), [@xmudrii](https://github.com/xmudrii))
+- Remove changelog from the release archive. Changelogs can be found on GitHub in the [CHANGELOG directory](https://github.com/kubermatic/kubeone/tree/main/CHANGELOG) ([#2213](https://github.com/kubermatic/kubeone/pull/2213), [@xmudrii](https://github.com/xmudrii))

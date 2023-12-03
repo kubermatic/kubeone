@@ -81,7 +81,7 @@ func withInsecureRegistry(registry string) genClusterOpts {
 func withDefaultAssetConfiguration(cls *kubeoneapi.KubeOneCluster) {
 	cls.AssetConfiguration = kubeoneapi.AssetConfiguration{
 		Kubernetes: kubeoneapi.ImageAsset{
-			ImageRepository: "k8s.gcr.io",
+			ImageRepository: "registry.k8s.io",
 		},
 		CNI: kubeoneapi.BinaryAsset{
 			URL: "http://127.0.0.1/cni.tar.gz",
@@ -98,7 +98,7 @@ func withDefaultAssetConfiguration(cls *kubeoneapi.KubeOneCluster) {
 func genCluster(opts ...genClusterOpts) kubeoneapi.KubeOneCluster {
 	cls := &kubeoneapi.KubeOneCluster{
 		Versions: kubeoneapi.VersionConfig{
-			Kubernetes: "1.23.9",
+			Kubernetes: "1.26.0",
 		},
 		SystemPackages: &kubeoneapi.SystemPackages{
 			ConfigureRepositories: true,
@@ -363,11 +363,11 @@ func TestKubeadmAmazonLinux(t *testing.T) {
 			},
 		},
 		{
-			name: "v1.23.9",
+			name: "v1.26.0",
 			args: args{
 				cluster: genCluster(
 					withDocker,
-					withKubeVersion("1.23.9"),
+					withKubeVersion("1.26.0"),
 					withDefaultAssetConfiguration,
 				),
 			},
@@ -606,7 +606,7 @@ func TestUpgradeKubeadmAndCNIFlatcar(t *testing.T) {
 	t.Parallel()
 
 	c := genCluster(
-		withKubeVersion("1.23.9"),
+		withKubeVersion("1.26.0"),
 		withContainerd,
 		withInsecureRegistry("127.0.0.1:5000"),
 	)
@@ -666,7 +666,7 @@ func TestUpgradeKubeletAndKubectlFlatcar(t *testing.T) {
 	t.Parallel()
 
 	c := genCluster(
-		withKubeVersion("1.23.9"),
+		withKubeVersion("1.26.0"),
 		withContainerd,
 		withInsecureRegistry("127.0.0.1:5000"),
 	)

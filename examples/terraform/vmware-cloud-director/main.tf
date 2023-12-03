@@ -14,19 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-# Configure the VMware vCloud Director Provider
+# Configure the VMware Cloud Director Provider
 provider "vcd" {
   /*
   See https://registry.terraform.io/providers/vmware/vcd/latest/docs#argument-reference
   for config options reference
   */
-  org = var.vcd_org_name
-  vdc = var.vcd_vdc_name
+  org                  = var.vcd_org_name
+  vdc                  = var.vcd_vdc_name
+  allow_unverified_ssl = var.allow_insecure
+  logging              = var.logging
 }
 
 locals {
   external_network_name = var.external_network_name == "" ? element([for net in data.vcd_edgegateway.edge_gateway.external_network : net.name if tolist(net.subnet)[0].use_for_default_route], 0) : var.external_network_name
   external_network_ip   = var.external_network_ip == "" ? data.vcd_edgegateway.edge_gateway.default_external_network_ip : var.external_network_ip
+
+  cluster_autoscaler_min_replicas = var.cluster_autoscaler_min_replicas > 0 ? var.cluster_autoscaler_min_replicas : var.initial_machinedeployment_replicas
+  cluster_autoscaler_max_replicas = var.cluster_autoscaler_max_replicas > 0 ? var.cluster_autoscaler_max_replicas : var.initial_machinedeployment_replicas
 }
 
 # Existing edge gateway in VDC
@@ -59,10 +64,26 @@ resource "vcd_vapp" "cluster" {
   name        = var.cluster_name
   description = "vApp for ${var.vcd_vdc_name} cluster"
 
-  metadata = {
-    provisioner  = "Kubeone"
-    cluster_name = "${var.cluster_name}"
-    type         = "Kubernetes Cluster"
+  metadata_entry {
+    key         = "provisioner"
+    value       = "KubeOne"
+    type        = "MetadataStringValue"
+    user_access = "READWRITE"
+    is_system   = false
+  }
+  metadata_entry {
+    key         = "cluster_name"
+    value       = var.cluster_name
+    type        = "MetadataStringValue"
+    user_access = "READWRITE"
+    is_system   = false
+  }
+  metadata_entry {
+    key         = "type"
+    value       = "Kubernetes Cluster"
+    type        = "MetadataStringValue"
+    user_access = "READWRITE"
+    is_system   = false
   }
 
   depends_on = [vcd_network_routed.network]
@@ -77,17 +98,42 @@ resource "vcd_vapp_org_network" "network" {
   depends_on = [vcd_vapp.cluster, vcd_network_routed.network]
 }
 
+data "vcd_catalog" "catalog" {
+  name = var.catalog_name
+}
+
+data "vcd_catalog_vapp_template" "vapp_template" {
+  catalog_id = data.vcd_catalog.catalog.id
+  name       = var.template_name
+}
+
 # Create VMs for control plane
 resource "vcd_vapp_vm" "control_plane" {
-  count         = 3
+  count         = var.control_plane_vm_count
   vapp_name     = vcd_vapp.cluster.name
   name          = "${var.cluster_name}-cp-${count.index + 1}"
   computer_name = "${var.cluster_name}-cp-${count.index + 1}"
 
-  metadata = {
-    provisioner  = "Kubeone"
-    cluster_name = "${var.cluster_name}"
-    role         = "control-plane"
+  metadata_entry {
+    key         = "provisioner"
+    value       = "KubeOne"
+    type        = "MetadataStringValue"
+    user_access = "READWRITE"
+    is_system   = false
+  }
+  metadata_entry {
+    key         = "cluster_name"
+    value       = var.cluster_name
+    type        = "MetadataStringValue"
+    user_access = "READWRITE"
+    is_system   = false
+  }
+  metadata_entry {
+    key         = "role"
+    value       = "control-plane"
+    type        = "MetadataStringValue"
+    user_access = "READWRITE"
+    is_system   = false
   }
 
   guest_properties = {
@@ -96,8 +142,7 @@ resource "vcd_vapp_vm" "control_plane" {
     "public-keys" = file(var.ssh_public_key_file)
   }
 
-  catalog_name  = var.catalog_name
-  template_name = var.template_name
+  vapp_template_id = data.vcd_catalog_vapp_template.vapp_template.id
 
   # resource allocation for the VM
   memory                 = var.control_plane_memory
@@ -157,4 +202,14 @@ resource "vcd_nsxv_snat" "rule_internet" {
 
   original_address   = "${var.gateway_ip}/24"
   translated_address = local.external_network_ip
+}
+
+# Create Hairpin SNAT rule
+resource "vcd_nsxv_snat" "rule_internal" {
+  edge_gateway = data.vcd_edgegateway.edge_gateway.name
+  network_type = "org"
+  network_name = vcd_network_routed.network.name
+
+  original_address   = "${var.gateway_ip}/24"
+  translated_address = var.gateway_ip
 }

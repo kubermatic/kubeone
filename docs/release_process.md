@@ -28,21 +28,21 @@ you can use the GitHub Compare feature. Grab the latest
 commit from the previous release and put it in the
 following link:
 ```
-https://github.com/kubermatic/kubeone/compare/<commit>...master
+https://github.com/kubermatic/kubeone/compare/<commit>...main
 ```
 
 ## Releasing KubeOne
 
 ### Preparing the release
 
-Before pushing a new Git tag, ensure your `master` branch is up-to-date.
+Before pushing a new Git tag, ensure your `main` branch is up-to-date.
 If you're pushing to a release branch, switch to the appropriate branch and
 make sure it's up-to-date.
 
 ```
-git checkout master
+git checkout main
 git fetch origin
-git reset --hard origin/master
+git reset --hard origin/main
 ```
 
 ### Creating a branch (only for RC and stable releases)
@@ -55,7 +55,7 @@ git checkout -b release/v0.x
 git push origin release/v0.x
 ```
 
-The alpha and beta releases are cut directly from the master branch,
+The alpha and beta releases are cut directly from the main branch,
 without creating the release branch. This ensures we don't have to
 cherry-pick each PR to the release branch.
 
@@ -87,5 +87,5 @@ It's recommended to try to download to the release from GitHub after it's
 available and compare the checksums, as well as, confirm that `kubeone version`
 shows the correct version.
 
-[docs-compatibility]: https://docs.kubermatic.com/kubeone/master/architecture/compatibility/
-[changelog]: https://github.com/kubermatic/kubeone/blob/master/CHANGELOG.md
+[docs-compatibility]: https://docs.kubermatic.com/kubeone/v1.7/architecture/compatibility/
+[changelog]: https://github.com/kubermatic/kubeone/blob/main/CHANGELOG.md

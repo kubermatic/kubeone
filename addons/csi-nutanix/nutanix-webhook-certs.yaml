@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nutanix-webhook-certs
+  namespace: kube-system
+data:
+  "tls.crt": |
+{{ .Certificates.CSIWebhookCert | b64enc | indent 4 }}
+  "tls.key": |
+{{ .Certificates.CSIWebhookKey | b64enc | indent 4 }}

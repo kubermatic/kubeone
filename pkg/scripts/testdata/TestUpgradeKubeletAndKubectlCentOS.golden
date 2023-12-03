@@ -53,20 +53,33 @@ echo -n "${yum_proxy}" >> /tmp/yum.conf
 sudo mv /tmp/yum.conf /etc/yum.conf
 
 
+# Rebuilding the yum cache is required upon migrating from the legacy to the community-owned
+# repositories, otherwise, yum will fail to upgrade the packages because it's trying to
+# use old revisions (e.g. 1.27.0-0 instead of 1.27.5-150500.1.1).
+repo_migration_needed=false
+
+if sudo grep -q "packages.cloud.google.com" /etc/yum.repos.d/kubernetes.repo; then
+  repo_migration_needed=true
+fi
+
 cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.26/rpm/
 enabled=1
 gpgcheck=1
-repo_gpgcheck=0
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.26/rpm/repodata/repomd.xml.key
 EOF
 
 source /etc/os-release
 if [ "$ID" == "centos" ] && [ "$VERSION_ID" == "8" ]; then
 	sudo sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
 	sudo sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+fi
+
+if [[ $repo_migration_needed == "true" ]]; then
+  sudo yum clean all
+  sudo yum makecache
 fi
 
 
@@ -91,7 +104,7 @@ sudo yum versionlock delete docker-ce docker-ce-cli containerd.io || true
 sudo yum install -y \
 	docker-ce-'20.10.*' \
 	docker-ce-cli-'20.10.*' \
-	containerd.io-'1.5.*'
+	containerd.io-'1.6.*'
 sudo yum versionlock add docker-ce docker-ce-cli containerd.io
 
 sudo mkdir -p $(dirname /etc/docker/daemon.json)
@@ -126,13 +139,14 @@ fi
 
 
 
-sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni || true
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools || true
 
 sudo yum install -y \
-	kubelet-1.23.9 \
-	kubectl-1.23.9 \
-	kubernetes-cni-0.8.7
-sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni
+	kubelet-1.26.0 \
+	kubectl-1.26.0 \
+	kubernetes-cni-1.2.0 \
+	cri-tools-1.26.0
+sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni cri-tools
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet

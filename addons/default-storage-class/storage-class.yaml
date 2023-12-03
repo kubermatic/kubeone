@@ -1,5 +1,6 @@
 {{ if eq .Config.CloudProvider.CloudProviderName "azure" }}
 {{ if .DeployCSIAddon }}
+---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -27,7 +28,17 @@ parameters:
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
 ---
+kind: VolumeSnapshotClass
+apiVersion: snapshot.storage.k8s.io/v1
+metadata:
+  name: csi-azuredisk-vsc
+driver: disk.csi.azure.com
+deletionPolicy: Delete
+parameters:
+  incremental: "true"
+  tags:
 {{ end }}
+---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -212,7 +223,6 @@ reclaimPolicy: Delete
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
-  namespace: kube-system
   name: hcloud-volumes
   annotations:
     storageclass.kubernetes.io/is-default-class: "true"
@@ -239,6 +249,33 @@ metadata:
     snapshot.storage.kubernetes.io/is-default-class: "true"
 driver: dobs.csi.digitalocean.com
 deletionPolicy: Delete
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: do-block-storage-retain
+provisioner: dobs.csi.digitalocean.com
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: do-block-storage-xfs
+provisioner: dobs.csi.digitalocean.com
+parameters:
+  fstype: xfs
+allowVolumeExpansion: true
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: do-block-storage-xfs-retain
+provisioner: dobs.csi.digitalocean.com
+parameters:
+  fstype: xfs
+reclaimPolicy: Retain
+allowVolumeExpansion: true
 {{ end }}
 
 {{ if eq .Config.CloudProvider.CloudProviderName "vmwareCloudDirector" }}

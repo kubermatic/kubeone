@@ -1,9 +1,14 @@
-# vSphere Quickstart Terraform configs
+# vSphere Quickstart Terraform configs for Flatcar Linux
 
 The vSphere Quickstart Terraform configs can be used to create the needed
 infrastructure for a Kubernetes HA cluster. Check out the following
 [Creating Infrastructure guide][docs-infrastructure] to learn more about how to
 use the configs and how to provision a Kubernetes cluster using KubeOne.
+
+These Terraform configs are supposed to be used with Flatcar Linux.
+
+We also provide Terraform configs for [Debian-based operating systems](../vsphere)
+and [CentOS-based operating systems](../vsphere_centos).
 
 ## Required environment variables
 
@@ -14,14 +19,14 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 
 ## How to prepare a template
 
-See <https://github.com/kubermatic/machine-controller/blob/master/docs/vsphere.md>
+See <https://github.com/kubermatic/machine-controller/blob/main/docs/vsphere.md>
 
 ## Kubernetes API Server Load Balancing
 
 See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 
-[docs-infrastructure]: https://docs.kubermatic.com/kubeone/master/guides/using-terraform-configs/
-[docs-tf-loadbalancer]: https://docs.kubermatic.com/kubeone/master/examples/ha-load-balancing/
+[docs-infrastructure]: https://docs.kubermatic.com/kubeone/v1.7/guides/using-terraform-configs/
+[docs-tf-loadbalancer]: https://docs.kubermatic.com/kubeone/v1.7/examples/ha-load-balancing/
 
 ## Requirements
 
@@ -57,11 +62,15 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_allow_insecure"></a> [allow\_insecure](#input\_allow\_insecure) | allow insecure https connection to vCenter | `bool` | `false` | no |
 | <a name="input_api_vip"></a> [api\_vip](#input\_api\_vip) | virtual IP address for Kubernetes API | `string` | `""` | no |
 | <a name="input_apiserver_alternative_names"></a> [apiserver\_alternative\_names](#input\_apiserver\_alternative\_names) | subject alternative names for the API Server signing cert. | `list(string)` | `[]` | no |
 | <a name="input_bastion_host"></a> [bastion\_host](#input\_bastion\_host) | ssh jumphost (bastion) hostname | `string` | `""` | no |
+| <a name="input_bastion_host_key"></a> [bastion\_host\_key](#input\_bastion\_host\_key) | Bastion SSH host public key | `string` | `null` | no |
 | <a name="input_bastion_port"></a> [bastion\_port](#input\_bastion\_port) | ssh jumphost (bastion) port | `number` | `22` | no |
 | <a name="input_bastion_username"></a> [bastion\_username](#input\_bastion\_username) | ssh jumphost (bastion) username | `string` | `""` | no |
+| <a name="input_cluster_autoscaler_max_replicas"></a> [cluster\_autoscaler\_max\_replicas](#input\_cluster\_autoscaler\_max\_replicas) | maximum number of replicas per MachineDeployment (requires cluster-autoscaler) | `number` | `0` | no |
+| <a name="input_cluster_autoscaler_min_replicas"></a> [cluster\_autoscaler\_min\_replicas](#input\_cluster\_autoscaler\_min\_replicas) | minimum number of replicas per MachineDeployment (requires cluster-autoscaler) | `number` | `0` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster | `string` | n/a | yes |
 | <a name="input_compute_cluster_name"></a> [compute\_cluster\_name](#input\_compute\_cluster\_name) | internal vSphere cluster name | `string` | `"cl-1"` | no |
 | <a name="input_control_plane_memory"></a> [control\_plane\_memory](#input\_control\_plane\_memory) | memory size of each control plane node in MB | `number` | `2048` | no |
@@ -78,6 +87,7 @@ No modules.
 | <a name="input_network_name"></a> [network\_name](#input\_network\_name) | network name | `string` | `"public"` | no |
 | <a name="input_resource_pool_name"></a> [resource\_pool\_name](#input\_resource\_pool\_name) | cluster resource pool name | `string` | `""` | no |
 | <a name="input_ssh_agent_socket"></a> [ssh\_agent\_socket](#input\_ssh\_agent\_socket) | SSH Agent socket, default to grab from $SSH\_AUTH\_SOCK | `string` | `"env:SSH_AUTH_SOCK"` | no |
+| <a name="input_ssh_hosts_keys"></a> [ssh\_hosts\_keys](#input\_ssh\_hosts\_keys) | A list of SSH hosts public keys to verify | `list(string)` | `null` | no |
 | <a name="input_ssh_port"></a> [ssh\_port](#input\_ssh\_port) | SSH port to be used to provision instances | `number` | `22` | no |
 | <a name="input_ssh_private_key_file"></a> [ssh\_private\_key\_file](#input\_ssh\_private\_key\_file) | SSH private key file used to access instances | `string` | `""` | no |
 | <a name="input_ssh_public_key_file"></a> [ssh\_public\_key\_file](#input\_ssh\_public\_key\_file) | SSH public key file | `string` | `"~/.ssh/id_rsa.pub"` | no |

@@ -89,7 +89,25 @@ variable "bastion_username" {
   type        = string
 }
 
+variable "ssh_hosts_keys" {
+  default     = null
+  description = "A list of SSH hosts public keys to verify"
+  type        = list(string)
+}
+
+variable "bastion_host_key" {
+  description = "Bastion SSH host public key"
+  default     = null
+  type        = string
+}
+
 # provider specific settings
+
+variable "allow_insecure" {
+  description = "allow insecure https connection to vCenter"
+  default     = false
+  type        = bool
+}
 
 variable "dc_name" {
   default     = "dc-1"
@@ -134,7 +152,7 @@ variable "compute_cluster_name" {
 }
 
 variable "template_name" {
-  default     = "ubuntu-18.04"
+  default     = "ubuntu-22.04"
   description = "template name"
   type        = string
 }
@@ -205,6 +223,18 @@ variable "initial_machinedeployment_replicas" {
   type        = number
 }
 
+variable "cluster_autoscaler_min_replicas" {
+  default     = 0
+  description = "minimum number of replicas per MachineDeployment (requires cluster-autoscaler)"
+  type        = number
+}
+
+variable "cluster_autoscaler_max_replicas" {
+  default     = 0
+  description = "maximum number of replicas per MachineDeployment (requires cluster-autoscaler)"
+  type        = number
+}
+
 variable "initial_machinedeployment_operating_system_profile" {
   default     = ""
   type        = string
@@ -218,4 +248,18 @@ variable "is_vsphere_enterprise_plus_license" {
   description = "toggle on/off based on your vsphere enterprise license"
   type        = bool
   default     = true
+}
+
+variable "ip_family" {
+  description = "IPFamily of the cluster. Defaults to IPv4."
+
+  # valid choices are:
+  # * IPv4
+  # * IPv4+IPv6 (dual-stack)
+  default = "IPv4"
+  type    = string
+  validation {
+    condition     = can(regex("^(IPv4|IPv4\\+IPv6)$", var.ip_family))
+    error_message = "Unsupported IP Family specified."
+  }
 }

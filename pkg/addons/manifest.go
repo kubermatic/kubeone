@@ -35,6 +35,7 @@ import (
 
 	"k8c.io/kubeone/pkg/certificate/cabundle"
 	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/pointer"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
 
@@ -45,7 +46,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/sets"
 	kyaml "k8s.io/apimachinery/pkg/util/yaml"
-	"k8s.io/utils/pointer"
 	"sigs.k8s.io/yaml"
 )
 
@@ -54,28 +54,31 @@ const (
 )
 
 func (a *applier) getManifestsFromDirectory(s *state.State, fsys fs.FS, addonName string) (string, error) {
+	var addonParams map[string]string
+	disableTemplating := false
+
 	overwriteRegistry := ""
 	if s.Cluster.RegistryConfiguration != nil && s.Cluster.RegistryConfiguration.OverwriteRegistry != "" {
 		overwriteRegistry = s.Cluster.RegistryConfiguration.OverwriteRegistry
 	}
 
-	var addonParams map[string]string
 	if s.Cluster.Addons.Enabled() {
 		for _, addon := range s.Cluster.Addons.Addons {
 			if addon.Name == addonName {
 				addonParams = addon.Params
+				disableTemplating = addon.DisableTemplating
 
 				break
 			}
 		}
 	}
 
-	manifests, err := a.loadAddonsManifests(fsys, addonName, addonParams, s.Logger, s.Verbose, overwriteRegistry)
+	manifests, err := a.loadAddonsManifests(fsys, addonName, addonParams, s.Logger, s.Verbose, overwriteRegistry, disableTemplating)
 	if err != nil {
 		return "", err
 	}
 
-	if s.Cluster.CloudProvider.SecretProviderClassName != "" {
+	if s.Cluster.CloudProvider.SecretProviderClassName != "" && !disableTemplating {
 		addonsToMutate := sets.NewString(
 			append(
 				resources.CloudAddons(),
@@ -96,7 +99,7 @@ func (a *applier) getManifestsFromDirectory(s *state.State, fsys fs.FS, addonNam
 		return "", err
 	}
 
-	combinedManifests := combineManifests(rawManifests)
+	combinedManifests := combineManifests(rawManifests, disableTemplating)
 
 	return combinedManifests.String(), nil
 }
@@ -109,6 +112,7 @@ func (a *applier) loadAddonsManifests(
 	logger logrus.FieldLogger,
 	verbose bool,
 	overwriteRegistry string,
+	disableTemplating bool,
 ) ([]runtime.RawExtension, error) {
 	var manifests []runtime.RawExtension
 
@@ -144,48 +148,60 @@ func (a *applier) loadAddonsManifests(
 			return nil, fail.Runtime(err, "reading addon")
 		}
 
-		tpl, err := template.New("addons-base").Funcs(txtFuncMap(overwriteRegistry)).Parse(string(manifestBytes))
-		if err != nil {
-			return nil, fail.Runtime(err, fmt.Sprintf("parsing addons manifest template %q", file.Name()))
+		// We need to escape occurrences of Go text template in the manifests.
+		if disableTemplating {
+			res := strings.ReplaceAll(string(manifestBytes), "{{", "^{{")
+			res = strings.ReplaceAll(res, "}}", "}}^")
+			manifestBytes = []byte(res)
 		}
 
-		// Make a copy and merge Params
-		tplDataParams := map[string]string{}
-		for k, v := range a.TemplateData.Params {
-			tplDataParams[k] = v
-		}
-		for k, v := range addonParams {
-			tplDataParams[k] = v
-		}
+		var manifest *bytes.Buffer
+		manifest = bytes.NewBuffer(manifestBytes)
 
-		// Resolve environment variables in Params
-		for k, v := range tplDataParams {
-			if strings.HasPrefix(v, ParamsEnvPrefix) {
-				envName := strings.TrimPrefix(v, ParamsEnvPrefix)
-				if env, ok := os.LookupEnv(envName); ok {
-					tplDataParams[k] = env
-				} else {
-					return nil, fail.RuntimeError{
-						Op:  "resolving template data environment variables",
-						Err: fmt.Errorf("%q not found", envName),
+		if !disableTemplating {
+			tpl, err := template.New("addons-base").Funcs(txtFuncMap(overwriteRegistry)).Parse(string(manifestBytes))
+			if err != nil {
+				return nil, fail.Runtime(err, fmt.Sprintf("parsing addons manifest template %q", file.Name()))
+			}
+
+			// Make a copy and merge Params
+			tplDataParams := map[string]string{}
+			for k, v := range a.TemplateData.Params {
+				tplDataParams[k] = v
+			}
+			for k, v := range addonParams {
+				tplDataParams[k] = v
+			}
+
+			// Resolve environment variables in Params
+			for k, v := range tplDataParams {
+				if strings.HasPrefix(v, ParamsEnvPrefix) {
+					envName := strings.TrimPrefix(v, ParamsEnvPrefix)
+					if env, ok := os.LookupEnv(envName); ok {
+						tplDataParams[k] = env
+					} else {
+						return nil, fail.RuntimeError{
+							Op:  "resolving template data environment variables",
+							Err: fmt.Errorf("%q not found", envName),
+						}
 					}
 				}
 			}
+
+			tplData := a.TemplateData
+			tplData.Params = tplDataParams
+
+			manifest = bytes.NewBuffer([]byte{})
+			if err := tpl.Execute(manifest, tplData); err != nil {
+				return nil, fail.Runtime(err, fmt.Sprintf("executing addons manifest template %q", file.Name()))
+			}
+
+			if len(bytes.TrimSpace(manifest.Bytes())) == 0 {
+				logger.Infof("Addons manifest %q is empty after parsing. Skipping.\n", file.Name())
+			}
 		}
 
-		tplData := a.TemplateData
-		tplData.Params = tplDataParams
-
-		buf := bytes.NewBuffer([]byte{})
-		if err := tpl.Execute(buf, tplData); err != nil {
-			return nil, fail.Runtime(err, fmt.Sprintf("executing addons manifest template %q", file.Name()))
-		}
-
-		if len(bytes.TrimSpace(buf.Bytes())) == 0 {
-			logger.Infof("Addons manifest %q is empty after parsing. Skipping.\n", file.Name())
-		}
-
-		reader := kyaml.NewYAMLReader(bufio.NewReader(buf))
+		reader := kyaml.NewYAMLReader(bufio.NewReader(manifest))
 		for {
 			yamlDoc, err := reader.Read()
 			if err != nil {
@@ -256,10 +272,17 @@ func ensureAddonsLabelsOnResources(manifests []runtime.RawExtension, addonName s
 
 // combineManifests combines all manifest into a single one.
 // This is needed so we can properly utilize kubectl apply --prune
-func combineManifests(manifests []*bytes.Buffer) *bytes.Buffer {
+func combineManifests(manifests []*bytes.Buffer, disablingTemplating bool) *bytes.Buffer {
 	parts := make([]string, len(manifests))
 	for i, m := range manifests {
 		s := m.String()
+
+		if disablingTemplating {
+			// When templating is disabled we append "^" to avoid YAML to JSON conversion issues. We revert that change here.
+			s = strings.ReplaceAll(s, "^{{", "{{")
+			s = strings.ReplaceAll(s, "}}^", "}}")
+		}
+
 		s = strings.TrimSuffix(s, "\n")
 		s = strings.TrimSpace(s)
 		parts[i] = s
@@ -367,7 +390,7 @@ func addSecretCSIVolume(docs []runtime.RawExtension, secretProviderClassName str
 		VolumeSource: corev1.VolumeSource{
 			CSI: &corev1.CSIVolumeSource{
 				Driver:   "secrets-store.csi.k8s.io",
-				ReadOnly: pointer.Bool(true),
+				ReadOnly: pointer.New(true),
 				VolumeAttributes: map[string]string{
 					"secretProviderClass": secretProviderClassName,
 				},

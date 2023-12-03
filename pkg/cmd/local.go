@@ -155,7 +155,7 @@ func localCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	cmd.Flags().StringVar(
 		&opts.KubernetesVersion,
 		longFlagName(opts, "KubernetesVersion"),
-		"1.24.2",
+		defaultKubeVersion,
 		"kubernetes version to install when there is no manifest")
 
 	cmd.Flags().StringVar(

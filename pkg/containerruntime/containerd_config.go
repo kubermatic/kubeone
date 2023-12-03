@@ -37,8 +37,9 @@ type containerdMetrics struct {
 }
 
 type containerdCRIPlugin struct {
-	Containerd *containerdCRISettings `toml:"containerd"`
-	Registry   *containerdCRIRegistry `toml:"registry"`
+	SandboxImage string                 `toml:"sandbox_image"`
+	Containerd   *containerdCRISettings `toml:"containerd"`
+	Registry     *containerdCRIRegistry `toml:"registry"`
 }
 
 type containerdCRISettings struct {
@@ -80,7 +81,13 @@ type containerdRegistryTLSConfig struct {
 }
 
 func marshalContainerdConfig(cluster *kubeoneapi.KubeOneCluster) (string, error) {
+	sandboxImage, serr := cluster.Versions.SandboxImage(cluster.RegistryConfiguration.ImageRegistry)
+	if serr != nil {
+		return "", serr
+	}
+
 	criPlugin := containerdCRIPlugin{
+		SandboxImage: sandboxImage,
 		Containerd: &containerdCRISettings{
 			Runtimes: map[string]containerdCRIRuntime{
 				"runc": {

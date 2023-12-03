@@ -69,10 +69,28 @@ variable "ssh_agent_socket" {
   type        = string
 }
 
+variable "ssh_hosts_keys" {
+  default     = null
+  description = "A list of SSH hosts public keys to verify"
+  type        = list(string)
+}
+
+variable "bastion_host_key" {
+  description = "Bastion SSH host public key"
+  default     = null
+  type        = string
+}
+
 variable "disable_kubeapi_loadbalancer" {
   type        = bool
   default     = false
   description = "E2E tests specific variable to disable usage of any loadbalancer in front of kubeapi-server"
+}
+
+variable "control_plane_vm_count" {
+  description = "number of control plane instances"
+  default     = 3
+  type        = number
 }
 
 # Provider specific settings
@@ -106,7 +124,7 @@ variable "control_plane_volume_size" {
 }
 
 variable "control_plane_image_family" {
-  default     = "ubuntu-2004-lts"
+  default     = "ubuntu-2204-lts"
   description = "Image family to use for provisioning instances"
   type        = string
 }
@@ -126,6 +144,18 @@ variable "workers_type" {
 variable "initial_machinedeployment_replicas" {
   description = "Number of replicas per MachineDeployment"
   default     = 2
+  type        = number
+}
+
+variable "cluster_autoscaler_min_replicas" {
+  default     = 0
+  description = "minimum number of replicas per MachineDeployment (requires cluster-autoscaler)"
+  type        = number
+}
+
+variable "cluster_autoscaler_max_replicas" {
+  default     = 0
+  description = "maximum number of replicas per MachineDeployment (requires cluster-autoscaler)"
   type        = number
 }
 

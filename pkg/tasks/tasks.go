@@ -24,6 +24,7 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeconfig"
+	"k8c.io/kubeone/pkg/localhelm"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/externalccm"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
@@ -123,6 +124,10 @@ func WithFullInstall(t Tasks) Tasks {
 	}...).
 		append(kubernetesConfigFiles()...).
 		append(Tasks{
+			{
+				Fn:        kubeadmPreflightChecks,
+				Operation: "kubeadm preflight checks",
+			},
 			{Fn: prePullImages, Operation: "pre-pull images"},
 			{
 				Fn: func(s *state.State) error {
@@ -213,6 +218,10 @@ func WithResources(t Tasks) Tasks {
 				},
 			},
 			{
+				Fn:        determinePauseImage,
+				Operation: "determining the pause image",
+			},
+			{
 				Fn:        patchStaticPods,
 				Operation: "patching static pods",
 			},
@@ -256,10 +265,8 @@ func WithResources(t Tasks) Tasks {
 				Description: "ensure embedded addons",
 			},
 			{
-				Fn:          ensureCNI,
-				Operation:   "installing CNI plugin",
-				Description: "ensure CNI",
-				Predicate:   func(s *state.State) bool { return s.Cluster.ClusterNetwork.CNI.External == nil },
+				Fn:        localhelm.Deploy,
+				Operation: "releasing core helm charts",
 			},
 			{
 				Fn:          ensureCABundleConfigMap,
@@ -268,16 +275,24 @@ func WithResources(t Tasks) Tasks {
 				Predicate:   func(s *state.State) bool { return s.Cluster.CABundle != "" },
 			},
 			{
+				Fn:          externalccm.Ensure,
+				Operation:   "ensuring external CCM",
+				Description: "ensure external CCM",
+				Predicate:   func(s *state.State) bool { return s.Cluster.CloudProvider.External },
+			},
+			{
 				Fn:          addons.EnsureUserAddons,
 				Operation:   "applying addons",
 				Description: "ensure custom addons",
 				Predicate:   func(s *state.State) bool { return s.Cluster.Addons != nil && s.Cluster.Addons.Enable },
 			},
 			{
-				Fn:          externalccm.Ensure,
-				Operation:   "ensuring external CCM",
-				Description: "ensure external CCM",
-				Predicate:   func(s *state.State) bool { return s.Cluster.CloudProvider.External },
+				Fn:          ensureVsphereCSICABundleConfigMap,
+				Operation:   "ensure vSphere CSI caBundle configMap",
+				Description: "ensure vSphere CSI caBundle configMap",
+				Predicate: func(s *state.State) bool {
+					return s.Cluster.CABundle != "" && s.Cluster.CloudProvider.Vsphere != nil && s.Cluster.CloudProvider.External && !s.Cluster.CloudProvider.DisableBundledCSIDrivers
+				},
 			},
 			{
 				Fn:        joinStaticWorkerNodes,
@@ -294,7 +309,7 @@ func WithResources(t Tasks) Tasks {
 			{
 				Fn:        operatingsystemmanager.WaitReady,
 				Operation: "waiting for operating-system-manager",
-				Predicate: func(s *state.State) bool { return s.Cluster.OperatingSystemManagerEnabled() },
+				Predicate: func(s *state.State) bool { return s.Cluster.OperatingSystemManager.Deploy },
 			},
 		}...,
 	)
@@ -361,7 +376,7 @@ func WithContainerDMigration(t Tasks) Tasks {
 			{
 				Fn: func(s *state.State) error {
 					s.Logger.Warn("Now please rolling restart your machineDeployments to get containerd")
-					s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/master/cheat-sheets/rollout-machinedeployment/")
+					s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/v1.7/cheat-sheets/rollout-machinedeployment/")
 
 					return nil
 				},
@@ -414,11 +429,13 @@ func WithDisableEncryptionProviders(t Tasks, customConfig bool) Tasks {
 		{
 			Fn:          fetchEncryptionProvidersFile,
 			Operation:   "fetching EncryptionProviders config",
-			Description: "fetch current Encryption Providers configuration file "},
+			Description: "fetch current Encryption Providers configuration file ",
+		},
 		{
 			Fn:          uploadIdentityFirstEncryptionConfiguration,
 			Operation:   "uploading encryption providers configuration",
-			Description: "upload updated Encryption Providers configuration file"},
+			Description: "upload updated Encryption Providers configuration file",
+		},
 		{
 			Fn:          ensureRestartKubeAPIServer,
 			Operation:   "restarting kube-apiserver pods",
@@ -507,8 +524,8 @@ func WithCCMCSIMigration(t Tasks) Tasks {
 				return s.CCMMigrationComplete
 			},
 		},
+		{Fn: generateKubeadm, Operation: "generating kubeadm config files"},
 	}...).
-		append(kubernetesConfigFiles()...).
 		append(
 			Task{Fn: ccmMigrationRegenerateControlPlaneManifestsAndKubeletConfig, Operation: "regenerating static pod manifests and kubelet config"},
 			Task{
@@ -521,6 +538,21 @@ func WithCCMCSIMigration(t Tasks) Tasks {
 		).
 		append(WithResources(nil)...).
 		append(
+			// Regenerate files only when finishing the CCM/CSI migration.
+			Task{
+				Fn:        generateConfigurationFiles,
+				Operation: "generating config files",
+				Predicate: func(s *state.State) bool {
+					return s.CCMMigrationComplete
+				},
+			},
+			Task{
+				Fn:        uploadConfigurationFiles,
+				Operation: "uploading config files",
+				Predicate: func(s *state.State) bool {
+					return s.CCMMigrationComplete
+				},
+			},
 			Task{
 				Fn:        migrateOpenStackPVs,
 				Operation: "migrating openstack persistentvolumes",
@@ -529,7 +561,7 @@ func WithCCMCSIMigration(t Tasks) Tasks {
 			Task{
 				Fn: func(s *state.State) error {
 					s.Logger.Warn("Now please rolling restart your machineDeployments to migrate to ccm/csi")
-					s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/master/cheat-sheets/rollout-machinedeployment/")
+					s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/v1.7/cheat-sheets/rollout-machinedeployment/")
 					s.Logger.Warn("Once you're done, please run this command again with the '--complete' flag to finish migration")
 
 					return nil

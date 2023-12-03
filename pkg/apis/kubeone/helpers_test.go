@@ -118,7 +118,7 @@ func TestContainerRuntimeConfig_MachineControllerFlags(t *testing.T) {
 								"registry3",
 							},
 						},
-						"k8s.gcr.io": {
+						"registry.k8s.io": {
 							Mirrors: []string{
 								"https://insecure.registry",
 							},
@@ -133,8 +133,8 @@ func TestContainerRuntimeConfig_MachineControllerFlags(t *testing.T) {
 				"-node-containerd-registry-mirrors=docker.io=http://registry1",
 				"-node-containerd-registry-mirrors=docker.io=https://registry2",
 				"-node-containerd-registry-mirrors=docker.io=registry3",
-				"-node-containerd-registry-mirrors=k8s.gcr.io=https://insecure.registry",
-				"-node-insecure-registries=k8s.gcr.io",
+				"-node-containerd-registry-mirrors=registry.k8s.io=https://insecure.registry",
+				"-node-insecure-registries=registry.k8s.io",
 			},
 		},
 	}
@@ -173,6 +173,121 @@ func TestMapStringStringToString(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := MapStringStringToString(tt.m1, "="); got != tt.want {
 				t.Errorf("MapStringStringToString() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestDefaultAssetConfiguration(t *testing.T) {
+	tests := []struct {
+		name                       string
+		cluster                    *KubeOneCluster
+		expectedAssetConfiguration AssetConfiguration
+	}{
+		{
+			name:                       "default options",
+			cluster:                    &KubeOneCluster{},
+			expectedAssetConfiguration: AssetConfiguration{},
+		},
+		{
+			name: "overwriteRegistry",
+			cluster: &KubeOneCluster{
+				RegistryConfiguration: &RegistryConfiguration{
+					OverwriteRegistry: "my.corp",
+				},
+			},
+			expectedAssetConfiguration: AssetConfiguration{
+				Kubernetes: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+				CoreDNS: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+				Etcd: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+				MetricsServer: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+			},
+		},
+		{
+			name: "coredns over assetConfiguration (v1beta1)",
+			cluster: &KubeOneCluster{
+				RegistryConfiguration: &RegistryConfiguration{
+					OverwriteRegistry: "my.corp",
+				},
+				AssetConfiguration: AssetConfiguration{
+					CoreDNS: ImageAsset{
+						ImageRepository: "my.corp/coredns",
+					},
+				},
+			},
+			expectedAssetConfiguration: AssetConfiguration{
+				Kubernetes: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+				CoreDNS: ImageAsset{
+					ImageRepository: "my.corp/coredns",
+				},
+				Etcd: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+				MetricsServer: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+			},
+		},
+		{
+			name: "coredns over coreDNS Feature (v1beta2)",
+			cluster: &KubeOneCluster{
+				RegistryConfiguration: &RegistryConfiguration{
+					OverwriteRegistry: "my.corp",
+				},
+				Features: Features{
+					CoreDNS: &CoreDNS{
+						ImageRepository: "my.corp/coredns",
+					},
+				},
+			},
+			expectedAssetConfiguration: AssetConfiguration{
+				Kubernetes: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+				CoreDNS: ImageAsset{
+					ImageRepository: "my.corp/coredns",
+				},
+				Etcd: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+				MetricsServer: ImageAsset{
+					ImageRepository: "my.corp",
+				},
+			},
+		},
+		{
+			name: "coredns over coreDNS Feature without overwriteRegistry (v1beta2)",
+			cluster: &KubeOneCluster{
+				Features: Features{
+					CoreDNS: &CoreDNS{
+						ImageRepository: "my.corp/coredns",
+					},
+				},
+			},
+			expectedAssetConfiguration: AssetConfiguration{
+				CoreDNS: ImageAsset{
+					ImageRepository: "my.corp/coredns",
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			tt.cluster.DefaultAssetConfiguration()
+			if !reflect.DeepEqual(tt.cluster.AssetConfiguration, tt.expectedAssetConfiguration) {
+				t.Errorf("Expected AssetConfiguration=%v, but got=%v", tt.expectedAssetConfiguration, tt.cluster.AssetConfiguration)
 			}
 		})
 	}

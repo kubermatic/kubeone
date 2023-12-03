@@ -18,9 +18,15 @@ provider "digitalocean" {
 }
 
 locals {
-  kube_cluster_tag   = "kubernetes-cluster:${var.cluster_name}"
-  kubeapi_endpoint   = var.disable_kubeapi_loadbalancer ? digitalocean_droplet.control_plane.0.ipv4_address_private : digitalocean_loadbalancer.control_plane.0.ip
-  loadbalancer_count = var.disable_kubeapi_loadbalancer ? 0 : 1
+  kube_cluster_tag            = "kubernetes-cluster:${var.cluster_name}"
+  control_plane_droplet_image = var.control_plane_droplet_image == "" ? var.image_references[var.os].image_name : var.control_plane_droplet_image
+  worker_os                   = var.worker_os == "" ? var.image_references[var.os].worker_os : var.worker_os
+  ssh_username                = var.ssh_username == "" ? var.image_references[var.os].ssh_username : var.ssh_username
+  kubeapi_endpoint            = var.disable_kubeapi_loadbalancer ? digitalocean_droplet.control_plane.0.ipv4_address_private : digitalocean_loadbalancer.control_plane.0.ip
+  loadbalancer_count          = var.disable_kubeapi_loadbalancer ? 0 : 1
+
+  cluster_autoscaler_min_replicas = var.cluster_autoscaler_min_replicas > 0 ? var.cluster_autoscaler_min_replicas : var.initial_machinedeployment_replicas
+  cluster_autoscaler_max_replicas = var.cluster_autoscaler_max_replicas > 0 ? var.cluster_autoscaler_max_replicas : var.initial_machinedeployment_replicas
 }
 
 resource "digitalocean_tag" "kube_cluster_tag" {
@@ -33,7 +39,7 @@ resource "digitalocean_ssh_key" "deployer" {
 }
 
 resource "digitalocean_droplet" "control_plane" {
-  count = 3
+  count = var.control_plane_vm_count
   name  = "${var.cluster_name}-control-plane-${count.index + 1}"
 
   tags = [
@@ -41,7 +47,7 @@ resource "digitalocean_droplet" "control_plane" {
     "kubeone",
   ]
 
-  image              = var.control_plane_droplet_image
+  image              = local.control_plane_droplet_image
   region             = var.region
   size               = var.control_plane_size
   private_networking = true

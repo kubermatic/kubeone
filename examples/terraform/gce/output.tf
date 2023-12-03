@@ -37,6 +37,8 @@ output "kubeone_hosts" {
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file
       ssh_user             = var.ssh_username
+      ssh_hosts_keys       = var.ssh_hosts_keys
+      bastion_host_key     = var.bastion_host_key
     }
   }
 }
@@ -51,7 +53,9 @@ output "kubeone_workers" {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         annotations = {
-          "k8c.io/operating-system-profile" = var.initial_machinedeployment_operating_system_profile
+          "k8c.io/operating-system-profile"                           = var.initial_machinedeployment_operating_system_profile
+          "cluster.k8s.io/cluster-api-autoscaler-node-group-min-size" = tostring(local.cluster_autoscaler_min_replicas)
+          "cluster.k8s.io/cluster-api-autoscaler-node-group-max-size" = tostring(local.cluster_autoscaler_max_replicas)
         }
         sshPublicKeys   = [file(var.ssh_public_key_file)]
         operatingSystem = var.worker_os
@@ -74,7 +78,7 @@ output "kubeone_workers" {
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
-          # https://github.com/kubermatic/machine-controller/blob/master/examples/gce-machinedeployment.yaml
+          # https://github.com/kubermatic/machine-controller/blob/main/examples/gce-machinedeployment.yaml
           diskSize              = 50
           diskType              = "pd-ssd"
           machineType           = var.workers_type

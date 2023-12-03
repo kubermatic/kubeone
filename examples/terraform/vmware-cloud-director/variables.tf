@@ -14,9 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-# vCloud Director provider configuration
+# VMware Cloud Director provider configuration
 variable "vcd_org_name" {
-  description = "Organization name for the vCloud Director setup"
+  description = "Organization name for the VMware Cloud Director setup"
   type        = string
 }
 
@@ -28,6 +28,18 @@ variable "vcd_vdc_name" {
 variable "vcd_edge_gateway_name" {
   description = "Name of the Edge Gateway"
   type        = string
+}
+
+variable "allow_insecure" {
+  description = "allow insecure https connection to VMware Cloud Director API"
+  default     = false
+  type        = bool
+}
+
+variable "logging" {
+  description = "Enable logging of VMware Cloud Director API activities into go-vcloud-director.log"
+  default     = false
+  type        = bool
 }
 
 # Cluster specific configuration
@@ -83,6 +95,18 @@ variable "ssh_agent_socket" {
   type        = string
 }
 
+variable "ssh_hosts_keys" {
+  default     = null
+  description = "A list of SSH hosts public keys to verify"
+  type        = list(string)
+}
+
+variable "bastion_host_key" {
+  description = "Bastion SSH host public key"
+  default     = null
+  type        = string
+}
+
 variable "catalog_name" {
   description = "Name of catalog that contains vApp templates"
   type        = string
@@ -91,6 +115,12 @@ variable "catalog_name" {
 variable "template_name" {
   description = "Name of the vApp template to use"
   type        = string
+}
+
+variable "control_plane_vm_count" {
+  description = "number of control plane instances"
+  default     = 3
+  type        = number
 }
 
 variable "control_plane_memory" {
@@ -203,6 +233,18 @@ EOF
 variable "initial_machinedeployment_replicas" {
   default     = 2
   description = "number of replicas per MachineDeployment"
+  type        = number
+}
+
+variable "cluster_autoscaler_min_replicas" {
+  default     = 0
+  description = "minimum number of replicas per MachineDeployment (requires cluster-autoscaler)"
+  type        = number
+}
+
+variable "cluster_autoscaler_max_replicas" {
+  default     = 0
+  description = "maximum number of replicas per MachineDeployment (requires cluster-autoscaler)"
   type        = number
 }
 

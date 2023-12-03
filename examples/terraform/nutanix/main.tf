@@ -16,6 +16,15 @@ limitations under the License.
 
 provider "nutanix" {}
 
+locals {
+  cluster_autoscaler_min_replicas = var.cluster_autoscaler_min_replicas > 0 ? var.cluster_autoscaler_min_replicas : var.initial_machinedeployment_replicas
+  cluster_autoscaler_max_replicas = var.cluster_autoscaler_max_replicas > 0 ? var.cluster_autoscaler_max_replicas : var.initial_machinedeployment_replicas
+
+  rendered_lb_config = templatefile("./etc_gobetween.tpl", {
+    lb_targets = nutanix_virtual_machine.control_plane.*.nic_list.0.ip_endpoint_list.0.ip,
+  })
+}
+
 data "nutanix_cluster" "cluster" {
   name = var.nutanix_cluster_name
 }
@@ -44,7 +53,7 @@ resource "nutanix_category_value" "category_value" {
 }
 
 resource "nutanix_virtual_machine" "control_plane" {
-  count        = 3
+  count        = var.control_plane_vm_count
   name         = "${var.cluster_name}-cp-${count.index}"
   cluster_uuid = data.nutanix_cluster.cluster.metadata.uuid
   project_reference = {
@@ -126,12 +135,6 @@ resource "nutanix_virtual_machine" "lb" {
   provisioner "remote-exec" {
     script = "gobetween.sh"
   }
-}
-
-locals {
-  rendered_lb_config = templatefile("./etc_gobetween.tpl", {
-    lb_targets = nutanix_virtual_machine.control_plane.*.nic_list.0.ip_endpoint_list.0.ip,
-  })
 }
 
 resource "null_resource" "lb_config" {

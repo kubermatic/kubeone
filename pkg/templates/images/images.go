@@ -23,7 +23,7 @@ import (
 	"sort"
 
 	"github.com/Masterminds/semver/v3"
-	"github.com/distribution/distribution/v3/reference"
+	"github.com/distribution/reference"
 
 	"k8c.io/kubeone/pkg/fail"
 )
@@ -74,14 +74,7 @@ const (
 	// Addons
 	ClusterAutoscaler
 
-	// General CSI images (to be removed)
-	CSIAttacher
-	CSINodeDriverRegistar
-	CSIProvisioner
-	CSISnapshotter
-	CSIResizer
-	CSILivenessProbe
-
+	// AWS CCM
 	AwsCCM
 
 	// Azure CCM
@@ -150,10 +143,17 @@ const (
 	OpenstackCSISnapshotController
 	OpenstackCSISnapshotWebhook
 
+	// Hetzner CSI
+	HetznerCSI
+	HetznerCSIAttacher
+	HetznerCSIResizer
+	HetznerCSIProvisioner
+	HetznerCSILivenessProbe
+	HetznerCSINodeDriverRegistar
+
 	// CCMs and CSI plugins
 	DigitaloceanCCM
 	HetznerCCM
-	HetznerCSI
 	OpenstackCCM
 	EquinixMetalCCM
 	VsphereCCM
@@ -170,6 +170,9 @@ const (
 
 	// VMwareCloud Director CSI
 	VMwareCloudDirectorCSI
+	VMwareCloudDirectorCSIAttacher
+	VMwareCloudDirectorCSIProvisioner
+	VMwareCloudDirectorCSINodeDriverRegistrar
 
 	// vSphere CSI
 	VsphereCSIDriver
@@ -211,72 +214,67 @@ func FindResource(name string) (Resource, error) {
 
 func baseResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
-		CalicoCNI:              {"*": "quay.io/calico/cni:v3.23.3"},
-		CalicoController:       {"*": "quay.io/calico/kube-controllers:v3.23.3"},
-		CalicoNode:             {"*": "quay.io/calico/node:v3.23.3"},
-		DNSNodeCache:           {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.21.1"},
-		Flannel:                {"*": "quay.io/coreos/flannel:v0.15.1"},
-		MachineController:      {"*": "quay.io/kubermatic/machine-controller:v1.54.0"},
-		MetricsServer:          {"*": "k8s.gcr.io/metrics-server/metrics-server:v0.6.1"},
-		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v1.0.0"},
+		CalicoCNI:              {"*": "quay.io/calico/cni:v3.26.3"},
+		CalicoController:       {"*": "quay.io/calico/kube-controllers:v3.26.3"},
+		CalicoNode:             {"*": "quay.io/calico/node:v3.26.3"},
+		DNSNodeCache:           {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.22.23"},
+		Flannel:                {"*": "docker.io/flannel/flannel:v0.21.3"},
+		MachineController:      {"*": "quay.io/kubermatic/machine-controller:v1.58.0"},
+		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.6.4"},
+		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v1.4.0"},
 	}
 }
 
 func optionalResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
-		// General CSI images (could be used for all providers)
-		CSINodeDriverRegistar: {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.3.0"},
-		CSILivenessProbe:      {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.4.0"},
-		CSIAttacher:           {"*": "k8s.gcr.io/sig-storage/csi-attacher:v3.3.0"},
-		CSIProvisioner:        {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v2.2.2"},
-		CSIResizer:            {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.3.0"},
-		CSISnapshotter:        {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v4.2.0"},
-
 		AwsCCM: {
-			"1.22.x":    "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.22.4",
-			"1.23.x":    "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.23.2",
-			">= 1.24.0": "k8s.gcr.io/provider-aws/cloud-controller-manager:v1.24.1",
-		},
-
-		// Azure CCM
-		AzureCCM: {
-			"1.22.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.1.18",
-			"1.23.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.23.15",
-			">= 1.24.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.24.3",
-		},
-		AzureCNM: {
-			"1.22.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.1.18",
-			"1.23.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.23.15",
-			">= 1.24.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.24.3",
+			"1.24.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.24.4",
+			"1.25.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.25.3",
+			"1.26.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.26.1",
+			">= 1.27.0": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.27.1",
 		},
 
 		// AWS EBS CSI driver
-		AwsEbsCSI:                    {"*": "public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.9.0"},
-		AwsEbsCSIAttacher:            {"*": "k8s.gcr.io/sig-storage/csi-attacher:v3.4.0"},
-		AwsEbsCSILivenessProbe:       {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.5.0"},
-		AwsEbsCSINodeDriverRegistrar: {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.1"},
-		AwsEbsCSIProvisioner:         {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.1.0"},
-		AwsEbsCSIResizer:             {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.4.0"},
-		AwsEbsCSISnapshotter:         {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v6.0.1"},
-		AwsEbsCSISnapshotController:  {"*": "k8s.gcr.io/sig-storage/snapshot-controller:v6.0.1"},
+		AwsEbsCSI:                    {"*": "public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.22.0"},
+		AwsEbsCSIAttacher:            {"*": "public.ecr.aws/eks-distro/kubernetes-csi/external-attacher:v4.3.0-eks-1-27-9"},
+		AwsEbsCSILivenessProbe:       {"*": "public.ecr.aws/eks-distro/kubernetes-csi/livenessprobe:v2.10.0-eks-1-27-9"},
+		AwsEbsCSINodeDriverRegistrar: {"*": "public.ecr.aws/eks-distro/kubernetes-csi/node-driver-registrar:v2.8.0-eks-1-27-9"},
+		AwsEbsCSIProvisioner:         {"*": "public.ecr.aws/eks-distro/kubernetes-csi/external-provisioner:v3.5.0-eks-1-27-9"},
+		AwsEbsCSIResizer:             {"*": "public.ecr.aws/eks-distro/kubernetes-csi/external-resizer:v1.8.0-eks-1-27-9"},
+		AwsEbsCSISnapshotController:  {"*": "registry.k8s.io/sig-storage/snapshot-controller:v6.2.1"},
+		AwsEbsCSISnapshotter:         {"*": "public.ecr.aws/eks-distro/kubernetes-csi/external-snapshotter/csi-snapshotter:v6.2.2-eks-1-27-9"},
+
+		// Azure CCM
+		AzureCCM: {
+			"1.24.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.24.22",
+			"1.25.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.25.15",
+			"1.26.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.26.12",
+			">= 1.27.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.27.6",
+		},
+		AzureCNM: {
+			"1.24.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.24.22",
+			"1.25.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.25.15",
+			"1.26.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.26.12",
+			">= 1.27.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.27.6",
+		},
 
 		// AzureFile CSI driver
-		AzureFileCSI:                      {"*": "mcr.microsoft.com/oss/kubernetes-csi/azurefile-csi:v1.20.0"},
-		AzureFileCSIAttacher:              {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-attacher:v3.5.0"},
-		AzureFileCSILivenessProbe:         {"*": "mcr.microsoft.com/oss/kubernetes-csi/livenessprobe:v2.7.0"},
-		AzureFileCSINodeDriverRegistar:    {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-node-driver-registrar:v2.5.1"},
-		AzureFileCSIProvisioner:           {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-provisioner:v3.2.0"},
-		AzureFileCSIResizer:               {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-resizer:v1.5.0"},
+		AzureFileCSI:                      {"*": "mcr.microsoft.com/oss/kubernetes-csi/azurefile-csi:v1.27.1"},
+		AzureFileCSIAttacher:              {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-attacher:v4.0.0"},
+		AzureFileCSILivenessProbe:         {"*": "mcr.microsoft.com/oss/kubernetes-csi/livenessprobe:v2.8.0"},
+		AzureFileCSINodeDriverRegistar:    {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-node-driver-registrar:v2.6.2"},
+		AzureFileCSIProvisioner:           {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-provisioner:v3.3.0"},
+		AzureFileCSIResizer:               {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-resizer:v1.6.0"},
 		AzureFileCSISnapshotter:           {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-snapshotter:v5.0.1"},
 		AzureFileCSISnapshotterController: {"*": "mcr.microsoft.com/oss/kubernetes-csi/snapshot-controller:v5.0.1"},
 
 		// AzureDisk CSI driver
-		AzureDiskCSI:                      {"*": "mcr.microsoft.com/oss/kubernetes-csi/azuredisk-csi:v1.21.0"},
-		AzureDiskCSIAttacher:              {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-attacher:v3.5.0"},
-		AzureDiskCSILivenessProbe:         {"*": "mcr.microsoft.com/oss/kubernetes-csi/livenessprobe:v2.7.0"},
-		AzureDiskCSINodeDriverRegistar:    {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-node-driver-registrar:v2.5.1"},
-		AzureDiskCSIProvisioner:           {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-provisioner:v3.2.0"},
-		AzureDiskCSIResizer:               {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-resizer:v1.5.0"},
+		AzureDiskCSI:                      {"*": "mcr.microsoft.com/oss/kubernetes-csi/azuredisk-csi:v1.27.1"},
+		AzureDiskCSIAttacher:              {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-attacher:v4.0.0"},
+		AzureDiskCSILivenessProbe:         {"*": "mcr.microsoft.com/oss/kubernetes-csi/livenessprobe:v2.8.0"},
+		AzureDiskCSINodeDriverRegistar:    {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-node-driver-registrar:v2.6.2"},
+		AzureDiskCSIProvisioner:           {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-provisioner:v3.3.0"},
+		AzureDiskCSIResizer:               {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-resizer:v1.6.0"},
 		AzureDiskCSISnapshotter:           {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-snapshotter:v5.0.1"},
 		AzureDiskCSISnapshotterController: {"*": "mcr.microsoft.com/oss/kubernetes-csi/snapshot-controller:v5.0.1"},
 
@@ -284,125 +282,162 @@ func optionalResources() map[Resource]map[string]string {
 		NutanixCCM: {"*": "ghcr.io/nutanix-cloud-native/cloud-provider-nutanix/controller:v0.2.0"},
 
 		// DigitalOcean CCM
-		DigitaloceanCCM: {"*": "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.37"},
+		DigitaloceanCCM: {"*": "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.43"},
 
-		DigitalOceanCSI:                          {"*": "docker.io/digitalocean/do-csi-plugin:v4.2.0"},
+		DigitalOceanCSI:                          {"*": "docker.io/digitalocean/do-csi-plugin:v4.6.1"},
 		DigitalOceanCSIAlpine:                    {"*": "docker.io/alpine:3"},
-		DigitalOceanCSIAttacher:                  {"*": "k8s.gcr.io/sig-storage/csi-attacher:v3.5.0"},
-		DigitalOceanCSINodeDriverRegistar:        {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.1"},
-		DigitalOceanCSIProvisioner:               {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.2.1"},
-		DigitalOceanCSIResizer:                   {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.5.0"},
-		DigitalOceanCSISnapshotController:        {"*": "k8s.gcr.io/sig-storage/snapshot-controller:v6.0.1"},
-		DigitalOceanCSISnapshotValidationWebhook: {"*": "k8s.gcr.io/sig-storage/snapshot-validation-webhook:v6.0.1"},
-		DigitalOceanCSISnapshotter:               {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v6.0.1"},
+		DigitalOceanCSIAttacher:                  {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.3.0"},
+		DigitalOceanCSINodeDriverRegistar:        {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.8.0"},
+		DigitalOceanCSIProvisioner:               {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.5.0"},
+		DigitalOceanCSIResizer:                   {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.8.0"},
+		DigitalOceanCSISnapshotController:        {"*": "registry.k8s.io/sig-storage/snapshot-controller:v6.2.1"},
+		DigitalOceanCSISnapshotValidationWebhook: {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v6.2.1"},
+		DigitalOceanCSISnapshotter:               {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v6.2.1"},
 
 		// Hetzner CCM
-		HetznerCCM: {"*": "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.12.1"},
+		HetznerCCM: {"*": "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.17.1"},
 
 		// Hetzner CSI
-		HetznerCSI: {"*": "docker.io/hetznercloud/hcloud-csi-driver:1.6.0"},
+		HetznerCSI:                   {"*": "docker.io/hetznercloud/hcloud-csi-driver:v2.3.2"},
+		HetznerCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.1.0"},
+		HetznerCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.7.0"},
+		HetznerCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.4.0"},
+		HetznerCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.9.0"},
+		HetznerCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.7.0"},
 
 		// OpenStack CCM
 		OpenstackCCM: {
-			"1.22.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.22.0",
-			"1.23.x":    "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.23.4",
-			">= 1.24.0": "docker.io/k8scloudprovider/openstack-cloud-controller-manager:v1.24.2",
+			"1.24.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.24.6",
+			"1.25.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.25.6",
+			"1.26.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.26.3",
+			">= 1.27.0": "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.27.1",
 		},
 
 		// OpenStack CSI
 		OpenstackCSI: {
-			"1.22.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.22.0",
-			"1.23.x":    "docker.io/k8scloudprovider/cinder-csi-plugin:v1.23.4",
-			">= 1.24.0": "docker.io/k8scloudprovider/cinder-csi-plugin:v1.24.2",
+			"1.24.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.24.6",
+			"1.25.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.25.6",
+			"1.26.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.26.3",
+			">= 1.27.0": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.27.1",
 		},
-		OpenstackCSINodeDriverRegistar: {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.0"},
-		OpenstackCSILivenessProbe:      {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.6.0"},
-		OpenstackCSIAttacher:           {"*": "k8s.gcr.io/sig-storage/csi-attacher:v3.4.0"},
-		OpenstackCSIProvisioner:        {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.1.0"},
-		OpenstackCSIResizer:            {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.4.0"},
-		OpenstackCSISnapshotter:        {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v5.0.1"},
-		OpenstackCSISnapshotController: {"*": "k8s.gcr.io/sig-storage/snapshot-controller:v5.0.1"},
-		OpenstackCSISnapshotWebhook:    {"*": "k8s.gcr.io/sig-storage/snapshot-validation-webhook:v5.0.1"},
+		OpenstackCSINodeDriverRegistar: {
+			"1.24.x":    "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.5.1",
+			"1.25.x":    "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.5.1",
+			"1.26.x":    "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.6.2",
+			">= 1.27.0": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.6.2",
+		},
+		OpenstackCSILivenessProbe: {
+			"1.24.x":    "k8s.gcr.io/sig-storage/livenessprobe:v2.6.0",
+			"1.25.x":    "registry.k8s.io/sig-storage/livenessprobe:v2.7.0",
+			"1.26.x":    "registry.k8s.io/sig-storage/livenessprobe:v2.8.0",
+			">= 1.27.0": "registry.k8s.io/sig-storage/livenessprobe:v2.9.0",
+		},
+		OpenstackCSIAttacher: {
+			"1.24.x":    "registry.k8s.io/sig-storage/csi-attacher:v3.4.0",
+			"1.25.x":    "registry.k8s.io/sig-storage/csi-attacher:v3.4.0",
+			"1.26.x":    "registry.k8s.io/sig-storage/csi-attacher:v4.0.0",
+			">= 1.27.0": "registry.k8s.io/sig-storage/csi-attacher:v4.2.0",
+		},
+		OpenstackCSIProvisioner: {
+			"1.24.x":    "registry.k8s.io/sig-storage/csi-provisioner:v3.1.0",
+			"1.25.x":    "registry.k8s.io/sig-storage/csi-provisioner:v3.1.0",
+			"1.26.x":    "registry.k8s.io/sig-storage/csi-provisioner:v3.4.0",
+			">= 1.27.0": "registry.k8s.io/sig-storage/csi-provisioner:v3.4.1",
+		},
+		OpenstackCSIResizer: {
+			"1.24.x":    "registry.k8s.io/sig-storage/csi-resizer:v1.4.0",
+			"1.25.x":    "registry.k8s.io/sig-storage/csi-resizer:v1.4.0",
+			"1.26.x":    "registry.k8s.io/sig-storage/csi-resizer:v1.6.0",
+			">= 1.27.0": "registry.k8s.io/sig-storage/csi-resizer:v1.7.0",
+		},
+		OpenstackCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v6.2.2"},
+		OpenstackCSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v6.2.2"},
+		OpenstackCSISnapshotWebhook:    {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v6.2.2"},
 
 		// Equinix Metal CCM
-		EquinixMetalCCM: {"*": "docker.io/equinix/cloud-provider-equinix-metal:v3.4.3"},
+		EquinixMetalCCM: {"*": "ghcr.io/equinix/cloud-provider-equinix-metal:v3.6.2"},
 
 		// vSphere CCM
 		VsphereCCM: {
-			"1.22.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.22.6",
-			"1.23.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.23.1",
-			">= 1.24.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.24.0",
+			"1.24.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.24.4",
+			"1.25.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.25.3",
+			"1.26.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.26.2",
+			">= 1.27.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.27.0",
 		},
 
 		// VMware Cloud Director CSI
-		VMwareCloudDirectorCSI: {"*": "projects.registry.vmware.com/vmware-cloud-director/cloud-director-named-disk-csi-driver:1.2.0.latest"},
+		VMwareCloudDirectorCSI:                    {"*": "projects.registry.vmware.com/vmware-cloud-director/cloud-director-named-disk-csi-driver:1.4.0"},
+		VMwareCloudDirectorCSIAttacher:            {"*": "registry.k8s.io/sig-storage/csi-attacher:v3.2.1"},
+		VMwareCloudDirectorCSIProvisioner:         {"*": "registry.k8s.io/sig-storage/csi-provisioner:v2.2.2"},
+		VMwareCloudDirectorCSINodeDriverRegistrar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.2.0"},
 
 		// vSphere CSI
-		VsphereCSIDriver:                    {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v2.6.0"},
-		VsphereCSISyncer:                    {"*": "gcr.io/cloud-provider-vsphere/csi/release/syncer:v2.6.0"},
-		VsphereCSIAttacher:                  {"*": "k8s.gcr.io/sig-storage/csi-attacher:v3.4.0"},
-		VsphereCSILivenessProbe:             {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.7.0"},
-		VsphereCSINodeDriverRegistar:        {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.1"},
-		VsphereCSIProvisioner:               {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.2.1"},
-		VsphereCSIResizer:                   {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.4.0"},
-		VsphereCSISnapshotter:               {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v5.0.1"},
-		VsphereCSISnapshotController:        {"*": "k8s.gcr.io/sig-storage/snapshot-controller:v5.0.1"},
-		VsphereCSISnapshotValidationWebhook: {"*": "k8s.gcr.io/sig-storage/snapshot-validation-webhook:v5.0.1"},
+		VsphereCSIDriver:                    {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v3.0.2"},
+		VsphereCSISyncer:                    {"*": "gcr.io/cloud-provider-vsphere/csi/release/syncer:v3.0.2"},
+		VsphereCSIAttacher:                  {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.2.0"},
+		VsphereCSILivenessProbe:             {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.9.0"},
+		VsphereCSINodeDriverRegistar:        {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.7.0"},
+		VsphereCSIProvisioner:               {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.4.0"},
+		VsphereCSIResizer:                   {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.7.0"},
+		VsphereCSISnapshotter:               {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v6.2.1"},
+		VsphereCSISnapshotController:        {"*": "registry.k8s.io/sig-storage/snapshot-controller:v6.2.1"},
+		VsphereCSISnapshotValidationWebhook: {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v6.2.1"},
 
 		// Nutanix CSI
-		NutanixCSI:                          {"*": "quay.io/karbon/ntnx-csi:v2.5.1"},
-		NutanixCSILivenessProbe:             {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.7.0"},
-		NutanixCSIProvisioner:               {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.2.0"},
-		NutanixCSIRegistrar:                 {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.1"},
-		NutanixCSIResizer:                   {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.5.0"},
-		NutanixCSISnapshotter:               {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v6.0.1"},
-		NutanixCSISnapshotController:        {"*": "k8s.gcr.io/sig-storage/snapshot-controller:v6.0.1"},
-		NutanixCSISnapshotValidationWebhook: {"*": "k8s.gcr.io/sig-storage/snapshot-validation-webhook:v6.0.1"},
+		NutanixCSI:                          {"*": "quay.io/karbon/ntnx-csi:v2.6.3"},
+		NutanixCSILivenessProbe:             {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.10.0"},
+		NutanixCSIProvisioner:               {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.5.0"},
+		NutanixCSIRegistrar:                 {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.8.0"},
+		NutanixCSIResizer:                   {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.8.0"},
+		NutanixCSISnapshotter:               {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v3.0.3"},
+		NutanixCSISnapshotController:        {"*": "registry.k8s.io/sig-storage/snapshot-controller:v6.2.1"},
+		NutanixCSISnapshotValidationWebhook: {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v6.2.1"},
 
 		// GCP Compute Persistent Disk CSI
-		GCPComputeCSIDriver:                    {"*": "k8s.gcr.io/cloud-provider-gcp/gcp-compute-persistent-disk-csi-driver:v1.7.2"},
-		GCPComputeCSIProvisioner:               {"*": "k8s.gcr.io/sig-storage/csi-provisioner:v3.1.0"},
-		GCPComputeCSIAttacher:                  {"*": "k8s.gcr.io/sig-storage/csi-attacher:v3.4.0"},
-		GCPComputeCSIResizer:                   {"*": "k8s.gcr.io/sig-storage/csi-resizer:v1.4.0"},
-		GCPComputeCSISnapshotter:               {"*": "k8s.gcr.io/sig-storage/csi-snapshotter:v4.0.1"},
-		GCPComputeCSISnapshotController:        {"*": "k8s.gcr.io/sig-storage/snapshot-controller:v4.0.1"},
-		GCPComputeCSISnapshotValidationWebhook: {"*": "k8s.gcr.io/sig-storage/snapshot-validation-webhook:v4.0.1"},
-		GCPComputeCSINodeDriverRegistrar:       {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.0"},
+		GCPComputeCSIDriver:                    {"*": "registry.k8s.io/cloud-provider-gcp/gcp-compute-persistent-disk-csi-driver:v1.10.1"},
+		GCPComputeCSIProvisioner:               {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.4.0"},
+		GCPComputeCSIAttacher:                  {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.2.0"},
+		GCPComputeCSIResizer:                   {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.7.0"},
+		GCPComputeCSISnapshotter:               {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v6.1.0"},
+		GCPComputeCSISnapshotController:        {"*": "registry.k8s.io/sig-storage/snapshot-controller:v6.1.0"},
+		GCPComputeCSISnapshotValidationWebhook: {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v6.1.0"},
+		GCPComputeCSINodeDriverRegistrar:       {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.7.0"},
 
 		// WeaveNet CNI plugin
 		WeaveNetCNIKube: {"*": "docker.io/weaveworks/weave-kube:2.8.1"},
 		WeaveNetCNINPC:  {"*": "docker.io/weaveworks/weave-npc:2.8.1"},
 
 		// Cilium
-		Cilium:         {"*": "quay.io/cilium/cilium:v1.12.0@sha256:079baa4fa1b9fe638f96084f4e0297c84dd4fb215d29d2321dcbe54273f63ade"},
-		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.12.0@sha256:bb2a42eda766e5d4a87ee8a5433f089db81b72dd04acf6b59fcbb445a95f9410"},
+		Cilium:         {"*": "quay.io/cilium/cilium:v1.14.3@sha256:e5ca22526e01469f8d10c14e2339a82a13ad70d9a359b879024715540eef4ace"},
+		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.14.3@sha256:c9613277b72103ed36e9c0d16b9a17cafd507461d59340e432e3e9c23468b5e2"},
 
 		// Calico VXLAN
-		CalicoVXLANCNI:        {"*": "quay.io/calico/cni:v3.23.3"},
-		CalicoVXLANController: {"*": "quay.io/calico/kube-controllers:v3.23.3"},
-		CalicoVXLANNode:       {"*": "quay.io/calico/node:v3.23.3"},
+		CalicoVXLANCNI:        {"*": "quay.io/calico/cni:v3.26.3"},
+		CalicoVXLANController: {"*": "quay.io/calico/kube-controllers:v3.26.3"},
+		CalicoVXLANNode:       {"*": "quay.io/calico/node:v3.26.3"},
 
 		// Hubble
-		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.12.0@sha256:ca8033ea8a3112d838f958862fa76c8d895e3c8d0f5590de849b91745af5ac4d"},
-		HubbleUI:        {"*": "quay.io/cilium/hubble-ui:v0.9.0@sha256:0ef04e9a29212925da6bdfd0ba5b581765e41a01f1cc30563cef9b30b457fea0"},
-		HubbleUIBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.9.0@sha256:000df6b76719f607a9edefb9af94dfd1811a6f1b6a8a9c537cba90bf12df474b"},
-		CiliumCertGen:   {"*": "quay.io/cilium/certgen:v0.1.8@sha256:4a456552a5f192992a6edcec2febb1c54870d665173a33dc7d876129b199ddbd"},
+		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.14.3@sha256:3f5c425faca4f8a38e29d4f86db2aadd8f33c9f05debd78a2bb2a24dd9e565d8"},
+		HubbleUI:        {"*": "quay.io/cilium/hubble-ui:v0.12.1@sha256:9e5f81ee747866480ea1ac4630eb6975ff9227f9782b7c93919c081c33f38267"},
+		HubbleUIBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.12.1@sha256:1f86f3400827a0451e6332262467f894eeb7caf0eb8779bd951e2caa9d027cbe"},
+		CiliumCertGen:   {"*": "quay.io/cilium/certgen:v0.1.9@sha256:89a0847753686444daabde9474b48340993bd19c7bea66a46e45b2974b82041f"},
 
 		// Cluster-autoscaler addon
 		ClusterAutoscaler: {
-			"1.22.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.22.3",
-			"1.23.x":    "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.23.1",
-			">= 1.24.0": "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.24.0",
+			"1.25.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.25.3",
+			"1.26.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.26.4",
+			"1.27.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.27.3",
+			">= 1.28.0": "registry.k8s.io/autoscaling/cluster-autoscaler:v1.28.0",
 		},
 
 		// CSI Vault Secret Provider
 		CSIVaultSecretProvider: {"*": "docker.io/hashicorp/vault-csi-provider:1.1.0"},
 
 		// CSI Secrets Driver
-		SecretStoreCSIDriverNodeRegistrar: {"*": "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.1"},
-		SecretStoreCSIDriver:              {"*": "k8s.gcr.io/csi-secrets-store/driver:v1.2.1"},
-		SecretStoreCSIDriverLivenessProbe: {"*": "k8s.gcr.io/sig-storage/livenessprobe:v2.7.0"},
-		SecretStoreCSIDriverCRDs:          {"*": "k8s.gcr.io/csi-secrets-store/driver-crds:v1.2.1"},
+		SecretStoreCSIDriverNodeRegistrar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.5.1"},
+		SecretStoreCSIDriver:              {"*": "registry.k8s.io/csi-secrets-store/driver:v1.2.1"},
+		SecretStoreCSIDriverLivenessProbe: {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.7.0"},
+		SecretStoreCSIDriverCRDs:          {"*": "registry.k8s.io/csi-secrets-store/driver-crds:v1.2.1"},
 	}
 }
 

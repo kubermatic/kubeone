@@ -43,12 +43,15 @@ spec:
           command:
             - /usr/local/bin/machine-controller
           args:
-            - -logtostderr
-            - -v=4
             - -health-probe-address=0.0.0.0:8085
             - -metrics-address=0.0.0.0:8080
+            {{ if .Config.Features.NodeLocalDNS.Deploy -}}
             - -cluster-dns={{ .Resources.NodeLocalDNSVirtualIP }}
+            {{ end -}}
             - -node-csr-approver
+            {{ if .Config.CloudProvider.External -}}
+            - -node-external-cloud-provider
+            {{ end }}
             - -join-cluster-timeout=15m
             - -node-container-runtime={{ .Config.ContainerRuntime }}
             {{ range .Config.ContainerRuntime.MachineControllerFlags -}}
@@ -82,6 +85,9 @@ spec:
 {{ end }}
           ports:
             - containerPort: 8085
+            - containerPort: 8080
+              name: metrics
+              protocol: TCP
           livenessProbe:
             httpGet:
               path: /readyz

@@ -1,11 +1,11 @@
-# Source: https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v2.6.0/manifests/vanilla/namespace.yaml
+# Source: https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v2.7.0/manifests/vanilla/namespace.yaml
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: vmware-system-csi
 
-# Source: https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v2.6.0/manifests/vanilla/vsphere-csi-driver.yaml
+# Source: https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v2.7.0/manifests/vanilla/vsphere-csi-driver.yaml
 ---
 apiVersion: v1
 kind: Secret
@@ -36,8 +36,11 @@ metadata:
   name: vsphere-csi-controller-role
 rules:
   - apiGroups: [""]
-    resources: ["nodes", "pods", "configmaps"]
+    resources: ["nodes", "pods"]
     verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch", "create"]
   - apiGroups: [""]
     resources: ["persistentvolumeclaims"]
     verbs: ["get", "list", "watch", "update"]
@@ -65,6 +68,9 @@ rules:
   - apiGroups: ["cns.vmware.com"]
     resources: ["cnsvspherevolumemigrations"]
     verbs: ["create", "get", "list", "watch", "update", "delete"]
+  - apiGroups: ["cns.vmware.com"]
+    resources: ["cnsvolumeinfoes"]
+    verbs: ["create", "get", "list", "watch", "delete"]
   - apiGroups: ["apiextensions.k8s.io"]
     resources: ["customresourcedefinitions"]
     verbs: ["get", "create", "update"]
@@ -165,16 +171,17 @@ data:
   "online-volume-extend": "true"
   "trigger-csi-fullsync": "false"
   "async-query-volume": "true"
-  "improved-csi-idempotency": "false"
-  "improved-volume-topology": "false  "
   "block-volume-snapshot": "true"
   "csi-windows-support": "false"
   "use-csinode-id": "true"
-  "list-volumes": "false"
+  "list-volumes": "true"
   "pv-to-backingdiskobjectid-mapping": "false"
-  "cnsmgr-suspend-create-volume": "false"
+  "cnsmgr-suspend-create-volume": "true"
   "topology-preferential-datastores": "true"
-  "max-pvscsi-targets-per-vm": "false"
+  "max-pvscsi-targets-per-vm": "true"
+  "multi-vcenter-csi-topology": "true"
+  "csi-internal-generated-cluster-id": "true"
+  "listview-tasks": "false"
 kind: ConfigMap
 metadata:
   name: internal-feature-states.csi.vsphere.vmware.com
@@ -226,6 +233,7 @@ spec:
         "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
         "csiConfig-hash": "{{ .Config.CloudProvider.CSIConfig | sha256sum }}"
     spec:
+      priorityClassName: system-cluster-critical # Guarantees scheduling for critical system pods
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -240,10 +248,10 @@ spec:
       nodeSelector:
         node-role.kubernetes.io/control-plane: ""
       tolerations:
-        - key: node-role.kubernetes.io/control-plane
+        - key: node-role.kubernetes.io/master
           operator: Exists
           effect: NoSchedule
-        - key: node-role.kubernetes.io/master
+        - key: node-role.kubernetes.io/control-plane
           operator: Exists
           effect: NoSchedule
         # uncomment below toleration if you need an aggressive pod eviction in case when
@@ -265,6 +273,9 @@ spec:
             - "--timeout=300s"
             - "--csi-address=$(ADDRESS)"
             - "--leader-election"
+            - "--leader-election-lease-duration=120s"
+            - "--leader-election-renew-deadline=60s"
+            - "--leader-election-retry-period=30s"
             - "--kube-api-qps=100"
             - "--kube-api-burst=100"
           env:
@@ -283,6 +294,9 @@ spec:
             - "--kube-api-qps=100"
             - "--kube-api-burst=100"
             - "--leader-election"
+            - "--leader-election-lease-duration=120s"
+            - "--leader-election-renew-deadline=60s"
+            - "--leader-election-retry-period=30s"
           env:
             - name: ADDRESS
               value: /csi/csi.sock
@@ -339,9 +353,9 @@ spec:
             httpGet:
               path: /healthz
               port: healthz
-            initialDelaySeconds: 10
-            timeoutSeconds: 3
-            periodSeconds: 5
+            initialDelaySeconds: 30
+            timeoutSeconds: 10
+            periodSeconds: 180
             failureThreshold: 3
         - name: liveness-probe
           image: {{ .InternalImages.Get "VsphereCSILivenessProbe" }}
@@ -355,6 +369,9 @@ spec:
           image: {{ .InternalImages.Get "VsphereCSISyncer" }}
           args:
             - "--leader-election"
+            - "--leader-election-lease-duration=120s"
+            - "--leader-election-renew-deadline=60s"
+            - "--leader-election-retry-period=30s"
             - "--fss-name=internal-feature-states.csi.vsphere.vmware.com"
             - "--fss-namespace=$(CSI_NAMESPACE)"
           imagePullPolicy: "Always"
@@ -373,6 +390,8 @@ spec:
               value: "100"
             - name: INCLUSTER_CLIENT_BURST
               value: "100"
+            - name: GODEBUG
+              value: x509sha1=1
             - name: CSI_NAMESPACE
               valueFrom:
                 fieldRef:
@@ -396,6 +415,9 @@ spec:
             - "--kube-api-qps=100"
             - "--kube-api-burst=100"
             - "--leader-election"
+            - "--leader-election-lease-duration=120s"
+            - "--leader-election-renew-deadline=60s"
+            - "--leader-election-retry-period=30s"
             - "--default-fstype=ext4"
             # needed only for topology aware setup
             #- "--feature-gates=Topology=true"
@@ -415,6 +437,9 @@ spec:
             - "--timeout=300s"
             - "--csi-address=$(ADDRESS)"
             - "--leader-election"
+            - "--leader-election-lease-duration=120s"
+            - "--leader-election-renew-deadline=60s"
+            - "--leader-election-retry-period=30s"
           env:
             - name: ADDRESS
               value: /csi/csi.sock
@@ -453,6 +478,7 @@ spec:
         "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
         "csiConfig-hash": "{{ .Config.CloudProvider.CSIConfig | sha256sum }}"
     spec:
+      priorityClassName: system-node-critical
       nodeSelector:
         kubernetes.io/os: linux
       serviceAccountName: vsphere-csi-node
@@ -505,6 +531,8 @@ spec:
               value: "true"
             - name: LOGGER_LEVEL
               value: "PRODUCTION" # Options: DEVELOPMENT, PRODUCTION
+            - name: GODEBUG
+              value: x509sha1=1
             - name: CSI_NAMESPACE
               valueFrom:
                 fieldRef:

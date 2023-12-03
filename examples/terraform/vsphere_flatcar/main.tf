@@ -24,6 +24,9 @@ provider "vsphere" {
 locals {
   resource_pool_id = var.resource_pool_name == "" ? data.vsphere_compute_cluster.cluster.resource_pool_id : data.vsphere_resource_pool.pool[0].id
   hostnames        = formatlist("${var.cluster_name}-cp-%d", [1, 2, 3])
+
+  cluster_autoscaler_min_replicas = var.cluster_autoscaler_min_replicas > 0 ? var.cluster_autoscaler_min_replicas : var.initial_machinedeployment_replicas
+  cluster_autoscaler_max_replicas = var.cluster_autoscaler_max_replicas > 0 ? var.cluster_autoscaler_max_replicas : var.initial_machinedeployment_replicas
 }
 
 data "vsphere_datacenter" "dc" {
@@ -100,6 +103,18 @@ resource "vsphere_virtual_machine" "control_plane" {
         ignition = {
           version = "2.2.0"
         }
+        systemd = {
+          units = [
+            {
+              name    = "docker.socket"
+              enabled = false
+            },
+            {
+              name    = "docker.service"
+              enabled = true
+            }
+          ]
+        },
         storage = {
           files = [
             {
@@ -132,7 +147,7 @@ An anti-affinity rule places a control_plane machines across different hosts wit
 
 resource "vsphere_compute_cluster_vm_anti_affinity_rule" "vm_anti_affinity_rule" {
   count               = var.is_vsphere_enterprise_plus_license ? 1 : 0
-  name                = "vm-anti-affinity-rule"
+  name                = "${var.cluster_name}-cp-vm-anti-affinity"
   compute_cluster_id  = data.vsphere_compute_cluster.cluster.id
   virtual_machine_ids = vsphere_virtual_machine.control_plane.*.id
 }

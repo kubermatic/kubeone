@@ -200,7 +200,7 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 					External:  false,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -217,7 +217,7 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 					External:  true,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -234,7 +234,7 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 					External: false,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -251,7 +251,7 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 					External: true,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -268,7 +268,7 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 					External: false,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -285,7 +285,7 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 					External: true,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -302,7 +302,7 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 					External:  false,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -321,7 +321,7 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 					External:  true,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -340,7 +340,7 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 					External:  true,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -359,7 +359,7 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 					External:  true,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -407,7 +407,7 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 					External:  false,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -424,7 +424,7 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 					External:  true,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -441,7 +441,7 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 					External: false,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -458,7 +458,7 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 					External: true,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -475,7 +475,7 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 					External: false,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -492,7 +492,7 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 					External: true,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -509,7 +509,7 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 					External:  true,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -528,7 +528,7 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 					External:  true,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -547,7 +547,7 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 					External:  true,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{
@@ -566,7 +566,7 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 					External:  true,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "v1.22.0",
+					Kubernetes: "v1.25.4",
 				},
 			},
 			liveCluster: &Cluster{

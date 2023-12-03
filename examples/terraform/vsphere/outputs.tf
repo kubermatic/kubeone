@@ -28,11 +28,13 @@ output "kubeone_hosts" {
 
   value = {
     control_plane = {
-      cluster_name         = var.cluster_name
-      cloud_provider       = "vsphere"
-      private_address      = []
-      hostnames            = local.hostnames
-      public_address       = vsphere_virtual_machine.control_plane.*.default_ip_address
+      cluster_name    = var.cluster_name
+      cloud_provider  = "vsphere"
+      private_address = []
+      hostnames       = local.hostnames
+      public_address  = vsphere_virtual_machine.control_plane.*.guest_ip_addresses.0
+      # KubeOne expects an array of array for IPv6 addresses since a single host/node can have multiple IPv6 addresses.
+      ipv6_addresses       = var.ip_family == "IPv4+IPv6" ? [for ip in vsphere_virtual_machine.control_plane.*.guest_ip_addresses.1 : [ip]] : null
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file
@@ -40,6 +42,8 @@ output "kubeone_hosts" {
       bastion              = var.bastion_host
       bastion_port         = var.bastion_port
       bastion_user         = var.bastion_username
+      ssh_hosts_keys       = var.ssh_hosts_keys
+      bastion_host_key     = var.bastion_host_key
     }
   }
 }
@@ -54,7 +58,9 @@ output "kubeone_workers" {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         annotations = {
-          "k8c.io/operating-system-profile" = var.initial_machinedeployment_operating_system_profile
+          "k8c.io/operating-system-profile"                           = var.initial_machinedeployment_operating_system_profile
+          "cluster.k8s.io/cluster-api-autoscaler-node-group-min-size" = tostring(local.cluster_autoscaler_min_replicas)
+          "cluster.k8s.io/cluster-api-autoscaler-node-group-max-size" = tostring(local.cluster_autoscaler_max_replicas)
         }
         sshPublicKeys   = [file(var.ssh_public_key_file)]
         operatingSystem = var.worker_os
@@ -77,8 +83,8 @@ output "kubeone_workers" {
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
-          # https://github.com/kubermatic/machine-controller/blob/master/examples/vsphere-machinedeployment.yaml
-          allowInsecure = false
+          # https://github.com/kubermatic/machine-controller/blob/main/examples/vsphere-machinedeployment.yaml
+          allowInsecure = var.allow_insecure
           cluster       = var.compute_cluster_name
           cpus          = var.worker_num_cpus
           datacenter    = var.dc_name
@@ -93,6 +99,9 @@ output "kubeone_workers" {
           vmNetName      = var.network_name
           resourcePool   = var.resource_pool_name
           folder         = var.folder_name
+        }
+        network = {
+          ipFamily = var.ip_family
         }
       }
     }

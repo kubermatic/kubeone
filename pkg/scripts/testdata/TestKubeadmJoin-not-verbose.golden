@@ -4,3 +4,4 @@ export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
 sudo kubeadm  join \
 	--config=test-wd/cfg/master_0.yaml
+sudo find /etc/kubernetes/pki/ -name *.crt -exec chmod 600 {} \;

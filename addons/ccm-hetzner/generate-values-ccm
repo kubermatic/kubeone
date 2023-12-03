@@ -1,0 +1,14 @@
+args:
+  leader-elect: "true"
+  allocate-node-cidrs: "false" # "false" as we use IPAM in kube-controller-manager
+  configure-cloud-routes: "false"  # "false" because we use VXLAN overlay
+
+env:
+  # The following two variables should *not* be set here:
+  # HCLOUD_METRICS_ENABLED - see monitoring.enabled
+  # HCLOUD_NETWORK - see networking.enabled
+  HCLOUD_TOKEN:
+    valueFrom:
+      secretKeyRef:
+        name: kubeone-ccm-credentials
+        key: HZ_TOKEN

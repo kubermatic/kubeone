@@ -20,7 +20,7 @@ metadata:
   namespace: kube-system
 data:
 {{ range .RegistryCredentials }}
-  {{ .RegistryName }}: |
+  {{ .RegistryName | quote }}: |
 {{ mustToRawJson .Auth | b64enc | indent 4 }}
 {{ end }}
 {{ end }}
@@ -59,6 +59,7 @@ spec:
         app: machine-controller-webhook
       annotations:
         "kubeone.k8c.io/credentials-hash": "{{ .MachineControllerCredentialsHash }}"
+        "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
     spec:
       nodeSelector:
         node-role.kubernetes.io/control-plane: ""
@@ -82,16 +83,19 @@ spec:
           command:
             - /usr/local/bin/webhook
           args:
-            - -logtostderr
-            - -v=4
             - -listen-address=0.0.0.0:9876
             - -namespace=kube-system
+            - -tls-cert-path=/tmp/cert/cert.pem
+            - -tls-key-path=/tmp/cert/key.pem
             {{ if .Config.CloudProvider.External }}
             - -node-external-cloud-provider
             {{ end }}
             {{ if .CSIMigrationFeatureGates }}
             - -node-kubelet-feature-gates={{ .CSIMigrationFeatureGates }}
             {{ end }}
+            {{ if .Config.CABundle -}}
+            - -ca-bundle={{ .Resources.CABundleSSLCertFilePath }}
+            {{ end -}}
             {{ if .OperatingSystemManagerEnabled }}
             - -use-osm
             {{ end }}
@@ -108,6 +112,9 @@ spec:
             - name: machinecontroller-webhook-serving-cert
               mountPath: /tmp/cert
               readOnly: true
+{{ if .Config.CABundle }}
+{{ caBundleVolumeMount | indent 12 }}
+{{ end }}
           livenessProbe:
             httpGet:
               path: /healthz
@@ -126,7 +133,9 @@ spec:
           secret:
             secretName: machinecontroller-webhook-serving-cert
             defaultMode: 0444
-
+{{ if .Config.CABundle }}
+{{ caBundleVolume | indent 8 }}
+{{ end }}
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration

@@ -74,6 +74,10 @@ type KubeOneCluster struct {
 	// Addons are used to deploy additional manifests.
 	Addons *Addons `json:"addons,omitempty"`
 
+	// HelmReleases configure helm charts to reconcile. For each HelmRelease it will run analog of: `helm upgrade
+	// --namespace <NAMESPACE> --install --create-namespace <RELEASE> <CHART> [--values=values-override.yaml]`
+	HelmReleases []HelmRelease `json:"helmReleases,omitempty"`
+
 	// SystemPackages configure kubeone behaviour regarding OS packages.
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
 
@@ -82,6 +86,42 @@ type KubeOneCluster struct {
 
 	// LoggingConfig configures the Kubelet's log rotation
 	LoggingConfig LoggingConfig `json:"loggingConfig,omitempty"`
+}
+
+type HelmRelease struct {
+	// Chart is [CHART] part of the `helm upgrade [RELEASE] [CHART]` command.
+	Chart string `json:"chart"`
+
+	// RepoURL is a chart repository URL where to locate the requested chart.
+	RepoURL string `json:"repoURL,omitempty"`
+
+	// ChartURL is a direct chart URL location.
+	ChartURL string `json:"chartURL,omitempty"`
+
+	// Version is --version flag of the `helm upgrade` command. Specify the exact chart version to use. If this is not
+	// specified, the latest version is used.
+	Version string `json:"version,omitempty"`
+
+	// ReleaseName is [RELEASE] part of the `helm upgrade [RELEASE] [CHART]` command. Empty is defaulted to chart.
+	ReleaseName string `json:"releaseName,omitempty"`
+
+	// Namespace is --namespace flag of the `helm upgrade` command. A namespace to use for a release.
+	Namespace string `json:"namespace"`
+
+	// Values provide optional overrides of the helm values.
+	Values []HelmValues `json:"values,omitempty"`
+}
+
+// HelmValues configure inputs to `helm upgrade --install` command analog.
+type HelmValues struct {
+	// ValuesFile is an optional path on the local file system containing helm values to override. An analog of --values
+	// flag of the `helm upgrade` command.
+	ValuesFile string `json:"valuesFile,omitempty"`
+
+	// Inline is optionally used as a convenient way to provide short user input overrides to the helm upgrade process.
+	// Is written to a temporary file and used as an analog of the `helm upgrade --values=/tmp/inline-helm-values-XXX`
+	// command.
+	Inline json.RawMessage `json:"inline,omitempty"`
 }
 
 // LoggingConfig configures the Kubelet's log rotation
@@ -164,6 +204,10 @@ type HostConfig struct {
 	// PublicAddress is externally accessible IP address from public internet.
 	PublicAddress string `json:"publicAddress"`
 
+	// IPv6Addresses is IPv6 addresses of the node, only the first one will be announced to the k8s control plane.
+	// It is a list because you can request lots of IPv6 addresses (for example in case you want to assign one address per service).
+	IPv6Addresses []string `json:"ipv6Addresses"`
+
 	// PrivateAddress is internal RFC-1918 IP address.
 	PrivateAddress string `json:"privateAddress"`
 
@@ -178,6 +222,9 @@ type HostConfig struct {
 	// SSHPrivateKeyFile is path to the file with PRIVATE AND CLEANTEXT ssh key.
 	// Default value is "".
 	SSHPrivateKeyFile string `json:"sshPrivateKeyFile,omitempty"`
+
+	// SSHHostPublicKey if not empty, will be used to verify remote host public key
+	SSHHostPublicKey []byte `json:"sshHostPublicKey,omitempty"`
 
 	// SSHAgentSocket path (or reference to the environment) to the SSH agent unix domain socket.
 	// Default value is "env:SSH_AUTH_SOCK".
@@ -194,6 +241,9 @@ type HostConfig struct {
 	// BastionUser is system login name to use when connecting to bastion host.
 	// Default value is "root".
 	BastionUser string `json:"bastionUser,omitempty"`
+
+	// BastionHostPublicKey if not empty, will be used to verify bastion SSH public key
+	BastionHostPublicKey []byte `json:"bastionHostPublicKey,omitempty"`
 
 	// Hostname is the hostname(1) of the host.
 	// Default value is populated at the runtime via running `hostname -f` command over ssh.
@@ -271,6 +321,9 @@ type APIEndpoint struct {
 type CloudProviderSpec struct {
 	// External
 	External bool `json:"external,omitempty"`
+
+	// DisableBundledCSIDrivers disables automatic deployment of CSI drivers bundled with KubeOne
+	DisableBundledCSIDrivers bool `json:"disableBundledCSIDrivers"`
 
 	// CloudConfig
 	CloudConfig string `json:"cloudConfig,omitempty"`
@@ -368,9 +421,17 @@ type ClusterNetworkConfig struct {
 	// default value is "10.244.0.0/16"
 	PodSubnet string `json:"podSubnet,omitempty"`
 
+	// PodSubnetIPv6
+	// default value is ""fd01::/48""
+	PodSubnetIPv6 string `json:"podSubnetIPv6,omitempty"`
+
 	// ServiceSubnet
 	// default value is "10.96.0.0/12"
 	ServiceSubnet string `json:"serviceSubnet,omitempty"`
+
+	// ServiceSubnetIPv6
+	// default value is "fd02::/120"
+	ServiceSubnetIPv6 string `json:"serviceSubnetIPv6,omitempty"`
 
 	// ServiceDomainName
 	// default value is "cluster.local"
@@ -386,7 +447,32 @@ type ClusterNetworkConfig struct {
 
 	// KubeProxy config
 	KubeProxy *KubeProxyConfig `json:"kubeProxy,omitempty"`
+
+	// IPFamily allows specifying IP family of a cluster.
+	// Valid values are IPv4 | IPv6 | IPv4+IPv6 | IPv6+IPv4.
+	IPFamily IPFamily `json:"ipFamily,omitempty"`
+
+	// NodeCIDRMaskSizeIPv4 is the mask size used to address the nodes within provided IPv4 Pods CIDR. It has to be larger than the provided IPv4 Pods CIDR. Defaults to 24.
+	NodeCIDRMaskSizeIPv4 *int `json:"nodeCIDRMaskSizeIPv4,omitempty"`
+
+	// NodeCIDRMaskSizeIPv6 is the mask size used to address the nodes within provided IPv6 Pods CIDR. It has to be larger than the provided IPv6 Pods CIDR. Defaults to 64.
+	NodeCIDRMaskSizeIPv6 *int `json:"nodeCIDRMaskSizeIPv6,omitempty"`
 }
+
+// IPFamily allows specifying IP family of a cluster.
+// Valid values are IPv4 | IPv6 | IPv4+IPv6 | IPv6+IPv4.
+type IPFamily string
+
+const (
+	// IPFamilyIPv4 IPv4 only cluster.
+	IPFamilyIPv4 IPFamily = "IPv4"
+	// IPFamilyIPv6 IPv6 only cluster.
+	IPFamilyIPv6 IPFamily = "IPv6"
+	// IPFamilyIPv4IPv6 Dualstack cluster with IPv4 as primary address family.
+	IPFamilyIPv4IPv6 IPFamily = "IPv4+IPv6"
+	// IPFamilyIPv6IPv4 Dualstack cluster with IPv6 as primary address family.
+	IPFamilyIPv6IPv4 IPFamily = "IPv6+IPv4"
+)
 
 // KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
 type KubeProxyConfig struct {
@@ -574,6 +660,9 @@ type ProviderStaticNetworkConfig struct {
 
 	// DNS
 	DNS DNSConfig `json:"dns"`
+
+	// IPFamily
+	IPFamily IPFamily `json:"ipFamily"`
 }
 
 // MachineControllerConfig configures kubermatic machine-controller deployment
@@ -654,11 +743,28 @@ type Features struct {
 
 	// Encryption Providers
 	EncryptionProviders *EncryptionProviders `json:"encryptionProviders,omitempty"`
+
+	// NodeLocalDNS config
+	NodeLocalDNS *NodeLocalDNS `json:"nodeLocalDNS,omitempty"`
+}
+
+type NodeLocalDNS struct {
+	// Deploy is enabled by default
+	Deploy bool `json:"deploy,omitempty"`
 }
 
 type CoreDNS struct {
 	Replicas                  *int32 `json:"replicas,omitempty"`
 	DeployPodDisruptionBudget *bool  `json:"deployPodDisruptionBudget,omitempty"`
+
+	// ImageRepository allows users to specify the image registry to be used
+	// for CoreDNS. Kubeadm automatically appends `/coredns` at the end, so it's
+	// not necessary to specify it.
+	// By default it's empty, which means it'll be defaulted based on kubeadm
+	// defaults and if overwriteRegistry feature is used.
+	// ImageRepository has the highest priority, meaning that it'll override
+	// overwriteRegistry if specified.
+	ImageRepository string `json:"imageRepository,omitempty"`
 }
 
 // PodNodeSelector feature flag
@@ -781,6 +887,9 @@ type Addon struct {
 
 	// Params to the addon, to render the addon using text/template, this will override globalParams
 	Params map[string]string `json:"params,omitempty"`
+
+	// DisableTemplating is used to disable templatization for the addon.
+	DisableTemplating bool `json:"disableTemplating,omitempty"`
 
 	// Delete flag to ensure the named addon with all its contents to be deleted
 	Delete bool `json:"delete,omitempty"`

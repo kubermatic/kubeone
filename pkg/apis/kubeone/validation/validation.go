@@ -21,6 +21,7 @@ import (
 	"crypto/x509"
 	"fmt"
 	"net"
+	"os"
 	"reflect"
 	"strings"
 
@@ -32,18 +33,23 @@ import (
 
 	"k8s.io/apimachinery/pkg/util/validation"
 	"k8s.io/apimachinery/pkg/util/validation/field"
+	netutils "k8s.io/utils/net"
+	"sigs.k8s.io/yaml"
 )
 
 const (
 	// lowerVersionConstraint defines a semver constraint that validates Kubernetes versions against a lower bound
-	lowerVersionConstraint = ">= 1.22"
+	lowerVersionConstraint = ">= 1.25"
 	// upperVersionConstraint defines a semver constraint that validates Kubernetes versions against an upper bound
-	upperVersionConstraint = "<= 1.24"
+	upperVersionConstraint = "<= 1.28"
+	// gte125VersionConstraint defines a semver constraint that validates Kubernetes versions >= 1.25
+	gte125VersionConstraint = ">= 1.25"
 )
 
 var (
-	lowerConstraint = semverutil.MustParseConstraint(lowerVersionConstraint)
-	upperConstraint = semverutil.MustParseConstraint(upperVersionConstraint)
+	lowerConstraint  = semverutil.MustParseConstraint(lowerVersionConstraint)
+	upperConstraint  = semverutil.MustParseConstraint(upperVersionConstraint)
+	gte125Constraint = semverutil.MustParseConstraint(gte125VersionConstraint)
 )
 
 // ValidateKubeOneCluster validates the KubeOneCluster object
@@ -51,29 +57,30 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	allErrs = append(allErrs, ValidateName(c.Name, field.NewPath("name"))...)
-	allErrs = append(allErrs, ValidateControlPlaneConfig(c.ControlPlane, field.NewPath("controlPlane"))...)
+	allErrs = append(allErrs, ValidateControlPlaneConfig(c.ControlPlane, c.Versions, c.ClusterNetwork, field.NewPath("controlPlane"))...)
 	allErrs = append(allErrs, ValidateAPIEndpoint(c.APIEndpoint, field.NewPath("apiEndpoint"))...)
-	allErrs = append(allErrs, ValidateCloudProviderSpec(c.CloudProvider, field.NewPath("provider"))...)
+	allErrs = append(allErrs, ValidateCloudProviderSpec(c.CloudProvider, c.ClusterNetwork, field.NewPath("provider"))...)
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
 	allErrs = append(allErrs, ValidateKubernetesSupport(c, field.NewPath(""))...)
 	allErrs = append(allErrs, ValidateContainerRuntimeConfig(c.ContainerRuntime, c.Versions, field.NewPath("containerRuntime"))...)
-	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, field.NewPath("clusterNetwork"))...)
-	allErrs = append(allErrs, ValidateStaticWorkersConfig(c.StaticWorkers, field.NewPath("staticWorkers"))...)
+	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, c.CloudProvider, field.NewPath("clusterNetwork"))...)
+	allErrs = append(allErrs, ValidateStaticWorkersConfig(c.StaticWorkers, c.Versions, c.ClusterNetwork, field.NewPath("staticWorkers"))...)
 
 	if c.MachineController != nil && c.MachineController.Deploy {
-		allErrs = append(allErrs, ValidateDynamicWorkerConfig(c.DynamicWorkers, field.NewPath("dynamicWorkers"))...)
+		allErrs = append(allErrs, ValidateDynamicWorkerConfig(c.DynamicWorkers, c.CloudProvider, field.NewPath("dynamicWorkers"))...)
 	} else if len(c.DynamicWorkers) > 0 {
 		allErrs = append(allErrs, field.Forbidden(field.NewPath("dynamicWorkers"),
 			"machine-controller deployment is disabled, but the configuration still contains dynamic workers"))
 	}
 
-	if c.OperatingSystemManagerEnabled() {
+	if c.OperatingSystemManager.Deploy {
 		allErrs = append(allErrs, ValidateOperatingSystemManager(c.MachineController, field.NewPath("operatingSystemManager"))...)
 	}
 
 	allErrs = append(allErrs, ValidateCABundle(c.CABundle, field.NewPath("caBundle"))...)
 	allErrs = append(allErrs, ValidateFeatures(c.Features, c.Versions, field.NewPath("features"))...)
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
+	allErrs = append(allErrs, ValidateHelmReleases(c.HelmReleases, field.NewPath("helmReleases"))...)
 	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
 	allErrs = append(allErrs,
 		ValidateContainerRuntimeVSRegistryConfiguration(
@@ -128,11 +135,11 @@ func ValidateName(name string, fldPath *field.Path) field.ErrorList {
 }
 
 // ValidateControlPlaneConfig validates the ControlPlaneConfig structure
-func ValidateControlPlaneConfig(c kubeoneapi.ControlPlaneConfig, fldPath *field.Path) field.ErrorList {
+func ValidateControlPlaneConfig(c kubeoneapi.ControlPlaneConfig, version kubeoneapi.VersionConfig, clusterNetwork kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	if len(c.Hosts) > 0 {
-		allErrs = append(allErrs, ValidateHostConfig(c.Hosts, fldPath.Child("hosts"))...)
+		allErrs = append(allErrs, ValidateHostConfig(c.Hosts, version, clusterNetwork, fldPath.Child("hosts"))...)
 	} else {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("hosts"), "",
 			".controlPlane.Hosts is a required field. There must be at least one control plane instance in the cluster."))
@@ -161,89 +168,96 @@ func ValidateAPIEndpoint(a kubeoneapi.APIEndpoint, fldPath *field.Path) field.Er
 			allErrs = append(allErrs, field.Invalid(fldPath, altName, "duplicates are not allowed in alternative names"))
 
 			break
-		} else {
-			visited[altName] = true
 		}
+		visited[altName] = true
 	}
 
 	return allErrs
 }
 
 // ValidateCloudProviderSpec validates the CloudProviderSpec structure
-func ValidateCloudProviderSpec(p kubeoneapi.CloudProviderSpec, fldPath *field.Path) field.ErrorList {
+//
+//nolint:gocyclo
+func ValidateCloudProviderSpec(providerSpec kubeoneapi.CloudProviderSpec, networkConfig kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	providerFound := false
-	if p.AWS != nil {
+	if providerSpec.AWS != nil {
+		if networkConfig.IPFamily.IsDualstack() && providerSpec.External && len(providerSpec.CloudConfig) == 0 {
+			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), "cloudConfig is required for dualstack clusters for aws provider"))
+		}
 		providerFound = true
 	}
-	if p.Azure != nil {
+	if providerSpec.Azure != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("azure"), "only one provider can be used at the same time"))
 		}
-		if len(p.CloudConfig) == 0 {
+		if len(providerSpec.CloudConfig) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), ".cloudProvider.cloudConfig is required for azure provider"))
 		}
 		providerFound = true
 	}
-	if p.DigitalOcean != nil {
+	if providerSpec.DigitalOcean != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("digitalocean"), "only one provider can be used at the same time"))
 		}
 		providerFound = true
 	}
-	if p.GCE != nil {
+	if providerSpec.GCE != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("gce"), "only one provider can be used at the same time"))
 		}
 		providerFound = true
 	}
-	if p.Hetzner != nil {
+	if providerSpec.Hetzner != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("hetzner"), "only one provider can be used at the same time"))
 		}
 		providerFound = true
 	}
-	if p.Nutanix != nil {
+	if providerSpec.Nutanix != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("nutanix"), "only one provider can be used at the same time"))
 		}
 		providerFound = true
 	}
-	if p.Openstack != nil {
+	if providerSpec.Openstack != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("openstack"), "only one provider can be used at the same time"))
 		}
-		if len(p.CloudConfig) == 0 {
+		if len(providerSpec.CloudConfig) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), ".cloudProvider.cloudConfig is required for openstack provider"))
 		}
 		providerFound = true
 	}
-	if p.EquinixMetal != nil {
+	if providerSpec.EquinixMetal != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("equinixmetal"), "only one provider can be used at the same time"))
 		}
 		providerFound = true
 	}
-	if p.VMwareCloudDirector != nil {
+	if providerSpec.VMwareCloudDirector != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("vmwareCloudDirector"), "only one provider can be used at the same time"))
 		}
 		providerFound = true
-		if p.External {
+		if providerSpec.External {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("external"), "external cloud provider is not supported for VMware Cloud Director clusters"))
 		}
 	}
-	if p.Vsphere != nil {
+	if providerSpec.Vsphere != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("vsphere"), "only one provider can be used at the same time"))
 		}
-		if len(p.CloudConfig) == 0 {
+		if len(providerSpec.CloudConfig) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), ".cloudProvider.cloudConfig is required for vSphere provider"))
+		}
+		if providerSpec.External && !providerSpec.DisableBundledCSIDrivers && len(providerSpec.CSIConfig) == 0 {
+			allErrs = append(allErrs, field.Required(fldPath.Child("csiConfig"), ".cloudProvider.csiConfig is required for vSphere provider"))
 		}
 		providerFound = true
 	}
-	if p.None != nil {
+	if providerSpec.None != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("none"), "only one provider can be used at the same time"))
 		}
@@ -254,13 +268,12 @@ func ValidateCloudProviderSpec(p kubeoneapi.CloudProviderSpec, fldPath *field.Pa
 		allErrs = append(allErrs, field.Invalid(fldPath, "", "provider must be specified"))
 	}
 
-	if len(p.CSIConfig) > 0 {
-		if p.Vsphere == nil {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("csiConfig"), "", ".cloudProvider.csiConfig is currently supported only for vsphere clusters"))
-		}
-		if !p.External {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("csiConfig"), "", ".cloudProvider.csiConfig is supported only for clusters using external cloud provider (.cloudProvider.external)"))
-		}
+	if providerSpec.DisableBundledCSIDrivers && len(providerSpec.CSIConfig) > 0 {
+		allErrs = append(allErrs, field.Forbidden(fldPath.Child("csiConfig"), ".cloudProvider.csiConfig is mutually exclusive with .cloudProvider.disableBundledCSIDrivers"))
+	}
+
+	if providerSpec.Vsphere == nil && len(providerSpec.CSIConfig) > 0 {
+		allErrs = append(allErrs, field.Forbidden(fldPath.Child("csiConfig"), ".cloudProvider.csiConfig is currently supported only for vsphere clusters"))
 	}
 
 	return allErrs
@@ -308,9 +321,25 @@ func ValidateKubernetesSupport(c kubeoneapi.KubeOneCluster, fldPath *field.Path)
 		return append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, ".versions.kubernetes is not a semver string"))
 	}
 
-	// vSphere CCM v1.24 supports Kubernetes 1.24 and 1.25.
-	if v.Minor() >= 26 && c.CloudProvider.Vsphere != nil {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("versions").Child("kubernetes"), c.Versions.Kubernetes, "kubernetes versions 1.25.0 and newer are currently not supported for vsphere clusters"))
+	// We require external CCM/CSI on vSphere starting with Kubernetes 1.25
+	// because the in-tree volume plugin requires the CSI driver to be
+	// deployed for Kubernetes 1.25 and newer.
+	// Existing clusters running the in-tree cloud provider must be migrated
+	// to the external CCM/CSI before upgrading to Kubernetes 1.25.
+	if v.Minor() >= 25 && c.CloudProvider.Vsphere != nil && !c.CloudProvider.External {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("cloudProvider").Child("external"), c.CloudProvider.External, "kubernetes 1.25 and newer doesn't support in-tree cloud provider with vsphere"))
+	}
+
+	// The in-tree cloud provider for OpenStack has been removed in
+	// Kubernetes 1.26.
+	if v.Minor() >= 26 && c.CloudProvider.Openstack != nil && !c.CloudProvider.External {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("cloudProvider").Child("external"), c.CloudProvider.External, "kubernetes 1.26 and newer doesn't support in-tree cloud provider with openstack"))
+	}
+
+	// The in-tree cloud provider for AWS has been removed in
+	// Kubernetes 1.26.
+	if v.Minor() >= 27 && c.CloudProvider.AWS != nil && !c.CloudProvider.External {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("cloudProvider").Child("external"), c.CloudProvider.External, "kubernetes 1.27 and newer doesn't support in-tree cloud provider with aws"))
 	}
 
 	return allErrs
@@ -346,19 +375,12 @@ func ValidateContainerRuntimeConfig(cr kubeoneapi.ContainerRuntimeConfig, versio
 }
 
 // ValidateClusterNetworkConfig validates the ClusterNetworkConfig structure
-func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
+func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, prov kubeoneapi.CloudProviderSpec, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	if len(c.PodSubnet) > 0 {
-		if _, _, err := net.ParseCIDR(c.PodSubnet); err != nil {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("podSubnet"), c.PodSubnet, ".clusterNetwork.podSubnet must be a valid CIDR string"))
-		}
-	}
-	if len(c.ServiceSubnet) > 0 {
-		if _, _, err := net.ParseCIDR(c.ServiceSubnet); err != nil {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("serviceSubnet"), c.ServiceSubnet, ".clusterNetwork.serviceSubnet must be a valid CIDR string"))
-		}
-	}
+	allErrs = append(allErrs, validateIPFamily(c.IPFamily, prov, fldPath.Child("ipFamily"))...)
+	allErrs = append(allErrs, validateCIDRs(c, fldPath)...)
+	allErrs = append(allErrs, validateNodeCIDRMaskSize(c, fldPath)...)
 
 	if c.CNI != nil {
 		allErrs = append(allErrs, ValidateCNI(c.CNI, fldPath.Child("cni"))...)
@@ -370,6 +392,100 @@ func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, fldPath *fi
 	}
 	if c.KubeProxy != nil {
 		allErrs = append(allErrs, ValidateKubeProxy(c.KubeProxy, fldPath.Child("kubeProxy"))...)
+	}
+
+	return allErrs
+}
+
+func validateIPFamily(ipFamily kubeoneapi.IPFamily, prov kubeoneapi.CloudProviderSpec, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if ipFamily == kubeoneapi.IPFamilyIPv6 || ipFamily == kubeoneapi.IPFamilyIPv6IPv4 {
+		allErrs = append(allErrs, field.Forbidden(fldPath, "ipv6 and ipv6+ipv4 ip families are currently not supported"))
+	}
+
+	if ipFamily == kubeoneapi.IPFamilyIPv4IPv6 && !(prov.AWS != nil || prov.None != nil || prov.Vsphere != nil) {
+		allErrs = append(allErrs, field.Forbidden(fldPath, "dualstack is currently supported only on AWS, vSphere and baremetal (none)"))
+	}
+
+	return allErrs
+}
+
+func validateNodeCIDRMaskSize(c kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	validateNodeCIDRMaskSize := func(nodeCIDRMaskSize *int, podCIDR string, fldPath *field.Path) {
+		if nodeCIDRMaskSize == nil {
+			allErrs = append(allErrs, field.Invalid(fldPath, nodeCIDRMaskSize, "node CIDR mask size must be set"))
+
+			return
+		}
+
+		_, podCIDRNet, err := net.ParseCIDR(podCIDR)
+		if err != nil {
+			allErrs = append(allErrs, field.Invalid(fldPath, podCIDR, fmt.Sprintf("couldn't parse CIDR %q: %v", podCIDR, err)))
+
+			return
+		}
+		podCIDRMaskSize, _ := podCIDRNet.Mask.Size()
+
+		if podCIDRMaskSize >= *nodeCIDRMaskSize {
+			allErrs = append(allErrs, field.Invalid(fldPath, nodeCIDRMaskSize,
+				fmt.Sprintf("node CIDR mask size (%d) must be longer than the mask size of the pod CIDR (%q)", *nodeCIDRMaskSize, podCIDR)))
+
+			return
+		}
+	}
+
+	switch c.IPFamily {
+	case kubeoneapi.IPFamilyIPv4:
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv4, c.PodSubnet, fldPath.Child("nodeCIDRMaskSizeIPv4"))
+	case kubeoneapi.IPFamilyIPv6:
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv6, c.PodSubnetIPv6, fldPath.Child("nodeCIDRMaskSizeIPv6"))
+	case kubeoneapi.IPFamilyIPv4IPv6, kubeoneapi.IPFamilyIPv6IPv4:
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv4, c.PodSubnet, fldPath.Child("nodeCIDRMaskSizeIPv4"))
+		validateNodeCIDRMaskSize(c.NodeCIDRMaskSizeIPv6, c.PodSubnetIPv6, fldPath.Child("nodeCIDRMaskSizeIPv6"))
+	}
+
+	return allErrs
+}
+
+func validateCIDRs(c kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	invalidFamilyErr := func(node, subnet string, ipFamily kubeoneapi.IPFamily) *field.Error {
+		return field.Invalid(fldPath.Child(node), subnet, fmt.Sprintf(".clusterNetwork.%s must be valid %q subnet.", node, ipFamily))
+	}
+
+	validateCIDR := func(node, subnet string, ipFamily kubeoneapi.IPFamily) {
+		switch ipFamily {
+		case kubeoneapi.IPFamilyIPv4:
+			if !netutils.IsIPv4CIDRString(subnet) {
+				allErrs = append(allErrs, invalidFamilyErr(node, subnet, ipFamily))
+			}
+		case kubeoneapi.IPFamilyIPv6:
+			if !netutils.IsIPv6CIDRString(subnet) {
+				allErrs = append(allErrs, invalidFamilyErr(node, subnet, ipFamily))
+			}
+		case kubeoneapi.IPFamilyIPv4IPv6, kubeoneapi.IPFamilyIPv6IPv4:
+			// just to make linter happy
+		}
+	}
+
+	switch c.IPFamily {
+	case kubeoneapi.IPFamilyIPv4:
+		validateCIDR("podSubnet", c.PodSubnet, kubeoneapi.IPFamilyIPv4)
+		validateCIDR("serviceSubnet", c.ServiceSubnet, kubeoneapi.IPFamilyIPv4)
+	case kubeoneapi.IPFamilyIPv6:
+		validateCIDR("podSubnetIPv6", c.PodSubnetIPv6, kubeoneapi.IPFamilyIPv6)
+		validateCIDR("serviceSubnetIPv6", c.ServiceSubnetIPv6, kubeoneapi.IPFamilyIPv6)
+	case kubeoneapi.IPFamilyIPv4IPv6, kubeoneapi.IPFamilyIPv6IPv4:
+		validateCIDR("podSubnet", c.PodSubnet, kubeoneapi.IPFamilyIPv4)
+		validateCIDR("serviceSubnet", c.ServiceSubnet, kubeoneapi.IPFamilyIPv4)
+		validateCIDR("podSubnetIPv6", c.PodSubnetIPv6, kubeoneapi.IPFamilyIPv6)
+		validateCIDR("serviceSubnetIPv6", c.ServiceSubnetIPv6, kubeoneapi.IPFamilyIPv6)
+	default:
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("ipFamily"), c.IPFamily, "unknown ipFamily"))
 	}
 
 	return allErrs
@@ -433,18 +549,18 @@ func ValidateCNI(c *kubeoneapi.CNI, fldPath *field.Path) field.ErrorList {
 }
 
 // ValidateStaticWorkersConfig validates the StaticWorkersConfig structure
-func ValidateStaticWorkersConfig(staticWorkers kubeoneapi.StaticWorkersConfig, fldPath *field.Path) field.ErrorList {
+func ValidateStaticWorkersConfig(staticWorkers kubeoneapi.StaticWorkersConfig, version kubeoneapi.VersionConfig, clusterNetwork kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	if len(staticWorkers.Hosts) > 0 {
-		allErrs = append(allErrs, ValidateHostConfig(staticWorkers.Hosts, fldPath.Child("hosts"))...)
+		allErrs = append(allErrs, ValidateHostConfig(staticWorkers.Hosts, version, clusterNetwork, fldPath.Child("hosts"))...)
 	}
 
 	return allErrs
 }
 
 // ValidateDynamicWorkerConfig validates the DynamicWorkerConfig structure
-func ValidateDynamicWorkerConfig(workerset []kubeoneapi.DynamicWorkerConfig, fldPath *field.Path) field.ErrorList {
+func ValidateDynamicWorkerConfig(workerset []kubeoneapi.DynamicWorkerConfig, prov kubeoneapi.CloudProviderSpec, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	for _, w := range workerset {
@@ -456,6 +572,9 @@ func ValidateDynamicWorkerConfig(workerset []kubeoneapi.DynamicWorkerConfig, fld
 		}
 		if len(w.Config.MachineAnnotations) > 0 && len(w.Config.NodeAnnotations) > 0 {
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("machineAnnotations"), w.Config.MachineAnnotations, "machineAnnotations has been replaced with nodeAnnotations, only one of those two can be set"))
+		}
+		if w.Config.Network != nil && w.Config.Network.IPFamily != "" {
+			allErrs = append(allErrs, validateIPFamily(w.Config.Network.IPFamily, prov, fldPath.Child("network", "ipFamily"))...)
 		}
 	}
 
@@ -482,6 +601,13 @@ func ValidateCABundle(caBundle string, fldPath *field.Path) field.ErrorList {
 func ValidateFeatures(f kubeoneapi.Features, versions kubeoneapi.VersionConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
+	v, err := semver.NewVersion(versions.Kubernetes)
+	if err != nil {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), versions.Kubernetes, ".versions.kubernetes is not a semver string"))
+
+		return allErrs
+	}
+
 	if f.CoreDNS != nil && f.CoreDNS.Replicas != nil && *f.CoreDNS.Replicas < 0 {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("coreDNS", "replicas"), *f.CoreDNS.Replicas, "coreDNS replicas cannot be < 0"))
 	}
@@ -493,6 +619,9 @@ func ValidateFeatures(f kubeoneapi.Features, versions kubeoneapi.VersionConfig, 
 	}
 	if f.OpenIDConnect != nil && f.OpenIDConnect.Enable {
 		allErrs = append(allErrs, ValidateOIDCConfig(f.OpenIDConnect.Config, fldPath.Child("openidConnect"))...)
+	}
+	if f.PodSecurityPolicy != nil && f.PodSecurityPolicy.Enable && v.Minor() >= 25 {
+		allErrs = append(allErrs, field.Forbidden(fldPath.Child("podSecurityPolicy"), "podSecurityPolicy is not supported on Kubernetes 1.25 and newer"))
 	}
 
 	return allErrs
@@ -571,9 +700,62 @@ func ValidateAddons(o *kubeoneapi.Addons, fldPath *field.Path) field.ErrorList {
 	return allErrs
 }
 
-// ValidateHostConfig validates the HostConfig structure
-func ValidateHostConfig(hosts []kubeoneapi.HostConfig, fldPath *field.Path) field.ErrorList {
+func ValidateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
+
+	for _, hr := range helmReleases {
+		if hr.Chart == "" {
+			allErrs = append(allErrs, field.Required(fldPath.Child("chart"), hr.Chart))
+		}
+
+		if hr.Namespace == "" {
+			allErrs = append(allErrs, field.Required(fldPath.Child("namespace"), hr.Namespace))
+		}
+
+		for idx, helmValues := range hr.Values {
+			fldIdentity := fldPath.Child("values").Index(idx)
+
+			if helmValues.ValuesFile != "" {
+				err := func() error {
+					valFile, err := os.Open(helmValues.ValuesFile)
+					if valFile != nil {
+						defer valFile.Close()
+					}
+
+					return err
+				}()
+				if err != nil {
+					allErrs = append(allErrs,
+						field.Invalid(fldIdentity.Child("valuesFile"), hr.Values[idx].ValuesFile, fmt.Sprintf("file is invalid: %v", err)),
+					)
+				}
+			}
+
+			if helmValues.Inline != nil {
+				obj := map[string]any{}
+				err := yaml.Unmarshal(helmValues.Inline, &obj)
+				if err != nil {
+					allErrs = append(allErrs,
+						field.Invalid(fldIdentity.Child("inline"), hr.Values[idx].Inline, fmt.Sprintf("inline is not a valid YAML: %v", err)),
+					)
+				}
+			}
+		}
+	}
+
+	return allErrs
+}
+
+// ValidateHostConfig validates the HostConfig structure
+func ValidateHostConfig(hosts []kubeoneapi.HostConfig, version kubeoneapi.VersionConfig, clusterNetwork kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	v, err := semver.NewVersion(version.Kubernetes)
+	if err != nil {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), version, ".versions.kubernetes is not a semver string"))
+
+		return allErrs
+	}
 
 	leaderFound := false
 	for _, h := range hosts {
@@ -585,6 +767,10 @@ func ValidateHostConfig(hosts []kubeoneapi.HostConfig, fldPath *field.Path) fiel
 		}
 		if len(h.PublicAddress) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath, "no public IP/address given"))
+		}
+
+		if (clusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv6 || clusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv4IPv6 || clusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv6IPv4) && len(h.IPv6Addresses) == 0 {
+			allErrs = append(allErrs, field.Required(fldPath, "no IPv6 address given"))
 		}
 		if len(h.PrivateAddress) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath, "no private IP/address givevn"))
@@ -605,6 +791,13 @@ func ValidateHostConfig(hosts []kubeoneapi.HostConfig, fldPath *field.Path) fiel
 		for labelKey, labelValue := range h.Labels {
 			if strings.HasSuffix(labelKey, "-") && labelValue != "" {
 				allErrs = append(allErrs, field.Invalid(fldPath.Child("labels"), labelValue, "label to remove cannot have value"))
+			}
+		}
+		if gte125Constraint.Check(v) {
+			for _, taint := range h.Taints {
+				if taint.Key == "node-role.kubernetes.io/master" {
+					allErrs = append(allErrs, field.Forbidden(fldPath.Child("taints"), fmt.Sprintf("%q taint is forbidden for clusters running Kubernetes 1.25+", "node-role.kubernetes.io/master")))
+				}
 			}
 		}
 	}

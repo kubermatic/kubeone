@@ -30,9 +30,9 @@ spec:
       labels:
         app: snapshot-controller
     spec:
-      serviceAccount: snapshot-controller
       nodeSelector:
         kubernetes.io/os: linux
+        node-role.kubernetes.io/control-plane: ""
       priorityClassName: system-cluster-critical
       tolerations:
         - key: "node-role.kubernetes.io/master"
@@ -41,6 +41,7 @@ spec:
         - key: "node-role.kubernetes.io/control-plane"
           operator: "Exists"
           effect: "NoSchedule"
+      serviceAccountName: snapshot-controller
       containers:
         - name: snapshot-controller
           image: "{{ .InternalImages.Get "AwsEbsCSISnapshotController" }}"

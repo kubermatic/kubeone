@@ -42,6 +42,8 @@ output "kubeone_hosts" {
       bastion              = nutanix_virtual_machine.lb.nic_list.0.ip_endpoint_list.0.ip
       bastion_port         = var.bastion_port
       bastion_user         = var.bastion_user
+      ssh_hosts_keys       = var.ssh_hosts_keys
+      bastion_host_key     = var.bastion_host_key
     }
   }
 }
@@ -56,7 +58,9 @@ output "kubeone_workers" {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         annotations = {
-          "k8c.io/operating-system-profile" = var.initial_machinedeployment_operating_system_profile
+          "k8c.io/operating-system-profile"                           = var.initial_machinedeployment_operating_system_profile
+          "cluster.k8s.io/cluster-api-autoscaler-node-group-min-size" = tostring(local.cluster_autoscaler_min_replicas)
+          "cluster.k8s.io/cluster-api-autoscaler-node-group-max-size" = tostring(local.cluster_autoscaler_max_replicas)
         }
         sshPublicKeys   = [file(var.ssh_public_key_file)]
         operatingSystem = var.worker_os
@@ -79,7 +83,7 @@ output "kubeone_workers" {
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
-          # https://github.com/kubermatic/machine-controller/blob/master/examples/nutanix-machinedeployment.yaml
+          # https://github.com/kubermatic/machine-controller/blob/main/examples/nutanix-machinedeployment.yaml
           clusterName = var.nutanix_cluster_name
           projectName = var.project_name
           subnetName  = var.subnet_name

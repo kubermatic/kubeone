@@ -1,0 +1,49 @@
+logVerbosityLevel: 1
+
+priorityClassName: "system-cluster-critical"
+
+secret:
+  enabled: true
+  create: false
+  name: "cloud-config"
+
+extraVolumes:
+  - name: k8s-certs
+    hostPath:
+      path: /etc/kubernetes/pki
+      type: DirectoryOrCreate
+  - name: ca-certs
+    hostPath:
+      path: /etc/ssl/certs
+      type: DirectoryOrCreate
+  - name: pki-certs
+    hostPath:
+      path: /etc/pki
+      type: DirectoryOrCreate
+  - name: usr-ca-certs
+    hostPath:
+      path: /usr/share/ca-certificates
+      type: DirectoryOrCreate
+
+extraVolumeMounts:
+  - name: k8s-certs
+    mountPath: /etc/kubernetes/pki
+    readOnly: true
+  - name: ca-certs
+    mountPath: /etc/ssl/certs
+    readOnly: true
+  - name: pki-certs
+    mountPath: /etc/pki
+    readOnly: true
+  - name: usr-ca-certs
+    mountPath: /usr/share/ca-certificates
+    readOnly: true
+
+tolerations:
+  - key: node.cloudprovider.kubernetes.io/uninitialized
+    effect: NoSchedule
+    value: "true"
+  - key: node-role.kubernetes.io/control-plane
+    effect: NoSchedule
+  - key: "node-role.kubernetes.io/master"
+    effect: NoSchedule

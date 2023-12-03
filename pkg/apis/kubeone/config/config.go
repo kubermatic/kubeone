@@ -167,6 +167,18 @@ func DefaultedV1Beta1KubeOneCluster(versionedCluster *kubeonev1beta1.KubeOneClus
 		return nil, err
 	}
 
+	// this can be nil if v1beta1 API was used as a source to convert into the internal API, since v1beta1 lacks the
+	// OperatingSystemManager field at all.
+	internalCluster.OperatingSystemManager = &kubeoneapi.OperatingSystemManagerConfig{
+		// but we don't want to enable the OSM for older v1beta1 API
+		Deploy: false,
+	}
+
+	// v1beta1 has no idea about NodeLocalDNS
+	internalCluster.Features.NodeLocalDNS = &kubeoneapi.NodeLocalDNS{
+		Deploy: true,
+	}
+
 	// Validate the configuration
 	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
 		return nil, fail.ConfigValidation(err)
@@ -226,6 +238,10 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 
 	// Source cloud-config from the credentials file if it's present
 	if cc, ok := credentials["cloudConfig"]; ok {
+		if cluster.CloudProvider.CloudConfig != "" {
+			return fail.NewConfigError("dynamic cloud config", "found cloudConfig in credentials file, in addition to already set in the manifest")
+		}
+
 		cluster.CloudProvider.CloudConfig = cc
 	}
 	// Source csi-config from the credentials file if it's present
@@ -272,12 +288,10 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 }
 
 func setRegistriesAuth(cluster *kubeoneapi.KubeOneCluster, buf string) error {
-	var (
-		registriesAuth struct {
-			runtime.TypeMeta                          `json:",inline"`
-			kubeonev1beta2.ContainerRuntimeContainerd `json:",inline"`
-		}
-	)
+	var registriesAuth struct {
+		runtime.TypeMeta                          `json:",inline"`
+		kubeonev1beta2.ContainerRuntimeContainerd `json:",inline"`
+	}
 
 	if err := yaml.UnmarshalStrict([]byte(buf), &registriesAuth); err != nil {
 		return fail.Config(err, "YAML unmarshal registriesAuth")
@@ -325,16 +339,20 @@ func isDir(dirname string) bool {
 }
 
 // checkClusterFeatures checks clusters for usage of alpha and deprecated fields, flags etc. and print a warning if any are found
-func checkClusterFeatures(c kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) {
-	if c.Features.PodSecurityPolicy != nil && c.Features.PodSecurityPolicy.Enable {
+func checkClusterFeatures(cluster kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) {
+	if cluster.Features.PodSecurityPolicy != nil && cluster.Features.PodSecurityPolicy.Enable {
 		logger.Warnf("PodSecurityPolicy is deprecated and will be removed with Kubernetes 1.25 release")
 	}
-	if c.CloudProvider.Nutanix != nil {
+	if cluster.CloudProvider.Nutanix != nil {
 		logger.Warnf("Nutanix support is considered as alpha, so the implementation might be changed in the future")
 		logger.Warnf("Nutanix support is planned to graduate to beta/stable in KubeOne 1.5+")
 	}
 
-	if c.ContainerRuntime.Docker != nil {
+	if cluster.ContainerRuntime.Docker != nil {
 		logger.Warnf("Support for docker will be removed with Kubernetes 1.24 release. It is recommended to switch to containerd as container runtime using `kubeone migrate to-containerd`")
+	}
+
+	if cluster.CloudProvider.Vsphere != nil && !cluster.CloudProvider.External && len(cluster.CloudProvider.CSIConfig) > 0 {
+		logger.Warnf(".cloudProvider.csiConfig is provided, but is ignored when used with the in-tree cloud provider")
 	}
 }

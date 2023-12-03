@@ -18,7 +18,13 @@ provider "metal" {
 }
 
 locals {
-  kube_cluster_tag = "kubernetes-cluster:${var.cluster_name}"
+  kube_cluster_tag               = "kubernetes-cluster:${var.cluster_name}"
+  control_plane_operating_system = var.control_plane_operating_system == "" ? var.image_references[var.os].image_name : var.control_plane_operating_system
+  worker_os                      = var.worker_os == "" ? var.image_references[var.os].worker_os : var.worker_os
+  ssh_username                   = var.ssh_username == "" ? var.image_references[var.os].ssh_username : var.ssh_username
+
+  cluster_autoscaler_min_replicas = var.cluster_autoscaler_min_replicas > 0 ? var.cluster_autoscaler_min_replicas : var.initial_machinedeployment_replicas
+  cluster_autoscaler_max_replicas = var.cluster_autoscaler_max_replicas > 0 ? var.cluster_autoscaler_max_replicas : var.initial_machinedeployment_replicas
 }
 
 resource "metal_ssh_key" "deployer" {
@@ -27,13 +33,13 @@ resource "metal_ssh_key" "deployer" {
 }
 
 resource "metal_device" "control_plane" {
-  count      = 3
+  count      = var.control_plane_vm_count
   depends_on = [metal_ssh_key.deployer]
 
   hostname         = "${var.cluster_name}-control-plane-${count.index + 1}"
   plan             = var.device_type
   metro            = var.metro
-  operating_system = var.control_plane_operating_system
+  operating_system = local.control_plane_operating_system
   billing_cycle    = "hourly"
   project_id       = var.project_id
   tags             = [local.kube_cluster_tag]

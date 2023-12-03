@@ -12,19 +12,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# follow up on: https://tech.davis-hansson.com/p/make/
+
+# do not rely on /bin/sh, it can be a symlink to anything (sh/bash/dash/busybox/etc).
+SHELL := bash
+
+# ensures each Make task is ran as one single shell session, rather than one new shell per line.
+.ONESHELL:
+
+# if a Make rule fails, it’s target file is deleted.
+.DELETE_ON_ERROR:
+
+# pass strict shell flags, to fail early
+.SHELLFLAGS := -eu -o pipefail -c
+
+# be loud about missing make variables
+MAKEFLAGS += --warn-undefined-variables
+
+# disable magic rules
+MAKEFLAGS += --no-builtin-rules
+
 export GOPATH?=$(shell go env GOPATH)
 export CGO_ENABLED=0
 export GOPROXY?=https://proxy.golang.org
 export GO111MODULE=on
 export GOFLAGS?=-mod=readonly -trimpath
+export DEFAULT_STABLE=$(shell curl -SsL https://dl.k8s.io/release/stable-1.28.txt)
 
 BUILD_DATE=$(shell if hash gdate 2>/dev/null; then gdate --rfc-3339=seconds | sed 's/ /T/'; else date --rfc-3339=seconds | sed 's/ /T/'; fi)
 GITCOMMIT=$(shell git log -1 --pretty=format:"%H")
 GITTAG=$(shell git describe --tags --always)
 GOLDFLAGS?=-s -w -extldflags=-zrelro -extldflags=-znow \
+	-X k8c.io/kubeone/pkg/cmd.defaultKubeVersion=$(DEFAULT_STABLE) \
 	-X k8c.io/kubeone/pkg/cmd.version=$(GITTAG) \
 	-X k8c.io/kubeone/pkg/cmd.commit=$(GITCOMMIT) \
 	-X k8c.io/kubeone/pkg/cmd.date=$(BUILD_DATE)
+
+# TODO(xmudrii): Rename the flag to "--clean" after updating goreleaser.
+GORELEASER_FLAGS ?= --rm-dist
 
 .PHONY: all
 all: install
@@ -52,9 +77,9 @@ download-gocache:
 	@# Prevent this from getting executed multiple times
 	@touch download-gocache
 
-.PHONY: generate-internal-groups
-generate-internal-groups: GOFLAGS = -mod=readonly
-generate-internal-groups: vendor
+.PHONY: update-codegen
+update-codegen: GOFLAGS = -mod=readonly
+update-codegen: vendor
 	./hack/update-codegen.sh
 
 .PHONY: test
@@ -72,7 +97,7 @@ buildenv:
 .PHONY: lint
 lint:
 	@golangci-lint version
-	golangci-lint run --timeout=5m -v ./pkg/... ./test/... ./testv2/...
+	golangci-lint run --timeout=5m -v ./pkg/... ./test/...
 
 .PHONY: verify-licence
 verify-licence: GOFLAGS = -mod=readonly
@@ -101,8 +126,16 @@ shfmt:
 prowfmt:
 	yq --inplace eval .prow.yaml
 
-fmt: shfmt prowfmt
+.PHONY: tffmt
+tffmt:
+	terraform fmt -write=true -recursive .
+
+fmt: shfmt prowfmt tffmt
 
 gogenerate:
 	go generate ./pkg/...
-	go generate ./testv2/...
+	go generate ./test/...
+
+.PHONY: goreleaser
+goreleaser:
+	goreleaser release $(GORELEASER_FLAGS)

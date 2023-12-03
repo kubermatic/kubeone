@@ -1,0 +1,9 @@
+config:
+  enabled: false
+
+  secret:
+    # Specifies whether Secret should be created from config values
+    create: true
+    # The name of the Secret referred to in the vsphere-cloud-config ConfigMap
+    # If your Kubernetes platform provides this secret, set create to false and adjust the secret name
+    name: cloud-config

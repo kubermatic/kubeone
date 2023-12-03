@@ -4,5 +4,5 @@ contact_links:
     url: https://github.com/kubermatic/kubeone/discussions
     about: Please use GitHub Discussions if you have questions about Kubermatic KubeOne.
   - name: Report a Security Issue
-    url: https://github.com/kubermatic/kubeone/blob/master/CONTRIBUTING.md#reporting-a-security-vulnerability
+    url: https://github.com/kubermatic/kubeone/blob/main/CONTRIBUTING.md#reporting-a-security-vulnerability
     about: Please follow the process for reporting security issues.

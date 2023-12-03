@@ -20,9 +20,9 @@ import (
 	unsafe "unsafe"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/pointer"
 
 	conversion "k8s.io/apimachinery/pkg/conversion"
-	"k8s.io/utils/pointer"
 )
 
 func Convert_kubeone_ContainerRuntimeContainerd_To_v1beta1_ContainerRuntimeContainerd(*kubeoneapi.ContainerRuntimeContainerd, *ContainerRuntimeContainerd, conversion.Scope) error {
@@ -42,8 +42,8 @@ func Convert_v1beta1_Features_To_kubeone_Features(in *Features, out *kubeoneapi.
 	}
 
 	out.CoreDNS = &kubeoneapi.CoreDNS{
-		Replicas:                  pointer.Int32(2),
-		DeployPodDisruptionBudget: pointer.Bool(true),
+		Replicas:                  pointer.New(int32(2)),
+		DeployPodDisruptionBudget: pointer.New(true),
 	}
 
 	// The PodPresets field has been dropped from v1beta2 API.
@@ -92,4 +92,16 @@ func Convert_kubeone_ProviderSpec_To_v1beta1_ProviderSpec(in *kubeoneapi.Provide
 func Convert_kubeone_Features_To_v1beta1_Features(in *kubeoneapi.Features, out *Features, s conversion.Scope) error {
 	// CoreDNS feature is introduced only in the v1beta2 API
 	return autoConvert_kubeone_Features_To_v1beta1_Features(in, out, s)
+}
+
+func Convert_kubeone_ClusterNetworkConfig_To_v1beta1_ClusterNetworkConfig(in *kubeoneapi.ClusterNetworkConfig, out *ClusterNetworkConfig, s conversion.Scope) error {
+	return autoConvert_kubeone_ClusterNetworkConfig_To_v1beta1_ClusterNetworkConfig(in, out, s)
+}
+
+func Convert_kubeone_ProviderStaticNetworkConfig_To_v1beta1_ProviderStaticNetworkConfig(in *kubeoneapi.ProviderStaticNetworkConfig, out *ProviderStaticNetworkConfig, s conversion.Scope) error {
+	return autoConvert_kubeone_ProviderStaticNetworkConfig_To_v1beta1_ProviderStaticNetworkConfig(in, out, s)
+}
+
+func Convert_kubeone_Addon_To_v1beta1_Addon(in *kubeoneapi.Addon, out *Addon, s conversion.Scope) error {
+	return autoConvert_kubeone_Addon_To_v1beta1_Addon(in, out, s)
 }

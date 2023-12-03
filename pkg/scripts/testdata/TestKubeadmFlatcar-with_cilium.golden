@@ -43,12 +43,6 @@ net.ipv4.ip_forward                 = 1
 net.netfilter.nf_conntrack_max      = 1000000
 vm.overcommit_memory                = 1
 EOF
-cat <<EOF | sudo tee /etc/sysctl.d/99-zzz-override_cilium.conf
-# Disable rp_filter on ALL interfaces since it may cause mangled packets to be dropped
-# https://github.com/cilium/cilium/blob/v1.11.1/pkg/datapath/loader/base.go#L244
-net.ipv4.conf.all.rp_filter = 0
-EOF
-
 sudo sysctl --system
 
 
@@ -61,11 +55,11 @@ sudo systemctl force-reload systemd-journald
 
 
 sudo mkdir -p /opt/bin /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
-curl -L "https://github.com/containernetworking/plugins/releases/download/v0.8.7/cni-plugins-linux-${HOST_ARCH}-v0.8.7.tgz" |
+curl -L "https://github.com/containernetworking/plugins/releases/download/v1.2.0/cni-plugins-linux-${HOST_ARCH}-v1.2.0.tgz" |
 	sudo tar -C /opt/cni/bin -xz
 
-RELEASE="v1.23.9"
-CRI_TOOLS_RELEASE="v1.21.0"
+RELEASE="v1.26.0"
+CRI_TOOLS_RELEASE="v1.26.0"
 
 curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_TOOLS_RELEASE}/crictl-${CRI_TOOLS_RELEASE}-linux-${HOST_ARCH}.tar.gz |
 	sudo tar -C /opt/bin -xz
@@ -75,7 +69,7 @@ curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_TOO
 
 
 cd /opt/bin
-k8s_rel_baseurl=https://storage.googleapis.com/kubernetes-release/release
+k8s_rel_baseurl=https://dl.k8s.io
 for binary in kubeadm kubelet kubectl; do
 	curl -L --output /tmp/$binary \
 		$k8s_rel_baseurl/${RELEASE}/bin/linux/${HOST_ARCH}/$binary

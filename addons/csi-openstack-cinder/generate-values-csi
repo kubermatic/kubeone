@@ -1,0 +1,21 @@
+logVerbosityLevel: 1
+
+secret:
+  enabled: true
+  create: false
+  filename: "cloud-config"
+  name: "cloud-config"
+
+priorityClassName: "system-cluster-critical"
+
+storageClass:
+  enabled: false
+
+csi:
+  plugin:
+    controllerPlugin:
+      tolerations:
+        - key: "node-role.kubernetes.io/master"
+          effect: NoSchedule
+        - key: "node-role.kubernetes.io/control-plane"
+          effect: NoSchedule

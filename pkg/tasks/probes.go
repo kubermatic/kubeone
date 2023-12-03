@@ -23,9 +23,6 @@ import (
 	"strings"
 
 	"github.com/Masterminds/semver/v3"
-	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
-	"github.com/kubermatic/machine-controller/pkg/jsonutil"
-	providerconfigtypes "github.com/kubermatic/machine-controller/pkg/providerconfig/types"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 
@@ -36,6 +33,10 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/state"
+
+	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
+	"github.com/kubermatic/machine-controller/pkg/jsonutil"
+	providerconfigtypes "github.com/kubermatic/machine-controller/pkg/providerconfig/types"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -147,12 +148,53 @@ func safeguard(s *state.State) error {
 		}
 	}
 
+	if err := safeguardNodeTaints(s); err != nil {
+		return err
+	}
+
 	if err := safeguardNodeSelectorsAndTolerations(s); err != nil {
 		return err
 	}
 
-	if err := safeguardFlatcarMachineDeployments(s); err != nil {
-		return err
+	return safeguardFlatcarMachineDeployments(s)
+}
+
+// safeguardNodeTaints ensures that there are no Nodes running Kubernetes 1.25
+// that have the "node-role.kubernetes.io/master" taint as it's removed in
+// Kubernetes 1.25.
+// This safeguard can be removed when removing support for Kubernetes 1.25.
+func safeguardNodeTaints(s *state.State) error {
+	var nodes corev1.NodeList
+	if err := s.DynamicClient.List(s.Context, &nodes, dynclient.InNamespace("")); err != nil {
+		return fail.KubeClient(err, "getting all nodes")
+	}
+
+	invalidTaints := []string{}
+
+	for _, node := range nodes.Items {
+		version, err := semver.NewVersion(node.Status.NodeInfo.KubeletVersion)
+		if err != nil {
+			return err
+		}
+		if version.Minor() < 25 {
+			continue
+		}
+
+		for _, taint := range node.Spec.Taints {
+			if taint.Key == nodeRoleMaster {
+				invalidTaints = append(invalidTaints, node.Name)
+			}
+		}
+	}
+
+	if len(invalidTaints) > 0 {
+		s.Logger.Errorf("Found %d node(s) that have the %q taint which is removed in Kubernetes 1.25: %s", len(invalidTaints), nodeRoleMaster, invalidTaints)
+		s.Logger.Warnf("Please remove those taints manually with %q before proceeding.", "kubectl taint nodes node-role.kubernetes.io/master- --all")
+
+		return fail.RuntimeError{
+			Err: errors.New("invalid node taints"),
+			Op:  fmt.Sprintf("some nodes have the %q taint removed Kubernetes 1.25", nodeRoleMaster),
+		}
 	}
 
 	return nil
@@ -166,15 +208,20 @@ func safeguard(s *state.State) error {
 // That's because node-role.kubernetes.io/master label/node role has been completely
 // removed in Kubernetes 1.24. This safeguard is executed only when upgrading
 // from 1.23 to 1.24.
-// This safeguard can be removed when removing support for Kubernetes 1.23.
+// This safeguard can be removed when removing support for Kubernetes 1.24.
 func safeguardNodeSelectorsAndTolerations(s *state.State) error {
 	targetVersion, err := semver.NewVersion(s.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return err
 	}
 
+	liveCP := s.LiveCluster.ControlPlane
+	if len(liveCP) == 0 || liveCP[0].Kubelet.Version == nil {
+		return nil
+	}
+
 	// Run safeguard only when upgrading to Kubernetes 1.24.
-	if targetVersion.Minor() == 24 && s.LiveCluster.ControlPlane[0].Kubelet.Version.Minor() == 23 {
+	if targetVersion.Minor() == 24 && liveCP[0].Kubelet.Version.Minor() == 23 {
 		var pods corev1.PodList
 		// List pods in all namespaces
 		if err := s.DynamicClient.List(s.Context, &pods, dynclient.InNamespace("")); err != nil {
@@ -277,7 +324,7 @@ func safeguardFlatcarMachineDeployments(s *state.State) error {
 		s.Logger.Warnf("cloud-init provisioning utility is not supported on Flatcar with Operating System Manager (OSM) enabled.")
 		s.Logger.Warnf("Please migrate your MachineDeployments to \"ignition\" provisioning utility after kubeone apply is done.")
 		s.Logger.Warnf("Not doing so will cause your Machines to never join the cluster.")
-		s.Logger.Warnf("For more details, check out the following document: https://docs.kubermatic.com/kubeone/master/architecture/operating-system-manager/usage/")
+		s.Logger.Warnf("For more details, check out the following document: https://docs.kubermatic.com/kubeone/v1.7/architecture/operating-system-manager/usage/")
 	}
 
 	return nil
@@ -675,7 +722,7 @@ func systemdUnitExecStartPath(conn executor.Interface, unitName string) (string,
 func systemdStatus(conn executor.Interface, service string) (uint64, error) {
 	out, _, _, err := conn.Exec(fmt.Sprintf(systemdShowStatusCMD, service))
 	if err != nil {
-		return 0, fail.Runtime(err, "ckecking %q systemd service status", service)
+		return 0, fail.Runtime(err, "checking %q systemd service status", service)
 	}
 
 	out = strings.ReplaceAll(out, "=", ": ")

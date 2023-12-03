@@ -120,11 +120,7 @@ type State struct {
 }
 
 func (s *State) KubeadmVerboseFlag() string {
-	if s.Verbose {
-		return "--v=6"
-	}
-
-	return ""
+	return "--v=6"
 }
 
 // Clone returns a shallow copy of the State.

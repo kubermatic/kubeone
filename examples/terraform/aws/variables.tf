@@ -74,6 +74,12 @@ variable "ssh_agent_socket" {
   type        = string
 }
 
+variable "ssh_hosts_keys" {
+  default     = null
+  description = "A list of SSH hosts public keys to verify"
+  type        = list(string)
+}
+
 variable "bastion_port" {
   description = "Bastion SSH port"
   default     = 22
@@ -83,6 +89,12 @@ variable "bastion_port" {
 variable "bastion_user" {
   description = "Bastion SSH username"
   default     = ""
+  type        = string
+}
+
+variable "bastion_host_key" {
+  description = "Bastion SSH host public key"
+  default     = null
   type        = string
 }
 
@@ -134,6 +146,12 @@ variable "worker_type" {
   type        = string
 }
 
+variable "worker_volume_size" {
+  default     = 50
+  description = "Size of the EBS volume, in Gb"
+  type        = number
+}
+
 variable "bastion_type" {
   default     = "t3.nano"
   description = "instance type for bastion"
@@ -171,14 +189,14 @@ variable "ami_filters" {
   default = {
     ubuntu = {
       owners       = ["099720109477"] # Canonical
-      image_name   = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+      image_name   = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
       ssh_username = "ubuntu"
       worker_os    = "ubuntu"
     }
 
     centos = {
       owners       = ["125523088429"]
-      image_name   = ["CentOS 7.* x86_64"]
+      image_name   = ["CentOS Linux 7 x86_64*"]
       ssh_username = "centos"
       worker_os    = "centos"
     }
@@ -230,6 +248,18 @@ variable "initial_machinedeployment_replicas" {
   description = "number of replicas per MachineDeployment"
   type        = number
 
+}
+
+variable "cluster_autoscaler_min_replicas" {
+  default     = 0
+  description = "minimum number of replicas per MachineDeployment (requires cluster-autoscaler)"
+  type        = number
+}
+
+variable "cluster_autoscaler_max_replicas" {
+  default     = 0
+  description = "maximum number of replicas per MachineDeployment (requires cluster-autoscaler)"
+  type        = number
 }
 
 variable "static_workers_count" {

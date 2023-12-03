@@ -82,6 +82,24 @@ variable "bastion_user" {
   type        = string
 }
 
+variable "ssh_hosts_keys" {
+  default     = null
+  description = "A list of SSH hosts public keys to verify"
+  type        = list(string)
+}
+
+variable "bastion_host_key" {
+  description = "Bastion SSH host public key"
+  default     = null
+  type        = string
+}
+
+variable "control_plane_vm_count" {
+  description = "number of control plane instances"
+  default     = 3
+  type        = number
+}
+
 # Provider specific settings
 
 variable "nutanix_cluster_name" {
@@ -179,6 +197,18 @@ variable "worker_disk_size" {
 variable "initial_machinedeployment_replicas" {
   default     = 2
   description = "number of replicas per MachineDeployment"
+  type        = number
+}
+
+variable "cluster_autoscaler_min_replicas" {
+  default     = 0
+  description = "minimum number of replicas per MachineDeployment (requires cluster-autoscaler)"
+  type        = number
+}
+
+variable "cluster_autoscaler_max_replicas" {
+  default     = 0
+  description = "maximum number of replicas per MachineDeployment (requires cluster-autoscaler)"
   type        = number
 }
 

@@ -25,6 +25,9 @@ locals {
   nic_address_pool_association_count = local.loadbalancer_count > 0 ? var.control_plane_vm_count : 0
   worker_os                          = var.worker_os == "" ? var.image_references[var.os].worker_os : var.worker_os
   ssh_username                       = var.ssh_username == "" ? var.image_references[var.os].ssh_username : var.ssh_username
+
+  cluster_autoscaler_min_replicas = var.cluster_autoscaler_min_replicas > 0 ? var.cluster_autoscaler_min_replicas : var.initial_machinedeployment_replicas
+  cluster_autoscaler_max_replicas = var.cluster_autoscaler_max_replicas > 0 ? var.cluster_autoscaler_max_replicas : var.initial_machinedeployment_replicas
 }
 
 provider "time" {
@@ -142,6 +145,7 @@ resource "azurerm_public_ip" "lbip" {
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Dynamic"
+  sku                 = var.ip_sku
 
   tags = {
     environment = "kubeone"
@@ -156,6 +160,7 @@ resource "azurerm_public_ip" "control_plane" {
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Dynamic"
+  sku                 = var.ip_sku
 
   tags = {
     environment = "kubeone"

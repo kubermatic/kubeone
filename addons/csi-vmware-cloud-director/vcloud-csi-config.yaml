@@ -11,6 +11,5 @@ data:
       host: {{ required "Please provide VCD_URL" (trimSuffix "/api" .Credentials.VCD_URL) }}
       org: {{ required "Please provide VCD_ORG" .Credentials.VCD_ORG }}
       vdc: {{ required "Please provide VCD_VDC" .Credentials.VCD_VDC }}
-      vAppName: {{ .Config.CloudProvider.VMwareCloudDirector.VApp }}
-    clusterid: {{ .Config.Name }}
----
+      vAppName: {{ default .Config.CloudProvider.VMwareCloudDirector.VApp .Params.vAppName }}
+    clusterid: {{ default .Config.Name .Params.clusterid }}

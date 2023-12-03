@@ -17,13 +17,15 @@ limitations under the License.
 package v1beta2
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/Masterminds/semver/v3"
 
+	"k8c.io/kubeone/pkg/pointer"
+
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/utils/pointer"
 )
 
 const (
@@ -41,6 +43,17 @@ const (
 	DefaultCanalMTU = 1450
 )
 
+const (
+	// DefaultPodSubnetIPv6 is the default network range from which IPv6 POD networks are allocated.
+	DefaultPodSubnetIPv6 = "fd01::/48"
+	// DefaultServiceSubnetIPv6 is the default network range from which IPv6 service VIPs are allocated.
+	DefaultServiceSubnetIPv6 = "fd02::/120"
+	// DefaultNodeCIDRMaskSizeIPv4 is the default mask size used to address the nodes within provided IPv4 Pods CIDR.
+	DefaultNodeCIDRMaskSizeIPv4 = 24
+	// DefaultNodeCIDRMaskSizeIPv6 is the default mask size used to address the nodes within provided IPv6 Pods CIDR.
+	DefaultNodeCIDRMaskSizeIPv6 = 64
+)
+
 func addDefaultingFuncs(scheme *runtime.Scheme) error {
 	return RegisterDefaults(scheme)
 }
@@ -54,8 +67,18 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_Proxy(obj)
 	SetDefaults_MachineController(obj)
 	SetDefaults_OperatingSystemManager(obj)
+	SetDefaults_HelmReleases(obj)
 	SetDefaults_SystemPackages(obj)
 	SetDefaults_Features(obj)
+	SetDefaults_CloudConfig(obj)
+}
+
+func SetDefaults_CloudConfig(obj *KubeOneCluster) {
+	if obj.CloudProvider.AWS != nil && obj.CloudProvider.External {
+		if obj.CloudProvider.CloudConfig == "" {
+			obj.CloudProvider.CloudConfig = defaultAWSCCMCloudConfig(obj.Name, obj.ClusterNetwork.IPFamily)
+		}
+	}
 }
 
 func SetDefaults_Hosts(obj *KubeOneCluster) {
@@ -67,6 +90,7 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 	setDefaultLeader := true
 
 	gteKube124Condition, _ := semver.NewConstraint(">= 1.24")
+	ltKube125Condition, _ := semver.NewConstraint("< 1.25")
 	actualVer, err := semver.NewVersion(obj.Versions.Kubernetes)
 	if err != nil {
 		return
@@ -82,11 +106,13 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 		obj.ControlPlane.Hosts[idx].ID = idx
 		defaultHostConfig(&obj.ControlPlane.Hosts[idx])
 		if obj.ControlPlane.Hosts[idx].Taints == nil {
-			obj.ControlPlane.Hosts[idx].Taints = []corev1.Taint{
-				{
-					Effect: corev1.TaintEffectNoSchedule,
-					Key:    "node-role.kubernetes.io/master",
-				},
+			if ltKube125Condition.Check(actualVer) {
+				obj.ControlPlane.Hosts[idx].Taints = []corev1.Taint{
+					{
+						Effect: corev1.TaintEffectNoSchedule,
+						Key:    "node-role.kubernetes.io/master",
+					},
+				}
 			}
 			if gteKube124Condition.Check(actualVer) {
 				obj.ControlPlane.Hosts[idx].Taints = append(obj.ControlPlane.Hosts[idx].Taints, corev1.Taint{
@@ -141,8 +167,27 @@ func SetDefaults_ContainerRuntime(obj *KubeOneCluster) {
 }
 
 func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
-	obj.ClusterNetwork.PodSubnet = defaults(obj.ClusterNetwork.PodSubnet, DefaultPodSubnet)
-	obj.ClusterNetwork.ServiceSubnet = defaults(obj.ClusterNetwork.ServiceSubnet, DefaultServiceSubnet)
+	if obj.ClusterNetwork.IPFamily == "" {
+		obj.ClusterNetwork.IPFamily = IPFamilyIPv4
+	}
+	switch obj.ClusterNetwork.IPFamily {
+	case IPFamilyIPv4:
+		obj.ClusterNetwork.PodSubnet = defaults(obj.ClusterNetwork.PodSubnet, DefaultPodSubnet)
+		obj.ClusterNetwork.ServiceSubnet = defaults(obj.ClusterNetwork.ServiceSubnet, DefaultServiceSubnet)
+		obj.ClusterNetwork.NodeCIDRMaskSizeIPv4 = defaults(obj.ClusterNetwork.NodeCIDRMaskSizeIPv4, ptr(DefaultNodeCIDRMaskSizeIPv4))
+	case IPFamilyIPv6:
+		obj.ClusterNetwork.PodSubnetIPv6 = defaults(obj.ClusterNetwork.PodSubnetIPv6, DefaultPodSubnetIPv6)
+		obj.ClusterNetwork.ServiceSubnetIPv6 = defaults(obj.ClusterNetwork.ServiceSubnetIPv6, DefaultServiceSubnetIPv6)
+		obj.ClusterNetwork.NodeCIDRMaskSizeIPv6 = defaults(obj.ClusterNetwork.NodeCIDRMaskSizeIPv6, ptr(DefaultNodeCIDRMaskSizeIPv6))
+	case IPFamilyIPv4IPv6, IPFamilyIPv6IPv4:
+		obj.ClusterNetwork.PodSubnet = defaults(obj.ClusterNetwork.PodSubnet, DefaultPodSubnet)
+		obj.ClusterNetwork.ServiceSubnet = defaults(obj.ClusterNetwork.ServiceSubnet, DefaultServiceSubnet)
+		obj.ClusterNetwork.PodSubnetIPv6 = defaults(obj.ClusterNetwork.PodSubnetIPv6, DefaultPodSubnetIPv6)
+		obj.ClusterNetwork.ServiceSubnetIPv6 = defaults(obj.ClusterNetwork.ServiceSubnetIPv6, DefaultServiceSubnetIPv6)
+		obj.ClusterNetwork.NodeCIDRMaskSizeIPv4 = defaults(obj.ClusterNetwork.NodeCIDRMaskSizeIPv4, ptr(DefaultNodeCIDRMaskSizeIPv4))
+		obj.ClusterNetwork.NodeCIDRMaskSizeIPv6 = defaults(obj.ClusterNetwork.NodeCIDRMaskSizeIPv6, ptr(DefaultNodeCIDRMaskSizeIPv6))
+	}
+
 	obj.ClusterNetwork.ServiceDomainName = defaults(obj.ClusterNetwork.ServiceDomainName, DefaultServiceDNS)
 	obj.ClusterNetwork.NodePortRange = defaults(obj.ClusterNetwork.NodePortRange, DefaultNodePortRange)
 
@@ -197,10 +242,17 @@ func SetDefaults_MachineController(obj *KubeOneCluster) {
 }
 
 func SetDefaults_OperatingSystemManager(obj *KubeOneCluster) {
-	// OSM can only be used in liaison with machine-controller
-	if obj.OperatingSystemManager == nil && (obj.MachineController != nil && obj.MachineController.Deploy) {
+	if obj.OperatingSystemManager == nil {
 		obj.OperatingSystemManager = &OperatingSystemManagerConfig{
-			Deploy: true,
+			Deploy: obj.MachineController.Deploy,
+		}
+	}
+}
+
+func SetDefaults_HelmReleases(obj *KubeOneCluster) {
+	for idx, hr := range obj.HelmReleases {
+		if hr.ReleaseName == "" {
+			obj.HelmReleases[idx].ReleaseName = hr.Chart
 		}
 	}
 }
@@ -218,10 +270,10 @@ func SetDefaults_Features(obj *KubeOneCluster) {
 		obj.Features.CoreDNS = &CoreDNS{}
 	}
 	if obj.Features.CoreDNS.Replicas == nil {
-		obj.Features.CoreDNS.Replicas = pointer.Int32(2)
+		obj.Features.CoreDNS.Replicas = pointer.New(int32(2))
 	}
 	if obj.Features.CoreDNS.DeployPodDisruptionBudget == nil {
-		obj.Features.CoreDNS.DeployPodDisruptionBudget = pointer.Bool(true)
+		obj.Features.CoreDNS.DeployPodDisruptionBudget = pointer.New(true)
 	}
 
 	if obj.Features.MetricsServer == nil {
@@ -234,6 +286,11 @@ func SetDefaults_Features(obj *KubeOneCluster) {
 	}
 	if obj.Features.OpenIDConnect != nil && obj.Features.OpenIDConnect.Enable {
 		defaultOpenIDConnect(&obj.Features.OpenIDConnect.Config)
+	}
+	if obj.Features.NodeLocalDNS == nil {
+		obj.Features.NodeLocalDNS = &NodeLocalDNS{
+			Deploy: true,
+		}
 	}
 }
 
@@ -269,6 +326,28 @@ func defaultHostConfig(obj *HostConfig) {
 	obj.BastionUser = defaults(obj.BastionUser, obj.SSHUsername)
 }
 
+func defaultAWSCCMCloudConfig(name string, ipFamily IPFamily) string {
+	lines := []string{
+		"[global]",
+		fmt.Sprintf("KubernetesClusterID=%q", name),
+	}
+
+	switch ipFamily {
+	case IPFamilyIPv4:
+		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv4"))
+	case IPFamilyIPv6:
+		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv6"))
+	case IPFamilyIPv4IPv6:
+		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv4"))
+		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv6"))
+	case IPFamilyIPv6IPv4:
+		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv6"))
+		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv4"))
+	}
+
+	return strings.Join(lines, "\n")
+}
+
 func defaults[T comparable](input, defaultValue T) T {
 	var zero T
 
@@ -277,4 +356,8 @@ func defaults[T comparable](input, defaultValue T) T {
 	}
 
 	return defaultValue
+}
+
+func ptr[T any](x T) *T {
+	return &x
 }

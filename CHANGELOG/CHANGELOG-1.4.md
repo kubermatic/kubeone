@@ -1,8 +1,107 @@
+# [v1.4.14](https://github.com/kubermatic/kubeone/releases/tag/v1.4.14) - 2023-05-08
+
+**This is an out-of-band patch release to fix issues with installing and upgrading Kubernetes on clusters running containerd 1.5.**
+
+## Changelog since v1.4.13
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Update and bind cri-tools to v1.25.0. This fixes an issue with installing/upgrading Kubernetes due to crictl v1.26.0 not being able to communicate with containerd 1.5 ([#2772](https://github.com/kubermatic/kubeone/pull/2772), [@kron4eg](https://github.com/kron4eg))
+
+# [v1.4.13](https://github.com/kubermatic/kubeone/releases/tag/v1.4.13) - 2023-01-17
+
+## Changelog since v1.4.12
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Fix an issue where custom CA bundle was not being propagated to machine-controller-webhook ([#2589](https://github.com/kubermatic/kubeone/pull/2589), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Remove the leftover `/tmp/k1-etc-environment` file. This fixes an issue with `kubeone apply` failing if the username is changed ([#2564](https://github.com/kubermatic/kubeone/pull/2564), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Run kubeadm with increased verbosity unconditionally. This only changes the behavior if KubeOne is run without the verbose flag but kubeadm fails, in which case kubeadm is going to print more information about the issue ([#2566](https://github.com/kubermatic/kubeone/pull/2566), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+# [v1.4.12](https://github.com/kubermatic/kubeone/releases/tag/v1.4.12) - 2022-12-12
+
+## Important Registry Change Information
+
+In November, we announced that we are changing all image references from `k8s.gcr.io` to `registry.k8s.io` to keep up with [the latest upstream changes](https://github.com/kubernetes/enhancements/tree/master/keps/sig-release/3000-artifact-distribution). **This patch release includes this change. Please ensure that any mirrors you use are able to host `registry.k8s.io` and/or that firewall rules are going to allow access to `registry.k8s.io` to pull images before upgrading to this KubeOne patch release.**
+
+The December Kubernetes patch releases (1.25.5, 1.24.9, 1.23.15, and 1.22.17) are enforcing `registry.k8s.io` by default. Please keep this in mind if you're using an older KubeOne patch release with the latest Kubernetes patch releases. We strongly advise that you use KubeOne v1.5.4 or newer with the latest Kubernetes patch releases.
+
+## Changelog since v1.4.11
+
+## Changes by Kind
+
+### API Change
+
+- Image references are changed from `k8s.gcr.io` to `registry.k8s.io`. This is done to keep up with [the latest upstream changes](https://github.com/kubernetes/enhancements/tree/master/keps/sig-release/3000-artifact-distribution). Please ensure that any mirrors you use are able to host `registry.k8s.io` and/or that firewall rules are going to allow access to `registry.k8s.io` to pull images before applying the next KubeOne patch releases. ([#2508](https://github.com/kubermatic/kubeone/pull/2508), [@xmudrii](https://github.com/xmudrii))
+
+### Feature
+
+- KubeOne is now built using Go 1.18.9 ([#2527](https://github.com/kubermatic/kubeone/pull/2527), [@xmudrii](https://github.com/xmudrii))
+- Update etcd to 3.5.6 which includes a fix for [the recently reported data inconsistency issue for a case when etcd crashes during processing defragmentation operation](https://groups.google.com/a/kubernetes.io/g/dev/c/sEVopPxKPDo/m/9ME3CzicBwAJ) ([#2500](https://github.com/kubermatic/kubeone/pull/2500), [@xmudrii](https://github.com/xmudrii))
+- Enable compact hash checks as per [the recommendations from etcd for detecting data corruption](https://etcd.io/docs/v3.5/op-guide/data_corruption/#enabling-data-corruption-detection) ([#2500](https://github.com/kubermatic/kubeone/pull/2500), [@xmudrii](https://github.com/xmudrii))
+- Validate support for Kubernetes patch releases 1.23.15 and 1.22.17 ([#2533](https://github.com/kubermatic/kubeone/pull/2533), [@xmudrii](https://github.com/xmudrii))
+
+### Bug or Regression
+
+- Fix a panic (NPE) when determining if it is safe to repair a cluster when there's no kubelet or kubelet systemd unit on the node ([#2496](https://github.com/kubermatic/kubeone/pull/2496), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Use the pause image from `registry.k8s.io` for all Kubernetes releases ([#2530](https://github.com/kubermatic/kubeone/pull/2530), [@xmudrii](https://github.com/xmudrii))
+
+# [v1.4.11](https://github.com/kubermatic/kubeone/releases/tag/v1.4.11) - 2022-11-11
+
+## Important Registry Change Information
+
+For the next series of KubeOne and KKP patch releases, image references will move from `k8s.gcr.io` to `registry.k8s.io`. This will be done to keep up with [the latest upstream changes](https://github.com/kubernetes/enhancements/tree/master/keps/sig-release/3000-artifact-distribution). Please ensure that any mirrors you use are able to host `registry.k8s.io` and/or that firewall rules are going to allow access to `registry.k8s.io` to pull images before applying the next KubeOne patch releases. **This is not included in this patch release but just a notification of future changes.**
+
+## Important Security Information
+
+**Kubernetes releases prior to 1.25.4, 1.24.8, 1.23.14, and 1.22.16 are affected by two Medium CVEs in kube-apiserver**: [CVE-2022-3162 (Unauthorized read of Custom Resources)](https://groups.google.com/g/kubernetes-announce/c/oR2PUBiODNA/m/tShPgvpUDQAJ) and [CVE-2022-3294 (Node address isn't always verified when proxying)](https://groups.google.com/g/kubernetes-announce/c/eR0ghAXy2H8/m/sCuQQZlVDQAJ). We **strongly recommend** upgrading to 1.25.4, 1.24.8, 1.23.14, or 1.22.16 **as soon as possible**.
+
+## Changelog since v1.4.10
+
+## Changes by Kind
+
+### Feature
+
+- Update etcd to 3.5.5 for Kubernetes 1.22+ clusters or use the version provided by kubeadm if it's newer ([#2444](https://github.com/kubermatic/kubeone/pull/2444), [@xmudrii](https://github.com/xmudrii))
+
+### Other (Cleanup or Flake)
+
+- Expose machine-controller metrics port (8080/TCP), so Prometheus ServiceMonitor can be used for scraping ([#2440](https://github.com/kubermatic/kubeone/pull/2440), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Chore
+
+- KubeOne is now built using Go 1.18.8 ([#2465](https://github.com/kubermatic/kubeone/pull/2465), [@xmudrii](https://github.com/xmudrii))
+- The `kubeone-e2e` image is moved from Docker Hub to Quay (`quay.io/kubermatic/kubeone-e2e`) ([#2465](https://github.com/kubermatic/kubeone/pull/2465), [@xmudrii](https://github.com/xmudrii))
+
+# [v1.4.10](https://github.com/kubermatic/kubeone/releases/tag/v1.4.10) - 2022-10-20
+
+## Changelog since v1.4.9
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Update `golang.org/x/crypto` dependency to a newer version to fix issues with SSH authentication on instances with newer OpenSSH versions ([#2390](https://github.com/kubermatic/kubeone/pull/2390), [@xmudrii](https://github.com/xmudrii))
+
+# [v1.4.9](https://github.com/kubermatic/kubeone/releases/tag/v1.4.9) - 2022-09-26
+
+## Changelog since v1.4.8
+
+## Changes by Kind
+
+### Feature
+
+- Update the `kubernetes-cni` package from 0.8.7 to 1.1.1 to support the latest Kubernetes patch releases ([#2358](https://github.com/kubermatic/kubeone/pull/2358), [@xmudrii](https://github.com/xmudrii))
+
 # [v1.4.8](https://github.com/kubermatic/kubeone/releases/tag/v1.4.8) - 2022-08-29
 
 ## Changelog since v1.4.7
 
-## Urgent Upgrade Notes 
+## Urgent Upgrade Notes
 
 ### (No, really, you MUST read this before you upgrade)
 
@@ -171,7 +270,7 @@ Check out the [Upgrading from 1.3 to 1.4 tutorial](https://docs.kubermatic.com/k
 
 ### Breaking changes / Action Required
 
-* The default AMI for CentOS in Terraform configs for AWS has been changed to Rocky Linux. If you use the new Terraform configs with an existing cluster, make sure to bind the AMI as described in [the production recommendations document](https://docs.kubermatic.com/kubeone/master/cheat_sheets/production_recommendations/) ([#1809](https://github.com/kubermatic/kubeone/pull/1809))
+* The default AMI for CentOS in Terraform configs for AWS has been changed to Rocky Linux. If you use the new Terraform configs with an existing cluster, make sure to bind the AMI as described in [the production recommendations document](https://docs.kubermatic.com/kubeone/main/cheat_sheets/production_recommendations/) ([#1809](https://github.com/kubermatic/kubeone/pull/1809))
 * The `cloud-provider-credentials` Secret is removed by KubeOne because KubeOne does not use it any longer. If you have any workloads **NOT** created by KubeOne that use this Secret, please migrate before upgrading KubeOne. Instead, KubeOne now creates `kubeone-machine-controller-credentials` and `kubeone-ccm-credentials` Secrets used by machine-controller and external CCM
 * Support for Amazon EKS-D clusters has been removed starting from this release
 * GCP: Default operating system for control plane instances is now Ubuntu 20.04 ([#1576](https://github.com/kubermatic/kubeone/pull/1576))
@@ -320,7 +419,7 @@ Check out the [Upgrading from 1.3 to 1.4 tutorial](https://docs.kubermatic.com/k
   * Make sure to bind `control_plane_image_family` to the image you're currently using or Terraform might recreate all your control plane instances
 * **[BREAKING]** Azure: Default VM type is changed to `Standard_F2` ([#1528](https://github.com/kubermatic/kubeone/pull/1528))
   * Make sure to bind `control_plane_vm_size` and `worker_vm_size` to the VM size you're currently using or Terraform might recreate all your instances
-* **[BREAKING]** The default AMI for CentOS in Terraform configs for AWS has been changed to Rocky Linux. If you use the new Terraform configs with an existing cluster, make sure to bind the AMI as described in [the production recommendations document](https://docs.kubermatic.com/kubeone/master/cheat_sheets/production_recommendations/) ([#1809](https://github.com/kubermatic/kubeone/pull/1809))
+* **[BREAKING]** The default AMI for CentOS in Terraform configs for AWS has been changed to Rocky Linux. If you use the new Terraform configs with an existing cluster, make sure to bind the AMI as described in [the production recommendations document](https://docs.kubermatic.com/kubeone/main/cheat_sheets/production_recommendations/) ([#1809](https://github.com/kubermatic/kubeone/pull/1809))
 * Add the `control_plane_vm_count` variable to the AWS configs used to control the number of control plane nodes (defaults to 3) ([#1810](https://github.com/kubermatic/kubeone/pull/1810))
 * Update the Terraform provider for OpenStack to version 1.47.0 ([#1816](https://github.com/kubermatic/kubeone/pull/1816))
 * Set Ubuntu 20.04 as the default image for OpenStack ([#1816](https://github.com/kubermatic/kubeone/pull/1816))
@@ -338,7 +437,7 @@ Check out the [Upgrading from 1.3 to 1.4 tutorial](https://docs.kubermatic.com/k
 * Azure: Open NodePorts by default ([#1528](https://github.com/kubermatic/kubeone/pull/1528))
 * Fix keepalived script in Terraform configs for vSphere to assume yes when updating repos ([#1537](https://github.com/kubermatic/kubeone/pull/1537))
 * Add additional Availability Set used for worker nodes to Terraform configs for Azure ([#1556](https://github.com/kubermatic/kubeone/pull/1556))
-  * Make sure to check the [production recommendations for Azure clusters](https://docs.kubermatic.com/kubeone/master/cheat_sheets/production_recommendations/#azure) for more information about how this additional availability set is used
+  * Make sure to check the [production recommendations for Azure clusters](https://docs.kubermatic.com/kubeone/main/cheat_sheets/production_recommendations/#azure) for more information about how this additional availability set is used
 
 ### Updated
 
@@ -375,7 +474,7 @@ Check out the [Upgrading from 1.3 to 1.4 tutorial](https://docs.kubermatic.com/k
   * Those providers have the CSI migration enabled by default in Kubernetes 1.23, so the CSI driver will be used for all volumes operations
 * Unconditionally deploy DigitalOcean, Hetzner, Nutanix, and OpenStack Cinder CSI drivers ([#1831](https://github.com/kubermatic/kubeone/pull/1831))
   * OpenStack has the CSI migration enabled by default since Kubernetes 1.18, so the CSI driver will be used for all operations
-* **[BREAKING]** The default AMI for CentOS in Terraform configs for AWS has been changed to Rocky Linux. If you use the new Terraform configs with an existing cluster, make sure to bind the AMI as described in [the production recommendations document](https://docs.kubermatic.com/kubeone/master/cheat_sheets/production_recommendations/) ([#1809](https://github.com/kubermatic/kubeone/pull/1809))
+* **[BREAKING]** The default AMI for CentOS in Terraform configs for AWS has been changed to Rocky Linux. If you use the new Terraform configs with an existing cluster, make sure to bind the AMI as described in [the production recommendations document](https://docs.kubermatic.com/kubeone/main/cheat_sheets/production_recommendations/) ([#1809](https://github.com/kubermatic/kubeone/pull/1809))
 
 ## Added
 
@@ -401,7 +500,7 @@ Check out the [Upgrading from 1.3 to 1.4 tutorial](https://docs.kubermatic.com/k
 
 ### Terraform Configs
 
-* **[BREAKING]** The default AMI for CentOS in Terraform configs for AWS has been changed to Rocky Linux. If you use the new Terraform configs with an existing cluster, make sure to bind the AMI as described in [the production recommendations document](https://docs.kubermatic.com/kubeone/master/cheat_sheets/production_recommendations/) ([#1809](https://github.com/kubermatic/kubeone/pull/1809))
+* **[BREAKING]** The default AMI for CentOS in Terraform configs for AWS has been changed to Rocky Linux. If you use the new Terraform configs with an existing cluster, make sure to bind the AMI as described in [the production recommendations document](https://docs.kubermatic.com/kubeone/main/cheat_sheets/production_recommendations/) ([#1809](https://github.com/kubermatic/kubeone/pull/1809))
 * Add the `control_plane_vm_count` variable to the AWS configs used to control the number of control plane nodes (defaults to 3) ([#1810](https://github.com/kubermatic/kubeone/pull/1810))
 * Update the Terraform provider for OpenStack to version 1.47.0 ([#1816](https://github.com/kubermatic/kubeone/pull/1816))
 * Set Ubuntu 20.04 as the default image for OpenStack ([#1816](https://github.com/kubermatic/kubeone/pull/1816))
@@ -670,7 +769,7 @@ Check out the [Upgrading from 1.3 to 1.4 tutorial](https://docs.kubermatic.com/k
 * Azure: Open NodePorts by default ([#1528](https://github.com/kubermatic/kubeone/pull/1528))
 * Fix keepalived script in Terraform configs for vSphere to assume yes when updating repos ([#1537](https://github.com/kubermatic/kubeone/pull/1537))
 * Add additional Availability Set used for worker nodes to Terraform configs for Azure ([#1556](https://github.com/kubermatic/kubeone/pull/1556))
-  * Make sure to check the [production recommendations for Azure clusters](https://docs.kubermatic.com/kubeone/master/cheat_sheets/production_recommendations/#azure) for more information about how this additional availability set is used
+  * Make sure to check the [production recommendations for Azure clusters](https://docs.kubermatic.com/kubeone/main/cheat_sheets/production_recommendations/#azure) for more information about how this additional availability set is used
 
 ### Updated
 

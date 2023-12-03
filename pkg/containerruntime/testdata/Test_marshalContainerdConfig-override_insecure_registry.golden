@@ -5,6 +5,7 @@ address = "127.0.0.1:1338"
 
 [plugins]
 [plugins."io.containerd.grpc.v1.cri"]
+sandbox_image = "some.registry/pause:3.9"
 [plugins."io.containerd.grpc.v1.cri".containerd]
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]

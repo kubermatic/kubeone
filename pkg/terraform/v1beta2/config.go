@@ -22,7 +22,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/imdario/mergo"
+	"dario.cat/mergo"
 
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/pkg/fail"
@@ -87,6 +87,7 @@ type controlPlane struct {
 
 type hostsSpec struct {
 	PublicAddress     []string          `json:"public_address"`
+	IPv6Addresses     [][]string        `json:"ipv6_addresses"`
 	PrivateAddress    []string          `json:"private_address"`
 	Hostnames         []string          `json:"hostnames"`
 	OperatingSystem   string            `json:"operating_system"`
@@ -94,9 +95,11 @@ type hostsSpec struct {
 	SSHPort           int               `json:"ssh_port"`
 	SSHPrivateKeyFile string            `json:"ssh_private_key_file"`
 	SSHAgentSocket    string            `json:"ssh_agent_socket"`
+	SSHHostKeys       [][]byte          `json:"ssh_hosts_keys"`
 	Bastion           string            `json:"bastion"`
 	BastionPort       int               `json:"bastion_port"`
 	BastionUser       string            `json:"bastion_user"`
+	BastionHostKey    []byte            `json:"bastion_host_key"`
 	Kubelet           kubeletSpec       `json:"kubelet,omitempty"`
 	Labels            map[string]string `json:"labels"`
 }
@@ -152,23 +155,22 @@ func (hs *hostsSpec) toHostConfigs(opts ...hostConfigsOpts) []kubeonev1beta2.Hos
 			privateIP = hs.PrivateAddress[i]
 		}
 
-		hostname := ""
-		if i < len(hs.Hostnames) {
-			hostname = hs.Hostnames[i]
+		var ipv6Addr []string
+		if i < len(hs.IPv6Addresses) {
+			ipv6Addr = hs.IPv6Addresses[i]
 		}
 
-		hosts = append(hosts, newHostConfig(publicIP, privateIP, hostname, hs))
+		hosts = append(hosts, newHostConfig(publicIP, privateIP, ipv6Addr, i, hs))
 	}
 
 	if len(hosts) == 0 {
 		// there was no public IPs available
 		for i, privateIP := range hs.PrivateAddress {
-			hostname := ""
-			if i < len(hs.Hostnames) {
-				hostname = hs.Hostnames[i]
+			var ipv6Addr []string
+			if i < len(hs.IPv6Addresses) {
+				ipv6Addr = hs.IPv6Addresses[i]
 			}
-
-			hosts = append(hosts, newHostConfig("", privateIP, hostname, hs))
+			hosts = append(hosts, newHostConfig("", privateIP, ipv6Addr, i, hs))
 		}
 	}
 
@@ -276,7 +278,7 @@ func (output *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error {
 
 		// Set StorageProfile.
 		if len(cp.StorageProfile) > 0 {
-			cluster.CloudProvider.VMwareCloudDirector.VApp = cp.VAppName
+			cluster.CloudProvider.VMwareCloudDirector.StorageProfile = cp.StorageProfile
 		}
 	}
 
@@ -342,26 +344,40 @@ func (output *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error {
 	return nil
 }
 
-func newHostConfig(publicIP, privateIP, hostname string, hs *hostsSpec) kubeonev1beta2.HostConfig {
-	hc := kubeonev1beta2.HostConfig{
-		Bastion:           hs.Bastion,
-		BastionPort:       hs.BastionPort,
-		BastionUser:       hs.BastionUser,
-		Hostname:          hostname,
-		OperatingSystem:   kubeonev1beta2.OperatingSystemName(hs.OperatingSystem),
-		PrivateAddress:    privateIP,
-		PublicAddress:     publicIP,
-		SSHAgentSocket:    hs.SSHAgentSocket,
-		SSHPrivateKeyFile: hs.SSHPrivateKeyFile,
-		SSHUsername:       hs.SSHUser,
-		SSHPort:           hs.SSHPort,
-		Kubelet:           kubeonev1beta2.KubeletConfig{},
-		Labels:            hs.Labels,
+func newHostConfig(publicIP, privateIP string, ipv6addr []string, idx int, spec *hostsSpec) kubeonev1beta2.HostConfig {
+	var hostname string
+
+	if idx < len(spec.Hostnames) {
+		hostname = spec.Hostnames[idx]
 	}
 
-	parseKubeletResourceParams(hs.Kubelet, &hc.Kubelet)
+	hostConfig := kubeonev1beta2.HostConfig{
+		Bastion:              spec.Bastion,
+		BastionPort:          spec.BastionPort,
+		BastionUser:          spec.BastionUser,
+		BastionHostPublicKey: spec.BastionHostKey,
+		Hostname:             hostname,
+		OperatingSystem:      kubeonev1beta2.OperatingSystemName(spec.OperatingSystem),
+		PrivateAddress:       privateIP,
+		PublicAddress:        publicIP,
+		IPv6Addresses:        ipv6addr,
+		SSHAgentSocket:       spec.SSHAgentSocket,
+		SSHPrivateKeyFile:    spec.SSHPrivateKeyFile,
+		SSHUsername:          spec.SSHUser,
+		SSHPort:              spec.SSHPort,
+		Kubelet:              kubeonev1beta2.KubeletConfig{},
+		Labels:               spec.Labels,
+	}
 
-	return hc
+	if idx < len(spec.SSHHostKeys) {
+		if pubKey := spec.SSHHostKeys[idx]; pubKey != nil {
+			hostConfig.SSHHostPublicKey = pubKey
+		}
+	}
+
+	parseKubeletResourceParams(spec.Kubelet, &hostConfig.Kubelet)
+
+	return hostConfig
 }
 
 func setWorkersetFlag(w *kubeonev1beta2.DynamicWorkerConfig, name string, value interface{}) error {

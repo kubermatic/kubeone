@@ -35,7 +35,7 @@ func completionCmd(rootCmd *cobra.Command) *cobra.Command {
 		`),
 		Example:   "kubeone completion bash",
 		ValidArgs: []string{"bash", "zsh"},
-		Args:      cobra.ExactValidArgs(1),
+		Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			switch args[0] {
 			case "bash":
@@ -61,7 +61,7 @@ func documentCmd(rootCmd *cobra.Command) *cobra.Command {
 		`),
 		Example:   "kubeone document man",
 		ValidArgs: []string{"man", "md", "rest", "yaml"},
-		Args:      cobra.ExactValidArgs(1),
+		Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			switch args[0] {
 			case "man":

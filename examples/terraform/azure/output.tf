@@ -37,6 +37,8 @@ output "kubeone_hosts" {
       ssh_port             = var.ssh_port
       ssh_private_key_file = var.ssh_private_key_file
       ssh_user             = local.ssh_username
+      ssh_hosts_keys       = var.ssh_hosts_keys
+      bastion_host_key     = var.bastion_host_key
     }
   }
 }
@@ -52,12 +54,15 @@ output "kubeone_workers" {
       replicas = var.initial_machinedeployment_replicas
       providerSpec = {
         annotations = {
-          "k8c.io/operating-system-profile" = var.initial_machinedeployment_operating_system_profile
+          "k8c.io/operating-system-profile"                           = var.initial_machinedeployment_operating_system_profile
+          "cluster.k8s.io/cluster-api-autoscaler-node-group-min-size" = tostring(local.cluster_autoscaler_min_replicas)
+          "cluster.k8s.io/cluster-api-autoscaler-node-group-max-size" = tostring(local.cluster_autoscaler_max_replicas)
         }
         sshPublicKeys   = [file(var.ssh_public_key_file)]
         operatingSystem = local.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot               = false
+          disableAutoUpdate               = var.disable_auto_update
           rhelSubscriptionManagerUser     = var.rhsm_username
           rhelSubscriptionManagerPassword = var.rhsm_password
           rhsmOfflineToken                = var.rhsm_offline_token
@@ -78,14 +83,14 @@ output "kubeone_workers" {
         cloudProviderSpec = {
           # provider specific fields:
           # see example under `cloudProviderSpec` section at:
-          # https://github.com/kubermatic/machine-controller/blob/master/examples/azure-machinedeployment.yaml
+          # https://github.com/kubermatic/machine-controller/blob/main/examples/azure-machinedeployment.yaml
           location      = var.location
           resourceGroup = azurerm_resource_group.rg.name
           # vnetResourceGroup     = ""
-          vmSize     = var.worker_vm_size
-          vnetName   = azurerm_virtual_network.vpc.name
-          subnetName = azurerm_subnet.subnet.name
-          # loadBalancerSku       = ""
+          vmSize          = var.worker_vm_size
+          vnetName        = azurerm_virtual_network.vpc.name
+          subnetName      = azurerm_subnet.subnet.name
+          loadBalancerSku = var.ip_sku
           routeTableName  = azurerm_route_table.rt.name
           availabilitySet = azurerm_availability_set.avset_workers.name
           # assignAvailabilitySet = true/false

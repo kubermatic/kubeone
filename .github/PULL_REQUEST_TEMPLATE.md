@@ -1,6 +1,6 @@
 <!--  Thanks for sending a pull request!  Here are some tips for you:
-1. If this is your first time sending a pull request, please read our contributing guidelines: https://github.com/kubermatic/kubeone/blob/master/CONTRIBUTING.md
-2. Make sure *all* commits in a pull request have the DCO signoff message. Without a DCO signoff, we can't review and merge your pull request due to legal reasons. Check the contributing guidelines for more information about DCO and how to sign commits: https://github.com/kubermatic/kubeone/blob/master/CONTRIBUTING.md#certificate-of-origin
+1. If this is your first time sending a pull request, please read our contributing guidelines: https://github.com/kubermatic/kubeone/blob/main/CONTRIBUTING.md
+2. Make sure *all* commits in a pull request have the DCO signoff message. Without a DCO signoff, we can't review and merge your pull request due to legal reasons. Check the contributing guidelines for more information about DCO and how to sign commits: https://github.com/kubermatic/kubeone/blob/main/CONTRIBUTING.md#certificate-of-origin
 3. If the PR is unfinished, see how to mark it: https://git.k8s.io/community/contributors/guide/pull-requests.md#marking-unfinished-pull-requests
 -->
 **What this PR does / why we need it**:
@@ -24,6 +24,7 @@ Optionally add one or more of the following kinds if applicable:
 /kind failing-test
 /kind flake
 /kind regression
+/kind chore
 -->
 
 **Special notes for your reviewer**:

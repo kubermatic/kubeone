@@ -23,8 +23,10 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"sort"
 	"strings"
 
+	"github.com/bombsimon/logrusr/v4"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
@@ -36,6 +38,13 @@ import (
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
+
+	"k8s.io/apimachinery/pkg/util/sets"
+	ctrlruntimelog "sigs.k8s.io/controller-runtime/pkg/log"
+)
+
+var (
+	defaultKubeVersion = ""
 )
 
 const yes = "yes"
@@ -158,6 +167,10 @@ func newLogger(verbose bool, format string) *logrus.Logger {
 		}
 	}
 
+	// Required by controller-runtime
+	// https://github.com/kubernetes-sigs/controller-runtime/blob/658c55227830b2d895b12fc1c86cbc731e36d291/TMP-LOGGING.md#
+	ctrlruntimelog.SetLogger(logrusr.New(logger))
+
 	if verbose {
 		logger.SetLevel(logrus.DebugLevel)
 	}
@@ -250,4 +263,40 @@ func defaultBackupPath(backupPath, manifestPath, clusterName string) string {
 	}
 
 	return backupPath
+}
+
+type oneOfFlag struct {
+	validSet     sets.Set[string]
+	defaultValue string
+	value        string
+	valid        bool
+}
+
+func (oof *oneOfFlag) String() string {
+	if oof.valid {
+		return oof.value
+	}
+
+	return oof.defaultValue
+}
+
+func (oof *oneOfFlag) Set(val string) error {
+	if !oof.validSet.Has(val) {
+		return fmt.Errorf("unknown value")
+	}
+	oof.value = val
+	oof.valid = true
+
+	return nil
+}
+
+func (*oneOfFlag) Type() string {
+	return "string"
+}
+
+func (oof *oneOfFlag) PossibleValues() []string {
+	l := oof.validSet.UnsortedList()
+	sort.Strings(l)
+
+	return l
 }

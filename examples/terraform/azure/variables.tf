@@ -86,6 +86,18 @@ variable "ssh_agent_socket" {
   type        = string
 }
 
+variable "ssh_hosts_keys" {
+  default     = null
+  description = "A list of SSH hosts public keys to verify"
+  type        = list(string)
+}
+
+variable "bastion_host_key" {
+  description = "Bastion SSH host public key"
+  default     = null
+  type        = string
+}
+
 variable "disable_kubeapi_loadbalancer" {
   type        = bool
   default     = false
@@ -93,6 +105,11 @@ variable "disable_kubeapi_loadbalancer" {
 }
 
 # Provider specific settings
+
+variable "ip_sku" {
+  default     = "Basic"
+  description = "SKU to use for IP addresses"
+}
 
 variable "location" {
   description = "Azure datacenter to use"
@@ -121,8 +138,8 @@ variable "image_references" {
     ubuntu = {
       image = {
         publisher = "Canonical"
-        offer     = "0001-com-ubuntu-server-focal"
-        sku       = "20_04-lts"
+        offer     = "0001-com-ubuntu-server-jammy"
+        sku       = "22_04-lts"
         version   = "latest"
       }
       plan         = []
@@ -147,7 +164,7 @@ variable "image_references" {
         publisher = "kinvolk"
         offer     = "flatcar-container-linux"
         sku       = "stable"
-        version   = "3227.2.1"
+        version   = "3374.2.3"
       }
       plan = [{
         name      = "stable"
@@ -216,6 +233,18 @@ variable "initial_machinedeployment_replicas" {
   type        = number
 }
 
+variable "cluster_autoscaler_min_replicas" {
+  default     = 0
+  description = "minimum number of replicas per MachineDeployment (requires cluster-autoscaler)"
+  type        = number
+}
+
+variable "cluster_autoscaler_max_replicas" {
+  default     = 0
+  description = "maximum number of replicas per MachineDeployment (requires cluster-autoscaler)"
+  type        = number
+}
+
 variable "initial_machinedeployment_operating_system_profile" {
   default     = ""
   type        = string
@@ -245,4 +274,10 @@ variable "rhsm_offline_token" {
   default     = ""
   type        = string
   sensitive   = true
+}
+
+variable "disable_auto_update" {
+  description = "Disable automatic flatcar updates (and reboot)"
+  type        = bool
+  default     = false
 }

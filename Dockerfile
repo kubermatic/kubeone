@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM docker.io/golang:1.19.0 as builder
+FROM docker.io/golang:1.21.3 as builder
 
 ARG GOPROXY=
 ENV GOPROXY=$GOPROXY
@@ -24,7 +24,7 @@ WORKDIR /go/src/k8c.io/kubeone
 COPY . .
 RUN make build
 
-FROM docker.io/alpine:3.15
+FROM docker.io/alpine:3.18
 LABEL maintainer="support@kubermatic.com"
 
 # openssh-client is required for the ssh binary and for ssh-agent

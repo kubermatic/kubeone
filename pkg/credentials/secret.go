@@ -21,8 +21,10 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"text/template"
 
 	"k8c.io/kubeone/pkg/clientutil"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
@@ -71,7 +73,7 @@ func Ensure(s *state.State) error {
 	}
 
 	// Ensure that we remove credentials secret for OSM if it's queued for deletion
-	if !s.Cluster.OperatingSystemManagerEnabled() {
+	if !s.Cluster.OperatingSystemManager.Deploy {
 		osmSecret := &corev1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      SecretNameOSM,
@@ -97,7 +99,7 @@ func Ensure(s *state.State) error {
 		}
 	}
 
-	if s.Cluster.OperatingSystemManagerEnabled() {
+	if s.Cluster.OperatingSystemManager.Deploy {
 		osmCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeOSM)
 		if err != nil {
 			return err
@@ -109,21 +111,27 @@ func Ensure(s *state.State) error {
 		}
 	}
 
+	ccmCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeCCM)
+	if err != nil {
+		return err
+	}
+
 	if s.Cluster.CloudProvider.CloudConfig != "" {
-		cloudCfgSecret := cloudConfigSecret(s.Cluster.CloudProvider.CloudConfig)
+		cloudConfig, err := renderCloudConfig(s.Cluster.CloudProvider.CloudConfig, ccmCreds)
+		if err != nil {
+			return err
+		}
+
+		s.Cluster.CloudProvider.CloudConfig = cloudConfig
+
+		cloudCfgSecret := cloudConfigSecret(cloudConfig)
 		if err := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, cloudCfgSecret); err != nil {
 			return err
 		}
 	}
 
-	if (s.Cluster.CloudProvider.External && s.Cluster.CloudProvider.Vsphere == nil) ||
-		s.Cluster.CloudProvider.GCE != nil {
+	if (s.Cluster.CloudProvider.External && s.Cluster.CloudProvider.Vsphere == nil) || s.Cluster.CloudProvider.GCE != nil {
 		s.Logger.Infoln("Creating CCM credentials secret...")
-
-		ccmCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeCCM)
-		if err != nil {
-			return err
-		}
 
 		ccmSecret := credentialsSecret(SecretNameCCM, ccmCreds)
 		if createErr := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, ccmSecret); createErr != nil {
@@ -132,11 +140,6 @@ func Ensure(s *state.State) error {
 	} else if s.Cluster.CloudProvider.Vsphere != nil {
 		s.Logger.Infoln("Creating vSphere CCM credentials secret...")
 
-		ccmCreds, err := ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, TypeCCM)
-		if err != nil {
-			return err
-		}
-
 		vsecret := vsphereSecret(ccmCreds)
 		if err := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, vsecret); err != nil {
 			return err
@@ -144,6 +147,22 @@ func Ensure(s *state.State) error {
 	}
 
 	return nil
+}
+
+func renderCloudConfig(input string, credentials map[string]string) (string, error) {
+	cloudConfigTpl, err := template.New("cloudConfig").Parse(input)
+	if err != nil {
+		return "", fail.Config(err, "cloudConfig parsing")
+	}
+
+	type data struct {
+		Credentials map[string]string
+	}
+
+	var result strings.Builder
+	err = cloudConfigTpl.Execute(&result, data{Credentials: credentials})
+
+	return result.String(), fail.Config(err, "cloudConfig render")
 }
 
 func EnvVarBindings(secretName string, creds map[string]string) []corev1.EnvVar {

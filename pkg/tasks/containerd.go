@@ -17,6 +17,7 @@ limitations under the License.
 package tasks
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -31,16 +32,14 @@ import (
 )
 
 const (
-	kubeadmCRISocket  = "kubeadm.alpha.kubernetes.io/cri-socket"
-	networkPluginFlag = "--network-plugin"
+	kubeadmCRISocket     = "kubeadm.alpha.kubernetes.io/cri-socket"
+	networkPluginFlag    = "--network-plugin"
+	containerRuntimeFlag = "--container-runtime"
 )
 
-var (
-	containerdKubeletFlags = map[string]string{
-		"--container-runtime":          "remote",
-		"--container-runtime-endpoint": "unix:///run/containerd/containerd.sock",
-	}
-)
+var containerdKubeletFlags = map[string]string{
+	"--container-runtime-endpoint": "unix:///run/containerd/containerd.sock",
+}
 
 func validateContainerdInConfig(s *state.State) error {
 	if s.Cluster.ContainerRuntime.Containerd == nil {
@@ -82,7 +81,7 @@ func migrateToContainerd(s *state.State) error {
 	return s.RunTaskOnAllNodes(migrateToContainerdTask, state.RunSequentially)
 }
 
-func migrateToContainerdTask(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+func migrateToContainerdTask(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 	s.Logger.Info("Migrating container runtime to containerd")
 
 	err := updateRemoteFile(s, kubeadmEnvFlagsFile, func(content []byte) ([]byte, error) {
@@ -94,6 +93,7 @@ func migrateToContainerdTask(s *state.State, node *kubeoneapi.HostConfig, conn e
 		// --network-plugin flag is not used with containerd and has been
 		// removed in Kubernetes 1.24
 		delete(kubeletFlags, networkPluginFlag)
+		delete(kubeletFlags, containerRuntimeFlag)
 
 		for k, v := range containerdKubeletFlags {
 			kubeletFlags[k] = v
@@ -118,10 +118,10 @@ func migrateToContainerdTask(s *state.State, node *kubeoneapi.HostConfig, conn e
 	}
 
 	s.Logger.Infof("Waiting all pods on %q to became Ready...", node.Hostname)
-	err = wait.Poll(10*time.Second, 10*time.Minute, func() (bool, error) {
+	err = wait.PollUntilContextTimeout(s.Context, 10*time.Second, 10*time.Minute, false, func(ctx context.Context) (bool, error) {
 		var podsList corev1.PodList
 
-		if perr := s.DynamicClient.List(s.Context, &podsList); perr != nil {
+		if perr := s.DynamicClient.List(ctx, &podsList); perr != nil {
 			return false, fail.KubeClient(err, "getting %T", podsList)
 		}
 

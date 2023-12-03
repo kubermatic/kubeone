@@ -17,9 +17,12 @@ limitations under the License.
 package kubeconfig
 
 import (
+	"context"
 	"io/fs"
+	"net"
 	"os"
 
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/executor/executorfs"
 	"k8c.io/kubeone/pkg/fail"
@@ -64,21 +67,49 @@ func BuildKubernetesClientset(s *state.State) error {
 		return fail.KubeClient(err, "building config from kubeconfig")
 	}
 
-	s.RESTConfig.WarningHandler = rest.NewWarningWriter(os.Stderr, rest.WarningWriterOptions{
-		Deduplicate: true,
-	})
-
-	tunn, err := s.Executor.Tunnel(s.Cluster.RandomHost())
+	err = TunnelRestConfig(s, s.RESTConfig)
 	if err != nil {
-		return fail.KubeClient(err, "getting SSH tunnel")
+		return err
 	}
 
-	s.RESTConfig.Dial = tunn.TunnelTo
-
-	s.DynamicClient, err = client.New(s.RESTConfig, client.Options{})
+	dynamicClient, err := client.New(s.RESTConfig, client.Options{})
 	if err != nil {
 		return fail.KubeClient(err, "building dynamic kubernetes client")
 	}
 
+	s.DynamicClient = dynamicClient
+
 	return nil
+}
+
+func TunnelRestConfig(s *state.State, rc *rest.Config) error {
+	rc.WarningHandler = rest.NewWarningWriter(os.Stderr, rest.WarningWriterOptions{
+		Deduplicate: true,
+	})
+
+	rc.Dial = func(ctx context.Context, network, address string) (net.Conn, error) {
+		dial := TunnelDialerFactory(s.Executor, s.Cluster.RandomHost())
+
+		return dial(ctx, network, address)
+	}
+
+	return nil
+}
+
+func TunnelDialerFactory(adapter executor.Adapter, host kubeoneapi.HostConfig) func(ctx context.Context, network, address string) (net.Conn, error) {
+	return func(ctx context.Context, network, address string) (net.Conn, error) {
+		tunn, err := adapter.Tunnel(host)
+		if err != nil {
+			return nil, fail.KubeClient(err, "getting SSH tunnel")
+		}
+
+		netConn, err := tunn.TunnelTo(ctx, network, address)
+		if err != nil {
+			tunn.Close()
+
+			return nil, err
+		}
+
+		return netConn, err
+	}
 }

@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Masterminds/semver/v3"
@@ -31,6 +32,7 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeflags"
+	"k8c.io/kubeone/pkg/semverutil"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/kubeadm/kubeadmargs"
 	"k8c.io/kubeone/pkg/templates/kubernetesconfigs"
@@ -44,6 +46,34 @@ const (
 	bootstrapTokenTTL = 60 * time.Minute
 )
 
+const (
+	// fixedEtcdVersion is an etcd version that doesn't have known data integrity and durability bugs
+	// (see etcdVersionCorruptCheckExtraArgs for more details)
+	fixedEtcdVersion = "3.5.6-0"
+
+	// NB: Currently no Kubernetes version uses 3.5.6, but to avoid deleting the code
+	// we just use some super high version as a fixed version.
+	// fixedEtcd123 defines a semver constraint used to check if Kubernetes 1.23 uses fixed etcd version
+	fixedEtcd123 = ">= 1.23.15, < 1.24"
+	// fixedEtcd124 defines a semver constraint used to check if Kubernetes 1.24 uses fixed etcd version
+	fixedEtcd124 = ">= 1.24.9, < 1.25"
+	// fixedEtcd125 defines a semver constraint used to check if Kubernetes 1.25 uses fixed etcd version
+	fixedEtcd125 = ">= 1.25.5, < 1.26"
+	// fixedEtcd126 defines a semver constraint used to check if Kubernetes 1.26+ uses fixed etcd version
+	fixedEtcd126 = ">= 1.26.0"
+)
+
+const (
+	registryK8sio = "registry.k8s.io"
+)
+
+var (
+	fixedEtcd123Constraint = semverutil.MustParseConstraint(fixedEtcd123)
+	fixedEtcd124Constraint = semverutil.MustParseConstraint(fixedEtcd124)
+	fixedEtcd125Constraint = semverutil.MustParseConstraint(fixedEtcd125)
+	fixedEtcd126Constraint = semverutil.MustParseConstraint(fixedEtcd126)
+)
+
 // NewConfig returns all required configs to init a cluster via a set of v1beta3 configs
 func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, error) {
 	cluster := s.Cluster
@@ -52,7 +82,11 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		return nil, fail.Config(err, "parsing kubernetes semver")
 	}
 
-	etcdImageTag, etcdExtraArgs := etcdVersionCorruptCheckExtraArgs(cluster.AssetConfiguration.Etcd.ImageTag)
+	etcdImageTag, etcdExtraArgs := etcdVersionCorruptCheckExtraArgs(kubeSemVer, cluster.AssetConfiguration.Etcd.ImageTag)
+
+	if s.Cluster.ClusterNetwork.HasIPv6() && len(host.IPv6Addresses) == 0 {
+		return nil, fmt.Errorf("host must have ipv6 address for %q family", s.Cluster.ClusterNetwork.IPFamily)
+	}
 
 	nodeRegistration := newNodeRegistration(s, host)
 	nodeRegistration.IgnorePreflightErrors = []string{
@@ -67,6 +101,13 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 	}
 
 	controlPlaneEndpoint := fmt.Sprintf("%s:%d", cluster.APIEndpoint.Host, cluster.APIEndpoint.Port)
+
+	var advertiseAddress string
+	if s.Cluster.ClusterNetwork.IPFamily.IsIPv6Primary() {
+		advertiseAddress = host.IPv6Addresses[0]
+	} else {
+		advertiseAddress = newNodeIP(host)
+	}
 
 	initConfig := &kubeadmv1beta3.InitConfiguration{
 		TypeMeta: metav1.TypeMeta{
@@ -89,7 +130,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			},
 		},
 		LocalAPIEndpoint: kubeadmv1beta3.APIEndpoint{
-			AdvertiseAddress: newNodeIP(host),
+			AdvertiseAddress: advertiseAddress,
 		},
 	}
 
@@ -100,7 +141,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		},
 		ControlPlane: &kubeadmv1beta3.JoinControlPlane{
 			LocalAPIEndpoint: kubeadmv1beta3.APIEndpoint{
-				AdvertiseAddress: newNodeIP(host),
+				AdvertiseAddress: advertiseAddress,
 			},
 		},
 		Discovery: kubeadmv1beta3.Discovery{
@@ -119,18 +160,30 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 			Kind:       "ClusterConfiguration",
 		},
 		Networking: kubeadmv1beta3.Networking{
-			PodSubnet:     cluster.ClusterNetwork.PodSubnet,
-			ServiceSubnet: cluster.ClusterNetwork.ServiceSubnet,
-			DNSDomain:     cluster.ClusterNetwork.ServiceDomainName,
+			PodSubnet: join(
+				cluster.ClusterNetwork.IPFamily,
+				cluster.ClusterNetwork.PodSubnet,
+				cluster.ClusterNetwork.PodSubnetIPv6,
+			),
+			ServiceSubnet: join(
+				cluster.ClusterNetwork.IPFamily,
+				cluster.ClusterNetwork.ServiceSubnet,
+				cluster.ClusterNetwork.ServiceSubnetIPv6,
+			),
+			DNSDomain: cluster.ClusterNetwork.ServiceDomainName,
 		},
 		KubernetesVersion:    cluster.Versions.Kubernetes,
 		ControlPlaneEndpoint: controlPlaneEndpoint,
 		APIServer: kubeadmv1beta3.APIServer{
 			ControlPlaneComponent: kubeadmv1beta3.ControlPlaneComponent{
 				ExtraArgs: map[string]string{
-					"endpoint-reconciler-type": "lease",
-					"service-node-port-range":  cluster.ClusterNetwork.NodePortRange,
-					"enable-admission-plugins": kubeflags.DefaultAdmissionControllers(kubeSemVer),
+					"enable-admission-plugins":      kubeflags.DefaultAdmissionControllers(kubeSemVer),
+					"endpoint-reconciler-type":      "lease",
+					"kubelet-certificate-authority": "/etc/kubernetes/pki/ca.crt",
+					"profiling":                     "false",
+					"request-timeout":               "1m",
+					"service-node-port-range":       cluster.ClusterNetwork.NodePortRange,
+					"tls-cipher-suites":             strings.Join(kubernetesconfigs.SafeTLSCiphers(), ","),
 				},
 				ExtraVolumes: []kubeadmv1beta3.HostPathMount{},
 			},
@@ -138,16 +191,24 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		},
 		ControllerManager: kubeadmv1beta3.ControlPlaneComponent{
 			ExtraArgs: map[string]string{
-				"flex-volume-plugin-dir": "/var/lib/kubelet/volumeplugins",
+				"flex-volume-plugin-dir":      "/var/lib/kubelet/volumeplugins",
+				"profiling":                   "false",
+				"terminated-pod-gc-threshold": "1000",
+			},
+			ExtraVolumes: []kubeadmv1beta3.HostPathMount{},
+		},
+		Scheduler: kubeadmv1beta3.ControlPlaneComponent{
+			ExtraArgs: map[string]string{
+				"profiling": "false",
 			},
 			ExtraVolumes: []kubeadmv1beta3.HostPathMount{},
 		},
 		ClusterName:     cluster.Name,
-		ImageRepository: cluster.AssetConfiguration.Kubernetes.ImageRepository,
+		ImageRepository: defaults(cluster.AssetConfiguration.Kubernetes.ImageRepository, registryK8sio),
 		Etcd: kubeadmv1beta3.Etcd{
 			Local: &kubeadmv1beta3.LocalEtcd{
 				ImageMeta: kubeadmv1beta3.ImageMeta{
-					ImageRepository: cluster.AssetConfiguration.Etcd.ImageRepository,
+					ImageRepository: defaults(cluster.AssetConfiguration.Etcd.ImageRepository, registryK8sio),
 					ImageTag:        etcdImageTag,
 				},
 				ExtraArgs: etcdExtraArgs,
@@ -155,7 +216,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		},
 		DNS: kubeadmv1beta3.DNS{
 			ImageMeta: kubeadmv1beta3.ImageMeta{
-				ImageRepository: cluster.AssetConfiguration.CoreDNS.ImageRepository,
+				ImageRepository: defaults(cluster.AssetConfiguration.CoreDNS.ImageRepository, fmt.Sprintf("%s/coredns", registryK8sio)),
 				ImageTag:        cluster.AssetConfiguration.CoreDNS.ImageTag,
 			},
 		},
@@ -163,6 +224,13 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
 		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = cluster.AssetConfiguration.Pause.ImageRepository + "/pause:" + cluster.AssetConfiguration.Pause.ImageTag
+	} else {
+		sandboxImage, serr := cluster.Versions.SandboxImage(cluster.RegistryConfiguration.ImageRegistry)
+		if serr != nil {
+			return nil, serr
+		}
+
+		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = sandboxImage
 	}
 
 	if s.ShouldEnableInTreeCloudProvider() {
@@ -295,6 +363,8 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		}
 	}
 
+	addControllerManagerNetworkArgs(clusterConfig.ControllerManager.ExtraArgs, cluster.ClusterNetwork)
+
 	args := kubeadmargs.NewFrom(clusterConfig.APIServer.ExtraArgs)
 	features.UpdateKubeadmClusterConfiguration(cluster.Features, args)
 
@@ -315,6 +385,45 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 	}
 
 	return []runtime.Object{initConfig, joinConfig, clusterConfig, kubeletConfig, kubeproxyConfig}, nil
+}
+
+func addControllerManagerNetworkArgs(m map[string]string, clusterNetwork kubeoneapi.ClusterNetworkConfig) {
+	if clusterNetwork.CNI.Cilium != nil {
+		return
+	}
+
+	switch clusterNetwork.IPFamily {
+	case kubeoneapi.IPFamilyIPv4:
+		if clusterNetwork.NodeCIDRMaskSizeIPv4 != nil {
+			m["node-cidr-mask-size-ipv4"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv4)
+		}
+	case kubeoneapi.IPFamilyIPv6:
+		if clusterNetwork.NodeCIDRMaskSizeIPv6 != nil {
+			m["node-cidr-mask-size-ipv6"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv6)
+		}
+	case kubeoneapi.IPFamilyIPv4IPv6, kubeoneapi.IPFamilyIPv6IPv4:
+		if clusterNetwork.NodeCIDRMaskSizeIPv4 != nil {
+			m["node-cidr-mask-size-ipv4"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv4)
+		}
+		if clusterNetwork.NodeCIDRMaskSizeIPv6 != nil {
+			m["node-cidr-mask-size-ipv6"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv6)
+		}
+	}
+}
+
+func join(ipFamily kubeoneapi.IPFamily, ipv4Subnet, ipv6Subnet string) string {
+	switch ipFamily {
+	case kubeoneapi.IPFamilyIPv4:
+		return ipv4Subnet
+	case kubeoneapi.IPFamilyIPv6:
+		return ipv6Subnet
+	case kubeoneapi.IPFamilyIPv4IPv6:
+		return strings.Join([]string{ipv4Subnet, ipv6Subnet}, ",")
+	case kubeoneapi.IPFamilyIPv6IPv4:
+		return strings.Join([]string{ipv6Subnet, ipv4Subnet}, ",")
+	default:
+		return "unknown IP family"
+	}
 }
 
 // NewConfig returns all required configs to init a cluster via a set of v13 configs
@@ -344,6 +453,13 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 
 	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
 		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = cluster.AssetConfiguration.Pause.ImageRepository + "/pause:" + cluster.AssetConfiguration.Pause.ImageTag
+	} else {
+		sandboxImage, serr := cluster.Versions.SandboxImage(s.Cluster.RegistryConfiguration.ImageRegistry)
+		if serr != nil {
+			return nil, serr
+		}
+
+		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = sandboxImage
 	}
 
 	if s.ShouldEnableInTreeCloudProvider() {
@@ -375,8 +491,22 @@ func newNodeIP(host kubeoneapi.HostConfig) string {
 
 func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1beta3.NodeRegistrationOptions {
 	kubeletCLIFlags := map[string]string{
-		"node-ip":           newNodeIP(host),
 		"volume-plugin-dir": "/var/lib/kubelet/volumeplugins",
+	}
+
+	// If external or in-tree CCM is in use we don't need to set --node-ip
+	// as the cloud provider will know what IPs to return.
+	if s.Cluster.ClusterNetwork.IPFamily.IsDualstack() {
+		if !s.Cluster.CloudProvider.External {
+			switch {
+			case s.Cluster.ClusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv4IPv6:
+				kubeletCLIFlags["node-ip"] = newNodeIP(host) + "," + host.IPv6Addresses[0]
+			case s.Cluster.ClusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv6IPv4:
+				kubeletCLIFlags["node-ip"] = host.IPv6Addresses[0] + "," + newNodeIP(host)
+			}
+		}
+	} else {
+		kubeletCLIFlags["node-ip"] = newNodeIP(host)
 	}
 
 	if m := host.Kubelet.SystemReserved; m != nil {
@@ -397,23 +527,44 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 	return kubeadmv1beta3.NodeRegistrationOptions{
 		Name:             host.Hostname,
 		Taints:           host.Taints,
-		CRISocket:        s.Cluster.ContainerRuntime.CRISocket(),
+		CRISocket:        fmt.Sprintf("unix://%s", s.Cluster.ContainerRuntime.CRISocket()),
 		KubeletExtraArgs: kubeletCLIFlags,
 	}
 }
 
-func etcdVersionCorruptCheckExtraArgs(etcdImageTag string) (string, map[string]string) {
-	etcdExtraArgs := map[string]string{}
-
-	// This is required because etcd v3.5-[0-2] (used for Kubernetes 1.22+)
-	// has an issue with the data integrity.
-	// See https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ
-	// for more details.
-	if etcdImageTag == "" {
-		etcdImageTag = "3.5.3-0"
+// etcdVersionCorruptCheckExtraArgs provides etcd version and args to be used.
+// This is required because:
+//   - etcd v3.5.[0-2] has an issue with the data integrity
+//     https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ
+//   - etcd v3.5.[0-4] has a durability issue affecting single-node (non-HA) etcd clusters
+//     https://groups.google.com/a/kubernetes.io/g/dev/c/7q4tB_Vp3Uc/m/MrHalhCIBAAJ
+func etcdVersionCorruptCheckExtraArgs(kubeVersion *semver.Version, etcdImageTag string) (string, map[string]string) {
+	etcdExtraArgs := map[string]string{
+		"experimental-compact-hash-check-enabled": "true",
+		"experimental-initial-corrupt-check":      "true",
+		"experimental-corrupt-check-time":         "240m",
 	}
-	etcdExtraArgs["experimental-initial-corrupt-check"] = "true"
-	etcdExtraArgs["experimental-corrupt-check-time"] = "240m"
 
-	return etcdImageTag, etcdExtraArgs
+	switch {
+	case etcdImageTag != "":
+		return etcdImageTag, etcdExtraArgs
+	case fixedEtcd123Constraint.Check(kubeVersion):
+		fallthrough
+	case fixedEtcd124Constraint.Check(kubeVersion):
+		fallthrough
+	case fixedEtcd125Constraint.Check(kubeVersion):
+		fallthrough
+	case fixedEtcd126Constraint.Check(kubeVersion):
+		return "", etcdExtraArgs
+	default:
+		return fixedEtcdVersion, etcdExtraArgs
+	}
+}
+
+func defaults(input, defaultValue string) string {
+	if input != "" {
+		return input
+	}
+
+	return defaultValue
 }

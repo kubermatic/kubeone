@@ -4,7 +4,8 @@
 # It should be installed as part of the base Kubernetes distribution in an appropriate
 # namespace for components implementing base system functionality. For installing with
 # Vanilla Kubernetes, kube-system makes sense for the namespace.
-
+#
+# Source: https://github.com/kubernetes-csi/external-snapshotter/blob/v6.1.0/deploy/kubernetes/webhook-example/rbac-snapshot-webhook.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:

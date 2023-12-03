@@ -20,29 +20,24 @@ import (
 	"strings"
 
 	"github.com/Masterminds/semver/v3"
+
+	"k8c.io/kubeone/pkg/semverutil"
 )
 
 var (
-	constrainv122x = mustConstraint("1.22.x")
+	upToV126Constraint = semverutil.MustParseConstraint("< 1.26.0")
+	v126Constraint     = semverutil.MustParseConstraint(">= 1.26.0, < 1.27.0")
 )
 
 // DefaultAdmissionControllers return list of default admission controllers for
 // given kubernetes version
-func DefaultAdmissionControllers(kubeVersion *semver.Version) string {
+func DefaultAdmissionControllers(v *semver.Version) string {
 	switch {
-	case constrainv122x.Check(kubeVersion):
-		return strings.Join(defaultAdmissionControllersv122x, ",")
+	case upToV126Constraint.Check(v):
+		return strings.Join(defaultAdmissionControllersv1225, ",")
+	case v126Constraint.Check(v):
+		return strings.Join(defaultAdmissionControllersv1226, ",")
 	default:
-		// return same as for last known release
-		return strings.Join(defaultAdmissionControllersv122x, ",")
+		return strings.Join(defaultAdmissionControllersv1227v1228, ",")
 	}
-}
-
-func mustConstraint(c string) *semver.Constraints {
-	constraint, err := semver.NewConstraint(c)
-	if err != nil {
-		panic(err)
-	}
-
-	return constraint
 }

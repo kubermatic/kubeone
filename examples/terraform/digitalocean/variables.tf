@@ -30,6 +30,18 @@ variable "apiserver_alternative_names" {
   type        = list(string)
 }
 
+variable "os" {
+  description = "Operating System to use in image filtering and MachineDeployment"
+
+  # valid choices are:
+  # * ubuntu
+  # * centos
+  # * rockylinux
+  default = "ubuntu"
+  type    = string
+}
+
+
 variable "worker_os" {
   description = "OS to run on worker machines"
 
@@ -37,7 +49,7 @@ variable "worker_os" {
   # * ubuntu
   # * centos
   # * rockylinux
-  default = "ubuntu"
+  default = ""
   type    = string
 }
 
@@ -55,7 +67,7 @@ variable "ssh_port" {
 
 variable "ssh_username" {
   description = "SSH user, used only in output"
-  default     = "root"
+  default     = ""
   type        = string
 }
 
@@ -71,13 +83,59 @@ variable "ssh_agent_socket" {
   type        = string
 }
 
+variable "ssh_hosts_keys" {
+  default     = null
+  description = "A list of SSH hosts public keys to verify"
+  type        = list(string)
+}
+
+variable "bastion_host_key" {
+  description = "Bastion SSH host public key"
+  default     = null
+  type        = string
+}
+
 variable "disable_kubeapi_loadbalancer" {
   type        = bool
   default     = false
   description = "E2E tests specific variable to disable usage of any loadbalancer in front of kubeapi-server"
 }
 
+variable "control_plane_vm_count" {
+  description = "number of control plane instances"
+  default     = 3
+  type        = number
+}
+
 # Provider specific settings
+
+variable "image_references" {
+  description = "map with images"
+  type = map(object({
+    image_name   = string
+    ssh_username = string
+    worker_os    = string
+  }))
+  default = {
+    ubuntu = {
+      image_name   = "ubuntu-22-04-x64"
+      ssh_username = "root"
+      worker_os    = "ubuntu"
+    }
+
+    centos = {
+      image_name   = "centos-7-x64"
+      ssh_username = "root"
+      worker_os    = "centos"
+    }
+
+    rockylinux = {
+      image_name   = "rockylinux-8-x64"
+      ssh_username = "root"
+      worker_os    = "rockylinux"
+    }
+  }
+}
 
 variable "region" {
   description = "Region to speak to"
@@ -87,7 +145,7 @@ variable "region" {
 
 variable "control_plane_droplet_image" {
   description = "Image to use for provisioning control plane droplets"
-  default     = "ubuntu-18-04-x64"
+  default     = ""
   type        = string
 }
 
@@ -106,6 +164,18 @@ variable "worker_size" {
 variable "initial_machinedeployment_replicas" {
   description = "Number of replicas per MachineDeployment"
   default     = 2
+  type        = number
+}
+
+variable "cluster_autoscaler_min_replicas" {
+  default     = 0
+  description = "minimum number of replicas per MachineDeployment (requires cluster-autoscaler)"
+  type        = number
+}
+
+variable "cluster_autoscaler_max_replicas" {
+  default     = 0
+  description = "maximum number of replicas per MachineDeployment (requires cluster-autoscaler)"
   type        = number
 }
 

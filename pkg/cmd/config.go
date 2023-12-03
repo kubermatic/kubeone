@@ -41,8 +41,6 @@ import (
 )
 
 const (
-	// defaultKubernetesVersion is default Kubernetes version for the example configuration file
-	defaultKubernetesVersion = "1.23.9"
 	// defaultCloudProviderName is cloud provider to build the example configuration file for
 	defaultCloudProviderName = "aws"
 )
@@ -114,7 +112,7 @@ func configPrintCmd() *cobra.Command {
 			configuration manifest, run the print command with --full flag.
 		`),
 		Args:          cobra.ExactArgs(0),
-		Example:       fmt.Sprintf("kubeone config print --provider digitalocean --kubernetes-version %s --cluster-name example", defaultKubernetesVersion),
+		Example:       fmt.Sprintf("kubeone config print --provider digitalocean --kubernetes-version %s --cluster-name example", defaultKubeVersion),
 		SilenceErrors: true,
 		RunE: func(_ *cobra.Command, args []string) error {
 			return runPrint(opts)
@@ -140,7 +138,7 @@ func configPrintCmd() *cobra.Command {
 		&opts.KubernetesVersion,
 		longFlagName(opts, "KubernetesVersion"),
 		shortFlagName(opts, "KubernetesVersion"),
-		defaultKubernetesVersion,
+		defaultKubeVersion,
 		"Kubernetes version")
 
 	cmd.Flags().StringVarP(
@@ -622,7 +620,7 @@ containerRuntime:
   # Default for 1.21+ Kubernetes clusters.
   # containerd:
   #   registries:
-  #     k8s.gcr.io:
+  #     registry.k8s.io:
   #       mirrors:
   #       - https://self-signed.pull-through.cache.tld
   #       tlsConfig:
@@ -649,6 +647,19 @@ features:
   coreDNS:
     replicas: 2
     deployPodDisruptionBudget: true
+    # imageRepository allows users to specify the image registry to be used
+    # for CoreDNS. Kubeadm automatically appends /coredns at the end, so it's
+    # not necessary to specify it.
+    # By default it's empty, which means it'll be defaulted based on kubeadm
+    # defaults and if overwriteRegistry feature is used.
+    # imageRepository has the highest priority, meaning that it'll override
+    # overwriteRegistry if specified.
+    imageRepository: ""
+
+  # nodeLocalDNS allows disabling deployment of node local DNS
+  nodeLocalDNS:
+    deploy: true
+
   # Enable the PodNodeSelector admission plugin in API server.
   # More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podnodeselector
   podNodeSelector:
@@ -784,7 +795,7 @@ addons:
   # available addons.
   # Check out the documentation to find more information about what are embedded
   # addons and how to use them:
-  # https://docs.kubermatic.com/kubeone/master/guides/addons/
+  # https://docs.kubermatic.com/kubeone/v1.7/guides/addons/
   addons:
     # name of the addon to be enabled/deployed (e.g. backups-restic)
     - name: ""
@@ -807,6 +818,8 @@ addons:
 #     bastion: '4.3.2.1'
 #     bastionPort: 22  # can be left out if using the default (22)
 #     bastionUser: 'root'  # can be left out if using the default ('root')
+#     # Optional ssh host public key for verification of the connection to the bastion host
+#     bastionHostPublicKey: "AAAAC3NzaC1lZDI1NTE5AAAAIGpmWkI5dl7GB3E1hB9LDuju87x9hX5Umw9fih+xXNU+"
 #     sshPort: 22 # can be left out if using the default (22)
 #     sshUsername: root
 #     # You usually want to configure either a private key OR an
@@ -814,6 +827,8 @@ addons:
 #     # prefixed with "env:" to refer to an environment variable.
 #     sshPrivateKeyFile: '/home/me/.ssh/id_rsa'
 #     sshAgentSocket: 'env:SSH_AUTH_SOCK'
+#     # Optional ssh host public key for verification of the connection to the control plane host
+#     sshHostPublicKey: "AAAAC3NzaC1lZDI1NTE5AAAAIPwEDvXiKfvXrysf86VW5dJTKDlQ09e2tV0+T3KeFKmI"
 #     # Taints are taints applied to nodes. If not provided (i.e. nil) for control plane nodes,
 #     # it defaults to:
 #     #   * For Kubernetes 1.23 and older: TaintEffectNoSchedule with key node-role.kubernetes.io/master
@@ -850,6 +865,7 @@ addons:
 #     bastion: '4.3.2.1'
 #     bastionPort: 22  # can be left out if using the default (22)
 #     bastionUser: 'root'  # can be left out if using the default ('root')
+#     bastionHostPublicKey: "AAAAC3NzaC1lZDI1NTE5AAAAIGpmWkI5dl7GB3E1hB9LDuju87x9hX5Umw9fih+xXNU+"
 #     sshPort: 22 # can be left out if using the default (22)
 #     sshUsername: root
 #     # You usually want to configure either a private key OR an
@@ -857,6 +873,8 @@ addons:
 #     # prefixed with "env:" to refer to an environment variable.
 #     sshPrivateKeyFile: '/home/me/.ssh/id_rsa'
 #     sshAgentSocket: 'env:SSH_AUTH_SOCK'
+#     # Optional ssh host public key for verification of the connection to the static worker host
+#     sshHostPublicKey: "AAAAC3NzaC1lZDI1NTE5AAAAIMBejAkW4AARsZZkC6PqWGuB14fkPzEQoZ4im4TuOkdD"
 #     # Taints is used to apply taints to the node.
 #     # Explicitly empty (i.e. taints: {}) means no taints will be applied.
 #     # taints:

@@ -81,6 +81,7 @@ const (
 	// VMware Cloud Director Credentials
 	VMwareCloudDirectorUsername     = "VCD_USER"
 	VMwareCloudDirectorPassword     = "VCD_PASSWORD"
+	VMwareCloudDirectorAPIToken     = "VCD_API_TOKEN" //nolint:gosec
 	VMwareCloudDirectorOrganization = "VCD_ORG"
 	VMwareCloudDirectorURL          = "VCD_URL"
 	VMwareCloudDirectorVDC          = "VCD_VDC"
@@ -99,49 +100,48 @@ const (
 	VSphereUsernameMC         = "VSPHERE_USERNAME"
 )
 
-var (
-	allKeys = []string{
-		AWSAccessKeyID,
-		AWSSecretAccessKey,
-		AzureClientID,
-		AzureClientSecret,
-		AzureTenantID,
-		AzureSubscriptionID,
-		DigitalOceanTokenKey,
-		GoogleServiceAccountKey,
-		HetznerTokenKey,
-		NutanixEndpoint,
-		NutanixPort,
-		NutanixUsername,
-		NutanixPassword,
-		NutanixInsecure,
-		NutanixProxyURL,
-		NutanixClusterName,
-		NutanixPEEndpoint,
-		NutanixPEUsername,
-		NutanixPEPassword,
-		OpenStackAuthURL,
-		OpenStackDomainName,
-		OpenStackPassword,
-		OpenStackRegionName,
-		OpenStackTenantID,
-		OpenStackTenantName,
-		OpenStackUserName,
-		EquinixMetalAuthToken,
-		EquinixMetalProjectID,
-		PacketAPIKey,
-		PacketProjectID,
-		VSphereAddress,
-		VSpherePassword,
-		VSphereUsername,
-		VMwareCloudDirectorUsername,
-		VMwareCloudDirectorPassword,
-		VMwareCloudDirectorOrganization,
-		VMwareCloudDirectorURL,
-		VMwareCloudDirectorVDC,
-		VMwareCloudDirectorSkipTLS,
-	}
-)
+var allKeys = []string{
+	AWSAccessKeyID,
+	AWSSecretAccessKey,
+	AzureClientID,
+	AzureClientSecret,
+	AzureTenantID,
+	AzureSubscriptionID,
+	DigitalOceanTokenKey,
+	GoogleServiceAccountKey,
+	HetznerTokenKey,
+	NutanixEndpoint,
+	NutanixPort,
+	NutanixUsername,
+	NutanixPassword,
+	NutanixInsecure,
+	NutanixProxyURL,
+	NutanixClusterName,
+	NutanixPEEndpoint,
+	NutanixPEUsername,
+	NutanixPEPassword,
+	OpenStackAuthURL,
+	OpenStackDomainName,
+	OpenStackPassword,
+	OpenStackRegionName,
+	OpenStackTenantID,
+	OpenStackTenantName,
+	OpenStackUserName,
+	EquinixMetalAuthToken,
+	EquinixMetalProjectID,
+	PacketAPIKey,
+	PacketProjectID,
+	VSphereAddress,
+	VSpherePassword,
+	VSphereUsername,
+	VMwareCloudDirectorUsername,
+	VMwareCloudDirectorPassword,
+	VMwareCloudDirectorAPIToken,
+	VMwareCloudDirectorOrganization,
+	VMwareCloudDirectorURL,
+	VMwareCloudDirectorVDC,
+	VMwareCloudDirectorSkipTLS,
+}
 
 // ProviderEnvironmentVariable is used to match environment variable used by KubeOne to environment variable used by
 // machine-controller.
@@ -247,6 +247,7 @@ func ProviderCredentials(cloudProvider kubeoneapi.CloudProviderSpec, credentials
 		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: VMwareCloudDirectorUsername},
 			{Name: VMwareCloudDirectorPassword},
+			{Name: VMwareCloudDirectorAPIToken},
 			{Name: VMwareCloudDirectorOrganization},
 			{Name: VMwareCloudDirectorURL},
 			{Name: VMwareCloudDirectorVDC},
@@ -582,11 +583,10 @@ func openstackValidationFunc(creds map[string]string) error {
 
 func vmwareCloudDirectorValidationFunc(creds map[string]string) error {
 	alwaysRequired := []string{
-		VMwareCloudDirectorUsername,
-		VMwareCloudDirectorPassword,
 		VMwareCloudDirectorOrganization,
 		VMwareCloudDirectorURL,
-		VMwareCloudDirectorVDC}
+		VMwareCloudDirectorVDC,
+	}
 
 	for _, key := range alwaysRequired {
 		if v, ok := creds[key]; !ok || len(v) == 0 {
@@ -595,6 +595,62 @@ func vmwareCloudDirectorValidationFunc(creds map[string]string) error {
 				Provider: "VMware Cloud Director",
 				Err:      errors.Errorf("key %v is required but is not present", key),
 			}
+		}
+	}
+
+	var (
+		apiToken bool
+		password bool
+		username bool
+	)
+
+	if v, ok := creds[VMwareCloudDirectorAPIToken]; ok && len(v) != 0 {
+		apiToken = true
+	}
+
+	if v, ok := creds[VMwareCloudDirectorUsername]; ok && len(v) != 0 {
+		username = true
+	}
+
+	if v, ok := creds[VMwareCloudDirectorPassword]; ok && len(v) != 0 {
+		password = true
+	}
+
+	userCreds := username || password
+
+	// API token and user credentials are mutually exclusive.
+	if userCreds && apiToken {
+		return fail.CredentialsError{
+			Op:       "validating",
+			Provider: "VMware Cloud Director",
+			Err: errors.Errorf(
+				"both api token (%s) and user credentials (%s %s) found",
+				VMwareCloudDirectorAPIToken,
+				VMwareCloudDirectorUsername,
+				VMwareCloudDirectorPassword,
+			),
+		}
+	}
+
+	// No valid credentials found.
+	if !userCreds && !apiToken {
+		return fail.CredentialsError{
+			Op:       "validating",
+			Provider: "VMware Cloud Director",
+			Err:      errors.New("no valid credentials (either api token or user) found"),
+		}
+	}
+
+	// Username and password are required when using default credentials i.e. username and password.
+	if !apiToken && !(username && password) {
+		return fail.CredentialsError{
+			Op:       "validating",
+			Provider: "VMware Cloud Director",
+			Err: errors.Errorf(
+				"key %v and %v are required but not present",
+				VMwareCloudDirectorUsername,
+				VMwareCloudDirectorPassword,
+			),
 		}
 	}
 

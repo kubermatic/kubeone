@@ -1,4 +1,4 @@
-# Source: https://github.com/kubernetes-csi/external-snapshotter/blob/v5.0.1/deploy/kubernetes/snapshot-controller/rbac-snapshot-controller.yaml
+# Source: https://github.com/kubernetes-csi/external-snapshotter/blob/v6.0.1/deploy/kubernetes/snapshot-controller/rbac-snapshot-controller.yaml
 ---
 # RBAC file for the snapshot controller.
 #
@@ -25,9 +25,6 @@ rules:
   - apiGroups: [""]
     resources: ["persistentvolumeclaims"]
     verbs: ["get", "list", "watch", "update"]
-  - apiGroups: ["storage.k8s.io"]
-    resources: ["storageclasses"]
-    verbs: ["get", "list", "watch"]
   - apiGroups: [""]
     resources: ["events"]
     verbs: ["list", "watch", "create", "update", "patch"]

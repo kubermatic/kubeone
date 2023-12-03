@@ -30,6 +30,17 @@ variable "apiserver_alternative_names" {
   type        = list(string)
 }
 
+variable "os" {
+  description = "Operating System to use in image filtering and MachineDeployment"
+
+  # valid choices are:
+  # * ubuntu
+  # * centos
+  # * rockylinux
+  default = "ubuntu"
+  type    = string
+}
+
 variable "worker_os" {
   description = "OS to run on worker machines"
 
@@ -37,7 +48,7 @@ variable "worker_os" {
   # * ubuntu
   # * centos
   # * rockylinux
-  default = "ubuntu"
+  default = ""
   type    = string
 }
 
@@ -55,7 +66,7 @@ variable "ssh_port" {
 
 variable "ssh_username" {
   description = "SSH user, used only in output"
-  default     = "root"
+  default     = ""
   type        = string
 }
 
@@ -71,6 +82,18 @@ variable "ssh_agent_socket" {
   type        = string
 }
 
+variable "ssh_hosts_keys" {
+  default     = null
+  description = "A list of SSH hosts public keys to verify"
+  type        = list(string)
+}
+
+variable "bastion_host_key" {
+  description = "Bastion SSH host public key"
+  default     = null
+  type        = string
+}
+
 variable "disable_kubeapi_loadbalancer" {
   type        = bool
   default     = false
@@ -79,14 +102,54 @@ variable "disable_kubeapi_loadbalancer" {
 
 # Provider specific settings
 
+variable "image_references" {
+  description = "map with images"
+  type = map(object({
+    image_name   = string
+    ssh_username = string
+    worker_os    = string
+  }))
+  default = {
+    ubuntu = {
+      image_name   = "ubuntu-22.04"
+      ssh_username = "root"
+      worker_os    = "ubuntu"
+    }
+
+    centos = {
+      image_name   = "centos-7"
+      ssh_username = "root"
+      worker_os    = "centos"
+    }
+
+    rockylinux = {
+      image_name   = "rocky-8"
+      ssh_username = "root"
+      worker_os    = "rockylinux"
+    }
+  }
+}
+
 variable "control_plane_type" {
   default = "cx21"
   type    = string
 }
 
 variable "control_plane_replicas" {
-  default = 3
-  type    = number
+  default     = 3
+  type        = number
+  description = "DEPRECATED: use control_plane_vm_count instead"
+
+  validation {
+    condition     = var.control_plane_replicas == 3
+    error_message = "control_plane_replicas is DEPRECATED, please use control_plane_vm_count instead"
+  }
+}
+
+variable "control_plane_vm_count" {
+  default     = 3
+  type        = number
+  description = "Number of control plane nodes in the cluster"
 }
 
 variable "worker_type" {
@@ -97,6 +160,18 @@ variable "worker_type" {
 variable "initial_machinedeployment_replicas" {
   description = "Number of replicas per MachineDeployment"
   default     = 2
+  type        = number
+}
+
+variable "cluster_autoscaler_min_replicas" {
+  default     = 0
+  description = "minimum number of replicas per MachineDeployment (requires cluster-autoscaler)"
+  type        = number
+}
+
+variable "cluster_autoscaler_max_replicas" {
+  default     = 0
+  description = "maximum number of replicas per MachineDeployment (requires cluster-autoscaler)"
   type        = number
 }
 
@@ -111,7 +186,7 @@ variable "datacenter" {
 }
 
 variable "image" {
-  default = "ubuntu-20.04"
+  default = ""
   type    = string
 }
 

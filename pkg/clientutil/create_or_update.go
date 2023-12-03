@@ -19,7 +19,7 @@ package clientutil
 import (
 	"context"
 
-	"github.com/imdario/mergo"
+	"dario.cat/mergo"
 
 	"k8c.io/kubeone/pkg/fail"
 

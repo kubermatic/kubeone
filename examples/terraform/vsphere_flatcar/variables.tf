@@ -85,7 +85,25 @@ variable "bastion_username" {
   type        = string
 }
 
+variable "ssh_hosts_keys" {
+  default     = null
+  description = "A list of SSH hosts public keys to verify"
+  type        = list(string)
+}
+
+variable "bastion_host_key" {
+  description = "Bastion SSH host public key"
+  default     = null
+  type        = string
+}
+
 # provider specific settings
+
+variable "allow_insecure" {
+  description = "allow insecure https connection to vCenter"
+  default     = false
+  type        = bool
+}
 
 variable "dc_name" {
   default     = "dc-1"
@@ -186,6 +204,18 @@ variable "api_vip" {
 variable "initial_machinedeployment_replicas" {
   description = "Number of replicas per MachineDeployment"
   default     = 2
+  type        = number
+}
+
+variable "cluster_autoscaler_min_replicas" {
+  default     = 0
+  description = "minimum number of replicas per MachineDeployment (requires cluster-autoscaler)"
+  type        = number
+}
+
+variable "cluster_autoscaler_max_replicas" {
+  default     = 0
+  description = "maximum number of replicas per MachineDeployment (requires cluster-autoscaler)"
   type        = number
 }
 

@@ -9,3 +9,16 @@ allowlist:
   - BSD-2-Clause-FreeBSD
   - BSD-3-Clause
   - ISC
+
+# copy from https://github.com/kubermatic/kubermatic/blob/3b015b3b90f1ab75d87129757c3f2c84e1964554/.wwhrd.yml
+exceptions:
+  - github.com/LeanerCloud/ec2-instances-info # Public domain: https://github.com/LeanerCloud/ec2-instances-info/blob/master/LICENSE.
+  - github.com/LeanerCloud/ec2-instances-info/data # MIT: https://github.com/powdahound/ec2instances.info/blob/master/LICENSE.
+  - github.com/acomagu/bufpipe # MIT: https://github.com/acomagu/bufpipe/blob/master/LICENSE (used by go-git)
+  - github.com/gosimple/slug # MPL-2.0. Required for https://github.com/grafana-tools/sdk
+  - github.com/hashicorp/errwrap # MPL-2.0
+  - github.com/hashicorp/go-cleanhttp # MPL-2.0
+  - github.com/hashicorp/go-multierror # MPL-2.0
+  - github.com/hashicorp/go-version # MPL-2.0
+  - github.com/hashicorp/golang-lru # MPL-2.0
+  - github.com/hashicorp/golang-lru/simplelru # MPL-2.0

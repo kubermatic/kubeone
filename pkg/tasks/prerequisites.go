@@ -42,6 +42,27 @@ func installPrerequisites(s *state.State) error {
 	return s.RunTaskOnAllNodes(installPrerequisitesOnNode, state.RunParallel)
 }
 
+func kubeadmPreflightChecks(s *state.State) error {
+	s.Logger.Info("Running kubeadm preflight checks...")
+
+	return s.RunTaskOnControlPlane(
+		func(ctx *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+			ctx.Logger.Info("	preflight...")
+			_, _, err := ctx.Runner.Run(heredoc.Docf(`
+				sudo kubeadm init phase preflight \
+					--ignore-preflight-errors=DirAvailable--var-lib-etcd,FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml,FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml,FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml,FileAvailable--etc-kubernetes-manifests-etcd.yaml,Port-6443,Port-10259,Port-10257,Port-10250,Port-2379,Port-2380 \
+					--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+			`), runner.TemplateVariables{
+				"NODE_ID":  node.ID,
+				"WORK_DIR": s.WorkDir,
+			})
+
+			return fail.SSH(err, "kubeadm preflight check")
+		},
+		state.RunParallel,
+	)
+}
+
 func prePullImages(s *state.State) error {
 	return s.RunTaskOnControlPlane(func(ctx *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
 		ctx.Logger.Info("Pre-pull images")
@@ -122,11 +143,8 @@ func setupProxy(logger *logrus.Entry, s *state.State) error {
 	}
 
 	logger.Infoln("Configuring proxy...")
-	if err := containerRuntimeEnvironment(s); err != nil {
-		return err
-	}
 
-	return nil
+	return containerRuntimeEnvironment(s)
 }
 
 func createEnvironmentFile(s *state.State) error {

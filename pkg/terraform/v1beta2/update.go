@@ -283,6 +283,7 @@ func updateVMwareCloudDirectorWorkerset(existingWorkerSet *kubeonev1beta2.Dynami
 	flags := []cloudProviderFlags{
 		{key: "organization", value: config.Organization},
 		{key: "vdc", value: config.VDC},
+		{key: "allowInsecure", value: config.AllowInsecure},
 		{key: "vapp", value: config.CPUs},
 		{key: "catalog", value: config.Catalog},
 		{key: "template", value: config.Template},
@@ -294,6 +295,10 @@ func updateVMwareCloudDirectorWorkerset(existingWorkerSet *kubeonev1beta2.Dynami
 		{key: "storageProfile", value: config.StorageProfile},
 		{key: "ipAllocationMode", value: config.IPAllocationMode},
 		{key: "metadata", value: config.Metadata},
+		{key: "placementPolicy", value: config.PlacementPolicy},
+		{key: "sizingPolicy", value: config.SizingPolicy},
+		{key: "diskIOPS", value: config.DiskIOPS},
+		{key: "diskBusType", value: config.DiskBusType},
 	}
 
 	for _, flag := range flags {

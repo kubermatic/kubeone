@@ -4,6 +4,7 @@ kind: ServiceAccount
 metadata:
   name: csi-vcd-node-sa
   namespace: kube-system
+
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -27,6 +28,7 @@ roleRef:
   kind: ClusterRole
   name: csi-nodeplugin-role
   apiGroup: rbac.authorization.k8s.io
+
 ---
 kind: DaemonSet
 apiVersion: apps/v1
@@ -47,7 +49,7 @@ spec:
       dnsPolicy: Default
       containers:
         - name: node-driver-registrar
-          image: k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.2.0
+          image: {{ .InternalImages.Get "VMwareCloudDirectorCSINodeDriverRegistrar" }}
           imagePullPolicy: "IfNotPresent"
           args:
             - "--v=5"
@@ -57,11 +59,9 @@ spec:
             preStop:
               exec:
                 command:
-                  [
-                    "/bin/sh",
-                    "-c",
-                    "rm -rf /registration/named-disk.csi.cloud-director.vmware.com /registration/named-disk.csi.cloud-director.vmware.com-reg.sock",
-                  ]
+                  - "/bin/sh"
+                  - "-c"
+                  - "rm -rf /registration/named-disk.csi.cloud-director.vmware.com /registration/named-disk.csi.cloud-director.vmware.com-reg.sock"
           env:
             - name: ADDRESS
               value: /csi/csi.sock
@@ -110,7 +110,7 @@ spec:
               mountPath: /dev
               mountPropagation: "HostToContainer"
             - name: pv-dir
-              mountPath: /var/lib/kubelet/plugins/kubernetes.io/csi/pv
+              mountPath: /var/lib/kubelet/plugins/kubernetes.io/csi
               mountPropagation: "Bidirectional"
             - name: vcloud-csi-config-volume
               mountPath: /etc/kubernetes/vcloud
@@ -139,7 +139,7 @@ spec:
             type: Directory
         - name: pv-dir
           hostPath:
-            path: /var/lib/kubelet/plugins/kubernetes.io/csi/pv
+            path: /var/lib/kubelet/plugins/kubernetes.io/csi
             type: DirectoryOrCreate
         - name: vcloud-csi-config-volume
           configMap:
@@ -147,4 +147,3 @@ spec:
         - name: vcloud-basic-auth-volume
           secret:
             secretName: vcloud-basic-auth
----

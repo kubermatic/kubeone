@@ -318,6 +318,26 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
+	if err := s.AddGeneratedConversionFunc((*HelmRelease)(nil), (*kubeone.HelmRelease)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1beta2_HelmRelease_To_kubeone_HelmRelease(a.(*HelmRelease), b.(*kubeone.HelmRelease), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*kubeone.HelmRelease)(nil), (*HelmRelease)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_HelmRelease_To_v1beta2_HelmRelease(a.(*kubeone.HelmRelease), b.(*HelmRelease), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*HelmValues)(nil), (*kubeone.HelmValues)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1beta2_HelmValues_To_kubeone_HelmValues(a.(*HelmValues), b.(*kubeone.HelmValues), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*kubeone.HelmValues)(nil), (*HelmValues)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_HelmValues_To_v1beta2_HelmValues(a.(*kubeone.HelmValues), b.(*HelmValues), scope)
+	}); err != nil {
+		return err
+	}
 	if err := s.AddGeneratedConversionFunc((*HetznerSpec)(nil), (*kubeone.HetznerSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1beta2_HetznerSpec_To_kubeone_HetznerSpec(a.(*HetznerSpec), b.(*kubeone.HetznerSpec), scope)
 	}); err != nil {
@@ -420,6 +440,16 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}
 	if err := s.AddGeneratedConversionFunc((*kubeone.MetricsServer)(nil), (*MetricsServer)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_kubeone_MetricsServer_To_v1beta2_MetricsServer(a.(*kubeone.MetricsServer), b.(*MetricsServer), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*NodeLocalDNS)(nil), (*kubeone.NodeLocalDNS)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1beta2_NodeLocalDNS_To_kubeone_NodeLocalDNS(a.(*NodeLocalDNS), b.(*kubeone.NodeLocalDNS), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*kubeone.NodeLocalDNS)(nil), (*NodeLocalDNS)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_NodeLocalDNS_To_v1beta2_NodeLocalDNS(a.(*kubeone.NodeLocalDNS), b.(*NodeLocalDNS), scope)
 	}); err != nil {
 		return err
 	}
@@ -686,6 +716,7 @@ func Convert_kubeone_AWSSpec_To_v1beta2_AWSSpec(in *kubeone.AWSSpec, out *AWSSpe
 func autoConvert_v1beta2_Addon_To_kubeone_Addon(in *Addon, out *kubeone.Addon, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Params = *(*map[string]string)(unsafe.Pointer(&in.Params))
+	out.DisableTemplating = in.DisableTemplating
 	out.Delete = in.Delete
 	return nil
 }
@@ -698,6 +729,7 @@ func Convert_v1beta2_Addon_To_kubeone_Addon(in *Addon, out *kubeone.Addon, s con
 func autoConvert_kubeone_Addon_To_v1beta2_Addon(in *kubeone.Addon, out *Addon, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Params = *(*map[string]string)(unsafe.Pointer(&in.Params))
+	out.DisableTemplating = in.DisableTemplating
 	out.Delete = in.Delete
 	return nil
 }
@@ -841,6 +873,7 @@ func Convert_kubeone_CiliumSpec_To_v1beta2_CiliumSpec(in *kubeone.CiliumSpec, ou
 
 func autoConvert_v1beta2_CloudProviderSpec_To_kubeone_CloudProviderSpec(in *CloudProviderSpec, out *kubeone.CloudProviderSpec, s conversion.Scope) error {
 	out.External = in.External
+	out.DisableBundledCSIDrivers = in.DisableBundledCSIDrivers
 	out.CloudConfig = in.CloudConfig
 	out.CSIConfig = in.CSIConfig
 	out.SecretProviderClassName = in.SecretProviderClassName
@@ -865,6 +898,7 @@ func Convert_v1beta2_CloudProviderSpec_To_kubeone_CloudProviderSpec(in *CloudPro
 
 func autoConvert_kubeone_CloudProviderSpec_To_v1beta2_CloudProviderSpec(in *kubeone.CloudProviderSpec, out *CloudProviderSpec, s conversion.Scope) error {
 	out.External = in.External
+	out.DisableBundledCSIDrivers = in.DisableBundledCSIDrivers
 	out.CloudConfig = in.CloudConfig
 	out.CSIConfig = in.CSIConfig
 	out.SecretProviderClassName = in.SecretProviderClassName
@@ -889,11 +923,16 @@ func Convert_kubeone_CloudProviderSpec_To_v1beta2_CloudProviderSpec(in *kubeone.
 
 func autoConvert_v1beta2_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig(in *ClusterNetworkConfig, out *kubeone.ClusterNetworkConfig, s conversion.Scope) error {
 	out.PodSubnet = in.PodSubnet
+	out.PodSubnetIPv6 = in.PodSubnetIPv6
 	out.ServiceSubnet = in.ServiceSubnet
+	out.ServiceSubnetIPv6 = in.ServiceSubnetIPv6
 	out.ServiceDomainName = in.ServiceDomainName
 	out.NodePortRange = in.NodePortRange
 	out.CNI = (*kubeone.CNI)(unsafe.Pointer(in.CNI))
 	out.KubeProxy = (*kubeone.KubeProxyConfig)(unsafe.Pointer(in.KubeProxy))
+	out.IPFamily = kubeone.IPFamily(in.IPFamily)
+	out.NodeCIDRMaskSizeIPv4 = (*int)(unsafe.Pointer(in.NodeCIDRMaskSizeIPv4))
+	out.NodeCIDRMaskSizeIPv6 = (*int)(unsafe.Pointer(in.NodeCIDRMaskSizeIPv6))
 	return nil
 }
 
@@ -904,11 +943,16 @@ func Convert_v1beta2_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig(in *Cl
 
 func autoConvert_kubeone_ClusterNetworkConfig_To_v1beta2_ClusterNetworkConfig(in *kubeone.ClusterNetworkConfig, out *ClusterNetworkConfig, s conversion.Scope) error {
 	out.PodSubnet = in.PodSubnet
+	out.PodSubnetIPv6 = in.PodSubnetIPv6
 	out.ServiceSubnet = in.ServiceSubnet
+	out.ServiceSubnetIPv6 = in.ServiceSubnetIPv6
 	out.ServiceDomainName = in.ServiceDomainName
 	out.NodePortRange = in.NodePortRange
 	out.CNI = (*CNI)(unsafe.Pointer(in.CNI))
 	out.KubeProxy = (*KubeProxyConfig)(unsafe.Pointer(in.KubeProxy))
+	out.IPFamily = IPFamily(in.IPFamily)
+	out.NodeCIDRMaskSizeIPv4 = (*int)(unsafe.Pointer(in.NodeCIDRMaskSizeIPv4))
+	out.NodeCIDRMaskSizeIPv6 = (*int)(unsafe.Pointer(in.NodeCIDRMaskSizeIPv6))
 	return nil
 }
 
@@ -1072,6 +1116,7 @@ func Convert_kubeone_ControlPlaneConfig_To_v1beta2_ControlPlaneConfig(in *kubeon
 func autoConvert_v1beta2_CoreDNS_To_kubeone_CoreDNS(in *CoreDNS, out *kubeone.CoreDNS, s conversion.Scope) error {
 	out.Replicas = (*int32)(unsafe.Pointer(in.Replicas))
 	out.DeployPodDisruptionBudget = (*bool)(unsafe.Pointer(in.DeployPodDisruptionBudget))
+	out.ImageRepository = in.ImageRepository
 	return nil
 }
 
@@ -1083,6 +1128,7 @@ func Convert_v1beta2_CoreDNS_To_kubeone_CoreDNS(in *CoreDNS, out *kubeone.CoreDN
 func autoConvert_kubeone_CoreDNS_To_v1beta2_CoreDNS(in *kubeone.CoreDNS, out *CoreDNS, s conversion.Scope) error {
 	out.Replicas = (*int32)(unsafe.Pointer(in.Replicas))
 	out.DeployPodDisruptionBudget = (*bool)(unsafe.Pointer(in.DeployPodDisruptionBudget))
+	out.ImageRepository = in.ImageRepository
 	return nil
 }
 
@@ -1244,6 +1290,7 @@ func autoConvert_v1beta2_Features_To_kubeone_Features(in *Features, out *kubeone
 	out.MetricsServer = (*kubeone.MetricsServer)(unsafe.Pointer(in.MetricsServer))
 	out.OpenIDConnect = (*kubeone.OpenIDConnect)(unsafe.Pointer(in.OpenIDConnect))
 	out.EncryptionProviders = (*kubeone.EncryptionProviders)(unsafe.Pointer(in.EncryptionProviders))
+	out.NodeLocalDNS = (*kubeone.NodeLocalDNS)(unsafe.Pointer(in.NodeLocalDNS))
 	return nil
 }
 
@@ -1261,6 +1308,7 @@ func autoConvert_kubeone_Features_To_v1beta2_Features(in *kubeone.Features, out 
 	out.MetricsServer = (*MetricsServer)(unsafe.Pointer(in.MetricsServer))
 	out.OpenIDConnect = (*OpenIDConnect)(unsafe.Pointer(in.OpenIDConnect))
 	out.EncryptionProviders = (*EncryptionProviders)(unsafe.Pointer(in.EncryptionProviders))
+	out.NodeLocalDNS = (*NodeLocalDNS)(unsafe.Pointer(in.NodeLocalDNS))
 	return nil
 }
 
@@ -1287,6 +1335,60 @@ func Convert_kubeone_GCESpec_To_v1beta2_GCESpec(in *kubeone.GCESpec, out *GCESpe
 	return autoConvert_kubeone_GCESpec_To_v1beta2_GCESpec(in, out, s)
 }
 
+func autoConvert_v1beta2_HelmRelease_To_kubeone_HelmRelease(in *HelmRelease, out *kubeone.HelmRelease, s conversion.Scope) error {
+	out.Chart = in.Chart
+	out.RepoURL = in.RepoURL
+	out.ChartURL = in.ChartURL
+	out.Version = in.Version
+	out.ReleaseName = in.ReleaseName
+	out.Namespace = in.Namespace
+	out.Values = *(*[]kubeone.HelmValues)(unsafe.Pointer(&in.Values))
+	return nil
+}
+
+// Convert_v1beta2_HelmRelease_To_kubeone_HelmRelease is an autogenerated conversion function.
+func Convert_v1beta2_HelmRelease_To_kubeone_HelmRelease(in *HelmRelease, out *kubeone.HelmRelease, s conversion.Scope) error {
+	return autoConvert_v1beta2_HelmRelease_To_kubeone_HelmRelease(in, out, s)
+}
+
+func autoConvert_kubeone_HelmRelease_To_v1beta2_HelmRelease(in *kubeone.HelmRelease, out *HelmRelease, s conversion.Scope) error {
+	out.Chart = in.Chart
+	out.RepoURL = in.RepoURL
+	out.ChartURL = in.ChartURL
+	out.Version = in.Version
+	out.ReleaseName = in.ReleaseName
+	out.Namespace = in.Namespace
+	out.Values = *(*[]HelmValues)(unsafe.Pointer(&in.Values))
+	return nil
+}
+
+// Convert_kubeone_HelmRelease_To_v1beta2_HelmRelease is an autogenerated conversion function.
+func Convert_kubeone_HelmRelease_To_v1beta2_HelmRelease(in *kubeone.HelmRelease, out *HelmRelease, s conversion.Scope) error {
+	return autoConvert_kubeone_HelmRelease_To_v1beta2_HelmRelease(in, out, s)
+}
+
+func autoConvert_v1beta2_HelmValues_To_kubeone_HelmValues(in *HelmValues, out *kubeone.HelmValues, s conversion.Scope) error {
+	out.ValuesFile = in.ValuesFile
+	out.Inline = *(*json.RawMessage)(unsafe.Pointer(&in.Inline))
+	return nil
+}
+
+// Convert_v1beta2_HelmValues_To_kubeone_HelmValues is an autogenerated conversion function.
+func Convert_v1beta2_HelmValues_To_kubeone_HelmValues(in *HelmValues, out *kubeone.HelmValues, s conversion.Scope) error {
+	return autoConvert_v1beta2_HelmValues_To_kubeone_HelmValues(in, out, s)
+}
+
+func autoConvert_kubeone_HelmValues_To_v1beta2_HelmValues(in *kubeone.HelmValues, out *HelmValues, s conversion.Scope) error {
+	out.ValuesFile = in.ValuesFile
+	out.Inline = *(*json.RawMessage)(unsafe.Pointer(&in.Inline))
+	return nil
+}
+
+// Convert_kubeone_HelmValues_To_v1beta2_HelmValues is an autogenerated conversion function.
+func Convert_kubeone_HelmValues_To_v1beta2_HelmValues(in *kubeone.HelmValues, out *HelmValues, s conversion.Scope) error {
+	return autoConvert_kubeone_HelmValues_To_v1beta2_HelmValues(in, out, s)
+}
+
 func autoConvert_v1beta2_HetznerSpec_To_kubeone_HetznerSpec(in *HetznerSpec, out *kubeone.HetznerSpec, s conversion.Scope) error {
 	out.NetworkID = in.NetworkID
 	return nil
@@ -1310,14 +1412,17 @@ func Convert_kubeone_HetznerSpec_To_v1beta2_HetznerSpec(in *kubeone.HetznerSpec,
 func autoConvert_v1beta2_HostConfig_To_kubeone_HostConfig(in *HostConfig, out *kubeone.HostConfig, s conversion.Scope) error {
 	out.ID = in.ID
 	out.PublicAddress = in.PublicAddress
+	out.IPv6Addresses = *(*[]string)(unsafe.Pointer(&in.IPv6Addresses))
 	out.PrivateAddress = in.PrivateAddress
 	out.SSHPort = in.SSHPort
 	out.SSHUsername = in.SSHUsername
 	out.SSHPrivateKeyFile = in.SSHPrivateKeyFile
+	out.SSHHostPublicKey = *(*[]byte)(unsafe.Pointer(&in.SSHHostPublicKey))
 	out.SSHAgentSocket = in.SSHAgentSocket
 	out.Bastion = in.Bastion
 	out.BastionPort = in.BastionPort
 	out.BastionUser = in.BastionUser
+	out.BastionHostPublicKey = *(*[]byte)(unsafe.Pointer(&in.BastionHostPublicKey))
 	out.Hostname = in.Hostname
 	out.IsLeader = in.IsLeader
 	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))
@@ -1337,14 +1442,17 @@ func Convert_v1beta2_HostConfig_To_kubeone_HostConfig(in *HostConfig, out *kubeo
 func autoConvert_kubeone_HostConfig_To_v1beta2_HostConfig(in *kubeone.HostConfig, out *HostConfig, s conversion.Scope) error {
 	out.ID = in.ID
 	out.PublicAddress = in.PublicAddress
+	out.IPv6Addresses = *(*[]string)(unsafe.Pointer(&in.IPv6Addresses))
 	out.PrivateAddress = in.PrivateAddress
 	out.SSHPort = in.SSHPort
 	out.SSHUsername = in.SSHUsername
 	out.SSHPrivateKeyFile = in.SSHPrivateKeyFile
+	out.SSHHostPublicKey = *(*[]byte)(unsafe.Pointer(&in.SSHHostPublicKey))
 	out.SSHAgentSocket = in.SSHAgentSocket
 	out.Bastion = in.Bastion
 	out.BastionPort = in.BastionPort
 	out.BastionUser = in.BastionUser
+	out.BastionHostPublicKey = *(*[]byte)(unsafe.Pointer(&in.BastionHostPublicKey))
 	out.Hostname = in.Hostname
 	out.IsLeader = in.IsLeader
 	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))
@@ -1465,6 +1573,7 @@ func autoConvert_v1beta2_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneClu
 		return err
 	}
 	out.Addons = (*kubeone.Addons)(unsafe.Pointer(in.Addons))
+	out.HelmReleases = *(*[]kubeone.HelmRelease)(unsafe.Pointer(&in.HelmReleases))
 	out.SystemPackages = (*kubeone.SystemPackages)(unsafe.Pointer(in.SystemPackages))
 	out.RegistryConfiguration = (*kubeone.RegistryConfiguration)(unsafe.Pointer(in.RegistryConfiguration))
 	if err := Convert_v1beta2_LoggingConfig_To_kubeone_LoggingConfig(&in.LoggingConfig, &out.LoggingConfig, s); err != nil {
@@ -1512,6 +1621,7 @@ func autoConvert_kubeone_KubeOneCluster_To_v1beta2_KubeOneCluster(in *kubeone.Ku
 		return err
 	}
 	out.Addons = (*Addons)(unsafe.Pointer(in.Addons))
+	out.HelmReleases = *(*[]HelmRelease)(unsafe.Pointer(&in.HelmReleases))
 	out.SystemPackages = (*SystemPackages)(unsafe.Pointer(in.SystemPackages))
 	// WARNING: in.AssetConfiguration requires manual conversion: does not exist in peer-type
 	out.RegistryConfiguration = (*RegistryConfiguration)(unsafe.Pointer(in.RegistryConfiguration))
@@ -1631,6 +1741,26 @@ func autoConvert_kubeone_MetricsServer_To_v1beta2_MetricsServer(in *kubeone.Metr
 // Convert_kubeone_MetricsServer_To_v1beta2_MetricsServer is an autogenerated conversion function.
 func Convert_kubeone_MetricsServer_To_v1beta2_MetricsServer(in *kubeone.MetricsServer, out *MetricsServer, s conversion.Scope) error {
 	return autoConvert_kubeone_MetricsServer_To_v1beta2_MetricsServer(in, out, s)
+}
+
+func autoConvert_v1beta2_NodeLocalDNS_To_kubeone_NodeLocalDNS(in *NodeLocalDNS, out *kubeone.NodeLocalDNS, s conversion.Scope) error {
+	out.Deploy = in.Deploy
+	return nil
+}
+
+// Convert_v1beta2_NodeLocalDNS_To_kubeone_NodeLocalDNS is an autogenerated conversion function.
+func Convert_v1beta2_NodeLocalDNS_To_kubeone_NodeLocalDNS(in *NodeLocalDNS, out *kubeone.NodeLocalDNS, s conversion.Scope) error {
+	return autoConvert_v1beta2_NodeLocalDNS_To_kubeone_NodeLocalDNS(in, out, s)
+}
+
+func autoConvert_kubeone_NodeLocalDNS_To_v1beta2_NodeLocalDNS(in *kubeone.NodeLocalDNS, out *NodeLocalDNS, s conversion.Scope) error {
+	out.Deploy = in.Deploy
+	return nil
+}
+
+// Convert_kubeone_NodeLocalDNS_To_v1beta2_NodeLocalDNS is an autogenerated conversion function.
+func Convert_kubeone_NodeLocalDNS_To_v1beta2_NodeLocalDNS(in *kubeone.NodeLocalDNS, out *NodeLocalDNS, s conversion.Scope) error {
+	return autoConvert_kubeone_NodeLocalDNS_To_v1beta2_NodeLocalDNS(in, out, s)
 }
 
 func autoConvert_v1beta2_NoneSpec_To_kubeone_NoneSpec(in *NoneSpec, out *kubeone.NoneSpec, s conversion.Scope) error {
@@ -1883,6 +2013,7 @@ func autoConvert_v1beta2_ProviderStaticNetworkConfig_To_kubeone_ProviderStaticNe
 	if err := Convert_v1beta2_DNSConfig_To_kubeone_DNSConfig(&in.DNS, &out.DNS, s); err != nil {
 		return err
 	}
+	out.IPFamily = kubeone.IPFamily(in.IPFamily)
 	return nil
 }
 
@@ -1897,6 +2028,7 @@ func autoConvert_kubeone_ProviderStaticNetworkConfig_To_v1beta2_ProviderStaticNe
 	if err := Convert_kubeone_DNSConfig_To_v1beta2_DNSConfig(&in.DNS, &out.DNS, s); err != nil {
 		return err
 	}
+	out.IPFamily = IPFamily(in.IPFamily)
 	return nil
 }
 

@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2022-07-27T18:43:11+05:00
+date = 2023-07-27T16:41:55+03:00
 weight = 11
 +++
 ## v1beta2
@@ -33,6 +33,8 @@ weight = 11
 * [ExternalCNISpec](#externalcnispec)
 * [Features](#features)
 * [GCESpec](#gcespec)
+* [HelmRelease](#helmrelease)
+* [HelmValues](#helmvalues)
 * [HetznerSpec](#hetznerspec)
 * [HostConfig](#hostconfig)
 * [IPTables](#iptables)
@@ -44,6 +46,7 @@ weight = 11
 * [LoggingConfig](#loggingconfig)
 * [MachineControllerConfig](#machinecontrollerconfig)
 * [MetricsServer](#metricsserver)
+* [NodeLocalDNS](#nodelocaldns)
 * [NoneSpec](#nonespec)
 * [NutanixSpec](#nutanixspec)
 * [OpenIDConnect](#openidconnect)
@@ -95,6 +98,7 @@ Addon config
 | ----- | ----------- | ------ | -------- |
 | name | Name of the addon to configure | string | true |
 | params | Params to the addon, to render the addon using text/template, this will override globalParams | map[string]string | false |
+| disableTemplating | DisableTemplating is used to disable templatization for the addon. | bool | false |
 | delete | Delete flag to ensure the named addon with all its contents to be deleted | bool | false |
 
 [Back to Group](#v1beta2)
@@ -173,6 +177,7 @@ Only one cloud provider must be defined at the single time.
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | external | External | bool | false |
+| disableBundledCSIDrivers | DisableBundledCSIDrivers disables automatic deployment of CSI drivers bundled with KubeOne | bool | true |
 | cloudConfig | CloudConfig | string | false |
 | csiConfig | CSIConfig | string | false |
 | secretProviderClassName | SecretProviderClassName | string | false |
@@ -197,11 +202,16 @@ ClusterNetworkConfig describes the cluster network
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | podSubnet | PodSubnet default value is \"10.244.0.0/16\" | string | false |
+| podSubnetIPv6 | PodSubnetIPv6 default value is \"\"fd01::/48\"\" | string | false |
 | serviceSubnet | ServiceSubnet default value is \"10.96.0.0/12\" | string | false |
+| serviceSubnetIPv6 | ServiceSubnetIPv6 default value is \"fd02::/120\" | string | false |
 | serviceDomainName | ServiceDomainName default value is \"cluster.local\" | string | false |
 | nodePortRange | NodePortRange default value is \"30000-32767\" | string | false |
 | cni | CNI default value is {canal: {mtu: 1450}} | *[CNI](#cni) | false |
 | kubeProxy | KubeProxy config | *[KubeProxyConfig](#kubeproxyconfig) | false |
+| ipFamily | IPFamily allows specifying IP family of a cluster. Valid values are IPv4 \| IPv6 \| IPv4+IPv6 \| IPv6+IPv4. | IPFamily | false |
+| nodeCIDRMaskSizeIPv4 | NodeCIDRMaskSizeIPv4 is the mask size used to address the nodes within provided IPv4 Pods CIDR. It has to be larger than the provided IPv4 Pods CIDR. Defaults to 24. | *int | false |
+| nodeCIDRMaskSizeIPv6 | NodeCIDRMaskSizeIPv6 is the mask size used to address the nodes within provided IPv6 Pods CIDR. It has to be larger than the provided IPv6 Pods CIDR. Defaults to 64. | *int | false |
 
 [Back to Group](#v1beta2)
 
@@ -289,6 +299,7 @@ ControlPlaneConfig defines control plane nodes
 | ----- | ----------- | ------ | -------- |
 | replicas |  | *int32 | false |
 | deployPodDisruptionBudget |  | *bool | false |
+| imageRepository | ImageRepository allows users to specify the image registry to be used for CoreDNS. Kubeadm automatically appends `/coredns` at the end, so it's not necessary to specify it. By default it's empty, which means it'll be defaulted based on kubeadm defaults and if overwriteRegistry feature is used. ImageRepository has the highest priority, meaning that it'll override overwriteRegistry if specified. | string | false |
 
 [Back to Group](#v1beta2)
 
@@ -377,6 +388,7 @@ Features controls what features will be enabled on the cluster
 | metricsServer | MetricsServer | *[MetricsServer](#metricsserver) | false |
 | openidConnect | OpenIDConnect | *[OpenIDConnect](#openidconnect) | false |
 | encryptionProviders | Encryption Providers | *[EncryptionProviders](#encryptionproviders) | false |
+| nodeLocalDNS | NodeLocalDNS config | *[NodeLocalDNS](#nodelocaldns) | false |
 
 [Back to Group](#v1beta2)
 
@@ -386,6 +398,33 @@ GCESpec defines the GCE cloud provider
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+
+[Back to Group](#v1beta2)
+
+### HelmRelease
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| chart | Chart is [CHART] part of the `helm upgrade [RELEASE] [CHART]` command. | string | true |
+| repoURL | RepoURL is a chart repository URL where to locate the requested chart. | string | false |
+| chartURL | ChartURL is a direct chart URL location. | string | false |
+| version | Version is --version flag of the `helm upgrade` command. Specify the exact chart version to use. If this is not specified, the latest version is used. | string | false |
+| releaseName | ReleaseName is [RELEASE] part of the `helm upgrade [RELEASE] [CHART]` command. Empty is defaulted to chart. | string | false |
+| namespace | Namespace is --namespace flag of the `helm upgrade` command. A namespace to use for a release. | string | true |
+| values | Values provide optional overrides of the helm values. | [][HelmValues](#helmvalues) | false |
+
+[Back to Group](#v1beta2)
+
+### HelmValues
+
+HelmValues configure inputs to `helm upgrade --install` command analog.
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| valuesFile | ValuesFile is an optional path on the local file system containing helm values to override. An analog of --values flag of the `helm upgrade` command. | string | false |
+| inline | Inline is optionally used as a convenient way to provide short user input overrides to the helm upgrade process. Is written to a temporary file and used as an analog of the `helm upgrade --values=/tmp/inline-helm-values-XXX` command. | [json.RawMessage](https://golang.org/pkg/encoding/json/#RawMessage) | false |
 
 [Back to Group](#v1beta2)
 
@@ -406,17 +445,20 @@ HostConfig describes a single control plane node.
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | publicAddress | PublicAddress is externally accessible IP address from public internet. | string | true |
+| ipv6Addresses | IPv6Addresses is IPv6 addresses of the node, only the first one will be announced to the k8s control plane. It is a list because you can request lots of IPv6 addresses (for example in case you want to assign one address per service). | []string | true |
 | privateAddress | PrivateAddress is internal RFC-1918 IP address. | string | true |
 | sshPort | SSHPort is port to connect ssh to. Default value is 22. | int | false |
 | sshUsername | SSHUsername is system login name. Default value is \"root\". | string | false |
 | sshPrivateKeyFile | SSHPrivateKeyFile is path to the file with PRIVATE AND CLEANTEXT ssh key. Default value is \"\". | string | false |
+| sshHostPublicKey | SSHHostPublicKey if not empty, will be used to verify remote host public key | []byte | false |
 | sshAgentSocket | SSHAgentSocket path (or reference to the environment) to the SSH agent unix domain socket. Default value is \"env:SSH_AUTH_SOCK\". | string | false |
 | bastion | Bastion is an IP or hostname of the bastion (or jump) host to connect to. Default value is \"\". | string | false |
 | bastionPort | BastionPort is SSH port to use when connecting to the bastion if it's configured in .Bastion. Default value is 22. | int | false |
 | bastionUser | BastionUser is system login name to use when connecting to bastion host. Default value is \"root\". | string | false |
+| bastionHostPublicKey | BastionHostPublicKey if not empty, will be used to verify bastion SSH public key | []byte | false |
 | hostname | Hostname is the hostname(1) of the host. Default value is populated at the runtime via running `hostname -f` command over ssh. | string | false |
 | isLeader | IsLeader indicates this host as a session leader. Default value is populated at the runtime. | bool | false |
-| taints | Taints are taints applied to nodes. Those taints are only applied when the node is being provisioned. If not provided (i.e. nil) for control plane nodes, it defaults to:\n  * For Kubernetes 1.23 and older: TaintEffectNoSchedule with key node-role.kubernetes.io/master\n  * For Kubernetes 1.24 and newer: TaintEffectNoSchedule with keys\n    node-role.kubernetes.io/control-plane and node-role.kubernetes.io/master\nExplicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes). | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#taint-v1-core) | false |
+| taints | Taints are taints applied to nodes. Those taints are only applied when the node is being provisioned. If not provided (i.e. nil) for control plane nodes, it defaults to:\n  * For Kubernetes 1.23 and older: TaintEffectNoSchedule with key node-role.kubernetes.io/master\n  * For Kubernetes 1.24 and newer: TaintEffectNoSchedule with keys\n    node-role.kubernetes.io/control-plane and node-role.kubernetes.io/master\nExplicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes). | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#taint-v1-core) | false |
 | labels | Labels to be used to apply (or remove, with minus symbol suffix, see more kubectl help label) labels to/from node | map[string]string | false |
 | kubelet | Kubelet | [KubeletConfig](#kubeletconfig) | false |
 | operatingSystem | OperatingSystem information, can be populated at the runtime. | OperatingSystemName | false |
@@ -479,6 +521,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | caBundle | CABundle PEM encoded global CA | string | false |
 | features | Features enables and configures additional cluster features. | [Features](#features) | false |
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |
+| helmReleases | HelmReleases configure helm charts to reconcile. For each HelmRelease it will run analog of: `helm upgrade --namespace <NAMESPACE> --install --create-namespace <RELEASE> <CHART> [--values=values-override.yaml]` | [][HelmRelease](#helmrelease) | false |
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |
 | registryConfiguration | RegistryConfiguration configures how Docker images are pulled from an image registry | *[RegistryConfiguration](#registryconfiguration) | false |
 | loggingConfig | LoggingConfig configures the Kubelet's log rotation | [LoggingConfig](#loggingconfig) | false |
@@ -538,6 +581,16 @@ MetricsServer feature flag
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | enable | Enable deployment of metrics-server. Default value is true. | bool | false |
+
+[Back to Group](#v1beta2)
+
+### NodeLocalDNS
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| deploy | Deploy is enabled by default | bool | false |
 
 [Back to Group](#v1beta2)
 
@@ -652,7 +705,7 @@ ProviderSpec describes a worker node
 | nodeAnnotations | NodeAnnotations set MachineDeployment.Spec.Template.Spec.ObjectMeta.Annotations as a way to annotate resulting Nodes | map[string]string | false |
 | machineObjectAnnotations | MachineObjectAnnotations set MachineDeployment.Spec.Template.Metadata.Annotations as a way to annotate resulting Machine objects. Those annotations are not propagated to Node objects. If you want to annotate resulting Nodes as well, see NodeAnnotations | map[string]string | false |
 | labels | Labels | map[string]string | false |
-| taints | Taints | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#taint-v1-core) | false |
+| taints | Taints | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#taint-v1-core) | false |
 | sshPublicKeys | SSHPublicKeys | []string | false |
 | operatingSystem | OperatingSystem | string | true |
 | operatingSystemSpec | OperatingSystemSpec | [json.RawMessage](https://golang.org/pkg/encoding/json/#RawMessage) | false |
@@ -670,6 +723,7 @@ ProviderStaticNetworkConfig contains a machine's static network configuration
 | cidr | CIDR | string | true |
 | gateway | Gateway | string | true |
 | dns | DNS | [DNSConfig](#dnsconfig) | true |
+| ipFamily | IPFamily | IPFamily | true |
 
 [Back to Group](#v1beta2)
 

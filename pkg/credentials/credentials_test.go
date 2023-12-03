@@ -145,9 +145,95 @@ func TestOpenstackValidationFunc(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			err := openstackValidationFunc(tt.creds)
+			if tt.err != nil && err != nil {
+				var credsErr fail.CredentialsError
+				if !errors.As(err, &credsErr) {
+					t.Errorf("extected %T error type", credsErr)
+				}
+				if credsErr.Err.Error() != tt.err.Error() {
+					t.Errorf("expected error = '%v', got error = '%v'", tt.err.Error(), err.Error())
+				}
+			} else if !errors.Is(err, tt.err) {
+				t.Errorf("%s: expected error = %v, got error = %v", tt.name, tt.err, err)
+			}
+		})
+	}
+}
+
+func TestVmwareCloudDirectorValidationFunc(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name  string
+		creds map[string]string
+		err   error
+	}{
+		{
+			name:  "empty",
+			creds: map[string]string{},
+			err:   errors.New("key VCD_ORG is required but is not present"),
+		},
+		{
+			name: "no-credentials",
+			creds: map[string]string{
+				"VCD_ORG": "test",
+				"VCD_URL": "http://localhost:8080",
+				"VCD_VDC": "vdc",
+			},
+			err: errors.New("no valid credentials (either api token or user) found"),
+		},
+		{
+			name: "username-password",
+			creds: map[string]string{
+				"VCD_ORG":      "test",
+				"VCD_URL":      "http://localhost:8080",
+				"VCD_VDC":      "vdc",
+				"VCD_USER":     "user",
+				"VCD_PASSWORD": "password",
+			},
+			err: nil,
+		},
+		{
+			name: "username-no-password",
+			creds: map[string]string{
+				"VCD_ORG":  "test",
+				"VCD_URL":  "http://localhost:8080",
+				"VCD_VDC":  "vdc",
+				"VCD_USER": "user",
+			},
+			err: errors.New("key VCD_USER and VCD_PASSWORD are required but not present"),
+		},
+		{
+			name: "password-no-username",
+			creds: map[string]string{
+				"VCD_ORG":      "test",
+				"VCD_URL":      "http://localhost:8080",
+				"VCD_VDC":      "vdc",
+				"VCD_PASSWORD": "password",
+			},
+			err: errors.New("key VCD_USER and VCD_PASSWORD are required but not present"),
+		},
+		{
+			name: "api-token",
+			creds: map[string]string{
+				"VCD_ORG":       "test",
+				"VCD_URL":       "http://localhost:8080",
+				"VCD_VDC":       "vdc",
+				"VCD_API_TOKEN": "token",
+			},
+			err: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := vmwareCloudDirectorValidationFunc(tt.creds)
 			if tt.err != nil && err != nil {
 				var credsErr fail.CredentialsError
 				if !errors.As(err, &credsErr) {

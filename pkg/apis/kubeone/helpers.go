@@ -24,13 +24,21 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 
 	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/semverutil"
 )
 
 const (
 	credentialSecretName = "kube-system/kubeone-registry-credentials" //nolint:gosec
+)
+
+var (
+	v124Constraint         = semverutil.MustParseConstraint(">= 1.24.0, < 1.25.0")
+	v125Constraint         = semverutil.MustParseConstraint(">= 1.25.0, < 1.26.0")
+	v126AndNewerConstraint = semverutil.MustParseConstraint(">= 1.26.0")
 )
 
 // Leader returns the first configured host. Only call this after
@@ -119,10 +127,6 @@ func (h *HostConfig) SetLeader(leader bool) {
 	h.IsLeader = leader
 }
 
-func (c KubeOneCluster) OperatingSystemManagerEnabled() bool {
-	return c.OperatingSystemManager != nil && c.OperatingSystemManager.Deploy
-}
-
 func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 	var mcFlags []string
 	switch {
@@ -136,8 +140,8 @@ func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 		// example output:
 		// -node-containerd-registry-mirrors=docker.io=custom.tld
 		// -node-containerd-registry-mirrors=docker.io=https://secure-custom.tld
-		// -node-containerd-registry-mirrors=k8s.gcr.io=http://somewhere
-		// -node-insecure-registries=docker.io,k8s.gcr.io
+		// -node-containerd-registry-mirrors=registry.k8s.io=http://somewhere
+		// -node-insecure-registries=docker.io,registry.k8s.io
 		var (
 			registryNames                 []string
 			insecureSet                   = map[string]struct{}{}
@@ -237,6 +241,32 @@ func (crc ContainerRuntimeConfig) CRISocket() string {
 	return ""
 }
 
+// SandboxImage is used to determine the pause image version that should be used,
+// depending on the desired Kubernetes version. It's important to use the same
+// pause image version for both container runtime and kubeadm to avoid issues.
+// Values come from:
+//   - https://github.com/kubernetes/kubernetes/blob/master/cmd/kubeadm/app/constants/constants.go#L423
+//   - https://github.com/containerd/containerd/blob/main/pkg/cri/config/config_unix.go#L90
+func (v VersionConfig) SandboxImage(imageRegistry func(string) string) (string, error) {
+	kubeSemVer, err := semver.NewVersion(v.Kubernetes)
+	if err != nil {
+		return "", fail.Config(err, "parsing kubernetes semver")
+	}
+
+	registry := imageRegistry("registry.k8s.io")
+
+	switch {
+	case v124Constraint.Check(kubeSemVer):
+		return fmt.Sprintf("%s/pause:3.7", registry), nil
+	case v125Constraint.Check(kubeSemVer):
+		return fmt.Sprintf("%s/pause:3.8", registry), nil
+	case v126AndNewerConstraint.Check(kubeSemVer):
+		fallthrough
+	default:
+		return fmt.Sprintf("%s/pause:3.9", registry), nil
+	}
+}
+
 // CloudProviderName returns name of the cloud provider
 func (p CloudProviderSpec) CloudProviderName() string {
 	switch {
@@ -308,20 +338,15 @@ func (c KubeOneCluster) csiMigrationFeatureGates(complete bool) (map[string]bool
 
 	switch {
 	case c.CloudProvider.AWS != nil:
-		featureGates["CSIMigrationAWS"] = true
 		if complete {
 			featureGates["InTreePluginAWSUnregister"] = true
 		}
 	case c.CloudProvider.Azure != nil:
-		featureGates["CSIMigrationAzureDisk"] = true
-		featureGates["CSIMigrationAzureFile"] = true
 		if complete {
 			featureGates["InTreePluginAzureDiskUnregister"] = true
 			featureGates["InTreePluginAzureFileUnregister"] = true
 		}
 	case c.CloudProvider.Openstack != nil:
-		featureGates["CSIMigrationOpenStack"] = true
-		featureGates["ExpandCSIVolumes"] = true
 		if complete {
 			featureGates["InTreePluginOpenStackUnregister"] = true
 		}
@@ -410,6 +435,22 @@ func (ads *Addons) RelativePath(manifestFilePath string) (string, error) {
 // This function is needed because the AssetsConfiguration API has been removed
 // in the v1beta2 API, so we can't use defaulting
 func (c *KubeOneCluster) DefaultAssetConfiguration() {
+	// IMPORTANT: Please pay attention to this part when removing AssetConfiguration.
+	// We allow overriding CoreDNS image in v1beta2 API.
+	// Priorities:
+	//  - 1st: c.Features.CoreDNS.ImageRepository (only v1beta2 API)
+	//         c.AssetConfiguration.CoreDNS.ImageRepository (only v1beta1 API)
+	//  - 2nd: c.RegistryConfiguration.OverwriteRegistry (both APIs)
+	// NOTE: We want to allow configuring CoreDNS ImageRepository even if
+	// OverwriteRegistry is not used (to avoid confusion since CoreDNS.ImageRepository is
+	// decoupled from OverwriteRegistry)
+	if c.Features.CoreDNS != nil {
+		c.AssetConfiguration.CoreDNS.ImageRepository = defaults(
+			c.AssetConfiguration.CoreDNS.ImageRepository, // If we're using v1beta2, this is going to be empty anyways
+			c.Features.CoreDNS.ImageRepository,
+		)
+	}
+
 	if c.RegistryConfiguration == nil || c.RegistryConfiguration.OverwriteRegistry == "" {
 		// We default AssetConfiguration only if RegistryConfiguration.OverwriteRegistry
 		// is used
@@ -450,4 +491,27 @@ func MapStringStringToString(m1 map[string]string, pairSeparator string) string 
 	sort.Strings(pairs)
 
 	return strings.Join(pairs, ",")
+}
+
+func (c ClusterNetworkConfig) HasIPv4() bool {
+	return c.IPFamily == IPFamilyIPv4 || c.IPFamily == IPFamilyIPv4IPv6 || c.IPFamily == IPFamilyIPv6IPv4
+}
+
+func (c ClusterNetworkConfig) HasIPv6() bool {
+	return c.IPFamily == IPFamilyIPv6 || c.IPFamily == IPFamilyIPv4IPv6 || c.IPFamily == IPFamilyIPv6IPv4
+}
+
+func (c IPFamily) IsDualstack() bool {
+	return c == IPFamilyIPv4IPv6 || c == IPFamilyIPv6IPv4
+}
+
+func (c IPFamily) IsIPv6Primary() bool {
+	return c == IPFamilyIPv6 || c == IPFamilyIPv6IPv4
+}
+
+func (v VersionConfig) KubernetesMajorMinorVersion() string {
+	// Validation passed at this point so we know that version is valid
+	kubeSemVer := semver.MustParse(v.Kubernetes)
+
+	return fmt.Sprintf("v%d.%d", kubeSemVer.Major(), kubeSemVer.Minor())
 }

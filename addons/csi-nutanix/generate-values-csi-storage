@@ -1,0 +1,16 @@
+tolerations:
+  - key: "node-role.kubernetes.io/master"
+    operator: "Exists"
+    effect: "NoSchedule"
+  - key: "node-role.kubernetes.io/control-plane"
+    operator: "Exists"
+    effect: "NoSchedule"
+
+# Prism Element endpoint and credentials
+prismEndPoint: ".Credentials.NUTANIX_PE_ENDPOINT"
+username: ".Credentials.NUTANIX_PE_USERNAME"
+password: ".Credentials.NUTANIX_PE_PASSWORD"
+
+controller:
+  nodeSelector:
+    node-role.kubernetes.io/control-plane: ""
