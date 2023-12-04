@@ -57,6 +57,7 @@ var embeddedAddons = map[string]string{
 	resources.AddonCSIHetzner:             "",
 	resources.AddonCSIGCPComputePD:        "",
 	resources.AddonCSINutanix:             "",
+	resources.AddonCCMNutanix:             "",
 	resources.AddonCSIOpenStackCinder:     "",
 	resources.AddonCSIVMwareCloudDirector: "",
 	resources.AddonCSIVsphere:             "",
@@ -388,6 +389,12 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 				name: resources.AddonCSINutanix,
 			},
 		)
+	case s.Cluster.CloudProvider.Nutanix != nil:
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCCMNutanix,
+			},
+		)
 	case s.Cluster.CloudProvider.Openstack != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
@@ -476,6 +483,7 @@ func ensureCCMAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 				},
 			},
 		)
+
 	default:
 		s.Logger.Infof("CCM driver for %q not yet supported, skipping", s.Cluster.CloudProvider.CloudProviderName())
 	}

@@ -156,6 +156,7 @@ const (
 	HetznerCCM
 	OpenstackCCM
 	EquinixMetalCCM
+	NutanixCCM
 	VsphereCCM
 
 	// CSI Vault Secret Provider
@@ -300,6 +301,9 @@ func optionalResources() map[Resource]map[string]string {
 		HetznerCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.4.0"},
 		HetznerCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.9.0"},
 		HetznerCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.7.0"},
+
+		// Nutanix CCM
+		NutanixCCM: {"*": "ghcr.io/nutanix-cloud-native/cloud-provider-nutanix/controller:v0.3.2"},
 
 		// OpenStack CCM
 		OpenstackCCM: {
