@@ -12,8 +12,8 @@ stringData:
         "type": "basic_auth", 
         "data": { 
           "prismCentral":{
-            "username": "$NUTANIX_USERNAME", 
-            "password": "$NUTANIX_PASSWORD"
+            "username": "{{ .Credentials.NUTANIX_USERNAME }}", 
+            "password": "{{ .Credentials.NUTANIX_PASSWORD }}"
           },
           "prismElements": null
         }
@@ -123,15 +123,15 @@ data:
   nutanix_config.json: |-
     {
       "prismCentral": {
-        "address": "${NUTANIX_ENDPOINT}",
-        "port": ${NUTANIX_PORT},
-        "insecure": ${NUTANIX_INSECURE},
+        "address": "{{ .Credentials.NUTANIX_ENDPOINT }}",
+        "port": {{ .Credentials.NUTANIX_PORT }},
+        "insecure": {{ .Credentials.NUTANIX_INSECURE }},
         "credentialRef": {
           "kind": "secret",
           "name": "nutanix-creds"
         }
       },
-      "enableCustomLabeling": false,
+      "enableCustomLabeling": true,
       "topologyDiscovery": {
         "type": "Prism"
       }
@@ -192,7 +192,7 @@ spec:
           key: node.kubernetes.io/not-ready
           operator: Exists
       containers:
-        - image: ${IMG}
+        - image: {{ .InternalImages.Get "NutanixCCM" }}
           imagePullPolicy: Always
           name: nutanix-cloud-controller-manager
           args:
