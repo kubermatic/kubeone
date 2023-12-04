@@ -29,6 +29,7 @@ const (
 	AddonCCMDigitalOcean        = "ccm-digitalocean"
 	AddonCCMEquinixMetal        = "ccm-equinixmetal"
 	AddonCCMHetzner             = "ccm-hetzner"
+	AddonCCMNutanix             = "ccm-nutanix"
 	AddonCCMOpenStack           = "ccm-openstack"
 	AddonCCMPacket              = "ccm-packet" // TODO: Remove after deprecation period.
 	AddonCCMVsphere             = "ccm-vsphere"
