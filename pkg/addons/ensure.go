@@ -389,12 +389,6 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 				name: resources.AddonCSINutanix,
 			},
 		)
-	case s.Cluster.CloudProvider.Nutanix != nil:
-		addonsToDeploy = append(addonsToDeploy,
-			addonAction{
-				name: resources.AddonCCMNutanix,
-			},
-		)
 	case s.Cluster.CloudProvider.Openstack != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
@@ -454,6 +448,12 @@ func ensureCCMAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 				supportFn: func() error {
 					return migrateHetznerCCM(s)
 				},
+			},
+		)
+	case s.Cluster.CloudProvider.Nutanix != nil:
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCCMNutanix,
 			},
 		)
 	case s.Cluster.CloudProvider.Openstack != nil:
