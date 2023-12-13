@@ -189,10 +189,10 @@ spec:
         resources:
           limits:
             cpu: 100m
-            memory: 300Mi
+            memory: 600Mi
           requests:
             cpu: 100m
-            memory: 300Mi
+            memory: 600Mi
       serviceAccountName: cluster-autoscaler
       terminationGracePeriodSeconds: 10
       tolerations:
