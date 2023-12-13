@@ -941,7 +941,14 @@ func detectClusterName(s *state.State) (string, error) {
 		}
 		for _, flag := range container.Command {
 			if strings.HasPrefix(flag, "--cluster-name") {
-				return strings.Split(flag, "=")[1], nil
+				if val := strings.Split(flag, "=")[1]; val != "$(CLUSTER_NAME)" {
+					return val, nil
+				}
+			}
+		}
+		for _, env := range container.Env {
+			if env.Name == "CLUSTER_NAME" {
+				return env.Value, nil
 			}
 		}
 	}
