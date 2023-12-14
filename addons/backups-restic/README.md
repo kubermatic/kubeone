@@ -18,7 +18,7 @@ storing backups.
 
 You need to replace the following values with the actual ones:
 * `<<RESTIC_PASSWORD>>` - a password used to encrypt the backups
-* `<<S3_BUCKET>>` - the name of the S3 bucket to be used for backups
+* `<<S3_BUCKET>>` - the restic-style path of the repository to be used for backups (e.g. `s3:s3.amazonaws.com/<backup-bucket-name>`)
 * `<<AWS_DEFAULT_REGION>>` - default AWS region
 
 Credentials are fetched automatically if you are deploying on AWS. If you want to use
