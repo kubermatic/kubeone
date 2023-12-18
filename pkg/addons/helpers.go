@@ -29,6 +29,7 @@ import (
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	rbacv1 "k8s.io/api/rbac/v1"
 	storagev1 "k8s.io/api/storage/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -152,8 +153,32 @@ func gceStandardStorageClass() *storagev1.StorageClass {
 	}
 }
 
-func migrateAzureDiskCSIDriver(s *state.State) error {
+func migrateAzureDiskCSI(s *state.State) error {
+	if err := migrateAzureDiskNodeCRBIfLegacy(s); err != nil {
+		return err
+	}
+
 	return clientutil.DeleteIfExists(s.Context, s.DynamicClient, azureDiskCSIDriver())
+}
+
+func migrateAzureDiskNodeCRBIfLegacy(s *state.State) error {
+	crb := &rbacv1.ClusterRoleBinding{}
+	key := client.ObjectKey{
+		Name: "csi-azuredisk-node-secret-binding",
+	}
+	if err := s.DynamicClient.Get(s.Context, key, crb); err != nil {
+		if k8serrors.IsNotFound(err) {
+			return nil
+		}
+
+		return err
+	}
+
+	if crb.RoleRef.Name == "csi-azuredisk-node-secret-role" {
+		return clientutil.DeleteIfExists(s.Context, s.DynamicClient, crb)
+	}
+
+	return nil
 }
 
 func azureDiskCSIDriver() *storagev1.CSIDriver {
