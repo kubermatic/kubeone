@@ -52,24 +52,14 @@ spec:
               path: /etc/kubernetes/pki
           initContainers:
           - name: snapshoter
-            image: {{ Registry "gcr.io" }}/etcd-development/etcd:v3.5.6
+            image: {{ Registry "gcr.io" }}/etcd-development/etcd:v3.5.11
             imagePullPolicy: IfNotPresent
             command:
-            - /bin/sh
-            - -c
-            - |-
-              set -euf
-              mkdir -p /backup/pki/kubernetes
-              mkdir -p /backup/pki/etcd
-              cp -a /etc/kubernetes/pki/etcd/ca.crt /backup/pki/etcd/
-              cp -a /etc/kubernetes/pki/etcd/ca.key /backup/pki/etcd/
-              cp -a /etc/kubernetes/pki/ca.crt /backup/pki/kubernetes
-              cp -a /etc/kubernetes/pki/ca.key /backup/pki/kubernetes
-              cp -a /etc/kubernetes/pki/front-proxy-ca.crt /backup/pki/kubernetes
-              cp -a /etc/kubernetes/pki/front-proxy-ca.key /backup/pki/kubernetes
-              cp -a /etc/kubernetes/pki/sa.key /backup/pki/kubernetes
-              cp -a /etc/kubernetes/pki/sa.pub /backup/pki/kubernetes
-              etcdctl snapshot save /backup/etcd-snapshot.db
+              - etcdctl
+            args:
+              - snapshot
+              - save
+              - /backup/etcd-snapshot.db
             env:
             - name: ETCDCTL_API
               value: "3"
@@ -100,6 +90,16 @@ spec:
             - -c
             - |-
               set -euf
+              mkdir -p /backup/pki/kubernetes
+              mkdir -p /backup/pki/etcd
+              cp -a /etc/kubernetes/pki/etcd/ca.crt /backup/pki/etcd/
+              cp -a /etc/kubernetes/pki/etcd/ca.key /backup/pki/etcd/
+              cp -a /etc/kubernetes/pki/ca.crt /backup/pki/kubernetes
+              cp -a /etc/kubernetes/pki/ca.key /backup/pki/kubernetes
+              cp -a /etc/kubernetes/pki/front-proxy-ca.crt /backup/pki/kubernetes
+              cp -a /etc/kubernetes/pki/front-proxy-ca.key /backup/pki/kubernetes
+              cp -a /etc/kubernetes/pki/sa.key /backup/pki/kubernetes
+              cp -a /etc/kubernetes/pki/sa.pub /backup/pki/kubernetes
               restic snapshots -q || restic init -q
               restic backup --tag=etcd --host=${ETCD_HOSTNAME} /backup
               restic forget --prune --keep-last 48
@@ -130,3 +130,6 @@ spec:
             volumeMounts:
             - mountPath: /backup
               name: etcd-backup
+            - mountPath: /etc/kubernetes/pki
+              name: host-pki
+              readOnly: true
