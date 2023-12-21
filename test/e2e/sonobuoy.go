@@ -60,7 +60,7 @@ func (sbb *sonobuoyBin) Run(ctx context.Context, mode sonobuoyMode) error {
 }
 
 func (sbb *sonobuoyBin) Wait(ctx context.Context) error {
-	return sbb.run(ctx, "wait")
+	return sbb.run(ctx, "wait", "--wait=120")
 }
 
 func (sbb *sonobuoyBin) Retrieve(ctx context.Context) error {
