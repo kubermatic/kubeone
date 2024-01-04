@@ -248,3 +248,95 @@ func TestVmwareCloudDirectorValidationFunc(t *testing.T) {
 		})
 	}
 }
+
+func TestCredentialsFinder(t *testing.T) {
+	withDynamicFixture := func(dynamicFn func(string) string) func(*credentialsFinder) error {
+		return func(cf *credentialsFinder) error {
+			cf.dynamic = dynamicFn
+
+			return nil
+		}
+	}
+
+	withStaticFixture := func(static map[string]string) func(*credentialsFinder) error {
+		return func(cf *credentialsFinder) error {
+			cf.static = static
+
+			return nil
+		}
+	}
+
+	tests := []struct {
+		name string
+		key  string
+		want string
+		opts []func(*credentialsFinder) error
+	}{
+		{
+			name: "static universal",
+			key:  "key1",
+			want: "val1",
+			opts: []func(*credentialsFinder) error{
+				withStaticFixture(map[string]string{
+					"key1": "val1",
+				}),
+			},
+		},
+		{
+			name: "static with type OSM",
+			key:  "key1",
+			want: "OSM_val1",
+			opts: []func(*credentialsFinder) error{
+				withType(TypeOSM),
+				withStaticFixture(map[string]string{
+					"OSM_key1": "OSM_val1",
+				}),
+			},
+		},
+		{
+			name: "dynamic with type OSM",
+			key:  "key1",
+			want: "OSM_val1",
+			opts: []func(*credentialsFinder) error{
+				withType(TypeOSM),
+				withStaticFixture(map[string]string{
+					"key1": "from_static",
+				}),
+				withDynamicFixture(func(key string) string {
+					return map[string]string{
+						"OSM_key1": "OSM_val1",
+					}[key]
+				}),
+			},
+		},
+		{
+			name: "static precedence over dynamic with type OSM",
+			key:  "key1",
+			want: "from_static",
+			opts: []func(*credentialsFinder) error{
+				withType(TypeOSM),
+				withStaticFixture(map[string]string{
+					"OSM_key1": "from_static",
+				}),
+				withDynamicFixture(func(key string) string {
+					return map[string]string{
+						"OSM_key1": "from_dynamic",
+					}[key]
+				}),
+			},
+		},
+	}
+
+	for _, tcase := range tests {
+		t.Run(tcase.name, func(t *testing.T) {
+			finder, err := newCredentialsFinder(tcase.opts...)
+			if err != nil {
+				t.Fatalf("got unexpcted error: %v", err)
+			}
+
+			if result := finder.get(tcase.key); result != tcase.want {
+				t.Errorf("get(%q)=%q, want %q", tcase.key, result, tcase.want)
+			}
+		})
+	}
+}

@@ -151,7 +151,7 @@ type ProviderEnvironmentVariable struct {
 }
 
 func Any(credentialsFilePath string) (map[string]string, error) {
-	credentialsFinder, err := newCredsFinder(credentialsFilePath, TypeUniversal)
+	credentialsFinder, err := newCredentialsFinder(withYAMLFile(credentialsFilePath))
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +159,7 @@ func Any(credentialsFilePath string) (map[string]string, error) {
 	creds := map[string]string{}
 
 	for _, key := range allKeys {
-		if val := credentialsFinder(key); val != "" {
+		if val := credentialsFinder.get(key); val != "" {
 			creds[key] = val
 			// NB: We want to use Equinix Metal env vars everywhere, even if
 			// users has PACKET_ env vars on their systems.
@@ -178,11 +178,12 @@ func Any(credentialsFilePath string) (map[string]string, error) {
 
 // ProviderCredentials implements fetching credentials for each supported provider
 func ProviderCredentials(cloudProvider kubeoneapi.CloudProviderSpec, credentialsFilePath string, credentialsType Type) (map[string]string, error) {
-	credentialsFinder, err := newCredsFinder(credentialsFilePath, credentialsType)
+	credentialsFinderStore, err := newCredentialsFinder(withYAMLFile(credentialsFilePath), withType(credentialsType))
 	if err != nil {
 		return nil, err
 	}
 
+	credentialsFinder := credentialsFinderStore.lookupFunc()
 	switch {
 	case cloudProvider.AWS != nil:
 		return credentialsFinder.aws()
@@ -277,43 +278,76 @@ func ProviderCredentials(cloudProvider kubeoneapi.CloudProviderSpec, credentials
 	}
 }
 
-func newCredsFinder(credentialsFilePath string, credentialsType Type) (lookupFunc, error) {
-	staticMap := map[string]string{}
-	finder := func(name string) string {
-		switch {
-		case credentialsType != TypeUniversal:
-			typedName := string(credentialsType) + "_" + name
-			if val := os.Getenv(typedName); val != "" {
-				return val
-			}
-			if val, ok := staticMap[typedName]; ok && val != "" {
-				return val
-			}
+func withYAMLFile(filePath string) func(*credentialsFinder) error {
+	return func(cf *credentialsFinder) error {
+		if filePath == "" {
+			return nil
+		}
 
-			fallthrough
-		default:
-			if val := os.Getenv(name); val != "" {
-				return val
-			}
+		buf, err := os.ReadFile(filePath)
+		if err != nil {
+			return fail.Runtime(err, "reading credentials file")
+		}
 
-			return staticMap[name]
+		if err = yaml.Unmarshal(buf, &cf.static); err != nil {
+			return fail.Runtime(err, "unmarshalling credentials file")
+		}
+
+		return nil
+	}
+}
+
+func withType(typ Type) func(*credentialsFinder) error {
+	return func(cf *credentialsFinder) error {
+		cf.typ = typ
+
+		return nil
+	}
+}
+
+func newCredentialsFinder(opts ...func(*credentialsFinder) error) (*credentialsFinder, error) {
+	cf := credentialsFinder{
+		static:  map[string]string{},
+		dynamic: os.Getenv,
+	}
+
+	for _, optFn := range opts {
+		if err := optFn(&cf); err != nil {
+			return nil, err
 		}
 	}
 
-	if credentialsFilePath == "" {
-		return finder, nil
+	return &cf, nil
+}
+
+type credentialsFinder struct {
+	static  map[string]string
+	dynamic func(string) string
+	typ     Type
+}
+
+func (cf *credentialsFinder) lookupFunc() lookupFunc { return cf.get }
+
+func (cf *credentialsFinder) typedKey(name string) string {
+	return string(cf.typ) + "_" + name
+}
+
+func (cf *credentialsFinder) fetch(name string) string {
+	if val := cf.static[name]; val != "" {
+		return val
 	}
 
-	buf, err := os.ReadFile(credentialsFilePath)
-	if err != nil {
-		return nil, fail.Runtime(err, "loading credentials file")
+	return cf.dynamic(name)
+}
+
+func (cf *credentialsFinder) get(name string) string {
+	if cf.typ != TypeUniversal {
+		if val := cf.fetch(cf.typedKey(name)); val != "" {
+			return val
+		}
 	}
 
-	if err = yaml.Unmarshal(buf, &staticMap); err != nil {
-		return nil, fail.Runtime(err, "unmarshalling credentials file")
-	}
-
-	return finder, nil
+	return cf.fetch(name)
 }
 
 // lookupFunc is function that retrieves credentials from the sources
