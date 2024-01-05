@@ -1,3 +1,34 @@
+# [v1.7.2](https://github.com/kubermatic/kubeone/releases/tag/v1.7.2) - 2024-01-05
+
+## Changelog since v1.7.1
+
+## Urgent Upgrade Notes 
+
+### (No, really, you MUST read this before you upgrade)
+
+- Fix determining the `CLUSTER_NAME` environment variable for OpenStack CCM DaemonSet and OpenStack Cinder CSI Deployment. This fixes a regression where the cluster name was changed to `kubernetes` upon running `kubeone apply` two or more times after upgrading from KubeOne 1.6 to KubeOne 1.7. This regression might affect Octavia Load Balancers, making them fail to reconcile. Please check the [known issues document](https://docs.kubermatic.com/kubeone/v1.7/known-issues/) to find if you're affected by this issue and what steps you need to take if you're affected ([#2979](https://github.com/kubermatic/kubeone/pull/2979), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Delete AzureDisk's `csi-azuredisk-node-secret-binding` ClusterRoleBinding if RoleRef's name is `csi-azuredisk-node-sa` to allow upgrading KubeOne from 1.6 to 1.7 ([#2984](https://github.com/kubermatic/kubeone/pull/2984), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Increase the memory requests and limits from 300Mi to 600Mi for cluster-autoscaler to prevent cluster-autoscaler from being `OOMKilled` ([#2979](https://github.com/kubermatic/kubeone/pull/2979), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Updates
+
+#### machine-controller
+
+- Update machine-controller to v1.57.4 ([#2989](https://github.com/kubermatic/kubeone/pull/2989), [@xmudrii](https://github.com/xmudrii))
+
+#### Addons
+
+- Update backup-restic addon to use etcd 3.5.11 for creating etcd snapshots ([#2982](https://github.com/kubermatic/kubeone/pull/2982), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+#### Go
+
+- KubeOne is now built with Go 1.21.5 ([#2989](https://github.com/kubermatic/kubeone/pull/2989), [@xmudrii](https://github.com/xmudrii))
+
 # [v1.7.1](https://github.com/kubermatic/kubeone/releases/tag/v1.7.1) - 2023-11-10
 
 ## Changelog since v1.7.0
