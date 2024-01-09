@@ -82,9 +82,8 @@ func Deploy(st *state.State) error {
 		return fail.NewRuntimeError("incorrect number of bytes written to temp kubeconfig", "")
 	}
 
-	restClientGetter := newRestClientGetter(tmpKubeConf.Name(), st)
 	helmSettings := newHelmSettings(st.Verbose)
-	cfg, err := newActionConfiguration(helmSettings.Debug)
+	helmCfg, err := newActionConfiguration(helmSettings.Debug)
 	if err != nil {
 		return err
 	}
@@ -141,21 +140,22 @@ func Deploy(st *state.State) error {
 			return fail.Runtime(errMerge, "merging helm values")
 		}
 
-		if err = cfg.Init(restClientGetter, release.Namespace, helmStorageDriver, st.Logger.Debugf); err != nil {
+		restClientGetter := newRestClientGetter(tmpKubeConf.Name(), release.Namespace, st)
+		if err = helmCfg.Init(restClientGetter, release.Namespace, helmStorageDriver, st.Logger.Debugf); err != nil {
 			return fail.Runtime(err, "initializing helm action configuration")
 		}
 
-		histClient := helmaction.NewHistory(cfg)
+		histClient := helmaction.NewHistory(helmCfg)
 		histClient.Max = 1
 		existingReleases, err := histClient.Run(release.ReleaseName)
 
 		switch {
 		case errors.Is(err, driver.ErrReleaseNotFound):
-			if err = installRelease(st.Context, cfg, release, helmSettings, providers, st.DynamicClient, vals, st.Logger); err != nil {
+			if err = installRelease(st.Context, helmCfg, release, helmSettings, providers, st.DynamicClient, vals, st.Logger); err != nil {
 				return err
 			}
 		case err == nil:
-			if err = upgradeRelease(st.Context, cfg, release, helmSettings, providers, st.DynamicClient, vals, existingReleases, st.Logger); err != nil {
+			if err = upgradeRelease(st.Context, helmCfg, release, helmSettings, providers, st.DynamicClient, vals, existingReleases, st.Logger); err != nil {
 				return err
 			}
 		default:
@@ -163,7 +163,7 @@ func Deploy(st *state.State) error {
 		}
 	}
 
-	return uninstallReleases(releasesToUninstall, cfg, restClientGetter, st.Logger)
+	return uninstallReleases(releasesToUninstall, helmCfg, tmpKubeConf.Name(), st)
 }
 
 func releasesFilterFn(helmReleases []kubeoneapi.HelmRelease, logger logrus.FieldLogger) func(rel *helmrelease.Release) bool {
@@ -190,9 +190,9 @@ func newHelmSettings(verbose bool) *helmcli.EnvSettings {
 	return helmSettings
 }
 
-func newRestClientGetter(kubeConfigFileName string, st *state.State) *genericclioptions.ConfigFlags {
+func newRestClientGetter(kubeConfigFileName, namespace string, st *state.State) *genericclioptions.ConfigFlags {
 	return &genericclioptions.ConfigFlags{
-		Namespace:  pointer.New("default"),
+		Namespace:  pointer.New(namespace),
 		KubeConfig: pointer.New(kubeConfigFileName),
 		WrapConfigFn: func(rc *rest.Config) *rest.Config {
 			tunnelErr := kubeconfig.TunnelRestConfig(st, rc)
@@ -346,16 +346,18 @@ func runInstallRelease(
 
 func uninstallReleases(
 	toUninstall []*helmrelease.Release,
-	cfg *helmaction.Configuration,
-	restClientGetter *genericclioptions.ConfigFlags,
-	logger logrus.FieldLogger,
+	helmCfg *helmaction.Configuration,
+	kubeconfPath string,
+	st *state.State,
 ) error {
+	logger := st.Logger
 	for _, release := range toUninstall {
-		if err := cfg.Init(restClientGetter, release.Namespace, helmStorageDriver, logger.Debugf); err != nil {
+		restClientGetter := newRestClientGetter(kubeconfPath, release.Namespace, st)
+		if err := helmCfg.Init(restClientGetter, release.Namespace, helmStorageDriver, logger.Debugf); err != nil {
 			return fail.Runtime(err, "initializing helm action configuration")
 		}
 
-		helmUninstall := helmaction.NewUninstall(cfg)
+		helmUninstall := helmaction.NewUninstall(helmCfg)
 		resp, err := helmUninstall.Run(release.Name)
 		if err != nil {
 			return fail.Runtime(err, "uninstalling helm release %s/%s", release.Namespace, release.Name)
@@ -408,7 +410,7 @@ func getChart(
 	return newChart(chartPath, chartName, providers, helmSettings)
 }
 
-func newChart(chartPath string, chartName string, providers getter.Providers, settings *helmcli.EnvSettings) (*chart.Chart, error) {
+func newChart(chartPath string, chartName string, providers getter.Providers, helmSettings *helmcli.EnvSettings) (*chart.Chart, error) {
 	chartRequested, err := loader.Load(chartPath)
 	if err != nil {
 		return nil, fail.Runtime(err, "loading helm chart")
@@ -422,7 +424,7 @@ func newChart(chartPath string, chartName string, providers getter.Providers, se
 
 	if req := chartRequested.Metadata.Dependencies; req != nil {
 		if errMiss := helmaction.CheckDependencies(chartRequested, req); errMiss != nil {
-			chartRequested, err = dependencyUpdate(chartName, settings, providers)
+			chartRequested, err = dependencyUpdate(chartName, helmSettings, providers)
 			if err != nil {
 				return nil, err
 			}
@@ -432,15 +434,15 @@ func newChart(chartPath string, chartName string, providers getter.Providers, se
 	return chartRequested, nil
 }
 
-func dependencyUpdate(chartPath string, settings *helmcli.EnvSettings, providers []getter.Provider) (*chart.Chart, error) {
+func dependencyUpdate(chartPath string, helmSettings *helmcli.EnvSettings, providers []getter.Provider) (*chart.Chart, error) {
 	mgr := &downloader.Manager{
 		Out:              os.Stdout,
 		ChartPath:        chartPath,
 		SkipUpdate:       false,
 		Getters:          providers,
-		RepositoryConfig: settings.RepositoryConfig,
-		RepositoryCache:  settings.RepositoryCache,
-		Debug:            settings.Debug,
+		RepositoryConfig: helmSettings.RepositoryConfig,
+		RepositoryCache:  helmSettings.RepositoryCache,
+		Debug:            helmSettings.Debug,
 	}
 	if err := mgr.Update(); err != nil {
 		return nil, fail.Runtime(err, "getting helm chart dependencies")
