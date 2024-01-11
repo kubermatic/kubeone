@@ -544,7 +544,7 @@ clusterNetwork:
       # * sed: shortest expected delay
       # * nq: never queue
       scheduler: rr
-      strictArp: false
+      strictARP: false
       tcpTimeout: "0"
       tcpFinTimeout: "0"
       udpTimeout: "0"
