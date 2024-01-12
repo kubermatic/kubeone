@@ -1141,65 +1141,6 @@ func TestValidateKubernetesSupport(t *testing.T) {
 	}
 }
 
-func TestValidateContainerRuntimeConfig(t *testing.T) {
-	tests := []struct {
-		name             string
-		containerRuntime kubeoneapi.ContainerRuntimeConfig
-		versions         kubeoneapi.VersionConfig
-		expectedError    bool
-	}{
-		{
-			name:             "only docker defined",
-			containerRuntime: kubeoneapi.ContainerRuntimeConfig{Docker: &kubeoneapi.ContainerRuntimeDocker{}},
-			versions:         kubeoneapi.VersionConfig{Kubernetes: "1.20"},
-			expectedError:    false,
-		},
-		{
-			name:             "docker with kubernetes 1.24+",
-			containerRuntime: kubeoneapi.ContainerRuntimeConfig{Docker: &kubeoneapi.ContainerRuntimeDocker{}},
-			versions:         kubeoneapi.VersionConfig{Kubernetes: "1.24"},
-			expectedError:    true,
-		},
-		{
-			name:             "only containerd defined",
-			containerRuntime: kubeoneapi.ContainerRuntimeConfig{Containerd: &kubeoneapi.ContainerRuntimeContainerd{}},
-			versions:         kubeoneapi.VersionConfig{Kubernetes: "1.20"},
-			expectedError:    false,
-		},
-		{
-			name: "both defined",
-			containerRuntime: kubeoneapi.ContainerRuntimeConfig{
-				Docker:     &kubeoneapi.ContainerRuntimeDocker{},
-				Containerd: &kubeoneapi.ContainerRuntimeContainerd{},
-			},
-			versions:      kubeoneapi.VersionConfig{Kubernetes: "1.20"},
-			expectedError: true,
-		},
-		{
-			name:             "non defined",
-			containerRuntime: kubeoneapi.ContainerRuntimeConfig{},
-			versions:         kubeoneapi.VersionConfig{Kubernetes: "1.20"},
-			expectedError:    false,
-		},
-		{
-			name:             "non defined, 1.21+",
-			containerRuntime: kubeoneapi.ContainerRuntimeConfig{},
-			versions:         kubeoneapi.VersionConfig{Kubernetes: "1.21"},
-			expectedError:    false,
-		},
-	}
-
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateContainerRuntimeConfig(tc.containerRuntime, tc.versions, &field.Path{})
-			if (len(errs) == 0) == tc.expectedError {
-				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
-			}
-		})
-	}
-}
-
 func TestValidateClusterNetworkConfig(t *testing.T) {
 	tests := []struct {
 		name                 string

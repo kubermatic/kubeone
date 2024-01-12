@@ -78,10 +78,6 @@ sudo yum install -y \
 	iproute-tc \
 	rsync
 
-{{ if .INSTALL_DOCKER }}
-{{ template "yum-docker-ce-amzn" . }}
-{{ end }}
-
 {{ if .INSTALL_CONTAINERD }}
 {{ template "yum-containerd-amzn" . }}
 {{ end }}
@@ -231,7 +227,6 @@ func KubeadmAmazonLinux(cluster *kubeoneapi.KubeOneCluster, force bool) (string,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 		"FORCE":                  force,
-		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"USE_KUBERNETES_REPO":    cluster.AssetConfiguration.NodeBinaries.URL == "",
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
@@ -269,7 +264,6 @@ func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeoneapi.KubeOneCluster) (string
 		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
-		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"USE_KUBERNETES_REPO":    cluster.AssetConfiguration.NodeBinaries.URL == "",
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
@@ -302,7 +296,6 @@ func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeoneapi.KubeOneCluster) (st
 		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
-		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"USE_KUBERNETES_REPO":    cluster.AssetConfiguration.NodeBinaries.URL == "",
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),

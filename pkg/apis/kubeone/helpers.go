@@ -130,12 +130,6 @@ func (h *HostConfig) SetLeader(leader bool) {
 func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 	var mcFlags []string
 	switch {
-	case crc.Docker != nil:
-		if len(crc.Docker.RegistryMirrors) > 0 {
-			mcFlags = append(mcFlags,
-				fmt.Sprintf("-node-registry-mirrors=%s", strings.Join(crc.Docker.RegistryMirrors, ",")),
-			)
-		}
 	case crc.Containerd != nil:
 		// example output:
 		// -node-containerd-registry-mirrors=docker.io=custom.tld
@@ -199,8 +193,6 @@ func (crc ContainerRuntimeConfig) String() string {
 	switch {
 	case crc.Containerd != nil:
 		return "containerd"
-	case crc.Docker != nil:
-		return "docker"
 	}
 
 	return "unknown"
@@ -208,8 +200,6 @@ func (crc ContainerRuntimeConfig) String() string {
 
 func (crc *ContainerRuntimeConfig) UnmarshalText(text []byte) error {
 	switch {
-	case bytes.Equal(text, []byte("docker")):
-		*crc = ContainerRuntimeConfig{Docker: &ContainerRuntimeDocker{}}
 	case bytes.Equal(text, []byte("containerd")):
 		*crc = ContainerRuntimeConfig{Containerd: &ContainerRuntimeContainerd{}}
 	default:
@@ -223,8 +213,6 @@ func (crc ContainerRuntimeConfig) ConfigPath() string {
 	switch {
 	case crc.Containerd != nil:
 		return "/etc/containerd/config.toml"
-	case crc.Docker != nil:
-		return "/etc/docker/daemon.json"
 	}
 
 	return ""
@@ -234,8 +222,6 @@ func (crc ContainerRuntimeConfig) CRISocket() string {
 	switch {
 	case crc.Containerd != nil:
 		return "/run/containerd/containerd.sock"
-	case crc.Docker != nil:
-		return "/var/run/dockershim.sock"
 	}
 
 	return ""

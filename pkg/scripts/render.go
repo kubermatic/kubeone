@@ -26,9 +26,8 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 )
 
-var (
-	containerRuntimeTemplates = map[string]string{
-		"container-runtime-daemon-config": heredoc.Doc(`
+var containerRuntimeTemplates = map[string]string{
+	"container-runtime-daemon-config": heredoc.Doc(`
 			{{- if .CONTAINER_RUNTIME_CONFIG_PATH }}
 			sudo mkdir -p $(dirname {{ .CONTAINER_RUNTIME_CONFIG_PATH }})
 			sudo touch {{ .CONTAINER_RUNTIME_CONFIG_PATH }}
@@ -45,100 +44,13 @@ var (
 			{{- end }}
 		`),
 
-		"containerd-systemd-setup": heredoc.Doc(`
+	"containerd-systemd-setup": heredoc.Doc(`
 			sudo systemctl daemon-reload
 			sudo systemctl enable containerd
 			sudo systemctl restart containerd
 		`),
 
-		"apt-docker-ce": heredoc.Docf(`
-			{{ if .CONFIGURE_REPOSITORIES }}
-			sudo install -m 0755 -d /etc/apt/keyrings
-			curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-			# Docker provides two different apt repos for ubuntu, bionic and focal. The focal repo currently
-			# contains only Docker 19.03.14, which is not validated for all Kubernetes version.
-			# Therefore, we use bionic repo which has all Docker versions.
-			echo "deb [signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu bionic stable" |
-				sudo tee /etc/apt/sources.list.d/docker.list
-			sudo apt-get update
-			{{ end }}
-
-			sudo apt-mark unhold docker-ce docker-ce-cli containerd.io || true
-			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
-
-			sudo DEBIAN_FRONTEND=noninteractive apt-get install \
-				--option "Dpkg::Options::=--force-confold" \
-				--no-install-recommends \
-				-y \
-				{{- if .FORCE }}
-				--allow-downgrades \
-				{{- end }}
-				docker-ce=5:{{ $DOCKER_VERSION_TO_INSTALL }} \
-				docker-ce-cli=5:{{ $DOCKER_VERSION_TO_INSTALL }} \
-				containerd.io=%s
-			sudo apt-mark hold docker-ce docker-ce-cli containerd.io
-			{{ template "container-runtime-daemon-config" . }}
-			{{ template "containerd-systemd-setup" . -}}
-			sudo systemctl enable --now docker
-			if systemctl status kubelet 2>&1 > /dev/null; then
-				sudo systemctl restart kubelet
-				sleep 10
-			fi
-			`,
-			latestDockerVersion,
-			defaultContainerdVersion,
-		),
-
-		"yum-docker-ce-amzn": heredoc.Docf(`
-			sudo yum versionlock delete docker containerd || true
-
-			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
-
-			sudo yum install -y \
-				docker-{{ $DOCKER_VERSION_TO_INSTALL }} \
-				containerd.io-%s
-			sudo yum versionlock add docker containerd
-			{{ template "container-runtime-daemon-config" . }}
-			{{ template "containerd-systemd-setup" . -}}
-			sudo systemctl enable --now docker
-			if systemctl status kubelet 2>&1 > /dev/null; then
-				sudo systemctl restart kubelet
-				sleep 10
-			fi
-		`,
-			latestDockerVersion,
-			defaultAmazonContainerdVersion,
-		),
-
-		"yum-docker-ce": heredoc.Docf(`
-			{{- if .CONFIGURE_REPOSITORIES }}
-			sudo yum install -y yum-utils
-			sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
-			sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true >/dev/null
-			{{- end }}
-
-			sudo yum versionlock delete docker-ce docker-ce-cli containerd.io || true
-
-			{{- $DOCKER_VERSION_TO_INSTALL := "%s" }}
-
-			sudo yum install -y \
-				docker-ce-{{ $DOCKER_VERSION_TO_INSTALL }} \
-				docker-ce-cli-{{ $DOCKER_VERSION_TO_INSTALL }} \
-				containerd.io-%s
-			sudo yum versionlock add docker-ce docker-ce-cli containerd.io
-			{{ template "container-runtime-daemon-config" . }}
-			{{ template "containerd-systemd-setup" . -}}
-			sudo systemctl enable --now docker
-			if systemctl status kubelet 2>&1 > /dev/null; then
-				sudo systemctl restart kubelet
-				sleep 10
-			fi
-			`,
-			latestDockerVersion,
-			defaultContainerdVersion,
-		),
-
-		"apt-containerd": heredoc.Docf(`
+	"apt-containerd": heredoc.Docf(`
 			{{ if .CONFIGURE_REPOSITORIES }}
 			sudo apt-get update
 			sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common lsb-release
@@ -161,10 +73,10 @@ var (
 			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			`,
-			defaultContainerdVersion,
-		),
+		defaultContainerdVersion,
+	),
 
-		"yum-containerd": heredoc.Docf(`
+	"yum-containerd": heredoc.Docf(`
 			{{ if .CONFIGURE_REPOSITORIES }}
 			sudo yum install -y yum-utils
 			sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
@@ -182,10 +94,10 @@ var (
 			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			`,
-			defaultContainerdVersion,
-		),
+		defaultContainerdVersion,
+	),
 
-		"yum-containerd-amzn": heredoc.Docf(`
+	"yum-containerd-amzn": heredoc.Docf(`
 			sudo yum versionlock delete containerd || true
 			sudo yum install -y containerd-%s
 			sudo yum versionlock add containerd
@@ -193,29 +105,17 @@ var (
 			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			`,
-			defaultAmazonContainerdVersion,
-		),
+		defaultAmazonContainerdVersion,
+	),
 
-		"flatcar-containerd": heredoc.Doc(`
+	"flatcar-containerd": heredoc.Doc(`
 			{{ template "container-runtime-daemon-config" . }}
 			{{ template "flatcar-systemd-drop-in" . }}
 			{{ template "containerd-systemd-setup" . }}
 			`,
-		),
+	),
 
-		"flatcar-docker": heredoc.Doc(`
-			{{ template "container-runtime-daemon-config" . }}
-			sudo systemctl daemon-reload
-			sudo systemctl enable --now docker
-			sudo systemctl restart docker
-			if systemctl status kubelet 2>&1 > /dev/null; then
-				sudo systemctl restart kubelet
-				sleep 10
-			fi			
-			`,
-		),
-
-		"flatcar-systemd-drop-in": heredoc.Doc(`
+	"flatcar-systemd-drop-in": heredoc.Doc(`
 			sudo mkdir -p /etc/systemd/system/containerd.service.d
 			cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/10-kubeone.conf
 			[Service]
@@ -225,8 +125,7 @@ var (
 			ExecStart=/usr/bin/env PATH=\${TORCX_BINDIR}:\${PATH} \${TORCX_BINDIR}/containerd --config \${CONTAINERD_CONFIG}
 			EOF
 		`),
-	}
-)
+}
 
 type Data map[string]interface{}
 

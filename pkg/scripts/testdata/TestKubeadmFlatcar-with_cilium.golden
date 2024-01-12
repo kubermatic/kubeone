@@ -66,8 +66,6 @@ curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_TOO
 
 
 
-
-
 cd /opt/bin
 k8s_rel_baseurl=https://dl.k8s.io
 for binary in kubeadm kubelet kubectl; do

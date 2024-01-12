@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"reflect"
 	"strings"
 
 	"github.com/Masterminds/semver/v3"
@@ -62,7 +61,6 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateCloudProviderSpec(c.CloudProvider, c.ClusterNetwork, field.NewPath("provider"))...)
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
 	allErrs = append(allErrs, ValidateKubernetesSupport(c, field.NewPath(""))...)
-	allErrs = append(allErrs, ValidateContainerRuntimeConfig(c.ContainerRuntime, c.Versions, field.NewPath("containerRuntime"))...)
 	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, c.CloudProvider, field.NewPath("clusterNetwork"))...)
 	allErrs = append(allErrs, ValidateStaticWorkersConfig(c.StaticWorkers, c.Versions, c.ClusterNetwork, field.NewPath("staticWorkers"))...)
 
@@ -109,13 +107,6 @@ func ValidateContainerRuntimeVSRegistryConfiguration(
 			containerdRegistriesField,
 			"",
 			fmt.Sprintf("can't have both %s and %s set", rcFldPath.String(), containerdRegistriesField.String()),
-		))
-	case cr.Docker != nil && cr.Docker.RegistryMirrors != nil:
-		dockerRegistryMirrorsField := crFldPath.Child("docker", "registryMirrors")
-		allErrs = append(allErrs, field.Invalid(
-			dockerRegistryMirrorsField,
-			"",
-			fmt.Sprintf("can't have both %s and %s set", rcFldPath.String(), dockerRegistryMirrorsField.String()),
 		))
 	}
 
@@ -340,35 +331,6 @@ func ValidateKubernetesSupport(c kubeoneapi.KubeOneCluster, fldPath *field.Path)
 	// Kubernetes 1.26.
 	if v.Minor() >= 27 && c.CloudProvider.AWS != nil && !c.CloudProvider.External {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("cloudProvider").Child("external"), c.CloudProvider.External, "kubernetes 1.27 and newer doesn't support in-tree cloud provider with aws"))
-	}
-
-	return allErrs
-}
-
-func ValidateContainerRuntimeConfig(cr kubeoneapi.ContainerRuntimeConfig, versions kubeoneapi.VersionConfig, fldPath *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-
-	allCRs := []interface{}{
-		cr.Docker,
-		cr.Containerd,
-	}
-
-	var found bool
-	for _, x := range allCRs {
-		if !reflect.ValueOf(x).IsNil() {
-			if found {
-				allErrs = append(allErrs, field.Invalid(fldPath, x, "only 1 container runtime can be activated"))
-			}
-			found = true
-		}
-	}
-
-	if cr.Docker != nil {
-		kubeVer, _ := semver.NewVersion(versions.Kubernetes)
-		gteKube124Condition, _ := semver.NewConstraint(">= 1.24")
-		if gteKube124Condition.Check(kubeVer) {
-			allErrs = append(allErrs, field.Invalid(fldPath, cr.Docker, "kubernetes v1.24+ requires containerd container runtime"))
-		}
 	}
 
 	return allErrs

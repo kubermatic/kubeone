@@ -20,8 +20,7 @@ import (
 	"github.com/MakeNowJust/heredoc/v2"
 )
 
-var (
-	libraryTemplate = heredoc.Doc(`
+var libraryTemplate = heredoc.Doc(`
 		{{ define "detect-host-cpu-architecture" }}
 		HOST_ARCH=""
 		case $(uname -m) in
@@ -82,10 +81,8 @@ var (
 		sudo systemctl force-reload systemd-journald
 		{{ end }}
 	`)
-)
 
 const (
-	latestDockerVersion            = "'20.10.*'"
 	defaultContainerdVersion       = "'1.6.*'"
 	defaultAmazonContainerdVersion = "'1.6.*'"
 )

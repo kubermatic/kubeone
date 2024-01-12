@@ -26,3 +26,7 @@ func Convert_kubeone_KubeOneCluster_To_v1beta2_KubeOneCluster(in *kubeoneapi.Kub
 	// AssetsConfiguration has been removed in the v1beta2 API
 	return autoConvert_kubeone_KubeOneCluster_To_v1beta2_KubeOneCluster(in, out, scope)
 }
+
+func Convert_v1beta2_ContainerRuntimeConfig_To_kubeone_ContainerRuntimeConfig(*ContainerRuntimeConfig, *kubeoneapi.ContainerRuntimeConfig, conversion.Scope) error {
+	return nil
+}

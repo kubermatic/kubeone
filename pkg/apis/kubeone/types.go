@@ -140,17 +140,8 @@ type LoggingConfig struct {
 
 // ContainerRuntimeConfig
 type ContainerRuntimeConfig struct {
-	// Dockerd related configurations
-	Docker *ContainerRuntimeDocker `json:"docker,omitempty"`
-
 	// Containerd related configurations
 	Containerd *ContainerRuntimeContainerd `json:"containerd,omitempty"`
-}
-
-// ContainerRuntimeDocker defines docker container runtime
-type ContainerRuntimeDocker struct {
-	// Configures dockerd with "registry-mirrors"
-	RegistryMirrors []string `json:"registryMirrors"`
 }
 
 // ContainerRuntimeContainerd defines docker container runtime

@@ -72,57 +72,53 @@ sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni cri-tools
 
 
 
-sudo install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-# Docker provides two different apt repos for ubuntu, bionic and focal. The focal repo currently
-# contains only Docker 19.03.14, which is not validated for all Kubernetes version.
-# Therefore, we use bionic repo which has all Docker versions.
-echo "deb [signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu bionic stable" |
-	sudo tee /etc/apt/sources.list.d/docker.list
 sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common lsb-release
+curl -fsSL https://download.docker.com/linux/$(lsb_release -si | tr '[:upper:]' '[:lower:]')/gpg |
+	sudo apt-key add -
+sudo add-apt-repository "deb https://download.docker.com/linux/$(lsb_release -si | tr '[:upper:]' '[:lower:]') $(lsb_release -cs) stable"
 
 
-sudo apt-mark unhold docker-ce docker-ce-cli containerd.io || true
-
+sudo apt-mark unhold containerd.io || true
 sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	--option "Dpkg::Options::=--force-confold" \
 	--no-install-recommends \
 	-y \
-	docker-ce=5:'20.10.*' \
-	docker-ce-cli=5:'20.10.*' \
 	containerd.io='1.6.*'
-sudo apt-mark hold docker-ce docker-ce-cli containerd.io
+sudo apt-mark hold containerd.io
 
-sudo mkdir -p $(dirname /etc/docker/daemon.json)
-sudo touch /etc/docker/daemon.json
-sudo chmod 600 /etc/docker/daemon.json
-cat <<EOF | sudo tee /etc/docker/daemon.json
-{
-	"exec-opts": [
-		"native.cgroupdriver=systemd"
-	],
-	"storage-driver": "overlay2",
-	"log-driver": "json-file",
-	"log-opts": {
-		"max-file": "5",
-		"max-size": "100m"
-	}
-}
+
+sudo mkdir -p $(dirname /etc/containerd/config.toml)
+sudo touch /etc/containerd/config.toml
+sudo chmod 600 /etc/containerd/config.toml
+cat <<EOF | sudo tee /etc/containerd/config.toml
+version = 2
+
+[metrics]
+address = "127.0.0.1:1338"
+
+[plugins]
+[plugins."io.containerd.grpc.v1.cri"]
+sandbox_image = "registry.k8s.io/pause:3.9"
+[plugins."io.containerd.grpc.v1.cri".containerd]
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+runtime_type = "io.containerd.runc.v2"
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+SystemdCgroup = true
+[plugins."io.containerd.grpc.v1.cri".registry]
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+endpoint = ["https://registry-1.docker.io"]
+
 EOF
 cat <<EOF | sudo tee /etc/crictl.yaml
-runtime-endpoint: unix:///var/run/dockershim.sock
+runtime-endpoint: unix:///run/containerd/containerd.sock
 EOF
 
 sudo systemctl daemon-reload
 sudo systemctl enable containerd
 sudo systemctl restart containerd
-sudo systemctl enable --now docker
-if systemctl status kubelet 2>&1 > /dev/null; then
-	sudo systemctl restart kubelet
-	sleep 10
-fi
-
-
 
 
 

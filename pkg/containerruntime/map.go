@@ -27,8 +27,6 @@ func UpdateDataMap(cluster *kubeoneapi.KubeOneCluster, inputMap map[string]inter
 	switch {
 	case cluster.ContainerRuntime.Containerd != nil:
 		crConfig, err = marshalContainerdConfig(cluster)
-	case cluster.ContainerRuntime.Docker != nil:
-		crConfig, err = marshalDockerConfig(cluster)
 	}
 
 	if err != nil {

@@ -374,31 +374,6 @@ func runProbes(s *state.State) error {
 	s.LiveCluster.CCMClusterName = clusterName
 	s.LiveCluster.Lock.Unlock()
 
-	switch {
-	case s.Cluster.ContainerRuntime.Containerd != nil:
-		return nil
-	case s.Cluster.ContainerRuntime.Docker != nil:
-		return nil
-	}
-
-	gteKube124Condition, _ := semver.NewConstraint(">= 1.24")
-
-	switch {
-	case gteKube124Condition.Check(s.LiveCluster.ExpectedVersion):
-		s.Cluster.ContainerRuntime.Containerd = &kubeoneapi.ContainerRuntimeContainerd{}
-
-		if s.LiveCluster.IsProvisioned() {
-			for _, host := range s.LiveCluster.ControlPlane {
-				if host.ContainerRuntimeDocker.IsProvisioned() {
-					s.Cluster.ContainerRuntime.Docker = &kubeoneapi.ContainerRuntimeDocker{}
-					s.Cluster.ContainerRuntime.Containerd = nil
-				}
-			}
-		}
-	default:
-		s.Cluster.ContainerRuntime.Docker = &kubeoneapi.ContainerRuntimeDocker{}
-	}
-
 	return nil
 }
 
@@ -455,11 +430,6 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn executor.
 	}
 
 	foundHost.ContainerRuntimeContainerd, err = systemdUnitInfo("containerd", conn, containerRuntimeOpts...)
-	if err != nil {
-		return err
-	}
-
-	foundHost.ContainerRuntimeDocker, err = systemdUnitInfo("docker", conn, containerRuntimeOpts...)
 	if err != nil {
 		return err
 	}
@@ -770,7 +740,9 @@ func detectEncryptionProvidersEnabled(s *state.State) (ees encryptionEnabledStat
 	err = s.DynamicClient.List(s.Context, &pods, &dynclient.ListOptions{
 		Namespace: "kube-system",
 		LabelSelector: labels.SelectorFromSet(map[string]string{
-			"component": "kube-apiserver"})})
+			"component": "kube-apiserver",
+		}),
+	})
 	if err != nil {
 		return ees, fail.KubeClient(err, "listing kube-apiserver pods")
 	}
