@@ -19,16 +19,7 @@ package containerruntime
 import kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 
 func UpdateDataMap(cluster *kubeoneapi.KubeOneCluster, inputMap map[string]interface{}) error {
-	var (
-		crConfig string
-		err      error
-	)
-
-	switch {
-	case cluster.ContainerRuntime.Containerd != nil:
-		crConfig, err = marshalContainerdConfig(cluster)
-	}
-
+	crConfig, err := marshalContainerdConfig(cluster)
 	if err != nil {
 		return err
 	}
