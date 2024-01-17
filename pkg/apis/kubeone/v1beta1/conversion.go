@@ -101,6 +101,6 @@ func Convert_kubeone_Addon_To_v1beta1_Addon(in *kubeoneapi.Addon, out *Addon, s 
 	return autoConvert_kubeone_Addon_To_v1beta1_Addon(in, out, s)
 }
 
-func Convert_v1beta1_ContainerRuntimeConfig_To_kubeone_ContainerRuntimeConfig(*ContainerRuntimeConfig, *kubeoneapi.ContainerRuntimeConfig, conversion.Scope) error {
-	return nil
+func Convert_v1beta1_ContainerRuntimeConfig_To_kubeone_ContainerRuntimeConfig(in *ContainerRuntimeConfig, out *kubeoneapi.ContainerRuntimeConfig, scope conversion.Scope) error {
+	return autoConvert_v1beta1_ContainerRuntimeConfig_To_kubeone_ContainerRuntimeConfig(in, out, scope)
 }
