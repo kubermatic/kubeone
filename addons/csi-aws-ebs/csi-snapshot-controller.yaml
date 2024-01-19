@@ -1,25 +1,140 @@
-# This YAML file shows how to deploy the snapshot controller
-
-# The snapshot controller implements the control loop for CSI snapshot functionality.
-# It should be installed as part of the base Kubernetes distribution in an appropriate
-# namespace for components implementing base system functionality. For installing with
-# Vanilla Kubernetes, kube-system makes sense for the namespace.
-
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: snapshot-controller
+  namespace: kube-system
 ---
-kind: Deployment
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: snapshot-controller-leaderelection
+  namespace: kube-system
+rules:
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - watch
+  - list
+  - delete
+  - update
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: snapshot-controller-runner
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - list
+  - watch
+  - create
+  - update
+  - patch
+- apiGroups:
+  - snapshot.storage.k8s.io
+  resources:
+  - volumesnapshotclasses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - snapshot.storage.k8s.io
+  resources:
+  - volumesnapshotcontents
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - delete
+  - patch
+- apiGroups:
+  - snapshot.storage.k8s.io
+  resources:
+  - volumesnapshotcontents/status
+  verbs:
+  - patch
+- apiGroups:
+  - snapshot.storage.k8s.io
+  resources:
+  - volumesnapshots
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
+- apiGroups:
+  - snapshot.storage.k8s.io
+  resources:
+  - volumesnapshots/status
+  verbs:
+  - update
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: snapshot-controller-leaderelection
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: snapshot-controller-leaderelection
+subjects:
+- kind: ServiceAccount
+  name: snapshot-controller
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: snapshot-controller-role
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: snapshot-controller-runner
+subjects:
+- kind: ServiceAccount
+  name: snapshot-controller
+  namespace: kube-system
+---
 apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: snapshot-controller
   namespace: kube-system
 spec:
+  minReadySeconds: 15
   replicas: 2
   selector:
     matchLabels:
       app: snapshot-controller
-  # the snapshot controller won't be marked as ready if the v1 CRDs are unavailable
-  # in #504 the snapshot-controller will exit after around 7.5 seconds if it
-  # can't find the v1 CRDs so this value should be greater than that
-  minReadySeconds: 15
   strategy:
     rollingUpdate:
       maxSurge: 0
@@ -41,11 +156,11 @@ spec:
         - key: "node-role.kubernetes.io/control-plane"
           operator: "Exists"
           effect: "NoSchedule"
-      serviceAccountName: snapshot-controller
       containers:
-        - name: snapshot-controller
-          image: "{{ .InternalImages.Get "AwsEbsCSISnapshotController" }}"
-          args:
-            - "--v=5"
-            - "--leader-election=true"
-          imagePullPolicy: IfNotPresent
+      - args:
+        - --v=5
+        - --leader-election=true
+        image: "{{ .InternalImages.Get "AwsEbsCSISnapshotController" }}"
+        imagePullPolicy: IfNotPresent
+        name: snapshot-controller
+      serviceAccountName: snapshot-controller
