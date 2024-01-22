@@ -88,6 +88,42 @@ sudo yum install -y \
 	rsync
 
 
+sudo yum versionlock delete containerd || true
+sudo yum install -y containerd-'1.6.*'
+sudo yum versionlock add containerd
+
+
+sudo mkdir -p $(dirname /etc/containerd/config.toml)
+sudo touch /etc/containerd/config.toml
+sudo chmod 600 /etc/containerd/config.toml
+cat <<EOF | sudo tee /etc/containerd/config.toml
+version = 2
+
+[metrics]
+address = "127.0.0.1:1338"
+
+[plugins]
+[plugins."io.containerd.grpc.v1.cri"]
+sandbox_image = "registry.k8s.io/pause:3.9"
+[plugins."io.containerd.grpc.v1.cri".containerd]
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+runtime_type = "io.containerd.runc.v2"
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+SystemdCgroup = true
+[plugins."io.containerd.grpc.v1.cri".registry]
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+endpoint = ["https://registry-1.docker.io"]
+
+EOF
+cat <<EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: unix:///run/containerd/containerd.sock
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable containerd
+sudo systemctl restart containerd
 
 
 

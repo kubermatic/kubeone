@@ -92,10 +92,6 @@ sudo yum install -y \
 sudo systemctl enable --now iscsid
 {{- end }}
 
-{{ if .INSTALL_DOCKER }}
-{{ template "yum-docker-ce" . }}
-{{ end }}
-
 {{ if .INSTALL_CONTAINERD }}
 {{ template "yum-containerd" . }}
 {{ end }}
@@ -162,7 +158,6 @@ func KubeadmCentOS(cluster *kubeoneapi.KubeOneCluster, force bool) (string, erro
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 		"FORCE":                  force,
-		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
@@ -198,7 +193,6 @@ func UpgradeKubeadmAndCNICentOS(cluster *kubeoneapi.KubeOneCluster) (string, err
 		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
-		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
@@ -229,7 +223,6 @@ func UpgradeKubeletAndKubectlCentOS(cluster *kubeoneapi.KubeOneCluster) (string,
 		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
-		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),

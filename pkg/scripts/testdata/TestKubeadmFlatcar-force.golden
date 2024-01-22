@@ -66,34 +66,46 @@ curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_TOO
 
 
 
-sudo mkdir -p $(dirname /etc/docker/daemon.json)
-sudo touch /etc/docker/daemon.json
-sudo chmod 600 /etc/docker/daemon.json
-cat <<EOF | sudo tee /etc/docker/daemon.json
-{
-	"exec-opts": [
-		"native.cgroupdriver=systemd"
-	],
-	"storage-driver": "overlay2",
-	"log-driver": "json-file",
-	"log-opts": {
-		"max-file": "5",
-		"max-size": "100m"
-	}
-}
+sudo mkdir -p $(dirname /etc/containerd/config.toml)
+sudo touch /etc/containerd/config.toml
+sudo chmod 600 /etc/containerd/config.toml
+cat <<EOF | sudo tee /etc/containerd/config.toml
+version = 2
+
+[metrics]
+address = "127.0.0.1:1338"
+
+[plugins]
+[plugins."io.containerd.grpc.v1.cri"]
+sandbox_image = "registry.k8s.io/pause:3.9"
+[plugins."io.containerd.grpc.v1.cri".containerd]
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+runtime_type = "io.containerd.runc.v2"
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+SystemdCgroup = true
+[plugins."io.containerd.grpc.v1.cri".registry]
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+endpoint = ["https://registry-1.docker.io"]
+
 EOF
 cat <<EOF | sudo tee /etc/crictl.yaml
-runtime-endpoint: unix:///var/run/dockershim.sock
+runtime-endpoint: unix:///run/containerd/containerd.sock
+EOF
+
+sudo mkdir -p /etc/systemd/system/containerd.service.d
+cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/10-kubeone.conf
+[Service]
+Restart=always
+Environment=CONTAINERD_CONFIG=/etc/containerd/config.toml
+ExecStart=
+ExecStart=/usr/bin/env PATH=\${TORCX_BINDIR}:\${PATH} \${TORCX_BINDIR}/containerd --config \${CONTAINERD_CONFIG}
 EOF
 
 sudo systemctl daemon-reload
-sudo systemctl enable --now docker
-sudo systemctl restart docker
-if systemctl status kubelet 2>&1 > /dev/null; then
-	sudo systemctl restart kubelet
-	sleep 10
-fi			
-
+sudo systemctl enable containerd
+sudo systemctl restart containerd
 
 
 

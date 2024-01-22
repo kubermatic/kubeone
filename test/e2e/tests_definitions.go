@@ -1378,20 +1378,6 @@ var (
 	}
 
 	Scenarios = map[string]Scenario{
-		// docker
-		"install_docker": &scenarioInstall{
-			Name:                 "install_docker",
-			ManifestTemplatePath: "testdata/docker_simple.yaml",
-		},
-		"upgrade_docker": &scenarioUpgrade{
-			Name:                 "upgrade_docker",
-			ManifestTemplatePath: "testdata/docker_simple.yaml",
-		},
-		"conformance_docker": &scenarioConformance{
-			Name:                 "conformance_docker",
-			ManifestTemplatePath: "testdata/docker_simple.yaml",
-		},
-
 		// containerd
 		"install_containerd": &scenarioInstall{
 			Name:                 "install_containerd",
@@ -1404,20 +1390,6 @@ var (
 		"conformance_containerd": &scenarioConformance{
 			Name:                 "conformance_containerd",
 			ManifestTemplatePath: "testdata/containerd_simple.yaml",
-		},
-
-		// docker external
-		"install_docker_external": &scenarioInstall{
-			Name:                 "install_docker_external",
-			ManifestTemplatePath: "testdata/docker_simple_external.yaml",
-		},
-		"upgrade_docker_external": &scenarioUpgrade{
-			Name:                 "upgrade_docker_external",
-			ManifestTemplatePath: "testdata/docker_simple_external.yaml",
-		},
-		"conformance_docker_external": &scenarioConformance{
-			Name:                 "conformance_docker_external",
-			ManifestTemplatePath: "testdata/docker_simple_external.yaml",
 		},
 
 		// external containerd
@@ -1443,17 +1415,9 @@ var (
 			Name:                 "calico_containerd_external",
 			ManifestTemplatePath: "testdata/containerd_calico_external.yaml",
 		},
-		"calico_docker": &scenarioInstall{
-			Name:                 "calico_docker",
-			ManifestTemplatePath: "testdata/docker_calico.yaml",
-		},
 		"weave_containerd": &scenarioInstall{
 			Name:                 "weave_containerd",
 			ManifestTemplatePath: "testdata/containerd_weave.yaml",
-		},
-		"weave_docker": &scenarioInstall{
-			Name:                 "weave_docker",
-			ManifestTemplatePath: "testdata/docker_weave.yaml",
 		},
 		"cilium_containerd": &scenarioInstall{
 			Name:                 "cilium_containerd",
@@ -1471,10 +1435,6 @@ var (
 			Name:                 "upgrade_cilium_containerd_external",
 			ManifestTemplatePath: "testdata/containerd_cilium_external.yaml",
 		},
-		"cilium_docker": &scenarioInstall{
-			Name:                 "cilium_docker",
-			ManifestTemplatePath: "testdata/docker_cilium.yaml",
-		},
 		"kube_proxy_ipvs_external": &scenarioInstall{
 			Name:                 "kube_proxy_ipvs_external",
 			ManifestTemplatePath: "testdata/kube_proxy_ipvs_external.yaml",
@@ -1482,10 +1442,6 @@ var (
 		"legacy_machine_controller_containerd": &scenarioInstall{
 			Name:                 "legacy_machine_controller_containerd",
 			ManifestTemplatePath: "testdata/legacy_machine_controller_containerd.yaml",
-		},
-		"legacy_machine_controller_docker": &scenarioInstall{
-			Name:                 "legacy_machine_controller_docker",
-			ManifestTemplatePath: "testdata/legacy_machine_controller_docker.yaml",
 		},
 		"legacy_machine_controller_containerd_external": &scenarioInstall{
 			Name:                 "legacy_machine_controller_containerd_external",

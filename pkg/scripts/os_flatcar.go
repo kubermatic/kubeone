@@ -40,10 +40,6 @@ CRI_TOOLS_RELEASE="v{{ .CRITOOLS_VERSION }}"
 curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_TOOLS_RELEASE}/crictl-${CRI_TOOLS_RELEASE}-linux-${HOST_ARCH}.tar.gz |
 	sudo tar -C /opt/bin -xz
 
-{{ if .INSTALL_DOCKER }}
-{{ template "flatcar-docker" . }}
-{{ end }}
-
 {{ if .INSTALL_CONTAINERD }}
 {{ template "flatcar-containerd" . }}
 {{ end }}
@@ -106,10 +102,6 @@ sudo systemctl daemon-reload
 	upgradeKubeadmAndCNIFlatcarScriptTemplate = `
 {{ template "detect-host-cpu-architecture" }}
 
-{{- if .INSTALL_DOCKER -}}
-{{ template "flatcar-docker" . }}
-{{ end }}
-
 {{- if .INSTALL_CONTAINERD -}}
 {{ template "flatcar-containerd" . }}
 {{ end }}
@@ -137,10 +129,6 @@ sudo chmod +x kubeadm
 source /etc/kubeone/proxy-env
 
 {{ template "detect-host-cpu-architecture" }}
-
-{{- if .INSTALL_DOCKER -}}
-{{ template "flatcar-docker" . }}
-{{ end }}
 
 {{- if .INSTALL_CONTAINERD -}}
 {{ template "flatcar-containerd" . }}
@@ -198,7 +186,6 @@ func KubeadmFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"CRITOOLS_VERSION":       criToolsVersion(cluster),
-		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
 	}
@@ -222,7 +209,6 @@ func UpgradeKubeadmAndCNIFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, er
 	data := Data{
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 	}
 
@@ -238,7 +224,6 @@ func UpgradeKubeadmAndCNIFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, er
 func UpgradeKubeletAndKubectlFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	data := Data{
 		"KUBERNETES_VERSION": cluster.Versions.Kubernetes,
-		"INSTALL_DOCKER":     cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD": cluster.ContainerRuntime.Containerd,
 	}
 

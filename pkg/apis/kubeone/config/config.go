@@ -348,10 +348,6 @@ func checkClusterFeatures(cluster kubeoneapi.KubeOneCluster, logger logrus.Field
 		logger.Warnf("Nutanix support is planned to graduate to beta/stable in KubeOne 1.5+")
 	}
 
-	if cluster.ContainerRuntime.Docker != nil {
-		logger.Warnf("Support for docker will be removed with Kubernetes 1.24 release. It is recommended to switch to containerd as container runtime using `kubeone migrate to-containerd`")
-	}
-
 	if cluster.CloudProvider.Vsphere != nil && !cluster.CloudProvider.External && len(cluster.CloudProvider.CSIConfig) > 0 {
 		logger.Warnf(".cloudProvider.csiConfig is provided, but is ignored when used with the in-tree cloud provider")
 	}

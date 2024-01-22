@@ -1,4 +1,0 @@
-set -xeuo pipefail
-export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
-sudo kubeadm  init phase kubelet-start \
-	--config=test-wd/cfg/master_0.yaml

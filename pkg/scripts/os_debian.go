@@ -78,10 +78,6 @@ cri_ver="{{ .CRITOOLS_VERSION }}-*"
 sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni cri-tools
 {{- end }}
 
-{{ if .INSTALL_DOCKER }}
-{{ template "apt-docker-ce" . }}
-{{ end }}
-
 {{ if .INSTALL_CONTAINERD }}
 {{ template "apt-containerd" . }}
 {{ end }}
@@ -141,7 +137,6 @@ func KubeadmDebian(cluster *kubeoneapi.KubeOneCluster, force bool) (string, erro
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
 		"FORCE":                  force,
-		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
@@ -173,7 +168,6 @@ func UpgradeKubeadmAndCNIDebian(cluster *kubeoneapi.KubeOneCluster) (string, err
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
-		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
@@ -200,7 +194,6 @@ func UpgradeKubeletAndKubectlDebian(cluster *kubeoneapi.KubeOneCluster) (string,
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
-		"INSTALL_DOCKER":         cluster.ContainerRuntime.Docker,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),

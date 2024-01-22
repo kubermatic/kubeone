@@ -129,87 +129,70 @@ func (h *HostConfig) SetLeader(leader bool) {
 
 func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 	var mcFlags []string
-	switch {
-	case crc.Docker != nil:
-		if len(crc.Docker.RegistryMirrors) > 0 {
+
+	// example output:
+	// -node-containerd-registry-mirrors=docker.io=custom.tld
+	// -node-containerd-registry-mirrors=docker.io=https://secure-custom.tld
+	// -node-containerd-registry-mirrors=registry.k8s.io=http://somewhere
+	// -node-insecure-registries=docker.io,registry.k8s.io
+	var (
+		registryNames                 []string
+		insecureSet                   = map[string]struct{}{}
+		registryCredentialsSecretFlag bool
+	)
+
+	for registry := range crc.Containerd.Registries {
+		registryNames = append(registryNames, registry)
+	}
+
+	// because iterating over map is randomized, we need this to have a "stable" output list
+	sort.Strings(registryNames)
+
+	for _, registryName := range registryNames {
+		containerdRegistry := crc.Containerd.Registries[registryName]
+		if containerdRegistry.TLSConfig != nil && containerdRegistry.TLSConfig.InsecureSkipVerify {
+			insecureSet[registryName] = struct{}{}
+		}
+
+		for _, mirror := range containerdRegistry.Mirrors {
 			mcFlags = append(mcFlags,
-				fmt.Sprintf("-node-registry-mirrors=%s", strings.Join(crc.Docker.RegistryMirrors, ",")),
+				fmt.Sprintf("-node-containerd-registry-mirrors=%s=%s", registryName, mirror),
 			)
 		}
-	case crc.Containerd != nil:
-		// example output:
-		// -node-containerd-registry-mirrors=docker.io=custom.tld
-		// -node-containerd-registry-mirrors=docker.io=https://secure-custom.tld
-		// -node-containerd-registry-mirrors=registry.k8s.io=http://somewhere
-		// -node-insecure-registries=docker.io,registry.k8s.io
-		var (
-			registryNames                 []string
-			insecureSet                   = map[string]struct{}{}
-			registryCredentialsSecretFlag bool
+
+		if containerdRegistry.Auth != nil {
+			registryCredentialsSecretFlag = true
+		}
+	}
+
+	if registryCredentialsSecretFlag {
+		mcFlags = append(mcFlags,
+			fmt.Sprintf("-node-registry-credentials-secret=%s", credentialSecretName),
 		)
+	}
 
-		for registry := range crc.Containerd.Registries {
-			registryNames = append(registryNames, registry)
+	if len(insecureSet) > 0 {
+		insecureNames := []string{}
+
+		for insecureName := range insecureSet {
+			insecureNames = append(insecureNames, insecureName)
 		}
 
-		// because iterating over map is randomized, we need this to have a "stable" output list
-		sort.Strings(registryNames)
-
-		for _, registryName := range registryNames {
-			containerdRegistry := crc.Containerd.Registries[registryName]
-			if containerdRegistry.TLSConfig != nil && containerdRegistry.TLSConfig.InsecureSkipVerify {
-				insecureSet[registryName] = struct{}{}
-			}
-
-			for _, mirror := range containerdRegistry.Mirrors {
-				mcFlags = append(mcFlags,
-					fmt.Sprintf("-node-containerd-registry-mirrors=%s=%s", registryName, mirror),
-				)
-			}
-
-			if containerdRegistry.Auth != nil {
-				registryCredentialsSecretFlag = true
-			}
-		}
-
-		if registryCredentialsSecretFlag {
-			mcFlags = append(mcFlags,
-				fmt.Sprintf("-node-registry-credentials-secret=%s", credentialSecretName),
-			)
-		}
-
-		if len(insecureSet) > 0 {
-			insecureNames := []string{}
-
-			for insecureName := range insecureSet {
-				insecureNames = append(insecureNames, insecureName)
-			}
-
-			sort.Strings(insecureNames)
-			mcFlags = append(mcFlags,
-				fmt.Sprintf("-node-insecure-registries=%s", strings.Join(insecureNames, ",")),
-			)
-		}
+		sort.Strings(insecureNames)
+		mcFlags = append(mcFlags,
+			fmt.Sprintf("-node-insecure-registries=%s", strings.Join(insecureNames, ",")),
+		)
 	}
 
 	return mcFlags
 }
 
 func (crc ContainerRuntimeConfig) String() string {
-	switch {
-	case crc.Containerd != nil:
-		return "containerd"
-	case crc.Docker != nil:
-		return "docker"
-	}
-
-	return "unknown"
+	return "containerd"
 }
 
 func (crc *ContainerRuntimeConfig) UnmarshalText(text []byte) error {
 	switch {
-	case bytes.Equal(text, []byte("docker")):
-		*crc = ContainerRuntimeConfig{Docker: &ContainerRuntimeDocker{}}
 	case bytes.Equal(text, []byte("containerd")):
 		*crc = ContainerRuntimeConfig{Containerd: &ContainerRuntimeContainerd{}}
 	default:
@@ -220,25 +203,11 @@ func (crc *ContainerRuntimeConfig) UnmarshalText(text []byte) error {
 }
 
 func (crc ContainerRuntimeConfig) ConfigPath() string {
-	switch {
-	case crc.Containerd != nil:
-		return "/etc/containerd/config.toml"
-	case crc.Docker != nil:
-		return "/etc/docker/daemon.json"
-	}
-
-	return ""
+	return "/etc/containerd/config.toml"
 }
 
 func (crc ContainerRuntimeConfig) CRISocket() string {
-	switch {
-	case crc.Containerd != nil:
-		return "/run/containerd/containerd.sock"
-	case crc.Docker != nil:
-		return "/var/run/dockershim.sock"
-	}
-
-	return ""
+	return "/run/containerd/containerd.sock"
 }
 
 // SandboxImage is used to determine the pause image version that should be used,

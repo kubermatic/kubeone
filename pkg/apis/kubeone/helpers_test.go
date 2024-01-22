@@ -77,7 +77,6 @@ func TestFeatureGatesString(t *testing.T) {
 
 func TestContainerRuntimeConfig_MachineControllerFlags(t *testing.T) {
 	type fields struct {
-		Docker     *ContainerRuntimeDocker
 		Containerd *ContainerRuntimeContainerd
 	}
 	tests := []struct {
@@ -85,21 +84,6 @@ func TestContainerRuntimeConfig_MachineControllerFlags(t *testing.T) {
 		fields fields
 		want   []string
 	}{
-		{
-			name: "docker empty",
-			fields: fields{
-				Docker: &ContainerRuntimeDocker{},
-			},
-		},
-		{
-			name: "docker with mirrors",
-			fields: fields{
-				Docker: &ContainerRuntimeDocker{
-					RegistryMirrors: []string{"my-registry", "other-registry"},
-				},
-			},
-			want: []string{"-node-registry-mirrors=my-registry,other-registry"},
-		},
 		{
 			name: "containerd empty",
 			fields: fields{
@@ -141,10 +125,8 @@ func TestContainerRuntimeConfig_MachineControllerFlags(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			crc := ContainerRuntimeConfig{
-				Docker:     tt.fields.Docker,
-				Containerd: tt.fields.Containerd,
-			}
+			crc := ContainerRuntimeConfig{Containerd: tt.fields.Containerd}
+
 			if got := crc.MachineControllerFlags(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ContainerRuntimeConfig.MachineControllerFlags() = \n%v, \nwant\n%v", got, tt.want)
 			}

@@ -459,25 +459,16 @@ func runApplyRotateKey(s *state.State, opts *applyOpts) error {
 
 func printHostInformation(host state.Host) {
 	containerdCR := host.ContainerRuntimeContainerd
-	dockerCR := host.ContainerRuntimeDocker
 
 	fmt.Printf("Host: %q\n", host.Config.Hostname)
 	fmt.Printf("\tHost initialized: %s\n", boolStr(host.Initialized()))
 
 	fmt.Printf("\t%s healthy: %s (%s)\n", containerdCR.Name, boolStr(containerdCR.Healthy()), printVersion(containerdCR.Version))
-	if dockerCR.IsProvisioned() {
-		fmt.Printf("\t%s healthy: %s (%s)\n", dockerCR.Name, boolStr(dockerCR.Healthy()), printVersion(dockerCR.Version))
-	}
 
 	fmt.Printf("\tKubelet healthy: %s (%s)\n", boolStr(host.Kubelet.Healthy()), printVersion(host.Kubelet.Version))
 	fmt.Println()
 
 	componentStatusReport(containerdCR)
-
-	if dockerCR.IsProvisioned() {
-		fmt.Println()
-		componentStatusReport(dockerCR)
-	}
 
 	fmt.Println()
 	componentStatusReport(host.Kubelet)

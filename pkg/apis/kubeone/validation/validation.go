@@ -110,13 +110,6 @@ func ValidateContainerRuntimeVSRegistryConfiguration(
 			"",
 			fmt.Sprintf("can't have both %s and %s set", rcFldPath.String(), containerdRegistriesField.String()),
 		))
-	case cr.Docker != nil && cr.Docker.RegistryMirrors != nil:
-		dockerRegistryMirrorsField := crFldPath.Child("docker", "registryMirrors")
-		allErrs = append(allErrs, field.Invalid(
-			dockerRegistryMirrorsField,
-			"",
-			fmt.Sprintf("can't have both %s and %s set", rcFldPath.String(), dockerRegistryMirrorsField.String()),
-		))
 	}
 
 	return allErrs
@@ -345,11 +338,10 @@ func ValidateKubernetesSupport(c kubeoneapi.KubeOneCluster, fldPath *field.Path)
 	return allErrs
 }
 
-func ValidateContainerRuntimeConfig(cr kubeoneapi.ContainerRuntimeConfig, versions kubeoneapi.VersionConfig, fldPath *field.Path) field.ErrorList {
+func ValidateContainerRuntimeConfig(cr kubeoneapi.ContainerRuntimeConfig, _ kubeoneapi.VersionConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	allCRs := []interface{}{
-		cr.Docker,
 		cr.Containerd,
 	}
 
@@ -360,14 +352,6 @@ func ValidateContainerRuntimeConfig(cr kubeoneapi.ContainerRuntimeConfig, versio
 				allErrs = append(allErrs, field.Invalid(fldPath, x, "only 1 container runtime can be activated"))
 			}
 			found = true
-		}
-	}
-
-	if cr.Docker != nil {
-		kubeVer, _ := semver.NewVersion(versions.Kubernetes)
-		gteKube124Condition, _ := semver.NewConstraint(">= 1.24")
-		if gteKube124Condition.Check(kubeVer) {
-			allErrs = append(allErrs, field.Invalid(fldPath, cr.Docker, "kubernetes v1.24+ requires containerd container runtime"))
 		}
 	}
 
