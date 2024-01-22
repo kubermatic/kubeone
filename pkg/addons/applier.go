@@ -43,7 +43,8 @@ import (
 )
 
 const (
-	webhookCertsCSI = "CSI"
+	webhookCertsCSI          = "CSI"
+	webhookCertsCSIMigration = "CSIMigration"
 )
 
 var (
@@ -262,59 +263,45 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 }
 
 func csiWebhookCerts(s *state.State, data *templateData, csiMigration bool, kubeCAPrivateKey *rsa.PrivateKey, kubeCACert *x509.Certificate) error {
-	// Certs for CSI plugins
+	webhookName := resources.GenericCSIWebhookName
+	webhookNamespace := resources.GenericCSIWebhookNamespace
+	certNamePrefix := webhookCertsCSI
+
 	switch {
-	case s.Cluster.CloudProvider.DigitalOcean != nil,
-		s.Cluster.CloudProvider.Openstack != nil,
-		s.Cluster.CloudProvider.GCE != nil:
-		if err := webhookCerts(data.Certificates,
-			webhookCertsCSI,
-			resources.GenericCSIWebhookName,
-			resources.GenericCSIWebhookNamespace,
-			s.Cluster.ClusterNetwork.ServiceDomainName,
-			kubeCAPrivateKey,
-			kubeCACert,
-		); err != nil {
-			return err
-		}
 	// Certs for vsphere-csi-webhook (deployed only if CSIMigration is enabled)
 	case s.Cluster.CloudProvider.Vsphere != nil:
+		webhookNamespace = resources.VsphereCSIWebhookNamespace
+
 		if err := webhookCerts(data.Certificates,
 			webhookCertsCSI,
-			resources.GenericCSIWebhookName,
-			resources.VsphereCSIWebhookNamespace,
+			webhookName,
+			webhookNamespace,
 			s.Cluster.ClusterNetwork.ServiceDomainName,
 			kubeCAPrivateKey,
 			kubeCACert,
 		); err != nil {
 			return err
 		}
-		if csiMigration {
-			if err := webhookCerts(data.Certificates,
-				"CSIMigration",
-				resources.VsphereCSIWebhookName,
-				resources.VsphereCSIWebhookNamespace,
-				s.Cluster.ClusterNetwork.ServiceDomainName,
-				kubeCAPrivateKey,
-				kubeCACert,
-			); err != nil {
-				return err
-			}
+
+		certNamePrefix = webhookCertsCSIMigration
+		webhookName = resources.VsphereCSIWebhookName
+
+		if !csiMigration {
+			return nil
 		}
 	case s.Cluster.CloudProvider.Nutanix != nil:
-		if err := webhookCerts(data.Certificates,
-			webhookCertsCSI,
-			resources.NutanixCSIWebhookName,
-			resources.GenericCSIWebhookNamespace,
-			s.Cluster.ClusterNetwork.ServiceDomainName,
-			kubeCAPrivateKey,
-			kubeCACert,
-		); err != nil {
-			return err
-		}
+		webhookName = resources.NutanixCSIWebhookName
 	}
 
-	return nil
+	return webhookCerts(
+		data.Certificates,
+		certNamePrefix,
+		webhookName,
+		webhookNamespace,
+		s.Cluster.ClusterNetwork.ServiceDomainName,
+		kubeCAPrivateKey,
+		kubeCACert,
+	)
 }
 
 func webhookCerts(certs map[string]string, prefix, webhookName, webhookNamespace, serviceDomainName string, kubeCAPrivateKey *rsa.PrivateKey, kubeCACert *x509.Certificate) error {

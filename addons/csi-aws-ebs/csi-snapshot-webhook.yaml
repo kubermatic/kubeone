@@ -1,0 +1,153 @@
+# Source: https://github.com/kubernetes-csi/external-snapshotter/blob/v6.1.0/deploy/kubernetes/webhook-example/rbac-snapshot-webhook.yaml
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: snapshot-webhook
+  namespace: kube-system
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: snapshot-webhook-runner
+rules:
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshotclasses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["groupsnapshot.storage.k8s.io"]
+    resources: ["volumegroupsnapshotclasses"]
+    verbs: ["get", "list", "watch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: snapshot-webhook-role
+subjects:
+  - kind: ServiceAccount
+    name: snapshot-webhook
+    namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: snapshot-webhook-runner
+  apiGroup: rbac.authorization.k8s.io
+
+# Source: https://github.com/kubernetes-csi/external-snapshotter/blob/v6.3.3/deploy/kubernetes/webhook-example/webhook.yaml
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: snapshot-validation-secret
+  namespace: kube-system
+data:
+  "cert.pem": |
+{{ .Certificates.CSIWebhookCert | b64enc | indent 4 }}
+  "key.pem": |
+{{ .Certificates.CSIWebhookKey | b64enc | indent 4 }}
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: "validation-webhook.snapshot.storage.k8s.io"
+  namespace: kube-system
+webhooks:
+- name: "validation-webhook.snapshot.storage.k8s.io"
+  rules:
+  - apiGroups:   ["snapshot.storage.k8s.io"]
+    apiVersions: ["v1"]
+    operations:  ["CREATE", "UPDATE"]
+    resources:   ["volumesnapshots", "volumesnapshotcontents", "volumesnapshotclasses"]
+    scope:       "*"
+  clientConfig:
+    service:
+      namespace: kube-system
+      name: "snapshot-validation-service"
+      path: "/volumesnapshot"
+    caBundle: |
+{{ .Certificates.KubernetesCA | b64enc | indent 6 }}
+  admissionReviewVersions: ["v1"]
+  sideEffects: None
+  failurePolicy: Ignore # We recommend switching to Fail only after successful installation of the webhook server and webhook.
+  timeoutSeconds: 2
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: "validation-webhook.groupsnapshot.storage.k8s.io"
+webhooks:
+- name: "validation-webhook.groupsnapshot.storage.k8s.io"
+  rules:
+  - apiGroups:   ["groupsnapshot.storage.k8s.io"]
+    apiVersions: ["v1alpha1"]
+    operations:  ["CREATE", "UPDATE"]
+    resources:   ["volumegroupsnapshots", "volumegroupsnapshotcontents", "volumegroupsnapshotclasses"]
+    scope:       "*"
+  clientConfig:
+    service:
+      namespace: kube-system
+      name: "snapshot-validation-service"
+      path: "/volumesnapshot"
+    caBundle: |
+{{ .Certificates.KubernetesCA | b64enc | indent 6 }}
+  admissionReviewVersions: ["v1"]
+  sideEffects: None
+  failurePolicy: Ignore # We recommend switching to Fail only after successful installation of the webhook server and webhook.
+  timeoutSeconds: 2
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snapshot-validation-deployment
+  namespace: kube-system
+  labels:
+    app: snapshot-validation
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: snapshot-validation
+  template:
+    metadata:
+      labels:
+        app: snapshot-validation
+    spec:
+      serviceAccountName: snapshot-webhook
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      tolerations:
+      - key: node-role.kubernetes.io/control-plane
+        effect: NoSchedule
+        operator: Exists
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+        operator: Exists
+      containers:
+      - name: snapshot-validation
+        image: {{ .InternalImages.Get "AwsCSISnapshotWebhook" }}
+        imagePullPolicy: IfNotPresent
+        args:
+        - '--tls-cert-file=/etc/snapshot-validation-webhook/certs/cert.pem'
+        - '--tls-private-key-file=/etc/snapshot-validation-webhook/certs/key.pem'
+        - '--enable-volume-group-snapshot-webhook'
+        ports:
+        - containerPort: 443 # change the port as needed
+        volumeMounts:
+          - name: snapshot-validation-webhook-certs
+            mountPath: /etc/snapshot-validation-webhook/certs
+            readOnly: true
+      volumes:
+        - name: snapshot-validation-webhook-certs
+          secret:
+            secretName: snapshot-validation-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: snapshot-validation-service
+  namespace: kube-system
+spec:
+  selector:
+    app: snapshot-validation
+  ports:
+    - protocol: TCP
+      port: 443
+      targetPort: 443
