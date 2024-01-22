@@ -281,7 +281,7 @@ func (h *Host) Initialized() bool {
 
 // IsProvisioned checks are CRI and Kubelet provisioned on a host
 func (h *Host) IsProvisioned() bool {
-	return (h.ContainerRuntimeContainerd.IsProvisioned()) && h.Kubelet.IsProvisioned()
+	return h.ContainerRuntimeContainerd.IsProvisioned() && h.Kubelet.IsProvisioned()
 }
 
 // ControlPlaneHealthy checks is a control-plane host part of the cluster and are CRI, Kubelet, and API server healthy

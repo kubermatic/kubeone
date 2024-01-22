@@ -75,6 +75,65 @@ func TestFeatureGatesString(t *testing.T) {
 	}
 }
 
+func TestContainerRuntimeConfig_MachineControllerFlags(t *testing.T) {
+	type fields struct {
+		Containerd *ContainerRuntimeContainerd
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   []string
+	}{
+		{
+			name: "containerd empty",
+			fields: fields{
+				Containerd: &ContainerRuntimeContainerd{},
+			},
+		},
+		{
+			name: "containerd with mirrors",
+			fields: fields{
+				Containerd: &ContainerRuntimeContainerd{
+					Registries: map[string]ContainerdRegistry{
+						"docker.io": {
+							Mirrors: []string{
+								"http://registry1",
+								"https://registry2",
+								"registry3",
+							},
+						},
+						"registry.k8s.io": {
+							Mirrors: []string{
+								"https://insecure.registry",
+							},
+							TLSConfig: &ContainerdTLSConfig{
+								InsecureSkipVerify: true,
+							},
+						},
+					},
+				},
+			},
+			want: []string{
+				"-node-containerd-registry-mirrors=docker.io=http://registry1",
+				"-node-containerd-registry-mirrors=docker.io=https://registry2",
+				"-node-containerd-registry-mirrors=docker.io=registry3",
+				"-node-containerd-registry-mirrors=registry.k8s.io=https://insecure.registry",
+				"-node-insecure-registries=registry.k8s.io",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			crc := ContainerRuntimeConfig{Containerd: tt.fields.Containerd}
+
+			if got := crc.MachineControllerFlags(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ContainerRuntimeConfig.MachineControllerFlags() = \n%v, \nwant\n%v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestMapStringStringToString(t *testing.T) {
 	tests := []struct {
 		name string
