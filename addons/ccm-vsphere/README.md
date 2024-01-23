@@ -11,7 +11,6 @@ helm repo update
 helm template vsphere-cpi vsphere-cpi/vsphere-cpi \
     --namespace=kube-system \
     --values=generate-values-ccm \
-    --version=1.27.0 \
     > ccm-vsphere.yaml
 ```
 

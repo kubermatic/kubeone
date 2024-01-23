@@ -316,19 +316,19 @@ func optionalResources() map[Resource]map[string]string {
 		// Equinix Metal CCM
 		EquinixMetalCCM: {"*": "ghcr.io/equinix/cloud-provider-equinix-metal:v3.6.2"},
 
-		// vSphere CCM
-		VsphereCCM: {
-			"1.24.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.24.4",
-			"1.25.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.25.3",
-			"1.26.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.26.2",
-			">= 1.27.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.27.0",
-		},
-
 		// VMware Cloud Director CSI
 		VMwareCloudDirectorCSI:                    {"*": "projects.registry.vmware.com/vmware-cloud-director/cloud-director-named-disk-csi-driver:1.4.0"},
 		VMwareCloudDirectorCSIAttacher:            {"*": "registry.k8s.io/sig-storage/csi-attacher:v3.2.1"},
 		VMwareCloudDirectorCSIProvisioner:         {"*": "registry.k8s.io/sig-storage/csi-provisioner:v2.2.2"},
 		VMwareCloudDirectorCSINodeDriverRegistrar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.2.0"},
+
+		// vSphere CCM
+		VsphereCCM: {
+			"1.26.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.26.2",
+			"1.27.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.27.0",
+			"1.28.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.28.0",
+			">= 1.29.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.29.0",
+		},
 
 		// vSphere CSI
 		VsphereCSIDriver:             {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v3.0.2"},
