@@ -305,52 +305,27 @@ func optionalResources() map[Resource]map[string]string {
 
 		// OpenStack CCM
 		OpenstackCCM: {
-			"1.24.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.24.6",
-			"1.25.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.25.6",
-			"1.26.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.26.3",
-			">= 1.27.0": "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.27.1",
+			"1.26.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.26.4",
+			"1.27.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.27.3",
+			"1.28.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.28.1",
+			">= 1.29.0": "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.29.0",
 		},
 
 		// OpenStack CSI
 		OpenstackCSI: {
-			"1.24.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.24.6",
-			"1.25.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.25.6",
-			"1.26.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.26.3",
-			">= 1.27.0": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.27.1",
+			"1.26.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.26.4",
+			"1.27.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.27.3",
+			"1.28.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.28.1",
+			">= 1.29.0": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.29.0",
 		},
-		OpenstackCSINodeDriverRegistar: {
-			"1.24.x":    "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.5.1",
-			"1.25.x":    "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.5.1",
-			"1.26.x":    "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.6.2",
-			">= 1.27.0": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.6.2",
-		},
-		OpenstackCSILivenessProbe: {
-			"1.24.x":    "k8s.gcr.io/sig-storage/livenessprobe:v2.6.0",
-			"1.25.x":    "registry.k8s.io/sig-storage/livenessprobe:v2.7.0",
-			"1.26.x":    "registry.k8s.io/sig-storage/livenessprobe:v2.8.0",
-			">= 1.27.0": "registry.k8s.io/sig-storage/livenessprobe:v2.9.0",
-		},
-		OpenstackCSIAttacher: {
-			"1.24.x":    "registry.k8s.io/sig-storage/csi-attacher:v3.4.0",
-			"1.25.x":    "registry.k8s.io/sig-storage/csi-attacher:v3.4.0",
-			"1.26.x":    "registry.k8s.io/sig-storage/csi-attacher:v4.0.0",
-			">= 1.27.0": "registry.k8s.io/sig-storage/csi-attacher:v4.2.0",
-		},
-		OpenstackCSIProvisioner: {
-			"1.24.x":    "registry.k8s.io/sig-storage/csi-provisioner:v3.1.0",
-			"1.25.x":    "registry.k8s.io/sig-storage/csi-provisioner:v3.1.0",
-			"1.26.x":    "registry.k8s.io/sig-storage/csi-provisioner:v3.4.0",
-			">= 1.27.0": "registry.k8s.io/sig-storage/csi-provisioner:v3.4.1",
-		},
-		OpenstackCSIResizer: {
-			"1.24.x":    "registry.k8s.io/sig-storage/csi-resizer:v1.4.0",
-			"1.25.x":    "registry.k8s.io/sig-storage/csi-resizer:v1.4.0",
-			"1.26.x":    "registry.k8s.io/sig-storage/csi-resizer:v1.6.0",
-			">= 1.27.0": "registry.k8s.io/sig-storage/csi-resizer:v1.7.0",
-		},
-		OpenstackCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v6.2.2"},
-		OpenstackCSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v6.2.2"},
-		OpenstackCSISnapshotWebhook:    {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v6.2.2"},
+		OpenstackCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.9.2"},
+		OpenstackCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.11.0"},
+		OpenstackCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.4.2"},
+		OpenstackCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.6.2"},
+		OpenstackCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.9.2"},
+		OpenstackCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v6.3.3"},
+		OpenstackCSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v6.3.3"},
+		OpenstackCSISnapshotWebhook:    {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v6.3.3"},
 
 		// Equinix Metal CCM
 		EquinixMetalCCM: {"*": "ghcr.io/equinix/cloud-provider-equinix-metal:v3.6.2"},
