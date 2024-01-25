@@ -51,6 +51,7 @@ var embeddedAddons = map[string]string{
 	resources.AddonCNICilium:              "",
 	resources.AddonCNIWeavenet:            "",
 	resources.AddonCSIAwsEBS:              "",
+	resources.AddonCSIExternalSnapshotter: "",
 	resources.AddonCSIAzureDisk:           "",
 	resources.AddonCSIAzureFile:           "",
 	resources.AddonCSIDigitalOcean:        "",
@@ -338,6 +339,10 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 	// CSIMigration, if applicable, for the cloud providers is turned on by default and requires installation of CSI drviers even if we
 	// don't use external CCM. Although mount operations would fall-back to in-tree solution if CSI driver is not available. Fallback
 	// for provision operations is NOT supported by in-tree solution.
+
+	addonsToDeploy = append(addonsToDeploy, addonAction{
+		name: resources.AddonCSIExternalSnapshotter,
+	})
 
 	switch {
 	case s.Cluster.CloudProvider.AWS != nil:

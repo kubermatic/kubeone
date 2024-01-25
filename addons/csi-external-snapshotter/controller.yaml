@@ -4,7 +4,7 @@
 # It should be installed as part of the base Kubernetes distribution in an appropriate
 # namespace for components implementing base system functionality. For installing with
 # Vanilla Kubernetes, kube-system makes sense for the namespace.
-
+# Source: https://github.com/kubernetes-csi/external-snapshotter/blob/v6.1.0/deploy/kubernetes/snapshot-controller/setup-snapshot-controller.yaml
 ---
 kind: Deployment
 apiVersion: apps/v1
@@ -31,24 +31,18 @@ spec:
         app: snapshot-controller
     spec:
       nodeSelector:
-        kubernetes.io/os: linux
         node-role.kubernetes.io/control-plane: ""
       tolerations:
-        - key: CriticalAddonsOnly
-          operator: Exists
-        - key: "node-role.kubernetes.io/master"
-          operator: "Exists"
-          effect: "NoSchedule"
-        - key: "node-role.kubernetes.io/control-plane"
-          operator: "Exists"
-          effect: "NoSchedule"
-        - operator: Exists
-          effect: NoExecute
-          tolerationSeconds: 300
+      - key: node-role.kubernetes.io/control-plane
+        effect: NoSchedule
+        operator: Exists
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+        operator: Exists
       serviceAccountName: snapshot-controller
       containers:
         - name: snapshot-controller
-          image: {{ .InternalImages.Get "GCPComputeCSISnapshotController" }}
+          image: {{ .InternalImages.Get "CSISnapshotController" }}
           args:
             - "--v=5"
             - "--leader-election=true"

@@ -10,6 +10,7 @@ data:
 {{ .Certificates.CSIWebhookCert | b64enc | indent 4 }}
   "key.pem": |
 {{ .Certificates.CSIWebhookKey | b64enc | indent 4 }}
+
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
@@ -35,16 +36,17 @@ webhooks:
   sideEffects: None
   failurePolicy: Fail
   timeoutSeconds: 2
+
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: snapshot-validation-deployment
+  name: snapshot-webhook
   namespace: kube-system
   labels:
     app: snapshot-validation
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: snapshot-validation
@@ -65,9 +67,11 @@ spec:
         operator: Exists
       containers:
       - name: snapshot-validation
-        image: {{ .InternalImages.Get "OpenstackCSISnapshotWebhook" }}
+        image: {{ .InternalImages.Get "CSISnapshotWebhook" }}
         imagePullPolicy: IfNotPresent
-        args: ['--tls-cert-file=/etc/snapshot-validation-webhook/certs/cert.pem', '--tls-private-key-file=/etc/snapshot-validation-webhook/certs/key.pem']
+        args:
+          - --tls-cert-file=/etc/snapshot-validation-webhook/certs/cert.pem
+          - --tls-private-key-file=/etc/snapshot-validation-webhook/certs/key.pem
         ports:
         - containerPort: 443 # change the port as needed
         volumeMounts:
@@ -78,6 +82,7 @@ spec:
         - name: snapshot-validation-webhook-certs
           secret:
             secretName: snapshot-validation-secret
+
 ---
 apiVersion: v1
 kind: Service
