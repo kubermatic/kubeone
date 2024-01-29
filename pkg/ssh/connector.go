@@ -99,17 +99,15 @@ func (c *Connector) forgetConnection(conn *connection) {
 }
 
 func sshOpts(host kubeoneapi.HostConfig) Opts {
-	privateKeyFile := host.SSHPrivateKeyFile
-	// Expand ~/ as path to the home directory
-	if strings.HasPrefix(privateKeyFile, "~/") {
-		privateKeyFile = filepath.Join(homedir.HomeDir(), privateKeyFile[2:])
-	}
+	privateKeyFile := resolveHomeDir(host.SSHPrivateKeyFile)
+	certFile := resolveHomeDir(host.SSHCertFile)
 
 	return Opts{
 		Username:             host.SSHUsername,
 		Port:                 host.SSHPort,
 		Hostname:             host.PublicAddress,
 		KeyFile:              privateKeyFile,
+		SSHCertFile:          certFile,
 		HostPublicKey:        host.SSHHostPublicKey,
 		AgentSocket:          host.SSHAgentSocket,
 		Timeout:              10 * time.Second,
@@ -118,4 +116,12 @@ func sshOpts(host kubeoneapi.HostConfig) Opts {
 		BastionUser:          host.BastionUser,
 		BastionHostPublicKey: host.BastionHostPublicKey,
 	}
+}
+
+func resolveHomeDir(path string) string {
+	// Expand ~/ as path to the home directory
+	if strings.HasPrefix(path, "~/") {
+		path = filepath.Join(homedir.HomeDir(), path[2:])
+	}
+	return path
 }

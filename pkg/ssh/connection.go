@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"golang.org/x/crypto/ssh/agent"
 	"io"
 	"net"
 	"os"
@@ -30,8 +31,6 @@ import (
 
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/agent"
-
 	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 )
@@ -52,6 +51,8 @@ type Opts struct {
 	Port                 int
 	PrivateKey           string
 	KeyFile              string
+	SSHCert              string
+	SSHCertFile          string
 	HostPublicKey        []byte
 	AgentSocket          string
 	Timeout              time.Duration
@@ -82,6 +83,16 @@ func validateOptions(o Opts) (Opts, error) {
 
 		o.PrivateKey = string(content)
 		o.KeyFile = ""
+	}
+
+	if len(o.SSHCertFile) > 0 {
+		content, err := os.ReadFile(o.SSHCertFile)
+		if err != nil {
+			return o, fail.Config(err, "reading SSH signed public key")
+		}
+
+		o.SSHCert = string(content)
+		o.SSHCertFile = ""
 	}
 
 	if o.Port <= 0 {
@@ -134,7 +145,29 @@ func NewConnection(connector *Connector, opts Opts) (executor.Interface, error) 
 			}
 		}
 
-		authMethods = append(authMethods, ssh.PublicKeys(signer))
+		if len(opts.SSHCert) > 0 {
+			cert, _, _, _, err := ssh.ParseAuthorizedKey([]byte(opts.SSHCert))
+			if err != nil {
+				return nil, fail.SSHError{
+					Op:  "parsing certificate",
+					Err: errors.Wrapf(err, "SSH certificate could not be parsed"),
+				}
+			}
+
+			// create a signer using both the certificate and the private key:
+			certSigner, signersErr := ssh.NewCertSigner(cert.(*ssh.Certificate), signer)
+			if err != nil {
+				return nil, fail.SSHError{
+					Op:  "creating new signer with private key and certificate",
+					Err: signersErr,
+				}
+			}
+
+			authMethods = append(authMethods, ssh.PublicKeys(certSigner))
+		} else {
+			authMethods = append(authMethods, ssh.PublicKeys(signer))
+		}
+
 	}
 
 	if len(opts.AgentSocket) > 0 {

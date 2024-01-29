@@ -107,6 +107,9 @@ type HostConfig struct {
 	// SSHPrivateKeyFile is path to the file with PRIVATE AND CLEANTEXT ssh key.
 	// Default value is "".
 	SSHPrivateKeyFile string `json:"sshPrivateKeyFile,omitempty"`
+	// SSHCertFile is path to the file with the certificate of the private key.
+	// Default value is "".
+	SSHCertFile string `json:"sshCertFile,omitempty"`
 	// SSHAgentSocket path (or reference to the environment) to the SSH agent unix domain socket.
 	// Default value is "env:SSH_AUTH_SOCK".
 	SSHAgentSocket string `json:"sshAgentSocket,omitempty"`
