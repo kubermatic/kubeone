@@ -152,6 +152,11 @@ func migrateGCEStandardStorageClass(s *state.State) error {
 	)
 }
 
+func migrateAzureFileCSI(s *state.State) error {
+	// TODO migrate selector.matchLabels of DaemonSet / Deployment
+	return nil
+}
+
 func migrateAzureDiskCSI(s *state.State) error {
 	if err := migrateAzureDiskNodeCRBIfLegacy(s); err != nil {
 		return err

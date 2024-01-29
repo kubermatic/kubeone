@@ -1,9 +1,5 @@
 snapshot:
-  enabled: true
-  VolumeSnapshotClass:
-    enabled: true
-  snapshotController:
-    name: csi-snapshot-manager
+  enabled: false
 
 windows:
   enabled: false
