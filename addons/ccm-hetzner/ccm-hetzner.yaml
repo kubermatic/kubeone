@@ -71,6 +71,8 @@ spec:
             - "--configure-cloud-routes=false"
             - "--leader-elect=true"
             - "--route-reconciliation-period=30s"
+            - "--webhook-secure-port=0"
+            - "--leader-elect=false"
             {{- with .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
             - --concurrent-service-syncs={{ . }}
             {{- end }}
@@ -80,10 +82,18 @@ spec:
                 secretKeyRef:
                   key: HZ_TOKEN
                   name: kubeone-ccm-credentials
-            - name: NODE_NAME
+            - name: ROBOT_PASSWORD
               valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
+                secretKeyRef:
+                  key: robot-password
+                  name: hcloud
+                  optional: true
+            - name: ROBOT_USER
+              valueFrom:
+                secretKeyRef:
+                  key: robot-user
+                  name: hcloud
+                  optional: true
             {{ with .Config.CloudProvider.Hetzner.NetworkID -}}
             - name: HCLOUD_LOAD_BALANCERS_USE_PRIVATE_IP
               value: "true"
