@@ -450,6 +450,7 @@ HostConfig describes a single control plane node.
 | sshPort | SSHPort is port to connect ssh to. Default value is 22. | int | false |
 | sshUsername | SSHUsername is system login name. Default value is \"root\". | string | false |
 | sshPrivateKeyFile | SSHPrivateKeyFile is path to the file with PRIVATE AND CLEANTEXT ssh key. Default value is \"\". | string | false |
+| SSHCertFile | SSHCertFile is path to the file with the certificate of the private key. Default value is \"\". | string | false |
 | sshHostPublicKey | SSHHostPublicKey if not empty, will be used to verify remote host public key | []byte | false |
 | sshAgentSocket | SSHAgentSocket path (or reference to the environment) to the SSH agent unix domain socket. Default value is \"env:SSH_AUTH_SOCK\". | string | false |
 | bastion | Bastion is an IP or hostname of the bastion (or jump) host to connect to. Default value is \"\". | string | false |
