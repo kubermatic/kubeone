@@ -383,7 +383,7 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 			addonAction{
 				name: resources.AddonCSIHetzner,
 				supportFn: func() error {
-					return migrateHetznerCSIDriver(s)
+					return migrateHetznerCSI(s)
 				},
 			},
 		)
