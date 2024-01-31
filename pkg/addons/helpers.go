@@ -39,8 +39,8 @@ import (
 const (
 	awsCSIDriverName                       = "ebs.csi.aws.com"
 	azureDiskCSIDriverName                 = "disk.csi.azure.com"
-	azurediskCSINodeSecretBindingName      = "csi-azuredisk-node-secret-binding"
-	azurediskCSINodeSecretRoleName         = "csi-azuredisk-node-secret-role"
+	azurediskCSINodeSecretBindingName      = "csi-azuredisk-node-secret-binding" //nolint:gosec
+	azurediskCSINodeSecretRoleName         = "csi-azuredisk-node-secret-role"    //nolint:gosec
 	gceStandardStorageClassName            = "standard"
 	hetznerCSIControllerDeploymentName     = "hcloud-csi-controller"
 	hetznerCSIDriverName                   = "csi.hetzner.cloud"
