@@ -1,0 +1,5 @@
+controller:
+  hcloudToken:
+    existingSecret:
+      name: kubeone-ccm-credentials
+      key: HZ_TOKEN

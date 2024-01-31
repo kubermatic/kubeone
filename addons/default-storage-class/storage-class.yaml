@@ -229,6 +229,7 @@ metadata:
 provisioner: csi.hetzner.cloud
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
+reclaimPolicy: "Delete"
 {{ end }}
 
 {{ if eq .Config.CloudProvider.CloudProviderName "digitalocean" }}
