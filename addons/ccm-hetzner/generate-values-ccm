@@ -1,5 +1,4 @@
 args:
-  leader-elect: "true"
   allocate-node-cidrs: "false" # "false" as we use IPAM in kube-controller-manager
   configure-cloud-routes: "false"  # "false" because we use VXLAN overlay
 

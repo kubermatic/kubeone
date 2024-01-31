@@ -69,7 +69,6 @@ spec:
             - "--allow-untagged-cloud"
             - "--cloud-provider=hcloud"
             - "--configure-cloud-routes=false"
-            - "--leader-elect=true"
             - "--route-reconciliation-period=30s"
             - "--webhook-secure-port=0"
             - "--leader-elect=false"
