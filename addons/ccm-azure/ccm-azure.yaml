@@ -109,6 +109,14 @@ rules:
       - get
       - create
       - update
+  - apiGroups:
+      - discovery.k8s.io
+    resources:
+      - endpointslices
+    verbs:
+      - get
+      - list
+      - watch
 ---
 # Source: cloud-provider-azure/templates/cloud-provider-azure.yaml
 kind: ClusterRole
@@ -220,6 +228,7 @@ spec:
           command: ["cloud-node-manager"]
           args:
             - --node-name=$(NODE_NAME)
+            - "--v=2"
           env:
             - name: NODE_NAME
               valueFrom:

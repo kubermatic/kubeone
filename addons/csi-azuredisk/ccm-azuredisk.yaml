@@ -6,11 +6,11 @@ metadata:
   name: csi-azuredisk-controller-sa
   namespace: kube-system
   labels:
-    app.kubernetes.io/instance: "release-name"
+    app.kubernetes.io/instance: "azuredisk-csi-driver"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "azuredisk-csi-driver"
-    app.kubernetes.io/version: "v1.27.1"
-    helm.sh/chart: "azuredisk-csi-driver-v1.27.1"
+    app.kubernetes.io/version: "v1.29.2"
+    helm.sh/chart: "azuredisk-csi-driver-v1.29.2"
 ---
 # Source: azuredisk-csi-driver/templates/serviceaccount-csi-azuredisk-node.yaml
 apiVersion: v1
@@ -19,11 +19,11 @@ metadata:
   name: csi-azuredisk-node-sa
   namespace: kube-system
   labels:
-    app.kubernetes.io/instance: "release-name"
+    app.kubernetes.io/instance: "azuredisk-csi-driver"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "azuredisk-csi-driver"
-    app.kubernetes.io/version: "v1.27.1"
-    helm.sh/chart: "azuredisk-csi-driver-v1.27.1"
+    app.kubernetes.io/version: "v1.29.2"
+    helm.sh/chart: "azuredisk-csi-driver-v1.29.2"
 ---
 # Source: azuredisk-csi-driver/templates/rbac-csi-azuredisk-controller.yaml
 kind: ClusterRole
@@ -31,11 +31,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: azuredisk-external-provisioner-role
   labels:
-    app.kubernetes.io/instance: "release-name"
+    app.kubernetes.io/instance: "azuredisk-csi-driver"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "azuredisk-csi-driver"
-    app.kubernetes.io/version: "v1.27.1"
-    helm.sh/chart: "azuredisk-csi-driver-v1.27.1"
+    app.kubernetes.io/version: "v1.29.2"
+    helm.sh/chart: "azuredisk-csi-driver-v1.29.2"
 rules:
   - apiGroups: [""]
     resources: ["persistentvolumes"]
@@ -71,11 +71,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: azuredisk-external-attacher-role
   labels:
-    app.kubernetes.io/instance: "release-name"
+    app.kubernetes.io/instance: "azuredisk-csi-driver"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "azuredisk-csi-driver"
-    app.kubernetes.io/version: "v1.27.1"
-    helm.sh/chart: "azuredisk-csi-driver-v1.27.1"
+    app.kubernetes.io/version: "v1.29.2"
+    helm.sh/chart: "azuredisk-csi-driver-v1.29.2"
 rules:
   - apiGroups: [""]
     resources: ["persistentvolumes"]
@@ -102,11 +102,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: azuredisk-external-snapshotter-role
   labels:
-    app.kubernetes.io/instance: "release-name"
+    app.kubernetes.io/instance: "azuredisk-csi-driver"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "azuredisk-csi-driver"
-    app.kubernetes.io/version: "v1.27.1"
-    helm.sh/chart: "azuredisk-csi-driver-v1.27.1"
+    app.kubernetes.io/version: "v1.29.2"
+    helm.sh/chart: "azuredisk-csi-driver-v1.29.2"
 rules:
   - apiGroups: [""]
     resources: ["events"]
@@ -133,11 +133,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: azuredisk-external-resizer-role
   labels:
-    app.kubernetes.io/instance: "release-name"
+    app.kubernetes.io/instance: "azuredisk-csi-driver"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "azuredisk-csi-driver"
-    app.kubernetes.io/version: "v1.27.1"
-    helm.sh/chart: "azuredisk-csi-driver-v1.27.1"
+    app.kubernetes.io/version: "v1.29.2"
+    helm.sh/chart: "azuredisk-csi-driver-v1.29.2"
 rules:
   - apiGroups: [""]
     resources: ["persistentvolumes"]
@@ -187,11 +187,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: azuredisk-csi-provisioner-binding
   labels:
-    app.kubernetes.io/instance: "release-name"
+    app.kubernetes.io/instance: "azuredisk-csi-driver"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "azuredisk-csi-driver"
-    app.kubernetes.io/version: "v1.27.1"
-    helm.sh/chart: "azuredisk-csi-driver-v1.27.1"
+    app.kubernetes.io/version: "v1.29.2"
+    helm.sh/chart: "azuredisk-csi-driver-v1.29.2"
 subjects:
   - kind: ServiceAccount
     name: csi-azuredisk-controller-sa
@@ -207,11 +207,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: azuredisk-csi-attacher-binding
   labels:
-    app.kubernetes.io/instance: "release-name"
+    app.kubernetes.io/instance: "azuredisk-csi-driver"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "azuredisk-csi-driver"
-    app.kubernetes.io/version: "v1.27.1"
-    helm.sh/chart: "azuredisk-csi-driver-v1.27.1"
+    app.kubernetes.io/version: "v1.29.2"
+    helm.sh/chart: "azuredisk-csi-driver-v1.29.2"
 subjects:
   - kind: ServiceAccount
     name: csi-azuredisk-controller-sa
@@ -227,11 +227,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: azuredisk-csi-snapshotter-binding
   labels:
-    app.kubernetes.io/instance: "release-name"
+    app.kubernetes.io/instance: "azuredisk-csi-driver"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "azuredisk-csi-driver"
-    app.kubernetes.io/version: "v1.27.1"
-    helm.sh/chart: "azuredisk-csi-driver-v1.27.1"
+    app.kubernetes.io/version: "v1.29.2"
+    helm.sh/chart: "azuredisk-csi-driver-v1.29.2"
 subjects:
   - kind: ServiceAccount
     name: csi-azuredisk-controller-sa
@@ -247,11 +247,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: azuredisk-csi-resizer-role
   labels:
-    app.kubernetes.io/instance: "release-name"
+    app.kubernetes.io/instance: "azuredisk-csi-driver"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "azuredisk-csi-driver"
-    app.kubernetes.io/version: "v1.27.1"
-    helm.sh/chart: "azuredisk-csi-driver-v1.27.1"
+    app.kubernetes.io/version: "v1.29.2"
+    helm.sh/chart: "azuredisk-csi-driver-v1.29.2"
 subjects:
   - kind: ServiceAccount
     name: csi-azuredisk-controller-sa
@@ -296,11 +296,11 @@ metadata:
   name: csi-azuredisk-node
   namespace: kube-system
   labels:
-    app.kubernetes.io/instance: "release-name"
+    app.kubernetes.io/instance: "azuredisk-csi-driver"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "azuredisk-csi-driver"
-    app.kubernetes.io/version: "v1.27.1"
-    helm.sh/chart: "azuredisk-csi-driver-v1.27.1"
+    app.kubernetes.io/version: "v1.29.2"
+    helm.sh/chart: "azuredisk-csi-driver-v1.29.2"
 spec:
   updateStrategy:
     rollingUpdate:
@@ -312,11 +312,11 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/instance: "release-name"
+        app.kubernetes.io/instance: "azuredisk-csi-driver"
         app.kubernetes.io/managed-by: "Helm"
         app.kubernetes.io/name: "azuredisk-csi-driver"
-        app.kubernetes.io/version: "v1.27.1"
-        helm.sh/chart: "azuredisk-csi-driver-v1.27.1"
+        app.kubernetes.io/version: "v1.29.2"
+        helm.sh/chart: "azuredisk-csi-driver-v1.29.2"
         app: csi-azuredisk-node
     spec:
       hostNetwork: true
@@ -334,6 +334,9 @@ spec:
                 values:
                 - virtual-kubelet
       priorityClassName: system-node-critical
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       tolerations:
         - operator: Exists
       containers:
@@ -389,7 +392,6 @@ spec:
             - "--v=5"
             - "--endpoint=$(CSI_ENDPOINT)"
             - "--nodeid=$(KUBE_NODE_NAME)"
-            - "--metrics-address=0.0.0.0:29605"
             - "--enable-perf-optimization=true"
             - "--drivername=disk.csi.azure.com"
             - "--volume-attach-limit=-1"
@@ -400,6 +402,8 @@ spec:
             - "--allow-empty-cloud-config=true"
             - "--support-zone=true"
             - "--get-node-info-from-labels=false"
+            - "--get-nodeid-from-imds=false"
+            - "--enable-otel-tracing=false"
           ports:
             - containerPort: 29603
               name: healthz
@@ -488,11 +492,11 @@ metadata:
   name: csi-azuredisk-controller
   namespace: kube-system
   labels:
-    app.kubernetes.io/instance: "release-name"
+    app.kubernetes.io/instance: "azuredisk-csi-driver"
     app.kubernetes.io/managed-by: "Helm"
     app.kubernetes.io/name: "azuredisk-csi-driver"
-    app.kubernetes.io/version: "v1.27.1"
-    helm.sh/chart: "azuredisk-csi-driver-v1.27.1"
+    app.kubernetes.io/version: "v1.29.2"
+    helm.sh/chart: "azuredisk-csi-driver-v1.29.2"
 spec:
   replicas: 2
   selector:
@@ -501,11 +505,11 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/instance: "release-name"
+        app.kubernetes.io/instance: "azuredisk-csi-driver"
         app.kubernetes.io/managed-by: "Helm"
         app.kubernetes.io/name: "azuredisk-csi-driver"
-        app.kubernetes.io/version: "v1.27.1"
-        helm.sh/chart: "azuredisk-csi-driver-v1.27.1"
+        app.kubernetes.io/version: "v1.29.2"
+        helm.sh/chart: "azuredisk-csi-driver-v1.29.2"
         app: csi-azuredisk-controller
     spec:
       hostNetwork: true
@@ -514,6 +518,9 @@ spec:
         kubernetes.io/os: linux
         node-role.kubernetes.io/control-plane: ""
       priorityClassName: system-cluster-critical
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       tolerations:
         - effect: NoSchedule
           key: node-role.kubernetes.io/master
@@ -528,7 +535,7 @@ spec:
         - name: csi-provisioner
           image: "{{ .InternalImages.Get "AzureDiskCSIProvisioner" }}"
           args:
-            - "--feature-gates=Topology=true"
+            - "--feature-gates=Topology=true,HonorPVReclaimPolicy=true"
             - "--csi-address=$(ADDRESS)"
             - "--v=2"
             - "--timeout=30s"
@@ -581,6 +588,7 @@ spec:
             - "-leader-election"
             - "--leader-election-namespace=kube-system"
             - "-v=2"
+            - "--timeout=1200s"
           env:
             - name: ADDRESS
               value: /csi/csi.sock
@@ -589,7 +597,7 @@ spec:
               mountPath: /csi
           resources:
             limits:
-              memory: 100Mi
+              memory: 200Mi
             requests:
               cpu: 10m
               memory: 20Mi
@@ -648,6 +656,7 @@ spec:
             - "--vmss-cache-ttl-seconds=-1"
             - "--enable-traffic-manager=false"
             - "--traffic-manager-port=7788"
+            - "--enable-otel-tracing=false"
           ports:
             - containerPort: 29602
               name: healthz
@@ -700,8 +709,8 @@ kind: CSIDriver
 metadata:
   name: disk.csi.azure.com
   annotations:
-    csiDriver: "v1.27.1"
-    snapshot: "v5.0.1"
+    csiDriver: "v1.29.2"
+    snapshot: "v6.3.1"
 spec:
   attachRequired: true
   podInfoOnMount: false

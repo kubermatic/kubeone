@@ -152,6 +152,36 @@ func migrateGCEStandardStorageClass(s *state.State) error {
 	)
 }
 
+func migrateAzureFileCSI(s *state.State) error {
+	dsKey := client.ObjectKey{
+		Name:      "csi-azurefile-nodemanager",
+		Namespace: metav1.NamespaceSystem,
+	}
+	dsLabels := map[string]string{
+		"app":                        "csi-azurefile-nodemanager",
+		"app.kubernetes.io/name":     "azurefile-csi-driver",
+		"app.kubernetes.io/instance": "azurefile-csi-driver",
+	}
+	if err := migrateDaemonsetIfPodSelectorDifferent(s, dsKey, dsLabels); err != nil {
+		return nil
+	}
+
+	deployKey := client.ObjectKey{
+		Name:      "csi-azurefile-controllermanager",
+		Namespace: metav1.NamespaceSystem,
+	}
+	deployLabels := map[string]string{
+		"app.kubernetes.io/name":     "azurefile-csi-driver",
+		"app.kubernetes.io/instance": "azurefile-csi-driver",
+		"app":                        "csi-azurefile-controllermanager",
+	}
+	if err := migrateDeploymentIfPodSelectorDifferent(s, deployKey, deployLabels); err != nil {
+		return nil
+	}
+
+	return nil
+}
+
 func migrateAzureDiskCSI(s *state.State) error {
 	if err := migrateAzureDiskNodeCRBIfLegacy(s); err != nil {
 		return err

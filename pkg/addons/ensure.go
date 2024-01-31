@@ -364,6 +364,9 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 			},
 			addonAction{
 				name: resources.AddonCSIAzureFile,
+				supportFn: func() error {
+					return migrateAzureFileCSI(s)
+				},
 			},
 		)
 	case s.Cluster.CloudProvider.GCE != nil:
