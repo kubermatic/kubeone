@@ -36,6 +36,7 @@ const (
 	AddonCNICilium              = "cni-cilium"
 	AddonCNIWeavenet            = "cni-weavenet"
 	AddonCoreDNSPDB             = "coredns-pdb"
+	AddonCSIExternalSnapshotter = "csi-external-snapshotter"
 	AddonCSIAwsEBS              = "csi-aws-ebs"
 	AddonCSIAzureDisk           = "csi-azuredisk"
 	AddonCSIAzureFile           = "csi-azurefile"
@@ -64,6 +65,7 @@ func CloudAddons() []string {
 		AddonCCMOpenStack,
 		AddonCCMPacket,
 		AddonCCMVsphere,
+		AddonCSIExternalSnapshotter,
 		AddonCSIAwsEBS,
 		AddonCSIAzureDisk,
 		AddonCSIAzureFile,
