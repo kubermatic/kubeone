@@ -74,7 +74,6 @@ type hostsSpec struct {
 	SSHUser           string   `json:"ssh_user"`
 	SSHPort           int      `json:"ssh_port"`
 	SSHPrivateKeyFile string   `json:"ssh_private_key_file"`
-	SSHCertFile       string   `json:"ssh_cert_file"`
 	SSHAgentSocket    string   `json:"ssh_agent_socket"`
 	Bastion           string   `json:"bastion"`
 	BastionPort       int      `json:"bastion_port"`
@@ -290,7 +289,6 @@ func newHostConfig(publicIP, privateIP, hostname string, hs *hostsSpec) kubeonev
 		PublicAddress:     publicIP,
 		SSHAgentSocket:    hs.SSHAgentSocket,
 		SSHPrivateKeyFile: hs.SSHPrivateKeyFile,
-		SSHCertFile:       hs.SSHCertFile,
 		SSHUsername:       hs.SSHUser,
 		SSHPort:           hs.SSHPort,
 	}
