@@ -17,21 +17,17 @@ This addon provides bunch of DaemonSets and operators:
   DaemonSet that will install `unattended-upgrades`
 * **RHEL/CentOS/Rocky Linux/Amazon Linux 2**
   DaemonSet that will install and configure `yum-cron`/`dnf-automatic`
-* **Debian/Ubuntu/RHEL/CentOS/Rocky Linux/Amazon Linux 2**
-  [Kured](https://github.com/weaveworks/kured) (DaemonSet and operator) that
-  will orchestrate node rebootes in case when it's required (kernel upgrades)
 * **Flatcar Linux**
   [Flatcar Linux Update Operator](https://github.com/kinvolk/flatcar-linux-update-operator)
 
 ## Deployment instructions
 
-Copy files from this directory to your configured addons directory.
-
-In `kubeone.yaml` config:
+In `kubeone.yaml` config add:
 ```yaml
 addons:
   enable: true
-  path: "./addons"
+  addons:
+    - name: "unattended-upgrades"
 ```
 
 ## Information about permissions
@@ -39,3 +35,10 @@ addons:
 Since daemonSets provided by this addon are making changes on the nodes
 themselves they require elevated permissions like full root access to the host
 machine.
+
+## Development
+
+### Generate Flatcar Linux Update Operator YAML
+```shell
+kubectl kustomize ./fluo > fluo.yaml
+```
