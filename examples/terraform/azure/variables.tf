@@ -37,6 +37,7 @@ variable "os" {
   # * ubuntu
   # * centos
   # * rockylinux
+  # * ol
   # * rhel
   # * flatcar
   default = "ubuntu"
@@ -50,6 +51,7 @@ variable "worker_os" {
   # * ubuntu
   # * centos
   # * rockylinux
+  # * ol
   # * rhel
   # * flatcar
   default = ""

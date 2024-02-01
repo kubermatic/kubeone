@@ -186,14 +186,15 @@ type ContainerdTLSConfig struct {
 type OperatingSystemName string
 
 const (
-	OperatingSystemNameUbuntu     OperatingSystemName = "ubuntu"
-	OperatingSystemNameDebian     OperatingSystemName = "debian"
-	OperatingSystemNameCentOS     OperatingSystemName = "centos"
-	OperatingSystemNameRHEL       OperatingSystemName = "rhel"
-	OperatingSystemNameRockyLinux OperatingSystemName = "rockylinux"
-	OperatingSystemNameAmazon     OperatingSystemName = "amzn"
-	OperatingSystemNameFlatcar    OperatingSystemName = "flatcar"
-	OperatingSystemNameUnknown    OperatingSystemName = ""
+	OperatingSystemNameUbuntu      OperatingSystemName = "ubuntu"
+	OperatingSystemNameDebian      OperatingSystemName = "debian"
+	OperatingSystemNameCentOS      OperatingSystemName = "centos"
+	OperatingSystemNameRHEL        OperatingSystemName = "rhel"
+	OperatingSystemNameRockyLinux  OperatingSystemName = "rockylinux"
+	OperatingSystemNameOracleLinux OperatingSystemName = "ol"
+	OperatingSystemNameAmazon      OperatingSystemName = "amzn"
+	OperatingSystemNameFlatcar     OperatingSystemName = "flatcar"
+	OperatingSystemNameUnknown     OperatingSystemName = ""
 )
 
 // HostConfig describes a single control plane node.

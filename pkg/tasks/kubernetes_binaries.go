@@ -31,6 +31,7 @@ func upgradeKubeletAndKubectlBinaries(s *state.State, node kubeoneapi.HostConfig
 		kubeoneapi.OperatingSystemNameFlatcar:    upgradeKubeletAndKubectlBinariesFlatcar,
 		kubeoneapi.OperatingSystemNameRHEL:       upgradeKubeletAndKubectlBinariesCentOS,
 		kubeoneapi.OperatingSystemNameRockyLinux: upgradeKubeletAndKubectlBinariesCentOS,
+		kubeoneapi.OperatingSystemNameOracleLinux: upgradeKubeletAndKubectlBinariesCentOS,
 		kubeoneapi.OperatingSystemNameUbuntu:     upgradeKubeletAndKubectlBinariesDebian,
 	})
 }
@@ -43,6 +44,7 @@ func upgradeKubeadmAndCNIBinaries(s *state.State, node kubeoneapi.HostConfig) er
 		kubeoneapi.OperatingSystemNameFlatcar:    upgradeKubeadmAndCNIBinariesFlatcar,
 		kubeoneapi.OperatingSystemNameRHEL:       upgradeKubeadmAndCNIBinariesCentOS,
 		kubeoneapi.OperatingSystemNameRockyLinux: upgradeKubeadmAndCNIBinariesCentOS,
+		kubeoneapi.OperatingSystemNameOracleLinux: upgradeKubeadmAndCNIBinariesCentOS,
 		kubeoneapi.OperatingSystemNameUbuntu:     upgradeKubeadmAndCNIBinariesDebian,
 	})
 }
