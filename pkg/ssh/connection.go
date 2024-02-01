@@ -156,7 +156,7 @@ func NewConnection(connector *Connector, opts Opts) (executor.Interface, error) 
 
 			// create a signer using both the certificate and the private key:
 			certSigner, signersErr := ssh.NewCertSigner(cert.(*ssh.Certificate), signer)
-			if err != nil {
+			if signersErr != nil {
 				return nil, fail.SSHError{
 					Op:  "creating new signer with private key and certificate",
 					Err: signersErr,
