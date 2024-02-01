@@ -51,8 +51,8 @@ spec:
             hostPath:
               path: /etc/kubernetes/pki
           initContainers:
-          - name: snapshoter
-            image: {{ Registry "gcr.io" }}/etcd-development/etcd:v3.5.11
+          - name: snapshotter
+            image: {{ Registry "gcr.io" }}/etcd-development/etcd:v3.5.12
             imagePullPolicy: IfNotPresent
             command:
               - etcdctl
@@ -83,7 +83,7 @@ spec:
               readOnly: true
           containers:
           - name: uploader
-            image: {{ Registry "docker.io" }}/restic/restic:0.16.0
+            image: {{ Registry "docker.io" }}/restic/restic:0.16.3
             imagePullPolicy: IfNotPresent
             command:
             - /bin/sh
