@@ -1,0 +1,61 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: reboot-coordinator
+
+resources:
+  - https://github.com/flatcar/flatcar-linux-update-operator/examples/deploy?ref=v0.10.0-rc1
+
+patches:
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: flatcar-linux-update-operator
+    patch: |-
+      - op: add
+        path: /spec/template/spec/affinity
+        value:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                  - key: v1.machine-controller.kubermatic.io/operating-system
+                    operator: In
+                    values:
+                    - flatcar
+                - matchExpressions:
+                  - key: v1.kubeone.io/operating-system
+                    operator: In
+                    values:
+                    - flatcar
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: |-
+          {{ Registry "ghcr.io" }}/flatcar/flatcar-linux-update-operator:v0.10.0-rc1
+
+  - target:
+      group: apps
+      version: v1
+      kind: DaemonSet
+      name: flatcar-linux-update-agent
+    patch: |-
+      - op: add
+        path: /spec/template/spec/affinity
+        value:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                  - key: v1.machine-controller.kubermatic.io/operating-system
+                    operator: In
+                    values:
+                    - flatcar
+                - matchExpressions:
+                  - key: v1.kubeone.io/operating-system
+                    operator: In
+                    values:
+                    - flatcar
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: |-
+          {{ Registry "ghcr.io" }}/flatcar/flatcar-linux-update-operator:v0.10.0-rc1

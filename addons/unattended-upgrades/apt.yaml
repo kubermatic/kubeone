@@ -19,43 +19,44 @@ spec:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchExpressions:
-              - key: v1.machine-controller.kubermatic.io/operating-system
-                operator: In
-                values:
-                - ubuntu
-            - matchExpressions:
-              - key: v1.kubeone.io/operating-system
-                operator: In
-                values:
-                - ubuntu
-                - debian
+              - matchExpressions:
+                  - key: v1.machine-controller.kubermatic.io/operating-system
+                    operator: In
+                    values:
+                      - ubuntu
+              - matchExpressions:
+                  - key: v1.kubeone.io/operating-system
+                    operator: In
+                    values:
+                      - ubuntu
+                      - debian
       tolerations:
-      - key: node-role.kubernetes.io/control-plane
-        effect: NoSchedule
-      - key: node-role.kubernetes.io/master
-        effect: NoSchedule
+        - key: node-role.kubernetes.io/control-plane
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
       hostPID: true
       containers:
-      - name: "unattended-upgrades-install"
-        image: "alpine:3.12.4"
-        securityContext:
-          privileged: true
-        command:
-        - /bin/sh
-        - -c
-        - |
-          set -xeuo pipefail
-          apk add --no-cache bash util-linux
-          nsenter -t 1 -m -u -i -n -p -- bash -c "${STARTUP_SCRIPT}"
-          sleep inf
-        env:
-        - name: STARTUP_SCRIPT
-          value: |
-            set -xeuo pipefail
-            export DEBIAN_FRONTEND=noninteractive
-            apt-get install -y --no-install-recommends \
-              apt-utils \
-              unattended-upgrades
-            echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true | debconf-set-selections
-            dpkg-reconfigure -f noninteractive unattended-upgrades
+        - name: "unattended-upgrades-install"
+          image: "alpine:3"
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -xeuo pipefail
+              apk add --no-cache bash util-linux
+              nsenter -t 1 -m -u -i -n -p -- bash -c "${STARTUP_SCRIPT}"
+              sleep inf
+          env:
+            - name: STARTUP_SCRIPT
+              value: |
+                set -xeuo pipefail
+                export DEBIAN_FRONTEND=noninteractive
+                apt-get install -y --no-install-recommends \
+                  apt-utils \
+                  unattended-upgrades
+                echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true | debconf-set-selections
+                dpkg-reconfigure -f noninteractive unattended-upgrades
