@@ -280,6 +280,7 @@ allowVolumeExpansion: true
 {{ end }}
 
 {{ if eq .Config.CloudProvider.CloudProviderName "vmwareCloudDirector" }}
+---
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:

@@ -1,0 +1,123 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kube-system
+
+resources:
+  - https://raw.githubusercontent.com/digitalocean/csi-digitalocean/v4.8.0/deploy/kubernetes/releases/csi-digitalocean-v4.8.0/driver.yaml
+
+patches:
+  - patch: |-
+      apiVersion: snapshot.storage.k8s.io/v1
+      kind: VolumeSnapshotClass
+      metadata:
+        name: do-block-storage
+      $patch: delete
+  - patch: |-
+      apiVersion: storage.k8s.io/v1
+      kind: StorageClass
+      metadata:
+        name: do-block-storage
+      $patch: delete
+  - patch: |-
+      apiVersion: storage.k8s.io/v1
+      kind: StorageClass
+      metadata:
+        name: do-block-storage-retain
+      $patch: delete
+  - patch: |-
+      ---
+      apiVersion: storage.k8s.io/v1
+      kind: StorageClass
+      metadata:
+        name: do-block-storage-xfs
+      $patch: delete
+  - patch: |-
+      apiVersion: storage.k8s.io/v1
+      kind: StorageClass
+      metadata:
+        name: do-block-storage-xfs-retain
+      $patch: delete
+  - target:
+      group: apps
+      version: v1
+      kind: StatefulSet
+      name: csi-do-controller
+    patch: |-
+      - op: add
+        path: /spec/template/metadata/annotations
+        value:
+          kubeone.k8c.io/credentials-hash: "{{ .CredentialsCCMHash }}"
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value:
+          kubernetes.io/os: linux
+          node-role.kubernetes.io/control-plane: ""
+      - op: add
+        path: /spec/template/spec/tolerations
+        value:
+          - key: CriticalAddonsOnly
+            operator: Exists
+          - key: "node-role.kubernetes.io/master"
+            operator: "Exists"
+            effect: "NoSchedule"
+          - key: "node-role.kubernetes.io/control-plane"
+            operator: "Exists"
+            effect: "NoSchedule"
+      - op: replace
+        path: /spec/template/spec/containers/4/env/2
+        value:
+          - name: DIGITALOCEAN_ACCESS_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: kubeone-ccm-credentials
+                key: DO_TOKEN
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: |-
+          {{ .InternalImages.Get "DigitalOceanCSIProvisioner" }}
+      - op: replace
+        path: /spec/template/spec/containers/1/image
+        value: |-
+          {{ .InternalImages.Get "DigitalOceanCSIAttacher" }}
+      - op: replace
+        path: /spec/template/spec/containers/2/image
+        value: |-
+          {{ .InternalImages.Get "DigitalOceanCSISnapshotter" }}
+      - op: replace
+        path: /spec/template/spec/containers/3/image
+        value: |-
+          {{ .InternalImages.Get "DigitalOceanCSIResizer" }}
+      - op: replace
+        path: /spec/template/spec/containers/4/image
+        value: |-
+          {{ .InternalImages.Get "DigitalOceanCSI" }}
+
+  - target:
+      group: apps
+      version: v1
+      kind: DaemonSet
+      name: csi-do-node
+    patch: |-
+      - op: add
+        path: /spec/template/spec/tolerations
+        value:
+          - key: CriticalAddonsOnly
+            operator: Exists
+          - key: "node-role.kubernetes.io/master"
+            operator: "Exists"
+            effect: "NoSchedule"
+          - key: "node-role.kubernetes.io/control-plane"
+            operator: "Exists"
+            effect: "NoSchedule"
+      - op: replace
+        path: /spec/template/spec/initContainers/0/image
+        value: |-
+          {{ .InternalImages.Get "DigitalOceanCSIAlpine" }}
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: |-
+          {{ .InternalImages.Get "DigitalOceanCSINodeDriverRegistar" }}
+      - op: replace
+        path: /spec/template/spec/containers/1/image
+        value: |-
+          {{ .InternalImages.Get "DigitalOceanCSI" }}
