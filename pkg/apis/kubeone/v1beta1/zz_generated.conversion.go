@@ -1193,6 +1193,7 @@ func autoConvert_kubeone_HostConfig_To_v1beta1_HostConfig(in *kubeone.HostConfig
 	out.SSHPort = in.SSHPort
 	out.SSHUsername = in.SSHUsername
 	out.SSHPrivateKeyFile = in.SSHPrivateKeyFile
+	// WARNING: in.SSHCertFile requires manual conversion: does not exist in peer-type
 	// WARNING: in.SSHHostPublicKey requires manual conversion: does not exist in peer-type
 	out.SSHAgentSocket = in.SSHAgentSocket
 	out.Bastion = in.Bastion
