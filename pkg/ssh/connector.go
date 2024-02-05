@@ -123,5 +123,6 @@ func resolveHomeDir(path string) string {
 	if strings.HasPrefix(path, "~/") {
 		path = filepath.Join(homedir.HomeDir(), path[2:])
 	}
+
 	return path
 }

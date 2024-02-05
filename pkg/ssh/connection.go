@@ -147,11 +147,11 @@ func NewConnection(connector *Connector, opts Opts) (executor.Interface, error) 
 		}
 
 		if len(opts.SSHCert) > 0 {
-			cert, _, _, _, err := ssh.ParseAuthorizedKey([]byte(opts.SSHCert))
-			if err != nil {
+			cert, _, _, _, certParseErr := ssh.ParseAuthorizedKey([]byte(opts.SSHCert))
+			if certParseErr != nil {
 				return nil, fail.SSHError{
 					Op:  "parsing certificate",
-					Err: errors.Wrapf(err, "SSH certificate could not be parsed"),
+					Err: errors.Wrapf(certParseErr, "SSH certificate could not be parsed"),
 				}
 			}
 
