@@ -168,7 +168,6 @@ func NewConnection(connector *Connector, opts Opts) (executor.Interface, error) 
 		} else {
 			authMethods = append(authMethods, ssh.PublicKeys(signer))
 		}
-
 	}
 
 	if len(opts.AgentSocket) > 0 {
