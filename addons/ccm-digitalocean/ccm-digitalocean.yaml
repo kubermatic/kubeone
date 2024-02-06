@@ -1,59 +1,3 @@
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: digitalocean-cloud-controller-manager
-  namespace: kube-system
-spec:
-  replicas: 1
-  revisionHistoryLimit: 2
-  selector:
-    matchLabels:
-      app: digitalocean-cloud-controller-manager
-  template:
-    metadata:
-      labels:
-        app: digitalocean-cloud-controller-manager
-      annotations:
-        "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
-    spec:
-      dnsPolicy: Default
-      hostNetwork: true
-      serviceAccountName: cloud-controller-manager
-      priorityClassName: system-cluster-critical
-      tolerations:
-        # this taint is set by all kubelets running `--cloud-provider=external`
-        # so we should tolerate it to schedule the digitalocean ccm
-        - key: "node.cloudprovider.kubernetes.io/uninitialized"
-          value: "true"
-          effect: "NoSchedule"
-        - key: "CriticalAddonsOnly"
-          operator: "Exists"
-        # cloud controller manages should be able to run on masters
-        # TODO: remove this when ccm is not supported on k8s <= 1.23
-        - key: "node-role.kubernetes.io/master"
-          effect: NoSchedule
-        # k8s clusters 1.24+ uses control-plane name instead of master
-        - key: "node-role.kubernetes.io/control-plane"
-          effect: NoSchedule
-      containers:
-      - image: {{ .InternalImages.Get "DigitaloceanCCM" }}
-        name: digitalocean-cloud-controller-manager
-        command:
-          - "/bin/digitalocean-cloud-controller-manager"
-          - "--leader-elect=false"
-        resources:
-          requests:
-            cpu: 100m
-            memory: 50Mi
-        env:
-          - name: DO_ACCESS_TOKEN
-            valueFrom:
-              secretKeyRef:
-                name: kubeone-ccm-credentials
-                key: DO_TOKEN
-
----
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -142,8 +86,8 @@ rules:
   - watch
   - update
 ---
-kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
 metadata:
   name: system:cloud-controller-manager
 roleRef:
@@ -154,3 +98,53 @@ subjects:
 - kind: ServiceAccount
   name: cloud-controller-manager
   namespace: kube-system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: digitalocean-cloud-controller-manager
+  namespace: kube-system
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: digitalocean-cloud-controller-manager
+  template:
+    metadata:
+      annotations:
+        kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
+      labels:
+        app: digitalocean-cloud-controller-manager
+    spec:
+      containers:
+      - command:
+        - /bin/digitalocean-cloud-controller-manager
+        - --leader-elect=false
+        env:
+        - name: DO_ACCESS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              key: DO_TOKEN
+              name: kubeone-ccm-credentials
+        image: '{{ .InternalImages.Get "DigitaloceanCCM" }}'
+        name: digitalocean-cloud-controller-manager
+        resources:
+          requests:
+            cpu: 100m
+            memory: 50Mi
+      dnsPolicy: Default
+      hostNetwork: true
+      priorityClassName: system-cluster-critical
+      serviceAccountName: cloud-controller-manager
+      tolerations:
+      - effect: NoSchedule
+        key: node.cloudprovider.kubernetes.io/uninitialized
+        value: "true"
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/control-plane
+      volumes: []

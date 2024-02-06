@@ -1,0 +1,74 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kube-system
+
+resources:
+  - https://raw.githubusercontent.com/digitalocean/digitalocean-cloud-controller-manager/master/releases/v0.1.47.yml
+
+patches:
+  # remove webhook from the upstream manifest
+  - patch: |-
+      apiVersion: cert-manager.io/v1
+      kind: Certificate
+      metadata:
+        name: digitalocean-cloud-controller-manager-serving-certs
+        namespace: kube-system
+      $patch: delete
+  - patch: |-
+      apiVersion: cert-manager.io/v1
+      kind: Issuer
+      metadata:
+        name: digitalocean-cloud-controller-manager-selfsigned-issuer
+        namespace: kube-system
+      $patch: delete
+  - patch: |-
+      apiVersion: admissionregistration.k8s.io/v1
+      kind: ValidatingWebhookConfiguration
+      metadata:
+        name: digitalocean-cloud-controller-manager-admission-webhook
+      $patch: delete
+  - patch: |-
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: digitalocean-cloud-controller-manager
+        namespace: kube-system
+      $patch: delete
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: digitalocean-cloud-controller-manager
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: digitalocean-cloud-controller-manager-admission-server
+                $patch: delete
+            volumes:
+              - name: digitalocean-cloud-controller-manager-serving-certs
+                $patch: delete
+
+  - target: # edit digitalocean-cloud-controller-manager Deployment
+      group: apps
+      version: v1
+      kind: Deployment
+      name: digitalocean-cloud-controller-manager
+    patch: |-
+      - op: add
+        path: /spec/template/metadata/annotations
+        value:
+          kubeone.k8c.io/credentials-hash: "{{ .CredentialsCCMHash }}"
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: |-
+          {{ .InternalImages.Get "DigitaloceanCCM" }}
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0
+        value:
+          name: DO_ACCESS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: kubeone-ccm-credentials
+              key: DO_TOKEN
