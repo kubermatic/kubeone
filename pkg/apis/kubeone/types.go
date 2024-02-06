@@ -217,6 +217,10 @@ type HostConfig struct {
 	// Default value is "".
 	SSHPrivateKeyFile string `json:"sshPrivateKeyFile,omitempty"`
 
+	// SSHCertFile is path to the file with the certificate of the private key.
+	// Default value is "".
+	SSHCertFile string `json:"sshCertFile,omitempty"`
+
 	// SSHHostPublicKey if not empty, will be used to verify remote host public key
 	SSHHostPublicKey []byte `json:"sshHostPublicKey,omitempty"`
 

@@ -52,6 +52,8 @@ type Opts struct {
 	Port                 int
 	PrivateKey           string
 	KeyFile              string
+	SSHCert              string
+	SSHCertFile          string
 	HostPublicKey        []byte
 	AgentSocket          string
 	Timeout              time.Duration
@@ -82,6 +84,16 @@ func validateOptions(o Opts) (Opts, error) {
 
 		o.PrivateKey = string(content)
 		o.KeyFile = ""
+	}
+
+	if len(o.SSHCertFile) > 0 {
+		content, err := os.ReadFile(o.SSHCertFile)
+		if err != nil {
+			return o, fail.Config(err, "reading SSH signed public key")
+		}
+
+		o.SSHCert = string(content)
+		o.SSHCertFile = ""
 	}
 
 	if o.Port <= 0 {
@@ -134,7 +146,28 @@ func NewConnection(connector *Connector, opts Opts) (executor.Interface, error) 
 			}
 		}
 
-		authMethods = append(authMethods, ssh.PublicKeys(signer))
+		if len(opts.SSHCert) > 0 {
+			cert, _, _, _, certParseErr := ssh.ParseAuthorizedKey([]byte(opts.SSHCert))
+			if certParseErr != nil {
+				return nil, fail.SSHError{
+					Op:  "parsing certificate",
+					Err: errors.Wrapf(certParseErr, "SSH certificate could not be parsed"),
+				}
+			}
+
+			// create a signer using both the certificate and the private key:
+			certSigner, signersErr := ssh.NewCertSigner(cert.(*ssh.Certificate), signer)
+			if signersErr != nil {
+				return nil, fail.SSHError{
+					Op:  "creating new signer with private key and certificate",
+					Err: signersErr,
+				}
+			}
+
+			authMethods = append(authMethods, ssh.PublicKeys(certSigner))
+		} else {
+			authMethods = append(authMethods, ssh.PublicKeys(signer))
+		}
 	}
 
 	if len(opts.AgentSocket) > 0 {
