@@ -1,0 +1,30 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kube-system
+
+resources:
+  - https://raw.githubusercontent.com/digitalocean/digitalocean-cloud-controller-manager/master/releases/v0.1.46.yml
+
+patches:
+  - target: # edit digitalocean-cloud-controller-manager Deployment
+      group: apps
+      version: v1
+      kind: Deployment
+      name: digitalocean-cloud-controller-manager
+    patch: |-
+      - op: add
+        path: /spec/template/metadata/annotations
+        value:
+          kubeone.k8c.io/credentials-hash: "{{ .CredentialsCCMHash }}"
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: |-
+          {{ .InternalImages.Get "DigitaloceanCCM" }}
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0
+        value:
+          name: DO_ACCESS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: kubeone-ccm-credentials
+              key: DO_TOKEN
