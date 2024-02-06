@@ -1,226 +1,203 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cloud-provider-equinix-metal
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cloud-provider-equinix-metal
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - endpoints
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - '*'
+  - apiGroups:
+      - ""
+    resources:
+      - nodes/status
+    verbs:
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - patch
+      - update
+      - watch
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - services/status
+    verbs:
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update
+      - patch
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update
+      - patch
+  - apiGroups:
+      - metallb.io
+    resources:
+      - ipaddresspools
+      - bgppeers
+      - bgpadvertisements
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - patch
+      - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cloud-provider-equinix-metal
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cloud-provider-equinix-metal
+subjects:
+  - kind: ServiceAccount
+    name: cloud-provider-equinix-metal
+    namespace: kube-system
+---
+apiVersion: v1
+data:
+  cloud-sa.json: '{{ EquinixMetalSecret .CredentialsCCM.METAL_AUTH_TOKEN .CredentialsCCM.METAL_PROJECT_ID | b64enc }}'
+kind: Secret
+metadata:
+  name: metal-cloud-config
+  namespace: kube-system
 ---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: cloud-provider-equinix-metal
-  namespace: kube-system
   labels:
     app: cloud-provider-equinix-metal
+  name: cloud-provider-equinix-metal
+  namespace: kube-system
 spec:
   selector:
     matchLabels:
       app: cloud-provider-equinix-metal
   template:
     metadata:
+      annotations:
+        kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
       labels:
         app: cloud-provider-equinix-metal
     spec:
-      dnsPolicy: Default
-      hostNetwork: true
-      priorityClassName: system-cluster-critical
-      serviceAccountName: cloud-controller-manager
-      # set node affinity such that it will run only on nodes that have one of (logical OR)
-      # the labels:
-      #   kubernetes.io/role: master
-      #   node-role.kubernetes.io/control-plane
-      #   node-role.kubernetes.io/master
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchExpressions:
-              - key: kubernetes.io/role
-                operator: In
-                values: [master]
-            - matchExpressions:
-              - key: node-role.kubernetes.io/control-plane
-                operator: Exists
-            - matchExpressions:
-              - key: node-role.kubernetes.io/master
-                operator: Exists
-      tolerations:
-        # this taint is set by all kubelets running `--cloud-provider=external`
-        # so we should tolerate it to schedule the Equinix Metal ccm
-        - key: "node.cloudprovider.kubernetes.io/uninitialized"
-          value: "true"
-          effect: "NoSchedule"
-        - key: "CriticalAddonsOnly"
-          operator: "Exists"
-        # cloud controller manager should be able to run on masters
-        - key: "node-role.kubernetes.io/master"
-          effect: NoSchedule
-          operator: Exists
-        - key: "node-role.kubernetes.io/control-plane"
-          effect: NoSchedule
-          operator: Exists
-        # Needed to let CCM come up and assign the EIP
-        - key: "node.kubernetes.io/not-ready"
-          effect: NoSchedule
-          operator: Exists
+              - matchExpressions:
+                  - key: kubernetes.io/role
+                    operator: In
+                    values:
+                      - master
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: Exists
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/master
+                    operator: Exists
       containers:
-      - image: {{ .InternalImages.Get "EquinixMetalCCM" }}
-        name: cloud-provider-equinix-metal
-        imagePullPolicy: Always
-        command:
-          - "./cloud-provider-equinix-metal"
-          - "--cloud-provider=equinixmetal"
-          - "--leader-elect=true"
-          - "--authentication-skip-lookup=true"
-          - "--cloud-config=/etc/cloud-sa/cloud-sa.json"
-          {{- with .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
-          - --concurrent-service-syncs={{ . }}
-          {{- end }}
-        resources:
-          requests:
-            cpu: 100m
-            memory: 50Mi
-        volumeMounts:
-          - name: cloud-sa-volume
-            readOnly: true
-            mountPath: "/etc/cloud-sa"
+        - command:
+            - ./cloud-provider-equinix-metal
+            - --cloud-provider=equinixmetal
+            - --leader-elect=true
+            - --authentication-skip-lookup=true
+            - --cloud-config=/etc/cloud-sa/cloud-sa.json
+            - --concurrent-service-syncs={{ default 0 .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
+          image: '{{ .InternalImages.Get "EquinixMetalCCM" }}'
+          imagePullPolicy: Always
+          name: cloud-provider-equinix-metal
+          resources:
+            requests:
+              cpu: 100m
+              memory: 50Mi
+          volumeMounts:
+            - mountPath: /etc/cloud-sa
+              name: cloud-sa-volume
+              readOnly: true
+      dnsPolicy: Default
+      hostNetwork: true
+      priorityClassName: system-cluster-critical
+      serviceAccountName: cloud-provider-equinix-metal
+      tolerations:
+        - effect: NoSchedule
+          key: node.cloudprovider.kubernetes.io/uninitialized
+          value: "true"
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+          operator: Exists
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: node.kubernetes.io/not-ready
+          operator: Exists
       volumes:
         - name: cloud-sa-volume
           secret:
             secretName: metal-cloud-config
-
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: cloud-controller-manager
-  namespace: kube-system
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  annotations:
-    rbac.authorization.kubernetes.io/autoupdate: "true"
-  name: system:cloud-controller-manager
-rules:
-- apiGroups:
-  # reason: so ccm can read the information about the kube-system namespace
-  - ""
-  resources:
-  - namespaces
-  verbs:
-  - get
-- apiGroups:
-  # reason: so ccm can monitor and update endpoints, used for control plane loadbalancer
-  - ""
-  resources:
-  - endpoints
-  verbs:
-  - create
-  - get
-  - list
-  - watch
-  - update
-  - patch
-- apiGroups:
-  # reason: so ccm can read and update nodes and annotations
-  - ""
-  resources:
-  - nodes
-  verbs:
-  - '*'
-- apiGroups:
-  # reason: so ccm can update the status of nodes
-  - ""
-  resources:
-  - nodes/status
-  verbs:
-  - patch
-- apiGroups:
-  # reason: so ccm can manage services for loadbalancer
-  - ""
-  resources:
-  - services
-  verbs:
-  - get
-  - list
-  - patch
-  - update
-  - watch
-  - create
-- apiGroups:
-  # reason: so ccm can update the status of services for loadbalancer
-  - ""
-  resources:
-  - services/status
-  verbs:
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  # reason: so ccm can read and update configmap for MetalLB <= 0.12.1
-  - ""
-  resources:
-  - configmaps
-  verbs:
-  - create
-  - get
-  - list
-  - watch
-  - update
-  - patch
-- apiGroups:
-  # reason: so ccm can read and update events
-  - ""
-  resources:
-  - events
-  verbs:
-  - create
-  - get
-  - list
-  - watch
-  - update
-  - patch
-- apiGroups:
-  # reason: so ccm can use leases
-  - "coordination.k8s.io"
-  resources:
-  - leases
-  verbs:
-  - create
-  - get
-  - list
-  - watch
-  - update
-  - patch
-- apiGroups:
-  # reason: so ccm can manage CRDs for MetalLB v0.13.2+
-  - metallb.io
-  resources:
-  - ipaddresspools
-  - bgppeers
-  - bgpadvertisements
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - patch
-  - delete
----
-kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: system:cloud-controller-manager
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: system:cloud-controller-manager
-subjects:
-- kind: ServiceAccount
-  name: cloud-controller-manager
-  namespace: kube-system
----
-kind: Secret
-apiVersion: v1
-metadata:
-  name: metal-cloud-config
-  namespace: kube-system
-data:
-  cloud-sa.json:
-    {{ EquinixMetalSecret .CredentialsCCM.METAL_AUTH_TOKEN .CredentialsCCM.METAL_PROJECT_ID | b64enc }}
