@@ -1,0 +1,27 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kube-system
+
+resources:
+  - https://github.com/kubernetes-sigs/cloud-provider-equinix-metal/releases/download/v3.8.0/deployment.yaml
+  - base/secret.yaml
+
+patches:
+  - target:
+      group: apps
+      version: v1
+      kind: DaemonSet
+      name: cloud-provider-equinix-metal
+    patch: |-
+      - op: add
+        path: /spec/template/metadata/annotations
+        value:
+          kubeone.k8c.io/credentials-hash: "{{ .CredentialsCCMHash }}"
+      - op: add
+        path: /spec/template/spec/containers/0/command/-
+        value: |-
+          --concurrent-service-syncs={{ default 0 .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: |-
+          {{ .InternalImages.Get "EquinixMetalCCM" }}
