@@ -1,429 +1,340 @@
----
-# Source: nutanix-csi-storage/templates/ntnx-csi-rbac.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: nutanix-csi-controller
   namespace: kube-system
 ---
-# Source: nutanix-csi-storage/templates/ntnx-csi-rbac.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: nutanix-csi-node
   namespace: kube-system
 ---
-# Source: nutanix-csi-storage/templates/ntnx-secret.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: ntnx-secret
-  namespace: kube-system
-data:
-  # base64 encoded prism-ip:prism-port:admin:password.
-  # E.g.: echo -n "10.83.0.91:9440:admin:mypassword" | base64
-  key: {{ printf "%s:%s:%s:%s" .Credentials.NUTANIX_PE_ENDPOINT .Credentials.NUTANIX_PORT .Credentials.NUTANIX_PE_USERNAME .Credentials.NUTANIX_PE_PASSWORD | b64enc }}
----
-# Source: nutanix-csi-storage/templates/ntnx-csi-rbac.yaml
-kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
 metadata:
   name: nutanix-csi-controller-role
   namespace: kube-system
 rules:
-  - apiGroups: [""]
-    resources: ["secrets"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: [""]
-    resources: ["nodes"]
-    verbs: ["get"]
-  - apiGroups: [""]
-    resources: ["persistentvolumes"]
-    verbs: ["get", "list", "watch", "create", "delete", "update", "patch"]
-  - apiGroups: [""]
-    resources: ["persistentvolumeclaims"]
-    verbs: ["get", "list", "watch", "update"]
-  - apiGroups: [""]
-    resources: ["persistentvolumeclaims/status"]
-    verbs: ["update", "patch"]
-  - apiGroups: ["storage.k8s.io"]
-    resources: ["storageclasses"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: [""]
-    resources: ["events"]
-    verbs: ["list", "watch", "create", "update", "patch"]
-  - apiGroups: ["snapshot.storage.k8s.io"]
-    resources: ["volumesnapshotclasses"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: ["snapshot.storage.k8s.io"]
-    resources: ["volumesnapshots"]
-    verbs: ["get", "list", "watch", "update"]
-  - apiGroups: ["snapshot.storage.k8s.io"]
-    resources: ["volumesnapshots/status"]
-    verbs: ["update"]
-  - apiGroups: ["snapshot.storage.k8s.io"]
-    resources: ["volumesnapshotcontents"]
-    verbs: ["create", "get", "list", "watch", "update", "delete", "patch"]
-  - apiGroups: ["snapshot.storage.k8s.io"]
-    resources: ["volumesnapshotcontents/status"]
-    verbs: ["update", "patch"]
-  - apiGroups: ["storage.k8s.io"]
-    resources: ["csinodes"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: ["coordination.k8s.io"]
-    resources: ["leases"]
-    verbs: ["get", "create", "delete", "update", "patch"]
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumes
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+      - update
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumeclaims
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumeclaims/status
+    verbs:
+      - update
+      - patch
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - storageclasses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - list
+      - watch
+      - create
+      - update
+      - patch
+  - apiGroups:
+      - snapshot.storage.k8s.io
+    resources:
+      - volumesnapshotclasses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - snapshot.storage.k8s.io
+    resources:
+      - volumesnapshots
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+  - apiGroups:
+      - snapshot.storage.k8s.io
+    resources:
+      - volumesnapshots/status
+    verbs:
+      - update
+  - apiGroups:
+      - snapshot.storage.k8s.io
+    resources:
+      - volumesnapshotcontents
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update
+      - delete
+      - patch
+  - apiGroups:
+      - snapshot.storage.k8s.io
+    resources:
+      - volumesnapshotcontents/status
+    verbs:
+      - update
+      - patch
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - csinodes
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - get
+      - create
+      - delete
+      - update
+      - patch
 ---
-# Source: nutanix-csi-storage/templates/ntnx-csi-rbac.yaml
-kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
 metadata:
   name: nutanix-csi-node-role
   namespace: kube-system
 rules:
-  - apiGroups: [""]
-    resources: ["secrets"]
-    verbs: ["get", "list"]
-  - apiGroups: [""]
-    resources: ["nodes"]
-    verbs: ["get", "list", "update"]
-  - apiGroups: [""]
-    resources: ["namespaces"]
-    verbs: ["get", "list"]
-  - apiGroups: [""]
-    resources: ["persistentvolumes"]
-    verbs: ["get", "list", "watch", "update"]
-  - apiGroups: ["storage.k8s.io"]
-    resources: ["volumeattachments"]
-    verbs: ["get", "list", "watch", "update"]
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+      - list
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumes
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - volumeattachments
+    verbs:
+      - get
+      - list
+      - watch
+      - update
 ---
-# Source: nutanix-csi-storage/templates/ntnx-csi-rbac.yaml
-kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
 metadata:
   name: nutanix-csi-controller-binding
   namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nutanix-csi-controller-role
 subjects:
   - kind: ServiceAccount
     name: nutanix-csi-controller
     namespace: kube-system
-roleRef:
-  kind: ClusterRole
-  name: nutanix-csi-controller-role
-  apiGroup: rbac.authorization.k8s.io
 ---
-# Source: nutanix-csi-storage/templates/ntnx-csi-rbac.yaml
-kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
 metadata:
   name: nutanix-csi-node-binding
   namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nutanix-csi-node-role
 subjects:
   - kind: ServiceAccount
     name: nutanix-csi-node
     namespace: kube-system
-roleRef:
-  kind: ClusterRole
-  name: nutanix-csi-node-role
-  apiGroup: rbac.authorization.k8s.io
 ---
-# Source: nutanix-csi-storage/templates/service-prometheus-csi.yaml
-# Copyright 2021 Nutanix Inc
-#
-# example usage: kubectl create -f <this_file>
-#
-
+apiVersion: v1
+data:
+  key: '{{ printf "%s:%s:%s:%s" .Credentials.NUTANIX_PE_ENDPOINT .Credentials.NUTANIX_PORT .Credentials.NUTANIX_PE_USERNAME .Credentials.NUTANIX_PE_PASSWORD | b64enc }}'
+kind: Secret
+metadata:
+  name: ntnx-secret
+  namespace: kube-system
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: nutanix-csi-metrics
-  namespace: kube-system
   labels:
     app: nutanix-csi-metrics
+  name: nutanix-csi-metrics
+  namespace: kube-system
 spec:
-  type: ClusterIP
-  selector:
-    app: nutanix-csi-controller
   ports:
     - name: provisioner
       port: 9809
-      targetPort: 9809
       protocol: TCP
+      targetPort: 9809
     - name: resizer
       port: 9810
-      targetPort: 9810
       protocol: TCP
----
-# Source: nutanix-csi-storage/templates/ntnx-csi-node-ds.yaml
-# Copyright 2021 Nutanix Inc
-#
-# example usage: kubectl create -f <this_file>
-
-kind: DaemonSet
-apiVersion: apps/v1
-metadata:
-  name: nutanix-csi-node
-  namespace: kube-system
-spec:
+      targetPort: 9810
   selector:
-    matchLabels:
-      app: nutanix-csi-node
-  updateStrategy:
-    type: "RollingUpdate"
-    rollingUpdate:
-      maxUnavailable: 10%
-  template:
-    metadata:
-      labels:
-        app: nutanix-csi-node
-      annotations:
-        "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
-    spec:
-      serviceAccount: nutanix-csi-node
-      hostNetwork: true
-      containers:
-        - name: driver-registrar
-          image: {{ .InternalImages.Get "NutanixCSIRegistrar" }}
-          imagePullPolicy: IfNotPresent
-          args:
-            - --v=2
-            - --csi-address=$(ADDRESS)
-            - --kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)
-          env:
-            - name: ADDRESS
-              value: /csi/csi.sock
-            - name: DRIVER_REG_SOCK_PATH
-              value: /var/lib/kubelet/plugins/csi.nutanix.com/csi.sock
-            - name: KUBE_NODE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-          resources:
-            requests:
-              cpu: 100m
-              memory: 20Mi
-          volumeMounts:
-            - name: plugin-dir
-              mountPath: /csi/
-            - name: registration-dir
-              mountPath: /registration
-        - name: nutanix-csi-node
-          securityContext:
-            privileged: true
-            allowPrivilegeEscalation: true
-          image: {{ .InternalImages.Get "NutanixCSI" }}
-          imagePullPolicy: IfNotPresent
-          args :
-            - "--endpoint=$(CSI_ENDPOINT)"
-            - "--nodeid=$(NODE_ID)"
-            - "--drivername=csi.nutanix.com"
-          env:
-            - name: CSI_ENDPOINT
-              value: unix:///csi/csi.sock
-            - name: NODE_ID
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-            - name: NODE_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
-{{ if .Config.CABundle }}
-{{ caBundleEnvVar | indent 12 }}
-{{ end }}
-          resources:
-            requests:
-              cpu: 100m
-              memory: 200Mi
-          volumeMounts:
-            - name: plugin-dir
-              mountPath: /csi
-            - name: pods-mount-dir
-              mountPath: /var/lib/kubelet
-              # needed so that any mounts setup inside this container are
-              # propagated back to the host machine.
-              mountPropagation: "Bidirectional"
-            - mountPath: /dev
-              name: device-dir
-            - mountPath: /etc/iscsi
-              name: iscsi-dir
-            - mountPath: /host
-              name: root-dir
-              # This is needed because mount is run from host using chroot.
-              mountPropagation: "Bidirectional"
-{{ if .Config.CABundle }}
-{{ caBundleVolumeMount | indent 12 }}
-{{ end }}
-          ports:
-            - containerPort: 9808
-              name: http-endpoint
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: http-endpoint
-            initialDelaySeconds: 10
-            timeoutSeconds: 3
-            periodSeconds: 2
-            failureThreshold: 3
-        - name: liveness-probe
-          resources:
-            requests:
-              cpu: 5m
-              memory: 20Mi
-          volumeMounts:
-            - mountPath: /csi
-              name: plugin-dir
-          image: {{ .InternalImages.Get "NutanixCSILivenessProbe" }}
-          imagePullPolicy: IfNotPresent
-          args:
-            - --csi-address=/csi/csi.sock
-            - --http-endpoint=:9808
-      priorityClassName: system-cluster-critical
-      tolerations:
-        - effect: NoSchedule
-          key: node-role.kubernetes.io/master
-          operator: Exists
-        - effect: NoSchedule
-          key: node-role.kubernetes.io/control-plane
-          operator: Exists
-      volumes:
-        - name: registration-dir
-          hostPath:
-            path: /var/lib/kubelet/plugins_registry/
-            type: Directory
-        - name: plugin-dir
-          hostPath:
-            path: /var/lib/kubelet/plugins/csi.nutanix.com/
-            type: DirectoryOrCreate
-        - name: pods-mount-dir
-          hostPath:
-            path: /var/lib/kubelet
-            type: Directory
-        - name: device-dir
-          hostPath:
-            path: /dev
-        - name: iscsi-dir
-          hostPath:
-            path: /etc/iscsi
-            type: Directory
-        - name: root-dir
-          hostPath:
-            path: /
-            type: Directory
-{{ if .Config.CABundle }}
-{{ caBundleVolume | indent 8 }}
-{{ end }}
+    app: nutanix-csi-controller
+  type: ClusterIP
 ---
-# Source: nutanix-csi-storage/templates/ntnx-csi-controller-deployment.yaml
-# Copyright 2021 Nutanix Inc
-#
-# example usage: kubectl create -f <this_file>
-
-kind: Deployment
 apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: nutanix-csi-controller
   namespace: kube-system
 spec:
   replicas: 2
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 0
   selector:
     matchLabels:
       app: nutanix-csi-controller
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
   template:
     metadata:
+      annotations:
+        kubeone.k8c.io/cabundle-hash: '{{ .Config.CABundle | sha256sum }}'
+        kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
       labels:
         app: nutanix-csi-controller
-      annotations:
-        "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
     spec:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - podAffinityTerm:
-              labelSelector:
-                matchLabels:
-                  app: nutanix-csi-controller
-              topologyKey: kubernetes.io/hostname
-            weight: 100
-      serviceAccount: nutanix-csi-controller
-      hostNetwork: true
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: nutanix-csi-controller
+                topologyKey: kubernetes.io/hostname
+              weight: 100
       containers:
-        - name: csi-provisioner
-          image: {{ .InternalImages.Get "NutanixCSIProvisioner" }}
-          imagePullPolicy: IfNotPresent
-          args:
+        - args:
             - --csi-address=$(ADDRESS)
             - --timeout=60s
             - --worker-threads=16
-            # This adds PV/PVC metadata to create volume requests
             - --extra-create-metadata=true
             - --default-fstype=ext4
-            # This is used to collect CSI operation metrics
             - --http-endpoint=:9809
             - --v=2
             - --leader-election=true
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          image: '{{ .InternalImages.Get "NutanixCSIProvisioner" }}'
+          imagePullPolicy: IfNotPresent
+          name: csi-provisioner
           resources:
             requests:
               cpu: 100m
               memory: 200Mi
           volumeMounts:
-            - name: socket-dir
-              mountPath: /var/lib/csi/sockets/pluginproxy/
-        - name: csi-resizer
-          image: {{ .InternalImages.Get "NutanixCSIResizer" }}
-          imagePullPolicy: IfNotPresent
-          args:
+            - mountPath: /var/lib/csi/sockets/pluginproxy/
+              name: socket-dir
+        - args:
             - --v=2
             - --csi-address=$(ADDRESS)
             - --timeout=60s
             - --leader-election=true
-            # NTNX CSI dirver supports online volume expansion.
             - --handle-volume-inuse-error=false
             - --http-endpoint=:9810
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          image: '{{ .InternalImages.Get "NutanixCSIResizer" }}'
+          imagePullPolicy: IfNotPresent
+          name: csi-resizer
           resources:
             requests:
               cpu: 5m
               memory: 30Mi
           volumeMounts:
-            - name: socket-dir
-              mountPath: /var/lib/csi/sockets/pluginproxy/
-        - name: csi-snapshotter
-          image: {{ .InternalImages.Get "NutanixCSISnapshotter" }}
-          imagePullPolicy: IfNotPresent
-          args:
-          - --csi-address=$(ADDRESS)
-          - --leader-election=true
-          - --logtostderr=true
-          - --timeout=300s
+            - mountPath: /var/lib/csi/sockets/pluginproxy/
+              name: socket-dir
+        - args:
+            - --csi-address=$(ADDRESS)
+            - --leader-election=true
+            - --logtostderr=true
+            - --timeout=300s
           env:
-          - name: ADDRESS
-            value: /csi/csi.sock
+            - name: ADDRESS
+              value: /csi/csi.sock
+          image: '{{ .InternalImages.Get "NutanixCSISnapshotter" }}'
+          imagePullPolicy: IfNotPresent
+          name: csi-snapshotter
           resources:
             requests:
               cpu: 5m
               memory: 30Mi
           volumeMounts:
-          - name: socket-dir
-            mountPath: /csi
-        - name: nutanix-csi-plugin
-          image: {{ .InternalImages.Get "NutanixCSI" }}
-          imagePullPolicy: IfNotPresent
-          securityContext:
-            allowPrivilegeEscalation: true
-            privileged: true
-          args:
+            - mountPath: /csi
+              name: socket-dir
+        - args:
             - --endpoint=$(CSI_ENDPOINT)
             - --nodeid=$(NODE_ID)
             - --drivername=csi.nutanix.com
@@ -437,32 +348,42 @@ spec:
 {{ if .Config.CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
+          image: '{{ .InternalImages.Get "NutanixCSI" }}'
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: http-endpoint
+            initialDelaySeconds: 10
+            periodSeconds: 2
+            timeoutSeconds: 3
+          name: nutanix-csi-plugin
+          ports:
+            - containerPort: 9807
+              name: http-endpoint
+              protocol: TCP
           resources:
             requests:
               cpu: 100m
               memory: 200Mi
+          securityContext:
+            allowPrivilegeEscalation: true
+            privileged: true
           volumeMounts:
             - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
-            # This is needed for static NFS volume feature.
             - mountPath: /host
               name: root-dir
 {{ if .Config.CABundle }}
 {{ caBundleVolumeMount | indent 12 }}
 {{ end }}
-          ports:
-            - containerPort: 9807
-              name: http-endpoint
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: http-endpoint
-            initialDelaySeconds: 10
-            timeoutSeconds: 3
-            periodSeconds: 2
-            failureThreshold: 3
-        - name: liveness-probe
+        - args:
+            - --csi-address=/csi/csi.sock
+            - --http-endpoint=:9807
+          image: '{{ .InternalImages.Get "NutanixCSILivenessProbe" }}'
+          imagePullPolicy: IfNotPresent
+          name: liveness-probe
           resources:
             requests:
               cpu: 5m
@@ -470,14 +391,11 @@ spec:
           volumeMounts:
             - mountPath: /csi
               name: socket-dir
-          image: {{ .InternalImages.Get "NutanixCSILivenessProbe" }}
-          imagePullPolicy: IfNotPresent
-          args:
-            - --csi-address=/csi/csi.sock
-            - --http-endpoint=:9807
-      priorityClassName: system-cluster-critical
+      hostNetwork: true
       nodeSelector:
         node-role.kubernetes.io/control-plane: ""
+      priorityClassName: system-cluster-critical
+      serviceAccount: nutanix-csi-controller
       tolerations:
         - effect: NoSchedule
           key: node-role.kubernetes.io/master
@@ -496,14 +414,160 @@ spec:
 {{ caBundleVolume | indent 8 }}
 {{ end }}
 ---
-# Source: nutanix-csi-storage/templates/ntnx-csi-rbac.yaml
-# Copyright 2018 Nutanix Inc
-#
-# Configuration to deploy the Nutanix CSI driver
-#
-# example usage: kubectl create -f <this_file>
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nutanix-csi-node
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: nutanix-csi-node
+  template:
+    metadata:
+      annotations:
+        kubeone.k8c.io/cabundle-hash: '{{ .Config.CABundle | sha256sum }}'
+        kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
+      labels:
+        app: nutanix-csi-node
+    spec:
+      containers:
+        - args:
+            - --v=2
+            - --csi-address=$(ADDRESS)
+            - --kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)
+          env:
+            - name: ADDRESS
+              value: /csi/csi.sock
+            - name: DRIVER_REG_SOCK_PATH
+              value: /var/lib/kubelet/plugins/csi.nutanix.com/csi.sock
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          image: '{{ .InternalImages.Get "NutanixCSIRegistrar" }}'
+          imagePullPolicy: IfNotPresent
+          name: driver-registrar
+          resources:
+            requests:
+              cpu: 100m
+              memory: 20Mi
+          volumeMounts:
+            - mountPath: /csi/
+              name: plugin-dir
+            - mountPath: /registration
+              name: registration-dir
+        - args:
+            - --endpoint=$(CSI_ENDPOINT)
+            - --nodeid=$(NODE_ID)
+            - --drivername=csi.nutanix.com
+          env:
+            - name: CSI_ENDPOINT
+              value: unix:///csi/csi.sock
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+{{ if .Config.CABundle }}
+{{ caBundleEnvVar | indent 12 }}
+{{ end }}
+          image: '{{ .InternalImages.Get "NutanixCSI" }}'
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: http-endpoint
+            initialDelaySeconds: 10
+            periodSeconds: 2
+            timeoutSeconds: 3
+          name: nutanix-csi-node
+          ports:
+            - containerPort: 9808
+              name: http-endpoint
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+          securityContext:
+            allowPrivilegeEscalation: true
+            privileged: true
+          volumeMounts:
+            - mountPath: /csi
+              name: plugin-dir
+            - mountPath: /var/lib/kubelet
+              mountPropagation: Bidirectional
+              name: pods-mount-dir
+            - mountPath: /dev
+              name: device-dir
+            - mountPath: /etc/iscsi
+              name: iscsi-dir
+            - mountPath: /host
+              mountPropagation: Bidirectional
+              name: root-dir
+{{ if .Config.CABundle }}
+{{ caBundleVolumeMount | indent 12 }}
+{{ end }}
+        - args:
+            - --csi-address=/csi/csi.sock
+            - --http-endpoint=:9808
+          image: '{{ .InternalImages.Get "NutanixCSILivenessProbe" }}'
+          imagePullPolicy: IfNotPresent
+          name: liveness-probe
+          resources:
+            requests:
+              cpu: 5m
+              memory: 20Mi
+          volumeMounts:
+            - mountPath: /csi
+              name: plugin-dir
+      hostNetwork: true
+      priorityClassName: system-cluster-critical
+      serviceAccount: nutanix-csi-node
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists
+      volumes:
+        - hostPath:
+            path: /var/lib/kubelet/plugins_registry/
+            type: Directory
+          name: registration-dir
+        - hostPath:
+            path: /var/lib/kubelet/plugins/csi.nutanix.com/
+            type: DirectoryOrCreate
+          name: plugin-dir
+        - hostPath:
+            path: /var/lib/kubelet
+            type: Directory
+          name: pods-mount-dir
+        - hostPath:
+            path: /dev
+          name: device-dir
+        - hostPath:
+            path: /etc/iscsi
+            type: Directory
+          name: iscsi-dir
+        - hostPath:
+            path: /
+            type: Directory
+          name: root-dir
+{{ if .Config.CABundle }}
+{{ caBundleVolume | indent 8 }}
+{{ end }}
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 10%
+    type: RollingUpdate
 ---
-# Source: nutanix-csi-storage/templates/csi-driver.yaml
 apiVersion: storage.k8s.io/v1
 kind: CSIDriver
 metadata:

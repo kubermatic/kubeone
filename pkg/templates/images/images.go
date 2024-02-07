@@ -341,11 +341,11 @@ func optionalResources() map[Resource]map[string]string {
 		VsphereCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v6.3.3"},
 
 		// Nutanix CSI
-		NutanixCSI:              {"*": "quay.io/karbon/ntnx-csi:v2.6.3"},
-		NutanixCSILivenessProbe: {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.10.0"},
-		NutanixCSIProvisioner:   {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.5.0"},
-		NutanixCSIRegistrar:     {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.8.0"},
-		NutanixCSIResizer:       {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.8.0"},
+		NutanixCSI:              {"*": "quay.io/karbon/ntnx-csi:v2.6.6"},
+		NutanixCSILivenessProbe: {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.11.0"},
+		NutanixCSIProvisioner:   {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.6.2"},
+		NutanixCSIRegistrar:     {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.9.1"},
+		NutanixCSIResizer:       {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.9.2"},
 		NutanixCSISnapshotter:   {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v3.0.3"},
 
 		// GCP Compute Persistent Disk CSI
