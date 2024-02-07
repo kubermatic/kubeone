@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: kube-system
 
 resources:
-  - base/vcloud-basic-auth.yaml
   - base/vcloud-csi-config.yaml
   - https://raw.githubusercontent.com/vmware/cloud-director-named-disk-csi-driver/1.5.0/manifests/csi-controller.yaml
   - https://raw.githubusercontent.com/vmware/cloud-director-named-disk-csi-driver/1.5.0/manifests/csi-driver.yaml

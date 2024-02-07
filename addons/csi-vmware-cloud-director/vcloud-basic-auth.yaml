@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vcloud-basic-auth
+  namespace: kube-system
+data:
+{{- with .Credentials.VCD_USER }}
+  username: {{ . | b64enc }}
+{{- end }}
+{{- with .Credentials.VCD_PASSWORD }}
+  password: {{ . | b64enc }}
+{{- end }}
+{{- with .Credentials.VCD_API_TOKEN }}
+  refreshToken: {{ . | b64enc }}
+{{- end }}
