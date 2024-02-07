@@ -36,6 +36,8 @@ patches:
         path: /spec/template/spec/containers/2/image
         value: |-
           {{ .InternalImages.Get "VMwareCloudDirectorCSI" }}
+      - op: remove
+        path: /spec/template/spec/containers/2/command/3
   - target:
       group: apps
       version: v1
