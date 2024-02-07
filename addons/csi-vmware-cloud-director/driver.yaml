@@ -1,0 +1,456 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: csi-vcd-controller-sa
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: csi-vcd-node-sa
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: csi-attacher-role
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumes
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - volumeattachments
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - patch
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - volumeattachments/status
+    verbs:
+      - patch
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - csinodes
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: csi-nodeplugin-role
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: csi-provisioner-role
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumes
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumeclaims
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - storageclasses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - csinodes
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - list
+      - watch
+      - create
+      - update
+      - patch
+  - apiGroups:
+      - snapshot.storage.k8s.io
+    resources:
+      - volumesnapshots
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - snapshot.storage.k8s.io
+    resources:
+      - volumesnapshotcontents
+    verbs:
+      - get
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: csi-attacher-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: csi-attacher-role
+subjects:
+  - kind: ServiceAccount
+    name: csi-vcd-controller-sa
+    namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: csi-nodeplugin-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: csi-nodeplugin-role
+subjects:
+  - kind: ServiceAccount
+    name: csi-vcd-node-sa
+    namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: csi-provisioner-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: csi-provisioner-role
+subjects:
+  - kind: ServiceAccount
+    name: csi-vcd-controller-sa
+    namespace: kube-system
+---
+apiVersion: v1
+data:
+  vcloud-csi-config.yaml: |
+    vcd:
+      host: {{ required "Please provide VCD_URL" (trimSuffix "/api" .Credentials.VCD_URL) }}
+      org: {{ required "Please provide VCD_ORG" .Credentials.VCD_ORG }}
+      vdc: {{ required "Please provide VCD_VDC" .Credentials.VCD_VDC }}
+      vAppName: {{ default .Config.CloudProvider.VMwareCloudDirector.VApp .Params.vAppName }}
+    clusterid: {{ default .Config.Name .Params.clusterid }}
+kind: ConfigMap
+metadata:
+  name: vcloud-csi-configmap
+  namespace: kube-system
+---
+apiVersion: v1
+data:
+  password: '{{ with .Credentials.VCD_PASSWORD }}{{ . | b64enc }}{{ end }}'
+  refreshToken: '{{ with .Credentials.VCD_API_TOKEN }}{{ . | b64enc }}{{ end }}'
+  username: '{{ with .Credentials.VCD_USER }}{{ . | b64enc }}{{ end }}'
+kind: Secret
+metadata:
+  name: vcloud-basic-auth
+  namespace: kube-system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: csi-vcd-controllerplugin
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: csi-vcd-controllerplugin
+  template:
+    metadata:
+      annotations:
+        kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
+      labels:
+        app: csi-vcd-controllerplugin
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - preference:
+                matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: Exists
+              weight: 1
+      containers:
+        - args:
+            - --csi-address=$(ADDRESS)
+            - --timeout=180s
+            - --v=5
+          env:
+            - name: ADDRESS
+              value: unix:///var/lib/csi/sockets/pluginproxy/csi.sock
+          image: '{{ .InternalImages.Get "VMwareCloudDirectorCSIAttacher" }}'
+          imagePullPolicy: IfNotPresent
+          name: csi-attacher
+          volumeMounts:
+            - mountPath: /var/lib/csi/sockets/pluginproxy/
+              name: socket-dir
+        - args:
+            - --csi-address=$(ADDRESS)
+            - --default-fstype=ext4
+            - --timeout=300s
+            - --v=5
+          env:
+            - name: ADDRESS
+              value: unix:///var/lib/csi/sockets/pluginproxy/csi.sock
+          image: '{{ .InternalImages.Get "VMwareCloudDirectorCSIProvisioner" }}'
+          imagePullPolicy: IfNotPresent
+          name: csi-provisioner
+          volumeMounts:
+            - mountPath: /var/lib/csi/sockets/pluginproxy/
+              name: socket-dir
+        - command:
+            - /opt/vcloud/bin/cloud-director-named-disk-csi-driver
+            - --cloud-config=/etc/kubernetes/vcloud/vcloud-csi-config.yaml
+            - --endpoint=$(CSI_ENDPOINT)
+            - --upgrade-rde
+            - --v=5
+          env:
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: CSI_ENDPOINT
+              value: unix:///var/lib/csi/sockets/pluginproxy/csi.sock
+          image: '{{ .InternalImages.Get "VMwareCloudDirectorCSI" }}'
+          imagePullPolicy: IfNotPresent
+          name: vcd-csi-plugin
+          securityContext:
+            allowPrivilegeEscalation: true
+            capabilities:
+              add:
+                - SYS_ADMIN
+            privileged: true
+          volumeMounts:
+            - mountPath: /var/lib/csi/sockets/pluginproxy/
+              name: socket-dir
+            - mountPath: /dev
+              mountPropagation: HostToContainer
+              name: pods-probe-dir
+            - mountPath: /var/lib/kubelet/plugins/kubernetes.io/csi
+              mountPropagation: Bidirectional
+              name: pv-dir
+            - mountPath: /etc/kubernetes/vcloud
+              name: vcloud-csi-config-volume
+            - mountPath: /etc/kubernetes/vcloud/basic-auth
+              name: vcloud-basic-auth-volume
+      dnsPolicy: Default
+      serviceAccount: csi-vcd-controller-sa
+      tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+      volumes:
+        - emptyDir: {}
+          name: socket-dir
+        - hostPath:
+            path: /dev
+            type: Directory
+          name: pods-probe-dir
+        - hostPath:
+            path: /var/lib/kubelet/plugins/kubernetes.io/csi
+            type: DirectoryOrCreate
+          name: pv-dir
+        - configMap:
+            name: vcloud-csi-configmap
+          name: vcloud-csi-config-volume
+        - name: vcloud-basic-auth-volume
+          secret:
+            secretName: vcloud-basic-auth
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: csi-vcd-nodeplugin
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: csi-vcd-nodeplugin
+  template:
+    metadata:
+      annotations:
+        kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
+      labels:
+        app: csi-vcd-nodeplugin
+    spec:
+      containers:
+        - args:
+            - --v=5
+            - --csi-address=$(ADDRESS)
+            - --kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)
+          env:
+            - name: ADDRESS
+              value: /csi/csi.sock
+            - name: DRIVER_REG_SOCK_PATH
+              value: /var/lib/kubelet/csi-plugins/named-disk.csi.cloud-director.vmware.com/csi.sock
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          image: '{{ .InternalImages.Get "VMwareCloudDirectorCSINodeDriverRegistrar" }}'
+          imagePullPolicy: IfNotPresent
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - rm -rf /registration/named-disk.csi.cloud-director.vmware.com /registration/named-disk.csi.cloud-director.vmware.com-reg.sock
+          name: node-driver-registrar
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+            - mountPath: /registration
+              name: registration-dir
+        - command:
+            - /opt/vcloud/bin/cloud-director-named-disk-csi-driver
+            - --nodeid=$(NODE_ID)
+            - --endpoint=$(CSI_ENDPOINT)
+            - --cloud-config=/etc/kubernetes/vcloud/vcloud-csi-config.yaml
+            - --v=5
+          env:
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: CSI_ENDPOINT
+              value: unix://csi/csi.sock
+          image: '{{ .InternalImages.Get "VMwareCloudDirectorCSI" }}'
+          imagePullPolicy: IfNotPresent
+          name: vcd-csi-plugin
+          securityContext:
+            allowPrivilegeEscalation: true
+            capabilities:
+              add:
+                - SYS_ADMIN
+            privileged: true
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+            - mountPath: /var/lib/kubelet/pods
+              mountPropagation: Bidirectional
+              name: kubelet-dir
+            - mountPath: /var/lib/cloud/data
+              name: pods-cloud-data
+              readOnly: true
+            - mountPath: /dev
+              mountPropagation: HostToContainer
+              name: pods-probe-dir
+            - mountPath: /var/lib/kubelet/plugins/kubernetes.io/csi
+              mountPropagation: Bidirectional
+              name: pv-dir
+            - mountPath: /etc/kubernetes/vcloud
+              name: vcloud-csi-config-volume
+            - mountPath: /etc/kubernetes/vcloud/basic-auth
+              name: vcloud-basic-auth-volume
+      dnsPolicy: Default
+      hostNetwork: true
+      serviceAccount: csi-vcd-node-sa
+      volumes:
+        - hostPath:
+            path: /var/lib/kubelet/csi-plugins/named-disk.csi.cloud-director.vmware.com
+            type: DirectoryOrCreate
+          name: socket-dir
+        - hostPath:
+            path: /var/lib/kubelet/plugins_registry/
+            type: DirectoryOrCreate
+          name: registration-dir
+        - hostPath:
+            path: /var/lib/kubelet/pods
+            type: DirectoryOrCreate
+          name: kubelet-dir
+        - hostPath:
+            path: /var/lib/cloud/data
+            type: DirectoryOrCreate
+          name: pods-cloud-data
+        - hostPath:
+            path: /dev
+            type: Directory
+          name: pods-probe-dir
+        - hostPath:
+            path: /var/lib/kubelet/plugins/kubernetes.io/csi
+            type: DirectoryOrCreate
+          name: pv-dir
+        - configMap:
+            name: vcloud-csi-configmap
+          name: vcloud-csi-config-volume
+        - name: vcloud-basic-auth-volume
+          secret:
+            secretName: vcloud-basic-auth
+---
+apiVersion: storage.k8s.io/v1
+kind: CSIDriver
+metadata:
+  name: named-disk.csi.cloud-director.vmware.com
+spec:
+  attachRequired: true
+  podInfoOnMount: false
