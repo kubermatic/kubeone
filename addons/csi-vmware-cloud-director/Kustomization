@@ -1,0 +1,57 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kube-system
+
+resources:
+  - base/vcloud-csi-config.yaml
+  - https://raw.githubusercontent.com/vmware/cloud-director-named-disk-csi-driver/1.5.0/manifests/csi-controller.yaml
+  - https://raw.githubusercontent.com/vmware/cloud-director-named-disk-csi-driver/1.5.0/manifests/csi-driver.yaml
+  - https://raw.githubusercontent.com/vmware/cloud-director-named-disk-csi-driver/1.5.0/manifests/csi-node.yaml
+  # following manifests are slightly modifined versions of the above, augmented with the CLUSTER_ID referece
+  # TODO: investigate if we need to use those
+  # - https://raw.githubusercontent.com/vmware/cloud-director-named-disk-csi-driver/1.5.0/manifests/csi-controller-crs.yaml
+  # - https://raw.githubusercontent.com/vmware/cloud-director-named-disk-csi-driver/1.5.0/manifests/csi-node-crs.yaml
+
+patches:
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: csi-vcd-controllerplugin
+    patch: |-
+      - op: add
+        path: /spec/template/metadata/annotations
+        value:
+          "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: |-
+          {{ .InternalImages.Get "VMwareCloudDirectorCSIAttacher" }}
+      - op: replace
+        path: /spec/template/spec/containers/1/image
+        value: |-
+          {{ .InternalImages.Get "VMwareCloudDirectorCSIProvisioner" }}
+      - op: replace
+        path: /spec/template/spec/containers/2/image
+        value: |-
+          {{ .InternalImages.Get "VMwareCloudDirectorCSI" }}
+      - op: remove
+        path: /spec/template/spec/containers/2/command/3
+  - target:
+      group: apps
+      version: v1
+      kind: DaemonSet
+      name: csi-vcd-nodeplugin
+    patch: |-
+      - op: add
+        path: /spec/template/metadata/annotations
+        value:
+          "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: |-
+          {{ .InternalImages.Get "VMwareCloudDirectorCSINodeDriverRegistrar" }}
+      - op: replace
+        path: /spec/template/spec/containers/1/image
+        value: |-
+          {{ .InternalImages.Get "VMwareCloudDirectorCSI" }}
