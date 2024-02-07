@@ -156,7 +156,9 @@ func SetDefaults_Versions(obj *KubeOneCluster) {
 }
 
 func SetDefaults_ContainerRuntime(obj *KubeOneCluster) {
-	obj.ContainerRuntime.Containerd = &ContainerRuntimeContainerd{}
+	if obj.ContainerRuntime.Containerd == nil {
+		obj.ContainerRuntime.Containerd = &ContainerRuntimeContainerd{}
+	}
 }
 
 func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
