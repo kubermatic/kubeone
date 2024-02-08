@@ -148,9 +148,10 @@ const (
 
 	// CCMs and CSI plugins
 	DigitaloceanCCM
-	HetznerCCM
-	OpenstackCCM
 	EquinixMetalCCM
+	HetznerCCM
+	NutanixCCM
+	OpenstackCCM
 	VsphereCCM
 
 	// CSI Vault Secret Provider
@@ -339,6 +340,9 @@ func optionalResources() map[Resource]map[string]string {
 		VsphereCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.6.2"},
 		VsphereCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.9.2"},
 		VsphereCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v6.3.3"},
+
+		// Nutanix CCM
+		NutanixCCM: {"*": "ghcr.io/nutanix-cloud-native/cloud-provider-nutanix/controller:v0.3.2"},
 
 		// Nutanix CSI
 		NutanixCSI:              {"*": "quay.io/karbon/ntnx-csi:v2.6.6"},

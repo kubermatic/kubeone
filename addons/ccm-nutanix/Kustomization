@@ -1,0 +1,34 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+helmCharts:
+- name: nutanix-cloud-provider
+  repo: https://nutanix.github.io/helm/
+  version: 0.3.3
+  releaseName: nutanix-cloud-provider
+  namespace: kube-system
+  valuesFile: values
+
+patches:
+  - patch: |-
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: nutanix-creds
+        namespace: kube-system
+      $patch: delete
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: nutanix-cloud-controller-manager
+    patch: |-
+      - op: add
+        path: /spec/template/metadata/annotations
+        value:
+          "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
+          "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: |-
+          {{ .InternalImages.Get "NutanixCCM" }}

@@ -457,6 +457,12 @@ func ensureCCMAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 				},
 			},
 		)
+	case s.Cluster.CloudProvider.Nutanix != nil:
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCCMNutanix,
+			},
+		)
 	case s.Cluster.CloudProvider.Openstack != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
