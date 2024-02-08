@@ -19,57 +19,72 @@ patches:
         path: /data/key
         value: |
           {{ printf "%s:%s:%s:%s" .Credentials.NUTANIX_PE_ENDPOINT .Credentials.NUTANIX_PORT .Credentials.NUTANIX_PE_USERNAME .Credentials.NUTANIX_PE_PASSWORD | b64enc }}
-  - target:
-      group: apps
-      version: v1
+
+  - patch: |-
+      apiVersion: apps/v1
       kind: DaemonSet
-      name: nutanix-csi-node
-    patch: |-
-      - op: add
-        path: /spec/template/metadata/annotations
-        value:
-          "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
-          "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
-      - op: replace
-        path: /spec/template/spec/containers/0/image
-        value: |-
-          {{ .InternalImages.Get "NutanixCSIRegistrar" }}
-      - op: replace
-        path: /spec/template/spec/containers/1/image
-        value: |-
-          {{ .InternalImages.Get "NutanixCSI" }}
-      - op: replace
-        path: /spec/template/spec/containers/2/image
-        value: |-
-          {{ .InternalImages.Get "NutanixCSILivenessProbe" }}
-  - target:
-      group: apps
-      version: v1
+      metadata:
+        name: nutanix-csi-node
+        namespace: kube-system
+      spec:
+        template:
+          metadata:
+            annotations:
+              kubeone.k8c.io/cabundle-hash: '{{ .Config.CABundle | sha256sum }}'
+              kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
+          spec:
+            containers:
+              - name: driver-registrar
+                image: '{{ .InternalImages.Get "NutanixCSIRegistrar" }}'
+              - name: nutanix-csi-node
+                image: '{{ .InternalImages.Get "NutanixCSI" }}'
+                env:
+                  - name: SSL_CERT_FILE
+                    value: /etc/kubeone/certs/ca-certificates.crt
+                volumeMounts:
+                  - mountPath: /etc/kubeone/certs
+                    name: ca-bundle
+                    readOnly: true
+              - name: liveness-probe
+                image: '{{ .InternalImages.Get "NutanixCSILivenessProbe" }}'
+            volumes:
+              - configMap:
+                  name: ca-bundle
+                  optional: true
+                name: ca-bundle
+  - patch: |-
+      apiVersion: apps/v1
       kind: Deployment
-      name: nutanix-csi-controller
-    patch: |-
-      - op: add
-        path: /spec/template/metadata/annotations
-        value:
-          "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
-          "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
-      - op: replace
-        path: /spec/template/spec/containers/0/image
-        value: |-
-          {{ .InternalImages.Get "NutanixCSIProvisioner" }}
-      - op: replace
-        path: /spec/template/spec/containers/1/image
-        value: |-
-          {{ .InternalImages.Get "NutanixCSIResizer" }}
-      - op: replace
-        path: /spec/template/spec/containers/2/image
-        value: |-
-          {{ .InternalImages.Get "NutanixCSISnapshotter" }}
-      - op: replace
-        path: /spec/template/spec/containers/3/image
-        value: |-
-          {{ .InternalImages.Get "NutanixCSI" }}
-      - op: replace
-        path: /spec/template/spec/containers/4/image
-        value: |-
-          {{ .InternalImages.Get "NutanixCSILivenessProbe" }}
+      metadata:
+        name: nutanix-csi-controller
+        namespace: kube-system
+      spec:
+        template:
+          metadata:
+            annotations:
+              kubeone.k8c.io/cabundle-hash: '{{ .Config.CABundle | sha256sum }}'
+              kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
+          spec:
+            containers:
+              - name: csi-provisioner
+                image: '{{ .InternalImages.Get "NutanixCSIProvisioner" }}'
+              - name: csi-resizer
+                image: '{{ .InternalImages.Get "NutanixCSIResizer" }}'
+              - name: csi-snapshotter
+                image: '{{ .InternalImages.Get "NutanixCSISnapshotter" }}'
+              - name: nutanix-csi-plugin
+                image: '{{ .InternalImages.Get "NutanixCSI" }}'
+                env:
+                  - name: SSL_CERT_FILE
+                    value: /etc/kubeone/certs/ca-certificates.crt
+                volumeMounts:
+                  - name: ca-bundle
+                    mountPath: /etc/kubeone/certs
+                    readOnly: true
+              - name: liveness-probe
+                image: '{{ .InternalImages.Get "NutanixCSILivenessProbe" }}'
+            volumes:
+              - name: ca-bundle
+                configMap:
+                  name: ca-bundle
+                  optional: true

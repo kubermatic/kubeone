@@ -339,15 +339,14 @@ spec:
             - --nodeid=$(NODE_ID)
             - --drivername=csi.nutanix.com
           env:
+            - name: SSL_CERT_FILE
+              value: /etc/kubeone/certs/ca-certificates.crt
             - name: CSI_ENDPOINT
               value: unix:///var/lib/csi/sockets/pluginproxy/csi.sock
             - name: NODE_ID
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-{{ if .Config.CABundle }}
-{{ caBundleEnvVar | indent 12 }}
-{{ end }}
           image: '{{ .InternalImages.Get "NutanixCSI" }}'
           imagePullPolicy: IfNotPresent
           livenessProbe:
@@ -371,13 +370,13 @@ spec:
             allowPrivilegeEscalation: true
             privileged: true
           volumeMounts:
+            - mountPath: /etc/kubeone/certs
+              name: ca-bundle
+              readOnly: true
             - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
             - mountPath: /host
               name: root-dir
-{{ if .Config.CABundle }}
-{{ caBundleVolumeMount | indent 12 }}
-{{ end }}
         - args:
             - --csi-address=/csi/csi.sock
             - --http-endpoint=:9807
@@ -404,15 +403,16 @@ spec:
           key: node-role.kubernetes.io/control-plane
           operator: Exists
       volumes:
+        - configMap:
+            name: ca-bundle
+            optional: true
+          name: ca-bundle
         - emptyDir: {}
           name: socket-dir
         - hostPath:
             path: /
             type: Directory
           name: root-dir
-{{ if .Config.CABundle }}
-{{ caBundleVolume | indent 8 }}
-{{ end }}
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -462,6 +462,8 @@ spec:
             - --nodeid=$(NODE_ID)
             - --drivername=csi.nutanix.com
           env:
+            - name: SSL_CERT_FILE
+              value: /etc/kubeone/certs/ca-certificates.crt
             - name: CSI_ENDPOINT
               value: unix:///csi/csi.sock
             - name: NODE_ID
@@ -472,9 +474,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
-{{ if .Config.CABundle }}
-{{ caBundleEnvVar | indent 12 }}
-{{ end }}
           image: '{{ .InternalImages.Get "NutanixCSI" }}'
           imagePullPolicy: IfNotPresent
           livenessProbe:
@@ -498,6 +497,9 @@ spec:
             allowPrivilegeEscalation: true
             privileged: true
           volumeMounts:
+            - mountPath: /etc/kubeone/certs
+              name: ca-bundle
+              readOnly: true
             - mountPath: /csi
               name: plugin-dir
             - mountPath: /var/lib/kubelet
@@ -510,9 +512,6 @@ spec:
             - mountPath: /host
               mountPropagation: Bidirectional
               name: root-dir
-{{ if .Config.CABundle }}
-{{ caBundleVolumeMount | indent 12 }}
-{{ end }}
         - args:
             - --csi-address=/csi/csi.sock
             - --http-endpoint=:9808
@@ -537,6 +536,10 @@ spec:
           key: node-role.kubernetes.io/control-plane
           operator: Exists
       volumes:
+        - configMap:
+            name: ca-bundle
+            optional: true
+          name: ca-bundle
         - hostPath:
             path: /var/lib/kubelet/plugins_registry/
             type: Directory
@@ -560,9 +563,6 @@ spec:
             path: /
             type: Directory
           name: root-dir
-{{ if .Config.CABundle }}
-{{ caBundleVolume | indent 8 }}
-{{ end }}
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%
