@@ -42,9 +42,11 @@ The following components/images should be updated:
 - [ ] [DigitalOcean CCM](https://github.com/digitalocean/digitalocean-cloud-controller-manager) <!-- (PR reference|already the latest) -->
 - [ ] [DigitalOcean CSI](https://github.com/digitalocean/csi-digitalocean) <!-- (PR reference|already the latest) -->
 - [ ] [EquinixMetal CCM](https://github.com/equinix/cloud-provider-equinix-metal) <!-- (PR reference|already the latest) -->
+- [ ] [GCP CCM](https://github.com/kubernetes/cloud-provider-gcp)  <!-- (PR reference|already the latest) -->
 - [ ] [GCP Compute Persistent Disk CSI](https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver) <!-- (PR reference|already the latest) -->
 - [ ] [Hetzner CCM](https://github.com/hetznercloud/hcloud-cloud-controller-manager) <!-- (PR reference|already the latest) -->
 - [ ] [Hetzner CSI](https://github.com/hetznercloud/csi-driver) <!-- (PR reference|already the latest) -->
+- [ ] [Nutanix CCM](https://github.com/nutanix/helm) <!-- (PR reference|already the latest) -->
 - [ ] [Nutanix CSI](https://github.com/nutanix/helm) <!-- (PR reference|already the latest) --> <!-- We intentionally use Helm charts repo, because the nutanix-csi repo is not up-to-date -->
 - [ ] [OpenStack CCM](https://github.com/kubernetes/cloud-provider-openstack) <!-- (PR reference|already the latest) -->
 - [ ] [OpenStack CSI](https://github.com/kubernetes/cloud-provider-openstack) <!-- (PR reference|already the latest) -->
