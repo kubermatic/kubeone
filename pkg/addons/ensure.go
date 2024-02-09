@@ -448,6 +448,12 @@ func ensureCCMAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 				name: resources.AddonCCMDigitalOcean,
 			},
 		)
+	case s.Cluster.CloudProvider.GCE != nil:
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCCMGCP,
+			},
+		)
 	case s.Cluster.CloudProvider.Hetzner != nil:
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{

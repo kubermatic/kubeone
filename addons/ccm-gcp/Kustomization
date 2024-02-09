@@ -1,0 +1,41 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kube-system
+
+resources:
+  - https://raw.githubusercontent.com/kubernetes/cloud-provider-gcp/providers/v0.28.2/deploy/packages/default/manifest.yaml
+
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: cloud-controller-manager
+        namespace: kube-system
+      spec:
+        template:
+          metadata:
+            annotations:
+              kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
+          spec:
+            containers:
+              - name: cloud-controller-manager
+                image: '{{ .InternalImages.Get "GCPCCM" }}'
+                env:
+                  - name: GOOGLE_APPLICATION_CREDENTIALS
+                    value: /etc/cloud-sa/cloud-sa.json
+                volumeMounts:
+                  - mountPath: /etc/kubernetes/cloud.config
+                    $patch: delete
+                  - name: cloudconfig
+                    mountPath: /etc/cloud-sa
+                    readOnly: true
+            volumes:
+              - name: cloudconfig
+                secret:
+                  items:
+                  - key: GOOGLE_SERVICE_ACCOUNT
+                    path: cloud-sa.json
+                  secretName: kubeone-ccm-credentials
+                hostPath:
+                  $patch: delete
