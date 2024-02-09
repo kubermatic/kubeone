@@ -64,7 +64,7 @@ func installCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		Example:       `kubeone install -m mycluster.yaml -t terraformoutput.json`,
 		Hidden:        true,
 		SilenceErrors: true,
-		RunE: func(_ *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
 				return err

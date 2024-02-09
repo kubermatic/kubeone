@@ -114,7 +114,7 @@ func configPrintCmd() *cobra.Command {
 		Args:          cobra.ExactArgs(0),
 		Example:       fmt.Sprintf("kubeone config print --provider digitalocean --kubernetes-version %s --cluster-name example", defaultKubeVersion),
 		SilenceErrors: true,
-		RunE: func(_ *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			return runPrint(opts)
 		},
 	}
@@ -209,7 +209,7 @@ The new manifest is printed on the standard output.
 		Args:          cobra.ExactArgs(0),
 		Example:       `kubeone config migrate --manifest mycluster.yaml`,
 		SilenceErrors: true,
-		RunE: func(_ *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
 				return err
@@ -237,7 +237,7 @@ The manifest is printed on the standard output.
 		Args:          cobra.ExactArgs(0),
 		Example:       `kubeone config machinedeployments --manifest mycluster.yaml`,
 		SilenceErrors: true,
-		RunE: func(_ *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
 				return err

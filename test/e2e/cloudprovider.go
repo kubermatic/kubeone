@@ -307,7 +307,7 @@ func (c *cloudProviderTests) validateLoadBalancerReadiness(t *testing.T) {
 		svcAddr = "http://" + svcAddr
 	}
 
-	err = wait.PollUntilContextTimeout(c.ctx, cpTestPollPeriod, cpTestTimeout, false, func(ctx context.Context) (done bool, err error) {
+	err = wait.PollUntilContextTimeout(c.ctx, cpTestPollPeriod, cpTestTimeout, false, func(_ context.Context) (done bool, err error) {
 		resp, err := http.Get(svcAddr) //nolint:gosec,noctx
 		if err != nil {
 			t.Logf("error testing service endpoint: %v", err)

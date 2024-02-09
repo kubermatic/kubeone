@@ -60,7 +60,7 @@ func initCmd() *cobra.Command {
 		`),
 		SilenceErrors: true,
 		Example:       `kubeone init --provider aws`,
-		RunE: func(_ *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			if opts.KubernetesVersion == "" {
 				return fail.Runtime(fmt.Errorf("--kubernetes-version is a required flag"), "flag validation")
 			}

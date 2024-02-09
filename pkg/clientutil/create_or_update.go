@@ -30,7 +30,7 @@ import (
 type Updater func(client.Client, client.Object)
 
 func WithComponentLabel(componentname string) Updater {
-	return func(c client.Client, obj client.Object) {
+	return func(_ client.Client, obj client.Object) {
 		LabelComponent(componentname, obj)
 	}
 }

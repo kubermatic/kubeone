@@ -50,7 +50,7 @@ const (
 func determineHostname(s *state.State) error {
 	s.Logger.Infoln("Determine hostname...")
 
-	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 		if node.Hostname != "" {
 			s.Logger.Debugf("Hostname is already set to %q", node.Hostname)
 

@@ -49,7 +49,7 @@ func addonsListCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		Short:         "List addons",
 		SilenceErrors: true,
 		Example:       `kubeone -m mycluster.yaml -t terraformoutput.json addons list`,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
 				return err

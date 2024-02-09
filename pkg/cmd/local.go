@@ -126,7 +126,7 @@ func localCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		`),
 		SilenceErrors: true,
 		Example:       `kubeone local`,
-		RunE: func(_ *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
 				return err
