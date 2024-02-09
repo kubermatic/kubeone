@@ -21,9 +21,20 @@ patches:
             containers:
               - name: cloud-controller-manager
                 image: '{{ .InternalImages.Get "GCPCCM" }}'
+                args:
+                  - /go-runner
+                  - --redirect-stderr=true
+                  - /cloud-controller-manager
+                  - --cloud-provider=gce
+                  - --cluster-name='{{ .Config.Name }}'
+                  - --controllers=cloud-node-controller,cloud-node-lifecycle-controller
+                  - --secure-port=10258
+                  - --v=2
                 env:
                   - name: GOOGLE_APPLICATION_CREDENTIALS
                     value: /etc/cloud-sa/cloud-sa.json
+                  - name: KUBERNETES_SERVICE_HOST
+                    $patch: delete
                 volumeMounts:
                   - mountPath: /etc/kubernetes/cloud.config
                     $patch: delete
