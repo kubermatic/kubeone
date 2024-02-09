@@ -70,8 +70,8 @@ spec:
           command:
             - /usr/local/bin/webhook
           args:
-            - -logtostderr
-            - -v=4
+            - -log-debug=false
+            - -log-format=json # json or console
             - -namespace=kube-system
           volumeMounts:
             - name: operating-system-manager-webhook-serving-cert
