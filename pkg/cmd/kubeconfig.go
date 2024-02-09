@@ -39,7 +39,7 @@ func kubeconfigCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		`),
 		Example:       `kubeone kubeconfig -m mycluster.yaml -t terraformoutput.json`,
 		SilenceErrors: true,
-		RunE: func(_ *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
 				return err

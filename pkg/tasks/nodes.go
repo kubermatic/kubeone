@@ -153,7 +153,7 @@ func labelNodes(s *state.State) error {
 }
 
 func patchStaticPods(s *state.State) error {
-	return s.RunTaskOnControlPlane(func(ctx *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+	return s.RunTaskOnControlPlane(func(ctx *state.State, _ *kubeoneapi.HostConfig, _ executor.Interface) error {
 		s.Logger.Infoln("Patching static pods...")
 
 		sshfs := ctx.Runner.NewFS()

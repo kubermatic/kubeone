@@ -50,13 +50,11 @@ const (
 	groupAuthenticated = "system:authenticated"
 )
 
-var (
-	allowedUsages = []certificatesv1.KeyUsage{
-		certificatesv1.UsageDigitalSignature,
-		certificatesv1.UsageKeyEncipherment,
-		certificatesv1.UsageServerAuth,
-	}
-)
+var allowedUsages = []certificatesv1.KeyUsage{
+	certificatesv1.UsageDigitalSignature,
+	certificatesv1.UsageKeyEncipherment,
+	certificatesv1.UsageServerAuth,
+}
 
 func renewControlPlaneCerts(s *state.State) error {
 	if !s.ForceUpgrade {
@@ -74,7 +72,7 @@ func renewControlPlaneCerts(s *state.State) error {
 
 	renewCmd := "sudo kubeadm certs renew all"
 	err := s.RunTaskOnControlPlane(
-		func(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+		func(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 			_, _, err := s.Runner.RunRaw(renewCmd)
 
 			return fail.SSH(err, "running %q on %s node", renewCmd, node.PublicAddress)

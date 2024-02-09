@@ -25,7 +25,7 @@ import (
 )
 
 func completionCmd(rootCmd *cobra.Command) *cobra.Command {
-	var cmd = &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "completion <bash|zsh>",
 		Short: "Generates completion scripts for bash and zsh",
 		Long: heredoc.Doc(`
@@ -36,7 +36,7 @@ func completionCmd(rootCmd *cobra.Command) *cobra.Command {
 		Example:   "kubeone completion bash",
 		ValidArgs: []string{"bash", "zsh"},
 		Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
+		RunE: func(_ *cobra.Command, args []string) (err error) {
 			switch args[0] {
 			case "bash":
 				err = rootCmd.GenBashCompletion(os.Stdout)
@@ -53,7 +53,7 @@ func completionCmd(rootCmd *cobra.Command) *cobra.Command {
 
 func documentCmd(rootCmd *cobra.Command) *cobra.Command {
 	var path string
-	var cmd = &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "document <man|md|rest|yaml>",
 		Short: "Generates documentation",
 		Long: heredoc.Doc(`
@@ -62,7 +62,7 @@ func documentCmd(rootCmd *cobra.Command) *cobra.Command {
 		Example:   "kubeone document man",
 		ValidArgs: []string{"man", "md", "rest", "yaml"},
 		Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
+		RunE: func(_ *cobra.Command, args []string) (err error) {
 			switch args[0] {
 			case "man":
 				header := &doc.GenManHeader{

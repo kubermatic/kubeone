@@ -63,7 +63,7 @@ func resetCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			hosts from Terraform output, using the '--tfjson' flag.
 		`),
 		Example: `kubeone reset -m mycluster.yaml -t terraformoutput.json`,
-		RunE: func(_ *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
 				return err

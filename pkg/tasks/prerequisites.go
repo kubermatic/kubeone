@@ -46,7 +46,7 @@ func kubeadmPreflightChecks(s *state.State) error {
 	s.Logger.Info("Running kubeadm preflight checks...")
 
 	return s.RunTaskOnControlPlane(
-		func(ctx *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+		func(ctx *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 			ctx.Logger.Info("	preflight...")
 			_, _, err := ctx.Runner.Run(heredoc.Docf(`
 				sudo kubeadm init phase preflight \
@@ -64,7 +64,7 @@ func kubeadmPreflightChecks(s *state.State) error {
 }
 
 func prePullImages(s *state.State) error {
-	return s.RunTaskOnControlPlane(func(ctx *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+	return s.RunTaskOnControlPlane(func(ctx *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 		ctx.Logger.Info("Pre-pull images")
 
 		_, _, err := ctx.Runner.Run(
@@ -163,7 +163,7 @@ func disableNMCloudSetup(s *state.State, node *kubeoneapi.HostConfig, _ executor
 		return nil
 	}
 
-	var allHosts = s.LiveCluster.ControlPlane
+	allHosts := s.LiveCluster.ControlPlane
 	allHosts = append(allHosts, s.LiveCluster.StaticWorkers...)
 	for _, host := range allHosts {
 		if node.ID == host.Config.ID && !host.Initialized() {

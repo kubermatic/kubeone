@@ -70,7 +70,7 @@ func kubeadmCertsExecutor(s *state.State, node *kubeoneapi.HostConfig, _ executo
 func initKubernetesLeader(s *state.State) error {
 	s.Logger.Infoln("Initializing Kubernetes on leader...")
 
-	return s.RunTaskOnLeader(func(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+	return s.RunTaskOnLeader(func(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 		var skipPhase string
 		if s.Cluster.ClusterNetwork.KubeProxy != nil && s.Cluster.ClusterNetwork.KubeProxy.SkipInstallation {
 			skipPhase = kubeadmPhaseKubeProxy
