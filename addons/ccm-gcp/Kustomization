@@ -31,6 +31,15 @@ patches:
           - configmaps
           verbs:
           - create
+      - op: add
+        path: /rules/-
+        value:
+          apiGroups:
+          - ""
+          resources:
+          - nodes
+          verbs:
+          - delete
 
   - patch: |-
       apiVersion: apps/v1
