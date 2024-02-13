@@ -138,6 +138,7 @@
     - name: vsphere_default
     - name: vsphere_centos
     - name: vsphere_flatcar
+    - name: gce_default
 
 - scenario: weave_containerd
   initVersion: v1.28.3
@@ -201,6 +202,7 @@
     - name: vsphere_default
     - name: vsphere_centos
     - name: vsphere_flatcar
+    - name: gce_default
 
 - scenario: cilium_containerd_external
   initVersion: v1.27.7
@@ -224,6 +226,7 @@
     - name: vsphere_default
     - name: vsphere_centos
     - name: vsphere_flatcar
+    - name: gce_default
 
 - scenario: upgrade_cilium_containerd
   initVersion: v1.27.7
@@ -259,6 +262,7 @@
     - name: vsphere_default
     - name: vsphere_centos
     - name: vsphere_flatcar
+    - name: gce_default
 
 - scenario: conformance_containerd
   initVersion: v1.25.15
@@ -437,6 +441,7 @@
     - name: vsphere_default
     - name: vsphere_centos
     - name: vsphere_flatcar
+    - name: gce_default
 
 - scenario: install_containerd_external
   initVersion: v1.26.10
@@ -470,6 +475,7 @@
     - name: vsphere_default
     - name: vsphere_centos
     - name: vsphere_flatcar
+    - name: gce_default
 
 - scenario: install_containerd_external
   initVersion: v1.27.7
@@ -504,6 +510,7 @@
     - name: vsphere_default
     - name: vsphere_centos
     - name: vsphere_flatcar
+    - name: gce_default
 
 - scenario: install_containerd_external
   initVersion: v1.28.3
@@ -538,6 +545,7 @@
     - name: vsphere_default
     - name: vsphere_centos
     - name: vsphere_flatcar
+    - name: gce_default
 
 - scenario: upgrade_containerd_external
   initVersion: v1.25.15
@@ -572,6 +580,7 @@
     - name: vsphere_default_stable
     - name: vsphere_centos_stable
     - name: vsphere_flatcar_stable
+    - name: gce_default
 
 - scenario: upgrade_containerd_external
   initVersion: v1.26.10
@@ -606,6 +615,7 @@
     - name: vsphere_default_stable
     - name: vsphere_centos_stable
     - name: vsphere_flatcar_stable
+    - name: gce_default
 
 - scenario: upgrade_containerd_external
   initVersion: v1.27.7
@@ -640,6 +650,7 @@
     - name: vsphere_default_stable
     - name: vsphere_centos_stable
     - name: vsphere_flatcar_stable
+    - name: gce_default
 
 - scenario: legacy_machine_controller_containerd_external
   initVersion: v1.25.15
@@ -673,6 +684,7 @@
     - name: vsphere_default
     - name: vsphere_centos
     - name: vsphere_flatcar
+    - name: gce_default
 
 - scenario: legacy_machine_controller_containerd_external
   initVersion: v1.26.10
@@ -706,6 +718,7 @@
     - name: vsphere_default
     - name: vsphere_centos
     - name: vsphere_flatcar
+    - name: gce_default
 
 - scenario: legacy_machine_controller_containerd_external
   initVersion: v1.27.7
@@ -739,6 +752,7 @@
     - name: vsphere_default
     - name: vsphere_centos
     - name: vsphere_flatcar
+    - name: gce_default
 
 - scenario: legacy_machine_controller_containerd_external
   initVersion: v1.28.3
@@ -772,3 +786,4 @@
     - name: vsphere_default
     - name: vsphere_centos
     - name: vsphere_flatcar
+    - name: gce_default

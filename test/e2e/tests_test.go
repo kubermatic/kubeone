@@ -874,6 +874,15 @@ func TestVsphereFlatcarCalicoContainerdExternalV1_27_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestGceDefaultCalicoContainerdExternalV1_27_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["calico_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.7")
+	scenario.Run(ctx, t)
+}
+
 func TestAzureDefaultWeaveContainerdV1_28_3(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
@@ -1261,6 +1270,15 @@ func TestVsphereFlatcarCiliumContainerdExternalV1_28_3(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestGceDefaultCiliumContainerdExternalV1_28_3(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.3")
+	scenario.Run(ctx, t)
+}
+
 func TestAwsAmznCiliumContainerdExternalV1_27_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
@@ -1426,6 +1444,15 @@ func TestVsphereCentosCiliumContainerdExternalV1_27_7(t *testing.T) {
 func TestVsphereFlatcarCiliumContainerdExternalV1_27_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.7")
+	scenario.Run(ctx, t)
+}
+
+func TestGceDefaultCiliumContainerdExternalV1_27_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.7")
@@ -1651,6 +1678,15 @@ func TestVsphereCentosUpgradeCiliumContainerdExternalFromV1_27_7_ToV1_28_3(t *te
 func TestVsphereFlatcarUpgradeCiliumContainerdExternalFromV1_27_7_ToV1_28_3(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.7", "v1.28.3")
+	scenario.Run(ctx, t)
+}
+
+func TestGceDefaultUpgradeCiliumContainerdExternalFromV1_27_7_ToV1_28_3(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.7", "v1.28.3")
@@ -2683,6 +2719,15 @@ func TestVsphereFlatcarInstallContainerdExternalV1_25_15(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestGceDefaultInstallContainerdExternalV1_25_15(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.25.15")
+	scenario.Run(ctx, t)
+}
+
 func TestAwsAmznInstallContainerdExternalV1_26_10(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
@@ -2938,6 +2983,15 @@ func TestVsphereCentosInstallContainerdExternalV1_26_10(t *testing.T) {
 func TestVsphereFlatcarInstallContainerdExternalV1_26_10(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.26.10")
+	scenario.Run(ctx, t)
+}
+
+func TestGceDefaultInstallContainerdExternalV1_26_10(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.26.10")
@@ -3205,6 +3259,15 @@ func TestVsphereFlatcarInstallContainerdExternalV1_27_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestGceDefaultInstallContainerdExternalV1_27_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.7")
+	scenario.Run(ctx, t)
+}
+
 func TestAwsAmznInstallContainerdExternalV1_28_3(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
@@ -3460,6 +3523,15 @@ func TestVsphereCentosInstallContainerdExternalV1_28_3(t *testing.T) {
 func TestVsphereFlatcarInstallContainerdExternalV1_28_3(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.3")
+	scenario.Run(ctx, t)
+}
+
+func TestGceDefaultInstallContainerdExternalV1_28_3(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.3")
@@ -3727,6 +3799,15 @@ func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_25_15_ToV1_26_10(t 
 	scenario.Run(ctx, t)
 }
 
+func TestGceDefaultUpgradeContainerdExternalFromV1_25_15_ToV1_26_10(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.25.15", "v1.26.10")
+	scenario.Run(ctx, t)
+}
+
 func TestAwsAmznStableUpgradeContainerdExternalFromV1_26_10_ToV1_27_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn_stable"]
@@ -3982,6 +4063,15 @@ func TestVsphereCentosStableUpgradeContainerdExternalFromV1_26_10_ToV1_27_7(t *t
 func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_26_10_ToV1_27_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.26.10", "v1.27.7")
+	scenario.Run(ctx, t)
+}
+
+func TestGceDefaultUpgradeContainerdExternalFromV1_26_10_ToV1_27_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.26.10", "v1.27.7")
@@ -4249,6 +4339,15 @@ func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_27_7_ToV1_28_3(t *t
 	scenario.Run(ctx, t)
 }
 
+func TestGceDefaultUpgradeContainerdExternalFromV1_27_7_ToV1_28_3(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.7", "v1.28.3")
+	scenario.Run(ctx, t)
+}
+
 func TestAwsAmznLegacyMachineControllerContainerdExternalV1_25_15(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
@@ -4504,6 +4603,15 @@ func TestVsphereCentosLegacyMachineControllerContainerdExternalV1_25_15(t *testi
 func TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_25_15(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.25.15")
+	scenario.Run(ctx, t)
+}
+
+func TestGceDefaultLegacyMachineControllerContainerdExternalV1_25_15(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.25.15")
@@ -4771,6 +4879,15 @@ func TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_26_10(t *test
 	scenario.Run(ctx, t)
 }
 
+func TestGceDefaultLegacyMachineControllerContainerdExternalV1_26_10(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.26.10")
+	scenario.Run(ctx, t)
+}
+
 func TestAwsAmznLegacyMachineControllerContainerdExternalV1_27_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
@@ -5032,6 +5149,15 @@ func TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_27_7(t *testi
 	scenario.Run(ctx, t)
 }
 
+func TestGceDefaultLegacyMachineControllerContainerdExternalV1_27_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.7")
+	scenario.Run(ctx, t)
+}
+
 func TestAwsAmznLegacyMachineControllerContainerdExternalV1_28_3(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
@@ -5287,6 +5413,15 @@ func TestVsphereCentosLegacyMachineControllerContainerdExternalV1_28_3(t *testin
 func TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_28_3(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["legacy_machine_controller_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.3")
+	scenario.Run(ctx, t)
+}
+
+func TestGceDefaultLegacyMachineControllerContainerdExternalV1_28_3(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.3")

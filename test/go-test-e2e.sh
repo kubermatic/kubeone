@@ -118,6 +118,8 @@ EOL
 cloudConfig: |
   [global]
   regional = true
+  multi-zone = true
+  token-url = "nil"
 EOL
     ;;
   "openstack")

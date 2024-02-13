@@ -2460,6 +2460,29 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-calico-containerd-external-v1.27.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultCalicoContainerdExternalV1_27_7
+      env:
+      - name: PROVIDER
+        value: gce
+      image: quay.io/kubermatic/build:go-1.22-node-18-2
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
     preset-azure: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-azure-default-weave-containerd-v1.28.3
@@ -3512,6 +3535,29 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-cilium-containerd-external-v1.28.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultCiliumContainerdExternalV1_28_3
+      env:
+      - name: PROVIDER
+        value: gce
+      image: quay.io/kubermatic/build:go-1.22-node-18-2
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-cilium-containerd-external-v1.27.7
@@ -3958,6 +4004,29 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      image: quay.io/kubermatic/build:go-1.22-node-18-2
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-cilium-containerd-external-v1.27.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultCiliumContainerdExternalV1_27_7
+      env:
+      - name: PROVIDER
+        value: gce
       image: quay.io/kubermatic/build:go-1.22-node-18-2
       imagePullPolicy: Always
       name: ""
@@ -4688,6 +4757,34 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      image: quay.io/kubermatic/build:go-1.22-node-18-2
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  extra_refs:
+  - base_ref: release/v1.7
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-upgrade-cilium-containerd-external-from-v1.27.7-to-v1.28.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultUpgradeCiliumContainerdExternalFromV1_27_7_ToV1_28_3
+      env:
+      - name: PROVIDER
+        value: gce
       image: quay.io/kubermatic/build:go-1.22-node-18-2
       imagePullPolicy: Always
       name: ""
@@ -7455,6 +7552,29 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-install-containerd-external-v1.25.15
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultInstallContainerdExternalV1_25_15
+      env:
+      - name: PROVIDER
+        value: gce
+      image: quay.io/kubermatic/build:go-1.22-node-18-2
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-install-containerd-external-v1.26.10
@@ -8131,6 +8251,29 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      image: quay.io/kubermatic/build:go-1.22-node-18-2
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-install-containerd-external-v1.26.10
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultInstallContainerdExternalV1_26_10
+      env:
+      - name: PROVIDER
+        value: gce
       image: quay.io/kubermatic/build:go-1.22-node-18-2
       imagePullPolicy: Always
       name: ""
@@ -8828,6 +8971,29 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-install-containerd-external-v1.27.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultInstallContainerdExternalV1_27_7
+      env:
+      - name: PROVIDER
+        value: gce
+      image: quay.io/kubermatic/build:go-1.22-node-18-2
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-install-containerd-external-v1.28.3
@@ -9505,6 +9671,29 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      image: quay.io/kubermatic/build:go-1.22-node-18-2
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-install-containerd-external-v1.28.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultInstallContainerdExternalV1_28_3
+      env:
+      - name: PROVIDER
+        value: gce
       image: quay.io/kubermatic/build:go-1.22-node-18-2
       imagePullPolicy: Always
       name: ""
@@ -10353,6 +10542,34 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-upgrade-containerd-external-from-v1.25.15-to-v1.26.10
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultUpgradeContainerdExternalFromV1_25_15_ToV1_26_10
+      env:
+      - name: PROVIDER
+        value: gce
+      image: quay.io/kubermatic/build:go-1.22-node-18-2
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  extra_refs:
+  - base_ref: release/v1.7
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-stable-upgrade-containerd-external-from-v1.26.10-to-v1.27.7
@@ -11171,6 +11388,34 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      image: quay.io/kubermatic/build:go-1.22-node-18-2
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  extra_refs:
+  - base_ref: release/v1.7
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-upgrade-containerd-external-from-v1.26.10-to-v1.27.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultUpgradeContainerdExternalFromV1_26_10_ToV1_27_7
+      env:
+      - name: PROVIDER
+        value: gce
       image: quay.io/kubermatic/build:go-1.22-node-18-2
       imagePullPolicy: Always
       name: ""
@@ -12013,6 +12258,34 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  extra_refs:
+  - base_ref: release/v1.7
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-upgrade-containerd-external-from-v1.27.7-to-v1.28.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultUpgradeContainerdExternalFromV1_27_7_ToV1_28_3
+      env:
+      - name: PROVIDER
+        value: gce
+      image: quay.io/kubermatic/build:go-1.22-node-18-2
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -12690,6 +12963,29 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      image: quay.io/kubermatic/build:go-1.22-node-18-2
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-legacy-machine-controller-containerd-external-v1.25.15
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultLegacyMachineControllerContainerdExternalV1_25_15
+      env:
+      - name: PROVIDER
+        value: gce
       image: quay.io/kubermatic/build:go-1.22-node-18-2
       imagePullPolicy: Always
       name: ""
@@ -13386,6 +13682,29 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-legacy-machine-controller-containerd-external-v1.26.10
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultLegacyMachineControllerContainerdExternalV1_26_10
+      env:
+      - name: PROVIDER
+        value: gce
+      image: quay.io/kubermatic/build:go-1.22-node-18-2
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-containerd-external-v1.27.7
@@ -14072,6 +14391,29 @@ presubmits:
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
   labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-legacy-machine-controller-containerd-external-v1.27.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultLegacyMachineControllerContainerdExternalV1_27_7
+      env:
+      - name: PROVIDER
+        value: gce
+      image: quay.io/kubermatic/build:go-1.22-node-18-2
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-legacy-machine-controller-containerd-external-v1.28.3
@@ -14748,6 +15090,29 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      image: quay.io/kubermatic/build:go-1.22-node-18-2
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-legacy-machine-controller-containerd-external-v1.28.3
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultLegacyMachineControllerContainerdExternalV1_28_3
+      env:
+      - name: PROVIDER
+        value: gce
       image: quay.io/kubermatic/build:go-1.22-node-18-2
       imagePullPolicy: Always
       name: ""
