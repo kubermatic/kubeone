@@ -4,5 +4,5 @@
 
 ### Generate manifest YAML
 ```shell
-kubectl kustomize . > ccm-gcp.yaml
+kubectl kustomize . | yq > ccm-gcp.yaml
 ```
