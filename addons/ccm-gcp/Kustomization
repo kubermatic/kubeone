@@ -25,10 +25,12 @@ patches:
                   - /go-runner
                   - --redirect-stderr=true
                   - /cloud-controller-manager
+                  - --allocate-node-cidrs=false
+                  - --cloud-config=/etc/kubernetes/cloud/config
                   - --cloud-provider=gce
-                  - --cluster-name='{{ .Config.Name }}'
-                  - --controllers=cloud-node-controller,cloud-node-lifecycle-controller
-                  - --secure-port=10258
+                  - --cluster-name={{ .Config.Name }}
+                  - --configure-cloud-routes=false
+                  - --controllers=*,-node-ipam-controller,-node-route-controller
                   - --v=2
                 env:
                   - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -38,15 +40,24 @@ patches:
                 volumeMounts:
                   - mountPath: /etc/kubernetes/cloud.config
                     $patch: delete
-                  - name: cloudconfig
+                  - name: cloud-sa
                     mountPath: /etc/cloud-sa
+                    readOnly: true
+                  - name: cloudconfig
+                    mountPath: /etc/kubernetes/cloud
                     readOnly: true
             volumes:
               - name: cloudconfig
                 secret:
+                  secretName: cloud-config
                   items:
-                  - key: GOOGLE_SERVICE_ACCOUNT
-                    path: cloud-sa.json
-                  secretName: kubeone-ccm-credentials
+                    - key: cloud-config
+                      path: config
                 hostPath:
                   $patch: delete
+              - name: cloud-sa
+                secret:
+                  secretName: kubeone-ccm-credentials
+                  items:
+                    - key: GOOGLE_SERVICE_ACCOUNT
+                      path: cloud-sa.json

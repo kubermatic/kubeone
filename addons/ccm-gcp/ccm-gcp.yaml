@@ -304,10 +304,12 @@ spec:
         - /go-runner
         - --redirect-stderr=true
         - /cloud-controller-manager
+        - --allocate-node-cidrs=false
+        - --cloud-config=/etc/kubernetes/cloud/config
         - --cloud-provider=gce
-        - --cluster-name='{{ .Config.Name }}'
-        - --controllers=cloud-node-controller,cloud-node-lifecycle-controller
-        - --secure-port=10258
+        - --cluster-name={{ .Config.Name }}
+        - --configure-cloud-routes=false
+        - --controllers=*,-node-ipam-controller,-node-route-controller
         - --v=2
         env:
         - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -331,6 +333,9 @@ spec:
             cpu: 200m
         volumeMounts:
         - mountPath: /etc/cloud-sa
+          name: cloud-sa
+          readOnly: true
+        - mountPath: /etc/kubernetes/cloud
           name: cloudconfig
           readOnly: true
       hostNetwork: true
@@ -349,6 +354,12 @@ spec:
         key: node-role.kubernetes.io/control-plane
       volumes:
       - name: cloudconfig
+        secret:
+          items:
+          - key: cloud-config
+            path: config
+          secretName: cloud-config
+      - name: cloud-sa
         secret:
           items:
           - key: GOOGLE_SERVICE_ACCOUNT
