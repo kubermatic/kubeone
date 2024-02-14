@@ -150,6 +150,7 @@ const (
 	DigitaloceanCCM
 	EquinixMetalCCM
 	HetznerCCM
+	GCPCCM
 	NutanixCCM
 	OpenstackCCM
 	VsphereCCM
@@ -351,6 +352,9 @@ func optionalResources() map[Resource]map[string]string {
 		NutanixCSIRegistrar:     {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.9.1"},
 		NutanixCSIResizer:       {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.9.2"},
 		NutanixCSISnapshotter:   {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v3.0.3"},
+
+		// GCP CCM
+		GCPCCM: {"*": "registry.k8s.io/cloud-provider-gcp/cloud-controller-manager:v28.2.1"},
 
 		// GCP Compute Persistent Disk CSI
 		// see: https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver/blob/master/deploy/kubernetes/images/stable-master/image.yaml

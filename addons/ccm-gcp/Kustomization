@@ -1,0 +1,98 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kube-system
+
+resources:
+  - https://raw.githubusercontent.com/kubernetes/cloud-provider-gcp/providers/v0.28.2/deploy/packages/default/manifest.yaml
+
+patches:
+  - target:
+      group: rbac.authorization.k8s.io
+      version: v1
+      kind: ClusterRole
+      name: system:cloud-controller-manager
+    patch: |-
+      - op: add
+        path: /rules/-
+        value:
+          apiGroups:
+          - ""
+          resources:
+          - services/status
+          verbs:
+          - patch
+          - update
+      - op: add
+        path: /rules/-
+        value:
+          apiGroups:
+          - ""
+          resources:
+          - configmaps
+          verbs:
+          - create
+      - op: add
+        path: /rules/-
+        value:
+          apiGroups:
+          - ""
+          resources:
+          - nodes
+          verbs:
+          - delete
+
+  - patch: |-
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: cloud-controller-manager
+        namespace: kube-system
+      spec:
+        template:
+          metadata:
+            annotations:
+              kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
+          spec:
+            containers:
+              - name: cloud-controller-manager
+                image: '{{ .InternalImages.Get "GCPCCM" }}'
+                args:
+                  - /go-runner
+                  - --redirect-stderr=true
+                  - /cloud-controller-manager
+                  - --allocate-node-cidrs=false
+                  - --cloud-config=/etc/kubernetes/cloud/config
+                  - --cloud-provider=gce
+                  - --cluster-name={{ .Config.Name }}
+                  - --configure-cloud-routes=false
+                  - --controllers=*,-node-ipam-controller,-node-route-controller
+                  - --v=2
+                env:
+                  - name: GOOGLE_APPLICATION_CREDENTIALS
+                    value: /etc/cloud-sa/cloud-sa.json
+                  - name: KUBERNETES_SERVICE_HOST
+                    $patch: delete
+                volumeMounts:
+                  - mountPath: /etc/kubernetes/cloud.config
+                    $patch: delete
+                  - name: cloud-sa
+                    mountPath: /etc/cloud-sa
+                    readOnly: true
+                  - name: cloudconfig
+                    mountPath: /etc/kubernetes/cloud
+                    readOnly: true
+            volumes:
+              - name: cloudconfig
+                secret:
+                  secretName: cloud-config
+                  items:
+                    - key: cloud-config
+                      path: config
+                hostPath:
+                  $patch: delete
+              - name: cloud-sa
+                secret:
+                  secretName: kubeone-ccm-credentials
+                  items:
+                    - key: GOOGLE_SERVICE_ACCOUNT
+                      path: cloud-sa.json

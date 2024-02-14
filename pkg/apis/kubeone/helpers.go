@@ -280,13 +280,17 @@ func (p CloudProviderSpec) MachineControllerCloudProvider() string {
 // CloudProviderInTree detects is there in-tree cloud provider implementation for specified provider.
 // List of in-tree provider can be found here: https://github.com/kubernetes/kubernetes/tree/master/pkg/cloudprovider
 func (p CloudProviderSpec) CloudProviderInTree() bool {
-	if p.AWS != nil || p.Azure != nil || p.Openstack != nil || p.Vsphere != nil {
-		return !p.External
-	} else if p.GCE != nil {
-		return true
+	switch {
+	case p.AWS != nil:
+	case p.Azure != nil:
+	case p.GCE != nil:
+	case p.Openstack != nil:
+	case p.Vsphere != nil:
+	default:
+		return false
 	}
 
-	return false
+	return !p.External
 }
 
 // CSIMigrationSupported returns if CSI migration is supported for the specified provider.
