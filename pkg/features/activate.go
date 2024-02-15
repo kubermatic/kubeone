@@ -36,17 +36,12 @@ const (
 func Activate(s *state.State) error {
 	s.Logger.Info("Activating additional features...")
 
-	if err := installKubeSystemPSP(s.Cluster.Features.PodSecurityPolicy, s); err != nil {
-		return err
-	}
-
 	return installPodNodeSelector(s.Context, s.DynamicClient, s.Cluster.Features.PodNodeSelector)
 }
 
 // UpdateKubeadmClusterConfiguration update additional config options in the kubeadm's
 // v1beta1.ClusterConfiguration according to enabled features
 func UpdateKubeadmClusterConfiguration(featuresCfg kubeoneapi.Features, args *kubeadmargs.Args) {
-	activateKubeadmPSP(featuresCfg.PodSecurityPolicy, args)
 	activateKubeadmStaticAuditLogs(featuresCfg.StaticAuditLog, args)
 	activateKubeadmDynamicAuditLogs(featuresCfg.DynamicAuditLog, args)
 	activateKubeadmOIDC(featuresCfg.OpenIDConnect, args)
