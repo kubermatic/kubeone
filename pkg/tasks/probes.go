@@ -645,7 +645,7 @@ func systemdUnitInfo(name string, conn executor.Interface, opts ...systemdUnitIn
 }
 
 func withFlatcarContainerRuntimeVersion(component *state.ComponentStatus, conn executor.Interface) error {
-	cmd := versionCmdGenerator(fmt.Sprintf("/run/torcx/bin/%s", component.Name))
+	cmd := versionCmdGenerator(fmt.Sprintf("PATH=/run/torcx/bin:$PATH %s", component.Name))
 
 	out, _, _, err := conn.Exec(cmd)
 	if err != nil {
