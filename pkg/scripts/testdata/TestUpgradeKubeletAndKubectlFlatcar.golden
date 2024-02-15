@@ -54,7 +54,7 @@ cat <<EOF | sudo tee /etc/systemd/system/containerd.service.d/10-kubeone.conf
 Restart=always
 Environment=CONTAINERD_CONFIG=/etc/containerd/config.toml
 ExecStart=
-ExecStart=/usr/bin/env containerd --config \${CONTAINERD_CONFIG}
+ExecStart=/usr/bin/env PATH=\${TORCX_BINDIR}:\${PATH} containerd --config \${CONTAINERD_CONFIG}
 EOF
 
 sudo systemctl daemon-reload
