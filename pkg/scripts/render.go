@@ -122,7 +122,7 @@ var containerRuntimeTemplates = map[string]string{
 			Restart=always
 			Environment=CONTAINERD_CONFIG=/etc/containerd/config.toml
 			ExecStart=
-			ExecStart=/usr/bin/env PATH=\${TORCX_BINDIR}:\${PATH} \${TORCX_BINDIR}/containerd --config \${CONTAINERD_CONFIG}
+			ExecStart=/usr/bin/env PATH=\${TORCX_BINDIR}:\${PATH} containerd --config \${CONTAINERD_CONFIG}
 			EOF
 		`),
 }
