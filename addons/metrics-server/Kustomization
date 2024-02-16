@@ -1,0 +1,38 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kube-system
+
+helmCharts:
+- name: metrics-server
+  repo: https://kubernetes-sigs.github.io/metrics-server/
+  version: v3.12.0
+  releaseName: metrics-server
+  namespace: kube-system
+  valuesFile: values
+
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: metrics-server
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: metrics-server
+                image: '{{ .InternalImages.Get "MetricsServer" }}'
+
+  # Had to hack around the lack of .Capabilities.APIVersions and .Capabilities.KubeVersion.Version in static environment
+  # like this
+  - target:
+      group: policy
+      version: v1beta1
+      kind: PodDisruptionBudget
+      name: metrics-server
+      namespace: kube-system
+    patch: |-
+      - op: replace
+        path: /apiVersion
+        value: policy/v1

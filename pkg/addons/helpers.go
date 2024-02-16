@@ -273,6 +273,18 @@ func removeCSIVsphereFromKubeSystem(s *state.State) error {
 	return DeleteAddonByName(s, resources.AddonCSIVsphereKubeSystem)
 }
 
+func migrateMetricsServer(state *state.State) error {
+	return migrateDeploymentIfPodSelectorDifferent(state,
+		client.ObjectKey{
+			Name:      "metrics-server",
+			Namespace: metav1.NamespaceSystem,
+		},
+		map[string]string{
+			"app.kubernetes.io/instance": "metrics-server",
+			"app.kubernetes.io/name":     "metrics-server",
+		})
+}
+
 func migrateDeploymentIfPodSelectorDifferent(s *state.State, key client.ObjectKey, expectedPodSelectors map[string]string) error {
 	deploy := &appsv1.Deployment{}
 	if err := s.DynamicClient.Get(s.Context, key, deploy); err != nil {

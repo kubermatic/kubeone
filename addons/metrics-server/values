@@ -1,0 +1,31 @@
+podDisruptionBudget:
+  enabled: true
+  maxUnavailable: 1
+
+defaultArgs:
+  - --kubelet-insecure-tls
+  - --kubelet-preferred-address-types=InternalIP,InternalDNS,ExternalDNS,ExternalIP
+  - --kubelet-use-node-status-port
+  - --metric-resolution=15s
+
+args:
+  - --tls-cert-file=/etc/serving-cert/cert.pem
+  - --tls-private-key-file=/etc/serving-cert/key.pem
+
+tolerations:
+  - key: "node-role.kubernetes.io/master"
+    operator: "Exists"
+    effect: "NoSchedule"
+  - key: "node-role.kubernetes.io/control-plane"
+    operator: "Exists"
+    effect: "NoSchedule"
+
+extraVolumeMounts:
+  - name: metrics-server-serving-cert
+    mountPath: /etc/serving-cert
+    readOnly: true
+
+extraVolumes:
+  - name: metrics-server-serving-cert
+    secret:
+      secretName: metrics-server-serving-cert
