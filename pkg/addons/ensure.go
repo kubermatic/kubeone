@@ -84,6 +84,9 @@ func collectAddons(s *state.State) []addonAction {
 	if s.Cluster.Features.MetricsServer.Enable {
 		addonsToDeploy = append(addonsToDeploy, addonAction{
 			name: resources.AddonMetricsServer,
+			supportFn: func() error {
+				return migrateMetricsServer(s)
+			},
 		})
 	}
 
