@@ -146,8 +146,8 @@ sudo yum install -y --disableplugin=priorities \
 	kubelet-1.26.0 \
 	kubeadm-1.26.0 \
 	kubectl-1.26.0 \
-	kubernetes-cni-1.2.0 \
-	cri-tools-1.26.0
+	kubernetes-cni \
+	cri-tools
 sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni cri-tools
 
 sudo systemctl daemon-reload

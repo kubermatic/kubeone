@@ -66,8 +66,6 @@ echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.
 sudo apt-get update
 
 kube_ver="1.26.0-*"
-cni_ver="1.2.0-*"
-cri_ver="1.26.0-*"
 
 
 
@@ -130,8 +128,8 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	kubelet=${kube_ver} \
 	kubeadm=${kube_ver} \
 	kubectl=${kube_ver} \
-	kubernetes-cni=${cni_ver} \
-	cri-tools=${cri_ver}
+	kubernetes-cni \
+	cri-tools
 
 sudo apt-mark hold kubelet kubeadm kubectl kubernetes-cni cri-tools
 

@@ -55,7 +55,7 @@ sudo systemctl force-reload systemd-journald
 
 
 sudo mkdir -p /opt/bin /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
-curl -L "https://github.com/containernetworking/plugins/releases/download/v1.2.0/cni-plugins-linux-${HOST_ARCH}-v1.2.0.tgz" |
+curl -L "https://github.com/containernetworking/plugins/releases/download/v1.3.0/cni-plugins-linux-${HOST_ARCH}-v1.3.0.tgz" |
 	sudo tar -C /opt/cni/bin -xz
 
 RELEASE="v1.26.0"
