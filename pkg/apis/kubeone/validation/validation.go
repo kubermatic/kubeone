@@ -39,17 +39,14 @@ import (
 
 const (
 	// lowerVersionConstraint defines a semver constraint that validates Kubernetes versions against a lower bound
-	lowerVersionConstraint = ">= 1.25"
+	lowerVersionConstraint = ">= 1.26"
 	// upperVersionConstraint defines a semver constraint that validates Kubernetes versions against an upper bound
-	upperVersionConstraint = "<= 1.28"
-	// gte125VersionConstraint defines a semver constraint that validates Kubernetes versions >= 1.25
-	gte125VersionConstraint = ">= 1.25"
+	upperVersionConstraint = "<= 1.29"
 )
 
 var (
-	lowerConstraint  = semverutil.MustParseConstraint(lowerVersionConstraint)
-	upperConstraint  = semverutil.MustParseConstraint(upperVersionConstraint)
-	gte125Constraint = semverutil.MustParseConstraint(gte125VersionConstraint)
+	lowerConstraint = semverutil.MustParseConstraint(lowerVersionConstraint)
+	upperConstraint = semverutil.MustParseConstraint(upperVersionConstraint)
 )
 
 // ValidateKubeOneCluster validates the KubeOneCluster object
@@ -734,13 +731,6 @@ func ValidateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.
 func ValidateHostConfig(hosts []kubeoneapi.HostConfig, version kubeoneapi.VersionConfig, clusterNetwork kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	v, err := semver.NewVersion(version.Kubernetes)
-	if err != nil {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("kubernetes"), version, ".versions.kubernetes is not a semver string"))
-
-		return allErrs
-	}
-
 	leaderFound := false
 	for _, h := range hosts {
 		if leaderFound && h.IsLeader {
@@ -775,13 +765,6 @@ func ValidateHostConfig(hosts []kubeoneapi.HostConfig, version kubeoneapi.Versio
 		for labelKey, labelValue := range h.Labels {
 			if strings.HasSuffix(labelKey, "-") && labelValue != "" {
 				allErrs = append(allErrs, field.Invalid(fldPath.Child("labels"), labelValue, "label to remove cannot have value"))
-			}
-		}
-		if gte125Constraint.Check(v) {
-			for _, taint := range h.Taints {
-				if taint.Key == "node-role.kubernetes.io/master" {
-					allErrs = append(allErrs, field.Forbidden(fldPath.Child("taints"), fmt.Sprintf("%q taint is forbidden for clusters running Kubernetes 1.25+", "node-role.kubernetes.io/master")))
-				}
 			}
 		}
 	}

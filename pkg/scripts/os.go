@@ -18,14 +18,11 @@ package scripts
 
 import (
 	"github.com/MakeNowJust/heredoc/v2"
-	"github.com/Masterminds/semver/v3"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/containerruntime"
 	"k8c.io/kubeone/pkg/fail"
 )
-
-const defaultKubernetesCNIVersion = "1.2.0"
 
 var migrateToContainerdScriptTemplate = heredoc.Doc(`
 	sudo systemctl stop kubelet
@@ -64,24 +61,4 @@ func MigrateToContainerd(cluster *kubeoneapi.KubeOneCluster, node *kubeoneapi.Ho
 
 func installISCSIAndNFS(cluster *kubeoneapi.KubeOneCluster) bool {
 	return cluster.CloudProvider.Nutanix != nil
-}
-
-func criToolsVersion(cluster *kubeoneapi.KubeOneCluster) string {
-	// Validation passed at this point so we know that version is valid
-	kubeSemVer := semver.MustParse(cluster.Versions.Kubernetes)
-
-	switch kubeSemVer.Minor() {
-	case 24:
-		fallthrough
-	case 25:
-		fallthrough
-	case 26:
-		return "1.26.0"
-	case 27:
-		return "1.27.1"
-	case 28:
-		fallthrough
-	default:
-		return "1.28.0"
-	}
 }

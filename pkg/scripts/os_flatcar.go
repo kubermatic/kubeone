@@ -17,6 +17,8 @@ limitations under the License.
 package scripts
 
 import (
+	"github.com/Masterminds/semver/v3"
+
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/containerruntime"
 	"k8c.io/kubeone/pkg/fail"
@@ -234,4 +236,24 @@ func UpgradeKubeletAndKubectlFlatcar(cluster *kubeoneapi.KubeOneCluster) (string
 	result, err := Render(upgradeKubeletAndKubectlFlatcarScriptTemplate, data)
 
 	return result, fail.Runtime(err, "rendering upgradeKubeletAndKubectlFlatcarScriptTemplate script")
+}
+
+const defaultKubernetesCNIVersion = "1.3.0"
+
+func criToolsVersion(cluster *kubeoneapi.KubeOneCluster) string {
+	// Validation passed at this point so we know that version is valid
+	kubeSemVer := semver.MustParse(cluster.Versions.Kubernetes)
+
+	switch kubeSemVer.Minor() {
+	case 26:
+		return "1.26.0"
+	case 27:
+		return "1.27.1"
+	case 28:
+		return "1.28.0"
+	case 29:
+		return "1.29.0"
+	}
+
+	return ""
 }
