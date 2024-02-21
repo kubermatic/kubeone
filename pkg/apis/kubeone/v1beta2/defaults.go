@@ -60,6 +60,7 @@ func addDefaultingFuncs(scheme *runtime.Scheme) error {
 
 func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_Hosts(obj)
+	SetDefaults_CloudProvider(obj)
 	SetDefaults_APIEndpoints(obj)
 	SetDefaults_Versions(obj)
 	SetDefaults_ContainerRuntime(obj)
@@ -71,6 +72,18 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_SystemPackages(obj)
 	SetDefaults_Features(obj)
 	SetDefaults_CloudConfig(obj)
+}
+
+func SetDefaults_CloudProvider(obj *KubeOneCluster) {
+	gteKube129Condition, _ := semver.NewConstraint(">= 1.29")
+	actualVer, err := semver.NewVersion(obj.Versions.Kubernetes)
+	if err != nil {
+		return
+	}
+
+	if gteKube129Condition.Check(actualVer) && obj.CloudProvider.None == nil {
+		obj.CloudProvider.External = true
+	}
 }
 
 func SetDefaults_CloudConfig(obj *KubeOneCluster) {
@@ -231,7 +244,7 @@ func SetDefaults_Proxy(obj *KubeOneCluster) {
 func SetDefaults_MachineController(obj *KubeOneCluster) {
 	if obj.MachineController == nil {
 		obj.MachineController = &MachineControllerConfig{
-			Deploy: true,
+			Deploy: obj.CloudProvider.None == nil,
 		}
 	}
 }
