@@ -275,10 +275,10 @@ addons:
 #     sshAgentSocket: 'env:SSH_AUTH_SOCK'
 #     # Taints is used to apply taints to the node.
 #     # If not provided defaults to TaintEffectNoSchedule, with key
-#     # node-role.kubernetes.io/master for control plane nodes.
+#     # node-role.kubernetes.io/control-plane for control plane nodes.
 #     # Explicitly empty (i.e. taints: {}) means no taints will be applied.
 #     taints:
-#     - key: "node-role.kubernetes.io/master"
+#     - key: "node-role.kubernetes.io/control-plane"
 #       effect: "NoSchedule"
 
 # A list of static workers, not managed by MachineController.

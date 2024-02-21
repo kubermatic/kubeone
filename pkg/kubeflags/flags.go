@@ -18,26 +18,9 @@ package kubeflags
 
 import (
 	"strings"
-
-	"github.com/Masterminds/semver/v3"
-
-	"k8c.io/kubeone/pkg/semverutil"
 )
 
-var (
-	upToV126Constraint = semverutil.MustParseConstraint("< 1.26.0")
-	v126Constraint     = semverutil.MustParseConstraint(">= 1.26.0, < 1.27.0")
-)
-
-// DefaultAdmissionControllers return list of default admission controllers for
-// given kubernetes version
-func DefaultAdmissionControllers(v *semver.Version) string {
-	switch {
-	case upToV126Constraint.Check(v):
-		return strings.Join(defaultAdmissionControllersv1225, ",")
-	case v126Constraint.Check(v):
-		return strings.Join(defaultAdmissionControllersv1226, ",")
-	default:
-		return strings.Join(defaultAdmissionControllersv1227v1228, ",")
-	}
+// DefaultAdmissionControllers return list of default admission controllers for given kubernetes version
+func DefaultAdmissionControllers() string {
+	return strings.Join(defaultAdmissionControllersv1_27v1_28v1_29, ",")
 }

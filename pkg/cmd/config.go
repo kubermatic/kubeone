@@ -830,13 +830,11 @@ addons:
 #     # Optional ssh host public key for verification of the connection to the control plane host
 #     sshHostPublicKey: "AAAAC3NzaC1lZDI1NTE5AAAAIPwEDvXiKfvXrysf86VW5dJTKDlQ09e2tV0+T3KeFKmI"
 #     # Taints are taints applied to nodes. If not provided (i.e. nil) for control plane nodes,
-#     # it defaults to:
-#     #   * For Kubernetes 1.23 and older: TaintEffectNoSchedule with key node-role.kubernetes.io/master
-#     #   * For Kubernetes 1.24 and newer: TaintEffectNoSchedule with keys
-#     #     node-role.kubernetes.io/control-plane and node-role.kubernetes.io/master
+#     # it defaults to TaintEffectNoSchedule with key
+#     #     node-role.kubernetes.io/control-plane
 #     # Explicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes).
 #     taints:
-#     - key: "node-role.kubernetes.io/master"
+#     - key: "node-role.kubernetes.io/control-plane"
 #       effect: "NoSchedule"
 #     labels:
 #       # to add new custom label
