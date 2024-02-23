@@ -27,9 +27,7 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 )
 
-var (
-	_ executor.MkdirFS = &virtfs{}
-)
+var _ executor.MkdirFS = &virtfs{}
 
 func New(conn executor.Interface) executor.MkdirFS {
 	return &virtfs{conn: conn}
@@ -72,7 +70,11 @@ func (vfs *virtfs) Glob(pattern string) ([]string, error) {
 
 	_, err := vfs.conn.POpen(cmd, nil, &stdout, &stderr)
 	if err != nil {
-		return nil, fmt.Errorf("glob failed: %w, %s %s", err, stdout.String(), stderr.String())
+		return nil, fail.SSH(&fs.PathError{
+			Op:   "glob",
+			Path: pattern,
+			Err:  fmt.Errorf("glob failed: %w, %s %s", err, stdout.String(), stderr.String()),
+		}, "glob")
 	}
 
 	return strings.Split(stdout.String(), " "), nil
@@ -88,11 +90,11 @@ func (vfs *virtfs) MkdirAll(path string, perm fs.FileMode) error {
 
 	_, err := vfs.conn.POpen(cmd, nil, &stdout, &stderr)
 	if err != nil {
-		return &fs.PathError{
+		return fail.SSH(&fs.PathError{
 			Op:   "mkdir",
 			Path: path,
 			Err:  fmt.Errorf("%w %s %s", err, stdout.String(), stderr.String()),
-		}
+		}, "mkdirall")
 	}
 
 	return nil
@@ -100,9 +102,15 @@ func (vfs *virtfs) MkdirAll(path string, perm fs.FileMode) error {
 
 func (vfs *virtfs) ReadFile(name string) ([]byte, error) {
 	var buf bytes.Buffer
-	_, err := vfs.conn.POpen(fmt.Sprintf("sudo cat %q", name), nil, &buf, nil)
+	var stderr strings.Builder
+
+	_, err := vfs.conn.POpen(fmt.Sprintf("sudo cat %q", name), nil, &buf, &stderr)
 	if err != nil {
-		return nil, err
+		return nil, fail.SSH(&fs.PathError{
+			Op:   "read",
+			Path: name,
+			Err:  fmt.Errorf("%w %s", err, stderr.String()),
+		}, "read file")
 	}
 
 	return buf.Bytes(), nil
@@ -118,7 +126,7 @@ func newSSHFileInfo(name string, conn executor.Interface) (fs.FileInfo, error) {
 
 	exitCode, err := conn.POpen(cmd, nil, &stdout, &stderr)
 	if exitCode != 0 || err != nil {
-		return nil, fail.Runtime(&fs.PathError{
+		return nil, fail.SSH(&fs.PathError{
 			Op:   "stat",
 			Path: name,
 			Err:  err,
