@@ -1,131 +1,3 @@
-# Source: https://github.com/projectcalico/calico/blob/v3.26.3/manifests/canal.yaml
----
-# Source: calico/templates/calico-kube-controllers.yaml
-# This manifest creates a Pod Disruption Budget for Controller to allow K8s Cluster Autoscaler to evict
-
-apiVersion: policy/v1
-kind: PodDisruptionBudget
-metadata:
-  name: calico-kube-controllers
-  namespace: kube-system
-  labels:
-    k8s-app: calico-kube-controllers
-spec:
-  maxUnavailable: 1
-  selector:
-    matchLabels:
-      k8s-app: calico-kube-controllers
----
-# Source: calico/templates/calico-kube-controllers.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: calico-kube-controllers
-  namespace: kube-system
----
-# Source: calico/templates/calico-node.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: canal
-  namespace: kube-system
----
-# Source: calico/templates/calico-node.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: calico-cni-plugin
-  namespace: kube-system
----
-# Source: calico/templates/calico-config.yaml
-# This ConfigMap is used to configure a self-hosted Canal installation.
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: canal-config
-  namespace: kube-system
-data:
-  # Typha is disabled.
-  typha_service_name: "none"
-
-  # The interface used by canal for host <-> host communication.
-  # If left blank, then the interface is chosen using the node's
-  # default route.
-  canal_iface: ""
-
-  # Whether or not to masquerade traffic to destinations not within
-  # the pod network.
-  masquerade: "true"
-
-  # Configure the MTU to use for workload interfaces and tunnels.
-  # By default, MTU is auto-detected, and explicitly setting this field should not be required.
-  # You can override auto-detection by providing a non-zero value.
-  veth_mtu: "{{ .Config.ClusterNetwork.CNI.Canal.MTU }}"
-
-  # The CNI network configuration to install on each node. The special
-  # values in this config will be automatically populated.
-  cni_network_config: |-
-    {
-      "name": "k8s-pod-network",
-      "cniVersion": "0.3.1",
-      "plugins": [
-        {
-          "type": "calico",
-          "log_level": "info",
-          "log_file_path": "/var/log/calico/cni/cni.log",
-          "datastore_type": "kubernetes",
-          "nodename": "__KUBERNETES_NODE_NAME__",
-          "mtu": __CNI_MTU__,
-          "ipam": {
-              "type": "host-local",
-              {{ if and .Config.ClusterNetwork.HasIPv4 .Config.ClusterNetwork.HasIPv6 }}
-              "ranges": [
-                  [{"subnet": "usePodCidr"}],
-                  [{"subnet": "usePodCidrIPv6"}]
-              ]
-              {{ else }}
-              {{ if .Config.ClusterNetwork.HasIPv6 }}
-              "subnet": "usePodCidrIPv6"
-              {{ else }}
-              "subnet": "usePodCidr"
-              {{ end }}
-              {{ end }}
-          },
-          "policy": {
-              "type": "k8s"
-          },
-          "kubernetes": {
-              "kubeconfig": "__KUBECONFIG_FILEPATH__"
-          }
-        },
-        {
-          "type": "portmap",
-          "snat": true,
-          "capabilities": {"portMappings": true}
-        },
-        {
-          "type": "bandwidth",
-          "capabilities": {"bandwidth": true}
-        }
-      ]
-    }
-
-  # Flannel network configuration. Mounted into the flannel container.
-  net-conf.json: |
-    {
-      {{ if .Config.ClusterNetwork.HasIPv4 }}
-      "Network": "{{ .Config.ClusterNetwork.PodSubnet }}",
-      {{ end }}
-      {{ if .Config.ClusterNetwork.HasIPv6 }}
-      "EnableIPv6": true,
-      "IPv6Network": "{{ .Config.ClusterNetwork.PodSubnetIPv6 }}",
-      {{ end }}
-      "Backend": {
-        "Type": "vxlan"
-      }
-    }
----
-# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -312,7 +184,6 @@ status:
   conditions: []
   storedVersions: []
 ---
-# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -360,12 +231,14 @@ spec:
                       type: string
                     cidr:
                       type: string
+                    interface:
+                      type: string
                     matchOperator:
+                      type: string
+                    source:
                       type: string
                   required:
                   - action
-                  - cidr
-                  - matchOperator
                   type: object
                 type: array
               exportV6:
@@ -379,12 +252,14 @@ spec:
                       type: string
                     cidr:
                       type: string
+                    interface:
+                      type: string
                     matchOperator:
+                      type: string
+                    source:
                       type: string
                   required:
                   - action
-                  - cidr
-                  - matchOperator
                   type: object
                 type: array
               importV4:
@@ -398,12 +273,14 @@ spec:
                       type: string
                     cidr:
                       type: string
+                    interface:
+                      type: string
                     matchOperator:
+                      type: string
+                    source:
                       type: string
                   required:
                   - action
-                  - cidr
-                  - matchOperator
                   type: object
                 type: array
               importV6:
@@ -417,12 +294,14 @@ spec:
                       type: string
                     cidr:
                       type: string
+                    interface:
+                      type: string
                     matchOperator:
+                      type: string
+                    source:
                       type: string
                   required:
                   - action
-                  - cidr
-                  - matchOperator
                   type: object
                 type: array
             type: object
@@ -436,7 +315,6 @@ status:
   conditions: []
   storedVersions: []
 ---
-# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -572,7 +450,6 @@ status:
   conditions: []
   storedVersions: []
 ---
-# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -634,7 +511,6 @@ status:
   conditions: []
   storedVersions: []
 ---
-# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -898,7 +774,6 @@ status:
   conditions: []
   storedVersions: []
 ---
-# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -963,7 +838,6 @@ status:
   conditions: []
   storedVersions: []
 ---
-# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -1017,12 +891,32 @@ spec:
                 - Enable
                 - Disable
                 type: string
+              bpfCTLBLogFilter:
+                description: 'BPFCTLBLogFilter specifies, what is logged by connect
+                  time load balancer when BPFLogLevel is debug. Currently has to be
+                  specified as ''all'' when BPFLogFilters is set to see CTLB logs.
+                  [Default: unset - means logs are emitted when BPFLogLevel id debug
+                  and BPFLogFilters not set.]'
+                type: string
+              bpfConnectTimeLoadBalancing:
+                description: 'BPFConnectTimeLoadBalancing when in BPF mode, controls
+                  whether Felix installs the connect-time load balancer. The connect-time
+                  load balancer is required for the host to be able to reach Kubernetes
+                  services and it improves the performance of pod-to-service connections.When
+                  set to TCP, connect time load balancing is available only for services
+                  with TCP ports. [Default: TCP]'
+                enum:
+                - TCP
+                - Enabled
+                - Disabled
+                type: string
               bpfConnectTimeLoadBalancingEnabled:
                 description: 'BPFConnectTimeLoadBalancingEnabled when in BPF mode,
                   controls whether Felix installs the connection-time load balancer.  The
                   connect-time load balancer is required for the host to be able to
                   reach Kubernetes services and it improves the performance of pod-to-service
-                  connections.  The only reason to disable it is for debugging purposes.  [Default:
+                  connections.  The only reason to disable it is for debugging purposes.
+                  This will be deprecated. Use BPFConnectTimeLoadBalancing [Default:
                   true]'
                 type: boolean
               bpfDSROptoutCIDRs:
@@ -1041,6 +935,12 @@ spec:
                   the cluster.  It should not match the workload interfaces (usually
                   named cali...).
                 type: string
+              bpfDisableGROForIfaces:
+                description: BPFDisableGROForIfaces is a regular expression that controls
+                  which interfaces Felix should disable the Generic Receive Offload
+                  [GRO] option.  It should not match the workload interfaces (usually
+                  named cali...).
+                type: string
               bpfDisableUnprivileged:
                 description: 'BPFDisableUnprivileged, if enabled, Felix sets the kernel.unprivileged_bpf_disabled
                   sysctl to disable unprivileged use of BPF.  This ensures that unprivileged
@@ -1056,7 +956,15 @@ spec:
                   with BPF programs regardless of what is the per-interfaces or global
                   setting. Possible values are Disabled, Strict or Loose. [Default:
                   Loose]'
+                pattern: ^(?i)(Disabled|Strict|Loose)?$
                 type: string
+              bpfExcludeCIDRsFromNAT:
+                description: BPFExcludeCIDRsFromNAT is a list of CIDRs that are to
+                  be excluded from NAT resolution so that host can handle them. A
+                  typical usecase is node local DNS cache.
+                items:
+                  type: string
+                type: array
               bpfExtToServiceConnmark:
                 description: 'BPFExtToServiceConnmark in BPF mode, control a 32bit
                   mark that is set on connections from an external client to a local
@@ -1073,12 +981,31 @@ spec:
                   is sent directly from the remote node.  In "DSR" mode, the remote
                   node appears to use the IP of the ingress node; this requires a
                   permissive L2 network.  [Default: Tunnel]'
+                pattern: ^(?i)(Tunnel|DSR)?$
                 type: string
+              bpfForceTrackPacketsFromIfaces:
+                description: 'BPFForceTrackPacketsFromIfaces in BPF mode, forces traffic
+                  from these interfaces to skip Calico''s iptables NOTRACK rule, allowing
+                  traffic from those interfaces to be tracked by Linux conntrack.  Should
+                  only be used for interfaces that are not used for the Calico fabric.  For
+                  example, a docker bridge device for non-Calico-networked containers.
+                  [Default: docker+]'
+                items:
+                  type: string
+                type: array
               bpfHostConntrackBypass:
                 description: 'BPFHostConntrackBypass Controls whether to bypass Linux
                   conntrack in BPF mode for workloads and services. [Default: true
                   - bypass Linux conntrack]'
                 type: boolean
+              bpfHostNetworkedNATWithoutCTLB:
+                description: 'BPFHostNetworkedNATWithoutCTLB when in BPF mode, controls
+                  whether Felix does a NAT without CTLB. This along with BPFConnectTimeLoadBalancing
+                  determines the CTLB behavior. [Default: Enabled]'
+                enum:
+                - Enabled
+                - Disabled
+                type: string
               bpfKubeProxyEndpointSlicesEnabled:
                 description: BPFKubeProxyEndpointSlicesEnabled in BPF mode, controls
                   whether Felix's embedded kube-proxy accepts EndpointSlices or not.
@@ -1094,6 +1021,7 @@ spec:
                   minimum time between updates to the dataplane for Felix''s embedded
                   kube-proxy.  Lower values give reduced set-up latency.  Higher values
                   reduce Felix CPU usage by batching up more work.  [Default: 1s]'
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
               bpfL3IfacePattern:
                 description: BPFL3IfacePattern is a regular expression that allows
@@ -1103,11 +1031,22 @@ spec:
                   as any interfaces that handle incoming traffic to nodeports and
                   services from outside the cluster.
                 type: string
+              bpfLogFilters:
+                additionalProperties:
+                  type: string
+                description: "BPFLogFilters is a map of key=values where the value
+                  is a pcap filter expression and the key is an interface name with
+                  'all' denoting all interfaces, 'weps' all workload endpoints and
+                  'heps' all host endpoints. \n When specified as an env var, it accepts
+                  a comma-separated list of key=values. [Default: unset - means all
+                  debug logs are emitted]"
+                type: object
               bpfLogLevel:
                 description: 'BPFLogLevel controls the log level of the BPF programs
                   when in BPF dataplane mode.  One of "Off", "Info", or "Debug".  The
                   logs are emitted to the BPF trace pipe, accessible with the command
                   `tc exec bpf debug`. [Default: Off].'
+                pattern: ^(?i)(Off|Info|Debug)?$
                 type: string
               bpfMapSizeConntrack:
                 description: 'BPFMapSizeConntrack sets the size for the conntrack
@@ -1172,6 +1111,7 @@ spec:
                   to append mode, be sure that the other rules in the chains signal
                   acceptance by falling through to the Calico rules, otherwise the
                   Calico policy will be bypassed. [Default: insert]'
+                pattern: ^(?i)(insert|append)?$
                 type: string
               dataplaneDriver:
                 description: DataplaneDriver filename of the external dataplane driver
@@ -1190,8 +1130,10 @@ spec:
               debugMemoryProfilePath:
                 type: string
               debugSimulateCalcGraphHangAfter:
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
               debugSimulateDataplaneHangAfter:
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
               defaultEndpointToHostAction:
                 description: 'DefaultEndpointToHostAction controls what happens to
@@ -1206,6 +1148,7 @@ spec:
                   endpoint egress policy. Use ACCEPT to unconditionally accept packets
                   from workloads after processing workload endpoint egress policy.
                   [Default: Drop]'
+                pattern: ^(?i)(Drop|Accept|Return)?$
                 type: string
               deviceRouteProtocol:
                 description: This defines the route protocol added to programmed device
@@ -1224,6 +1167,7 @@ spec:
               disableConntrackInvalidCheck:
                 type: boolean
               endpointReportingDelay:
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
               endpointReportingEnabled:
                 type: boolean
@@ -1291,12 +1235,14 @@ spec:
                   based on auto-detected platform capabilities.  Values are specified
                   in a comma separated list with no spaces, example; "SNATFullyRandom=true,MASQFullyRandom=false,RestoreSupportsLock=".  "true"
                   or "false" will force the feature, empty or omitted values are auto-detected.
+                pattern: ^([a-zA-Z0-9-_]+=(true|false|),)*([a-zA-Z0-9-_]+=(true|false|))?$
                 type: string
               featureGates:
                 description: FeatureGates is used to enable or disable tech-preview
                   Calico features. Values are specified in a comma separated list
                   with no spaces, example; "BPFConnectTimeLoadBalancingWorkaround=enabled,XyZ=false".
                   This is used to enable features that are not fully production ready.
+                pattern: ^([a-zA-Z0-9-_]+=([^=]+),)*([a-zA-Z0-9-_]+=([^=]+))?$
                 type: string
               floatingIPs:
                 description: FloatingIPs configures whether or not Felix will program
@@ -1358,6 +1304,7 @@ spec:
                 description: InterfaceRefreshInterval is the period at which Felix
                   rescans local interfaces to verify their state. The rescan can be
                   disabled by setting the interval to 0.
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
               ipipEnabled:
                 description: 'IPIPEnabled overrides whether Felix should configure
@@ -1373,18 +1320,22 @@ spec:
                   all iptables state to ensure that no other process has accidentally
                   broken Calico''s rules. Set to 0 to disable iptables refresh. [Default:
                   90s]'
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
               iptablesBackend:
                 description: IptablesBackend specifies which backend of iptables will
                   be used. The default is Auto.
+                pattern: ^(?i)(Auto|FelixConfiguration|FelixConfigurationList|Legacy|NFT)?$
                 type: string
               iptablesFilterAllowAction:
+                pattern: ^(?i)(Accept|Return)?$
                 type: string
               iptablesFilterDenyAction:
                 description: IptablesFilterDenyAction controls what happens to traffic
                   that is denied by network policy. By default Calico blocks traffic
                   with an iptables "DROP" action. If you want to use "REJECT" action
                   instead you can configure it in here.
+                pattern: ^(?i)(Drop|Reject)?$
                 type: string
               iptablesLockFilePath:
                 description: 'IptablesLockFilePath is the location of the iptables
@@ -1397,6 +1348,7 @@ spec:
                   wait between attempts to acquire the iptables lock if it is not
                   available. Lower values make Felix more responsive when the lock
                   is contended, but use more CPU. [Default: 50ms]'
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
               iptablesLockTimeout:
                 description: 'IptablesLockTimeout is the time that Felix will wait
@@ -1405,8 +1357,10 @@ spec:
                   also take the lock. When running Felix inside a container, this
                   requires the /run directory of the host to be mounted into the calico/node
                   or calico/felix container. [Default: 0s disabled]'
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
               iptablesMangleAllowAction:
+                pattern: ^(?i)(Accept|Return)?$
                 type: string
               iptablesMarkMask:
                 description: 'IptablesMarkMask is the mask that Felix selects its
@@ -1423,6 +1377,7 @@ spec:
                   back in order to check the write was not clobbered by another process.
                   This should only occur if another application on the system doesn''t
                   respect the iptables lock. [Default: 1s]'
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
               iptablesRefreshInterval:
                 description: 'IptablesRefreshInterval is the period at which Felix
@@ -1433,6 +1388,7 @@ spec:
                   was fixed in kernel version 4.11. If you are using v4.11 or greater
                   you may want to set this to, a higher value to reduce Felix CPU
                   usage. [Default: 10s]'
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
               ipv6Support:
                 description: IPv6Support controls whether Felix enables support for
@@ -1467,15 +1423,18 @@ spec:
               logSeverityFile:
                 description: 'LogSeverityFile is the log severity above which logs
                   are sent to the log file. [Default: Info]'
+                pattern: ^(?i)(Debug|Info|Warning|Error|Fatal)?$
                 type: string
               logSeverityScreen:
                 description: 'LogSeverityScreen is the log severity above which logs
                   are sent to the stdout. [Default: Info]'
+                pattern: ^(?i)(Debug|Info|Warning|Error|Fatal)?$
                 type: string
               logSeveritySys:
                 description: 'LogSeveritySys is the log severity above which logs
                   are sent to the syslog. Set to None for no logging to syslog. [Default:
                   Info]'
+                pattern: ^(?i)(Debug|Info|Warning|Error|Fatal)?$
                 type: string
               maxIpsetSize:
                 type: integer
@@ -1514,6 +1473,7 @@ spec:
                 pattern: ^.*
                 x-kubernetes-int-or-string: true
               netlinkTimeout:
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
               openstackRegion:
                 description: 'OpenstackRegion is the name of the region that a particular
@@ -1568,21 +1528,25 @@ spec:
                 description: 'ReportingInterval is the interval at which Felix reports
                   its status into the datastore or 0 to disable. Must be non-zero
                   in OpenStack deployments. [Default: 30s]'
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
               reportingTTL:
                 description: 'ReportingTTL is the time-to-live setting for process-wide
                   status reports. [Default: 90s]'
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
               routeRefreshInterval:
                 description: 'RouteRefreshInterval is the period at which Felix re-checks
                   the routes in the dataplane to ensure that no other process has
                   accidentally broken Calico''s rules. Set to 0 to disable route refresh.
                   [Default: 90s]'
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
               routeSource:
                 description: 'RouteSource configures where Felix gets its routing
                   information. - WorkloadIPs: use workload endpoints to construct
                   routes. - CalicoIPAM: the default - use IPAM data to construct routes.'
+                pattern: ^(?i)(WorkloadIPs|CalicoIPAM)?$
                 type: string
               routeSyncDisabled:
                 description: RouteSyncDisabled will disable all operations performed
@@ -1622,6 +1586,7 @@ spec:
                   packets that do not get DNAT''d by kube-proxy. Unless set to "Disabled",
                   in which case such routing loops continue to be allowed. [Default:
                   Drop]'
+                pattern: ^(?i)(Drop|Reject|Disabled)?$
                 type: string
               sidecarAccelerationEnabled:
                 description: 'SidecarAccelerationEnabled enables experimental sidecar
@@ -1637,10 +1602,12 @@ spec:
               usageReportingInitialDelay:
                 description: 'UsageReportingInitialDelay controls the minimum delay
                   before Felix makes a report. [Default: 300s]'
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
               usageReportingInterval:
                 description: 'UsageReportingInterval controls the interval at which
                   Felix makes reports. [Default: 86400s]'
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
               useInternalDataplaneDriver:
                 description: UseInternalDataplaneDriver, if true, Felix will use its
@@ -1664,6 +1631,14 @@ spec:
                 type: integer
               vxlanVNI:
                 type: integer
+              windowsManageFirewallRules:
+                description: 'WindowsManageFirewallRules configures whether or not
+                  Felix will program Windows Firewall rules. (to allow inbound access
+                  to its own metrics ports) [Default: Disabled]'
+                enum:
+                - Enabled
+                - Disabled
+                type: string
               wireguardEnabled:
                 description: 'WireguardEnabled controls whether Wireguard is enabled
                   for IPv4 (encapsulating IPv4 traffic over an IPv4 underlay network).
@@ -1689,6 +1664,7 @@ spec:
               wireguardKeepAlive:
                 description: 'WireguardKeepAlive controls Wireguard PersistentKeepalive
                   option. Set 0 to disable. [Default: 0]'
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
               wireguardListeningPort:
                 description: 'WireguardListeningPort controls the listening port used
@@ -1715,6 +1691,7 @@ spec:
                   the allowedSourcePrefixes annotation to send traffic with a source
                   IP address that is not theirs. This is disabled by default. When
                   set to "Any", pods can request any prefix.
+                pattern: ^(?i)(Disabled|Any)?$
                 type: string
               xdpEnabled:
                 description: 'XDPEnabled enables XDP acceleration for suitable untracked
@@ -1725,6 +1702,7 @@ spec:
                   all XDP state to ensure that no other process has accidentally broken
                   Calico''s BPF maps or attached programs. Set to 0 to disable XDP
                   refresh. [Default: 90s]'
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
             type: object
         type: object
@@ -1737,7 +1715,6 @@ status:
   conditions: []
   storedVersions: []
 ---
-# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -2539,6 +2516,19 @@ spec:
                   with identical order will be applied in alphanumerical order based
                   on the Policy "Name".
                 type: number
+              performanceHints:
+                description: "PerformanceHints contains a list of hints to Calico's
+                  policy engine to help process the policy more efficiently.  Hints
+                  never change the enforcement behaviour of the policy. \n Currently,
+                  the only available hint is \"AssumeNeededOnEveryNode\".  When that
+                  hint is set on a policy, Felix will act as if the policy matches
+                  a local endpoint even if it does not. This is useful for \"preloading\"
+                  any large static policies that are known to be used on every node.
+                  If the policy is _not_ used on a particular node then the work done
+                  to preload the policy (and to maintain it) is wasted."
+                items:
+                  type: string
+                type: array
               preDNAT:
                 description: PreDNAT indicates to apply the rules in this policy before
                   any DNAT.
@@ -2593,7 +2583,6 @@ status:
   conditions: []
   storedVersions: []
 ---
-# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -2647,7 +2636,6 @@ status:
   conditions: []
   storedVersions: []
 ---
-# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -2756,7 +2744,6 @@ status:
   conditions: []
   storedVersions: []
 ---
-# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -2803,10 +2790,8 @@ spec:
                   value is the index of the associated attributes in the Attributes
                   array.
                 items:
-                  type: integer
-                  # TODO: This nullable is manually added in. We should update controller-gen
-                  # to handle []*int properly itself.
                   nullable: true
+                  type: integer
                 type: array
               attributes:
                 description: Attributes is an array of arbitrary metadata associated
@@ -2876,7 +2861,6 @@ status:
   conditions: []
   storedVersions: []
 ---
-# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -2935,7 +2919,6 @@ status:
   conditions: []
   storedVersions: []
 ---
-# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -2992,7 +2975,6 @@ status:
   conditions: []
   storedVersions: []
 ---
-# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -3102,7 +3084,6 @@ status:
   conditions: []
   storedVersions: []
 ---
-# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -3157,7 +3138,6 @@ status:
   conditions: []
   storedVersions: []
 ---
-# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -3411,7 +3391,6 @@ status:
   conditions: []
   storedVersions: []
 ---
-# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -4198,6 +4177,19 @@ spec:
                   with identical order will be applied in alphanumerical order based
                   on the Policy "Name".
                 type: number
+              performanceHints:
+                description: "PerformanceHints contains a list of hints to Calico's
+                  policy engine to help process the policy more efficiently.  Hints
+                  never change the enforcement behaviour of the policy. \n Currently,
+                  the only available hint is \"AssumeNeededOnEveryNode\".  When that
+                  hint is set on a policy, Felix will act as if the policy matches
+                  a local endpoint even if it does not. This is useful for \"preloading\"
+                  any large static policies that are known to be used on every node.
+                  If the policy is _not_ used on a particular node then the work done
+                  to preload the policy (and to maintain it) is wasted."
+                items:
+                  type: string
+                type: array
               selector:
                 description: "The selector is an expression used to pick pick out
                   the endpoints that the policy should be applied to. \n Selector
@@ -4248,7 +4240,6 @@ status:
   conditions: []
   storedVersions: []
 ---
-# Source: calico/templates/kdd-crds.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -4300,300 +4291,301 @@ status:
   conditions: []
   storedVersions: []
 ---
-# Source: calico/templates/calico-kube-controllers-rbac.yaml
-# Include a clusterrole for the kube-controllers component,
-# and bind it to the calico-kube-controllers serviceaccount.
-kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: calico-kube-controllers
-rules:
-  # Nodes are watched to monitor for deletions.
-  - apiGroups: [""]
-    resources:
-      - nodes
-    verbs:
-      - watch
-      - list
-      - get
-  # Pods are watched to check for existence as part of IPAM controller.
-  - apiGroups: [""]
-    resources:
-      - pods
-    verbs:
-      - get
-      - list
-      - watch
-  # IPAM resources are manipulated in response to node and block updates, as well as periodic triggers.
-  - apiGroups: ["crd.projectcalico.org"]
-    resources:
-      - ipreservations
-    verbs:
-      - list
-  - apiGroups: ["crd.projectcalico.org"]
-    resources:
-      - blockaffinities
-      - ipamblocks
-      - ipamhandles
-    verbs:
-      - get
-      - list
-      - create
-      - update
-      - delete
-      - watch
-  # Pools are watched to maintain a mapping of blocks to IP pools.
-  - apiGroups: ["crd.projectcalico.org"]
-    resources:
-      - ippools
-    verbs:
-      - list
-      - watch
-  # kube-controllers manages hostendpoints.
-  - apiGroups: ["crd.projectcalico.org"]
-    resources:
-      - hostendpoints
-    verbs:
-      - get
-      - list
-      - create
-      - update
-      - delete
-  # Needs access to update clusterinformations.
-  - apiGroups: ["crd.projectcalico.org"]
-    resources:
-      - clusterinformations
-    verbs:
-      - get
-      - list
-      - create
-      - update
-      - watch
-  # KubeControllersConfiguration is where it gets its config
-  - apiGroups: ["crd.projectcalico.org"]
-    resources:
-      - kubecontrollersconfigurations
-    verbs:
-      # read its own config
-      - get
-      # create a default if none exists
-      - create
-      # update status
-      - update
-      # watch for changes
-      - watch
----
-# Source: calico/templates/calico-node-rbac.yaml
-# Include a clusterrole for the calico-node DaemonSet,
-# and bind it to the calico-node serviceaccount.
-kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: calico-node
-rules:
-  # Used for creating service account tokens to be used by the CNI plugin
-  - apiGroups: [""]
-    resources:
-      - serviceaccounts/token
-    resourceNames:
-      - canal
-      - calico-cni-plugin
-    verbs:
-      - create
-  # The CNI plugin needs to get pods, nodes, and namespaces.
-  - apiGroups: [""]
-    resources:
-      - pods
-      - nodes
-      - namespaces
-    verbs:
-      - get
-  # EndpointSlices are used for Service-based network policy rule
-  # enforcement.
-  - apiGroups: ["discovery.k8s.io"]
-    resources:
-      - endpointslices
-    verbs:
-      - watch
-      - list
-  - apiGroups: [""]
-    resources:
-      - endpoints
-      - services
-    verbs:
-      # Used to discover service IPs for advertisement.
-      - watch
-      - list
-      # Used to discover Typhas.
-      - get
-  # Pod CIDR auto-detection on kubeadm needs access to config maps.
-  - apiGroups: [""]
-    resources:
-      - configmaps
-    verbs:
-      - get
-  - apiGroups: [""]
-    resources:
-      - nodes/status
-    verbs:
-      # Needed for clearing NodeNetworkUnavailable flag.
-      - patch
-      # Calico stores some configuration information in node annotations.
-      - update
-  # Watch for changes to Kubernetes NetworkPolicies.
-  - apiGroups: ["networking.k8s.io"]
-    resources:
-      - networkpolicies
-    verbs:
-      - watch
-      - list
-  # Used by Calico for policy information.
-  - apiGroups: [""]
-    resources:
-      - pods
-      - namespaces
-      - serviceaccounts
-    verbs:
-      - list
-      - watch
-  # The CNI plugin patches pods/status.
-  - apiGroups: [""]
-    resources:
-      - pods/status
-    verbs:
-      - patch
-  # Calico monitors various CRDs for config.
-  - apiGroups: ["crd.projectcalico.org"]
-    resources:
-      - globalfelixconfigs
-      - felixconfigurations
-      - bgppeers
-      - bgpfilters
-      - globalbgpconfigs
-      - bgpconfigurations
-      - ippools
-      - ipreservations
-      - ipamblocks
-      - globalnetworkpolicies
-      - globalnetworksets
-      - networkpolicies
-      - networksets
-      - clusterinformations
-      - hostendpoints
-      - blockaffinities
-      - caliconodestatuses
-    verbs:
-      - get
-      - list
-      - watch
-  # Calico must create and update some CRDs on startup.
-  - apiGroups: ["crd.projectcalico.org"]
-    resources:
-      - ippools
-      - felixconfigurations
-      - clusterinformations
-    verbs:
-      - create
-      - update
-  # Calico must update some CRDs.
-  - apiGroups: [ "crd.projectcalico.org" ]
-    resources:
-      - caliconodestatuses
-    verbs:
-      - update
-  # Calico stores some configuration information on the node.
-  - apiGroups: [""]
-    resources:
-      - nodes
-    verbs:
-      - get
-      - list
-      - watch
-  # These permissions are only required for upgrade from v2.6, and can
-  # be removed after upgrade or on fresh installations.
-  - apiGroups: ["crd.projectcalico.org"]
-    resources:
-      - bgpconfigurations
-      - bgppeers
-    verbs:
-      - create
-      - update
----
-# Source: calico/templates/calico-node-rbac.yaml
-# CNI cluster role
-kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: v1
+kind: ServiceAccount
 metadata:
   name: calico-cni-plugin
-rules:
-  - apiGroups: [""]
-    resources:
-      - pods
-      - nodes
-      - namespaces
-    verbs:
-      - get
-  - apiGroups: [""]
-    resources:
-      - pods/status
-    verbs:
-      - patch
+  namespace: kube-system
 ---
-# Source: calico/templates/calico-node-rbac.yaml
-# Flannel ClusterRole
-# Pulled from https://github.com/coreos/flannel/blob/master/Documentation/kube-flannel-rbac.yml
-kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: v1
+kind: ServiceAccount
 metadata:
-  name: flannel
-rules:
-  - apiGroups: [""]
-    resources:
-      - pods
-    verbs:
-      - get
-  - apiGroups: [""]
-    resources:
-      - nodes
-    verbs:
-      - list
-      - watch
-  - apiGroups: [""]
-    resources:
-      - nodes/status
-    verbs:
-      - patch
----
-# Source: calico/templates/calico-kube-controllers-rbac.yaml
-kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: calico-kube-controllers
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: calico-kube-controllers
-subjects:
-- kind: ServiceAccount
   name: calico-kube-controllers
   namespace: kube-system
 ---
-# Source: calico/templates/calico-node-rbac.yaml
-# Bind the flannel ClusterRole to the canal ServiceAccount.
-kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: v1
+kind: ServiceAccount
 metadata:
-  name: canal-flannel
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: flannel
-subjects:
-- kind: ServiceAccount
   name: canal
   namespace: kube-system
 ---
-# Source: calico/templates/calico-node-rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: calico-cni-plugin
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - nodes
+  - namespaces
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - pods/status
+  verbs:
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: calico-kube-controllers
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - watch
+  - list
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - crd.projectcalico.org
+  resources:
+  - ipreservations
+  verbs:
+  - list
+- apiGroups:
+  - crd.projectcalico.org
+  resources:
+  - blockaffinities
+  - ipamblocks
+  - ipamhandles
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - watch
+- apiGroups:
+  - crd.projectcalico.org
+  resources:
+  - ippools
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - crd.projectcalico.org
+  resources:
+  - hostendpoints
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+- apiGroups:
+  - crd.projectcalico.org
+  resources:
+  - clusterinformations
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - watch
+- apiGroups:
+  - crd.projectcalico.org
+  resources:
+  - kubecontrollersconfigurations
+  verbs:
+  - get
+  - create
+  - update
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: calico-node
+rules:
+- apiGroups:
+  - ""
+  resourceNames:
+  - canal
+  - calico-cni-plugin
+  resources:
+  - serviceaccounts/token
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - nodes
+  - namespaces
+  verbs:
+  - get
+- apiGroups:
+  - discovery.k8s.io
+  resources:
+  - endpointslices
+  verbs:
+  - watch
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - endpoints
+  - services
+  verbs:
+  - watch
+  - list
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - nodes/status
+  verbs:
+  - patch
+  - update
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - networkpolicies
+  verbs:
+  - watch
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - namespaces
+  - serviceaccounts
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/status
+  verbs:
+  - patch
+- apiGroups:
+  - crd.projectcalico.org
+  resources:
+  - globalfelixconfigs
+  - felixconfigurations
+  - bgppeers
+  - bgpfilters
+  - globalbgpconfigs
+  - bgpconfigurations
+  - ippools
+  - ipreservations
+  - ipamblocks
+  - globalnetworkpolicies
+  - globalnetworksets
+  - networkpolicies
+  - networksets
+  - clusterinformations
+  - hostendpoints
+  - blockaffinities
+  - caliconodestatuses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - crd.projectcalico.org
+  resources:
+  - ippools
+  - felixconfigurations
+  - clusterinformations
+  verbs:
+  - create
+  - update
+- apiGroups:
+  - crd.projectcalico.org
+  resources:
+  - caliconodestatuses
+  verbs:
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - crd.projectcalico.org
+  resources:
+  - bgpconfigurations
+  - bgppeers
+  verbs:
+  - create
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: flannel
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - nodes/status
+  verbs:
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: calico-cni-plugin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: calico-cni-plugin
+subjects:
+- kind: ServiceAccount
+  name: calico-cni-plugin
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: calico-kube-controllers
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: calico-kube-controllers
+subjects:
+- kind: ServiceAccount
+  name: calico-kube-controllers
+  namespace: kube-system
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -4607,360 +4599,27 @@ subjects:
   name: canal
   namespace: kube-system
 ---
-# Source: calico/templates/calico-node-rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: calico-cni-plugin
+  name: canal-flannel
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: calico-cni-plugin
+  name: flannel
 subjects:
 - kind: ServiceAccount
-  name: calico-cni-plugin
-  namespace: kube-system
----
-# Source: calico/templates/calico-node.yaml
-# This manifest installs the canal container, as well
-# as the CNI plugins and network config on
-# each master and worker node in a Kubernetes cluster.
-kind: DaemonSet
-apiVersion: apps/v1
-metadata:
   name: canal
   namespace: kube-system
-  labels:
-    k8s-app: canal
-spec:
-  selector:
-    matchLabels:
-      k8s-app: canal
-  updateStrategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1
-  template:
-    metadata:
-      labels:
-        k8s-app: canal
-    spec:
-      nodeSelector:
-        kubernetes.io/os: linux
-      hostNetwork: true
-      tolerations:
-        # Make sure canal gets scheduled on all nodes.
-        - effect: NoSchedule
-          operator: Exists
-        # Mark the pod as a critical add-on for rescheduling.
-        - key: CriticalAddonsOnly
-          operator: Exists
-        - effect: NoExecute
-          operator: Exists
-      serviceAccountName: canal
-      # Minimize downtime during a rolling upgrade or deletion; tell Kubernetes to do a "force
-      # deletion": https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods.
-      terminationGracePeriodSeconds: 0
-      priorityClassName: system-node-critical
-      initContainers:
-        # This container installs the CNI binaries
-        # and CNI network config file on each node.
-        - name: install-cni
-          image: {{ .InternalImages.Get "CalicoCNI" }}
-          imagePullPolicy: IfNotPresent
-          command: ["/opt/cni/bin/install"]
-          envFrom:
-          - configMapRef:
-              # Allow KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT to be overridden for eBPF mode.
-              name: kubernetes-services-endpoint
-              optional: true
-          env:
-            # Set the serviceaccount name to use for the Calico CNI plugin.
-            # We use canal-node instead of calico-node when using flannel networking.
-            - name: CALICO_CNI_SERVICE_ACCOUNT
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.serviceAccountName
-            # Name of the CNI config file to create.
-            - name: CNI_CONF_NAME
-              value: "10-canal.conflist"
-            # The CNI network config to install on each node.
-            - name: CNI_NETWORK_CONFIG
-              valueFrom:
-                configMapKeyRef:
-                  name: canal-config
-                  key: cni_network_config
-            # Set the hostname based on the k8s node name.
-            - name: KUBERNETES_NODE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-            # CNI MTU Config variable
-            - name: CNI_MTU
-              valueFrom:
-                configMapKeyRef:
-                  name: canal-config
-                  key: veth_mtu
-            # Prevents the container from sleeping forever.
-            - name: SLEEP
-              value: "false"
-          volumeMounts:
-            - mountPath: /host/opt/cni/bin
-              name: cni-bin-dir
-            - mountPath: /host/etc/cni/net.d
-              name: cni-net-dir
-          securityContext:
-            privileged: true
-        # This init container mounts the necessary filesystems needed by the BPF data plane
-        # i.e. bpf at /sys/fs/bpf and cgroup2 at /run/calico/cgroup. Calico-node initialisation is executed
-        # in best effort fashion, i.e. no failure for errors, to not disrupt pod creation in iptable mode.
-        - name: "mount-bpffs"
-          image: {{ .InternalImages.Get "CalicoNode" }}
-          imagePullPolicy: IfNotPresent
-          command: ["calico-node", "-init", "-best-effort"]
-          volumeMounts:
-            - mountPath: /sys/fs
-              name: sys-fs
-              # Bidirectional is required to ensure that the new mount we make at /sys/fs/bpf propagates to the host
-              # so that it outlives the init container.
-              mountPropagation: Bidirectional
-            - mountPath: /var/run/calico
-              name: var-run-calico
-              # Bidirectional is required to ensure that the new mount we make at /run/calico/cgroup propagates to the host
-              # so that it outlives the init container.
-              mountPropagation: Bidirectional
-            # Mount /proc/ from host which usually is an init program at /nodeproc. It's needed by mountns binary,
-            # executed by calico-node, to mount root cgroup2 fs at /run/calico/cgroup to attach CTLB programs correctly.
-            - mountPath: /nodeproc
-              name: nodeproc
-              readOnly: true
-          securityContext:
-            privileged: true
-      containers:
-        # Runs canal container on each Kubernetes node. This
-        # container programs network policy and routes on each
-        # host.
-        - name: calico-node
-          image: {{ .InternalImages.Get "CalicoNode" }}
-          imagePullPolicy: IfNotPresent
-          envFrom:
-          - configMapRef:
-              # Allow KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT to be overridden for eBPF mode.
-              name: kubernetes-services-endpoint
-              optional: true
-          env:
-            # Use Kubernetes API as the backing datastore.
-            - name: DATASTORE_TYPE
-              value: "kubernetes"
-            # Configure route aggregation based on pod CIDR.
-            - name: USE_POD_CIDR
-              value: "true"
-            # Wait for the datastore.
-            - name: WAIT_FOR_DATASTORE
-              value: "true"
-            # Set based on the k8s node name.
-            - name: NODENAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-            # Set the serviceaccount name to use for the Calico CNI plugin.
-            # We use canal-node instead of calico-node when using flannel networking.
-            - name: CALICO_CNI_SERVICE_ACCOUNT
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.serviceAccountName
-            # Don't enable BGP.
-            - name: CALICO_NETWORKING_BACKEND
-              value: "none"
-            # Cluster type to identify the deployment type
-            - name: CLUSTER_TYPE
-              value: "k8s,canal"
-            # Period, in seconds, at which felix re-applies all iptables state
-            - name: FELIX_IPTABLESREFRESHINTERVAL
-              value: "60"
-            # No IP address needed.
-            - name: IP
-              value: ""
-            {{ if .Config.ClusterNetwork.HasIPv4 }}
-            # The default IPv4 pool to create on startup if none exists. Pod IPs will be
-            # chosen from this range. Changing this value after installation will have
-            # no effect. This should fall within `--cluster-cidr`.
-            - name: CALICO_IPV4POOL_CIDR
-              value: "{{ .Config.ClusterNetwork.PodSubnet }}"
-            {{ end }}
-            # Disable file logging so `kubectl logs` works.
-            - name: CALICO_DISABLE_FILE_LOGGING
-              value: "true"
-            # Set Felix endpoint to host default action to ACCEPT.
-            - name: FELIX_DEFAULTENDPOINTTOHOSTACTION
-              value: "ACCEPT"
-            {{ if .Config.ClusterNetwork.HasIPv6 }}
-            - name: FELIX_IPV6SUPPORT
-              value: "true"
-            - name: IP6
-              value: "autodetect"
-            - name: CALICO_IPV6POOL_CIDR
-              value: "{{ .Config.ClusterNetwork.PodSubnetIPv6 }}"
-            {{ else }}
-            # Disable IPv6 on Kubernetes.
-            - name: FELIX_IPV6SUPPORT
-              value: "false"
-            {{ end }}
-            - name: FELIX_HEALTHENABLED
-              value: "true"
-            - name: FELIX_IPTABLESBACKEND
-              value: "{{ default .CalicoIptablesBackend .Params.iptablesBackend }}"
-          securityContext:
-            privileged: true
-          resources:
-            requests:
-              cpu: {{ default .Params.RequestsCPU "250m" }}
-          lifecycle:
-            preStop:
-              exec:
-                command:
-                - /bin/calico-node
-                - -shutdown
-          livenessProbe:
-            exec:
-              command:
-              - /bin/calico-node
-              - -felix-live
-            periodSeconds: 10
-            initialDelaySeconds: 10
-            failureThreshold: 6
-            timeoutSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /readiness
-              port: 9099
-              host: localhost
-            periodSeconds: 10
-            timeoutSeconds: 10
-          volumeMounts:
-            # For maintaining CNI plugin API credentials.
-            - mountPath: /host/etc/cni/net.d
-              name: cni-net-dir
-              readOnly: false
-            - mountPath: /lib/modules
-              name: lib-modules
-              readOnly: true
-            - mountPath: /run/xtables.lock
-              name: xtables-lock
-              readOnly: false
-            - mountPath: /var/run/calico
-              name: var-run-calico
-              readOnly: false
-            - mountPath: /var/lib/calico
-              name: var-lib-calico
-              readOnly: false
-            - name: policysync
-              mountPath: /var/run/nodeagent
-            # For eBPF mode, we need to be able to mount the BPF filesystem at /sys/fs/bpf so we mount in the
-            # parent directory.
-            - name: bpffs
-              mountPath: /sys/fs/bpf
-            - name: cni-log-dir
-              mountPath: /var/log/calico/cni
-              readOnly: true
-        # This container runs flannel using the kube-subnet-mgr backend
-        # for allocating subnets.
-        - name: kube-flannel
-          image: {{ .InternalImages.Get "Flannel" }}
-          imagePullPolicy: IfNotPresent
-          command: [ "/opt/bin/flanneld", "--ip-masq", "--kube-subnet-mgr" ]
-          securityContext:
-            privileged: true
-          env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: POD_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: FLANNELD_IFACE
-              {{ if .Config.ClusterNetwork.HasIPv6 }}
-              valueFrom:
-                configMapKeyRef:
-                  key: canal_iface
-                  name: canal-config
-              {{ else }}
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
-              {{ end }}
-            - name: FLANNELD_IP_MASQ
-              valueFrom:
-                configMapKeyRef:
-                  name: canal-config
-                  key: masquerade
-          volumeMounts:
-          - mountPath: /run/xtables.lock
-            name: xtables-lock
-            readOnly: false
-          - name: flannel-cfg
-            mountPath: /etc/kube-flannel/
-      volumes:
-        # Used by canal.
-        - name: lib-modules
-          hostPath:
-            path: /lib/modules
-        - name: var-run-calico
-          hostPath:
-            path: /var/run/calico
-        - name: var-lib-calico
-          hostPath:
-            path: /var/lib/calico
-        - name: xtables-lock
-          hostPath:
-            path: /run/xtables.lock
-            type: FileOrCreate
-        - name: sys-fs
-          hostPath:
-            path: /sys/fs/
-            type: DirectoryOrCreate
-        - name: bpffs
-          hostPath:
-            path: /sys/fs/bpf
-            type: Directory
-        # mount /proc at /nodeproc to be used by mount-bpffs initContainer to mount root cgroup2 fs.
-        - name: nodeproc
-          hostPath:
-            path: /proc
-        # Used by flannel.
-        - name: flannel-cfg
-          configMap:
-            name: canal-config
-        # Used to install CNI.
-        - name: cni-bin-dir
-          hostPath:
-            path: /opt/cni/bin
-        - name: cni-net-dir
-          hostPath:
-            path: /etc/cni/net.d
-        # Used to access CNI logs.
-        - name: cni-log-dir
-          hostPath:
-            path: /var/log/calico/cni
-        # Used to create per-pod Unix Domain Sockets
-        - name: policysync
-          hostPath:
-            type: DirectoryOrCreate
-            path: /var/run/nodeagent
 ---
-# Source: calico/templates/calico-kube-controllers.yaml
-# See https://github.com/projectcalico/kube-controllers
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: calico-kube-controllers
-  namespace: kube-system
   labels:
     k8s-app: calico-kube-controllers
+  name: calico-kube-controllers
+  namespace: kube-system
 spec:
-  # The controllers can only have a single active instance.
   replicas: 1
   selector:
     matchLabels:
@@ -4969,45 +4628,337 @@ spec:
     type: Recreate
   template:
     metadata:
-      name: calico-kube-controllers
-      namespace: kube-system
       labels:
         k8s-app: calico-kube-controllers
+      name: calico-kube-controllers
+      namespace: kube-system
     spec:
+      containers:
+      - env:
+        - name: ENABLED_CONTROLLERS
+          value: node
+        - name: DATASTORE_TYPE
+          value: kubernetes
+        image: '{{ .InternalImages.Get "CalicoController" }}'
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /usr/bin/check-status
+            - -l
+          failureThreshold: 6
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 10
+        name: calico-kube-controllers
+        readinessProbe:
+          exec:
+            command:
+            - /usr/bin/check-status
+            - -r
+          periodSeconds: 10
       nodeSelector:
         kubernetes.io/os: linux
-      tolerations:
-        # Mark the pod as a critical add-on for rescheduling.
-        - key: CriticalAddonsOnly
-          operator: Exists
-        - key: node-role.kubernetes.io/master
-          effect: NoSchedule
-        - key: node-role.kubernetes.io/control-plane
-          effect: NoSchedule
-      serviceAccountName: calico-kube-controllers
       priorityClassName: system-cluster-critical
+      serviceAccountName: calico-kube-controllers
+      tolerations:
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/control-plane
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    k8s-app: calico-kube-controllers
+  name: calico-kube-controllers
+  namespace: kube-system
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      k8s-app: calico-kube-controllers
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    k8s-app: canal
+  name: canal
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      k8s-app: canal
+  template:
+    metadata:
+      labels:
+        k8s-app: canal
+    spec:
       containers:
-        - name: calico-kube-controllers
-          image: {{ .InternalImages.Get "CalicoController" }}
-          imagePullPolicy: IfNotPresent
-          env:
-            # Choose which controllers to run.
-            - name: ENABLED_CONTROLLERS
-              value: node
-            - name: DATASTORE_TYPE
-              value: kubernetes
-          livenessProbe:
+      - env:
+        - name: FELIX_IPTABLESBACKEND
+          value: '{{ default .CalicoIptablesBackend .Params.iptablesBackend }}'
+        - name: CALICO_IPV4POOL_CIDR
+          valueFrom:
+            configMapKeyRef:
+              key: CALICO_IPV4POOL_CIDR
+              name: canal-config
+              optional: true
+        - name: FELIX_IPV6SUPPORT
+          valueFrom:
+            configMapKeyRef:
+              key: FELIX_IPV6SUPPORT
+              name: canal-config
+              optional: true
+        - name: IP6
+          valueFrom:
+            configMapKeyRef:
+              key: IP6
+              name: canal-config
+              optional: true
+        - name: CALICO_IPV6POOL_CIDR
+          valueFrom:
+            configMapKeyRef:
+              key: CALICO_IPV6POOL_CIDR
+              name: canal-config
+              optional: true
+        - name: DATASTORE_TYPE
+          value: kubernetes
+        - name: USE_POD_CIDR
+          value: "true"
+        - name: WAIT_FOR_DATASTORE
+          value: "true"
+        - name: NODENAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: CALICO_CNI_SERVICE_ACCOUNT
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.serviceAccountName
+        - name: CALICO_NETWORKING_BACKEND
+          value: none
+        - name: CLUSTER_TYPE
+          value: k8s,canal
+        - name: FELIX_IPTABLESREFRESHINTERVAL
+          value: "60"
+        - name: IP
+          value: ""
+        - name: CALICO_DISABLE_FILE_LOGGING
+          value: "true"
+        - name: FELIX_DEFAULTENDPOINTTOHOSTACTION
+          value: ACCEPT
+        - name: FELIX_HEALTHENABLED
+          value: "true"
+        envFrom:
+        - configMapRef:
+            name: kubernetes-services-endpoint
+            optional: true
+        image: '{{ .InternalImages.Get "CalicoNode" }}'
+        imagePullPolicy: IfNotPresent
+        lifecycle:
+          preStop:
             exec:
               command:
-              - /usr/bin/check-status
-              - -l
-            periodSeconds: 10
-            initialDelaySeconds: 10
-            failureThreshold: 6
-            timeoutSeconds: 10
-          readinessProbe:
-            exec:
-              command:
-              - /usr/bin/check-status
-              - -r
-            periodSeconds: 10
+              - /bin/calico-node
+              - -shutdown
+        livenessProbe:
+          exec:
+            command:
+            - /bin/calico-node
+            - -felix-live
+          failureThreshold: 6
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 10
+        name: calico-node
+        readinessProbe:
+          httpGet:
+            host: localhost
+            path: /readiness
+            port: 9099
+          periodSeconds: 10
+          timeoutSeconds: 10
+        resources:
+          requests:
+            cpu: '{{ default .Params.RequestsCPU "250m" }}'
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /host/etc/cni/net.d
+          name: cni-net-dir
+          readOnly: false
+        - mountPath: /lib/modules
+          name: lib-modules
+          readOnly: true
+        - mountPath: /run/xtables.lock
+          name: xtables-lock
+          readOnly: false
+        - mountPath: /var/run/calico
+          name: var-run-calico
+          readOnly: false
+        - mountPath: /var/lib/calico
+          name: var-lib-calico
+          readOnly: false
+        - mountPath: /var/run/nodeagent
+          name: policysync
+        - mountPath: /sys/fs/bpf
+          name: bpffs
+        - mountPath: /var/log/calico/cni
+          name: cni-log-dir
+          readOnly: true
+      - command:
+        - /opt/bin/flanneld
+        - --ip-masq
+        - --kube-subnet-mgr
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: FLANNELD_IFACE
+          valueFrom:
+            configMapKeyRef:
+              key: canal_iface
+              name: canal-config
+        - name: FLANNELD_IP_MASQ
+          valueFrom:
+            configMapKeyRef:
+              key: masquerade
+              name: canal-config
+        image: '{{ .InternalImages.Get "Flannel" }}'
+        imagePullPolicy: IfNotPresent
+        name: kube-flannel
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /run/xtables.lock
+          name: xtables-lock
+          readOnly: false
+        - mountPath: /etc/kube-flannel/
+          name: flannel-cfg
+      hostNetwork: true
+      initContainers:
+      - command:
+        - /opt/cni/bin/install
+        env:
+        - name: CALICO_CNI_SERVICE_ACCOUNT
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.serviceAccountName
+        - name: CNI_CONF_NAME
+          value: 10-canal.conflist
+        - name: CNI_NETWORK_CONFIG
+          valueFrom:
+            configMapKeyRef:
+              key: cni_network_config
+              name: canal-config
+        - name: KUBERNETES_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: CNI_MTU
+          valueFrom:
+            configMapKeyRef:
+              key: veth_mtu
+              name: canal-config
+        - name: SLEEP
+          value: "false"
+        envFrom:
+        - configMapRef:
+            name: kubernetes-services-endpoint
+            optional: true
+        image: '{{ .InternalImages.Get "CalicoCNI" }}'
+        imagePullPolicy: IfNotPresent
+        name: install-cni
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /host/opt/cni/bin
+          name: cni-bin-dir
+        - mountPath: /host/etc/cni/net.d
+          name: cni-net-dir
+      - command:
+        - calico-node
+        - -init
+        - -best-effort
+        image: '{{ .InternalImages.Get "CalicoNode" }}'
+        imagePullPolicy: IfNotPresent
+        name: mount-bpffs
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /sys/fs
+          mountPropagation: Bidirectional
+          name: sys-fs
+        - mountPath: /var/run/calico
+          mountPropagation: Bidirectional
+          name: var-run-calico
+        - mountPath: /nodeproc
+          name: nodeproc
+          readOnly: true
+      nodeSelector:
+        kubernetes.io/os: linux
+      priorityClassName: system-node-critical
+      serviceAccountName: canal
+      terminationGracePeriodSeconds: 0
+      tolerations:
+      - effect: NoSchedule
+        operator: Exists
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - effect: NoExecute
+        operator: Exists
+      volumes:
+      - hostPath:
+          path: /lib/modules
+        name: lib-modules
+      - hostPath:
+          path: /var/run/calico
+        name: var-run-calico
+      - hostPath:
+          path: /var/lib/calico
+        name: var-lib-calico
+      - hostPath:
+          path: /run/xtables.lock
+          type: FileOrCreate
+        name: xtables-lock
+      - hostPath:
+          path: /sys/fs/
+          type: DirectoryOrCreate
+        name: sys-fs
+      - hostPath:
+          path: /sys/fs/bpf
+          type: Directory
+        name: bpffs
+      - hostPath:
+          path: /proc
+        name: nodeproc
+      - configMap:
+          name: canal-config
+        name: flannel-cfg
+      - hostPath:
+          path: /opt/cni/bin
+        name: cni-bin-dir
+      - hostPath:
+          path: /etc/cni/net.d
+        name: cni-net-dir
+      - hostPath:
+          path: /var/log/calico/cni
+        name: cni-log-dir
+      - hostPath:
+          path: /var/run/nodeagent
+          type: DirectoryOrCreate
+        name: policysync
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
