@@ -3,5 +3,5 @@
 ## Development
 
 ```shell
-kubectl kustomize . > canal.yaml
+kubectl kustomize . | yq > canal.yaml
 ```
