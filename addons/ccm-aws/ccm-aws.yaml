@@ -1,157 +1,174 @@
----
-# Source: aws-cloud-controller-manager/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  labels:
+    helm.sh/chart: aws-cloud-controller-manager-0.0.8
   name: cloud-controller-manager
   namespace: kube-system
-  labels:
-    helm.sh/chart: "aws-cloud-controller-manager-0.0.7"
 ---
-# Source: aws-cloud-controller-manager/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: system:cloud-controller-manager
   labels:
-    helm.sh/chart: "aws-cloud-controller-manager-0.0.7"
+    helm.sh/chart: aws-cloud-controller-manager-0.0.8
+  name: system:cloud-controller-manager
 rules:
   - apiGroups:
-    - ""
+      - ""
     resources:
-    - events
+      - events
     verbs:
-    - create
-    - patch
-    - update
+      - create
+      - patch
+      - update
   - apiGroups:
-    - ""
+      - ""
     resources:
-    - nodes
+      - nodes
     verbs:
-    - '*'
+      - '*'
   - apiGroups:
-    - ""
+      - ""
     resources:
-    - nodes/status
+      - nodes/status
     verbs:
-    - patch
+      - patch
   - apiGroups:
-    - ""
+      - ""
     resources:
-    - services
+      - services
     verbs:
-    - list
-    - patch
-    - update
-    - watch
+      - list
+      - patch
+      - update
+      - watch
   - apiGroups:
-    - ""
+      - ""
     resources:
-    - services/status
+      - services/status
     verbs:
-    - list
-    - patch
-    - update
-    - watch
+      - list
+      - patch
+      - update
+      - watch
   - apiGroups:
-    - ""
+      - ""
     resources:
-    - serviceaccounts
+      - serviceaccounts
     verbs:
-    - create
+      - create
   - apiGroups:
-    - ""
+      - ""
     resources:
-    - persistentvolumes
+      - persistentvolumes
     verbs:
-    - get
-    - list
-    - update
-    - watch
+      - get
+      - list
+      - update
+      - watch
   - apiGroups:
-    - ""
+      - ""
     resources:
-    - endpoints
+      - endpoints
     verbs:
-    - create
-    - get
-    - list
-    - watch
-    - update
+      - create
+      - get
+      - list
+      - watch
+      - update
   - apiGroups:
-    - coordination.k8s.io
+      - coordination.k8s.io
     resources:
-    - leases
+      - leases
     verbs:
-    - create
-    - get
-    - list
-    - watch
-    - update
+      - create
+      - get
+      - list
+      - watch
+      - update
   - apiGroups:
-    - ""
+      - ""
     resources:
-    - serviceaccounts/token
+      - serviceaccounts/token
     verbs:
-    - create
+      - create
 ---
-# Source: aws-cloud-controller-manager/templates/cluserrolebinding.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: system:cloud-controller-manager
-  labels:
-    helm.sh/chart: "aws-cloud-controller-manager-0.0.7"
-roleRef:
-  kind: ClusterRole
-  name: system:cloud-controller-manager
-  apiGroup: rbac.authorization.k8s.io
-subjects:
-- apiGroup: ""
-  kind: ServiceAccount
-  name: cloud-controller-manager
-  namespace: kube-system
----
-# Source: aws-cloud-controller-manager/templates/rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
+  labels:
+    helm.sh/chart: aws-cloud-controller-manager-0.0.8
   name: cloud-controller-manager:apiserver-authentication-reader
   namespace: kube-system
-  labels:
-    helm.sh/chart: "aws-cloud-controller-manager-0.0.7"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: extension-apiserver-authentication-reader
 subjects:
-- apiGroup: ""
-  kind: ServiceAccount
-  name: cloud-controller-manager
-  namespace: kube-system
+  - apiGroup: ""
+    kind: ServiceAccount
+    name: cloud-controller-manager
+    namespace: kube-system
 ---
-# Source: aws-cloud-controller-manager/templates/daemonset.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    helm.sh/chart: aws-cloud-controller-manager-0.0.8
+  name: system:cloud-controller-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:cloud-controller-manager
+subjects:
+  - apiGroup: ""
+    kind: ServiceAccount
+    name: cloud-controller-manager
+    namespace: kube-system
+---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: aws-cloud-controller-manager
   labels:
-    k8s-app:  aws-cloud-controller-manager
-    helm.sh/chart: "aws-cloud-controller-manager-0.0.7"
+    helm.sh/chart: aws-cloud-controller-manager-0.0.8
+    k8s-app: aws-cloud-controller-manager
+  name: aws-cloud-controller-manager
   namespace: kube-system
 spec:
   selector:
     matchLabels:
-      k8s-app:  aws-cloud-controller-manager
-  updateStrategy:
-    type: RollingUpdate
+      k8s-app: aws-cloud-controller-manager
   template:
     metadata:
-      name: aws-cloud-controller-manager
       labels:
-        k8s-app:  aws-cloud-controller-manager
+        k8s-app: aws-cloud-controller-manager
+      name: aws-cloud-controller-manager
     spec:
+      containers:
+        - args:
+            - --cluster-name={{ .Config.Name }}
+            - --cloud-provider=aws
+            - --use-service-account-credentials=false
+            - --configure-cloud-routes=false
+            - --cloud-config=/etc/kubernetes/cloud/cloud-config
+            - --v=2
+          env: []
+          image: '{{ .InternalImages.Get "AwsCCM" }}'
+          name: aws-cloud-controller-manager
+          resources:
+            requests:
+              cpu: 200m
+          securityContext: {}
+          volumeMounts:
+            - mountPath: /etc/kubernetes/cloud
+              name: cloud-config
+              readOnly: true
+      dnsPolicy: Default
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      priorityClassName: system-node-critical
+      securityContext: {}
+      serviceAccountName: cloud-controller-manager
       tolerations:
         - effect: NoSchedule
           key: node.cloudprovider.kubernetes.io/uninitialized
@@ -160,39 +177,10 @@ spec:
           key: node-role.kubernetes.io/master
         - effect: NoSchedule
           key: node-role.kubernetes.io/control-plane
-      nodeSelector:
-        node-role.kubernetes.io/control-plane: ""
-      dnsPolicy: Default
-      priorityClassName: system-node-critical
-      serviceAccountName: cloud-controller-manager
-      securityContext:
-        {}
-      containers:
-        - name: aws-cloud-controller-manager
-          image: "{{ .InternalImages.Get "AwsCCM" }}"
-          args:
-            - --cluster-name={{ .Config.Name }}
-            - --cloud-provider=aws
-            - --use-service-account-credentials=false
-            - --configure-cloud-routes=false
-            - --cloud-config=/etc/kubernetes/cloud/cloud-config
-            - --v=2
-            {{- with .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
-            - --concurrent-service-syncs={{ . }}
-            {{- end }}
-          resources:
-            requests:
-              cpu: 200m
-          env:
-            []
-          securityContext:
-            {}
-          volumeMounts:
-            - mountPath: /etc/kubernetes/cloud
-              name: cloud-config
-              readOnly: true
       volumes:
         - name: cloud-config
           secret:
             defaultMode: 420
             secretName: cloud-config
+  updateStrategy:
+    type: RollingUpdate
