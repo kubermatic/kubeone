@@ -1,3 +1,33 @@
+# [v1.7.3](https://github.com/kubermatic/kubeone/releases/tag/v1.7.3) - 2024-03-01
+
+## Changelog since v1.7.2
+
+## Changes by Kind
+
+### Feature
+
+- Enforce etcd v3.5.10 for Kubernetes versions that use an older etcd version. This etcd version includes some important stability, reliability, and security fixes ([#3004](https://github.com/kubermatic/kubeone/pull/3004), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Bug or Regression
+
+- Fix KubeOne failing to provision and upgrade Flatcar control plane and static worker nodes due to `torcx` removal ([#3041](https://github.com/kubermatic/kubeone/pull/3041), [@kron4eg](https://github.com/kron4eg))
+- Fix Helm deploying resources in the wrong namespace ([#3001](https://github.com/kubermatic/kubeone/pull/3001), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Improve error messages when working with remote files over SSH ([#3054](https://github.com/kubermatic/kubeone/pull/3054), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Updates
+
+#### machine-controller
+
+- Update machine-controller to v1.57.5 ([#3057](https://github.com/kubermatic/kubeone/pull/3057), [@xmudrii](https://github.com/xmudrii))
+
+#### operating-system-manager
+
+- Update operating-system-manager to v1.3.4 ([#3041](https://github.com/kubermatic/kubeone/pull/3041), [@kron4eg](https://github.com/kron4eg))
+
+#### Go
+
+- KubeOne is now built with Go 1.21.6 ([#3060](https://github.com/kubermatic/kubeone/pull/3060), [@xmudrii](https://github.com/xmudrii))
+
 # [v1.7.2](https://github.com/kubermatic/kubeone/releases/tag/v1.7.2) - 2024-01-05
 
 ## Changelog since v1.7.1
