@@ -1,3 +1,32 @@
+# [v1.6.5](https://github.com/kubermatic/kubeone/releases/tag/v1.6.5) - 2024-03-01
+
+## Changelog since v1.6.4
+
+## Changes by Kind
+
+### Feature
+
+- Enforce etcd v3.5.10 for Kubernetes versions that use an older etcd version. This etcd version includes some important stability, reliability, and security fixes ([#3003](https://github.com/kubermatic/kubeone/pull/3003), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Bug or Regression
+
+- Fix KubeOne failing to provision and upgrade Flatcar control plane and static worker nodes due to `torcx` removal ([#3042](https://github.com/kubermatic/kubeone/pull/3042), [@kron4eg](https://github.com/kron4eg))
+- Improve error messages when working with remote files over SSH ([#3053](https://github.com/kubermatic/kubeone/pull/3053), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Updates
+
+#### machine-controller
+
+- Update machine-controller to v1.56.6 ([#3058](https://github.com/kubermatic/kubeone/pull/3058), [@xmudrii](https://github.com/xmudrii))
+
+#### operating-system-manager
+
+- Update operating-system-manager to v1.2.4 ([#3042](https://github.com/kubermatic/kubeone/pull/3042), [@kron4eg](https://github.com/kron4eg))
+
+#### Addons
+
+- Update backup-restic addon to use etcd 3.5.11 for creating etcd snapshots ([#2983](https://github.com/kubermatic/kubeone/pull/2983), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.6.4](https://github.com/kubermatic/kubeone/releases/tag/v1.6.4) - 2023-11-10
 
 ## Changelog since v1.6.3
