@@ -28,9 +28,9 @@
 ###
 ### Usage:
 ###  The script can be used in the following way:
-###    CHANGELOG_START_REV="v1.5.2" \
-###    CHANGELOG_END_SHA="6c8a662a94ecf78ea98f3ad8cc899465445e7d86" \
-###    CHANGELOG_BRANCH="release/v1.5" \
+###    CHANGELOG_START_REV="v1.7.2" \
+###    CHANGELOG_END_SHA="b96f8510e223bc032a2794f77b864e897a6f6943" \
+###    CHANGELOG_BRANCH="release/v1.7" \
 ###    ./hack/generate-changelog.sh
 ###
 ###  The changelog will be saved to the /tmp directory with the random
@@ -74,7 +74,7 @@ tpl=${CHANGELOG_TPL:-"$(dirname "$0")/changelog.tpl"}
 git_branch="$(git rev-parse --abbrev-ref HEAD)"
 branch=${CHANGELOG_BRANCH:-"$git_branch"}
 
-release-notes \
+release-notes generate \
     --org="$org" \
     --repo="$repo" \
     --start-rev="$CHANGELOG_START_REV" \
@@ -83,4 +83,5 @@ release-notes \
     --go-template="go-template:$tpl" \
     --output="$output" \
     --required-author "" \
-    --markdown-links
+    --markdown-links \
+    --dependencies=false
