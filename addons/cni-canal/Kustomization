@@ -81,7 +81,7 @@ patches:
                         optional: true
                 resources:
                   requests:
-                    cpu: '{{ default .Params.RequestsCPU "250m" }}'
+                    cpu: '{{ default "250m" .Params.RequestsCPU }}'
               - name: kube-flannel
                 image: '{{ .InternalImages.Get "Flannel" }}'
             initContainers:

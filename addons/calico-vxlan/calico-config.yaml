@@ -55,7 +55,7 @@ data:
       ]
     }
   typha_service_name: none
-  veth_mtu: "{{ default 0 .Config.ClusterNetwork.CNI.Canal.MTU }}"
+  veth_mtu: "{{ default 0 .Params.MTU }}"
 
   {{ if .Config.ClusterNetwork.HasIPv4 }}
   # The default IPv4 pool to create on startup if none exists. Pod IPs will be

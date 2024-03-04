@@ -3392,7 +3392,7 @@ spec:
             timeoutSeconds: 10
           resources:
             requests:
-              cpu: '{{ default .Params.RequestsCPU "250m" }}'
+              cpu: '{{ default "250m" .Params.RequestsCPU }}'
           securityContext:
             privileged: true
           volumeMounts:
