@@ -265,6 +265,12 @@ func WithResources(t Tasks) Tasks {
 				Description: "ensure embedded addons",
 			},
 			{
+				Fn:          addons.EnsureUserAddons,
+				Operation:   "applying addons",
+				Description: "ensure custom addons",
+				Predicate:   func(s *state.State) bool { return s.Cluster.Addons != nil && s.Cluster.Addons.Enable },
+			},
+			{
 				Fn:        localhelm.Deploy,
 				Operation: "releasing core helm charts",
 			},
@@ -279,12 +285,6 @@ func WithResources(t Tasks) Tasks {
 				Operation:   "ensuring external CCM",
 				Description: "ensure external CCM",
 				Predicate:   func(s *state.State) bool { return s.Cluster.CloudProvider.External },
-			},
-			{
-				Fn:          addons.EnsureUserAddons,
-				Operation:   "applying addons",
-				Description: "ensure custom addons",
-				Predicate:   func(s *state.State) bool { return s.Cluster.Addons != nil && s.Cluster.Addons.Enable },
 			},
 			{
 				Fn:          ensureVsphereCSICABundleConfigMap,
