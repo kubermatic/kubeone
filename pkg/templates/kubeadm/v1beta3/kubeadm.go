@@ -85,6 +85,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 	}
 
 	etcdImageTag, etcdExtraArgs := etcdVersionCorruptCheckExtraArgs(kubeSemVer, cluster.AssetConfiguration.Etcd.ImageTag)
+	etcdExtraArgs["cipher-suites"] = kubernetesconfigs.SafeTLSCiphersString()
 
 	if s.Cluster.ClusterNetwork.HasIPv6() && len(host.IPv6Addresses) == 0 {
 		return nil, fmt.Errorf("host must have ipv6 address for %q family", s.Cluster.ClusterNetwork.IPFamily)
@@ -185,7 +186,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 					"profiling":                     "false",
 					"request-timeout":               "1m",
 					"service-node-port-range":       cluster.ClusterNetwork.NodePortRange,
-					"tls-cipher-suites":             strings.Join(kubernetesconfigs.SafeTLSCiphers(), ","),
+					"tls-cipher-suites":             kubernetesconfigs.SafeTLSCiphersString(),
 				},
 				ExtraVolumes: []kubeadmv1beta3.HostPathMount{},
 			},

@@ -18,6 +18,7 @@ package kubernetesconfigs
 
 import (
 	"crypto/tls"
+	"strings"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/templates/resources"
@@ -27,30 +28,27 @@ import (
 	kubeletconfigv1beta1 "k8s.io/kubelet/config/v1beta1"
 )
 
+// Convert default Go's secure cipher suites list from crypto/tls.CipherSuites() to comma separated string
+func SafeTLSCiphersString() string {
+	return strings.Join(SafeTLSCiphers(), ",")
+}
+
+// Convert default Go's secure cipher suites list from crypto/tls.CipherSuites() to []string
 func SafeTLSCiphers() []string {
-	return []string{
-		tls.CipherSuiteName(tls.TLS_AES_128_GCM_SHA256),
-		tls.CipherSuiteName(tls.TLS_AES_256_GCM_SHA384),
-		tls.CipherSuiteName(tls.TLS_CHACHA20_POLY1305_SHA256),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_AES_128_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_AES_128_GCM_SHA256),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_AES_256_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_AES_256_GCM_SHA384),
+	// TODO: we also need for AWS LB healthcheck client, but those considred insecure
+	// TLS_RSA_WITH_3DES_EDE_CBC_SHA
+	// TLS_RSA_WITH_AES_128_CBC_SHA
+	// TLS_RSA_WITH_AES_128_GCM_SHA256
+	// TLS_RSA_WITH_AES_256_CBC_SHA
+	// TLS_RSA_WITH_AES_256_GCM_SHA384
+	allCiphers := tls.CipherSuites()
+	result := make([]string, 0, len(allCiphers))
+
+	for _, cc := range allCiphers {
+		result = append(result, tls.CipherSuiteName(cc.ID))
 	}
+
+	return result
 }
 
 func NewKubeletConfiguration(cluster *kubeoneapi.KubeOneCluster, featureGates map[string]bool) (runtime.Object, error) {
