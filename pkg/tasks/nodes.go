@@ -97,6 +97,8 @@ func ensureRestartKubeAPIServerCrictl(s *state.State) error {
 }
 
 func labelNodes(s *state.State) error {
+	s.Logger.Infof("Labeling nodes...")
+
 	candidateNodes := sets.NewString()
 	nodeList := corev1.NodeList{}
 
