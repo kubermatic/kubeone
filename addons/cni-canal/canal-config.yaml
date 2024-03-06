@@ -1,0 +1,101 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: canal-config
+  namespace: kube-system
+data:
+  # Typha is disabled.
+  typha_service_name: "none"
+
+  # The interface used by canal for host <-> host communication.
+  # If left blank, then the interface is chosen using the node's
+  # default route.
+  canal_iface: ""
+
+  # Whether or not to masquerade traffic to destinations not within
+  # the pod network.
+  masquerade: "true"
+
+  # Configure the MTU to use for workload interfaces and tunnels.
+  # By default, MTU is auto-detected, and explicitly setting this field should not be required.
+  # You can override auto-detection by providing a non-zero value.
+  veth_mtu: "{{ default 0 .Config.ClusterNetwork.CNI.Canal.MTU }}"
+
+  # The CNI network configuration to install on each node. The special
+  # values in this config will be automatically populated.
+  cni_network_config: |-
+    {
+      "name": "k8s-pod-network",
+      "cniVersion": "0.3.1",
+      "plugins": [
+        {
+          "type": "calico",
+          "log_level": "info",
+          "log_file_path": "/var/log/calico/cni/cni.log",
+          "datastore_type": "kubernetes",
+          "nodename": "__KUBERNETES_NODE_NAME__",
+          "mtu": __CNI_MTU__,
+          "ipam": {
+              "type": "host-local",
+              {{ if and .Config.ClusterNetwork.HasIPv4 .Config.ClusterNetwork.HasIPv6 }}
+              "ranges": [
+                  [{"subnet": "usePodCidr"}],
+                  [{"subnet": "usePodCidrIPv6"}]
+              ]
+              {{ else }}
+              {{ if .Config.ClusterNetwork.HasIPv6 }}
+              "subnet": "usePodCidrIPv6"
+              {{ else }}
+              "subnet": "usePodCidr"
+              {{ end }}
+              {{ end }}
+          },
+          "policy": {
+              "type": "k8s"
+          },
+          "kubernetes": {
+              "kubeconfig": "__KUBECONFIG_FILEPATH__"
+          }
+        },
+        {
+          "type": "portmap",
+          "snat": true,
+          "capabilities": {"portMappings": true}
+        },
+        {
+          "type": "bandwidth",
+          "capabilities": {"bandwidth": true}
+        }
+      ]
+    }
+
+  # Flannel network configuration. Mounted into the flannel container.
+  net-conf.json: |
+    {
+      {{ if .Config.ClusterNetwork.HasIPv4 }}
+      "Network": "{{ .Config.ClusterNetwork.PodSubnet }}",
+      {{ end }}
+      {{ if .Config.ClusterNetwork.HasIPv6 }}
+      "EnableIPv6": true,
+      "IPv6Network": "{{ .Config.ClusterNetwork.PodSubnetIPv6 }}",
+      {{ end }}
+      "Backend": {
+        "Type": "vxlan"
+      }
+    }
+
+  {{ if .Config.ClusterNetwork.HasIPv4 }}
+  # The default IPv4 pool to create on startup if none exists. Pod IPs will be
+  # chosen from this range. Changing this value after installation will have
+  # no effect. This should fall within `--cluster-cidr`.
+  CALICO_IPV4POOL_CIDR: "{{ .Config.ClusterNetwork.PodSubnet }}"
+  {{ end }}
+
+  {{ if .Config.ClusterNetwork.HasIPv6 }}
+  FELIX_IPV6SUPPORT: "true"
+  IP6: "autodetect"
+  CALICO_IPV6POOL_CIDR: "{{ .Config.ClusterNetwork.PodSubnetIPv6 }}"
+  {{ else }}
+  # Disable IPv6 on Kubernetes.
+  FELIX_IPV6SUPPORT: "false"
+  {{ end }}

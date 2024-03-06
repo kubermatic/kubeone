@@ -1,0 +1,93 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kube-system
+
+resources:
+  - https://raw.githubusercontent.com/projectcalico/calico/v3.27.2/manifests/calico-vxlan.yaml
+
+patches:
+  - patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: calico-config
+        namespace: kube-system
+      $patch: delete
+
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: calico-kube-controllers
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: calico-kube-controllers
+                image: '{{ .InternalImages.Get "CalicoController" }}'
+
+  - patch: |-
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: calico-node
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: calico-node
+                env:
+                  - name: FELIX_IPV6SUPPORT
+                    $patch: delete
+
+  - patch: |-
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: calico-node
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: calico-node
+                image: '{{ .InternalImages.Get "CalicoNode" }}'
+                env:
+                  - name: FELIX_IPTABLESBACKEND
+                    value: '{{ default .CalicoIptablesBackend .Params.iptablesBackend }}'
+                  - name: CALICO_IPV4POOL_CIDR
+                    valueFrom:
+                      configMapKeyRef:
+                        name: calico-config
+                        key: CALICO_IPV4POOL_CIDR
+                        optional: true
+                  - name: FELIX_IPV6SUPPORT
+                    valueFrom:
+                      configMapKeyRef:
+                        name: calico-config
+                        key: FELIX_IPV6SUPPORT
+                        optional: true
+                  - name: IP6
+                    valueFrom:
+                      configMapKeyRef:
+                        name: calico-config
+                        key: IP6
+                        optional: true
+                  - name: CALICO_IPV6POOL_CIDR
+                    valueFrom:
+                      configMapKeyRef:
+                        name: calico-config
+                        key: CALICO_IPV6POOL_CIDR
+                        optional: true
+                resources:
+                  requests:
+                    cpu: '{{ default "250m" .Params.RequestsCPU }}'
+            initContainers:
+              - name: install-cni
+                image: '{{ .InternalImages.Get "CalicoCNI" }}'
+              - name: mount-bpffs
+                image: '{{ .InternalImages.Get "CalicoNode" }}'
+              - name: upgrade-ipam
+                image: '{{ .InternalImages.Get "CalicoCNI" }}'

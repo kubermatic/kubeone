@@ -1,5 +1,11 @@
 # Calico addon (with VXLAN)
 
+## Development
+
+```shell
+kubectl kustomize . | yq > calico-vxlan.yaml
+```
+
 ## Setup
 
 Since this addon is now shipped together with KubeOne, it's possible to simply
