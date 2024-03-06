@@ -110,8 +110,8 @@ sudo yum install -y \
 {{- if .KUBECTL }}
 	kubectl-{{ .KUBERNETES_VERSION }} \
 {{- end }}
-	kubernetes-cni-{{ .KUBERNETES_CNI_VERSION }} \
-	cri-tools-{{ .CRITOOLS_VERSION }}
+	kubernetes-cni \
+	cri-tools
 sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni cri-tools
 
 sudo systemctl daemon-reload
@@ -153,8 +153,6 @@ func KubeadmCentOS(cluster *kubeoneapi.KubeOneCluster, force bool) (string, erro
 		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
-		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 		"FORCE":                  force,
@@ -189,8 +187,6 @@ func UpgradeKubeadmAndCNICentOS(cluster *kubeoneapi.KubeOneCluster) (string, err
 		"KUBEADM":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
-		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
@@ -219,8 +215,6 @@ func UpgradeKubeletAndKubectlCentOS(cluster *kubeoneapi.KubeOneCluster) (string,
 		"KUBECTL":                true,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
-		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,

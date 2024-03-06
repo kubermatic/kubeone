@@ -60,6 +60,7 @@ func addDefaultingFuncs(scheme *runtime.Scheme) error {
 
 func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_Hosts(obj)
+	SetDefaults_CloudProvider(obj)
 	SetDefaults_APIEndpoints(obj)
 	SetDefaults_Versions(obj)
 	SetDefaults_ContainerRuntime(obj)
@@ -71,6 +72,18 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_SystemPackages(obj)
 	SetDefaults_Features(obj)
 	SetDefaults_CloudConfig(obj)
+}
+
+func SetDefaults_CloudProvider(obj *KubeOneCluster) {
+	gteKube129Condition, _ := semver.NewConstraint(">= 1.29")
+	actualVer, err := semver.NewVersion(obj.Versions.Kubernetes)
+	if err != nil {
+		return
+	}
+
+	if gteKube129Condition.Check(actualVer) && obj.CloudProvider.None == nil {
+		obj.CloudProvider.External = true
+	}
 }
 
 func SetDefaults_CloudConfig(obj *KubeOneCluster) {
@@ -89,13 +102,6 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 
 	setDefaultLeader := true
 
-	gteKube124Condition, _ := semver.NewConstraint(">= 1.24")
-	ltKube125Condition, _ := semver.NewConstraint("< 1.25")
-	actualVer, err := semver.NewVersion(obj.Versions.Kubernetes)
-	if err != nil {
-		return
-	}
-
 	// Define a unique ID for each host
 	for idx := range obj.ControlPlane.Hosts {
 		if setDefaultLeader && obj.ControlPlane.Hosts[idx].IsLeader {
@@ -106,20 +112,10 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 		obj.ControlPlane.Hosts[idx].ID = idx
 		defaultHostConfig(&obj.ControlPlane.Hosts[idx])
 		if obj.ControlPlane.Hosts[idx].Taints == nil {
-			if ltKube125Condition.Check(actualVer) {
-				obj.ControlPlane.Hosts[idx].Taints = []corev1.Taint{
-					{
-						Effect: corev1.TaintEffectNoSchedule,
-						Key:    "node-role.kubernetes.io/master",
-					},
-				}
-			}
-			if gteKube124Condition.Check(actualVer) {
-				obj.ControlPlane.Hosts[idx].Taints = append(obj.ControlPlane.Hosts[idx].Taints, corev1.Taint{
-					Effect: corev1.TaintEffectNoSchedule,
-					Key:    "node-role.kubernetes.io/control-plane",
-				})
-			}
+			obj.ControlPlane.Hosts[idx].Taints = append(obj.ControlPlane.Hosts[idx].Taints, corev1.Taint{
+				Effect: corev1.TaintEffectNoSchedule,
+				Key:    "node-role.kubernetes.io/control-plane",
+			})
 		}
 	}
 	if setDefaultLeader {
@@ -231,7 +227,7 @@ func SetDefaults_Proxy(obj *KubeOneCluster) {
 func SetDefaults_MachineController(obj *KubeOneCluster) {
 	if obj.MachineController == nil {
 		obj.MachineController = &MachineControllerConfig{
-			Deploy: true,
+			Deploy: obj.CloudProvider.None == nil,
 		}
 	}
 }

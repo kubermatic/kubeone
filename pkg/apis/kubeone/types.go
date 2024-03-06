@@ -252,10 +252,8 @@ type HostConfig struct {
 	IsLeader bool `json:"isLeader,omitempty"`
 
 	// Taints are taints applied to nodes. Those taints are only applied when the node is being provisioned.
-	// If not provided (i.e. nil) for control plane nodes, it defaults to:
-	//   * For Kubernetes 1.23 and older: TaintEffectNoSchedule with key node-role.kubernetes.io/master
-	//   * For Kubernetes 1.24 and newer: TaintEffectNoSchedule with keys
-	//     node-role.kubernetes.io/control-plane and node-role.kubernetes.io/master
+	// If not provided (i.e. nil) for control plane nodes, it defaults to TaintEffectNoSchedule with key
+	//     node-role.kubernetes.io/control-plane
 	// Explicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes).
 	Taints []corev1.Taint `json:"taints,omitempty"`
 

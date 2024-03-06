@@ -170,8 +170,8 @@ sudo yum install -y --disableplugin=priorities \
 {{- if .KUBECTL }}
 	kubectl-{{ .KUBERNETES_VERSION }} \
 {{- end }}
-	kubernetes-cni-{{ .KUBERNETES_CNI_VERSION }} \
-	cri-tools-{{ .CRITOOLS_VERSION }}
+	kubernetes-cni \
+	cri-tools
 sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni cri-tools
 {{- end }}
 
@@ -222,8 +222,6 @@ func KubeadmAmazonLinux(cluster *kubeoneapi.KubeOneCluster, force bool) (string,
 		"KUBECTL_URL":            cluster.AssetConfiguration.Kubectl.URL,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
-		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 		"FORCE":                  force,
@@ -260,8 +258,6 @@ func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeoneapi.KubeOneCluster) (string
 		"CNI_URL":                cluster.AssetConfiguration.CNI.URL,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
-		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
@@ -292,8 +288,6 @@ func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeoneapi.KubeOneCluster) (st
 		"KUBECTL_URL":            cluster.AssetConfiguration.Kubectl.URL,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
-		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,

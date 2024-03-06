@@ -15,7 +15,6 @@ limitations under the License.
 */
 
 //go:generate go run ../generator -file ../tests.yml -type go -output ./tests_test.go
-//go:generate go run ../generator -file ../tests.yml -type yaml -output ./prow.yaml
 //go:generate go run ../generator -file ../tests.yml -type yaml -output ./../../.prow/generated.yaml
 
 package e2e

@@ -337,16 +337,11 @@ func DeleteAddonByName(s *state.State, addonName string) error {
 }
 
 func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction {
-	// We deploy available CSI drivers un-conditionally for k8s v1.23+
-	//
 	// CSIMigration, if applicable, for the cloud providers is turned on by default and requires installation of CSI drviers even if we
 	// don't use external CCM. Although mount operations would fall-back to in-tree solution if CSI driver is not available. Fallback
 	// for provision operations is NOT supported by in-tree solution.
 
-	addonsToDeploy = append(addonsToDeploy, addonAction{
-		name: resources.AddonCSIExternalSnapshotter,
-	})
-
+	var unknownProvider bool
 	switch {
 	case s.Cluster.CloudProvider.AWS != nil:
 		addonsToDeploy = append(addonsToDeploy,
@@ -426,6 +421,13 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 		)
 	default:
 		s.Logger.Infof("CSI driver for %q not yet supported, skipping", s.Cluster.CloudProvider.CloudProviderName())
+		unknownProvider = true
+	}
+
+	if !unknownProvider {
+		addonsToDeploy = append(addonsToDeploy, addonAction{
+			name: resources.AddonCSIExternalSnapshotter,
+		})
 	}
 
 	return addonsToDeploy
