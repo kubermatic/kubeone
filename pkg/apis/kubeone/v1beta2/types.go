@@ -90,6 +90,35 @@ type KubeOneCluster struct {
 	// TLSCipherSuites allows to configure TLS cipher suites for different components. See
 	// https://pkg.go.dev/crypto/tls#pkg-constants for possible values.
 	TLSCipherSuites TLSCipherSuites `json:"tlsCipherSuites"`
+
+	// ControlPlaneComponents configures the Kubernetes control plane components
+	ControlPlaneComponents *ControlPlaneComponents `json:"controlPlaneComponents,omitempty"`
+}
+
+type ControlPlaneComponents struct {
+	// ControllerManagerConfig configures the Kubernetes Controller Manager
+	ControllerManager *ControlPlaneComponentConfig `json:"controllerManager,omitempty"`
+
+	// Scheduler configures the Kubernetes Scheduler
+	Scheduler *ControlPlaneComponentConfig `json:"scheduler,omitempty"`
+
+	// APIServer configures the Kubernetes API Server
+	APIServer *ControlPlaneComponentConfig `json:"apiServer,omitempty"`
+}
+
+type ControlPlaneComponentConfig struct {
+	// Flags is a set of additional flags that will be passed to the control plane component.
+	// KubeOne internally configures some flags that are eseeential for the cluster to work. Those flags set by KubeOne
+	// will be merged with the ones specified in the configuration. In case of conflict the value provided by the user will be used.
+	// Usage of `feature-gates` is not allowed here, use `FeatureGates` field instead.
+	// IMPORTANT: Use of these flags is at the user's own risk, as KubeOne does not provide support for issues caused by invalid values and configurations.
+	Flags map[string]string `json:"flags,omitempty"`
+
+	// FeatureGates is a map of additional feature gates that will be passed on to the control plane component.
+	// KubeOne internally configures some feature gates that are eseeential for the cluster to work. Those feature gates set by KubeOne
+	// will be merged with the ones specified in the configuration. In case of conflict the value provided by the user will be used.
+	// IMPORTANT: Use of these featureGates is at the user's own risk, as KubeOne does not provide support for issues caused by invalid values and configurations.
+	FeatureGates map[string]bool `json:"featureGates,omitempty"`
 }
 
 type TLSCipherSuites struct {

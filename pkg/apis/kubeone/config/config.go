@@ -42,7 +42,8 @@ import (
 
 const (
 	// KubeOneClusterKind is kind of the KubeOneCluster object
-	KubeOneClusterKind = "KubeOneCluster"
+	KubeOneClusterKind                  = "KubeOneCluster"
+	flagsAndFeatureGateOverridesWarning = "%s only covers %s. For some features, you may also need additional configuration for other components. Use this at your own risk!!"
 )
 
 var (
@@ -185,7 +186,7 @@ func DefaultedV1Beta1KubeOneCluster(versionedCluster *kubeonev1beta1.KubeOneClus
 	}
 
 	// Check for deprecated fields/features for a cluster
-	checkClusterFeatures(*internalCluster, logger)
+	checkClusterConfiguration(*internalCluster, logger)
 
 	return internalCluster, nil
 }
@@ -222,7 +223,7 @@ func DefaultedV1Beta2KubeOneCluster(versionedCluster *kubeonev1beta2.KubeOneClus
 	}
 
 	// Check for deprecated fields/features for a cluster
-	checkClusterFeatures(*internalCluster, logger)
+	checkClusterConfiguration(*internalCluster, logger)
 
 	return internalCluster, nil
 }
@@ -338,8 +339,8 @@ func isDir(dirname string) bool {
 	return statErr == nil && stat.Mode().IsDir()
 }
 
-// checkClusterFeatures checks clusters for usage of alpha and deprecated fields, flags etc. and print a warning if any are found
-func checkClusterFeatures(cluster kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) {
+// checkClusterConfiguration checks clusters for usage of alpha, deprecated fields, flags, unrecommended features etc. and print a warning if any are found.
+func checkClusterConfiguration(cluster kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) {
 	if cluster.Features.PodSecurityPolicy != nil && cluster.Features.PodSecurityPolicy.Enable {
 		logger.Warnf("PodSecurityPolicy is deprecated and will be removed with Kubernetes 1.25 release")
 	}
@@ -350,5 +351,27 @@ func checkClusterFeatures(cluster kubeoneapi.KubeOneCluster, logger logrus.Field
 
 	if cluster.CloudProvider.Vsphere != nil && !cluster.CloudProvider.External && len(cluster.CloudProvider.CSIConfig) > 0 {
 		logger.Warnf(".cloudProvider.csiConfig is provided, but is ignored when used with the in-tree cloud provider")
+	}
+
+	checkFlagsAndFeatureGateOverrides(cluster, logger)
+}
+
+func checkFlagsAndFeatureGateOverrides(cluster kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) {
+	if cluster.ControlPlaneComponents != nil {
+		if cluster.ControlPlaneComponents.ControllerManager != nil {
+			if cluster.ControlPlaneComponents.ControllerManager.Flags != nil || cluster.ControlPlaneComponents.ControllerManager.FeatureGates != nil {
+				logger.Warnf(flagsAndFeatureGateOverridesWarning, ".controlPlaneComponents.controllerManager.flags", "Controller Manager")
+			}
+		}
+		if cluster.ControlPlaneComponents.Scheduler != nil {
+			if cluster.ControlPlaneComponents.Scheduler.Flags != nil || cluster.ControlPlaneComponents.Scheduler.FeatureGates != nil {
+				logger.Warnf(flagsAndFeatureGateOverridesWarning, ".controlPlaneComponents.scheduler.flags", "Scheduler")
+			}
+		}
+		if cluster.ControlPlaneComponents.APIServer != nil {
+			if cluster.ControlPlaneComponents.APIServer.Flags != nil || cluster.ControlPlaneComponents.APIServer.FeatureGates != nil {
+				logger.Warnf(flagsAndFeatureGateOverridesWarning, ".controlPlaneComponents.apiServer.flags", "API Server")
+			}
+		}
 	}
 }

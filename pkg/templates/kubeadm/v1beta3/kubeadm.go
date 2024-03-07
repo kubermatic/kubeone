@@ -366,6 +366,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 	}
 
 	addControllerManagerNetworkArgs(clusterConfig.ControllerManager.ExtraArgs, cluster.ClusterNetwork)
+	addControlPlaneComponentsAdditionalArgs(cluster, clusterConfig)
 
 	args := kubeadmargs.NewFrom(clusterConfig.APIServer.ExtraArgs)
 	features.UpdateKubeadmClusterConfiguration(cluster.Features, args)
@@ -409,6 +410,41 @@ func addControllerManagerNetworkArgs(m map[string]string, clusterNetwork kubeone
 		}
 		if clusterNetwork.NodeCIDRMaskSizeIPv6 != nil {
 			m["node-cidr-mask-size-ipv6"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv6)
+		}
+	}
+}
+
+func addControlPlaneComponentsAdditionalArgs(cluster *kubeoneapi.KubeOneCluster, clusterConfig *kubeadmv1beta3.ClusterConfiguration) {
+	if cluster.ControlPlaneComponents != nil {
+		if cluster.ControlPlaneComponents.ControllerManager != nil {
+			if cluster.ControlPlaneComponents.ControllerManager.Flags != nil {
+				for k, v := range cluster.ControlPlaneComponents.ControllerManager.Flags {
+					clusterConfig.ControllerManager.ExtraArgs[k] = v
+				}
+			}
+			if cluster.ControlPlaneComponents.ControllerManager.FeatureGates != nil {
+				clusterConfig.ControllerManager.ExtraArgs["feature-gates"] = mergeFeatureGates(clusterConfig.ControllerManager.ExtraArgs["feature-gates"], cluster.ControlPlaneComponents.ControllerManager.FeatureGates)
+			}
+		}
+		if cluster.ControlPlaneComponents.Scheduler != nil {
+			if cluster.ControlPlaneComponents.Scheduler.Flags != nil {
+				for k, v := range cluster.ControlPlaneComponents.Scheduler.Flags {
+					clusterConfig.Scheduler.ExtraArgs[k] = v
+				}
+			}
+			if cluster.ControlPlaneComponents.Scheduler.FeatureGates != nil {
+				clusterConfig.Scheduler.ExtraArgs["feature-gates"] = mergeFeatureGates(clusterConfig.Scheduler.ExtraArgs["feature-gates"], cluster.ControlPlaneComponents.Scheduler.FeatureGates)
+			}
+		}
+		if cluster.ControlPlaneComponents.APIServer != nil {
+			if cluster.ControlPlaneComponents.APIServer.Flags != nil {
+				for k, v := range cluster.ControlPlaneComponents.APIServer.Flags {
+					clusterConfig.APIServer.ExtraArgs[k] = v
+				}
+			}
+			if cluster.ControlPlaneComponents.APIServer.FeatureGates != nil {
+				clusterConfig.APIServer.ExtraArgs["feature-gates"] = mergeFeatureGates(clusterConfig.APIServer.ExtraArgs["feature-gates"], cluster.ControlPlaneComponents.APIServer.FeatureGates)
+			}
 		}
 	}
 }
@@ -577,4 +613,35 @@ func defaults(input, defaultValue string) string {
 	}
 
 	return defaultValue
+}
+
+func mergeFeatureGates(featureGates string, additionalFeatureGates map[string]bool) string {
+	featureGatesMap := make(map[string]bool)
+	featureGatesArr := strings.Split(featureGates, ",")
+	for _, fg := range featureGatesArr {
+		kv := strings.Split(fg, "=")
+		if len(kv) == 2 {
+			key := strings.TrimSpace(kv[0])
+			value := strings.TrimSpace(kv[1])
+			if value == "true" {
+				featureGatesMap[key] = true
+			} else if value == "false" {
+				featureGatesMap[key] = false
+			}
+		}
+	}
+
+	for k, v := range additionalFeatureGates {
+		featureGatesMap[k] = v
+	}
+
+	var featureGatesStr strings.Builder
+	for k, v := range featureGatesMap {
+		featureGatesStr.WriteString(k)
+		featureGatesStr.WriteString("=")
+		featureGatesStr.WriteString(strconv.FormatBool(v))
+		featureGatesStr.WriteString(",")
+	}
+
+	return strings.TrimSuffix(featureGatesStr.String(), ",")
 }

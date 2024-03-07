@@ -79,6 +79,7 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
 	allErrs = append(allErrs, ValidateHelmReleases(c.HelmReleases, field.NewPath("helmReleases"))...)
 	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
+	allErrs = append(allErrs, ValidateControlPlaneComponents(c.ControlPlaneComponents, field.NewPath("controlPlaneComponents"))...)
 	allErrs = append(allErrs,
 		ValidateContainerRuntimeVSRegistryConfiguration(
 			c.ContainerRuntime,
@@ -790,6 +791,34 @@ func ValidateRegistryConfiguration(r *kubeoneapi.RegistryConfiguration, fldPath 
 
 	if r.InsecureRegistry && r.OverwriteRegistry == "" {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("insecureRegistry"), r.InsecureRegistry, "insecureRegistry requires overwriteRegistry to be configured"))
+	}
+
+	return allErrs
+}
+
+func ValidateControlPlaneComponents(c *kubeoneapi.ControlPlaneComponents, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if c == nil {
+		return allErrs
+	}
+
+	if c.ControllerManager != nil && c.ControllerManager.Flags != nil {
+		if _, ok := c.ControllerManager.Flags["feature-gates"]; ok {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("controllerManager").Child("flags"), c.ControllerManager.Flags, "specifying feature-gates flag is forbidden here. Use .controlPlaneComponents.controllerManager.featureGates instead"))
+		}
+	}
+
+	if c.Scheduler != nil && c.Scheduler.Flags != nil {
+		if _, ok := c.Scheduler.Flags["feature-gates"]; ok {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("scheduler").Child("flags"), c.Scheduler.Flags, "specifying feature-gates flag is forbidden here. Use .controlPlaneComponents.scheduler.featureGates instead"))
+		}
+	}
+
+	if c.APIServer != nil && c.APIServer.Flags != nil {
+		if _, ok := c.APIServer.Flags["feature-gates"]; ok {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("apiServer").Child("flags"), c.APIServer.Flags, "specifying feature-gates flag is forbidden here. Use .controlPlaneComponents.apiServer.featureGates instead"))
+		}
 	}
 
 	return allErrs
