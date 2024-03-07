@@ -1,11 +1,12 @@
 +++
 title = "v1beta2 API Reference"
-date = 2024-02-21T16:22:06+02:00
+date = 2024-03-07T12:44:59+05:00
 weight = 11
 +++
 ## v1beta2
 
 * [APIEndpoint](#apiendpoint)
+* [APIServerConfig](#apiserverconfig)
 * [AWSSpec](#awsspec)
 * [Addon](#addon)
 * [Addons](#addons)
@@ -78,6 +79,16 @@ APIEndpoint is the endpoint used to communicate with the Kubernetes API
 | host | Host is the hostname or IP on which API is running. | string | true |
 | port | Port is the port used to reach to the API. Default value is 6443. | int | false |
 | alternativeNames | AlternativeNames is a list of Subject Alternative Names for the API Server signing cert. | []string | false |
+
+[Back to Group](#v1beta2)
+
+### APIServerConfig
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| additionalArgs | AdditionalArgs is a list of additional arguments that will be passed to the API server | map[string]string | false |
 
 [Back to Group](#v1beta2)
 
@@ -526,6 +537,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |
 | registryConfiguration | RegistryConfiguration configures how Docker images are pulled from an image registry | *[RegistryConfiguration](#registryconfiguration) | false |
 | loggingConfig | LoggingConfig configures the Kubelet's log rotation | [LoggingConfig](#loggingconfig) | false |
+| apiServer | APIServer configures the Kubernetes API server | *[APIServerConfig](#apiserverconfig) | false |
 
 [Back to Group](#v1beta2)
 

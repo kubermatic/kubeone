@@ -178,15 +178,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		ControlPlaneEndpoint: controlPlaneEndpoint,
 		APIServer: kubeadmv1beta3.APIServer{
 			ControlPlaneComponent: kubeadmv1beta3.ControlPlaneComponent{
-				ExtraArgs: map[string]string{
-					"enable-admission-plugins":      kubeflags.DefaultAdmissionControllers(),
-					"endpoint-reconciler-type":      "lease",
-					"kubelet-certificate-authority": "/etc/kubernetes/pki/ca.crt",
-					"profiling":                     "false",
-					"request-timeout":               "1m",
-					"service-node-port-range":       cluster.ClusterNetwork.NodePortRange,
-					"tls-cipher-suites":             strings.Join(kubernetesconfigs.SafeTLSCiphers(), ","),
-				},
+				ExtraArgs:    apiServerArgs(cluster),
 				ExtraVolumes: []kubeadmv1beta3.HostPathMount{},
 			},
 			CertSANs: certSANS,
@@ -411,6 +403,26 @@ func addControllerManagerNetworkArgs(m map[string]string, clusterNetwork kubeone
 			m["node-cidr-mask-size-ipv6"] = fmt.Sprintf("%d", *clusterNetwork.NodeCIDRMaskSizeIPv6)
 		}
 	}
+}
+
+func apiServerArgs(cluster *kubeoneapi.KubeOneCluster) map[string]string {
+	apiServerArgs := map[string]string{
+		"enable-admission-plugins":      kubeflags.DefaultAdmissionControllers(),
+		"endpoint-reconciler-type":      "lease",
+		"kubelet-certificate-authority": "/etc/kubernetes/pki/ca.crt",
+		"profiling":                     "false",
+		"request-timeout":               "1m",
+		"service-node-port-range":       cluster.ClusterNetwork.NodePortRange,
+		"tls-cipher-suites":             strings.Join(kubernetesconfigs.SafeTLSCiphers(), ","),
+	}
+
+	if cluster.APIServer != nil && cluster.APIServer.AdditionalArgs != nil {
+		for k, v := range cluster.APIServer.AdditionalArgs {
+			apiServerArgs[k] = v
+		}
+	}
+
+	return apiServerArgs
 }
 
 func join(ipFamily kubeoneapi.IPFamily, ipv4Subnet, ipv6Subnet string) string {

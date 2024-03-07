@@ -89,6 +89,14 @@ type KubeOneCluster struct {
 
 	// LoggingConfig configures the Kubelet's log rotation
 	LoggingConfig LoggingConfig `json:"loggingConfig,omitempty"`
+
+	// APIServer configures the Kubernetes API server
+	APIServer *APIServerConfig `json:"apiServer,omitempty"`
+}
+
+type APIServerConfig struct {
+	// AdditionalArgs is a list of additional arguments that will be passed to the API server
+	AdditionalArgs map[string]string `json:"additionalArgs,omitempty"`
 }
 
 type HelmRelease struct {

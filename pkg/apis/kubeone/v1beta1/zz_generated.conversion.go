@@ -1402,6 +1402,7 @@ func autoConvert_kubeone_KubeOneCluster_To_v1beta1_KubeOneCluster(in *kubeone.Ku
 	}
 	out.RegistryConfiguration = (*RegistryConfiguration)(unsafe.Pointer(in.RegistryConfiguration))
 	// WARNING: in.LoggingConfig requires manual conversion: does not exist in peer-type
+	// WARNING: in.APIServer requires manual conversion: does not exist in peer-type
 	return nil
 }
 
