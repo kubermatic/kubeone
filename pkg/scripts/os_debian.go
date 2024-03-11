@@ -33,6 +33,16 @@ source /etc/kubeone/proxy-env
 {{ template "sysctl-k8s" . }}
 {{ template "journald-config" }}
 
+{{- if .CONFIGURE_REPOSITORIES }}
+sudo install -m 0755 -d /etc/apt/keyrings
+
+curl -fsSL https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/deb/Release.key | sudo gpg --dearmor --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update
+{{- end }}
+
 sudo mkdir -p /etc/apt/apt.conf.d
 cat <<EOF | sudo tee /etc/apt/apt.conf.d/proxy.conf
 {{- if .HTTPS_PROXY }}
@@ -58,16 +68,6 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 
 {{- if .INSTALL_ISCSI_AND_NFS }}
 sudo systemctl enable --now iscsid
-{{- end }}
-
-{{- if .CONFIGURE_REPOSITORIES }}
-sudo install -m 0755 -d /etc/apt/keyrings
-
-curl -fsSL https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/deb/Release.key | sudo gpg --dearmor --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-
-echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-
-sudo apt-get update
 {{- end }}
 
 kube_ver="{{ .KUBERNETES_VERSION }}-*"
