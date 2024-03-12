@@ -1386,10 +1386,6 @@ var (
 			Name:                 "upgrade_containerd",
 			ManifestTemplatePath: "testdata/containerd_simple.yaml",
 		},
-		"conformance_containerd": &scenarioConformance{
-			Name:                 "conformance_containerd",
-			ManifestTemplatePath: "testdata/containerd_simple.yaml",
-		},
 
 		// external containerd
 		"install_containerd_external": &scenarioInstall{
@@ -1406,29 +1402,13 @@ var (
 		},
 
 		// Various features
-		"calico_containerd": &scenarioInstall{
-			Name:                 "calico_containerd",
-			ManifestTemplatePath: "testdata/containerd_calico.yaml",
-		},
 		"calico_containerd_external": &scenarioInstall{
 			Name:                 "calico_containerd_external",
 			ManifestTemplatePath: "testdata/containerd_calico_external.yaml",
 		},
-		"weave_containerd": &scenarioInstall{
-			Name:                 "weave_containerd",
-			ManifestTemplatePath: "testdata/containerd_weave.yaml",
-		},
-		"cilium_containerd": &scenarioInstall{
-			Name:                 "cilium_containerd",
-			ManifestTemplatePath: "testdata/containerd_cilium.yaml",
-		},
 		"cilium_containerd_external": &scenarioInstall{
 			Name:                 "cilium_containerd_external",
 			ManifestTemplatePath: "testdata/containerd_cilium_external.yaml",
-		},
-		"upgrade_cilium_containerd": &scenarioUpgrade{
-			Name:                 "upgrade_cilium_containerd",
-			ManifestTemplatePath: "testdata/containerd_cilium.yaml",
 		},
 		"upgrade_cilium_containerd_external": &scenarioUpgrade{
 			Name:                 "upgrade_cilium_containerd_external",
@@ -1437,10 +1417,6 @@ var (
 		"kube_proxy_ipvs_external": &scenarioInstall{
 			Name:                 "kube_proxy_ipvs_external",
 			ManifestTemplatePath: "testdata/kube_proxy_ipvs_external.yaml",
-		},
-		"legacy_machine_controller_containerd": &scenarioInstall{
-			Name:                 "legacy_machine_controller_containerd",
-			ManifestTemplatePath: "testdata/legacy_machine_controller_containerd.yaml",
 		},
 		"legacy_machine_controller_containerd_external": &scenarioInstall{
 			Name:                 "legacy_machine_controller_containerd_external",
