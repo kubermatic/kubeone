@@ -2160,9 +2160,9 @@ func Convert_kubeone_SystemPackages_To_v1beta2_SystemPackages(in *kubeone.System
 }
 
 func autoConvert_v1beta2_TLSCipherSuites_To_kubeone_TLSCipherSuites(in *TLSCipherSuites, out *kubeone.TLSCipherSuites, s conversion.Scope) error {
-	out.Kubelet = *(*[]string)(unsafe.Pointer(&in.Kubelet))
 	out.APIServer = *(*[]string)(unsafe.Pointer(&in.APIServer))
 	out.Etcd = *(*[]string)(unsafe.Pointer(&in.Etcd))
+	out.Kubelet = *(*[]string)(unsafe.Pointer(&in.Kubelet))
 	return nil
 }
 
@@ -2172,9 +2172,9 @@ func Convert_v1beta2_TLSCipherSuites_To_kubeone_TLSCipherSuites(in *TLSCipherSui
 }
 
 func autoConvert_kubeone_TLSCipherSuites_To_v1beta2_TLSCipherSuites(in *kubeone.TLSCipherSuites, out *TLSCipherSuites, s conversion.Scope) error {
-	out.Kubelet = *(*[]string)(unsafe.Pointer(&in.Kubelet))
 	out.APIServer = *(*[]string)(unsafe.Pointer(&in.APIServer))
 	out.Etcd = *(*[]string)(unsafe.Pointer(&in.Etcd))
+	out.Kubelet = *(*[]string)(unsafe.Pointer(&in.Kubelet))
 	return nil
 }
 
