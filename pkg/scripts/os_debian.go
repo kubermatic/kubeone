@@ -43,7 +43,7 @@ Acquire::http::Proxy "{{ .HTTP_PROXY }}";
 {{- end }}
 EOF
 
-# Removing old Kubernertes repositories from apt sources is needed when upgrading from older Kubeone versions,
+# Removing deprecated Kubernetes repositories from apt sources is needed when upgrading from older KubeOne versions,
 # otherwise, apt-get update will fail to upgrade the packages.
 {{- if .CONFIGURE_REPOSITORIES }}
 if sudo grep -q "deb http://apt.kubernetes.io/ kubernetes-xenial main" /etc/apt/sources.list.d/kubernetes.list; then
