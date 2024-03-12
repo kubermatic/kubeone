@@ -2588,6 +2588,34 @@ presubmits:
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
   labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-upgrade-containerd-from-v1.27.11-to-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultUpgradeContainerdFromV1_27_11_ToV1_28_7
+      env:
+      - name: PROVIDER
+        value: gce
+      image: quay.io/kubermatic/build:go-1.22-node-18-5
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  extra_refs:
+  - base_ref: release/v1.7
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-amzn-stable-upgrade-containerd-external-from-v1.27.11-to-v1.28.7
