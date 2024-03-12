@@ -290,7 +290,7 @@ func SetDefaults_Features(obj *KubeOneCluster) {
 
 func SetDefaults_TLSCipherSuites(obj *KubeOneCluster) {
 	if obj.TLSCipherSuites.APIServer == nil {
-		obj.TLSCipherSuites.APIServer = kubernetesconfigs.TLSCipherSuites(kubernetesconfigs.APIServerDefaultTLSCipherSuites())
+		obj.TLSCipherSuites.APIServer = kubernetesconfigs.APIServerDefaultTLSCipherSuites()
 	}
 
 	if obj.TLSCipherSuites.Etcd == nil {
@@ -298,7 +298,7 @@ func SetDefaults_TLSCipherSuites(obj *KubeOneCluster) {
 	}
 
 	if obj.TLSCipherSuites.Kubelet == nil {
-		obj.TLSCipherSuites.Kubelet = kubernetesconfigs.TLSCipherSuites(tls.CipherSuites())
+		obj.TLSCipherSuites.Kubelet = kubernetesconfigs.DefaultTLSCipherSuites()
 	}
 }
 
