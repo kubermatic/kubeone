@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2024-02-21T16:22:06+02:00
+date = 2024-03-12T21:50:36+02:00
 weight = 11
 +++
 ## v1beta2
@@ -64,6 +64,7 @@ weight = 11
 * [StaticAuditLogConfig](#staticauditlogconfig)
 * [StaticWorkersConfig](#staticworkersconfig)
 * [SystemPackages](#systempackages)
+* [TLSCipherSuites](#tlsciphersuites)
 * [VMwareCloudDirectorSpec](#vmwareclouddirectorspec)
 * [VersionConfig](#versionconfig)
 * [VsphereSpec](#vspherespec)
@@ -526,6 +527,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |
 | registryConfiguration | RegistryConfiguration configures how Docker images are pulled from an image registry | *[RegistryConfiguration](#registryconfiguration) | false |
 | loggingConfig | LoggingConfig configures the Kubelet's log rotation | [LoggingConfig](#loggingconfig) | false |
+| tlsCipherSuites | TLSCipherSuites allows to configure TLS cipher suites for different components. See https://pkg.go.dev/crypto/tls#pkg-constants for possible values. | [TLSCipherSuites](#tlsciphersuites) | true |
 
 [Back to Group](#v1beta2)
 
@@ -794,6 +796,18 @@ SystemPackages controls configurations of APT/YUM
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | configureRepositories | ConfigureRepositories (true by default) is a flag to control automatic configuration of kubeadm / docker repositories. | bool | false |
+
+[Back to Group](#v1beta2)
+
+### TLSCipherSuites
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| apiServer | APIServer is a list of TLS cipher suites to use in kube-apiserver. | []string | false |
+| etcd | Etcd is a list of TLS cipher suites to use in etcd. | []string | false |
+| kubelet | Kubelet is a list of TLS cipher suites to use in kubelet. | []string | false |
 
 [Back to Group](#v1beta2)
 

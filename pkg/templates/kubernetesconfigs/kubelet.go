@@ -27,30 +27,43 @@ import (
 	kubeletconfigv1beta1 "k8s.io/kubelet/config/v1beta1"
 )
 
-func SafeTLSCiphers() []string {
-	return []string{
-		tls.CipherSuiteName(tls.TLS_AES_128_GCM_SHA256),
-		tls.CipherSuiteName(tls.TLS_AES_256_GCM_SHA384),
-		tls.CipherSuiteName(tls.TLS_CHACHA20_POLY1305_SHA256),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_AES_128_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_AES_128_GCM_SHA256),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_AES_256_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_AES_256_GCM_SHA384),
+// This list is produces according to CIS 1.8 / 1.2.30
+//
+// See more: https://github.com/aquasecurity/kube-bench/blob/v0.7.2/cfg/cis-1.8/master.yaml#L768-L788
+func APIServerDefaultTLSCipherSuites() []*tls.CipherSuite {
+	return []*tls.CipherSuite{
+		{ID: tls.TLS_AES_128_GCM_SHA256, Name: "TLS_AES_128_GCM_SHA256"},
+		{ID: tls.TLS_AES_256_GCM_SHA384, Name: "TLS_AES_256_GCM_SHA384"},
+		{ID: tls.TLS_CHACHA20_POLY1305_SHA256, Name: "TLS_CHACHA20_POLY1305_SHA256"},
+		{ID: tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA, Name: "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA"},
+		{ID: tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256, Name: "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"},
+		{ID: tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA, Name: "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA"},
+		{ID: tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384, Name: "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"},
+		{ID: tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305, Name: "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305"},
+		{ID: tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256, Name: "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256"},
+		{ID: tls.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA, Name: "TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA"},
+		{ID: tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA, Name: "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"},
+		{ID: tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, Name: "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"},
+		{ID: tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA, Name: "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA"},
+		{ID: tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384, Name: "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"},
+		{ID: tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305, Name: "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305"},
+		{ID: tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256, Name: "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256"},
+		{ID: tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA, Name: "TLS_RSA_WITH_3DES_EDE_CBC_SHA"},
+		{ID: tls.TLS_RSA_WITH_AES_128_CBC_SHA, Name: "TLS_RSA_WITH_AES_128_CBC_SHA"},
+		{ID: tls.TLS_RSA_WITH_AES_128_GCM_SHA256, Name: "TLS_RSA_WITH_AES_128_GCM_SHA256"},
+		{ID: tls.TLS_RSA_WITH_AES_256_CBC_SHA, Name: "TLS_RSA_WITH_AES_256_CBC_SHA"},
+		{ID: tls.TLS_RSA_WITH_AES_256_GCM_SHA384, Name: "TLS_RSA_WITH_AES_256_GCM_SHA384"},
 	}
+}
+
+func TLSCipherSuites(cipherSuites []*tls.CipherSuite) []string {
+	result := make([]string, 0, len(cipherSuites))
+
+	for _, cs := range cipherSuites {
+		result = append(result, tls.CipherSuiteName(cs.ID))
+	}
+
+	return result
 }
 
 func NewKubeletConfiguration(cluster *kubeoneapi.KubeOneCluster, featureGates map[string]bool) (runtime.Object, error) {
@@ -72,7 +85,7 @@ func NewKubeletConfiguration(cluster *kubeoneapi.KubeOneCluster, featureGates ma
 		ReadOnlyPort:         0,
 		RotateCertificates:   true,
 		ServerTLSBootstrap:   true,
-		TLSCipherSuites:      SafeTLSCiphers(),
+		TLSCipherSuites:      cluster.TLSCipherSuites.Kubelet,
 	}
 
 	if cluster.Features.NodeLocalDNS.Deploy {

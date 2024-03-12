@@ -17,12 +17,14 @@ limitations under the License.
 package v1beta2
 
 import (
+	"crypto/tls"
 	"fmt"
 	"strings"
 
 	"github.com/Masterminds/semver/v3"
 
 	"k8c.io/kubeone/pkg/pointer"
+	"k8c.io/kubeone/pkg/templates/kubernetesconfigs"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -72,6 +74,7 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_SystemPackages(obj)
 	SetDefaults_Features(obj)
 	SetDefaults_CloudConfig(obj)
+	SetDefaults_TLSCipherSuites(obj)
 }
 
 func SetDefaults_CloudProvider(obj *KubeOneCluster) {
@@ -282,6 +285,20 @@ func SetDefaults_Features(obj *KubeOneCluster) {
 		obj.Features.NodeLocalDNS = &NodeLocalDNS{
 			Deploy: true,
 		}
+	}
+}
+
+func SetDefaults_TLSCipherSuites(obj *KubeOneCluster) {
+	if obj.TLSCipherSuites.APIServer == nil {
+		obj.TLSCipherSuites.APIServer = kubernetesconfigs.TLSCipherSuites(kubernetesconfigs.APIServerDefaultTLSCipherSuites())
+	}
+
+	if obj.TLSCipherSuites.Etcd == nil {
+		obj.TLSCipherSuites.Etcd = kubernetesconfigs.TLSCipherSuites(tls.CipherSuites())
+	}
+
+	if obj.TLSCipherSuites.Kubelet == nil {
+		obj.TLSCipherSuites.Kubelet = kubernetesconfigs.TLSCipherSuites(tls.CipherSuites())
 	}
 }
 
