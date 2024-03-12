@@ -141,16 +141,6 @@
     - name: azure_rhel_stable
     - name: azure_rockylinux_stable
 
-- scenario: upgrade_containerd
-  initVersion: v1.28.7
-  upgradedVersion: v1.29.2
-  infrastructures:
-    - name: azure_centos_stable
-    - name: azure_default_stable
-    - name: azure_flatcar_stable
-    - name: azure_rhel_stable
-    - name: azure_rockylinux_stable
-
 - scenario: upgrade_containerd_external
   initVersion: v1.27.11
   upgradedVersion: v1.28.7

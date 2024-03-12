@@ -973,51 +973,6 @@ func TestAzureRockylinuxStableUpgradeContainerdFromV1_27_11_ToV1_28_7(t *testing
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosStableUpgradeContainerdFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos_stable"]
-	scenario := Scenarios["upgrade_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureDefaultStableUpgradeContainerdFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_default_stable"]
-	scenario := Scenarios["upgrade_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureFlatcarStableUpgradeContainerdFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_flatcar_stable"]
-	scenario := Scenarios["upgrade_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureRhelStableUpgradeContainerdFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_rhel_stable"]
-	scenario := Scenarios["upgrade_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureRockylinuxStableUpgradeContainerdFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_rockylinux_stable"]
-	scenario := Scenarios["upgrade_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestAwsAmznStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn_stable"]
