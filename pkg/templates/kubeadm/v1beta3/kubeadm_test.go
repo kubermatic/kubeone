@@ -17,6 +17,7 @@ limitations under the License.
 package v1beta3
 
 import (
+	"maps"
 	"reflect"
 	"testing"
 
@@ -30,11 +31,15 @@ func TestEtcdVersionCorruptCheckExtraArgs(t *testing.T) {
 		"experimental-corrupt-check-time":         "240m",
 	}
 
+	etcdExtraArgsWithCiphers := maps.Clone(etcdExtraArgs)
+	etcdExtraArgsWithCiphers["cipher-suites"] = "cipher1,cipher2"
+
 	tests := []struct {
 		name                 string
 		kubeVersion          *semver.Version
 		etcdImageTag         string
 		expectedEtcdImageTag string
+		cipherSuites         []string
 		expectedEtcdArgs     map[string]string
 	}{
 		{
@@ -123,11 +128,19 @@ func TestEtcdVersionCorruptCheckExtraArgs(t *testing.T) {
 			expectedEtcdImageTag: "9.9.9-0",
 			expectedEtcdArgs:     etcdExtraArgs,
 		},
+		{
+			name:                 "tls cipher suites",
+			kubeVersion:          semver.MustParse("1.26.13"),
+			etcdImageTag:         "9.9.9-0",
+			expectedEtcdImageTag: "9.9.9-0",
+			cipherSuites:         []string{"cipher1", "cipher2"},
+			expectedEtcdArgs:     etcdExtraArgsWithCiphers,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ver, args := etcdVersionCorruptCheckExtraArgs(tt.kubeVersion, tt.etcdImageTag)
+			ver, args := etcdVersionCorruptCheckExtraArgs(tt.kubeVersion, tt.etcdImageTag, tt.cipherSuites)
 			if ver != tt.expectedEtcdImageTag {
 				t.Errorf("got etcd image tag %q, but expected %q", ver, tt.expectedEtcdImageTag)
 			}

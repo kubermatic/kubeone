@@ -84,7 +84,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		return nil, fail.Config(err, "parsing kubernetes semver")
 	}
 
-	etcdImageTag, etcdExtraArgs := etcdVersionCorruptCheckExtraArgs(kubeSemVer, cluster.AssetConfiguration.Etcd.ImageTag)
+	etcdImageTag, etcdExtraArgs := etcdVersionCorruptCheckExtraArgs(kubeSemVer, cluster.AssetConfiguration.Etcd.ImageTag, cluster.TLSCipherSuites.Etcd)
 
 	if s.Cluster.ClusterNetwork.HasIPv6() && len(host.IPv6Addresses) == 0 {
 		return nil, fmt.Errorf("host must have ipv6 address for %q family", s.Cluster.ClusterNetwork.IPFamily)
@@ -185,7 +185,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 					"profiling":                     "false",
 					"request-timeout":               "1m",
 					"service-node-port-range":       cluster.ClusterNetwork.NodePortRange,
-					"tls-cipher-suites":             strings.Join(kubernetesconfigs.SafeTLSCiphers(), ","),
+					"tls-cipher-suites":             strings.Join(cluster.TLSCipherSuites.APIServer, ","),
 				},
 				ExtraVolumes: []kubeadmv1beta3.HostPathMount{},
 			},
@@ -540,11 +540,15 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 //     https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ
 //   - etcd v3.5.[0-4] has a durability issue affecting single-node (non-HA) etcd clusters
 //     https://groups.google.com/a/kubernetes.io/g/dev/c/7q4tB_Vp3Uc/m/MrHalhCIBAAJ
-func etcdVersionCorruptCheckExtraArgs(kubeVersion *semver.Version, etcdImageTag string) (string, map[string]string) {
+func etcdVersionCorruptCheckExtraArgs(kubeVersion *semver.Version, etcdImageTag string, cipherSuites []string) (string, map[string]string) {
 	etcdExtraArgs := map[string]string{
 		"experimental-compact-hash-check-enabled": "true",
 		"experimental-initial-corrupt-check":      "true",
 		"experimental-corrupt-check-time":         "240m",
+	}
+
+	if len(cipherSuites) > 0 {
+		etcdExtraArgs["cipher-suites"] = strings.Join(cipherSuites, ",")
 	}
 
 	switch {

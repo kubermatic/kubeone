@@ -17,8 +17,6 @@ limitations under the License.
 package kubernetesconfigs
 
 import (
-	"crypto/tls"
-
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/templates/resources"
 
@@ -26,32 +24,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	kubeletconfigv1beta1 "k8s.io/kubelet/config/v1beta1"
 )
-
-func SafeTLSCiphers() []string {
-	return []string{
-		tls.CipherSuiteName(tls.TLS_AES_128_GCM_SHA256),
-		tls.CipherSuiteName(tls.TLS_AES_256_GCM_SHA384),
-		tls.CipherSuiteName(tls.TLS_CHACHA20_POLY1305_SHA256),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305),
-		tls.CipherSuiteName(tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305),
-		tls.CipherSuiteName(tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_AES_128_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_AES_128_GCM_SHA256),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_AES_256_CBC_SHA),
-		tls.CipherSuiteName(tls.TLS_RSA_WITH_AES_256_GCM_SHA384),
-	}
-}
 
 func NewKubeletConfiguration(cluster *kubeoneapi.KubeOneCluster, featureGates map[string]bool) (runtime.Object, error) {
 	bfalse := false
@@ -72,7 +44,7 @@ func NewKubeletConfiguration(cluster *kubeoneapi.KubeOneCluster, featureGates ma
 		ReadOnlyPort:         0,
 		RotateCertificates:   true,
 		ServerTLSBootstrap:   true,
-		TLSCipherSuites:      SafeTLSCiphers(),
+		TLSCipherSuites:      cluster.TLSCipherSuites.Kubelet,
 	}
 
 	if cluster.Features.NodeLocalDNS.Deploy {

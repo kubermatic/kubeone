@@ -89,6 +89,21 @@ type KubeOneCluster struct {
 
 	// LoggingConfig configures the Kubelet's log rotation
 	LoggingConfig LoggingConfig `json:"loggingConfig,omitempty"`
+
+	// TLSCipherSuites allows to configure TLS cipher suites for different components. See
+	// https://pkg.go.dev/crypto/tls#pkg-constants for possible values.
+	TLSCipherSuites TLSCipherSuites `json:"tlsCipherSuites"`
+}
+
+type TLSCipherSuites struct {
+	// APIServer is a list of TLS cipher suites to use in kube-apiserver.
+	APIServer []string `json:"apiServer,omitempty"`
+
+	// Etcd is a list of TLS cipher suites to use in etcd.
+	Etcd []string `json:"etcd,omitempty"`
+
+	// Kubelet is a list of TLS cipher suites to use in kubelet.
+	Kubelet []string `json:"kubelet,omitempty"`
 }
 
 type HelmRelease struct {
