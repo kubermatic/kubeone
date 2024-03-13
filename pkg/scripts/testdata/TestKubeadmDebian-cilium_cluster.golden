@@ -55,6 +55,12 @@ Acquire::https::Proxy "http://https.proxy";
 Acquire::http::Proxy "http://http.proxy";
 EOF
 
+# Removing deprecated Kubernetes repositories from apt sources is needed when upgrading from older KubeOne versions,
+# otherwise, apt-get update will fail to upgrade the packages.
+if sudo grep -q "deb http://apt.kubernetes.io/ kubernetes-xenial main" /etc/apt/sources.list.d/kubernetes.list; then
+  rm -f /etc/apt/sources.list.d/kubernetes.list
+fi
+
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
 	apt-transport-https \
