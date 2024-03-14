@@ -11,7 +11,7 @@ all pods have a place to run and there are no unneeded nodes.
   [Kubermatic machine-controller][machine-controller]
   * We recommend checking the [Concepts][docs-concepts] document to learn more
     about how Cluster-API and Kubermatic machine-controller work
-* Cluster running Kubernetes v1.18 or newer is recommended
+* Cluster running Kubernetes v1.27 or newer is recommended
 
 ## How It Works?
 
@@ -74,6 +74,19 @@ of replicas per MachineDeployment:
 * `cluster.k8s.io/cluster-api-autoscaler-node-group-max-size` - the maximum
   number of replicas
 
+### Scale TO zero and FROM zero support
+
+It's possible to instruct cluster-autoscaler to scale MachineDeployments from
+and to zero replicas. You will need the following annotations on your
+MachineDeployments.
+
+* `capacity.cluster-autoscaler.kubernetes.io/memory` - the size of memory that
+  configured instance will have once created.
+* `capacity.cluster-autoscaler.kubernetes.io/cpu` - the number vCPUs that
+  configured instance will have once created.
+* `cluster.k8s.io/cluster-api-autoscaler-node-group-min-size` this annotation
+  should be set to zero for scale to zero to work.
+
 **Note:** You don't need to apply those annotations to all MachineDeployment
 objects. They should be applied only on MachineDeployments that should be
 considered by Cluster Autoscaler.
@@ -92,8 +105,10 @@ to replace the MachineDeployment name and minimum/maximum size with the
 appropriate values.
 
 ```bash
-kubectl annotate machinedeployment -n kube-system <machinedeployment-name> cluster.k8s.io/cluster-api-autoscaler-node-group-min-size="<min-size>"
-kubectl annotate machinedeployment -n kube-system <machinedeployment-name> cluster.k8s.io/cluster-api-autoscaler-node-group-max-size="<max-size>"
+kubectl annotate machinedeployment -n kube-system <machinedeployment-name> cluster.k8s.io/cluster-api-autoscaler-node-group-min-size=0
+kubectl annotate machinedeployment -n kube-system <machinedeployment-name> cluster.k8s.io/cluster-api-autoscaler-node-group-max-size=10
+kubectl annotate machinedeployment -n kube-system <machinedeployment-name> capacity.cluster-autoscaler.kubernetes.io/memory=4Gi
+kubectl annotate machinedeployment -n kube-system <machinedeployment-name> capacity.cluster-autoscaler.kubernetes.io/cpu=2
 ```
 
 ## Using The Addon
