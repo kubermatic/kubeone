@@ -75,7 +75,7 @@ metadata:
 rules:
   - apiGroups: [""]
     resources: ["configmaps"]
-    verbs: ["create","list","watch"]
+    verbs: ["create", "list", "watch"]
   - apiGroups: [""]
     resources: ["configmaps"]
     resourceNames: ["cluster-autoscaler-status", "cluster-autoscaler-priority-expander"]
@@ -90,17 +90,17 @@ metadata:
     k8s-app: cluster-autoscaler
 rules:
   - apiGroups:
-    - cluster.k8s.io
+      - cluster.k8s.io
     resources:
-    - machinedeployments
-    - machinedeployments/scale
-    - machines
-    - machinesets
+      - machinedeployments
+      - machinedeployments/scale
+      - machines
+      - machinesets
     verbs:
-    - get
-    - list
-    - update
-    - watch
+      - get
+      - list
+      - update
+      - watch
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -114,9 +114,9 @@ roleRef:
   kind: ClusterRole
   name: cluster-autoscaler
 subjects:
-- kind: ServiceAccount
-  name: cluster-autoscaler
-  namespace: kube-system
+  - kind: ServiceAccount
+    name: cluster-autoscaler
+    namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -147,9 +147,9 @@ roleRef:
   kind: ClusterRole
   name: cluster-autoscaler-management
 subjects:
-- kind: ServiceAccount
-  name: cluster-autoscaler
-  namespace: kube-system
+  - kind: ServiceAccount
+    name: cluster-autoscaler
+    namespace: kube-system
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -172,38 +172,39 @@ spec:
         prometheus.io/port: '8085'
     spec:
       containers:
-      - image: {{ default (.InternalImages.Get "ClusterAutoscaler") .Params.CLUSTER_AUTOSCALER_IMAGE }}
-        name: cluster-autoscaler
-        command:
-        - /cluster-autoscaler
-        args:
-        - --cloud-provider=clusterapi
-        - --namespace=kube-system
-        - --skip-nodes-with-local-storage={{ default "true" .Params.CLUSTER_AUTOSCALER_SKIP_LOCAL_STORAGE }}
-        - --logtostderr=true
-        - --stderrthreshold=info
-        - --v=4
-        env:
-        - name: CAPI_GROUP
-          value: "cluster.k8s.io"
-        resources:
-          limits:
-            cpu: 100m
-            memory: 600Mi
-          requests:
-            cpu: 100m
-            memory: 600Mi
+        - image: '{{ default (.InternalImages.Get "ClusterAutoscaler") .Params.CLUSTER_AUTOSCALER_IMAGE }}'
+          name: cluster-autoscaler
+          command:
+            - /cluster-autoscaler
+          args:
+            - --cloud-provider=clusterapi
+            - --namespace=kube-system
+            - --skip-nodes-with-local-storage={{ default "true" .Params.CLUSTER_AUTOSCALER_SKIP_LOCAL_STORAGE }}
+            - --node-group-auto-discovery=clusterapi:namespace=kube-system
+            - --logtostderr=true
+            - --stderrthreshold=info
+            - --v=4
+          env:
+            - name: CAPI_GROUP
+              value: "cluster.k8s.io"
+          resources:
+            limits:
+              cpu: 100m
+              memory: 600Mi
+            requests:
+              cpu: 100m
+              memory: 600Mi
       serviceAccountName: cluster-autoscaler
       terminationGracePeriodSeconds: 10
       tolerations:
-      - effect: NoSchedule
-        key: node-role.kubernetes.io/control-plane
-      - effect: NoSchedule
-        key: node-role.kubernetes.io/master
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchExpressions:
-              - key: node-role.kubernetes.io/control-plane
-                operator: Exists
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: Exists
