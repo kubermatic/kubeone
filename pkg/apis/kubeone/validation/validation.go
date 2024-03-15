@@ -767,6 +767,12 @@ func ValidateHostConfig(hosts []kubeoneapi.HostConfig, clusterNetwork kubeoneapi
 				allErrs = append(allErrs, field.Invalid(fldPath.Child("labels"), labelValue, "label to remove cannot have value"))
 			}
 		}
+
+		for _, taint := range host.Taints {
+			if taint.Key == "node-role.kubernetes.io/master" {
+				allErrs = append(allErrs, field.Forbidden(fldPath.Child("taints"), fmt.Sprintf("%q taint is forbidden for clusters running Kubernetes 1.25+", "node-role.kubernetes.io/master")))
+			}
+		}
 	}
 
 	return allErrs
