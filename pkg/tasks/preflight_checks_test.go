@@ -267,3 +267,53 @@ func TestCheckVersionSkewInvalid(t *testing.T) {
 		})
 	}
 }
+
+func TestCheckHostname(t *testing.T) {
+	t.Parallel()
+
+	testcases := []struct {
+		name      string
+		hostnames []string
+		expError  error
+	}{
+		{
+			name:      "valid hostname",
+			hostnames: []string{"valid-hostname"},
+			expError:  nil,
+		},
+		{
+			name:      "invalid hostname",
+			hostnames: []string{"ALL-CAPS"},
+			expError: fmt.Errorf(`runtime: validating node hostnames
+- hostname "ALL-CAPS" cannot be used as Kubernetes node: [a lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')]
+Please rename host(s)`),
+		},
+		{
+			name:      "multiple errors",
+			hostnames: []string{"ALL-CAPS", "inv@lid-symbol"},
+			expError: fmt.Errorf(`runtime: validating node hostnames
+- hostname "ALL-CAPS" cannot be used as Kubernetes node: [a lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')]
+- hostname "inv@lid-symbol" cannot be used as Kubernetes node: [a lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')]
+Please rename host(s)`),
+		},
+	}
+
+	for _, tc := range testcases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			err := checkHostnames(tc.hostnames)
+
+			exp, act := "", ""
+			if tc.expError != nil {
+				exp = tc.expError.Error()
+			}
+			if err != nil {
+				act = err.Error()
+			}
+			if exp != act {
+				t.Fatalf("want error\n%q\ngot\n%q\n", tc.expError, err)
+			}
+		})
+	}
+}
