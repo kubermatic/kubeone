@@ -26,6 +26,25 @@ patches:
         namespace: kube-system
       $patch: delete
   - patch: |-
+      apiVersion: batch/v1beta1
+      kind: CronJob
+      metadata:
+        name: hubble-generate-certs
+        namespace: kube-system
+      $patch: delete
+
+  # A hack, to compensate for the lack of ability to set .Capabilities when using helmCharts API.
+  - target:
+      group: policy
+      version: v1beta1
+      kind: PodDisruptionBudget
+      name: cilium-operator
+      namespace: kube-system
+    patch: |-
+      - op: replace
+        path: /apiVersion
+        value: policy/v1
+  - patch: |-
       apiVersion: apps/v1
       kind: DaemonSet
       metadata:

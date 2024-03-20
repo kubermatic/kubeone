@@ -576,47 +576,7 @@ spec:
             name: cilium-config
           name: cilium-config-path
 ---
-apiVersion: batch/v1beta1
-kind: CronJob
-metadata:
-  labels:
-    app.kubernetes.io/name: hubble-generate-certs
-    app.kubernetes.io/part-of: cilium
-    k8s-app: hubble-generate-certs
-  name: hubble-generate-certs
-  namespace: kube-system
-spec:
-  concurrencyPolicy: Forbid
-  jobTemplate:
-    spec:
-      template:
-        metadata:
-          labels:
-            k8s-app: hubble-generate-certs
-        spec:
-          affinity: null
-          automountServiceAccountToken: true
-          containers:
-            - args:
-                - --cilium-namespace=kube-system
-                - --ca-generate
-                - --ca-reuse-secret
-                - --hubble-server-cert-generate
-                - --hubble-server-cert-common-name=*.default.hubble-grpc.cilium.io
-                - --hubble-server-cert-validity-duration=94608000s
-              command:
-                - /usr/bin/cilium-certgen
-              image: quay.io/cilium/certgen:v0.1.9@sha256:89a0847753686444daabde9474b48340993bd19c7bea66a46e45b2974b82041f
-              imagePullPolicy: IfNotPresent
-              name: certgen
-          hostNetwork: true
-          restartPolicy: OnFailure
-          serviceAccount: hubble-generate-certs
-          serviceAccountName: hubble-generate-certs
-      ttlSecondsAfterFinished: 1800
-  schedule: 0 0 1 */4 *
----
-apiVersion: policy/v1beta1
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   labels:

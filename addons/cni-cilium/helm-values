@@ -4,15 +4,11 @@ cni:
 hubble:
   relay:
     enabled: false
-    podDisruptionBudget:
-      enabled: true
   tls:
     auto:
       method: cronJob
   ui:
     enabled: false
-    podDisruptionBudget:
-      enabled: true
 
 kubeProxyReplacement: strict
 
@@ -24,5 +20,3 @@ operator:
 
 preflight:
   enabled: false
-  podDisruptionBudget:
-    enabled: true
