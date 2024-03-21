@@ -168,6 +168,7 @@ const (
 	VMwareCloudDirectorCSI
 	VMwareCloudDirectorCSIAttacher
 	VMwareCloudDirectorCSIProvisioner
+	VMwareCloudDirectorCSIResizer
 	VMwareCloudDirectorCSINodeDriverRegistrar
 
 	// vSphere CSI
@@ -318,9 +319,10 @@ func optionalResources() map[Resource]map[string]string {
 		EquinixMetalCCM: {"*": "quay.io/equinix-oss/cloud-provider-equinix-metal:v3.8.0"},
 
 		// VMware Cloud Director CSI
-		VMwareCloudDirectorCSI:                    {"*": "projects.registry.vmware.com/vmware-cloud-director/cloud-director-named-disk-csi-driver:1.5.0"},
+		VMwareCloudDirectorCSI:                    {"*": "projects.registry.vmware.com/vmware-cloud-director/cloud-director-named-disk-csi-driver:1.6.0"},
 		VMwareCloudDirectorCSIAttacher:            {"*": "registry.k8s.io/sig-storage/csi-attacher:v3.2.1"},
 		VMwareCloudDirectorCSIProvisioner:         {"*": "registry.k8s.io/sig-storage/csi-provisioner:v2.2.2"},
+		VMwareCloudDirectorCSIResizer:             {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.4.0"},
 		VMwareCloudDirectorCSINodeDriverRegistrar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.2.0"},
 
 		// vSphere CPI (A.K.A. CCM)

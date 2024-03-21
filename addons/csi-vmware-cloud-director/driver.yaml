@@ -149,6 +149,55 @@ rules:
       - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: csi-resizer-role
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumes
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumeclaims
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumeclaims/status
+    verbs:
+      - update
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - list
+      - watch
+      - create
+      - update
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: csi-attacher-binding
@@ -187,6 +236,19 @@ subjects:
     name: csi-vcd-controller-sa
     namespace: kube-system
 ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: csi-resizer-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: csi-resizer-role
+subjects:
+  - kind: ServiceAccount
+    name: csi-vcd-controller-sa
+    namespace: kube-system
+---
 apiVersion: v1
 data:
   vcloud-csi-config.yaml: |
@@ -199,16 +261,6 @@ data:
 kind: ConfigMap
 metadata:
   name: vcloud-csi-configmap
-  namespace: kube-system
----
-apiVersion: v1
-data:
-  password: '{{ with .Credentials.VCD_PASSWORD }}{{ . | b64enc }}{{ end }}'
-  refreshToken: '{{ with .Credentials.VCD_API_TOKEN }}{{ . | b64enc }}{{ end }}'
-  username: '{{ with .Credentials.VCD_USER }}{{ . | b64enc }}{{ end }}'
-kind: Secret
-metadata:
-  name: vcloud-basic-auth
   namespace: kube-system
 ---
 apiVersion: apps/v1
@@ -264,11 +316,23 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
+        - args:
+            - --csi-address=$(ADDRESS)
+            - --timeout=30s
+            - --v=5
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          image: '{{ .InternalImages.Get "VMwareCloudDirectorCSIResizer" }}'
+          imagePullPolicy: IfNotPresent
+          name: csi-resizer
+          volumeMounts:
+            - mountPath: /var/lib/csi/sockets/pluginproxy/
+              name: socket-dir
         - command:
             - /opt/vcloud/bin/cloud-director-named-disk-csi-driver
             - --cloud-config=/etc/kubernetes/vcloud/vcloud-csi-config.yaml
             - --endpoint=$(CSI_ENDPOINT)
-            - --v=5
           env:
             - name: NODE_ID
               valueFrom:
@@ -370,12 +434,24 @@ spec:
               name: socket-dir
             - mountPath: /registration
               name: registration-dir
+        - args:
+            - --csi-address=$(ADDRESS)
+            - --timeout=30s
+            - --v=5
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          image: '{{ .InternalImages.Get "VMwareCloudDirectorCSIResizer" }}'
+          imagePullPolicy: IfNotPresent
+          name: csi-resizer
+          volumeMounts:
+            - mountPath: /var/lib/csi/sockets/pluginproxy/
+              name: socket-dir
         - command:
             - /opt/vcloud/bin/cloud-director-named-disk-csi-driver
             - --nodeid=$(NODE_ID)
             - --endpoint=$(CSI_ENDPOINT)
             - --cloud-config=/etc/kubernetes/vcloud/vcloud-csi-config.yaml
-            - --v=5
           env:
             - name: NODE_ID
               valueFrom:
