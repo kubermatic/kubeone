@@ -12,3 +12,9 @@ This section what [addon parameters][params] can be used with this addon.
   * `true` (default): enable listening on IPv6
   * `false`: disable listening on IPv6
   * Note: enabling this parameter requires having IPv6 support enabled in kernel
+
+## Development
+
+```shell
+kubectl kustomize --enable-helm . | yq > cilium.yaml
+```

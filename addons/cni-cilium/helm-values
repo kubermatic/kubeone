@@ -1,0 +1,22 @@
+cni:
+  exclusive: false
+
+hubble:
+  relay:
+    enabled: false
+  tls:
+    auto:
+      method: cronJob
+  ui:
+    enabled: false
+
+kubeProxyReplacement: strict
+
+operator:
+  enabled: true
+  replicas: 1
+  podDisruptionBudget:
+    enabled: true
+
+preflight:
+  enabled: false
