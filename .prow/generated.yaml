@@ -3479,14 +3479,14 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-aws-amzn-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsAmznStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestAwsAmznUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: aws
@@ -3507,14 +3507,14 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-aws-centos-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsCentosStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestAwsCentosUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: aws
@@ -3535,14 +3535,14 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-aws-default-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsDefaultStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestAwsDefaultUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: aws
@@ -3563,14 +3563,14 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-aws-flatcar-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsFlatcarStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestAwsFlatcarUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: aws
@@ -3591,14 +3591,14 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRhelStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestAwsRhelUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: aws
@@ -3619,14 +3619,14 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRockylinuxStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestAwsRockylinuxUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: aws
@@ -3647,14 +3647,14 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-azure-centos-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureCentosStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestAzureCentosUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: azure
@@ -3677,14 +3677,14 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-azure-default-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureDefaultStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestAzureDefaultUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: azure
@@ -3707,14 +3707,14 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-flatcar-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-azure-flatcar-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureFlatcarStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestAzureFlatcarUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: azure
@@ -3738,14 +3738,14 @@ presubmits:
     preset-azure: "true"
     preset-goproxy: "true"
     preset-rhel: "true"
-  name: pull-kubeone-e2e-azure-rhel-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-azure-rhel-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRhelStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestAzureRhelUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: azure
@@ -3768,14 +3768,14 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-rockylinux-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-azure-rockylinux-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRockylinuxStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestAzureRockylinuxUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: azure
@@ -3798,14 +3798,14 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-centos-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-digitalocean-centos-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanCentosStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestDigitaloceanCentosUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: digitalocean
@@ -3826,14 +3826,14 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-digitalocean-default-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestDigitaloceanDefaultUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: digitalocean
@@ -3854,14 +3854,14 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-rockylinux-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-digitalocean-rockylinux-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanRockylinuxStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestDigitaloceanRockylinuxUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: digitalocean
@@ -3882,14 +3882,14 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-centos-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-equinixmetal-centos-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalCentosStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestEquinixmetalCentosUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -3910,14 +3910,14 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-default-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-equinixmetal-default-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalDefaultStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestEquinixmetalDefaultUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -3938,14 +3938,14 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-flatcar-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-equinixmetal-flatcar-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalFlatcarStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestEquinixmetalFlatcarUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -3966,14 +3966,14 @@ presubmits:
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-rockylinux-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestEquinixmetalRockylinuxStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestEquinixmetalRockylinuxUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -4022,14 +4022,14 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-centos-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-hetzner-centos-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerCentosStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestHetznerCentosUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: hetzner
@@ -4050,14 +4050,14 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-hetzner-default-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerDefaultStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestHetznerDefaultUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: hetzner
@@ -4078,14 +4078,14 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-rockylinux-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-hetzner-rockylinux-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerRockylinuxStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestHetznerRockylinuxUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: hetzner
@@ -4106,14 +4106,14 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-openstack-centos-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackCentosStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestOpenstackCentosUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: openstack
@@ -4136,14 +4136,42 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-openstack-default-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestOpenstackDefaultUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: quay.io/kubermatic/build:go-1.22-node-18-5
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  extra_refs:
+  - base_ref: release/v1.7
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-flatcar-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackFlatcarUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: openstack
@@ -4166,44 +4194,14 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-openstack-rhel-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-18-5
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.7
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackRhelStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestOpenstackRhelUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: openstack
@@ -4256,14 +4254,14 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-centos-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-vsphere-centos-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereCentosStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestVsphereCentosUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: vsphere
@@ -4284,14 +4282,14 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-vsphere-default-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereDefaultStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestVsphereDefaultUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: vsphere
@@ -4312,14 +4310,14 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  name: pull-kubeone-e2e-vsphere-flatcar-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      - TestVsphereFlatcarUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
       env:
       - name: PROVIDER
         value: vsphere
