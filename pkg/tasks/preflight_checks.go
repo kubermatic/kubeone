@@ -32,6 +32,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/apimachinery/pkg/util/validation"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -68,6 +69,15 @@ func runPreflightChecks(s *state.State) error {
 		} else {
 			return err
 		}
+	}
+
+	s.Logger.Infoln("Verifying that hostnames are valid Kubernetes node names...")
+	allHostnames := make([]string, len(s.Cluster.ControlPlane.Hosts)+len(s.Cluster.StaticWorkers.Hosts))
+	for i, host := range append(s.Cluster.ControlPlane.Hosts, s.Cluster.StaticWorkers.Hosts...) {
+		allHostnames[i] = host.Hostname
+	}
+	if err := checkHostnames(allHostnames); err != nil {
+		return err
 	}
 
 	return nil
@@ -206,6 +216,26 @@ func checkVersionSkew(reqVer, currVer *semver.Version, diff uint64) error {
 			Op:  "checking version skew policy",
 			Err: errors.Errorf("component can be only %d minor version older than requested version", diff),
 		}
+	}
+
+	return nil
+}
+
+func checkHostnames(hostnames []string) error {
+	// According to k8s spec, the node hostname has to be a valid RFC 1123 DNS Subdomain (https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-subdomain-names)
+	allErrors := []string{}
+
+	for _, hostname := range hostnames {
+		err := validation.IsDNS1123Subdomain(hostname)
+		if len(err) > 0 {
+			allErrors = append(allErrors, fmt.Sprintf("- hostname %q cannot be used as Kubernetes node: %s", hostname, err))
+		}
+	}
+
+	if len(allErrors) > 0 {
+		allErrors = append(allErrors, "Please rename host(s)")
+
+		return fail.Runtime(fmt.Errorf(strings.Join(allErrors, "\n")), "validating node hostnames")
 	}
 
 	return nil
