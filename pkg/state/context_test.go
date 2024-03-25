@@ -23,8 +23,6 @@ import (
 )
 
 func TestShouldEnableInTreeCloudProvider(t *testing.T) {
-	t.Parallel()
-
 	tests := []struct {
 		name                 string
 		cluster              *kubeoneapi.KubeOneCluster
@@ -183,8 +181,6 @@ func TestShouldEnableInTreeCloudProvider(t *testing.T) {
 }
 
 func TestShouldEnableCSIMigration(t *testing.T) {
-	t.Parallel()
-
 	tests := []struct {
 		name         string
 		cluster      *kubeoneapi.KubeOneCluster
@@ -264,7 +260,7 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 			name: "new vSphere cluster with external disabled",
 			cluster: &kubeoneapi.KubeOneCluster{
 				CloudProvider: kubeoneapi.CloudProviderSpec{
-					Hetzner:  &kubeoneapi.HetznerSpec{},
+					Vsphere:  &kubeoneapi.VsphereSpec{},
 					External: false,
 				},
 				Versions: kubeoneapi.VersionConfig{
@@ -281,7 +277,7 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 			name: "new vSphere cluster with external enabled",
 			cluster: &kubeoneapi.KubeOneCluster{
 				CloudProvider: kubeoneapi.CloudProviderSpec{
-					Hetzner:  &kubeoneapi.HetznerSpec{},
+					Vsphere:  &kubeoneapi.VsphereSpec{},
 					External: true,
 				},
 				Versions: kubeoneapi.VersionConfig{
@@ -292,7 +288,7 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 				CCMStatus: nil,
 			},
 			ccmMigration: false,
-			want:         false,
+			want:         true,
 		},
 		{
 			name: "existing OpenStack cluster with external disabled",
@@ -390,8 +386,6 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 }
 
 func TestShouldUnregisterInTreeProvider(t *testing.T) {
-	t.Parallel()
-
 	tests := []struct {
 		name                 string
 		cluster              *kubeoneapi.KubeOneCluster
@@ -471,7 +465,7 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 			name: "new vSphere cluster with external disabled",
 			cluster: &kubeoneapi.KubeOneCluster{
 				CloudProvider: kubeoneapi.CloudProviderSpec{
-					Hetzner:  &kubeoneapi.HetznerSpec{},
+					Vsphere:  &kubeoneapi.VsphereSpec{},
 					External: false,
 				},
 				Versions: kubeoneapi.VersionConfig{
@@ -488,7 +482,7 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 			name: "new vSphere cluster with external enabled",
 			cluster: &kubeoneapi.KubeOneCluster{
 				CloudProvider: kubeoneapi.CloudProviderSpec{
-					Hetzner:  &kubeoneapi.HetznerSpec{},
+					Vsphere:  &kubeoneapi.VsphereSpec{},
 					External: true,
 				},
 				Versions: kubeoneapi.VersionConfig{
@@ -499,7 +493,7 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 				CCMStatus: nil,
 			},
 			ccmMigrationComplete: false,
-			want:                 false,
+			want:                 true,
 		},
 		{
 			name: "existing OpenStack cluster with external disabled and in-tree provider registered",
@@ -582,8 +576,6 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
 			s := &State{
 				Cluster:              tc.cluster,
 				LiveCluster:          tc.liveCluster,

@@ -53,8 +53,13 @@ const (
 
 	kubeletInitializedCMD = `test -f /etc/kubernetes/kubelet.conf`
 
-	k8sAppLabel               = "k8s-app"
+	k8sAppLabel = "k8s-app"
+
+	awsCCMAppLabelValue       = "aws-cloud-controller-manager"
+	azureCCMAppLabelValue     = "azure-cloud-controller-manager"
+	gceCCMAppLabelValue       = "gce-cloud-controller-manager"
 	openstackCCMAppLabelValue = "openstack-cloud-controller-manager"
+	vsphereCCMAppLabelValue   = "vsphere-cloud-controller-manager"
 
 	nodeRoleMaster       = "node-role.kubernetes.io/master"
 	nodeRoleControlPlane = "node-role.kubernetes.io/control-plane"
@@ -790,12 +795,11 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 				if csiFlagRegex.MatchString(command) {
 					status.CSIMigrationEnabled = true
 				}
-
 				csiFeatureGates, _, _ := s.Cluster.CSIMigrationFeatureGates(true)
 				unregistered := []string{}
 
 				for fg := range csiFeatureGates {
-					if strings.Contains(fg, "Unregister") {
+					if strings.Contains(fg, "Unregister") || strings.Contains(fg, "DisableCloudProviders") {
 						unregistered = append(unregistered, fg)
 					}
 				}
@@ -819,11 +823,15 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 
 	switch {
 	case s.Cluster.CloudProvider.Azure != nil:
-		ccmLabelValue = "azure-cloud-controller-manager"
+		ccmLabelValue = azureCCMAppLabelValue
+	case s.Cluster.CloudProvider.AWS != nil:
+		ccmLabelValue = awsCCMAppLabelValue
+	case s.Cluster.CloudProvider.GCE != nil:
+		ccmLabelValue = gceCCMAppLabelValue
 	case s.Cluster.CloudProvider.Openstack != nil:
 		ccmLabelValue = openstackCCMAppLabelValue
 	case s.Cluster.CloudProvider.Vsphere != nil:
-		ccmLabelValue = "vsphere-cloud-controller-manager"
+		ccmLabelValue = vsphereCCMAppLabelValue
 	default:
 		status.ExternalCCMDeployed = false
 

@@ -307,29 +307,19 @@ func (c KubeOneCluster) CSIMigrationSupported() bool {
 }
 
 func (c KubeOneCluster) csiMigrationFeatureGates(complete bool) (map[string]bool, error) {
-	featureGates := map[string]bool{}
-
 	switch {
 	case c.CloudProvider.AWS != nil:
-		if complete {
-			featureGates["InTreePluginAWSUnregister"] = true
-		}
 	case c.CloudProvider.Azure != nil:
-		if complete {
-			featureGates["InTreePluginAzureDiskUnregister"] = true
-			featureGates["InTreePluginAzureFileUnregister"] = true
-		}
+	case c.CloudProvider.GCE != nil:
 	case c.CloudProvider.Openstack != nil:
-		if complete {
-			featureGates["InTreePluginOpenStackUnregister"] = true
-		}
 	case c.CloudProvider.Vsphere != nil:
-		featureGates["CSIMigrationvSphere"] = true
-		if complete {
-			featureGates["InTreePluginvSphereUnregister"] = true
-		}
 	default:
 		return nil, fail.ConfigValidation(fmt.Errorf("csi migration is not supported for selected provider"))
+	}
+
+	featureGates := map[string]bool{}
+	if complete {
+		featureGates["DisableCloudProviders"] = true
 	}
 
 	return featureGates, nil
