@@ -19,7 +19,6 @@ package tasks
 import (
 	"encoding/json"
 	"fmt"
-	"regexp"
 	"strings"
 
 	"github.com/Masterminds/semver/v3"
@@ -53,8 +52,13 @@ const (
 
 	kubeletInitializedCMD = `test -f /etc/kubernetes/kubelet.conf`
 
-	k8sAppLabel               = "k8s-app"
+	k8sAppLabel = "k8s-app"
+
+	awsCCMAppLabelValue       = "aws-cloud-controller-manager"
+	azureCCMAppLabelValue     = "azure-cloud-controller-manager"
+	gceCCMAppLabelValue       = "gce-cloud-controller-manager"
 	openstackCCMAppLabelValue = "openstack-cloud-controller-manager"
+	vsphereCCMAppLabelValue   = "vsphere-cloud-controller-manager"
 
 	nodeRoleMaster       = "node-role.kubernetes.io/master"
 	nodeRoleControlPlane = "node-role.kubernetes.io/control-plane"
@@ -777,25 +781,23 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 		return nil, fail.KubeClient(err, "listing kube-controller-manager pods")
 	}
 
-	// This uses regex so we can easily match any CSIMigration feature gate
-	// and confirm it's enabled.
-	csiFlagRegex := regexp.MustCompile(`CSIMigration[a-zA-Z]+=true`)
-	status := &state.CCMStatus{}
+	status := &state.CCMStatus{
+		// permanently enable CSIMigrationEnabled for all former in-tree providers since now all the providers are
+		// extrnal
+		CSIMigrationEnabled: s.Cluster.CloudProvider.OriginalInTreeCloudProvider(),
+	}
+
 	for _, pod := range pods.Items {
 		for _, command := range pod.Spec.Containers[0].Command {
 			switch {
 			case strings.HasPrefix(command, "--cloud-provider") && !strings.Contains(command, "external"):
 				status.InTreeCloudProviderEnabled = true
 			case strings.HasPrefix(command, "--feature-gates"):
-				if csiFlagRegex.MatchString(command) {
-					status.CSIMigrationEnabled = true
-				}
-
 				csiFeatureGates, _, _ := s.Cluster.CSIMigrationFeatureGates(true)
 				unregistered := []string{}
 
 				for fg := range csiFeatureGates {
-					if strings.Contains(fg, "Unregister") {
+					if strings.Contains(fg, "Unregister") || strings.Contains(fg, "DisableCloudProviders") {
 						unregistered = append(unregistered, fg)
 					}
 				}
@@ -819,11 +821,15 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 
 	switch {
 	case s.Cluster.CloudProvider.Azure != nil:
-		ccmLabelValue = "azure-cloud-controller-manager"
+		ccmLabelValue = azureCCMAppLabelValue
+	case s.Cluster.CloudProvider.AWS != nil:
+		ccmLabelValue = awsCCMAppLabelValue
+	case s.Cluster.CloudProvider.GCE != nil:
+		ccmLabelValue = gceCCMAppLabelValue
 	case s.Cluster.CloudProvider.Openstack != nil:
 		ccmLabelValue = openstackCCMAppLabelValue
 	case s.Cluster.CloudProvider.Vsphere != nil:
-		ccmLabelValue = "vsphere-cloud-controller-manager"
+		ccmLabelValue = vsphereCCMAppLabelValue
 	default:
 		status.ExternalCCMDeployed = false
 

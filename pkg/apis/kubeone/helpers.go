@@ -293,6 +293,21 @@ func (p CloudProviderSpec) CloudProviderInTree() bool {
 	return !p.External
 }
 
+// OriginalInTreeCloudProvider indicates if configured cloud provider originally been an in-tree provider.
+func (p CloudProviderSpec) OriginalInTreeCloudProvider() bool {
+	switch {
+	case p.AWS != nil:
+	case p.Azure != nil:
+	case p.GCE != nil:
+	case p.Openstack != nil:
+	case p.Vsphere != nil:
+	default:
+		return false
+	}
+
+	return true
+}
+
 // CSIMigrationSupported returns if CSI migration is supported for the specified provider.
 // NB: The CSI migration can be supported only if KubeOne supports CSI plugin and driver
 // for the provider
@@ -307,29 +322,19 @@ func (c KubeOneCluster) CSIMigrationSupported() bool {
 }
 
 func (c KubeOneCluster) csiMigrationFeatureGates(complete bool) (map[string]bool, error) {
-	featureGates := map[string]bool{}
-
 	switch {
 	case c.CloudProvider.AWS != nil:
-		if complete {
-			featureGates["InTreePluginAWSUnregister"] = true
-		}
 	case c.CloudProvider.Azure != nil:
-		if complete {
-			featureGates["InTreePluginAzureDiskUnregister"] = true
-			featureGates["InTreePluginAzureFileUnregister"] = true
-		}
+	case c.CloudProvider.GCE != nil:
 	case c.CloudProvider.Openstack != nil:
-		if complete {
-			featureGates["InTreePluginOpenStackUnregister"] = true
-		}
 	case c.CloudProvider.Vsphere != nil:
-		featureGates["CSIMigrationvSphere"] = true
-		if complete {
-			featureGates["InTreePluginvSphereUnregister"] = true
-		}
 	default:
 		return nil, fail.ConfigValidation(fmt.Errorf("csi migration is not supported for selected provider"))
+	}
+
+	featureGates := map[string]bool{}
+	if complete {
+		featureGates["DisableCloudProviders"] = true
 	}
 
 	return featureGates, nil

@@ -52,6 +52,8 @@ patches:
           metadata:
             annotations:
               kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
+            labels:
+              k8s-app: gce-cloud-controller-manager
           spec:
             containers:
               - name: cloud-controller-manager
