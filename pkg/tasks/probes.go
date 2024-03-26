@@ -782,6 +782,8 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 	}
 
 	status := &state.CCMStatus{
+		// permanently enable CSIMigrationEnabled for all former in-tree providers since now all the providers are
+		// extrnal
 		CSIMigrationEnabled: s.Cluster.CloudProvider.OriginalInTreeCloudProvider(),
 	}
 

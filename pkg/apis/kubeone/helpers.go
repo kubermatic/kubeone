@@ -293,6 +293,7 @@ func (p CloudProviderSpec) CloudProviderInTree() bool {
 	return !p.External
 }
 
+// OriginalInTreeCloudProvider indicates if configured cloud provider originally been an in-tree provider.
 func (p CloudProviderSpec) OriginalInTreeCloudProvider() bool {
 	switch {
 	case p.AWS != nil:
