@@ -293,6 +293,20 @@ func (p CloudProviderSpec) CloudProviderInTree() bool {
 	return !p.External
 }
 
+func (p CloudProviderSpec) OriginalInTreeCloudProvider() bool {
+	switch {
+	case p.AWS != nil:
+	case p.Azure != nil:
+	case p.GCE != nil:
+	case p.Openstack != nil:
+	case p.Vsphere != nil:
+	default:
+		return false
+	}
+
+	return true
+}
+
 // CSIMigrationSupported returns if CSI migration is supported for the specified provider.
 // NB: The CSI migration can be supported only if KubeOne supports CSI plugin and driver
 // for the provider

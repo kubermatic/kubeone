@@ -138,7 +138,7 @@ func migrateToCCMCSICmd(fs *pflag.FlagSet) *cobra.Command {
 			    done after all worker nodes managed by machine-controller are rolled-out.
 
 			Make sure to familiarize yourself with the CCM/CSI migration requirements by checking the following document:
-			https://docs.kubermatic.com/kubeone/v1.8/guides/ccm-csi-migration/
+			https://docs.kubermatic.com/kubeone/main/guides/ccm-csi-migration/
 		`),
 		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(fs)

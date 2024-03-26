@@ -19,7 +19,6 @@ package tasks
 import (
 	"encoding/json"
 	"fmt"
-	"regexp"
 	"strings"
 
 	"github.com/Masterminds/semver/v3"
@@ -782,19 +781,16 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 		return nil, fail.KubeClient(err, "listing kube-controller-manager pods")
 	}
 
-	// This uses regex so we can easily match any CSIMigration feature gate
-	// and confirm it's enabled.
-	csiFlagRegex := regexp.MustCompile(`CSIMigration[a-zA-Z]+=true`)
-	status := &state.CCMStatus{}
+	status := &state.CCMStatus{
+		CSIMigrationEnabled: s.Cluster.CloudProvider.OriginalInTreeCloudProvider(),
+	}
+
 	for _, pod := range pods.Items {
 		for _, command := range pod.Spec.Containers[0].Command {
 			switch {
 			case strings.HasPrefix(command, "--cloud-provider") && !strings.Contains(command, "external"):
 				status.InTreeCloudProviderEnabled = true
 			case strings.HasPrefix(command, "--feature-gates"):
-				if csiFlagRegex.MatchString(command) {
-					status.CSIMigrationEnabled = true
-				}
 				csiFeatureGates, _, _ := s.Cluster.CSIMigrationFeatureGates(true)
 				unregistered := []string{}
 
