@@ -120,7 +120,7 @@ func labelNodes(s *state.State) error {
 		if candidateNodes.Has(host.Hostname) || candidateNodes.Has(host.PrivateAddress) || candidateNodes.Has(host.PublicAddress) {
 			hostsSet[host.Hostname] = host
 			// force node-role.kubernetes.io/control-plane on control-plane nodes (in case when restored from the backup)
-			hostsSet[host.Hostname].Labels["node-role.kubernetes.io/control-plane"] = ""
+			hostsSet[host.Hostname].Labels[labelControlPlaneNode] = ""
 		}
 	}
 
