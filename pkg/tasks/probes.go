@@ -60,8 +60,7 @@ const (
 	openstackCCMAppLabelValue = "openstack-cloud-controller-manager"
 	vsphereCCMAppLabelValue   = "vsphere-cloud-controller-manager"
 
-	nodeRoleMaster       = "node-role.kubernetes.io/master"
-	nodeRoleControlPlane = "node-role.kubernetes.io/control-plane"
+	nodeRoleMaster = "node-role.kubernetes.io/master"
 
 	provisioningUtilityKey       = "provisioningUtility"
 	provisioningUtilityCloudInit = "cloud-init"
@@ -243,7 +242,7 @@ func safeguardNodeSelectorsAndTolerations(s *state.State) error {
 			for _, t := range pod.Spec.Tolerations {
 				if t.Key == nodeRoleMaster {
 					foundMaster = true
-				} else if t.Key == nodeRoleControlPlane {
+				} else if t.Key == labelControlPlaneNode {
 					foundControlPlane = true
 				}
 			}
@@ -263,7 +262,7 @@ func safeguardNodeSelectorsAndTolerations(s *state.State) error {
 		}
 		if len(invalidTolerations) > 0 {
 			shouldFail = true
-			s.Logger.Errorf("Found %d pod(s) that have toleration removed in Kubernetes 1.24 %q, but not %q toleration: %s", len(invalidTolerations), nodeRoleMaster, nodeRoleControlPlane, invalidTolerations)
+			s.Logger.Errorf("Found %d pod(s) that have toleration removed in Kubernetes 1.24 %q, but not %q toleration: %s", len(invalidTolerations), nodeRoleMaster, labelControlPlaneNode, invalidTolerations)
 		}
 		if shouldFail {
 			s.Logger.Warn("For pods managed by KubeOne, run 'kubeone apply' with your current/actual Kubernetes version before upgrading to Kubernetes 1.24.")
