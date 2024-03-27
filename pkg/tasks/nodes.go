@@ -18,6 +18,7 @@ package tasks
 
 import (
 	"bytes"
+	"context"
 	"io"
 	"path/filepath"
 	"strings"
@@ -33,6 +34,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/client-go/util/retry"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/yaml"
 )
 
@@ -114,20 +116,31 @@ func labelNodes(s *state.State) error {
 	}
 
 	hostsSet := map[string]kubeoneapi.HostConfig{}
+	for _, host := range s.Cluster.ControlPlane.Hosts {
+		if candidateNodes.Has(host.Hostname) || candidateNodes.Has(host.PrivateAddress) || candidateNodes.Has(host.PublicAddress) {
+			hostsSet[host.Hostname] = host
+			// force node-role.kubernetes.io/control-plane on control-plane nodes (in case when restored from the backup)
+			hostsSet[host.Hostname].Labels["node-role.kubernetes.io/control-plane"] = ""
+		}
+	}
 
-	for _, host := range append(s.Cluster.ControlPlane.Hosts, s.Cluster.StaticWorkers.Hosts...) {
+	for _, host := range s.Cluster.StaticWorkers.Hosts {
 		if candidateNodes.Has(host.Hostname) || candidateNodes.Has(host.PrivateAddress) || candidateNodes.Has(host.PublicAddress) {
 			hostsSet[host.Hostname] = host
 		}
 	}
 
-	for nodeName, host := range hostsSet {
+	return applyHostLabels(s.Context, hostsSet, s.DynamicClient)
+}
+
+func applyHostLabels(ctx context.Context, hosts map[string]kubeoneapi.HostConfig, dynClient client.Client) error {
+	for nodeName, host := range hosts {
 		nodeName := nodeName
 		host := host
 		updateErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 			var node corev1.Node
 
-			if err := s.DynamicClient.Get(s.Context, types.NamespacedName{Name: nodeName}, &node); err != nil {
+			if err := dynClient.Get(ctx, types.NamespacedName{Name: nodeName}, &node); err != nil {
 				return err
 			}
 
@@ -143,7 +156,7 @@ func labelNodes(s *state.State) error {
 				}
 			}
 
-			return s.DynamicClient.Update(s.Context, &node)
+			return dynClient.Update(ctx, &node)
 		})
 
 		if updateErr != nil {
