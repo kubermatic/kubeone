@@ -303,6 +303,10 @@ func WithResources(t Tasks) Tasks {
 				Operation: "labeling nodes",
 			},
 			{
+				Fn:        fixFilePermissions,
+				Operation: "Fix permissions of system files",
+			},
+			{
 				Fn:        machinecontroller.WaitReady,
 				Operation: "waiting for machine-controller",
 			},
