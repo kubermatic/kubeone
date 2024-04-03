@@ -17,10 +17,21 @@ limitations under the License.
 package tasks
 
 import (
+	"context"
+	"io/fs"
+	"strings"
+	"time"
+
+	"github.com/pkg/errors"
+
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/executor"
-	"k8c.io/kubeone/pkg/runner"
+	"k8c.io/kubeone/pkg/executor/executorfs"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
+
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/util/wait"
 )
 
 var systemFiles = map[string][]string{
@@ -35,18 +46,63 @@ var systemFiles = map[string][]string{
 }
 
 func fixFilePermissions(s *state.State) error {
-	s.Logger.Info("Fixing permissions of the kubernetes system files")
+	s.Logger.Info("Fixing permissions of the kubernetes system files...")
 
-	return s.RunTaskOnAllNodes(func(ctx *state.State, _ *kubeoneapi.HostConfig, _ executor.Interface) error {
+	readyNodes := func(ctx context.Context) (bool, error) {
+		s.Logger.Debug(".")
+
+		nodeList := corev1.NodeList{}
+		if err := s.DynamicClient.List(ctx, &nodeList); err != nil {
+			return false, fail.KubeClient(err, "getting %T", nodeList)
+		}
+
+		for _, node := range nodeList.Items {
+			for _, cond := range node.Status.Conditions {
+				if cond.Type == corev1.NodeReady {
+					if cond.Status != corev1.ConditionTrue {
+						// Some Nodes are not yet Ready. Let's continue to poll.
+						return false, nil
+					}
+				}
+			}
+		}
+
+		return true, nil
+	}
+
+	s.Logger.Debug("Waiting for all nodes to be Ready.")
+	if err := wait.PollUntilContextTimeout(s.Context, 5*time.Second, 5*time.Minute, true, readyNodes); err != nil {
+		return fail.KubeClient(err, "waiting for all Nodes to be Ready")
+	}
+
+	return s.RunTaskOnAllNodes(func(ctx *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
 		for _, pathList := range systemFiles {
 			for _, path := range pathList {
-				args := runner.TemplateVariables{"PATH": path}
-				if ctx.Verbose {
-					args["VERBOSE"] = "--verbose"
+				nodeFS := executorfs.New(conn)
+				matches, err := fs.Glob(nodeFS, path)
+				if err != nil {
+					return fail.SSH(err, "expanding glob pattern")
 				}
 
-				if _, _, err := ctx.Runner.Run("sudo chmod 600 {{ with .VERBOSE }}{{ . }} {{ end }}{{ .PATH }}", args); err != nil {
-					return err
+				for _, match := range matches {
+					match := strings.TrimSpace(match)
+					file, err := nodeFS.Open(match)
+					if err != nil {
+						return err
+					}
+
+					fw, ok := file.(executor.ExtendedFile)
+					if !ok {
+						return fail.RuntimeError{
+							Op:  "checking if file satisfy sshiofs.ExtendedFile interface",
+							Err: errors.New("can not change file permissions"),
+						}
+					}
+
+					s.Logger.Debugf("chmod 0600 %q", match)
+					if err = fw.Chmod(0o600); err != nil {
+						return err
+					}
 				}
 			}
 		}
