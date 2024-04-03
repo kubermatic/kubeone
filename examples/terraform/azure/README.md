@@ -47,6 +47,9 @@ No modules.
 | [azurerm_virtual_network.vpc](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) | resource |
 | [time_sleep.wait_30_seconds](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 | [azurerm_public_ip.control_plane](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/public_ip) | data source |
+| [azurerm_network_interface.lb_vm_network](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface) | resource |
+| [azurerm_virtual_machine.lb_vm](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine) | resource |
+| [null_resource.lb_config](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 
 ## Inputs
 
@@ -65,8 +68,10 @@ No modules.
 | <a name="input_initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployments, only applicable if operating-system-manager addon is enabled.<br>If not specified, the default value will be added by machine-controller addon. | `string` | `""` | no |
 | <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | Number of replicas per MachineDeployment | `number` | `2` | no |
 | <a name="input_ip_sku"></a> [ip\_sku](#input\_ip\_sku) | SKU to use for IP addresses | `string` | `"Basic"` | no |
+| <a name="input_lb_vm_size"></a> [lb_vm_size](#input\_lb_vm_size) | VM Size for Load Balancer machines | `string` | `"Standard_B2s"` | no |
 | <a name="input_location"></a> [location](#input\_location) | Azure datacenter to use | `string` | `"westeurope"` | no |
 | <a name="input_os"></a> [os](#input\_os) | Operating System to use for finding image reference and in MachineDeployment | `string` | `"ubuntu"` | no |
+| <a name="input_private_networking_only"></a> [private_networking_only](#input\_private_networking_only) | Enable this to use private networking only | `bool` | `"false"` | no
 | <a name="input_rhsm_offline_token"></a> [rhsm\_offline\_token](#input\_rhsm\_offline\_token) | RHSM offline token | `string` | `""` | no |
 | <a name="input_rhsm_password"></a> [rhsm\_password](#input\_rhsm\_password) | RHSM password | `string` | `""` | no |
 | <a name="input_rhsm_username"></a> [rhsm\_username](#input\_rhsm\_username) | RHSM username | `string` | `""` | no |
