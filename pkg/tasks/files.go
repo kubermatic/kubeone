@@ -85,7 +85,7 @@ func fixFilePermissions(s *state.State) error {
 				}
 
 				for _, match := range matches {
-					match := strings.TrimSpace(match)
+					match = strings.TrimSpace(match)
 					file, err := nodeFS.Open(match)
 					if err != nil {
 						return err
@@ -99,7 +99,7 @@ func fixFilePermissions(s *state.State) error {
 						}
 					}
 
-					s.Logger.Debugf("chmod 0600 %q", match)
+					ctx.Logger.Debugf("chmod 0600 %q", match)
 					if err = fw.Chmod(0o600); err != nil {
 						return err
 					}
