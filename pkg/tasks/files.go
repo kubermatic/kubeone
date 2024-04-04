@@ -71,11 +71,16 @@ func fixFilePermissions(s *state.State) error {
 	}
 
 	s.Logger.Debug("Waiting for all nodes to be Ready.")
+
+	// In order to satisfy CIS benchmark 1.8 we have to chmod 0600 files in /etc/cni/net.d/, however this directory is
+	// created only by the CNI driver and we have to wait until it's available (which happens when the Node becomes``
+	// Ready).
 	if err := wait.PollUntilContextTimeout(s.Context, 5*time.Second, 5*time.Minute, true, readyNodes); err != nil {
 		return fail.KubeClient(err, "waiting for all Nodes to be Ready")
 	}
 
-	return s.RunTaskOnAllNodes(func(ctx *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
+	// CIS benchmark tests mode of files only on control-plane nodes
+	return s.RunTaskOnControlPlane(func(ctx *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
 		for _, pathList := range systemFiles {
 			for _, path := range pathList {
 				nodeFS := executorfs.New(conn)
@@ -95,7 +100,7 @@ func fixFilePermissions(s *state.State) error {
 					if !ok {
 						return fail.RuntimeError{
 							Op:  "checking if file satisfy sshiofs.ExtendedFile interface",
-							Err: errors.New("can not change file permissions"),
+							Err: errors.New("file is not executor.ExtendedFile"),
 						}
 					}
 
