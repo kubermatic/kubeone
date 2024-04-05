@@ -140,7 +140,7 @@ func (a *applier) loadAddonsManifests(
 		}
 
 		if verbose {
-			logger.Infof("Parsing addons manifest '%s'\n", file.Name())
+			logger.Debugf("Parsing addons manifest '%s'\n", file.Name())
 		}
 
 		manifestBytes, err := fs.ReadFile(fsys, filePath)
