@@ -118,6 +118,10 @@ func labelNodes(s *state.State) error {
 	hostsSet := map[string]kubeoneapi.HostConfig{}
 	for _, host := range s.Cluster.ControlPlane.Hosts {
 		if candidateNodes.Has(host.Hostname) || candidateNodes.Has(host.PrivateAddress) || candidateNodes.Has(host.PublicAddress) {
+			if host.Labels == nil {
+				host.Labels = map[string]string{}
+			}
+
 			hostsSet[host.Hostname] = host
 			// force node-role.kubernetes.io/control-plane on control-plane nodes (in case when restored from the backup)
 			hostsSet[host.Hostname].Labels[labelControlPlaneNode] = ""
