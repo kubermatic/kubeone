@@ -36,8 +36,10 @@ import (
 
 var systemFiles = map[string][]string{
 	"kubelet": {
-		"/lib/systemd/system/kubelet.service",
+		"/lib/systemd/system/kubelet.service*",
 		"/lib/systemd/system/kubelet.service.d/*",
+		"/etc/systemd/system/kubelet.service*",
+		"/etc/systemd/system/kubelet.service.d/*",
 		"/var/lib/kubelet/config.yaml",
 	},
 	"cni": {
@@ -91,6 +93,11 @@ func fixFilePermissions(s *state.State) error {
 
 				for _, match := range matches {
 					match = strings.TrimSpace(match)
+					if match == path {
+						// glob returns the pattern itself in case when there was no match
+						continue
+					}
+
 					file, err := nodeFS.Open(match)
 					if err != nil {
 						return err
@@ -104,8 +111,18 @@ func fixFilePermissions(s *state.State) error {
 						}
 					}
 
-					ctx.Logger.Debugf("chmod 0600 %q", match)
-					if err = fw.Chmod(0o600); err != nil {
+					fi, err := fw.Stat()
+					if err != nil {
+						return err
+					}
+
+					var mode fs.FileMode = 0o600
+					if fi.IsDir() {
+						mode = 0o700
+					}
+
+					ctx.Logger.Debugf("chmod %o %q", mode, match)
+					if err = fw.Chmod(mode); err != nil {
 						return err
 					}
 				}
