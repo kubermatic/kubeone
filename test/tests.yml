@@ -140,7 +140,7 @@
     - name: azure_flatcar_stable
     - name: azure_rhel_stable
     - name: azure_rockylinux_stable
-    - name: gce_default
+    - name: gce_default_stable
 
 - scenario: upgrade_containerd_external
   initVersion: v1.27.11

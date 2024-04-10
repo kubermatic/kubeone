@@ -2590,14 +2590,14 @@ presubmits:
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-upgrade-containerd-from-v1.27.11-to-v1.28.7
+  name: pull-kubeone-e2e-gce-default-stable-upgrade-containerd-from-v1.27.11-to-v1.28.7
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestGceDefaultUpgradeContainerdFromV1_27_11_ToV1_28_7
+      - TestGceDefaultStableUpgradeContainerdFromV1_27_11_ToV1_28_7
       env:
       - name: PROVIDER
         value: gce

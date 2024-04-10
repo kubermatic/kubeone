@@ -973,9 +973,9 @@ func TestAzureRockylinuxStableUpgradeContainerdFromV1_27_11_ToV1_28_7(t *testing
 	scenario.Run(ctx, t)
 }
 
-func TestGceDefaultUpgradeContainerdFromV1_27_11_ToV1_28_7(t *testing.T) {
+func TestGceDefaultStableUpgradeContainerdFromV1_27_11_ToV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["gce_default"]
+	infra := Infrastructures["gce_default_stable"]
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11", "v1.28.7")
