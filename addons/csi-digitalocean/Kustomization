@@ -66,11 +66,11 @@ patches:
       - op: replace
         path: /spec/template/spec/containers/4/env/2
         value:
-          - name: DIGITALOCEAN_ACCESS_TOKEN
-            valueFrom:
-              secretKeyRef:
-                name: kubeone-ccm-credentials
-                key: DO_TOKEN
+          name: DIGITALOCEAN_ACCESS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: kubeone-ccm-credentials
+              key: DO_TOKEN
       - op: replace
         path: /spec/template/spec/containers/0/image
         value: |-

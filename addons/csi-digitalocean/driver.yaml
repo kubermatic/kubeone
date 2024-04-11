@@ -387,11 +387,11 @@ spec:
           value: unix:///var/lib/csi/sockets/pluginproxy/csi.sock
         - name: DIGITALOCEAN_API_URL
           value: https://api.digitalocean.com/
-        - - name: DIGITALOCEAN_ACCESS_TOKEN
-            valueFrom:
-              secretKeyRef:
-                key: DO_TOKEN
-                name: kubeone-ccm-credentials
+        - name: DIGITALOCEAN_ACCESS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              key: DO_TOKEN
+              name: kubeone-ccm-credentials
         image: '{{ .InternalImages.Get "DigitalOceanCSI" }}'
         imagePullPolicy: Always
         name: csi-do-plugin
