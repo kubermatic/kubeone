@@ -898,9 +898,6 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/hetzner",
-				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-				},
 			},
 			protokol: protokolBin{
 				namespaces: []string{"kube-system"},
@@ -918,9 +915,6 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/hetzner",
-				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-				},
 			},
 			protokol: protokolBin{
 				namespaces: []string{"kube-system"},
@@ -939,7 +933,6 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/hetzner",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"os=centos",
 				},
 			},
@@ -960,7 +953,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/hetzner",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"image=centos-7",
 					"worker_os=centos",
 				},
@@ -982,7 +974,6 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/hetzner",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"os=rockylinux",
 				},
 			},
@@ -1003,7 +994,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/hetzner",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"image=rocky-8",
 					"worker_os=rockylinux",
 				},
