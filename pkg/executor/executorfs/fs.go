@@ -117,7 +117,7 @@ func (vfs *virtfs) ReadFile(name string) ([]byte, error) {
 }
 
 func newSSHFileInfo(name string, conn executor.Interface) (fs.FileInfo, error) {
-	const cmdTpl = "sudo stat --printf='%%s %%f %%Y' %q"
+	const cmdTpl = `sudo stat --printf='%%s\t%%f\t%%Y\t%%F' %q`
 
 	var (
 		stdout, stderr strings.Builder
@@ -139,8 +139,8 @@ func newSSHFileInfo(name string, conn executor.Interface) (fs.FileInfo, error) {
 		modTime int64
 	)
 
-	fia := strings.Split(stdout.String(), " ")
-	if len(fia) != 3 {
+	fia := strings.Split(stdout.String(), "\t")
+	if len(fia) != 4 {
 		return nil, fail.Runtime(fs.ErrInvalid, "wrong number of stat output")
 	}
 
@@ -166,6 +166,10 @@ func newSSHFileInfo(name string, conn executor.Interface) (fs.FileInfo, error) {
 			Path: name,
 			Op:   "stat",
 		}, "scanning file modtime")
+	}
+
+	if fia[3] == "directory" {
+		mode |= fs.ModeDir
 	}
 
 	return &fileInfo{

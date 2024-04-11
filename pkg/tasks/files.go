@@ -36,8 +36,10 @@ import (
 
 var systemFiles = map[string][]string{
 	"kubelet": {
-		"/lib/systemd/system/kubelet.service",
+		"/lib/systemd/system/kubelet.service*",
 		"/lib/systemd/system/kubelet.service.d/*",
+		"/etc/systemd/system/kubelet.service*",
+		"/etc/systemd/system/kubelet.service.d/*",
 		"/var/lib/kubelet/config.yaml",
 	},
 	"cni": {
@@ -81,16 +83,22 @@ func fixFilePermissions(s *state.State) error {
 
 	// CIS benchmark tests mode of files only on control-plane nodes
 	return s.RunTaskOnControlPlane(func(ctx *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
-		for _, pathList := range systemFiles {
-			for _, path := range pathList {
+		for _, globPatterns := range systemFiles {
+			for _, pattern := range globPatterns {
 				nodeFS := executorfs.New(conn)
-				matches, err := fs.Glob(nodeFS, path)
+				matches, err := fs.Glob(nodeFS, pattern)
 				if err != nil {
 					return fail.SSH(err, "expanding glob pattern")
 				}
 
 				for _, match := range matches {
 					match = strings.TrimSpace(match)
+					// check if pattern actually contains a glob pattern
+					if strings.HasSuffix(pattern, "*") && match == pattern {
+						// glob returns the pattern itself in case when there was no match
+						continue
+					}
+
 					file, err := nodeFS.Open(match)
 					if err != nil {
 						return err
@@ -104,8 +112,18 @@ func fixFilePermissions(s *state.State) error {
 						}
 					}
 
-					ctx.Logger.Debugf("chmod 0600 %q", match)
-					if err = fw.Chmod(0o600); err != nil {
+					fi, err := fw.Stat()
+					if err != nil {
+						return err
+					}
+
+					var mode fs.FileMode = 0o600
+					if fi.IsDir() {
+						mode = 0o700
+					}
+
+					ctx.Logger.Debugf("chmod %o %q", mode, match)
+					if err = fw.Chmod(mode); err != nil {
 						return err
 					}
 				}
