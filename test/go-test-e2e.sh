@@ -42,6 +42,11 @@ function cleanup() {
 }
 trap cleanup EXIT
 
+function fatal() {
+  echo "$1"
+  exit 1
+}
+
 function generate_ssh_key() {
   local private_ssh_key_file=$1
 
@@ -194,6 +199,7 @@ if [ -n "${RUNNING_IN_CI}" ]; then
 fi
 
 go_test_args=("$@")
+TEST_NAME="$*"
 
 if [ -n "${CREDENTIALS_FILE_PATH}" ]; then
   go_test_args+=("-credentials" "${CREDENTIALS_FILE_PATH}")
@@ -202,6 +208,8 @@ fi
 cd test/e2e
 
 go test -c . -tags e2e
+
+./e2e.test -test.list "$TEST_NAME" | grep -q "$TEST_NAME" || fatal "NO TESTS MATCH $TEST_NAME"
 
 # to handle OS signals directly, we launch e2e tests using dedicated binary
 exec ./e2e.test \
