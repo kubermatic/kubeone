@@ -83,17 +83,18 @@ func fixFilePermissions(s *state.State) error {
 
 	// CIS benchmark tests mode of files only on control-plane nodes
 	return s.RunTaskOnControlPlane(func(ctx *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
-		for _, pathList := range systemFiles {
-			for _, path := range pathList {
+		for _, globPatterns := range systemFiles {
+			for _, pattern := range globPatterns {
 				nodeFS := executorfs.New(conn)
-				matches, err := fs.Glob(nodeFS, path)
+				matches, err := fs.Glob(nodeFS, pattern)
 				if err != nil {
 					return fail.SSH(err, "expanding glob pattern")
 				}
 
 				for _, match := range matches {
 					match = strings.TrimSpace(match)
-					if match == path {
+					// check if pattern actually contains a glob pattern
+					if strings.HasSuffix(pattern, "*") && match == pattern {
 						// glob returns the pattern itself in case when there was no match
 						continue
 					}
