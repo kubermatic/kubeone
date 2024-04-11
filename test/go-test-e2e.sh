@@ -214,5 +214,6 @@ go test -c . -tags e2e
 # to handle OS signals directly, we launch e2e tests using dedicated binary
 exec ./e2e.test \
   -test.timeout "$TEST_TIMEOUT" \
+  -test.v \
   -test.run \
   "${go_test_args[@]}"
