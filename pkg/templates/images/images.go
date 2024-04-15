@@ -240,16 +240,14 @@ func optionalResources() map[Resource]map[string]string {
 
 		// Azure CCM
 		AzureCCM: {
-			"1.26.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.26.12",
-			"1.27.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.27.6",
-			"1.28.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.28.5",
-			">= 1.29.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.29.0",
+			"1.27.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.27.16",
+			"1.28.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.28.8",
+			">= 1.29.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.29.3",
 		},
 		AzureCNM: {
-			"1.26.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.26.12",
-			"1.27.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.27.6",
-			"1.28.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.28.5",
-			">= 1.29.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.29.0",
+			"1.27.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.27.16",
+			"1.28.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.28.8",
+			">= 1.29.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.29.3",
 		},
 
 		// AzureFile CSI driver
@@ -262,7 +260,7 @@ func optionalResources() map[Resource]map[string]string {
 		AzureFileCSISnapshotter:        {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-snapshotter:v6.3.3"},
 
 		// AzureDisk CSI driver
-		AzureDiskCSI:                   {"*": "mcr.microsoft.com/oss/kubernetes-csi/azuredisk-csi:v1.29.3"},
+		AzureDiskCSI:                   {"*": "mcr.microsoft.com/oss/kubernetes-csi/azuredisk-csi:v1.29.5"},
 		AzureDiskCSIAttacher:           {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-attacher:v4.3.0"},
 		AzureDiskCSILivenessProbe:      {"*": "mcr.microsoft.com/oss/kubernetes-csi/livenessprobe:v2.10.0"},
 		AzureDiskCSINodeDriverRegistar: {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-node-driver-registrar:v2.8.0"},

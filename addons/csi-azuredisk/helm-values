@@ -7,6 +7,11 @@ windows:
 controller:
   runOnControlPlane: true
   cloudConfigSecretName: cloud-config
+  hostNetwork: false
 
 node:
   cloudConfigSecretName: cloud-config
+  allowEmptyCloudConfig: false
+
+linux:
+  hostNetwork: false

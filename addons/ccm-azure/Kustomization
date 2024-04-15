@@ -1,0 +1,61 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+helmCharts:
+- name: cloud-provider-azure
+  repo: https://raw.githubusercontent.com/kubernetes-sigs/cloud-provider-azure/master/helm/repo
+  version: v1.29.0
+  releaseName: cloud-provider-azure
+  namespace: kube-system
+  valuesFile: helm-values
+
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: cloud-node-manager
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: cloud-node-manager
+                image: '{{ .InternalImages.Get "AzureCNM" }}'
+
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: cloud-controller-manager
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: cloud-controller-manager
+                image: '{{ .InternalImages.Get "AzureCCM" }}'
+                volumeMounts:
+                  - name: cloud-config
+                    mountPath: /etc/cloud
+                    readOnly: true
+            volumes:
+              - name: cloud-config
+                secret:
+                  secretName: cloud-config
+
+  - patch: |-
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: cloud-node-manager-windows
+        namespace: kube-system
+      $patch: delete
+
+  - patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: cloud-provider-azure-scripts
+        namespace: kube-system
+      $patch: delete

@@ -1,0 +1,50 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+helmCharts:
+- name: azuredisk-csi-driver
+  repo: https://raw.githubusercontent.com/kubernetes-sigs/azuredisk-csi-driver/master/charts
+  version: v1.29.5
+  releaseName: azuredisk-csi-driver
+  namespace: kube-system
+  valuesFile: helm-values
+
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: csi-azuredisk-node
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: liveness-probe
+                image: '{{ .InternalImages.Get "AzureDiskCSILivenessProbe" }}'
+              - name: node-driver-registrar
+                image: '{{ .InternalImages.Get "AzureDiskCSINodeDriverRegistar" }}'
+              - name: azuredisk
+                image: '{{ .InternalImages.Get "AzureDiskCSI" }}'
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: csi-azuredisk-controller
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: csi-provisioner
+                image: '{{ .InternalImages.Get "AzureDiskCSIProvisioner" }}'
+              - name: csi-attacher
+                image: '{{ .InternalImages.Get "AzureDiskCSIAttacher" }}'
+              - name: csi-snapshotter
+                image: '{{ .InternalImages.Get "AzureDiskCSISnapshotter" }}'
+              - name: csi-resizer
+                image: '{{ .InternalImages.Get "AzureDiskCSIResizer" }}'
+              - name: liveness-probe
+                image: '{{ .InternalImages.Get "AzureDiskCSILivenessProbe" }}'
+              - name: azuredisk
+                image: '{{ .InternalImages.Get "AzureDiskCSI" }}'

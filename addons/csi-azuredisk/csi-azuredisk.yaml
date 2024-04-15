@@ -1,0 +1,869 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/instance: azuredisk-csi-driver
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: azuredisk-csi-driver
+    app.kubernetes.io/version: v1.29.5
+    helm.sh/chart: azuredisk-csi-driver-v1.29.5
+  name: csi-azuredisk-controller-sa
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/instance: azuredisk-csi-driver
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: azuredisk-csi-driver
+    app.kubernetes.io/version: v1.29.5
+    helm.sh/chart: azuredisk-csi-driver-v1.29.5
+  name: csi-azuredisk-node-sa
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/instance: azuredisk-csi-driver
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: azuredisk-csi-driver
+    app.kubernetes.io/version: v1.29.5
+    helm.sh/chart: azuredisk-csi-driver-v1.29.5
+  name: azuredisk-external-attacher-role
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumes
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - csi.storage.k8s.io
+    resources:
+      - csinodeinfos
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - volumeattachments
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - patch
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - volumeattachments/status
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - patch
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - get
+      - watch
+      - list
+      - delete
+      - update
+      - create
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/instance: azuredisk-csi-driver
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: azuredisk-csi-driver
+    app.kubernetes.io/version: v1.29.5
+    helm.sh/chart: azuredisk-csi-driver-v1.29.5
+  name: azuredisk-external-provisioner-role
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumes
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumeclaims
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - storageclasses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - csinodes
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - snapshot.storage.k8s.io
+    resources:
+      - volumesnapshots
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - snapshot.storage.k8s.io
+    resources:
+      - volumesnapshotcontents
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - get
+      - watch
+      - list
+      - delete
+      - update
+      - create
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/instance: azuredisk-csi-driver
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: azuredisk-csi-driver
+    app.kubernetes.io/version: v1.29.5
+    helm.sh/chart: azuredisk-csi-driver-v1.29.5
+  name: azuredisk-external-resizer-role
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumes
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumeclaims
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumeclaims/status
+    verbs:
+      - update
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - list
+      - watch
+      - create
+      - update
+      - patch
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - get
+      - watch
+      - list
+      - delete
+      - update
+      - create
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/instance: azuredisk-csi-driver
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: azuredisk-csi-driver
+    app.kubernetes.io/version: v1.29.5
+    helm.sh/chart: azuredisk-csi-driver-v1.29.5
+  name: azuredisk-external-snapshotter-role
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - list
+      - watch
+      - create
+      - update
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - snapshot.storage.k8s.io
+    resources:
+      - volumesnapshotclasses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - snapshot.storage.k8s.io
+    resources:
+      - volumesnapshotcontents
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update
+      - delete
+      - patch
+  - apiGroups:
+      - snapshot.storage.k8s.io
+    resources:
+      - volumesnapshotcontents/status
+    verbs:
+      - update
+      - patch
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - get
+      - watch
+      - list
+      - delete
+      - update
+      - create
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: csi-azuredisk-controller-secret-role
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: csi-azuredisk-node-role
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: azuredisk-csi-driver
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: azuredisk-csi-driver
+    app.kubernetes.io/version: v1.29.5
+    helm.sh/chart: azuredisk-csi-driver-v1.29.5
+  name: azuredisk-csi-attacher-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: azuredisk-external-attacher-role
+subjects:
+  - kind: ServiceAccount
+    name: csi-azuredisk-controller-sa
+    namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: azuredisk-csi-driver
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: azuredisk-csi-driver
+    app.kubernetes.io/version: v1.29.5
+    helm.sh/chart: azuredisk-csi-driver-v1.29.5
+  name: azuredisk-csi-provisioner-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: azuredisk-external-provisioner-role
+subjects:
+  - kind: ServiceAccount
+    name: csi-azuredisk-controller-sa
+    namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: azuredisk-csi-driver
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: azuredisk-csi-driver
+    app.kubernetes.io/version: v1.29.5
+    helm.sh/chart: azuredisk-csi-driver-v1.29.5
+  name: azuredisk-csi-resizer-role
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: azuredisk-external-resizer-role
+subjects:
+  - kind: ServiceAccount
+    name: csi-azuredisk-controller-sa
+    namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: azuredisk-csi-driver
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: azuredisk-csi-driver
+    app.kubernetes.io/version: v1.29.5
+    helm.sh/chart: azuredisk-csi-driver-v1.29.5
+  name: azuredisk-csi-snapshotter-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: azuredisk-external-snapshotter-role
+subjects:
+  - kind: ServiceAccount
+    name: csi-azuredisk-controller-sa
+    namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: csi-azuredisk-controller-secret-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: csi-azuredisk-controller-secret-role
+subjects:
+  - kind: ServiceAccount
+    name: csi-azuredisk-controller-sa
+    namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: csi-azuredisk-node-secret-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: csi-azuredisk-node-role
+subjects:
+  - kind: ServiceAccount
+    name: csi-azuredisk-node-sa
+    namespace: kube-system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: azuredisk-csi-driver
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: azuredisk-csi-driver
+    app.kubernetes.io/version: v1.29.5
+    helm.sh/chart: azuredisk-csi-driver-v1.29.5
+  name: csi-azuredisk-controller
+  namespace: kube-system
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: csi-azuredisk-controller
+  template:
+    metadata:
+      labels:
+        app: csi-azuredisk-controller
+        app.kubernetes.io/instance: azuredisk-csi-driver
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: azuredisk-csi-driver
+        app.kubernetes.io/version: v1.29.5
+        helm.sh/chart: azuredisk-csi-driver-v1.29.5
+    spec:
+      containers:
+        - args:
+            - --feature-gates=Topology=true,HonorPVReclaimPolicy=true
+            - --csi-address=$(ADDRESS)
+            - --v=2
+            - --timeout=30s
+            - --leader-election
+            - --leader-election-namespace=kube-system
+            - --worker-threads=100
+            - --extra-create-metadata=true
+            - --strict-topology=true
+            - --kube-api-qps=50
+            - --kube-api-burst=100
+          env:
+            - name: ADDRESS
+              value: /csi/csi.sock
+          image: '{{ .InternalImages.Get "AzureDiskCSIProvisioner" }}'
+          name: csi-provisioner
+          resources:
+            limits:
+              memory: 500Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+        - args:
+            - -v=2
+            - -csi-address=$(ADDRESS)
+            - -timeout=1200s
+            - -leader-election
+            - --leader-election-namespace=kube-system
+            - -worker-threads=1000
+            - -kube-api-qps=200
+            - -kube-api-burst=400
+          env:
+            - name: ADDRESS
+              value: /csi/csi.sock
+          image: '{{ .InternalImages.Get "AzureDiskCSIAttacher" }}'
+          name: csi-attacher
+          resources:
+            limits:
+              memory: 500Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+        - args:
+            - -csi-address=$(ADDRESS)
+            - -leader-election
+            - --leader-election-namespace=kube-system
+            - -v=2
+            - --timeout=1200s
+          env:
+            - name: ADDRESS
+              value: /csi/csi.sock
+          image: '{{ .InternalImages.Get "AzureDiskCSISnapshotter" }}'
+          name: csi-snapshotter
+          resources:
+            limits:
+              memory: 200Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+        - args:
+            - -csi-address=$(ADDRESS)
+            - -v=2
+            - -leader-election
+            - --leader-election-namespace=kube-system
+            - -handle-volume-inuse-error=false
+            - -feature-gates=RecoverVolumeExpansionFailure=true
+            - -timeout=240s
+          env:
+            - name: ADDRESS
+              value: /csi/csi.sock
+          image: '{{ .InternalImages.Get "AzureDiskCSIResizer" }}'
+          name: csi-resizer
+          resources:
+            limits:
+              memory: 500Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+        - args:
+            - --csi-address=/csi/csi.sock
+            - --probe-timeout=3s
+            - --http-endpoint=localhost:29602
+            - --v=2
+          image: '{{ .InternalImages.Get "AzureDiskCSILivenessProbe" }}'
+          name: liveness-probe
+          resources:
+            limits:
+              memory: 100Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+        - args:
+            - --v=5
+            - --endpoint=$(CSI_ENDPOINT)
+            - --metrics-address=0.0.0.0:29604
+            - --disable-avset-nodes=false
+            - --vm-type=
+            - --drivername=disk.csi.azure.com
+            - --cloud-config-secret-name=cloud-config
+            - --cloud-config-secret-namespace=kube-system
+            - --custom-user-agent=
+            - --user-agent-suffix=OSS-helm
+            - --allow-empty-cloud-config=false
+            - --vmss-cache-ttl-seconds=-1
+            - --enable-traffic-manager=false
+            - --traffic-manager-port=7788
+            - --enable-otel-tracing=false
+            - --check-disk-lun-collision=true
+          env:
+            - name: AZURE_CREDENTIAL_FILE
+              valueFrom:
+                configMapKeyRef:
+                  key: path
+                  name: azure-cred-file
+                  optional: true
+            - name: CSI_ENDPOINT
+              value: unix:///csi/csi.sock
+            - name: AZURE_GO_SDK_LOG_LEVEL
+          image: '{{ .InternalImages.Get "AzureDiskCSI" }}'
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              host: localhost
+              path: /healthz
+              port: 29602
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+          name: azuredisk
+          ports:
+            - containerPort: 29604
+              name: metrics
+              protocol: TCP
+          resources:
+            limits:
+              memory: 500Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+            - mountPath: /etc/kubernetes/
+              name: azure-cred
+      hostNetwork: false
+      nodeSelector:
+        kubernetes.io/os: linux
+        node-role.kubernetes.io/control-plane: ""
+      priorityClassName: system-cluster-critical
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: csi-azuredisk-controller-sa
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/controlplane
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists
+      volumes:
+        - emptyDir: {}
+          name: socket-dir
+        - hostPath:
+            path: /etc/kubernetes/
+            type: DirectoryOrCreate
+          name: azure-cred
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app.kubernetes.io/instance: azuredisk-csi-driver
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: azuredisk-csi-driver
+    app.kubernetes.io/version: v1.29.5
+    helm.sh/chart: azuredisk-csi-driver-v1.29.5
+  name: csi-azuredisk-node
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: csi-azuredisk-node
+  template:
+    metadata:
+      labels:
+        app: csi-azuredisk-node
+        app.kubernetes.io/instance: azuredisk-csi-driver
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: azuredisk-csi-driver
+        app.kubernetes.io/version: v1.29.5
+        helm.sh/chart: azuredisk-csi-driver-v1.29.5
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: type
+                    operator: NotIn
+                    values:
+                      - virtual-kubelet
+      containers:
+        - args:
+            - --csi-address=/csi/csi.sock
+            - --probe-timeout=3s
+            - --http-endpoint=localhost:29603
+            - --v=2
+          image: '{{ .InternalImages.Get "AzureDiskCSILivenessProbe" }}'
+          name: liveness-probe
+          resources:
+            limits:
+              memory: 100Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+        - args:
+            - --csi-address=$(ADDRESS)
+            - --kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)
+            - --v=2
+          env:
+            - name: ADDRESS
+              value: /csi/csi.sock
+            - name: DRIVER_REG_SOCK_PATH
+              value: /var/lib/kubelet/plugins/disk.csi.azure.com/csi.sock
+          image: '{{ .InternalImages.Get "AzureDiskCSINodeDriverRegistar" }}'
+          livenessProbe:
+            exec:
+              command:
+                - /csi-node-driver-registrar
+                - --kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)
+                - --mode=kubelet-registration-probe
+            initialDelaySeconds: 30
+            timeoutSeconds: 15
+          name: node-driver-registrar
+          resources:
+            limits:
+              memory: 100Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+            - mountPath: /registration
+              name: registration-dir
+        - args:
+            - --v=5
+            - --endpoint=$(CSI_ENDPOINT)
+            - --nodeid=$(KUBE_NODE_NAME)
+            - --enable-perf-optimization=true
+            - --drivername=disk.csi.azure.com
+            - --volume-attach-limit=-1
+            - --cloud-config-secret-name=cloud-config
+            - --cloud-config-secret-namespace=kube-system
+            - --custom-user-agent=
+            - --user-agent-suffix=OSS-helm
+            - --allow-empty-cloud-config=false
+            - --support-zone=true
+            - --get-node-info-from-labels=false
+            - --get-nodeid-from-imds=false
+            - --enable-otel-tracing=false
+          env:
+            - name: AZURE_CREDENTIAL_FILE
+              valueFrom:
+                configMapKeyRef:
+                  key: path
+                  name: azure-cred-file
+                  optional: true
+            - name: CSI_ENDPOINT
+              value: unix:///csi/csi.sock
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: AZURE_GO_SDK_LOG_LEVEL
+          image: '{{ .InternalImages.Get "AzureDiskCSI" }}'
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              host: localhost
+              path: /healthz
+              port: 29603
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+          name: azuredisk
+          resources:
+            limits:
+              memory: 200Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+            - mountPath: /var/lib/kubelet/
+              mountPropagation: Bidirectional
+              name: mountpoint-dir
+            - mountPath: /etc/kubernetes/
+              name: azure-cred
+            - mountPath: /dev
+              name: device-dir
+            - mountPath: /sys/bus/scsi/devices
+              name: sys-devices-dir
+            - mountPath: /sys/class/
+              name: sys-class
+      dnsPolicy: Default
+      hostNetwork: false
+      nodeSelector:
+        kubernetes.io/os: linux
+      priorityClassName: system-node-critical
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: csi-azuredisk-node-sa
+      tolerations:
+        - operator: Exists
+      volumes:
+        - hostPath:
+            path: /var/lib/kubelet/plugins/disk.csi.azure.com
+            type: DirectoryOrCreate
+          name: socket-dir
+        - hostPath:
+            path: /var/lib/kubelet/
+            type: DirectoryOrCreate
+          name: mountpoint-dir
+        - hostPath:
+            path: /var/lib/kubelet/plugins_registry/
+            type: DirectoryOrCreate
+          name: registration-dir
+        - hostPath:
+            path: /etc/kubernetes/
+            type: DirectoryOrCreate
+          name: azure-cred
+        - hostPath:
+            path: /dev
+            type: Directory
+          name: device-dir
+        - hostPath:
+            path: /sys/bus/scsi/devices
+            type: Directory
+          name: sys-devices-dir
+        - hostPath:
+            path: /sys/class/
+            type: Directory
+          name: sys-class
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+---
+apiVersion: storage.k8s.io/v1
+kind: CSIDriver
+metadata:
+  annotations:
+    csiDriver: v1.29.5
+    snapshot: v6.3.1
+  name: disk.csi.azure.com
+spec:
+  attachRequired: true
+  fsGroupPolicy: File
+  podInfoOnMount: false
