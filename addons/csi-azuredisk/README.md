@@ -5,5 +5,5 @@ See more: https://github.com/kubernetes-sigs/azuredisk-csi-driver/tree/master/ch
 ## Development
 
 ```shell
-kubectl kustomize --enable-helm . | yq > ccm-azuredisk.yaml
+kubectl kustomize --enable-helm . | yq > csi-azuredisk.yaml
 ```
