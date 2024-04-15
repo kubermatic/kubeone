@@ -35,6 +35,14 @@ patches:
             containers:
               - name: cloud-controller-manager
                 image: '{{ .InternalImages.Get "AzureCCM" }}'
+                volumeMounts:
+                  - name: cloud-config
+                    mountPath: /etc/cloud
+                    readOnly: true
+            volumes:
+              - name: cloud-config
+                secret:
+                  secretName: cloud-config
 
   - patch: |-
       apiVersion: apps/v1

@@ -240,6 +240,9 @@ spec:
               cpu: 100m
               memory: 128Mi
           volumeMounts:
+            - mountPath: /etc/cloud
+              name: cloud-config
+              readOnly: true
             - mountPath: /etc/kubernetes
               name: etc-kubernetes
             - mountPath: /etc/ssl
@@ -272,6 +275,9 @@ spec:
           topologyKey: kubernetes.io/hostname
           whenUnsatisfiable: DoNotSchedule
       volumes:
+        - name: cloud-config
+          secret:
+            secretName: cloud-config
         - hostPath:
             path: /etc/kubernetes
           name: etc-kubernetes
