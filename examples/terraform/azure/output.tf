@@ -90,9 +90,9 @@ output "kubeone_workers" {
           vmSize          = var.worker_vm_size
           vnetName        = azurerm_virtual_network.vpc.name
           subnetName      = azurerm_subnet.subnet.name
-          loadBalancerSku = var.ip_sku
+          loadBalancerSku = "Standard"
           routeTableName  = azurerm_route_table.rt.name
-          availabilitySet = azurerm_availability_set.avset_workers.name
+          availabilitySet = azurerm_availability_set.avset.name
           # assignAvailabilitySet = true/false
           securityGroupName = azurerm_network_security_group.sg.name
           assignPublicIP    = true

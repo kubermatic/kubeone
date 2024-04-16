@@ -57,20 +57,6 @@ resource "azurerm_availability_set" "avset" {
   }
 }
 
-resource "azurerm_availability_set" "avset_workers" {
-  name                         = "${var.cluster_name}-avset-workers"
-  location                     = var.location
-  resource_group_name          = azurerm_resource_group.rg.name
-  platform_fault_domain_count  = 2
-  platform_update_domain_count = 2
-  managed                      = true
-
-  tags = {
-    environment = "kubeone"
-    cluster     = var.cluster_name
-  }
-}
-
 resource "azurerm_route_table" "rt" {
   name                          = "${var.cluster_name}-rt"
   location                      = azurerm_resource_group.rg.location
@@ -144,8 +130,8 @@ resource "azurerm_public_ip" "lbip" {
   name                = "${var.cluster_name}-lbip"
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
-  allocation_method   = "Dynamic"
-  sku                 = var.ip_sku
+  allocation_method   = "Static"
+  sku                 = "Standard"
 
   tags = {
     environment = "kubeone"
@@ -159,8 +145,8 @@ resource "azurerm_public_ip" "control_plane" {
   name                = "${var.cluster_name}-cp-${count.index}"
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
-  allocation_method   = "Dynamic"
-  sku                 = var.ip_sku
+  allocation_method   = "Static"
+  sku                 = "Standard"
 
   tags = {
     environment = "kubeone"
@@ -174,6 +160,7 @@ resource "azurerm_lb" "lb" {
   resource_group_name = azurerm_resource_group.rg.name
   name                = "kubernetes"
   location            = var.location
+  sku                 = "Standard"
 
   frontend_ip_configuration {
     name                 = "KubeApi"
