@@ -94,11 +94,10 @@ cloudConfig: |
     "location": "westeurope",
     "subnetName": "${TF_VAR_cluster_name}-subnet",
     "routeTableName": "",
-    "loadBalancerSku": "standard",
+    "loadBalancerSku": "Standard",
     "securityGroupName": "${TF_VAR_cluster_name}-sg",
     "vnetName": "${TF_VAR_cluster_name}-vpc",
     "primaryAvailabilitySetName": "${TF_VAR_cluster_name}-avset",
-    "excludeMasterFromStandardLB": "false",
     "useInstanceMetadata": true,
     "useManagedIdentityExtension": false,
     "userAssignedIdentityID": ""
