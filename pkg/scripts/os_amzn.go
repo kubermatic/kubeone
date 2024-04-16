@@ -44,15 +44,6 @@ echo -n "${yum_proxy}" >> /tmp/yum.conf
 sudo mv /tmp/yum.conf /etc/yum.conf
 
 {{ if .CONFIGURE_REPOSITORIES }}
-# Rebuilding the yum cache is required upon migrating from the legacy to the community-owned
-# repositories, otherwise, yum will fail to upgrade the packages because it's trying to
-# use old revisions (e.g. 1.27.0-0 instead of 1.27.5-150500.1.1).
-repo_migration_needed=false
-
-if sudo grep -q "packages.cloud.google.com" /etc/yum.repos.d/kubernetes.repo; then
-  repo_migration_needed=true
-fi
-
 cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
@@ -62,10 +53,11 @@ gpgcheck=1
 gpgkey=https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/rpm/repodata/repomd.xml.key
 EOF
 
-if [[ $repo_migration_needed == "true" ]]; then
-  sudo yum clean all
-  sudo yum makecache
-fi
+# We must clean 'yum' cache upon changing the package repository
+# because older 'yum' versions (e.g. CentOS and Amazon Linux 2)
+# don't detect the change otherwise.
+sudo yum clean all
+sudo yum makecache
 {{ end }}
 
 sudo yum install -y \
