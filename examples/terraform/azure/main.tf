@@ -124,6 +124,11 @@ resource "azurerm_network_security_group" "sg" {
   }
 }
 
+resource "azurerm_subnet_network_security_group_association" "sg_subnet" {
+  subnet_id                 = azurerm_subnet.subnet.id
+  network_security_group_id = azurerm_network_security_group.sg.id
+}
+
 resource "azurerm_public_ip" "lbip" {
   count = local.loadbalancer_count
 
