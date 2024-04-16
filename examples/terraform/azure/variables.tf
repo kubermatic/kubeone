@@ -24,6 +24,12 @@ variable "cluster_name" {
   }
 }
 
+variable "private_networking_only" {
+  description = "Enable this to use private networking only"
+  default     = false
+  type        = bool
+}
+
 variable "apiserver_alternative_names" {
   description = "subject alternative names for the API Server signing cert."
   default     = []
@@ -280,4 +286,10 @@ variable "disable_auto_update" {
   description = "Disable automatic flatcar updates (and reboot)"
   type        = bool
   default     = false
+}
+
+variable "lb_vm_size" {
+  description = "VM Size for Load Balancer machines"
+  type        = string
+  default = "Standard_B2s"
 }

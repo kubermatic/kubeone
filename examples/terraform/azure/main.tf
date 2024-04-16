@@ -20,14 +20,19 @@ provider "azurerm" {
 }
 
 locals {
-  kubeapi_endpoint                   = var.disable_kubeapi_loadbalancer ? azurerm_network_interface.control_plane.0.private_ip_address : azurerm_public_ip.lbip.0.ip_address
+  kubeapi_endpoint                   = var.disable_kubeapi_loadbalancer ? azurerm_network_interface.control_plane.0.private_ip_address : var.private_networking_only ? azurerm_lb.lb.0.private_ip_address : azurerm_public_ip.lbip.0.ip_address
+  rendered_lb_config                 = var.private_networking_only ? templatefile("./etc_gobetween.tpl", {
+    lb_targets                       = azurerm_network_interface.control_plane.*.private_ip_address,
+  }) : null
   loadbalancer_count                 = var.disable_kubeapi_loadbalancer ? 0 : 1
   nic_address_pool_association_count = local.loadbalancer_count > 0 ? var.control_plane_vm_count : 0
   worker_os                          = var.worker_os == "" ? var.image_references[var.os].worker_os : var.worker_os
   ssh_username                       = var.ssh_username == "" ? var.image_references[var.os].ssh_username : var.ssh_username
 
-  cluster_autoscaler_min_replicas = var.cluster_autoscaler_min_replicas > 0 ? var.cluster_autoscaler_min_replicas : var.initial_machinedeployment_replicas
-  cluster_autoscaler_max_replicas = var.cluster_autoscaler_max_replicas > 0 ? var.cluster_autoscaler_max_replicas : var.initial_machinedeployment_replicas
+  cluster_autoscaler_min_replicas    = var.cluster_autoscaler_min_replicas > 0 ? var.cluster_autoscaler_min_replicas : var.initial_machinedeployment_replicas
+  cluster_autoscaler_max_replicas    = var.cluster_autoscaler_max_replicas > 0 ? var.cluster_autoscaler_max_replicas : var.initial_machinedeployment_replicas
+
+  lb_vm_count                        = var.private_networking_only ? 2 : 0
 }
 
 provider "time" {
@@ -139,7 +144,7 @@ resource "azurerm_network_security_group" "sg" {
 }
 
 resource "azurerm_public_ip" "lbip" {
-  count = local.loadbalancer_count
+  count = var.private_networking_only ? 0 : local.loadbalancer_count
 
   name                = "${var.cluster_name}-lbip"
   location            = var.location
@@ -154,7 +159,7 @@ resource "azurerm_public_ip" "lbip" {
 }
 
 resource "azurerm_public_ip" "control_plane" {
-  count = var.control_plane_vm_count
+  count = var.private_networking_only ? 0 : var.control_plane_vm_count
 
   name                = "${var.cluster_name}-cp-${count.index}"
   location            = var.location
@@ -175,9 +180,21 @@ resource "azurerm_lb" "lb" {
   name                = "kubernetes"
   location            = var.location
 
-  frontend_ip_configuration {
-    name                 = "KubeApi"
-    public_ip_address_id = azurerm_public_ip.lbip.0.id
+  dynamic "frontend_ip_configuration" {
+    for_each = var.private_networking_only ? [1] : []
+    content {
+      name                          = "KubeApi"
+      subnet_id                     = azurerm_subnet.subnet.id
+      private_ip_address_allocation = "Dynamic"
+    }
+  }
+
+  dynamic "frontend_ip_configuration" {
+    for_each = var.private_networking_only ? [] : [1]
+    content {
+      name                 = "KubeApi"
+      public_ip_address_id = azurerm_public_ip.lbip.0.id
+    }
   }
 
   tags = {
@@ -227,11 +244,23 @@ resource "azurerm_network_interface" "control_plane" {
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
 
-  ip_configuration {
-    name                          = "${var.cluster_name}-cp-${count.index}"
-    subnet_id                     = azurerm_subnet.subnet.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = element(azurerm_public_ip.control_plane.*.id, count.index)
+  dynamic "ip_configuration" {
+    for_each = var.private_networking_only ? [] : [1]
+    content {
+      name                          = "${var.cluster_name}-cp-${count.index}"
+      subnet_id                     = azurerm_subnet.subnet.id
+      private_ip_address_allocation = "Dynamic"
+      public_ip_address_id          = element(azurerm_public_ip.control_plane.*.id, count.index)
+    }
+  }
+
+  dynamic "ip_configuration" {
+    for_each = var.private_networking_only ? [1] : []
+    content {
+      name                          = "${var.cluster_name}-cp-${count.index}"
+      subnet_id                     = azurerm_subnet.subnet.id
+      private_ip_address_allocation = "Dynamic"
+    }
   }
 }
 
@@ -314,7 +343,116 @@ data "azurerm_public_ip" "control_plane" {
   depends_on = [
     time_sleep.wait_30_seconds
   ]
-  count               = var.control_plane_vm_count
+  count               = var.private_networking_only ? 0 : var.control_plane_vm_count
   name                = "${var.cluster_name}-cp-${count.index}"
   resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_network_interface" "lb_vm_network" {
+  depends_on = [
+    azurerm_lb.lb,
+  ]
+  count = var.private_networking_only ? local.lb_vm_count : 0
+
+  name                = "${var.cluster_name}-lb-${count.index}"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+  ip_configuration {
+    name                          = "${var.cluster_name}-lb-${count.index}"
+    subnet_id                     = azurerm_subnet.subnet.id
+    private_ip_address_allocation = "Dynamic"
+  }
+
+}
+resource "azurerm_virtual_machine" "lb_vm" {
+  depends_on = [
+    azurerm_network_interface.lb_vm_network,
+    azurerm_virtual_machine.control_plane
+  ]
+  count = var.private_networking_only ? local.lb_vm_count : 0
+
+  name                             = "${var.cluster_name}-lb-${count.index}"
+  location                         = var.location
+  resource_group_name              = azurerm_resource_group.rg.name
+  availability_set_id              = azurerm_availability_set.avset.id
+  vm_size                          = var.lb_vm_size
+  network_interface_ids            = [element(azurerm_network_interface.lb_vm_network.*.id, count.index)]
+  delete_os_disk_on_termination    = true
+  delete_data_disks_on_termination = true
+
+  dynamic "plan" {
+    for_each = var.image_references[var.os].plan
+
+    content {
+      name      = plan.value["name"]
+      publisher = plan.value["publisher"]
+      product   = plan.value["product"]
+    }
+  }
+  storage_image_reference {
+    publisher = var.image_references[var.os].image.publisher
+    offer     = var.image_references[var.os].image.offer
+    sku       = var.image_references[var.os].image.sku
+    version   = var.image_references[var.os].image.version
+  }
+
+  storage_os_disk {
+    name              = "${var.cluster_name}-lb-${count.index}"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Standard_LRS"
+  }
+
+  os_profile {
+    computer_name  = "${var.cluster_name}-lb-${count.index}"
+    admin_username = local.ssh_username
+    custom_data    = file("gobetween.sh")
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = true
+
+    ssh_keys {
+      key_data = file(var.ssh_public_key_file)
+      path     = "/home/${local.ssh_username}/.ssh/authorized_keys"
+    }
+  }
+
+  tags = {
+    environment = "kubeone"
+    cluster     = var.cluster_name
+  }
+
+}
+
+
+resource "null_resource" "lb_config" {
+  depends_on = [
+    azurerm_virtual_machine.lb_vm
+  ]
+  triggers = {
+    lb_instance_ids      = join(",", azurerm_virtual_machine.lb_vm.*.id)
+    cluster_instance_ids = join(",", azurerm_virtual_machine.control_plane.*.id)
+    config               = local.rendered_lb_config
+  }
+
+  count = var.private_networking_only ? local.lb_vm_count : 0
+  connection {
+    type = "ssh"
+    user = var.ssh_username
+    private_key = file(var.ssh_private_key_file)
+    host = element(azurerm_network_interface.lb_vm_network.*.private_ip_address, count.index)
+  }
+
+  provisioner "file" {
+    content     = local.rendered_lb_config
+    destination = "/tmp/gobetween.toml"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mv /tmp/gobetween.toml /etc/gobetween.toml",
+      "sudo systemctl restart gobetween",
+    ]
+  }
 }

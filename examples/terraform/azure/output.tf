@@ -95,7 +95,7 @@ output "kubeone_workers" {
           availabilitySet = azurerm_availability_set.avset_workers.name
           # assignAvailabilitySet = true/false
           securityGroupName = azurerm_network_security_group.sg.name
-          assignPublicIP    = true
+          assignPublicIP    = var.private_networking_only ? false : true
           imageReference    = var.os != "rhel" ? var.image_references[var.os].image : null
           imagePlan         = length(var.image_references[var.os].plan) > 0 && var.os != "rhel" ? var.image_references[var.os].plan[0] : null
           # Zones (optional)
