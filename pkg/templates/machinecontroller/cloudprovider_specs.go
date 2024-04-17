@@ -165,14 +165,14 @@ type AzureSpec struct {
 	Zones                 []string             `json:"zones"`
 	ImagePlan             *AzureImagePlan      `json:"imagePlan"`
 	ImageReference        *AzureImageReference `json:"imageReference,omitempty"`
-
-	ImageID        string            `json:"imageID"`
-	OSDiskSize     int               `json:"osDiskSize"`
-	OSDiskSKU      *string           `json:"osDiskSKU,omitempty"`
-	DataDiskSize   int               `json:"dataDiskSize"`
-	DataDiskSKU    *string           `json:"dataDiskSKU,omitempty"`
-	AssignPublicIP bool              `json:"assignPublicIP"`
-	Tags           map[string]string `json:"tags"`
+	ImageID               string               `json:"imageID"`
+	OSDiskSize            int                  `json:"osDiskSize"`
+	OSDiskSKU             *string              `json:"osDiskSKU,omitempty"`
+	DataDiskSize          int                  `json:"dataDiskSize"`
+	DataDiskSKU           *string              `json:"dataDiskSKU,omitempty"`
+	AssignPublicIP        bool                 `json:"assignPublicIP"`
+	PublicIPSKU           string               `json:"publicIPSKU"`
+	Tags                  map[string]string    `json:"tags"`
 }
 
 type AzureImagePlan struct {

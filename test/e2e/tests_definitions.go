@@ -345,9 +345,6 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/azure",
-				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-				},
 			},
 			protokol: protokolBin{
 				namespaces: []string{"kube-system"},
@@ -366,9 +363,6 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/azure",
-				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-				},
 			},
 			protokol: protokolBin{
 				namespaces: []string{"kube-system"},
@@ -388,7 +382,6 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/azure",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"os=centos",
 				},
 			},
@@ -410,7 +403,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/azure",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"os=centos",
 				},
 			},
@@ -432,7 +424,6 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/azure",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"disable_auto_update=true",
 					"os=flatcar",
 				},
@@ -455,7 +446,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/azure",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"disable_auto_update=true",
 					"os=flatcar",
 				},
@@ -479,7 +469,6 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/azure",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"os=rhel",
 				},
 			},
@@ -502,7 +491,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/azure",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"os=rhel",
 				},
 			},
@@ -524,7 +512,6 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/azure",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"os=rockylinux",
 				},
 			},
@@ -546,7 +533,6 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/azure",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
 					"os=rockylinux",
 				},
 			},

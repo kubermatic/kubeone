@@ -94,6 +94,7 @@ func updateAzureWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig,
 		{key: "dataDiskSize", value: azureCloudConfig.DataDiskSize},
 		{key: "dataDiskSKU", value: azureCloudConfig.DataDiskSKU},
 		{key: "assignPublicIP", value: azureCloudConfig.AssignPublicIP},
+		{key: "publicIPSKU", value: azureCloudConfig.PublicIPSKU},
 		{key: "tags", value: azureCloudConfig.Tags},
 	}
 
