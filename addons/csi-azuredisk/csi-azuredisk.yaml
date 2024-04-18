@@ -638,7 +638,7 @@ spec:
               name: socket-dir
             - mountPath: /etc/kubernetes/
               name: azure-cred
-      hostNetwork: false
+      hostNetwork: true
       nodeSelector:
         kubernetes.io/os: linux
         node-role.kubernetes.io/control-plane: ""
@@ -812,7 +812,7 @@ spec:
             - mountPath: /sys/class/
               name: sys-class
       dnsPolicy: Default
-      hostNetwork: false
+      hostNetwork: true
       nodeSelector:
         kubernetes.io/os: linux
       priorityClassName: system-node-critical
