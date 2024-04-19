@@ -221,6 +221,9 @@ spec:
             - --v=2
           command:
             - cloud-controller-manager
+          env:
+            - name: SSL_CERT_FILE
+              value: /usr/share/ca-certificates/ca-certificates.crt
           image: '{{ .InternalImages.Get "AzureCCM" }}'
           imagePullPolicy: IfNotPresent
           livenessProbe:
@@ -245,7 +248,7 @@ spec:
               readOnly: true
             - mountPath: /etc/kubernetes
               name: etc-kubernetes
-            - mountPath: /etc/ssl
+            - mountPath: /usr/share/ca-certificates
               name: ssl-mount
               readOnly: true
             - mountPath: /var/lib/waagent/ManagedIdentity-Settings
@@ -282,7 +285,7 @@ spec:
             path: /etc/kubernetes
           name: etc-kubernetes
         - hostPath:
-            path: /etc/ssl
+            path: /usr/share/ca-certificates
           name: ssl-mount
         - hostPath:
             path: /var/lib/waagent/ManagedIdentity-Settings
