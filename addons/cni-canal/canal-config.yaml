@@ -10,7 +10,9 @@ data:
   # The interface used by canal for host <-> host communication.
   # If left blank, then the interface is chosen using the node's
   # default route.
-  canal_iface: ""
+  canal_iface: "{{ default "" .Params.IFACE }}"
+
+  canal_iface_regex: '{{ default "" .Params.IFACE_REGEX }}'
 
   # Whether or not to masquerade traffic to destinations not within
   # the pod network.
