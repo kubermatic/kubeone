@@ -25,6 +25,20 @@ locals {
 
   cluster_autoscaler_min_replicas = var.cluster_autoscaler_min_replicas > 0 ? var.cluster_autoscaler_min_replicas : var.initial_machinedeployment_replicas
   cluster_autoscaler_max_replicas = var.cluster_autoscaler_max_replicas > 0 ? var.cluster_autoscaler_max_replicas : var.initial_machinedeployment_replicas
+
+  base_network_mask = parseint(split("/", var.base_network_cidr)[1], 10)
+  subnet_newbits    = var.subnet_mask - local.base_network_mask
+  subnet_netnum     = pow(2, local.subnet_newbits) - 1
+  ip_range = cidrsubnet(
+    var.base_network_cidr,
+    local.subnet_newbits,
+    random_integer.random_subnet_netnum.result,
+  )
+}
+
+resource "random_integer" "random_subnet_netnum" {
+  min = 0
+  max = local.subnet_netnum
 }
 
 resource "hcloud_ssh_key" "kubeone" {
@@ -34,7 +48,14 @@ resource "hcloud_ssh_key" "kubeone" {
 
 resource "hcloud_network" "net" {
   name     = var.cluster_name
-  ip_range = var.ip_range
+  ip_range = local.ip_range
+}
+
+resource "hcloud_network_subnet" "kubeone" {
+  network_id   = hcloud_network.net.id
+  type         = "server"
+  network_zone = var.network_zone
+  ip_range     = local.ip_range
 }
 
 resource "hcloud_firewall" "cluster" {
@@ -63,7 +84,7 @@ resource "hcloud_firewall" "cluster" {
     protocol    = "tcp"
     port        = "any"
     source_ips = [
-      var.ip_range,
+      hcloud_network.net.ip_range,
     ]
   }
 
@@ -73,7 +94,7 @@ resource "hcloud_firewall" "cluster" {
     protocol    = "udp"
     port        = "any"
     source_ips = [
-      var.ip_range,
+      hcloud_network.net.ip_range,
     ]
   }
 
@@ -96,13 +117,6 @@ resource "hcloud_firewall" "cluster" {
       "0.0.0.0/0",
     ]
   }
-}
-
-resource "hcloud_network_subnet" "kubeone" {
-  network_id   = hcloud_network.net.id
-  type         = "server"
-  network_zone = var.network_zone
-  ip_range     = var.ip_range
 }
 
 resource "hcloud_server_network" "control_plane" {

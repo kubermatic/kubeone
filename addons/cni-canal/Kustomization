@@ -84,6 +84,12 @@ patches:
                     cpu: '{{ default "250m" .Params.RequestsCPU }}'
               - name: kube-flannel
                 image: '{{ .InternalImages.Get "Flannel" }}'
+                env:
+                  - name: FLANNELD_IFACE_REGEX
+                    valueFrom:
+                      configMapKeyRef:
+                        key: canal_iface_regex
+                        name: canal-config
             initContainers:
               - name: install-cni
                 image: '{{ .InternalImages.Get "CalicoCNI" }}'

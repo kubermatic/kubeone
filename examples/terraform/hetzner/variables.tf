@@ -190,10 +190,16 @@ variable "image" {
   type    = string
 }
 
-variable "ip_range" {
-  default     = "192.168.0.0/16"
-  description = "ip range to use for private network"
+variable "base_network_cidr" {
+  default     = "10.100.0.0/16"
+  description = "base cidr, resulting cidr is randomly generated depending on provided subnet_mask"
   type        = string
+}
+
+variable "subnet_mask" {
+  default     = 24
+  description = "subnet mask to use for generating cidr for a private network"
+  type        = number
 }
 
 variable "network_zone" {
