@@ -83,6 +83,7 @@ func (scenario *scenarioConformance) test(ctx context.Context, t *testing.T) {
 			scenario.ManifestTemplatePath,
 			manifestData{
 				VERSION: scenario.versions[0],
+				INFRA:   scenario.infra.name,
 			},
 		),
 		k1Opts...,

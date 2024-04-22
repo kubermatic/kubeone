@@ -100,6 +100,7 @@ func (scenario *scenarioUpgrade) kubeone(t *testing.T, version string) *kubeoneB
 			scenario.ManifestTemplatePath,
 			manifestData{
 				VERSION: version,
+				INFRA:   scenario.infra.name,
 			},
 		),
 		k1Opts...,

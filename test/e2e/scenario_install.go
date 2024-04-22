@@ -120,6 +120,7 @@ func (scenario *scenarioInstall) kubeone(t *testing.T) *kubeoneBin {
 			scenario.ManifestTemplatePath,
 			manifestData{
 				VERSION: scenario.versions[0],
+				INFRA:   scenario.infra.name,
 			},
 		),
 		k1Opts...,
