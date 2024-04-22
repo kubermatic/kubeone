@@ -34,7 +34,7 @@ func completionCmd(rootCmd *cobra.Command) *cobra.Command {
 			. <(kubeone completion <shell>)
 		`),
 		Example:   "kubeone completion bash",
-		ValidArgs: []string{"bash", "zsh"},
+		ValidArgs: []string{"bash", "zsh", "fish"},
 		Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 		RunE: func(_ *cobra.Command, args []string) (err error) {
 			switch args[0] {
@@ -42,6 +42,8 @@ func completionCmd(rootCmd *cobra.Command) *cobra.Command {
 				err = rootCmd.GenBashCompletion(os.Stdout)
 			case "zsh":
 				err = rootCmd.GenZshCompletion(os.Stdout)
+			case "fish":
+				err = rootCmd.GenFishCompletion(os.Stdout, true)
 			}
 
 			return
