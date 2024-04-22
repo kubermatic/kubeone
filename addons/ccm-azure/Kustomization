@@ -35,6 +35,9 @@ patches:
             containers:
               - name: cloud-controller-manager
                 image: '{{ .InternalImages.Get "AzureCCM" }}'
+                env:
+                  - name: SSL_CERT_FILE
+                    value: /usr/share/ca-certificates/ca-certificates.crt
                 volumeMounts:
                   - name: cloud-config
                     mountPath: /etc/cloud
