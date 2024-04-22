@@ -248,6 +248,7 @@ func newKubeoneBin(terraformPath, manifestPath string, opts ...kubeoneBinOpts) *
 
 type manifestData struct {
 	VERSION string
+	INFRA   string
 }
 
 func renderManifest(t *testing.T, templatePath string, data manifestData) string {
@@ -263,7 +264,8 @@ func renderManifest(t *testing.T, templatePath string, data manifestData) string
 
 	tpl, err := template.New("").
 		Funcs(template.FuncMap{
-			"required": requiredTemplateFunc,
+			"required":  requiredTemplateFunc,
+			"hasPrefix": strings.HasPrefix,
 		}).
 		Parse(string(templateContent))
 	if err != nil {
