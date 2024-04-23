@@ -880,7 +880,8 @@ var (
 				"preset-hetzner": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "hetzner",
+				"PROVIDER":     "hetzner",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/hetzner",
@@ -900,7 +901,8 @@ var (
 				"preset-hetzner": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "hetzner",
+				"PROVIDER":     "hetzner",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/hetzner",
@@ -920,7 +922,8 @@ var (
 				"preset-hetzner": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "hetzner",
+				"PROVIDER":     "hetzner",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/hetzner",
@@ -941,7 +944,8 @@ var (
 				"preset-hetzner": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "hetzner",
+				"PROVIDER":     "hetzner",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/hetzner",
@@ -963,7 +967,8 @@ var (
 				"preset-hetzner": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "hetzner",
+				"PROVIDER":     "hetzner",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/hetzner",
@@ -984,7 +989,8 @@ var (
 				"preset-hetzner": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "hetzner",
+				"PROVIDER":     "hetzner",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/hetzner",

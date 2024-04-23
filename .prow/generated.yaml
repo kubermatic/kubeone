@@ -466,6 +466,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -489,6 +491,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -512,6 +516,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -1176,6 +1182,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -1199,6 +1207,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -1222,6 +1232,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -1886,6 +1898,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -1909,6 +1923,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -1932,6 +1948,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -3172,6 +3190,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -3200,6 +3220,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -3228,6 +3250,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -4033,6 +4057,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -4061,6 +4087,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -4089,6 +4117,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -4794,6 +4824,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -4817,6 +4849,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -4840,6 +4874,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -5503,6 +5539,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -5526,6 +5564,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -5549,6 +5589,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -6212,6 +6254,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -6235,6 +6279,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -6258,6 +6304,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -6921,6 +6969,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -6944,6 +6994,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -6967,6 +7019,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -7630,6 +7684,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -7653,6 +7709,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -7676,6 +7734,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -8339,6 +8399,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -8362,6 +8424,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -8385,6 +8449,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -9148,6 +9214,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -9176,6 +9244,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -9204,6 +9274,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -10009,6 +10081,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -10037,6 +10111,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -10065,6 +10141,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -10868,6 +10946,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -10891,6 +10971,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -10914,6 +10996,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -11577,6 +11661,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -11600,6 +11686,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -11623,6 +11711,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -12286,6 +12376,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -12309,6 +12401,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
@@ -12332,6 +12426,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      - name: TEST_TIMEOUT
+        value: 120m
       image: quay.io/kubermatic/build:go-1.22-node-18-5
       imagePullPolicy: Always
       name: ""
