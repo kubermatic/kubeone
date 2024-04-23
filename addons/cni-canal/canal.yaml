@@ -3399,6 +3399,10 @@ spec:
             - --ip-masq
             - --kube-subnet-mgr
           env:
+            - name: FLANNELD_IFACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
             - name: FLANNELD_IFACE_REGEX
               valueFrom:
                 configMapKeyRef:
@@ -3412,11 +3416,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: FLANNELD_IFACE
-              valueFrom:
-                configMapKeyRef:
-                  key: canal_iface
-                  name: canal-config
             - name: FLANNELD_IP_MASQ
               valueFrom:
                 configMapKeyRef:

@@ -90,8 +90,28 @@ patches:
                       configMapKeyRef:
                         key: canal_iface_regex
                         name: canal-config
+                  - name: FLANNELD_IFACE
+                    $patch: delete
             initContainers:
               - name: install-cni
                 image: '{{ .InternalImages.Get "CalicoCNI" }}'
               - name: mount-bpffs
                 image: '{{ .InternalImages.Get "CalicoNode" }}'
+
+  - patch: |-
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: canal
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: calico-node
+              - name: kube-flannel
+                env:
+                  - name: FLANNELD_IFACE
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: status.hostIP
