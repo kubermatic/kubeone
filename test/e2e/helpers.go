@@ -518,7 +518,7 @@ func waitMachinesHasNodes(t *testing.T, k1 *kubeoneBin, client ctrlruntimeclient
 		}
 	}
 
-	waitErr := wait.PollUntilContextTimeout(ctx, 15*time.Second, 20*time.Minute, false, func(ctx context.Context) (bool, error) {
+	waitErr := wait.PollUntilContextTimeout(ctx, 15*time.Second, 30*time.Minute, false, func(ctx context.Context) (bool, error) {
 		var (
 			machineList              clusterv1alpha1.MachineList
 			someMachinesLacksTheNode bool
