@@ -11,11 +11,6 @@ addons:
   enable: true
   addons:
   - name: default-storage-class
-  {{ if hasPrefix .INFRA "hetzner" }}
-  - name: cni-canal
-    params:
-      IFACE: ens10
-  {{ end }}
 
 cloudProvider:
   external: true
