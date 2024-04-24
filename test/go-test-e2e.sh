@@ -205,6 +205,8 @@ if [ -n "${CREDENTIALS_FILE_PATH}" ]; then
   go_test_args+=("-credentials" "${CREDENTIALS_FILE_PATH}")
 fi
 
+go_test_args+=("-kubeone-verbose")
+
 cd test/e2e
 
 go test -c . -tags e2e
