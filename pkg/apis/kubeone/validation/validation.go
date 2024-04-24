@@ -316,9 +316,9 @@ func ValidateKubernetesSupport(c kubeoneapi.KubeOneCluster, fldPath *field.Path)
 		case c.CloudProvider.AWS != nil && v.Minor() >= 27:
 			// The in-tree cloud provider for AWS has been removed in Kubernetes 1.27.
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("cloudProvider").Child("external"), c.CloudProvider.External, "kubernetes 1.27 and newer doesn't support in-tree cloud provider with aws"))
-		case c.CloudProvider.Azure != nil && v.Minor() >= 27:
-			// The in-tree cloud provider for Azure has been removed in Kubernetes 1.27.
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("cloudProvider").Child("external"), c.CloudProvider.External, "kubernetes 1.27 and newer doesn't support in-tree cloud provider with azure"))
+		case c.CloudProvider.Azure != nil && v.Minor() >= 29:
+			// The in-tree cloud provider for Azure has been removed in Kubernetes 1.29.
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("cloudProvider").Child("external"), c.CloudProvider.External, "kubernetes 1.29 and newer doesn't support in-tree cloud provider with azure"))
 		case c.CloudProvider.GCE != nil && v.Minor() >= 29:
 			// The in-tree cloud provider for GCE has been removed in Kubernetes 1.29.
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("cloudProvider").Child("external"), c.CloudProvider.External, "kubernetes 1.29 and newer doesn't support in-tree cloud provider with gce"))
