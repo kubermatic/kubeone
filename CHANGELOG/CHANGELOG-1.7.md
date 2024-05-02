@@ -1,3 +1,27 @@
+# [v1.7.4](https://github.com/kubermatic/kubeone/releases/tag/v1.7.4) - 2024-05-02
+
+## Changelog since v1.7.3
+
+## Urgent Upgrade Notes 
+
+### (No, really, you MUST read this before you upgrade)
+
+- Update operating-system-manager to v1.3.5. The latest Ubuntu 22.04 images ship with `cloud-init` 24.x package. This package has breaking changes and thus rendered our OperatingSystemProfiles (OSPs) as incompatible. It's recommended to [refresh your machines](https://docs.kubermatic.com/kubeone/v1.7/cheat-sheets/rollout-machinedeployment/) with the latest provided OSPs to ensure that a system-wide package update, that updates cloud-init to 24.x, doesn't break the machines. ([#3163](https://github.com/kubermatic/kubeone/pull/3163), [@xrstf](https://github.com/xrstf))
+ 
+## Changes by Kind
+
+### Bug or Regression
+
+- Clean `yum` cache upon configuring Kubernetes repos. This fixes an issue with cluster upgrades failing on nodes with an older `yum` version ([#3147](https://github.com/kubermatic/kubeone/pull/3147), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Deploy user defined addons before the external CCM initialization. This fixes an issue with cluster provisioning for users that use both external CCM and external CNI ([#3068](https://github.com/kubermatic/kubeone/pull/3068), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix cluster upgrades on Debian hosts with deprecated Kubernetes repositories ([#3084](https://github.com/kubermatic/kubeone/pull/3084), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Updates
+
+#### machine-controller
+
+- Update machine-controller to v1.57.6 ([#3064](https://github.com/kubermatic/kubeone/pull/3064), [@ahmedwaleedmalik](https://github.com/ahmedwaleedmalik))
+
 # [v1.7.3](https://github.com/kubermatic/kubeone/releases/tag/v1.7.3) - 2024-03-01
 
 ## Changelog since v1.7.2
