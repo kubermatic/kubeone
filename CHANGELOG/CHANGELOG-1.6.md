@@ -1,3 +1,20 @@
+# [v1.6.6](https://github.com/kubermatic/kubeone/releases/tag/v1.6.6) - 2024-05-02
+
+## Changelog since v1.6.5
+
+## Urgent Upgrade Notes 
+
+### (No, really, you MUST read this before you upgrade)
+
+- Update operating-system-manager to v1.2.5. The latest Ubuntu 22.04 images ship with `cloud-init` 24.x package. This package has breaking changes and thus rendered our OperatingSystemProfiles (OSPs) as incompatible. It's recommended to [refresh your machines](https://docs.kubermatic.com/kubeone/v1.7/cheat-sheets/rollout-machinedeployment/) with the latest provided OSPs to ensure that a system-wide package update, that updates cloud-init to 24.x, doesn't break the machines. ([#3164](https://github.com/kubermatic/kubeone/pull/3164), [@xrstf](https://github.com/xrstf))
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Clean `yum` cache upon configuring Kubernetes repos. This fixes an issue with cluster upgrades failing on nodes with an older `yum` version ([#3148](https://github.com/kubermatic/kubeone/pull/3148), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix cluster upgrades on Debian hosts with deprecated Kubernetes repositories ([#3083](https://github.com/kubermatic/kubeone/pull/3083), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.6.5](https://github.com/kubermatic/kubeone/releases/tag/v1.6.5) - 2024-03-01
 
 ## Changelog since v1.6.4
