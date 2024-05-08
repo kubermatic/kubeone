@@ -35,6 +35,17 @@ patches:
             containers:
               - name: cloud-controller-manager
                 image: '{{ .InternalImages.Get "AzureCCM" }}'
+                args:
+                  - --allocate-node-cidrs=false
+                  - --cloud-config=/etc/cloud/cloud-config
+                  - --cloud-provider=azure
+                  - --cluster-name={{ .Config.Name }}
+                  - --configure-cloud-routes=false
+                  - --controllers=*,-cloud-node
+                  - --leader-elect=true
+                  - --route-reconciliation-period=10s
+                  - --secure-port=10268
+                  - --v=2
                 env:
                   - name: SSL_CERT_FILE
                     value: /usr/share/ca-certificates/ca-certificates.crt
