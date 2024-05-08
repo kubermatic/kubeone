@@ -270,8 +270,6 @@ func csiWebhookCerts(s *state.State, data *templateData, csiMigration bool, kube
 	switch {
 	// Certs for vsphere-csi-webhook (deployed only if CSIMigration is enabled)
 	case s.Cluster.CloudProvider.Vsphere != nil:
-		webhookNamespace = resources.VsphereCSIWebhookNamespace
-
 		if err := webhookCerts(data.Certificates,
 			webhookCertsCSI,
 			webhookName,
@@ -285,6 +283,7 @@ func csiWebhookCerts(s *state.State, data *templateData, csiMigration bool, kube
 
 		certNamePrefix = webhookCertsCSIMigration
 		webhookName = resources.VsphereCSIWebhookName
+		webhookNamespace = resources.VsphereCSIWebhookNamespace
 
 		if !csiMigration {
 			return nil
