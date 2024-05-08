@@ -211,14 +211,16 @@ spec:
             - --allocate-node-cidrs=false
             - --cloud-config=/etc/cloud/cloud-config
             - --cloud-provider=azure
-            - --cluster-cidr=10.244.0.0/16
-            - --cluster-name=kubernetes
+            - --cluster-name={{ .Config.Name }}
             - --configure-cloud-routes=false
             - --controllers=*,-cloud-node
             - --leader-elect=true
             - --route-reconciliation-period=10s
             - --secure-port=10268
             - --v=2
+            {{- with .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
+            - --concurrent-service-syncs={{ . }}
+            {{- end }}
           command:
             - cloud-controller-manager
           env:
