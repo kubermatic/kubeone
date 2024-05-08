@@ -1,6 +1,6 @@
 allow_insecure       = true
 dc_name              = "Hamburg"
-datastore_name       = "vsan"
+datastore_name       = "esxi-3"
 compute_cluster_name = "Kubermatic"
 network_name         = "Default Network"
 folder_name          = "Kubermatic-ci"
