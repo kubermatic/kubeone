@@ -43,7 +43,8 @@ import (
 const (
 	// KubeOneClusterKind is kind of the KubeOneCluster object
 	KubeOneClusterKind                  = "KubeOneCluster"
-	flagsAndFeatureGateOverridesWarning = "%s only covers %s. For some features, you may also need additional configuration for other components. Use this at your own risk!!"
+	controlPlaneComponentsWarning       = "Usage of the .controlPlaneComponents feature is at your own risk since options configured via this feature cannot properly be validated by KubeOne"
+	flagsAndFeatureGateOverridesWarning = "\t- %s only covers %s. Some features might also need additional configuration for other components."
 )
 
 var (
@@ -358,19 +359,21 @@ func checkClusterConfiguration(cluster kubeoneapi.KubeOneCluster, logger logrus.
 
 func checkFlagsAndFeatureGateOverrides(cluster kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) {
 	if cluster.ControlPlaneComponents != nil {
+		logger.Warn(controlPlaneComponentsWarning)
+
 		if cluster.ControlPlaneComponents.ControllerManager != nil {
 			if cluster.ControlPlaneComponents.ControllerManager.Flags != nil || cluster.ControlPlaneComponents.ControllerManager.FeatureGates != nil {
-				logger.Warnf(flagsAndFeatureGateOverridesWarning, ".controlPlaneComponents.controllerManager.flags", "Controller Manager")
+				logger.Warnf(flagsAndFeatureGateOverridesWarning, ".controlPlaneComponents.controllerManager", "kube-controller-manager")
 			}
 		}
 		if cluster.ControlPlaneComponents.Scheduler != nil {
 			if cluster.ControlPlaneComponents.Scheduler.Flags != nil || cluster.ControlPlaneComponents.Scheduler.FeatureGates != nil {
-				logger.Warnf(flagsAndFeatureGateOverridesWarning, ".controlPlaneComponents.scheduler.flags", "Scheduler")
+				logger.Warnf(flagsAndFeatureGateOverridesWarning, ".controlPlaneComponents.scheduler", "kube-scheduler")
 			}
 		}
 		if cluster.ControlPlaneComponents.APIServer != nil {
 			if cluster.ControlPlaneComponents.APIServer.Flags != nil || cluster.ControlPlaneComponents.APIServer.FeatureGates != nil {
-				logger.Warnf(flagsAndFeatureGateOverridesWarning, ".controlPlaneComponents.apiServer.flags", "API Server")
+				logger.Warnf(flagsAndFeatureGateOverridesWarning, ".controlPlaneComponents.apiServer", "kube-apiserver")
 			}
 		}
 	}
