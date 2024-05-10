@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2024-03-12T21:50:36+02:00
+date = 2024-04-29T17:38:32+05:00
 weight = 11
 +++
 ## v1beta2
@@ -22,6 +22,8 @@ weight = 11
 * [ContainerdRegistry](#containerdregistry)
 * [ContainerdRegistryAuthConfig](#containerdregistryauthconfig)
 * [ContainerdTLSConfig](#containerdtlsconfig)
+* [ControlPlaneComponentConfig](#controlplanecomponentconfig)
+* [ControlPlaneComponents](#controlplanecomponents)
 * [ControlPlaneConfig](#controlplaneconfig)
 * [CoreDNS](#coredns)
 * [DNSConfig](#dnsconfig)
@@ -282,6 +284,29 @@ Configures containerd TLS for a registry
 
 [Back to Group](#v1beta2)
 
+### ControlPlaneComponentConfig
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| flags | Flags is a set of additional flags that will be passed to the control plane component. KubeOne internally configures some flags that are eseeential for the cluster to work. Those flags set by KubeOne will be merged with the ones specified in the configuration. In case of conflict the value provided by the user will be used. Usage of `feature-gates` is not allowed here, use `FeatureGates` field instead. IMPORTANT: Use of these flags is at the user's own risk, as KubeOne does not provide support for issues caused by invalid values and configurations. | map[string]string | false |
+| featureGates | FeatureGates is a map of additional feature gates that will be passed on to the control plane component. KubeOne internally configures some feature gates that are eseeential for the cluster to work. Those feature gates set by KubeOne will be merged with the ones specified in the configuration. In case of conflict the value provided by the user will be used. IMPORTANT: Use of these featureGates is at the user's own risk, as KubeOne does not provide support for issues caused by invalid values and configurations. | map[string]bool | false |
+
+[Back to Group](#v1beta2)
+
+### ControlPlaneComponents
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| controllerManager | ControllerManagerConfig configures the Kubernetes Controller Manager | *[ControlPlaneComponentConfig](#controlplanecomponentconfig) | false |
+| scheduler | Scheduler configures the Kubernetes Scheduler | *[ControlPlaneComponentConfig](#controlplanecomponentconfig) | false |
+| apiServer | APIServer configures the Kubernetes API Server | *[ControlPlaneComponentConfig](#controlplanecomponentconfig) | false |
+
+[Back to Group](#v1beta2)
+
 ### ControlPlaneConfig
 
 ControlPlaneConfig defines control plane nodes
@@ -528,6 +553,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | registryConfiguration | RegistryConfiguration configures how Docker images are pulled from an image registry | *[RegistryConfiguration](#registryconfiguration) | false |
 | loggingConfig | LoggingConfig configures the Kubelet's log rotation | [LoggingConfig](#loggingconfig) | false |
 | tlsCipherSuites | TLSCipherSuites allows to configure TLS cipher suites for different components. See https://pkg.go.dev/crypto/tls#pkg-constants for possible values. | [TLSCipherSuites](#tlsciphersuites) | true |
+| controlPlaneComponents | ControlPlaneComponents configures the Kubernetes control plane components | *[ControlPlaneComponents](#controlplanecomponents) | false |
 
 [Back to Group](#v1beta2)
 
