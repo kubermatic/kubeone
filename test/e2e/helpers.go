@@ -35,6 +35,7 @@ import (
 	"time"
 
 	"github.com/Masterminds/semver/v3"
+	"github.com/go-logr/logr"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
@@ -51,6 +52,7 @@ import (
 	"k8s.io/client-go/util/retry"
 	k8spath "k8s.io/utils/path"
 	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
+	ctrlruntimelog "sigs.k8s.io/controller-runtime/pkg/log"
 )
 
 const (
@@ -63,6 +65,8 @@ func init() {
 	if err := clusterv1alpha1.AddToScheme(scheme.Scheme); err != nil {
 		panic(err)
 	}
+
+	ctrlruntimelog.SetLogger(logr.Discard())
 }
 
 func mustGetwd() string {
