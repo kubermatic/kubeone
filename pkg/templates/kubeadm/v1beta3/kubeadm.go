@@ -40,6 +40,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/sets"
 )
 
 const (
@@ -638,13 +639,12 @@ func mergeFeatureGates(featureGates string, additionalFeatureGates map[string]bo
 		featureGatesMap[k] = v
 	}
 
-	var featureGatesStr strings.Builder
-	for k, v := range featureGatesMap {
-		featureGatesStr.WriteString(k)
-		featureGatesStr.WriteString("=")
-		featureGatesStr.WriteString(strconv.FormatBool(v))
-		featureGatesStr.WriteString(",")
+	featureGatesKeys := sets.List(sets.KeySet(featureGatesMap))
+
+	var featureGatesStr []string
+	for _, k := range featureGatesKeys {
+		featureGatesStr = append(featureGatesStr, fmt.Sprintf("%s=%t", k, featureGatesMap[k]))
 	}
 
-	return strings.TrimSuffix(featureGatesStr.String(), ",")
+	return strings.Join(featureGatesStr, ",")
 }
