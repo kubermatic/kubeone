@@ -63,7 +63,8 @@ output "kubeone_workers" {
         sshPublicKeys   = [file(var.ssh_public_key_file)]
         operatingSystem = var.worker_os
         operatingSystemSpec = {
-          distUpgradeOnBoot = false
+          distUpgradeOnBoot = var.worker_dist_upgrade_on_boot
+          disableAutoUpdate = var.worker_disable_auto_update
         }
         # nodeAnnotations are applied on resulting Node objects
         # nodeAnnotations = {
@@ -87,8 +88,8 @@ output "kubeone_workers" {
           cpus          = var.worker_num_cpus
           datacenter    = var.dc_name
           # Either Datastore or DatastoreCluster have to be provided.
-          datastore        = var.datastore_name
-          datastoreCluster = var.datastore_cluster_name
+          datastore        = local.worker_datastore_name
+          datastoreCluster = local.worker_datastore_cluster_name
           # Optional: Resize the root disk to this size. Must be bigger than the existing size
           # Default is to leave the disk at the same size as the template
           diskSizeGB     = var.worker_disk

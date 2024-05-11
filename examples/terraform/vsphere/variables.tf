@@ -127,6 +127,18 @@ variable "datastore_cluster_name" {
   type        = string
 }
 
+variable "worker_datastore_name" {
+  default     = ""
+  description = "datastore name for worker nodes (default to datastore_name if not set)"
+  type        = string
+}
+
+variable "worker_datastore_cluster_name" {
+  default     = ""
+  description = "datastore cluster name for worker nodes (default to datastore_cluster_name)"
+  type        = string
+}
+
 variable "resource_pool_name" {
   default     = ""
   description = "cluster resource pool name"
@@ -197,6 +209,18 @@ variable "worker_disk" {
   default     = 10
   description = "disk size of each worker node in GB"
   type        = number
+}
+
+variable "worker_dist_upgrade_on_boot" {
+  default     = false
+  description = "distUpgradeOnBoot option for worker nodes"
+  type        = bool
+}
+
+variable "worker_disable_auto_update" {
+  default     = false
+  description = "disableAutoUpdate option for worker nodes"
+  type        = bool
 }
 
 variable "api_vip" {
