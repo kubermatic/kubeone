@@ -36,6 +36,10 @@ resource "openstack_compute_instance_v2" "control_plane" {
   key_pair        = openstack_compute_keypair_v2.deployer.name
   security_groups = [openstack_networking_secgroup_v2.securitygroup.name]
 
+  user_data = templatefile("./flatcar-config.tftpl", {
+    ssh_key = chomp(file(var.ssh_public_key_file))
+  })
+
   network {
     port = element(openstack_networking_port_v2.control_plane[*].id, count.index)
   }
