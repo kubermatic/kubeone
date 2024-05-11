@@ -112,6 +112,14 @@ resource "vsphere_virtual_machine" "control_plane" {
             {
               name    = "docker.service"
               enabled = true
+            },
+            {
+              name = "update-engine.service"
+              mask = true
+            },
+            {
+              name = "locksmithd.service"
+              mask = true
             }
           ]
         },
@@ -123,6 +131,14 @@ resource "vsphere_virtual_machine" "control_plane" {
               mode       = 420
               contents = {
                 source = "data:,${local.hostnames[count.index]}"
+              }
+            },
+            {
+              filesystem = "root"
+              path       = "/etc/flatcar/update.conf"
+              mode       = 420
+              contents = {
+                inline = "SERVER=disabled"
               }
             }
           ]
