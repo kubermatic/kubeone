@@ -120,10 +120,6 @@ func retryFn(fn func() error) error {
 	return retryFnWithBackoff(retry.DefaultRetry, fn)
 }
 
-func retryFnWithBackoff(backoff wait.Backoff, fn func() error) error {
-	return retry.OnError(backoff, trueRetriable, fn)
-}
-
 func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {
 	switch val := input.(type) {
 	case nil:
