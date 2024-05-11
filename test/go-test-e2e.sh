@@ -100,7 +100,8 @@ cloudConfig: |
     "primaryAvailabilitySetName": "${TF_VAR_cluster_name}-avset",
     "useInstanceMetadata": true,
     "useManagedIdentityExtension": false,
-    "userAssignedIdentityID": ""
+    "userAssignedIdentityID": "",
+    "vmType": "standard"
   }
 EOL
     ;;
