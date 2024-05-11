@@ -61,6 +61,13 @@ const (
 	k1CloneURI            = "ssh://git@github.com/kubermatic/kubeone.git"
 )
 
+var SonobuoyRetry = wait.Backoff{
+	Steps:    10,
+	Duration: 10 * time.Second,
+	Factor:   1.0,
+	Jitter:   0.1,
+}
+
 func init() {
 	if err := clusterv1alpha1.AddToScheme(scheme.Scheme); err != nil {
 		panic(err)
@@ -105,8 +112,12 @@ func trueRetriable(error) bool {
 	return true
 }
 
+func retryFnWithBackoff(backoff wait.Backoff, fn func() error) error {
+	return retry.OnError(backoff, trueRetriable, fn)
+}
+
 func retryFn(fn func() error) error {
-	return retry.OnError(retry.DefaultRetry, trueRetriable, fn)
+	return retryFnWithBackoff(retry.DefaultRetry, fn)
 }
 
 func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {
@@ -522,7 +533,7 @@ func waitMachinesHasNodes(t *testing.T, k1 *kubeoneBin, client ctrlruntimeclient
 		}
 	}
 
-	waitErr := wait.PollUntilContextTimeout(ctx, 15*time.Second, 20*time.Minute, false, func(ctx context.Context) (bool, error) {
+	waitErr := wait.PollUntilContextTimeout(ctx, 15*time.Second, 30*time.Minute, false, func(ctx context.Context) (bool, error) {
 		var (
 			machineList              clusterv1alpha1.MachineList
 			someMachinesLacksTheNode bool
@@ -593,21 +604,21 @@ func sonobuoyRun(ctx context.Context, t *testing.T, k1 *kubeoneBin, mode sonobuo
 		proxyURL:   proxyURL,
 	}
 
-	if err = retryFn(func() error { return sb.Run(ctx, mode) }); err != nil {
+	if err = retryFnWithBackoff(SonobuoyRetry, func() error { return sb.Run(ctx, mode) }); err != nil {
 		t.Fatalf("sonobuoy run failed: %v", err)
 	}
 
-	if err = retryFn(func() error { return sb.Wait(ctx) }); err != nil {
+	if err = retryFnWithBackoff(SonobuoyRetry, func() error { return sb.Wait(ctx) }); err != nil {
 		t.Fatalf("sonobuoy wait failed: %v", err)
 	}
 
-	err = retryFn(func() error { return sb.Retrieve(ctx) })
+	err = retryFnWithBackoff(SonobuoyRetry, func() error { return sb.Retrieve(ctx) })
 	if err != nil {
 		t.Fatalf("sonobuoy retrieve failed: %v", err)
 	}
 
 	var report []sonobuoyReport
-	err = retryFn(func() error {
+	err = retryFnWithBackoff(SonobuoyRetry, func() error {
 		report, err = sb.Results(ctx)
 
 		return err

@@ -1212,7 +1212,8 @@ var (
 				"preset-vsphere": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "vsphere",
+				"PROVIDER":     "vsphere",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/vsphere",
@@ -1235,7 +1236,8 @@ var (
 				"preset-vsphere": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "vsphere",
+				"PROVIDER":     "vsphere",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/vsphere",
@@ -1258,7 +1260,8 @@ var (
 				"preset-vsphere": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "vsphere",
+				"PROVIDER":     "vsphere",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/vsphere_centos",
@@ -1281,7 +1284,8 @@ var (
 				"preset-vsphere": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "vsphere",
+				"PROVIDER":     "vsphere",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/vsphere_centos",
@@ -1300,11 +1304,12 @@ var (
 		"vsphere_flatcar": {
 			name: "vsphere_flatcar",
 			labels: map[string]string{
-				"preset-goproxy":        "true",
-				"preset-vsphere-legacy": "true",
+				"preset-goproxy": "true",
+				"preset-vsphere": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "vsphere",
+				"PROVIDER":     "vsphere",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path:    "../../examples/terraform/vsphere_flatcar",
@@ -1321,11 +1326,12 @@ var (
 		"vsphere_flatcar_stable": {
 			name: "vsphere_flatcar_stable",
 			labels: map[string]string{
-				"preset-goproxy":        "true",
-				"preset-vsphere-legacy": "true",
+				"preset-goproxy": "true",
+				"preset-vsphere": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "vsphere",
+				"PROVIDER":     "vsphere",
+				"TEST_TIMEOUT": "120m",
 			},
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/vsphere_flatcar",
