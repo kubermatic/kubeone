@@ -1,4 +1,4 @@
-control_plane_flavor  = "m1.small"
+control_plane_flavor  = "l1c.small"
 worker_flavor         = "l1c.small"
 external_network_name = "ext-net"
 image                 = "kubeone-e2e-flatcar"
