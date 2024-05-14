@@ -14,7 +14,7 @@ postsubmits:
       preset-docker-mirror: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.22-node-18-kind-0.22-5
+        - image: quay.io/kubermatic/build:go-1.22-node-18-kind-0.22-6
           command:
             - /bin/bash
             - -c
@@ -38,7 +38,7 @@ postsubmits:
       containers:
         # This must match the go version used for building, else go will rightfully
         # not use the cache
-        - image: quay.io/kubermatic/build:go-1.22-node-18-5
+        - image: quay.io/kubermatic/build:go-1.22-node-18-6
           command:
             - ./hack/ci/upload-gocache.sh
           resources:
@@ -57,7 +57,7 @@ postsubmits:
       containers:
         # This must match the go version used for building, else go will rightfully
         # not use the cache
-        - image: quay.io/kubermatic/build:go-1.22-node-18-5
+        - image: quay.io/kubermatic/build:go-1.22-node-18-6
           command:
             - ./hack/ci/upload-gocache.sh
           env:
