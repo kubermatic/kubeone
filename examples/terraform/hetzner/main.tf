@@ -29,7 +29,7 @@ locals {
   base_network_mask = parseint(split("/", var.base_network_cidr)[1], 10)
   subnet_newbits    = var.subnet_mask - local.base_network_mask
   subnet_netnum     = pow(2, local.subnet_newbits) - 1
-  ip_range = cidrsubnet(
+  ip_range = var.ip_range != "" ? var.ip_range : cidrsubnet(
     var.base_network_cidr,
     local.subnet_newbits,
     random_integer.random_subnet_netnum.result,
