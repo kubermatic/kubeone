@@ -145,7 +145,7 @@ presubmits:
       preset-docker-mirror: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.22-node-18-kind-0.22-6
+        - image: quay.io/kubermatic/build:go-1.22-node-18-kind-0.23-6
           command:
             - /bin/bash
             - -c
