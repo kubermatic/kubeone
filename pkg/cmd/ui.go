@@ -18,6 +18,7 @@ package cmd
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
@@ -35,9 +36,19 @@ func uiCmd() *cobra.Command {
 		Args:          cobra.ExactArgs(0),
 		RunE: func(_ *cobra.Command, _ []string) error {
 			fmt.Println("hello ui")
-			return nil
+			return ui()
 		},
 	}
 
 	return cmd
+}
+
+func ui() error {
+	http.HandleFunc("/", serveUi)
+	http.ListenAndServe(":8080", nil)
+	return nil
+}
+
+func serveUi(w http.ResponseWriter, req *http.Request) {
+	fmt.Fprintf(w, "hello ui in the browser\n")
 }
