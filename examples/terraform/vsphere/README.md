@@ -13,7 +13,7 @@ guide.
 We also provide Terraform configs for [CentOS-based operating systems](../vsphere_centos)
 and [Flatcar Linux](../vsphere_flatcar).
 
-[Ubuntu Template VM]: https://docs.kubermatic.com/kubeone/v1.7/guides/vsphere-template-vm/ubuntu/
+[Ubuntu Template VM]: https://docs.kubermatic.com/kubeone/v1.8/guides/vsphere-template-vm/ubuntu/
 
 ## Required environment variables
 
@@ -36,8 +36,8 @@ Based on IP assignment in terraform, we assume that the first IP would be IPv4 a
 
 See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 
-[docs-infrastructure]: https://docs.kubermatic.com/kubeone/v1.7/guides/using-terraform-configs/
-[docs-tf-loadbalancer]: https://docs.kubermatic.com/kubeone/v1.7/examples/ha-load-balancing/
+[docs-infrastructure]: https://docs.kubermatic.com/kubeone/v1.8/guides/using-terraform-configs/
+[docs-tf-loadbalancer]: https://docs.kubermatic.com/kubeone/v1.8/examples/ha-load-balancing/
 
 ## Requirements
 

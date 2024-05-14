@@ -5,11 +5,11 @@ infrastructure for a Kubernetes HA cluster with dualstack (IPv4+IPv6) support. C
 [Creating Infrastructure guide][docs-infrastructure] to learn more about how to
 use the configs and how to provision a Kubernetes cluster using KubeOne.
 
-[docs-infrastructure]: https://docs.kubermatic.com/kubeone/v1.7/guides/using-terraform-configs/
+[docs-infrastructure]: https://docs.kubermatic.com/kubeone/v1.8/guides/using-terraform-configs/
 
 ## AWS external CCM cloud-config
 KubeOne will use following cloud-config when provisioning the cluster using external AWS CCM.
-You can [override](https://docs.kubermatic.com/kubeone/v1.7/references/kubeone-cluster-v1beta2/#cloudproviderspec) the cloud-config
+You can [override](https://docs.kubermatic.com/kubeone/v1.8/references/kubeone-cluster-v1beta2/#cloudproviderspec) the cloud-config
 but you must specify all the options shown below. Otherwise CCM fails to initialize nodes with proper IP addresses
 and host network pods don't get dualstack IPs.
 
