@@ -18,6 +18,7 @@ package kubeone
 
 import (
 	"encoding/json"
+	"time"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -157,6 +158,9 @@ type HelmRelease struct {
 
 	// Wait is --wait flag of the `helm install` command.
 	Wait bool `json:"wait,omitempty"`
+
+	// WaitTimeout --timeout flag of the `helm install` command. Default to 5m
+	WaitTimeout time.Duration `json:"timeout,omitempty"`
 
 	// Values provide optional overrides of the helm values.
 	Values []HelmValues `json:"values,omitempty"`
