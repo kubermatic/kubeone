@@ -155,6 +155,9 @@ type HelmRelease struct {
 	// Namespace is --namespace flag of the `helm upgrade` command. A namespace to use for a release.
 	Namespace string `json:"namespace"`
 
+	// Wait is --wait flag of the `helm install` command.
+	Wait bool `json:"wait,omitempty"`
+
 	// Values provide optional overrides of the helm values.
 	Values []HelmValues `json:"values,omitempty"`
 }
