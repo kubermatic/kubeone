@@ -69,6 +69,20 @@
                 <td>{{ .OS }}</td>
                 <td>{{ .Kubelet }}</td>
                 <td>{{ .Age }}</td>
+                <table>
+                    {{ range .Machines }}
+                    <tr>
+                        <td>{{ .Namespace }}</td>
+                        <td>{{ .Name }}</td>
+                        <td>{{ .Provider }}</td>
+                        <td>{{ .OS }}</td>
+                        <td>{{ .Node }}</td>
+                        <td>{{ .Kubelet }}</td>
+                        <td>{{ .Address }}</td>
+                        <td>{{ .Age }}</td>
+                    </tr>
+                    {{ end }}
+                </table>
               </tr>
               {{ end }}
               </tbody>

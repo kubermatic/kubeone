@@ -43,6 +43,18 @@ type machineDeployment struct {
 	OS                string
 	Kubelet           string
 	Age               string
+	Machines          *[]machine
+}
+
+type machine struct {
+	Namespace string
+	Name      string
+	Provider  string
+	OS        string
+	Node      string
+	Kubelet   string
+	Address   string
+	Age       string
 }
 
 func Serve(state *state.State) error {
@@ -64,14 +76,13 @@ func Serve(state *state.State) error {
 		}
 	})
 
-
 	http.Handle(
-        "/assets",
-        http.StripPrefix(
-            "/assets",
-            http.FileServer(http.Dir("./assets")),
-        ),
-    )
+		"/assets",
+		http.StripPrefix(
+			"/assets",
+			http.FileServer(http.Dir("./assets")),
+		),
+	)
 
 	state.Logger.Infoln("Visit http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
@@ -95,8 +106,6 @@ func getDBData(state *state.State) (*dbData, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	state.Logger.Infof("MDs %v", machineDeployments)
 
 	dbData := dbData{
 		Nodes:              &nodes,
@@ -166,7 +175,10 @@ func getMachineDeployments(state *state.State) ([]machineDeployment, error) {
 
 	result := []machineDeployment{}
 	for _, md := range machineDeployments.Items {
-		state.Logger.Infof("MD %v", md)
+		machines, err := getMachines(state, &md)
+		if err != nil {
+			return nil, err
+		}
 		result = append(result, machineDeployment{
 			Namespace:         md.Namespace,
 			Name:              md.Name,
@@ -176,8 +188,33 @@ func getMachineDeployments(state *state.State) ([]machineDeployment, error) {
 			OS:                "TODO",
 			Kubelet:           "TODO",
 			Age:               "TODO",
+			Machines:          &machines,
 		},
 		)
 	}
 	return result, nil
+}
+
+func getMachines(state *state.State, md *clusterv1alpha1.MachineDeployment) ([]machine, error) {
+	machines := clusterv1alpha1.MachineList{}
+	if err := state.DynamicClient.List(state.Context, &machines); err != nil {
+		return nil, err
+	}
+
+	result := []machine{}
+	for _, currMachine := range machines.Items {
+		result = append(result, machine{
+			Namespace: currMachine.Namespace,
+			Name:      currMachine.Name,
+			Provider:  "TODO",
+			OS:        "TODO",
+			Node:      "TODO",
+			Kubelet:   "TODO",
+			Address:   "TODO",
+			Age:       "TODO",
+		})
+	}
+
+	return result, nil
+
 }
