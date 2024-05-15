@@ -64,6 +64,15 @@ func Serve(state *state.State) error {
 		}
 	})
 
+
+	http.Handle(
+        "/assets",
+        http.StripPrefix(
+            "/assets",
+            http.FileServer(http.Dir("./assets")),
+        ),
+    )
+
 	state.Logger.Infoln("Visit http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
 	return nil
