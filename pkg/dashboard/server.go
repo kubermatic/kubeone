@@ -1,8 +1,7 @@
 package dashboard
 
 import (
-	_ "embed"
-	"fmt"
+	"embed"
 	"html/template"
 	"net/http"
 
@@ -12,14 +11,16 @@ import (
 
 	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 //go:embed index.html
 var indexTemplate string
+
+//go:embed assets/*
+var assetsFS embed.FS
 
 type dbData struct {
 	Nodes              *[]node
@@ -57,46 +58,49 @@ type machine struct {
 	Age       string
 }
 
-func Serve(state *state.State) error {
-
+func Serve(st *state.State) error {
 	htmlTemplate, err := template.New("mainPage").Parse(indexTemplate)
 	if err != nil {
 		return err
 	}
 
-	dbData, err := getDBData(state)
-	if err != nil {
+	if err := kubeconfig.BuildKubernetesClientset(st); err != nil {
 		return err
 	}
 
-	http.HandleFunc("/", func(writer http.ResponseWriter, r *http.Request) {
-		err := htmlTemplate.Execute(writer, dbData)
-		if err != nil {
-			fmt.Printf("Error on serving dashboard %s", err)
+	http.Handle("/", dashboardHandler(st, htmlTemplate))
+	http.Handle("/assets/", http.FileServerFS(assetsFS))
+
+	st.Logger.Infoln("Visit http://localhost:8080")
+	http.ListenAndServe("localhost:8080", nil)
+
+	return nil
+}
+
+func httpHandleError(handler func(http.ResponseWriter, *http.Request) error) http.Handler {
+	return http.HandlerFunc(func(wr http.ResponseWriter, req *http.Request) {
+		if err := handler(wr, req); err != nil {
+			http.Error(wr, err.Error(), 500)
 		}
 	})
+}
 
-	http.Handle(
-		"/assets",
-		http.StripPrefix(
-			"/assets",
-			http.FileServer(http.Dir("./assets")),
-		),
-	)
+func dashboardHandler(st *state.State, htmlTemplate *template.Template) http.Handler {
+	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
+		dbData, err := getDBData(st)
+		if err != nil {
+			return err
+		}
 
-	state.Logger.Infoln("Visit http://localhost:8080")
-	http.ListenAndServe(":8080", nil)
-	return nil
-	// TODO
+		if err = htmlTemplate.Execute(wr, dbData); err != nil {
+			return err
+		}
+
+		return nil
+	})
 }
 
 func getDBData(state *state.State) (*dbData, error) {
-
-	err := kubeconfig.BuildKubernetesClientset(state)
-	if err != nil {
-		return nil, err
-	}
-
 	nodes, err := getNodes(state)
 	if err != nil {
 		return nil, err
@@ -111,6 +115,7 @@ func getDBData(state *state.State) (*dbData, error) {
 		Nodes:              &nodes,
 		MachineDeployments: &machineDeployments,
 	}
+
 	return &dbData, nil
 }
 
@@ -216,5 +221,4 @@ func getMachines(state *state.State, md *clusterv1alpha1.MachineDeployment) ([]m
 	}
 
 	return result, nil
-
 }

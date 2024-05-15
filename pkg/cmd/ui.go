@@ -17,10 +17,10 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/spf13/pflag"
-
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+
 	"k8c.io/kubeone/pkg/dashboard"
 )
 
@@ -55,8 +55,10 @@ func uiCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			if err != nil {
 				return err
 			}
+
 			return dashboard.Serve(state)
 		},
 	}
+
 	return cmd
 }
