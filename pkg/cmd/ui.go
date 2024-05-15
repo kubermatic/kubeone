@@ -29,6 +29,7 @@ type uiOpts struct {
 	// AutoApprove    bool `longflag:"auto-approve" shortflag:"y"`
 	// DestroyWorkers bool `longflag:"destroy-workers"`
 	// RemoveBinaries bool `longflag:"remove-binaries"`
+	// TODO
 }
 
 // TODO
@@ -54,7 +55,6 @@ func uiCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			state.Logger.Infoln("HUST: got state")
 			return dashboard.Serve(state)
 		},
 	}

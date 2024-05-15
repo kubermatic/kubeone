@@ -34,13 +34,10 @@ type machineDeployment struct {
 
 func Serve(state *state.State) error {
 
-	state.Logger.Infoln("HUST: dasboard serve")
-
 	mainPage, err := template.New("mainPage").Parse(indexTemplate)
 	if err != nil {
 		return err
 	}
-	state.Logger.Infoln("HUST: parsed templ")
 
 	dbData, err := getDBData(state)
 	if err != nil {
@@ -57,25 +54,23 @@ func Serve(state *state.State) error {
 	state.Logger.Infoln("Visit http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
 	return nil
+	// TODO
 }
 
 func getDBData(state *state.State) (*dbData, error) {
 
-	state.Logger.Infoln("HUST: get DB State")
 	err := kubeconfig.BuildKubernetesClientset(state)
 	if err != nil {
 		return nil, err
 	}
 
-	state.Logger.Infoln("HUST: build state")
-
-	nodes, _ := getNodes(state)
-	state.Logger.Infoln("HUST: got nodes")
-
-	state.Logger.Warnln(nodes)
+	nodes, err := getNodes(state)
+	if err != nil {
+		return nil, err
+	}
 
 	dbData := dbData{
-		Nodes:              &[]node{{Name: "n1", Version: "v1"}, {Name: "n2", Version: "v2"}},
+		Nodes:              &nodes,
 		MachineDeployments: &[]machineDeployment{},
 	}
 	return &dbData, nil
@@ -94,18 +89,14 @@ func getNodes(s *state.State) ([]node, error) {
 		return nil, fail.KubeClient(err, "listing nodes")
 	}
 
-	// result := []node{}
+	result := []node{}
 
-	// for _, currNode := range nodes.Items {
-	// 	result = append(result, node{
-	// 		NodeName: currNode.Name,
-	// 		Version:  currNode.Status.NodeInfo.KubeletVersion,
-	// 	})
-	// 	s.Logger.Infof("HUST, GETNODES: %v", currNode.Name)
-	// }
+	for _, currNode := range nodes.Items {
+		result = append(result, node{
+			Name:    currNode.Name,
+			Version: currNode.Status.NodeInfo.KubeletVersion,
+		})
+	}
 
-	// s.Logger.Infof("HUST, GOT NODES: %v", result)
-
-	return nil, nil
-
+	return result, nil
 }
