@@ -15,11 +15,17 @@
     <table>
         <tr>
             <th>Name</th>
+            <th>Status</th>
+            <th>Roles</th>
+            <th>Age</th>
             <th>Version</th>
         </tr>
         {{ range .Nodes }}
         <tr>
             <td>{{ .Name }}</td>
+            <td>{{ .Status }}</td>
+            <td>{{ .Roles }}</td>
+            <td>{{ .Age }}</td>
             <td>{{ .Version }}</td>
         </tr>
         {{ end }}
