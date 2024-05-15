@@ -150,6 +150,7 @@ presubmits:
             - /bin/bash
             - -c
             - |
+              while true; do sleep 10; done
               set -euo pipefail
               start-docker.sh
               ./hack/ci/push-image.sh
