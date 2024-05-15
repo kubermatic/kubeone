@@ -47,7 +47,7 @@ type machineDeployment struct {
 
 func Serve(state *state.State) error {
 
-	mainPage, err := template.New("mainPage").Parse(indexTemplate)
+	htmlTemplate, err := template.New("mainPage").Parse(indexTemplate)
 	if err != nil {
 		return err
 	}
@@ -58,7 +58,7 @@ func Serve(state *state.State) error {
 	}
 
 	http.HandleFunc("/", func(writer http.ResponseWriter, r *http.Request) {
-		err := mainPage.Execute(writer, dbData)
+		err := htmlTemplate.Execute(writer, dbData)
 		if err != nil {
 			fmt.Printf("Error on serving dashboard %s", err)
 		}
@@ -164,22 +164,20 @@ func getMachineDeployments(state *state.State) ([]machineDeployment, error) {
 		return nil, err
 	}
 
+	result := []machineDeployment{}
 	for _, md := range machineDeployments.Items {
 		state.Logger.Infof("MD %v", md)
+		result = append(result, machineDeployment{
+			Namespace:         md.Namespace,
+			Name:              md.Name,
+			Replicas:          int(*md.Spec.Replicas),
+			AvailableReplicas: int(md.Status.AvailableReplicas),
+			Provider:          "TODO",
+			OS:                "TODO",
+			Kubelet:           "TODO",
+			Age:               "TODO",
+		},
+		)
 	}
-
-	// NAMESPACE     NAME              REPLICAS   AVAILABLE-REPLICAS   PROVIDER   OS       KUBELET   AGE
-
-	result := []machineDeployment{{
-		Namespace:         "Dummy",
-		Name:              "Dummy",
-		Replicas:          0,
-		AvailableReplicas: 0,
-		Provider:          "Dummy",
-		OS:                "Dummy",
-		Kubelet:           "Dummy",
-		Age:               "Dummy",
-	}}
-
 	return result, nil
 }
