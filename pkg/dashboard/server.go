@@ -10,6 +10,10 @@ import (
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/state"
 
+	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
 	corev1 "k8s.io/api/core/v1"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -31,8 +35,14 @@ type node struct {
 }
 
 type machineDeployment struct {
-	Name     string
-	Replicas int
+	Namespace         string
+	Name              string
+	Replicas          int
+	AvailableReplicas int
+	Provider          string
+	OS                string
+	Kubelet           string
+	Age               string
 }
 
 func Serve(state *state.State) error {
@@ -72,9 +82,16 @@ func getDBData(state *state.State) (*dbData, error) {
 		return nil, err
 	}
 
+	machineDeployments, err := getMachineDeployments(state)
+	if err != nil {
+		return nil, err
+	}
+
+	state.Logger.Infof("MDs %v", machineDeployments)
+
 	dbData := dbData{
 		Nodes:              &nodes,
-		MachineDeployments: &[]machineDeployment{},
+		MachineDeployments: &machineDeployments,
 	}
 	return &dbData, nil
 }
@@ -123,27 +140,37 @@ func getNodeRole(node *corev1.Node) (string, error) {
 	return "<none>", nil
 }
 
-func getMachineDeployments(s *state.State) ([]machineDeployment, error) {
-	if s.DynamicClient == nil {
+func getMachineDeployments(state *state.State) ([]machineDeployment, error) {
+	if state.DynamicClient == nil {
 		return nil, fail.NoKubeClient()
 	}
 
-	// // Get node list
-	// nodes := corev1.NodeList{}
-	// nodeListOpts := dynclient.ListOptions{}
-	// if err := s.DynamicClient.List(s.Context, &nodes, &nodeListOpts); err != nil {
-	// 	return nil, fail.KubeClient(err, "listing nodes")
-	// }
+	machineDeployments := clusterv1alpha1.MachineDeploymentList{}
+	err := state.DynamicClient.List(
+		state.Context,
+		&machineDeployments,
+		dynclient.InNamespace(metav1.NamespaceSystem),
+	)
+	if err != nil {
+		return nil, err
+	}
 
-	// result := []node{}
-	// for _, currNode := range nodes.Items {
-	// 	result = append(result, node{
-	// 		Name:    currNode.Name,
-	// 		Version: currNode.Status.NodeInfo.KubeletVersion,
-	// 	})
-	// }
+	for _, md := range machineDeployments.Items {
+		state.Logger.Infof("MD %v", md)
+	}
 
-	// return result, nil
+	// NAMESPACE     NAME              REPLICAS   AVAILABLE-REPLICAS   PROVIDER   OS       KUBELET   AGE
 
-	return nil, nil
+	result := []machineDeployment{{
+		Namespace:         "Dummy",
+		Name:              "Dummy",
+		Replicas:          0,
+		AvailableReplicas: 0,
+		Provider:          "Dummy",
+		OS:                "Dummy",
+		Kubelet:           "Dummy",
+		Age:               "Dummy",
+	}}
+
+	return result, nil
 }

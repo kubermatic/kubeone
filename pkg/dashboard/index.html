@@ -31,6 +31,33 @@
         {{ end }}
     </table>
 
+    <h2>MachineDeployments</h2>
+    <table>
+        <tr>
+            <th>Namespace</th>
+            <th>Name</th>
+            <th>Replicas</th>
+            <th>Available-Replicas</th>
+            <th>Provider</th>
+            <th>OS</th>
+            <th>Kubelet</th>
+            <th>Age</th>
+        </tr>
+        {{ range .MachineDeployments }}
+        <tr>
+            <td>{{ .Namespace }}</td>
+            <td>{{ .Name }}</td>
+            <td>{{ .Replicas }}</td>
+            <td>{{ .AvailableReplicas }}</td>
+            <td>{{ .Provider }}</td>
+            <td>{{ .OS }}</td>
+            <td>{{ .Kubelet }}</td>
+            <td>{{ .Age }}</td>
+        </tr>
+        {{ end }}
+    </table>
+
+
 </body>
 
 </html>
