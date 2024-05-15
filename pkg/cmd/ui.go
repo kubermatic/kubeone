@@ -17,15 +17,24 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
-	"net/http"
+	"github.com/spf13/pflag"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
+	"k8c.io/kubeone/pkg/dashboard"
 )
 
+type uiOpts struct {
+	globalOptions
+	// AutoApprove    bool `longflag:"auto-approve" shortflag:"y"`
+	// DestroyWorkers bool `longflag:"destroy-workers"`
+	// RemoveBinaries bool `longflag:"remove-binaries"`
+}
+
 // TODO
-func uiCmd() *cobra.Command {
+func uiCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+	opts := &uiOpts{}
+
 	cmd := &cobra.Command{
 		Use:   "ui",
 		Short: "TODO",
@@ -35,20 +44,19 @@ func uiCmd() *cobra.Command {
 		SilenceErrors: true,
 		Args:          cobra.ExactArgs(0),
 		RunE: func(_ *cobra.Command, _ []string) error {
-			fmt.Println("hello ui")
-			return ui()
+			gopts, err := persistentGlobalOptions(rootFlags)
+			if err != nil {
+				return err
+			}
+			opts.globalOptions = *gopts
+
+			state, err := opts.BuildState()
+			if err != nil {
+				return err
+			}
+			state.Logger.Infoln("HUST: got state")
+			return dashboard.Serve(state)
 		},
 	}
-
 	return cmd
-}
-
-func ui() error {
-	http.HandleFunc("/", serveUi)
-	http.ListenAndServe(":8080", nil)
-	return nil
-}
-
-func serveUi(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintf(w, "hello ui in the browser\n")
 }

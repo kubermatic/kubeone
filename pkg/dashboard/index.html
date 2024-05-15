@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KubeOne Dashboard</title>
+</head>
+
+<body>
+
+    <h1>KubeOne Dashboard</h1>
+
+    <h2>Nodes</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Version</th>
+        </tr>
+        {{ range .Nodes }}
+        <tr>
+            <td>{{ .Name }}</td>
+            <td>{{ .Version }}</td>
+        </tr>
+        {{ end }}
+    </table>
+
+</body>
+
+</html>
