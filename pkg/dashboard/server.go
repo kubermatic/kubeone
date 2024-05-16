@@ -23,16 +23,16 @@ var indexTemplate string
 var assetsFS embed.FS
 
 type dbData struct {
-	Nodes              *[]node
-	MachineDeployments *[]machineDeployment
+	ControlPlaneNodes  []node
+	WorkerNodes        []node
+	MachineDeployments []machineDeployment
 }
 
 type node struct {
-	Name    string
-	Status  string
-	Roles   string
-	Age     string
-	Version string
+	Name              string
+	Status            string
+	LastHeartbeatTime string
+	Version           string
 }
 
 type machineDeployment struct {
@@ -112,55 +112,47 @@ func getDBData(state *state.State) (*dbData, error) {
 	}
 
 	dbData := dbData{
-		Nodes:              &nodes,
-		MachineDeployments: &machineDeployments,
+		ControlPlaneNodes:  nodes.ControlPlaneNodes,
+		WorkerNodes:        nodes.WorkerNodes,
+		MachineDeployments: machineDeployments,
 	}
 
 	return &dbData, nil
 }
 
-func getNodes(s *state.State) ([]node, error) {
-	if s.DynamicClient == nil {
-		return nil, fail.NoKubeClient()
-	}
+type nodesResult struct {
+	ControlPlaneNodes []node
+	WorkerNodes       []node
+}
 
-	// Get node list
+func getNodes(s *state.State) (*nodesResult, error) {
 	nodes := corev1.NodeList{}
 	nodeListOpts := dynclient.ListOptions{}
 	if err := s.DynamicClient.List(s.Context, &nodes, &nodeListOpts); err != nil {
 		return nil, fail.KubeClient(err, "listing nodes")
 	}
 
-	result := []node{}
+	var result nodesResult
+
 	for _, currNode := range nodes.Items {
-		// TODO is this safe
-		// TODO does this deliver really the last state?
-		// TODO nil checks
-		role, err := getNodeRole(&currNode)
-		if err != nil {
-			return nil, err
+		_, isControlPlane := currNode.ObjectMeta.Labels["node-role.kubernetes.io/control-plane"]
+		lastCondition := currNode.Status.Conditions[len(currNode.Status.Conditions)-1]
+
+		aNode := node{
+			Name:              currNode.Name,
+			Status:            string(lastCondition.Type),
+			LastHeartbeatTime: lastCondition.LastHeartbeatTime.Format("2006-01-02 15:04:05"),
+			Version:           currNode.Status.NodeInfo.KubeletVersion,
 		}
 
-		lastCondition := currNode.Status.Conditions[len(currNode.Status.Conditions)-1]
-		result = append(result, node{
-			Name:    currNode.Name,
-			Status:  string(lastCondition.Type),
-			Roles:   role,
-			Age:     lastCondition.LastHeartbeatTime.Format("2006-01-02 15:04:05"),
-			Version: currNode.Status.NodeInfo.KubeletVersion,
-		})
+		if isControlPlane {
+			result.ControlPlaneNodes = append(result.ControlPlaneNodes, aNode)
+		} else {
+			result.WorkerNodes = append(result.WorkerNodes, aNode)
+		}
 	}
 
-	return result, nil
-}
-
-func getNodeRole(node *corev1.Node) (string, error) {
-	// TODO is this smart enough?
-	_, ok := node.ObjectMeta.Labels["node-role.kubernetes.io/control-plane"]
-	if ok {
-		return "control-plane", nil
-	}
-	return "<none>", nil
+	return &result, nil
 }
 
 func getMachineDeployments(state *state.State) ([]machineDeployment, error) {

@@ -18,30 +18,15 @@
     <div class="container-l d-flex flex-column h-100">
       <div class="card shadow-sm">
         <div class="card-body">
-          <h4 class="card-title pb-2">Nodes</h4>
-          <div class="row row-cols-1 row-cols-md-4 g-3">
-            {{ range .Nodes }}
-            <div class="col">
-              <div class="card">
-                <div class="card-header">
-                  {{.Name}}
-                  <span class="badge border text-bg-light rounded-pill mx-2">{{.Status}}</span>
-                </div>
-                <div class="card-body">
-                  <div class="row row-cols-2 g-2">
-                    <div class="col-4"><strong>Version</strong></div>
-                    <div class="col">{{.Version}}</div>
-                    <div class="col-4"><strong>Roles</strong></div>
-                    <div class="col">{{.Roles}}</div>
-                    <div class="col-4"><strong>Age</strong></div>
-                    <div class="col">{{.Age}}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {{ end }}
-          </div>
+          <h4 class="card-title pb-2">Control-Plane Nodes</h4>
+          {{ template "nodes" .ControlPlaneNodes }}
         </div>
+        {{ with .WorkerNodes }}
+        <div class="card-body">
+          <h4 class="card-title pb-2">Worker Nodes</h4>
+          {{ template "nodes" . }}
+        </div>
+        {{ end }}
       </div>
       <div class="card mt-4 shadow-sm">
         <div class="card-body">
@@ -102,3 +87,26 @@
           crossorigin="anonymous"></script>
   </body>
 </html>
+
+{{ define "nodes" }}
+<div class="row row-cols-1 row-cols-md-4 g-3">
+  {{ range . }}
+  <div class="col">
+    <div class="card">
+      <div class="card-header">
+        {{.Name}}
+        <span class="badge border text-bg-light rounded-pill mx-2">{{.Status}}</span>
+      </div>
+      <div class="card-body">
+        <div class="row row-cols-2 g-2">
+          <div class="col-4"><strong>Version</strong></div>
+          <div class="col">{{.Version}}</div>
+          <div class="col-4"><strong>LastHeartbeatTime</strong></div>
+          <div class="col">{{.LastHeartbeatTime}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{ end }}
+</div>
+{{ end }}
