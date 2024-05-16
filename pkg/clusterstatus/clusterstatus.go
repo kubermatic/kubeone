@@ -33,7 +33,7 @@ import (
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-type nodeStatus struct {
+type NodeStatus struct {
 	NodeName  string `json:"nodeName,omitempty"`
 	Version   string `json:"version,omitempty"`
 	APIServer bool   `json:"apiServer,omitempty"`
@@ -41,7 +41,7 @@ type nodeStatus struct {
 }
 
 func Print(s *state.State) error {
-	status, err := getClusterStatus(s)
+	status, err := Fetch(s, true)
 	if err != nil {
 		return err
 	}
@@ -86,7 +86,7 @@ func clusterStatusHeader() []string {
 	}
 }
 
-func getClusterStatus(s *state.State) ([]nodeStatus, error) {
+func Fetch(s *state.State, preflightChecks bool) ([]NodeStatus, error) {
 	if s.DynamicClient == nil {
 		return nil, fail.NoKubeClient()
 	}
@@ -101,12 +101,14 @@ func getClusterStatus(s *state.State) ([]nodeStatus, error) {
 		return nil, fail.KubeClient(err, "listing nodes")
 	}
 
-	// Run preflight checks
-	if err := preflightstatus.Run(s, nodes); err != nil {
-		return nil, err
+	if preflightChecks {
+		// Run preflight checks
+		if err := preflightstatus.Run(s, nodes); err != nil {
+			return nil, err
+		}
 	}
 
-	status := []nodeStatus{}
+	status := []NodeStatus{}
 	errs := []error{}
 
 	etcdRing, err := etcdstatus.MemberList(s)
@@ -142,7 +144,7 @@ func getClusterStatus(s *state.State) ([]nodeStatus, error) {
 			aStatus = true
 		}
 
-		status = append(status, nodeStatus{
+		status = append(status, NodeStatus{
 			NodeName:  host.Hostname,
 			Version:   kubeletVersion,
 			Etcd:      eStatus,

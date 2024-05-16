@@ -103,6 +103,12 @@
           <div class="col">{{.Version}}</div>
           <div class="col-4"><strong>Seen</strong></div>
           <div class="col">{{.LastHeartbeatTime}}</div>
+          {{ if .IsControlPlane }}
+          <div class="col-4"><strong>etcd</strong></div>
+          <div class="col">{{.EtcdOK}}</div>
+          <div class="col-4"><strong>apiserver</strong></div>
+          <div class="col">{{.APIServerOK}}</div>
+          {{ end }}
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"k8c.io/kubeone/pkg/clusterstatus"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/state"
@@ -32,8 +33,11 @@ type dbData struct {
 type node struct {
 	Name              string
 	Status            string
+	IsControlPlane    bool
 	LastHeartbeatTime time.Duration
 	Version           string
+	EtcdOK            bool
+	APIServerOK       bool
 }
 
 type machineDeployment struct {
@@ -133,6 +137,11 @@ func getNodes(s *state.State) (*nodesResult, error) {
 		return nil, fail.KubeClient(err, "listing nodes")
 	}
 
+	controlPlaneStatus, err := clusterstatus.Fetch(s, false)
+	if err != nil {
+		return nil, err
+	}
+
 	var result nodesResult
 
 	for _, currNode := range nodes.Items {
@@ -141,9 +150,12 @@ func getNodes(s *state.State) (*nodesResult, error) {
 
 		aNode := node{
 			Name:              currNode.Name,
+			IsControlPlane:    isControlPlane,
 			Status:            string(lastCondition.Type),
 			LastHeartbeatTime: time.Now().Sub(lastCondition.LastHeartbeatTime.Time).Truncate(time.Second),
 			Version:           currNode.Status.NodeInfo.KubeletVersion,
+			EtcdOK:            findNodeEtcd(controlPlaneStatus, currNode.Name),
+			APIServerOK:       findNodeApiServer(controlPlaneStatus, currNode.Name),
 		}
 
 		if isControlPlane {
@@ -214,4 +226,24 @@ func getMachines(state *state.State, md *clusterv1alpha1.MachineDeployment) ([]m
 	}
 
 	return result, nil
+}
+
+func findNodeEtcd(nodes []clusterstatus.NodeStatus, search string) bool {
+	for _, cp := range nodes {
+		if cp.NodeName == search {
+			return cp.Etcd
+		}
+	}
+
+	return false
+}
+
+func findNodeApiServer(nodes []clusterstatus.NodeStatus, search string) bool {
+	for _, cp := range nodes {
+		if cp.NodeName == search {
+			return cp.APIServer
+		}
+	}
+
+	return false
 }
