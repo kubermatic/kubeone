@@ -4,6 +4,7 @@ import (
 	"embed"
 	"html/template"
 	"net/http"
+	"slices"
 	"time"
 
 	"k8c.io/kubeone/pkg/clusterstatus"
@@ -211,8 +212,15 @@ func getMachines(state *state.State, md *clusterv1alpha1.MachineDeployment) ([]m
 		return nil, err
 	}
 
+	//TODO filtering according to the md
+
 	result := []machine{}
 	for _, currMachine := range machines.Items {
+		addressIndex := slices.IndexFunc(currMachine.Status.Addresses, func(a corev1.NodeAddress) bool { return a.Type == "ExternalIP" })
+		if addressIndex >= 0 {
+
+		}
+
 		result = append(result, machine{
 			Namespace: currMachine.Namespace,
 			Name:      currMachine.Name,
