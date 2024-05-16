@@ -78,7 +78,7 @@
                     </thead>
                     <tbody>
                     {{ range .Machines }}
-                    <tr class="{{ if not .Deleted }}{{ else }}table-danger{{ end }}">
+                    <tr class="{{ if .Deleted }}table-danger{{ end }}">
                       <td>
                         <div class="d-flex">
                           {{ if not .Deleted }}
@@ -151,20 +151,20 @@
           <div class="col-4"><strong>etcd</strong></div>
           <div class="col">
             <div class="d-flex">
-              {{ if not .EtcdOK }}
-              {{ template "status-badge" "Not Ready" }}
+              {{ if .EtcdOK }}
+                {{ template "status-badge" "Ready" }}
               {{ else }}
-              {{ template "status-badge" "Not Ready" }}
+                {{ template "status-badge" "Not Ready" }}
               {{ end}}
             </div>
           </div>
           <div class="col-4"><strong>apiserver</strong></div>
           <div class="col">
             <div class="d-flex">
-              {{ if not .APIServerOK }}
-              {{ template "status-badge" "Not Ready" }}
+              {{ if .APIServerOK }}
+                {{ template "status-badge" "Ready" }}
               {{ else }}
-              {{ template "status-badge" "Ready" }}
+                {{ template "status-badge" "Not Ready" }}
               {{ end}}
             </div>
           </div>
