@@ -46,22 +46,20 @@ type machineDeployment struct {
 	Name              string
 	Replicas          int
 	AvailableReplicas int
-	Provider          string
 	OS                string
 	Kubelet           string
-	Age               string
+	Age               time.Duration
 	Machines          *[]machine
 }
 
 type machine struct {
 	Namespace string
 	Name      string
-	Provider  string
 	OS        string
 	Node      string
 	Kubelet   string
 	Address   string
-	Age       string
+	Age       time.Duration
 	Deleted   bool
 }
 
@@ -196,10 +194,9 @@ func getMachineDeployments(state *state.State) ([]machineDeployment, error) {
 			Name:              md.Name,
 			Replicas:          int(*md.Spec.Replicas),
 			AvailableReplicas: int(md.Status.AvailableReplicas),
-			Provider:          "TODO",
 			OS:                "TODO",
-			Kubelet:           "TODO",
-			Age:               "TODO",
+			Kubelet:           md.Spec.Template.Spec.Versions.Kubelet,
+			Age:               time.Now().Sub(md.CreationTimestamp.Time).Truncate(time.Second),
 			Machines:          &machines,
 		},
 		)
@@ -250,12 +247,11 @@ func getMachines(state *state.State, md *clusterv1alpha1.MachineDeployment) ([]m
 		result = append(result, machine{
 			Namespace: currMachine.Namespace,
 			Name:      currMachine.Name,
-			Provider:  "TODO",
 			OS:        "TODO",
 			Node:      currMachine.Status.NodeRef.Name,
 			Kubelet:   currMachine.Spec.Versions.Kubelet,
 			Address:   address,
-			Age:       currMachine.ObjectMeta.CreationTimestamp.Format("2006-01-02 15:04:05"),
+			Age:       time.Now().Sub(currMachine.CreationTimestamp.Time).Truncate(time.Second),
 			Deleted:   !currMachine.ObjectMeta.DeletionTimestamp.IsZero(),
 		})
 	}
