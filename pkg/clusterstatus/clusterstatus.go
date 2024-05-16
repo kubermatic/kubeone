@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 
 	"k8c.io/kubeone/pkg/clusterstatus/apiserverstatus"
 	"k8c.io/kubeone/pkg/clusterstatus/etcdstatus"
@@ -116,41 +117,66 @@ func Fetch(s *state.State, preflightChecks bool) ([]NodeStatus, error) {
 		return nil, err
 	}
 
+	var (
+		statusWG   sync.WaitGroup
+		statusLock sync.Mutex
+	)
+
 	for _, host := range s.Cluster.ControlPlane.Hosts {
-		etcdStatus, err := etcdstatus.Get(s, host, etcdRing)
-		if err != nil {
-			errs = append(errs, err)
-		}
+		host := host
+		statusWG.Add(1)
 
-		apiserverStatus, err := apiserverstatus.Get(s, host)
-		if err != nil {
-			errs = append(errs, err)
-		}
+		go func() {
+			defer statusWG.Done()
 
-		var kubeletVersion string
-		for _, node := range nodes.Items {
-			if node.ObjectMeta.Name == host.Hostname {
-				kubeletVersion = node.Status.NodeInfo.KubeletVersion
+			var (
+				etcdCh      = make(chan bool)
+				apiserverCh = make(chan bool)
+			)
+
+			go func() {
+				etcdStatus, err := etcdstatus.Get(s, host, etcdRing)
+				if err != nil {
+					errs = append(errs, err)
+				}
+				eStatus := false
+				if etcdStatus != nil && etcdStatus.Health && etcdStatus.Member {
+					eStatus = true
+				}
+				etcdCh <- eStatus
+			}()
+
+			go func() {
+				apiserverStatus, err := apiserverstatus.Get(s, host)
+				if err != nil {
+					errs = append(errs, err)
+				}
+				aStatus := false
+				if apiserverStatus != nil && apiserverStatus.Health {
+					aStatus = true
+				}
+				apiserverCh <- aStatus
+			}()
+
+			var kubeletVersion string
+			for _, node := range nodes.Items {
+				if node.ObjectMeta.Name == host.Hostname {
+					kubeletVersion = node.Status.NodeInfo.KubeletVersion
+				}
 			}
-		}
 
-		eStatus := false
-		if etcdStatus != nil && etcdStatus.Health && etcdStatus.Member {
-			eStatus = true
-		}
-
-		aStatus := false
-		if apiserverStatus != nil && apiserverStatus.Health {
-			aStatus = true
-		}
-
-		status = append(status, NodeStatus{
-			NodeName:  host.Hostname,
-			Version:   kubeletVersion,
-			Etcd:      eStatus,
-			APIServer: aStatus,
-		})
+			statusLock.Lock()
+			status = append(status, NodeStatus{
+				NodeName:  host.Hostname,
+				Version:   kubeletVersion,
+				Etcd:      <-etcdCh,
+				APIServer: <-apiserverCh,
+			})
+			statusLock.Unlock()
+		}()
 	}
+
+	statusWG.Wait()
 
 	if len(errs) > 0 {
 		for _, e := range errs {
