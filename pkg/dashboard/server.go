@@ -4,6 +4,7 @@ import (
 	"embed"
 	"html/template"
 	"net/http"
+	"slices"
 	"time"
 
 	"k8c.io/kubeone/pkg/clusterstatus"
@@ -280,4 +281,13 @@ func findNodeApiServer(nodes []clusterstatus.NodeStatus, search string) bool {
 	}
 
 	return false
+}
+
+func getExternalIp(machine *clusterv1alpha1.Machine) (string, error) {
+	addressIndex := slices.IndexFunc(machine.Status.Addresses, func(a corev1.NodeAddress) bool { return a.Type == "ExternalIP" })
+	if addressIndex >= 0 {
+		return machine.Status.Addresses[addressIndex].Address, nil
+	}
+	// TODO what if no external ip address
+	return "", nil
 }
