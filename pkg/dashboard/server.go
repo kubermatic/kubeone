@@ -4,6 +4,7 @@ import (
 	"embed"
 	"html/template"
 	"net/http"
+	"time"
 
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
@@ -31,7 +32,7 @@ type dbData struct {
 type node struct {
 	Name              string
 	Status            string
-	LastHeartbeatTime string
+	LastHeartbeatTime time.Duration
 	Version           string
 }
 
@@ -141,7 +142,7 @@ func getNodes(s *state.State) (*nodesResult, error) {
 		aNode := node{
 			Name:              currNode.Name,
 			Status:            string(lastCondition.Type),
-			LastHeartbeatTime: lastCondition.LastHeartbeatTime.Format("2006-01-02 15:04:05"),
+			LastHeartbeatTime: time.Now().Sub(lastCondition.LastHeartbeatTime.Time).Truncate(time.Second),
 			Version:           currNode.Status.NodeInfo.KubeletVersion,
 		}
 
