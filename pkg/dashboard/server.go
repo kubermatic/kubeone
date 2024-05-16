@@ -4,7 +4,6 @@ import (
 	"embed"
 	"html/template"
 	"net/http"
-	"slices"
 	"time"
 
 	"k8c.io/kubeone/pkg/clusterstatus"
@@ -62,6 +61,7 @@ type machine struct {
 	Kubelet   string
 	Address   string
 	Age       string
+	Deleted   bool
 }
 
 func Serve(st *state.State) error {
@@ -207,18 +207,43 @@ func getMachineDeployments(state *state.State) ([]machineDeployment, error) {
 }
 
 func getMachines(state *state.State, md *clusterv1alpha1.MachineDeployment) ([]machine, error) {
+
+	// filter MachineSets owned by the MachineDeployment
+	machineSets := clusterv1alpha1.MachineSetList{}
+	if err := state.DynamicClient.List(state.Context, &machineSets); err != nil {
+		return nil, err
+	}
+	filteredMachineSets := []clusterv1alpha1.MachineSet{}
+	for _, currMS := range machineSets.Items {
+		for _, currMSOR := range currMS.OwnerReferences {
+			if md.UID == currMSOR.UID {
+				filteredMachineSets = append(filteredMachineSets, currMS)
+			}
+		}
+	}
+
+	// filter Machines owned by one of the MachineSets owned by the MachineDeployment
 	machines := clusterv1alpha1.MachineList{}
 	if err := state.DynamicClient.List(state.Context, &machines); err != nil {
 		return nil, err
 	}
-
-	//TODO filtering according to the md
+	filteredMachines := []clusterv1alpha1.Machine{}
+	for _, currMachine := range machines.Items {
+		for _, currMachineOR := range currMachine.OwnerReferences {
+			for _, currMS := range filteredMachineSets {
+				if currMachineOR.UID == currMS.UID {
+					filteredMachines = append(filteredMachines, currMachine)
+				}
+			}
+		}
+	}
 
 	result := []machine{}
-	for _, currMachine := range machines.Items {
-		addressIndex := slices.IndexFunc(currMachine.Status.Addresses, func(a corev1.NodeAddress) bool { return a.Type == "ExternalIP" })
-		if addressIndex >= 0 {
+	for _, currMachine := range filteredMachines {
 
+		address, err := getExternalIp(&currMachine)
+		if err != nil {
+			return nil, err
 		}
 
 		result = append(result, machine{
@@ -226,10 +251,11 @@ func getMachines(state *state.State, md *clusterv1alpha1.MachineDeployment) ([]m
 			Name:      currMachine.Name,
 			Provider:  "TODO",
 			OS:        "TODO",
-			Node:      "TODO",
-			Kubelet:   "TODO",
-			Address:   "TODO",
-			Age:       "TODO",
+			Node:      currMachine.Status.NodeRef.Name,
+			Kubelet:   currMachine.Spec.Versions.Kubelet,
+			Address:   address,
+			Age:       currMachine.ObjectMeta.CreationTimestamp.Format("2006-01-02 15:04:05"),
+			Deleted:   !currMachine.ObjectMeta.DeletionTimestamp.IsZero(),
 		})
 	}
 
