@@ -2,6 +2,7 @@ package dashboard
 
 import (
 	"embed"
+	"fmt"
 	"html/template"
 	"net/http"
 	"slices"
@@ -25,7 +26,7 @@ var indexTemplate string
 //go:embed assets/*
 var assetsFS embed.FS
 
-type dbData struct {
+type dashboardData struct {
 	ControlPlaneNodes  []node
 	WorkerNodes        []node
 	MachineDeployments []machineDeployment
@@ -63,7 +64,7 @@ type machine struct {
 	Deleted   bool
 }
 
-func Serve(st *state.State) error {
+func Serve(st *state.State, port int) error {
 	htmlTemplate, err := template.New("mainPage").Parse(indexTemplate)
 	if err != nil {
 		return err
@@ -76,8 +77,8 @@ func Serve(st *state.State) error {
 	http.Handle("/", dashboardHandler(st, htmlTemplate))
 	http.Handle("/assets/", http.FileServerFS(assetsFS))
 
-	st.Logger.Infoln("Visit http://localhost:8080")
-	http.ListenAndServe("localhost:8080", nil)
+	st.Logger.Infoln(fmt.Sprintf("Visit http://localhost:%d to access UI", port))
+	http.ListenAndServe(fmt.Sprintf("localhost:%d", port), nil)
 
 	return nil
 }
@@ -92,12 +93,12 @@ func httpHandleError(handler func(http.ResponseWriter, *http.Request) error) htt
 
 func dashboardHandler(st *state.State, htmlTemplate *template.Template) http.Handler {
 	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
-		dbData, err := getDBData(st)
+		dashboardData, err := getDashboardData(st)
 		if err != nil {
 			return err
 		}
 
-		if err = htmlTemplate.Execute(wr, dbData); err != nil {
+		if err = htmlTemplate.Execute(wr, dashboardData); err != nil {
 			return err
 		}
 
@@ -105,7 +106,7 @@ func dashboardHandler(st *state.State, htmlTemplate *template.Template) http.Han
 	})
 }
 
-func getDBData(state *state.State) (*dbData, error) {
+func getDashboardData(state *state.State) (*dashboardData, error) {
 	nodes, err := getNodes(state)
 	if err != nil {
 		return nil, err
@@ -116,13 +117,13 @@ func getDBData(state *state.State) (*dbData, error) {
 		return nil, err
 	}
 
-	dbData := dbData{
+	dashboardData := dashboardData{
 		ControlPlaneNodes:  nodes.ControlPlaneNodes,
 		WorkerNodes:        nodes.WorkerNodes,
 		MachineDeployments: machineDeployments,
 	}
 
-	return &dbData, nil
+	return &dashboardData, nil
 }
 
 type nodesResult struct {

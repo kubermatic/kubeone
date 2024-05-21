@@ -26,21 +26,20 @@ import (
 
 type uiOpts struct {
 	globalOptions
-	// AutoApprove    bool `longflag:"auto-approve" shortflag:"y"`
-	// DestroyWorkers bool `longflag:"destroy-workers"`
-	// RemoveBinaries bool `longflag:"remove-binaries"`
-	// TODO
+	Port int `longflag:"port" shortflag:"port"`
 }
 
-// TODO
+// uiCmd setups ui command
 func uiCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	opts := &uiOpts{}
 
 	cmd := &cobra.Command{
 		Use:   "ui",
-		Short: "TODO",
+		Short: "Show UI",
 		Long: heredoc.Doc(`
-			TODO
+			Starts a webserver providing a minimalistic overview of the KubeOne Kubernetes Cluster.
+
+			By default port 8080 will be used, you can customize the port via the port flag. 
 		`),
 		SilenceErrors: true,
 		Args:          cobra.ExactArgs(0),
@@ -56,9 +55,16 @@ func uiCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 				return err
 			}
 
-			return dashboard.Serve(state)
+			return dashboard.Serve(state, opts.Port)
 		},
 	}
+
+	cmd.Flags().IntVarP(
+		&opts.Port,
+		longFlagName(opts, "port"),
+		shortFlagName(opts, "port"),
+		8080,
+		"port on which webserver is running")
 
 	return cmd
 }
