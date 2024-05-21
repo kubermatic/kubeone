@@ -78,6 +78,9 @@ type KubeOneCluster struct {
 	// --namespace <NAMESPACE> --install --create-namespace <RELEASE> <CHART> [--values=values-override.yaml]`
 	HelmReleases []HelmRelease `json:"helmReleases,omitempty"`
 
+	// Workloads
+	Workloads []Workload `json:"workloads,omitempty"`
+
 	// SystemPackages configure kubeone behaviour regarding OS packages.
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
 
@@ -93,6 +96,15 @@ type KubeOneCluster struct {
 
 	// ControlPlaneComponents configures the Kubernetes control plane components
 	ControlPlaneComponents *ControlPlaneComponents `json:"controlPlaneComponents,omitempty"`
+}
+
+// Workload
+type Workload struct {
+	// Addon
+	Addon *Addon `json:"addon,omitempty"`
+
+	// HelmRelease
+	HelmRelease *HelmRelease `json:"helmRelease,omitempty"`
 }
 
 type ControlPlaneComponents struct {

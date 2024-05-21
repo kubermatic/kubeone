@@ -1396,6 +1396,7 @@ func autoConvert_kubeone_KubeOneCluster_To_v1beta1_KubeOneCluster(in *kubeone.Ku
 		out.Addons = nil
 	}
 	// WARNING: in.HelmReleases requires manual conversion: does not exist in peer-type
+	// WARNING: in.Workloads requires manual conversion: does not exist in peer-type
 	out.SystemPackages = (*SystemPackages)(unsafe.Pointer(in.SystemPackages))
 	if err := Convert_kubeone_AssetConfiguration_To_v1beta1_AssetConfiguration(&in.AssetConfiguration, &out.AssetConfiguration, s); err != nil {
 		return err
