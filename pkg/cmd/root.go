@@ -137,6 +137,7 @@ func newRoot() *cobra.Command {
 		statusCmd(fs),
 		upgradeCmd(fs),
 		versionCmd(),
+		uiCmd(fs),
 	)
 
 	return rootCmd
