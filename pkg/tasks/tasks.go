@@ -17,18 +17,18 @@ limitations under the License.
 package tasks
 
 import (
-	"k8c.io/kubeone/pkg/addons"
 	"k8c.io/kubeone/pkg/certificate"
 	"k8c.io/kubeone/pkg/clusterstatus"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeconfig"
-	"k8c.io/kubeone/pkg/localhelm"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/externalccm"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
 	"k8c.io/kubeone/pkg/templates/operatingsystemmanager"
+	"k8c.io/kubeone/pkg/workloads/addons"
+	"k8c.io/kubeone/pkg/workloads/localhelm"
 )
 
 type Tasks []Task
@@ -263,6 +263,10 @@ func WithResources(t Tasks) Tasks {
 				Fn:          addons.Ensure,
 				Operation:   "applying addons",
 				Description: "ensure embedded addons",
+			},
+			{
+				Fn:        nil,
+				Operation: "reconcile addons and helm releases",
 			},
 			{
 				Fn:          addons.EnsureUserAddons,

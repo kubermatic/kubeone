@@ -27,9 +27,9 @@ import (
 
 	"github.com/Masterminds/semver/v3"
 
-	"k8c.io/kubeone/pkg/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/semverutil"
+	"k8c.io/kubeone/pkg/workloads/addons"
 
 	"k8s.io/apimachinery/pkg/util/validation"
 	"k8s.io/apimachinery/pkg/util/validation/field"

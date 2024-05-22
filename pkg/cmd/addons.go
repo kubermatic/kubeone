@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
-	"k8c.io/kubeone/pkg/addons"
+	"k8c.io/kubeone/pkg/workloads/addons"
 )
 
 func addonsCmd(rootFlags *pflag.FlagSet) *cobra.Command {

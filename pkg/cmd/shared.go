@@ -32,20 +32,18 @@ import (
 	"github.com/spf13/pflag"
 	"golang.org/x/term"
 
-	"k8c.io/kubeone/pkg/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/apis/kubeone/config"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/workloads/addons"
 
 	"k8s.io/apimachinery/pkg/util/sets"
 	ctrlruntimelog "sigs.k8s.io/controller-runtime/pkg/log"
 )
 
-var (
-	defaultKubeVersion = ""
-)
+var defaultKubeVersion = ""
 
 const yes = "yes"
 
@@ -248,7 +246,7 @@ func initBackup(backupPath string) error {
 	}
 
 	// try to write to the file before doing anything else
-	backup, err := os.OpenFile(backupPath, os.O_RDWR|os.O_CREATE, 0600)
+	backup, err := os.OpenFile(backupPath, os.O_RDWR|os.O_CREATE, 0o600)
 	if err != nil {
 		return fail.Runtime(err, "opening backup file for write")
 	}
