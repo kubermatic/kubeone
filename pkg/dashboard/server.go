@@ -102,7 +102,6 @@ func Serve(st *state.State, port int) error {
 		ReadHeaderTimeout: 10 * time.Second,
 	}
 	if err := server.ListenAndServe(); err != nil {
-		// if err := http.ListenAndServe(fmt.Sprintf("localhost:%d", port), nil); err != nil {
 		return err
 	}
 
