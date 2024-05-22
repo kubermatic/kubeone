@@ -40,7 +40,6 @@
                 <th scope="col">Name</th>
                 <th scope="col">Namespace</th>
                 <th scope="col">Replicas</th>
-                <th scope="col">OS</th>
                 <th scope="col">Kubelet</th>
                 <th scope="col">Age</th>
               </tr>
@@ -56,7 +55,6 @@
                 <td><strong>{{ .Name }}</strong></td>
                 <td>{{ .Namespace }}</td>
                 <td>{{ .AvailableReplicas }} / {{ .Replicas }}</td>
-                <td>{{ .OS }}</td>
                 <td>{{ .Kubelet }}</td>
                 <td>{{ .Age }}</td>
               </tr>
@@ -69,7 +67,6 @@
                       <th scope="col">Status</th>
                       <th scope="col">Name</th>
                       <th scope="col">Namespace</th>
-                      <th scope="col">OS</th>
                       <th scope="col">Node</th>
                       <th scope="col">Kubelet</th>
                       <th scope="col">Address</th>
@@ -90,7 +87,6 @@
                       </td>
                       <td>{{ .Namespace }}</td>
                       <td>{{ .Name }}</td>
-                      <td>{{ .OS }}</td>
                       <td>{{ .Node }}</td>
                       <td>{{ .Kubelet }}</td>
                       <td>{{ .Address }}</td>

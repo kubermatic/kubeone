@@ -47,7 +47,6 @@ type machineDeployment struct {
 	Name              string
 	Replicas          int
 	AvailableReplicas int
-	OS                string
 	Kubelet           string
 	Age               time.Duration
 	Machines          *[]machine
@@ -56,12 +55,16 @@ type machineDeployment struct {
 type machine struct {
 	Namespace string
 	Name      string
-	OS        string
 	Node      string
 	Kubelet   string
 	Address   string
 	Age       time.Duration
 	Deleted   bool
+}
+
+type nodesResult struct {
+	ControlPlaneNodes []node
+	WorkerNodes       []node
 }
 
 func Serve(st *state.State, port int) error {
@@ -126,11 +129,6 @@ func getDashboardData(state *state.State) (*dashboardData, error) {
 	return &dashboardData, nil
 }
 
-type nodesResult struct {
-	ControlPlaneNodes []node
-	WorkerNodes       []node
-}
-
 func getNodes(s *state.State) (*nodesResult, error) {
 	nodes := corev1.NodeList{}
 	nodeListOpts := dynclient.ListOptions{}
@@ -153,7 +151,7 @@ func getNodes(s *state.State) (*nodesResult, error) {
 			Name:              currNode.Name,
 			IsControlPlane:    isControlPlane,
 			Status:            string(lastCondition.Type),
-			LastHeartbeatTime: time.Now().Sub(lastCondition.LastHeartbeatTime.Time).Truncate(time.Second),
+			LastHeartbeatTime: time.Since(lastCondition.LastHeartbeatTime.Time).Truncate(time.Second),
 			Version:           currNode.Status.NodeInfo.KubeletVersion,
 			EtcdOK:            findNodeEtcd(controlPlaneStatus, currNode.Name),
 			APIServerOK:       findNodeApiServer(controlPlaneStatus, currNode.Name),
@@ -195,9 +193,8 @@ func getMachineDeployments(state *state.State) ([]machineDeployment, error) {
 			Name:              md.Name,
 			Replicas:          int(*md.Spec.Replicas),
 			AvailableReplicas: int(md.Status.AvailableReplicas),
-			OS:                "TODO",
 			Kubelet:           md.Spec.Template.Spec.Versions.Kubelet,
-			Age:               time.Now().Sub(md.CreationTimestamp.Time).Truncate(time.Second),
+			Age:               time.Since(md.CreationTimestamp.Time).Truncate(time.Second),
 			Machines:          &machines,
 		},
 		)
@@ -248,11 +245,10 @@ func getMachines(state *state.State, md *clusterv1alpha1.MachineDeployment) ([]m
 		result = append(result, machine{
 			Namespace: currMachine.Namespace,
 			Name:      currMachine.Name,
-			OS:        "TODO",
 			Node:      currMachine.Status.NodeRef.Name,
 			Kubelet:   currMachine.Spec.Versions.Kubelet,
 			Address:   address,
-			Age:       time.Now().Sub(currMachine.CreationTimestamp.Time).Truncate(time.Second),
+			Age:       time.Since(currMachine.CreationTimestamp.Time).Truncate(time.Second),
 			Deleted:   !currMachine.ObjectMeta.DeletionTimestamp.IsZero(),
 		})
 	}
