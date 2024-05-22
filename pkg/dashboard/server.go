@@ -211,6 +211,7 @@ func getMachineDeployments(state *state.State) ([]machineDeployment, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		result = append(result, machineDeployment{
 			Namespace:         currMachineDeployment.Namespace,
 			Name:              currMachineDeployment.Name,
@@ -232,6 +233,7 @@ func getMachines(state *state.State, md *clusterv1alpha1.MachineDeployment) ([]m
 	if err := state.DynamicClient.List(state.Context, &machineSets); err != nil {
 		return nil, err
 	}
+
 	filteredMachineSets := []clusterv1alpha1.MachineSet{}
 	for _, currMS := range machineSets.Items {
 		for _, currMSOR := range currMS.OwnerReferences {
@@ -246,6 +248,7 @@ func getMachines(state *state.State, md *clusterv1alpha1.MachineDeployment) ([]m
 	if err := state.DynamicClient.List(state.Context, &machines); err != nil {
 		return nil, err
 	}
+
 	filteredMachines := []clusterv1alpha1.Machine{}
 	for _, currMachine := range machines.Items {
 		for _, currMachineOR := range currMachine.OwnerReferences {
@@ -259,13 +262,18 @@ func getMachines(state *state.State, md *clusterv1alpha1.MachineDeployment) ([]m
 
 	result := []machine{}
 	for i := range filteredMachines {
-		currMachine := &filteredMachines[i]
-		address := getExternalIP(currMachine)
+		currMachine := filteredMachines[i]
+		address := getExternalIP(&currMachine)
+
+		var nodeName string
+		if noderef := currMachine.Status.NodeRef; noderef != nil {
+			nodeName = noderef.Name
+		}
 
 		result = append(result, machine{
 			Namespace: currMachine.Namespace,
 			Name:      currMachine.Name,
-			Node:      currMachine.Status.NodeRef.Name,
+			Node:      nodeName,
 			Kubelet:   currMachine.Spec.Versions.Kubelet,
 			Address:   address,
 			Age:       time.Since(currMachine.CreationTimestamp.Time).Truncate(time.Second),
@@ -301,6 +309,7 @@ func getExternalIP(machine *clusterv1alpha1.Machine) string {
 	if addressIndex >= 0 {
 		return machine.Status.Addresses[addressIndex].Address
 	}
+
 	// TODO what if no external ip address
 	return ""
 }
