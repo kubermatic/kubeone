@@ -81,7 +81,14 @@ func Serve(st *state.State, port int) error {
 	http.Handle("/assets/", http.FileServerFS(assetsFS))
 
 	st.Logger.Infoln(fmt.Sprintf("Visit http://localhost:%d to access UI", port))
-	http.ListenAndServe(fmt.Sprintf("localhost:%d", port), nil)
+	server := &http.Server{
+		Addr:              fmt.Sprintf(":%d", port),
+		ReadHeaderTimeout: 10 * time.Second,
+	}
+	if err := server.ListenAndServe(); err != nil {
+		// if err := http.ListenAndServe(fmt.Sprintf("localhost:%d", port), nil); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -95,7 +102,7 @@ func httpHandleError(handler func(http.ResponseWriter, *http.Request) error) htt
 }
 
 func dashboardHandler(st *state.State, htmlTemplate *template.Template) http.Handler {
-	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
+	return httpHandleError(func(wr http.ResponseWriter, _ *http.Request) error {
 		dashboardData, err := getDashboardData(st)
 		if err != nil {
 			return err
@@ -120,13 +127,13 @@ func getDashboardData(state *state.State) (*dashboardData, error) {
 		return nil, err
 	}
 
-	dashboardData := dashboardData{
+	ret := dashboardData{
 		ControlPlaneNodes:  nodes.ControlPlaneNodes,
 		WorkerNodes:        nodes.WorkerNodes,
 		MachineDeployments: machineDeployments,
 	}
 
-	return &dashboardData, nil
+	return &ret, nil
 }
 
 func getNodes(s *state.State) (*nodesResult, error) {
@@ -154,7 +161,7 @@ func getNodes(s *state.State) (*nodesResult, error) {
 			LastHeartbeatTime: time.Since(lastCondition.LastHeartbeatTime.Time).Truncate(time.Second),
 			Version:           currNode.Status.NodeInfo.KubeletVersion,
 			EtcdOK:            findNodeEtcd(controlPlaneStatus, currNode.Name),
-			APIServerOK:       findNodeApiServer(controlPlaneStatus, currNode.Name),
+			APIServerOK:       findNodeAPIServer(controlPlaneStatus, currNode.Name),
 		}
 
 		if isControlPlane {
@@ -199,11 +206,11 @@ func getMachineDeployments(state *state.State) ([]machineDeployment, error) {
 		},
 		)
 	}
+
 	return result, nil
 }
 
 func getMachines(state *state.State, md *clusterv1alpha1.MachineDeployment) ([]machine, error) {
-
 	// filter MachineSets owned by the MachineDeployment
 	machineSets := clusterv1alpha1.MachineSetList{}
 	if err := state.DynamicClient.List(state.Context, &machineSets); err != nil {
@@ -236,11 +243,7 @@ func getMachines(state *state.State, md *clusterv1alpha1.MachineDeployment) ([]m
 
 	result := []machine{}
 	for _, currMachine := range filteredMachines {
-
-		address, err := getExternalIp(&currMachine)
-		if err != nil {
-			return nil, err
-		}
+		address := getExternalIP(&currMachine)
 
 		result = append(result, machine{
 			Namespace: currMachine.Namespace,
@@ -266,7 +269,7 @@ func findNodeEtcd(nodes []clusterstatus.NodeStatus, search string) bool {
 	return false
 }
 
-func findNodeApiServer(nodes []clusterstatus.NodeStatus, search string) bool {
+func findNodeAPIServer(nodes []clusterstatus.NodeStatus, search string) bool {
 	for _, cp := range nodes {
 		if cp.NodeName == search {
 			return cp.APIServer
@@ -276,11 +279,11 @@ func findNodeApiServer(nodes []clusterstatus.NodeStatus, search string) bool {
 	return false
 }
 
-func getExternalIp(machine *clusterv1alpha1.Machine) (string, error) {
+func getExternalIP(machine *clusterv1alpha1.Machine) string {
 	addressIndex := slices.IndexFunc(machine.Status.Addresses, func(a corev1.NodeAddress) bool { return a.Type == "ExternalIP" })
 	if addressIndex >= 0 {
-		return machine.Status.Addresses[addressIndex].Address, nil
+		return machine.Status.Addresses[addressIndex].Address
 	}
 	// TODO what if no external ip address
-	return "", nil
+	return ""
 }
