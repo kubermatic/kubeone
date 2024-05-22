@@ -205,18 +205,19 @@ func getMachineDeployments(state *state.State) ([]machineDeployment, error) {
 	}
 
 	result := []machineDeployment{}
-	for _, md := range machineDeployments.Items {
-		machines, err := getMachines(state, &md)
+	for i := range machineDeployments.Items {
+		currMachineDeployment := &machineDeployments.Items[i]
+		machines, err := getMachines(state, currMachineDeployment)
 		if err != nil {
 			return nil, err
 		}
 		result = append(result, machineDeployment{
-			Namespace:         md.Namespace,
-			Name:              md.Name,
-			Replicas:          int(*md.Spec.Replicas),
-			AvailableReplicas: int(md.Status.AvailableReplicas),
-			Kubelet:           md.Spec.Template.Spec.Versions.Kubelet,
-			Age:               time.Since(md.CreationTimestamp.Time).Truncate(time.Second),
+			Namespace:         currMachineDeployment.Namespace,
+			Name:              currMachineDeployment.Name,
+			Replicas:          int(*currMachineDeployment.Spec.Replicas),
+			AvailableReplicas: int(currMachineDeployment.Status.AvailableReplicas),
+			Kubelet:           currMachineDeployment.Spec.Template.Spec.Versions.Kubelet,
+			Age:               time.Since(currMachineDeployment.CreationTimestamp.Time).Truncate(time.Second),
 			Machines:          &machines,
 		},
 		)
@@ -257,8 +258,9 @@ func getMachines(state *state.State, md *clusterv1alpha1.MachineDeployment) ([]m
 	}
 
 	result := []machine{}
-	for _, currMachine := range filteredMachines {
-		address := getExternalIP(&currMachine)
+	for i := range filteredMachines {
+		currMachine := &filteredMachines[i]
+		address := getExternalIP(currMachine)
 
 		result = append(result, machine{
 			Namespace: currMachine.Namespace,
