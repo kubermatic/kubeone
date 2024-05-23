@@ -27,6 +27,7 @@ import (
 	"k8c.io/kubeone/pkg/templates/externalccm"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
 	"k8c.io/kubeone/pkg/templates/operatingsystemmanager"
+	"k8c.io/kubeone/pkg/workloads"
 	"k8c.io/kubeone/pkg/workloads/addons"
 	"k8c.io/kubeone/pkg/workloads/localhelm"
 )
@@ -265,7 +266,7 @@ func WithResources(t Tasks) Tasks {
 				Description: "ensure embedded addons",
 			},
 			{
-				Fn:        nil,
+				Fn:        workloads.Ensure,
 				Operation: "reconcile addons and helm releases",
 			},
 			{
@@ -276,7 +277,11 @@ func WithResources(t Tasks) Tasks {
 			},
 			{
 				Fn:        localhelm.Deploy,
-				Operation: "releasing core helm charts",
+				Operation: "releasing helm charts",
+			},
+			{
+				Fn:        localhelm.Uninstall,
+				Operation: "uninstall helm releases",
 			},
 			{
 				Fn:          ensureCABundleConfigMap,

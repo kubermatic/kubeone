@@ -33,6 +33,36 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+func File(st *state.State) (*os.File, func(), error) {
+	konfigBuf, err := Download(st)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	tmpKubeConf, err := os.CreateTemp("", "kubeone-kubeconfig-*")
+	if err != nil {
+		return nil, nil, fail.Runtime(err, "creating temp file for helm kubeconfig")
+	}
+
+	cleanupFn := func() {
+		name := tmpKubeConf.Name()
+		tmpKubeConf.Close()
+		os.Remove(name)
+	}
+
+	n, err := tmpKubeConf.Write(konfigBuf)
+	if err != nil {
+		cleanupFn()
+		return nil, nil, fail.Runtime(err, "wring temp file for helm kubeconfig")
+	}
+	if n != len(konfigBuf) {
+		cleanupFn()
+		return nil, nil, fail.NewRuntimeError("incorrect number of bytes written to temp kubeconfig", "")
+	}
+
+	return tmpKubeConf, cleanupFn, nil
+}
+
 // Download downloads Kubeconfig over SSH
 func Download(s *state.State) ([]byte, error) {
 	// connect to host

@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 	"sort"
 
 	"github.com/google/go-cmp/cmp"
@@ -59,111 +60,88 @@ const (
 )
 
 func Deploy(st *state.State) error {
-	konfigBuf, err := kubeconfig.Download(st)
+	tmpKubeConf, cleanupFn, err := kubeconfig.File(st)
 	if err != nil {
 		return err
 	}
+	defer cleanupFn()
 
-	tmpKubeConf, err := os.CreateTemp("", "kubeone-kubeconfig-*")
-	if err != nil {
-		return fail.Runtime(err, "creating temp file for helm kubeconfig")
-	}
-	defer func() {
-		name := tmpKubeConf.Name()
-		tmpKubeConf.Close()
-		os.Remove(name)
-	}()
-
-	n, err := tmpKubeConf.Write(konfigBuf)
-	if err != nil {
-		return fail.Runtime(err, "wring temp file for helm kubeconfig")
-	}
-	if n != len(konfigBuf) {
-		return fail.NewRuntimeError("incorrect number of bytes written to temp kubeconfig", "")
-	}
-
-	helmSettings := newHelmSettings(st.Verbose)
-	helmCfg, err := newActionConfiguration(helmSettings.Debug)
-	if err != nil {
-		return err
-	}
-
-	kubeClient, err := kubernetes.NewForConfig(st.RESTConfig)
-	if err != nil {
-		return fail.Config(err, "init new kubernetes client")
-	}
-
-	// all namespaces
-	noNamespaceSecretsClient := kubeClient.CoreV1().Secrets("")
-	releasesToUninstall, err := driver.
-		NewSecrets(noNamespaceSecretsClient).
-		List(releasesFilterFn(st.Cluster.HelmReleases, st.Logger))
+	helmSettings := NewHelmSettings(st.Verbose)
+	helmCfg, err := NewActionConfiguration(helmSettings.Debug)
 	if err != nil {
 		return err
 	}
 
 	for _, release := range st.Cluster.HelmReleases {
-		var valueFiles []string
-		for _, value := range release.Values {
-			if value.ValuesFile != "" {
-				valueFiles = append(valueFiles, value.ValuesFile)
-			}
-
-			if value.Inline != nil {
-				inlineValues, errTmp := os.CreateTemp("", "inline-helm-values-*")
-				if errTmp != nil {
-					return fail.Runtime(errTmp, "creating temp file for helm inline values")
-				}
-
-				inlineValuesName := inlineValues.Name()
-				defer os.Remove(inlineValuesName)
-
-				valuesBuf := bytes.NewBuffer(value.Inline)
-				_, err = io.Copy(inlineValues, valuesBuf)
-				if err != nil {
-					inlineValues.Close()
-
-					return fail.Runtime(err, "copying helm inline values to the temp file")
-				}
-
-				inlineValues.Close()
-				valueFiles = append(valueFiles, inlineValuesName)
-			}
-		}
-
-		valueOpts := &values.Options{
-			ValueFiles: valueFiles,
-		}
-		providers := getter.All(helmSettings)
-		vals, errMerge := valueOpts.MergeValues(providers)
-		if errMerge != nil {
-			return fail.Runtime(errMerge, "merging helm values")
-		}
-
-		restClientGetter := newRestClientGetter(tmpKubeConf.Name(), release.Namespace, st)
-		if err = helmCfg.Init(restClientGetter, release.Namespace, helmStorageDriver, st.Logger.Debugf); err != nil {
-			return fail.Runtime(err, "initializing helm action configuration")
-		}
-
-		histClient := helmaction.NewHistory(helmCfg)
-		histClient.Max = 1
-		existingReleases, err := histClient.Run(release.ReleaseName)
-
-		switch {
-		case errors.Is(err, driver.ErrReleaseNotFound):
-			if err = installRelease(st.Context, helmCfg, release, helmSettings, providers, st.DynamicClient, vals, st.Logger); err != nil {
-				return err
-			}
-		case err == nil:
-			if err = upgradeRelease(st.Context, helmCfg, release, helmSettings, providers, st.DynamicClient, vals, existingReleases, st.Logger); err != nil {
-				return err
-			}
-		default:
-			return fail.Runtime(err, "helm releases history")
+		if err := DeployRelease(st, release, helmSettings, tmpKubeConf, helmCfg); err != nil {
+			return err
 		}
 	}
 
-	return uninstallReleases(releasesToUninstall, helmCfg, tmpKubeConf.Name(), st)
+	return nil
+}
+
+func DeployRelease(st *state.State, release kubeoneapi.HelmRelease, helmSettings *helmcli.EnvSettings, kubeconfig *os.File, helmCfg *helmaction.Configuration) error {
+	var valueFiles []string
+	for _, value := range release.Values {
+		if value.ValuesFile != "" {
+			valueFiles = append(valueFiles, value.ValuesFile)
+		}
+
+		if value.Inline != nil {
+			inlineValues, errTmp := os.CreateTemp("", "inline-helm-values-*")
+			if errTmp != nil {
+				return fail.Runtime(errTmp, "creating temp file for helm inline values")
+			}
+
+			inlineValuesName := inlineValues.Name()
+			defer os.Remove(inlineValuesName)
+
+			valuesBuf := bytes.NewBuffer(value.Inline)
+			_, err := io.Copy(inlineValues, valuesBuf)
+			if err != nil {
+				inlineValues.Close()
+
+				return fail.Runtime(err, "copying helm inline values to the temp file")
+			}
+
+			inlineValues.Close()
+			valueFiles = append(valueFiles, inlineValuesName)
+		}
+	}
+
+	valueOpts := &values.Options{
+		ValueFiles: valueFiles,
+	}
+	providers := getter.All(helmSettings)
+	vals, errMerge := valueOpts.MergeValues(providers)
+	if errMerge != nil {
+		return fail.Runtime(errMerge, "merging helm values")
+	}
+
+	restClientGetter := newRestClientGetter(kubeconfig.Name(), release.Namespace, st)
+	if err := helmCfg.Init(restClientGetter, release.Namespace, helmStorageDriver, st.Logger.Debugf); err != nil {
+		return fail.Runtime(err, "initializing helm action configuration")
+	}
+
+	histClient := helmaction.NewHistory(helmCfg)
+	histClient.Max = 1
+	existingReleases, err := histClient.Run(release.ReleaseName)
+
+	switch {
+	case errors.Is(err, driver.ErrReleaseNotFound):
+		if err = installRelease(st.Context, helmCfg, release, helmSettings, providers, st.DynamicClient, vals, st.Logger); err != nil {
+			return err
+		}
+	case err == nil:
+		if err = upgradeRelease(st.Context, helmCfg, release, helmSettings, providers, st.DynamicClient, vals, existingReleases, st.Logger); err != nil {
+			return err
+		}
+	default:
+		return fail.Runtime(err, "helm releases history")
+	}
+
+	return nil
 }
 
 func releasesFilterFn(helmReleases []kubeoneapi.HelmRelease, logger logrus.FieldLogger) func(rel *helmrelease.Release) bool {
@@ -183,7 +161,7 @@ func releasesFilterFn(helmReleases []kubeoneapi.HelmRelease, logger logrus.Field
 	}
 }
 
-func newHelmSettings(verbose bool) *helmcli.EnvSettings {
+func NewHelmSettings(verbose bool) *helmcli.EnvSettings {
 	helmSettings := helmcli.New()
 	helmSettings.Debug = verbose
 
@@ -344,13 +322,48 @@ func runInstallRelease(
 	return rel, nil
 }
 
+func Uninstall(st *state.State) error {
+	tmpKubeConf, cleanupFn, err := kubeconfig.File(st)
+	if err != nil {
+		return err
+	}
+	defer cleanupFn()
+
+	helmCfg, err := NewActionConfiguration(st.Verbose)
+	if err != nil {
+		return err
+	}
+
+	return uninstallReleases(st, helmCfg, tmpKubeConf.Name())
+}
+
 func uninstallReleases(
-	toUninstall []*helmrelease.Release,
+	st *state.State,
 	helmCfg *helmaction.Configuration,
 	kubeconfPath string,
-	st *state.State,
 ) error {
 	logger := st.Logger
+
+	kubeClient, err := kubernetes.NewForConfig(st.RESTConfig)
+	if err != nil {
+		return fail.Config(err, "init new kubernetes client")
+	}
+
+	releasesToKeep := slices.Clone(st.Cluster.HelmReleases)
+
+	for _, wk := range st.Cluster.Workloads {
+		if wk.HelmRelease != nil {
+			releasesToKeep = append(releasesToKeep, *wk.HelmRelease)
+		}
+	}
+
+	// all namespaces
+	noNamespaceSecretsClient := kubeClient.CoreV1().Secrets("")
+	toUninstall, err := driver.NewSecrets(noNamespaceSecretsClient).List(releasesFilterFn(releasesToKeep, st.Logger))
+	if err != nil {
+		return err
+	}
+
 	for _, release := range toUninstall {
 		restClientGetter := newRestClientGetter(kubeconfPath, release.Namespace, st)
 		if err := helmCfg.Init(restClientGetter, release.Namespace, helmStorageDriver, logger.Debugf); err != nil {
@@ -456,7 +469,7 @@ func dependencyUpdate(chartPath string, helmSettings *helmcli.EnvSettings, provi
 	return chartRequested, nil
 }
 
-func newActionConfiguration(debug bool) (*helmaction.Configuration, error) {
+func NewActionConfiguration(debug bool) (*helmaction.Configuration, error) {
 	registryClient, err := registry.NewClient(
 		registry.ClientOptDebug(debug),
 		registry.ClientOptEnableCache(true),
