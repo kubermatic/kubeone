@@ -217,7 +217,7 @@ variable "ami_filters" {
 
     rockylinux = {
       owners       = ["792107900819"] # RockyLinux
-      image_name   = ["Rocky-8-ec2-*.x86_64"]
+      image_name   = ["Rocky-8-EC2-*.x86_64"]
       ssh_username = "rocky"
       worker_os    = "rockylinux"
     }
