@@ -71,6 +71,7 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_MachineController(obj)
 	SetDefaults_OperatingSystemManager(obj)
 	SetDefaults_HelmReleases(obj)
+	SetDefaults_Workloads(obj)
 	SetDefaults_SystemPackages(obj)
 	SetDefaults_Features(obj)
 	SetDefaults_CloudConfig(obj)
@@ -249,10 +250,22 @@ func SetDefaults_OperatingSystemManager(obj *KubeOneCluster) {
 	}
 }
 
+func defaulHelmRelease(hr *HelmRelease) {
+	if hr.ReleaseName == "" {
+		hr.ReleaseName = hr.Chart
+	}
+}
+
 func SetDefaults_HelmReleases(obj *KubeOneCluster) {
-	for idx, hr := range obj.HelmReleases {
-		if hr.ReleaseName == "" {
-			obj.HelmReleases[idx].ReleaseName = hr.Chart
+	for idx := range obj.HelmReleases {
+		defaulHelmRelease(&obj.HelmReleases[idx])
+	}
+}
+
+func SetDefaults_Workloads(obj *KubeOneCluster) {
+	for idx, wk := range obj.Workloads {
+		if wk.HelmRelease != nil {
+			defaulHelmRelease(obj.Workloads[idx].HelmRelease)
 		}
 	}
 }
