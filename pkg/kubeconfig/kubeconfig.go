@@ -53,10 +53,12 @@ func File(st *state.State) (*os.File, func(), error) {
 	n, err := tmpKubeConf.Write(konfigBuf)
 	if err != nil {
 		cleanupFn()
+
 		return nil, nil, fail.Runtime(err, "wring temp file for helm kubeconfig")
 	}
 	if n != len(konfigBuf) {
 		cleanupFn()
+
 		return nil, nil, fail.NewRuntimeError("incorrect number of bytes written to temp kubeconfig", "")
 	}
 

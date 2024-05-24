@@ -78,6 +78,7 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateFeatures(c.Features, c.Versions, field.NewPath("features"))...)
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
 	allErrs = append(allErrs, ValidateHelmReleases(c.HelmReleases, field.NewPath("helmReleases"))...)
+	allErrs = append(allErrs, ValidateWorkloads(c.Workloads, field.NewPath("workloads"))...)
 	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
 	allErrs = append(allErrs, ValidateControlPlaneComponents(c.ControlPlaneComponents, field.NewPath("controlPlaneComponents"))...)
 	allErrs = append(allErrs,
@@ -725,6 +726,20 @@ func ValidateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.
 					)
 				}
 			}
+		}
+	}
+
+	return allErrs
+}
+
+func ValidateWorkloads(workloads []kubeoneapi.Workload, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	for _, wk := range workloads {
+		switch {
+		case wk.Addon != nil:
+		case wk.HelmRelease != nil:
+			allErrs = append(allErrs, ValidateHelmReleases([]kubeoneapi.HelmRelease{*wk.HelmRelease}, fldPath)...)
 		}
 	}
 
