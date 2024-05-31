@@ -737,21 +737,6 @@ type SystemPackages struct {
 	ConfigureRepositories bool `json:"configureRepositories,omitempty"`
 }
 
-// ImageAsset is used to customize the image repository and the image tag
-type ImageAsset struct {
-	// ImageRepository customizes the registry/repository
-	ImageRepository string `json:"imageRepository,omitempty"`
-
-	// ImageTag customizes the image tag
-	ImageTag string `json:"imageTag,omitempty"`
-}
-
-// BinaryAsset is used to customize the URL of the binary asset
-type BinaryAsset struct {
-	// URL from where to download the binary
-	URL string `json:"url,omitempty"`
-}
-
 // RegistryConfiguration controls how images used for components deployed by
 // KubeOne and kubeadm are pulled from an image registry
 type RegistryConfiguration struct {
