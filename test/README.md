@@ -60,7 +60,7 @@ Currently we have 3 basic scenarios to run:
 ## Infras
 
 Infra references the terraform config to use and it's variables. Multiplied
-together with Scenarios they form a matrix of diffeernt cloud providers /
+together with Scenarios they form a matrix of different cloud providers /
 version / configuration options
 
 ## Regenerating tests
@@ -75,7 +75,7 @@ Will rerun `go generate` in respected directories.
 
 Infras and Scenarios are being defined in [tests_definitions.go](e2e/tests_definitions.go).
 
-Those definitions are used to express the veriability of available configs /
+Those definitions are used to express the variability of available configs /
 things to test.
 
 Once definitions with needed configs are written down, they can be referenced in
@@ -91,7 +91,7 @@ plus prow.yaml config with corresponding calls to generated test functions.
 
 There is a shell [go-test-e2e.sh](go-test-e2e.sh) scrint to run small setup
 procedures (like generating SSH keys and extracting auth variables from
-envirionmen). It's being used in generated prow cases. It's possible to launch
+environment). It's being used in generated prow cases. It's possible to launch
 it manually.
 
 ```shell
