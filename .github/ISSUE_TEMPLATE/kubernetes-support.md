@@ -24,11 +24,11 @@ This is a collector issue for Kubernetes 1.2x support in KubeOne. The following 
 * [ ] Check the Kubernetes changelog to ensure there are no breaking changes and removals
 * [ ] Update the `build` image to update Sonobuoy (and other dependencies if needed)
 * [ ] Update the latest supported Kubernetes version in [the API validation](https://github.com/kubermatic/kubeone/blob/main/pkg/apis/kubeone/validation/validation.go#L40-L41) <!-- (link to the PR) -->
-* [ ] Update [default admission controllers](https://github.com/kubermatic/kubeone/blob/main/pkg/kubeflags/data.go) if needed <!-- (link to the PR) -->
-* [ ] Update `pause` image version in `pkg/apis/kubeone`  if needed <!-- (link to the PR) -->
+* [ ] Update [default admission controllers](https://github.com/kubermatic/kubeone/blob/main/pkg/kubeflags/data.go) if needed. It can be obtained via `docker run --rm registry.k8s.io/kube-apiserver:v${KUBERNETES_VERSION} kube-apiserver -h | grep "admission-control"` <!-- (link to the PR) -->
+* [ ] Update `pause` image version in `pkg/apis/kubeone/helpers.go` if needed. You can use `crane ls registry.k8s.io/pause` to search for newer versions of the pause image. <!-- (link to the PR) -->
 * [ ] Update [the stable version marker in Makefile](https://github.com/kubermatic/kubeone/blob/5273f9a372736569c6b09b38f2959019d29e4d6a/Makefile#L24) <!-- (link to the PR) -->
-* [ ] Update [machine-controller and operating-system-manager](https://github.com/kubermatic/kubeone/blob/a5c3a14725bf135cb2682c4ec96d5872b165b98f/pkg/templates/images/images.go#L222-L224) <!-- (link to the PR) -->
-* [ ] Add E2E tests <!-- (link to the PR) -->
+* [ ] Update [machine-controller, operating-system-manager, and metrics server](https://github.com/kubermatic/kubeone/blob/a5c3a14725bf135cb2682c4ec96d5872b165b98f/pkg/templates/images/images.go#L222-L224) <!-- (link to the PR) -->
+* [ ] Add E2E tests inside `tests.yml` <!-- (link to the PR) -->
 * [ ] Update daily periodics to use the latest Kubernetes release
 * [ ] Update [the Compatibility Matrix](https://docs.kubermatic.com/kubeone/main/architecture/compatibility/supported-versions/) <!-- (link to the PR) -->
 * [ ] Create an issue to track updating [images](https://github.com/kubermatic/kubeone/blob/main/pkg/templates/images/images.go) <!-- link to the issue -->
