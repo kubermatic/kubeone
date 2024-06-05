@@ -36,7 +36,7 @@ import (
 )
 
 const (
-	kubeoneStableBaseRef = "release/v1.7"
+	kubeoneStableBaseRef = "release/v1.8"
 )
 
 type scenarioUpgrade struct {
