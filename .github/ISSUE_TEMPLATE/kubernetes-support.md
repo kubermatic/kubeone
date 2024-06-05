@@ -35,7 +35,7 @@ This is a collector issue for Kubernetes 1.2x support in KubeOne. The following 
 
 Tips & Tricks:
 
-* You can use `crane ls <url of the image>` to search for newer versions of  images
+* Sometimes the image tag does no match any official GitHub Release name. In these cases `crane ls <url of the image>` can be used to check if a new version of an image exists. Nonetheless, changelog still needs to be checked if the new version introduces any breaking changes
 * Default Admission Controllers can be obtained via `docker run --rm registry.k8s.io/kube-apiserver:v${KUBERNETES_VERSION} kube-apiserver -h | grep "admission-control"`
 
 <!--
