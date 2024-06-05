@@ -1198,60 +1198,6 @@ func TestGceDefaultInstallContainerdV1_28_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosInstallContainerdV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["install_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureDefaultInstallContainerdV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_default"]
-	scenario := Scenarios["install_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureFlatcarInstallContainerdV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_flatcar"]
-	scenario := Scenarios["install_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureRhelInstallContainerdV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_rhel"]
-	scenario := Scenarios["install_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureRockylinuxInstallContainerdV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_rockylinux"]
-	scenario := Scenarios["install_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestGceDefaultInstallContainerdV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["gce_default"]
-	scenario := Scenarios["install_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureCentosStableUpgradeContainerdFromV1_27_11_ToV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_centos_stable"]
@@ -1303,60 +1249,6 @@ func TestGceDefaultStableUpgradeContainerdFromV1_27_11_ToV1_28_7(t *testing.T) {
 	scenario := Scenarios["upgrade_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11", "v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureCentosStableUpgradeContainerdFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos_stable"]
-	scenario := Scenarios["upgrade_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureDefaultStableUpgradeContainerdFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_default_stable"]
-	scenario := Scenarios["upgrade_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureFlatcarStableUpgradeContainerdFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_flatcar_stable"]
-	scenario := Scenarios["upgrade_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureRhelStableUpgradeContainerdFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_rhel_stable"]
-	scenario := Scenarios["upgrade_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureRockylinuxStableUpgradeContainerdFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_rockylinux_stable"]
-	scenario := Scenarios["upgrade_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestGceDefaultStableUpgradeContainerdFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["gce_default_stable"]
-	scenario := Scenarios["upgrade_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
 	scenario.Run(ctx, t)
 }
 
@@ -5176,12 +5068,12 @@ func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_30_1(t *testing.T)
 	scenario.Run(ctx, t)
 }
 
-func TestAwsDefaultKubeProxyIpvsExternalV1_28_7(t *testing.T) {
+func TestAwsDefaultKubeProxyIpvsExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["kube_proxy_ipvs_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
+	scenario.SetVersions("v1.30.1")
 	scenario.Run(ctx, t)
 }
 
@@ -6370,59 +6262,5 @@ func TestGceDefaultCsiCcmMigrationV1_28_7(t *testing.T) {
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureCentosCsiCcmMigrationV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureDefaultCsiCcmMigrationV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_default"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureFlatcarCsiCcmMigrationV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_flatcar"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureRhelCsiCcmMigrationV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_rhel"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureRockylinuxCsiCcmMigrationV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_rockylinux"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestGceDefaultCsiCcmMigrationV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["gce_default"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
 	scenario.Run(ctx, t)
 }
