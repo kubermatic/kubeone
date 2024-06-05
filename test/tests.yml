@@ -707,9 +707,8 @@
   infrastructures:
     - name: aws_long_timeout_default
 
-# TODO what about this one?
 - scenario: kube_proxy_ipvs_external
-  initVersion: v1.28.7
+  initVersion: v1.30.1
   infrastructures:
     - name: aws_default
 
