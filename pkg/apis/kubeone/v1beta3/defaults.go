@@ -20,6 +20,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/Masterminds/semver/v3"
 
@@ -253,6 +254,10 @@ func SetDefaults_HelmReleases(obj *KubeOneCluster) {
 	for idx, hr := range obj.HelmReleases {
 		if hr.ReleaseName == "" {
 			obj.HelmReleases[idx].ReleaseName = hr.Chart
+		}
+
+		if hr.WaitTimeout == 0 {
+			obj.HelmReleases[idx].WaitTimeout = time.Minute * 5
 		}
 	}
 }

@@ -81,6 +81,7 @@ download-gocache:
 update-codegen: GOFLAGS = -mod=readonly
 update-codegen: vendor
 	./hack/update-codegen.sh
+	rm -rf ./vendor
 
 .PHONY: test
 test: download-gocache
