@@ -120,27 +120,24 @@ func listImages(opts *listImagesOpts) error {
 	if configErr == nil {
 		// Custom loading of the config is needed to avoid "normal" validation process, but we here don't care about
 		// validity of the config, the only part that's needed is `.RegistryConfiguration`
-		func() {
-			var conf kubeonev1beta3.KubeOneCluster
-			if err := yaml.Unmarshal(configBuf, &conf); err != nil {
-				// we don't care if there was an error, just proceed like there was no manifest file given at all
-				return
+		var conf kubeonev1beta3.KubeOneCluster
+		if err := yaml.Unmarshal(configBuf, &conf); err != nil {
+			return err
+		}
+
+		overRegGetter := images.WithOverwriteRegistryGetter(func() string {
+			if rc := conf.RegistryConfiguration; rc != nil {
+				return rc.OverwriteRegistry
 			}
 
-			overRegGetter := images.WithOverwriteRegistryGetter(func() string {
-				if rc := conf.RegistryConfiguration; rc != nil {
-					return rc.OverwriteRegistry
-				}
+			return ""
+		})
 
-				return ""
-			})
+		kubeVerGetter := images.WithKubernetesVersionGetter(func() string {
+			return conf.Versions.Kubernetes
+		})
 
-			kubeVerGetter := images.WithKubernetesVersionGetter(func() string {
-				return conf.Versions.Kubernetes
-			})
-
-			resolveropts = append(resolveropts, overRegGetter, kubeVerGetter)
-		}()
+		resolveropts = append(resolveropts, overRegGetter, kubeVerGetter)
 	}
 
 	if opts.KubernetesVersion != "" {
