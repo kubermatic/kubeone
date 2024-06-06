@@ -45,35 +45,14 @@ spec:
           args:
             - -health-probe-address=0.0.0.0:8085
             - -metrics-address=0.0.0.0:8080
-            {{ if .Config.Features.NodeLocalDNS.Deploy -}}
-            - -cluster-dns={{ .Resources.NodeLocalDNSVirtualIP }}
-            {{ end -}}
             - -node-csr-approver
             {{ if .Config.CloudProvider.External -}}
             - -node-external-cloud-provider
-            {{ end }}
-            - -join-cluster-timeout=15m
-            - -node-container-runtime={{ .Config.ContainerRuntime }}
-            {{ range .Config.ContainerRuntime.MachineControllerFlags -}}
-            - {{ . }}
-            {{ end -}}
-            {{ with .Config.Proxy.HTTP -}}
-            - -node-http-proxy={{ . }}
-            {{ end -}}
-            {{ with .Config.Proxy.NoProxy -}}
-            - -node-no-proxy={{ . }}
-            {{ end -}}
-            {{ with .Config.RegistryConfiguration.InsecureRegistryAddress -}}
-            - -node-insecure-registries={{ . }}
             {{ end -}}
             {{ if .Config.CABundle -}}
             - -ca-bundle={{ .Resources.CABundleSSLCertFilePath }}
             {{ end -}}
-            {{ if .OperatingSystemManagerEnabled -}}
-            - -use-osm
-            {{ end -}}
-            - -node-kubelet-repository={{ .Resources.KubeletImageRepository }}
-            - -node-pause-image={{ .InternalImages.Get "PauseImage" }}
+            - -join-cluster-timeout=15m
           env:
             - name: HTTPS_PROXY
               value: "{{ .Config.Proxy.HTTPS }}"

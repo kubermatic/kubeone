@@ -85,20 +85,17 @@ spec:
           args:
             - -listen-address=0.0.0.0:9876
             - -namespace=kube-system
-            - -tls-cert-path=/tmp/cert/cert.pem
-            - -tls-key-path=/tmp/cert/key.pem
-            {{ if .Config.CloudProvider.External }}
+            {{ if .Config.CloudProvider.External -}}
             - -node-external-cloud-provider
-            {{ end }}
-            {{ if .CSIMigrationFeatureGates }}
+            {{ end -}}
+            {{ if .CSIMigrationFeatureGates -}}
             - -node-kubelet-feature-gates={{ .CSIMigrationFeatureGates }}
-            {{ end }}
+            {{ end -}}
             {{ if .Config.CABundle -}}
             - -ca-bundle={{ .Resources.CABundleSSLCertFilePath }}
             {{ end -}}
-            {{ if .OperatingSystemManagerEnabled }}
-            - -use-osm
-            {{ end }}
+            - -tls-cert-path=/tmp/cert/cert.pem
+            - -tls-key-path=/tmp/cert/key.pem
           env:
             - name: HTTPS_PROXY
               value: "{{ .Config.Proxy.HTTPS }}"
