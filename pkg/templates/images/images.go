@@ -271,7 +271,7 @@ func optionalResources() map[Resource]map[string]string {
 		AzureDiskCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.0.1"}, // use non-MCR image until 8.x is mirrored in MCR
 
 		// DigitalOcean CCM
-		DigitaloceanCCM: {"*": "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.47"},
+		DigitaloceanCCM: {"*": "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.53"},
 
 		// DigitalOcean CSI
 		DigitalOceanCSI:                   {"*": "docker.io/digitalocean/do-csi-plugin:v4.8.0"},
