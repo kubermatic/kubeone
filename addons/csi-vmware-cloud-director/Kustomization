@@ -7,7 +7,7 @@ resources:
   - https://raw.githubusercontent.com/vmware/cloud-director-named-disk-csi-driver/1.6.0/manifests/csi-controller.yaml
   - https://raw.githubusercontent.com/vmware/cloud-director-named-disk-csi-driver/1.6.0/manifests/csi-driver.yaml
   - https://raw.githubusercontent.com/vmware/cloud-director-named-disk-csi-driver/1.6.0/manifests/csi-node.yaml
-  # following manifests are slightly modifined versions of the above, augmented with the CLUSTER_ID referece
+  # following manifests are slightly modified versions of the above, augmented with the CLUSTER_ID reference
 
 patches:
   - target:
