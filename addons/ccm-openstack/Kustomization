@@ -1,0 +1,14 @@
+namespace: kube-system
+
+resources:
+  - ccm-openstack.yaml
+
+patches:
+  - target:
+      kind: DaemonSet
+      namespace: kube-system
+      name: openstack-cloud-controller-manager
+    patch: |-
+      - op: replace
+        path: "/spec/template/spec/containers/0/env/0/value"
+        value: "/etc/config/cloud-config"
