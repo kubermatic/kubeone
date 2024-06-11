@@ -1,11 +1,11 @@
-# Source: https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v2.7.0/manifests/vanilla/namespace.yaml
+# Source: https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v3.2.0/manifests/vanilla/namespace.yaml
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: vmware-system-csi
 
-# Source: https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v2.7.0/manifests/vanilla/vsphere-csi-driver.yaml
+# Source: https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v3.2.0/manifests/vanilla/vsphere-csi-driver.yaml
 ---
 apiVersion: v1
 kind: Secret
@@ -167,21 +167,8 @@ roleRef:
 apiVersion: v1
 data:
   "csi-migration": "{{ .CSIMigration }}"
-  "csi-auth-check": "true"
-  "online-volume-extend": "true"
   "trigger-csi-fullsync": "false"
-  "async-query-volume": "true"
-  "block-volume-snapshot": "true"
-  "csi-windows-support": "false"
-  "use-csinode-id": "true"
-  "list-volumes": "true"
   "pv-to-backingdiskobjectid-mapping": "false"
-  "cnsmgr-suspend-create-volume": "true"
-  "topology-preferential-datastores": "true"
-  "max-pvscsi-targets-per-vm": "true"
-  "multi-vcenter-csi-topology": "true"
-  "csi-internal-generated-cluster-id": "true"
-  "listview-tasks": "false"
 kind: ConfigMap
 metadata:
   name: internal-feature-states.csi.vsphere.vmware.com
@@ -213,6 +200,7 @@ metadata:
   name: vsphere-csi-controller
   namespace: vmware-system-csi
   labels:
+    # added as the selector for the PDBs
     app: vsphere-csi-controller
 spec:
   replicas: 3
@@ -326,6 +314,8 @@ spec:
               value: "100"
             - name: INCLUSTER_CLIENT_BURST
               value: "100"
+            - name: GODEBUG
+              value: x509sha1=1,tlsmaxrsasize=16384
             - name: CSI_NAMESPACE
               valueFrom:
                 fieldRef:
@@ -333,6 +323,10 @@ spec:
 {{ if .Config.CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            runAsGroup: 65532
           volumeMounts:
             - mountPath: /etc/cloud
               name: vsphere-config-volume
@@ -369,9 +363,9 @@ spec:
           image: {{ .InternalImages.Get "VsphereCSISyncer" }}
           args:
             - "--leader-election"
-            - "--leader-election-lease-duration=120s"
-            - "--leader-election-renew-deadline=60s"
-            - "--leader-election-retry-period=30s"
+            - "--leader-election-lease-duration=30s"
+            - "--leader-election-renew-deadline=20s"
+            - "--leader-election-retry-period=10s"
             - "--fss-name=internal-feature-states.csi.vsphere.vmware.com"
             - "--fss-namespace=$(CSI_NAMESPACE)"
           imagePullPolicy: "Always"
@@ -391,7 +385,7 @@ spec:
             - name: INCLUSTER_CLIENT_BURST
               value: "100"
             - name: GODEBUG
-              value: x509sha1=1
+              value: x509sha1=1,tlsmaxrsasize=16384
             - name: CSI_NAMESPACE
               valueFrom:
                 fieldRef:
@@ -399,6 +393,10 @@ spec:
 {{ if .Config.CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            runAsGroup: 65532
           volumeMounts:
             - mountPath: /etc/cloud
               name: vsphere-config-volume
@@ -531,8 +529,6 @@ spec:
               value: "true"
             - name: LOGGER_LEVEL
               value: "PRODUCTION" # Options: DEVELOPMENT, PRODUCTION
-            - name: GODEBUG
-              value: x509sha1=1
             - name: CSI_NAMESPACE
               valueFrom:
                 fieldRef:
