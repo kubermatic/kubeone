@@ -390,9 +390,10 @@ func optionalResources() map[Resource]map[string]string {
 
 		// Cluster-autoscaler addon
 		ClusterAutoscaler: {
-			"1.27.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.27.5",
-			"1.28.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.28.2",
-			">= 1.29.0": "registry.k8s.io/autoscaling/cluster-autoscaler:v1.29.0",
+			"1.27.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.27.8",
+			"1.28.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.28.5",
+			"1.29.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.29.3",
+			">= 1.30.0": "registry.k8s.io/autoscaling/cluster-autoscaler:v1.30.1",
 		},
 
 		// CSI Vault Secret Provider
