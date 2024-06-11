@@ -379,14 +379,14 @@ func optionalResources() map[Resource]map[string]string {
 		CalicoVXLANNode:       {"*": "quay.io/calico/node:v3.26.3"},
 
 		// Cilium
-		Cilium:         {"*": "quay.io/cilium/cilium:v1.15.2@sha256:bfeb3f1034282444ae8c498dca94044df2b9c9c8e7ac678e0b43c849f0b31746"},
-		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.15.2@sha256:4dd8f67630f45fcaf58145eb81780b677ef62d57632d7e4442905ad3226a9088"},
+		Cilium:         {"*": "quay.io/cilium/cilium:v1.15.6@sha256:6aa840986a3a9722cd967ef63248d675a87add7e1704740902d5d3162f0c0def"},
+		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.15.6@sha256:5789f0935eef96ad571e4f5565a8800d3a8fbb05265cf6909300cd82fd513c3d"},
 
 		// Hubble
-		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.15.2@sha256:48480053930e884adaeb4141259ff1893a22eb59707906c6d38de2fe01916cb0"},
+		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.15.6@sha256:a0863dd70d081b273b87b9b7ce7e2d3f99171c2f5e202cd57bc6691e51283e0c"},
 		HubbleUI:        {"*": "quay.io/cilium/hubble-ui:v0.13.0@sha256:7d663dc16538dd6e29061abd1047013a645e6e69c115e008bee9ea9fef9a6666"},
 		HubbleUIBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.13.0@sha256:1e7657d997c5a48253bb8dc91ecee75b63018d16ff5e5797e5af367336bc8803"},
-		CiliumCertGen:   {"*": "quay.io/cilium/certgen:v0.1.9@sha256:89a0847753686444daabde9474b48340993bd19c7bea66a46e45b2974b82041f"},
+		CiliumCertGen:   {"*": "quay.io/cilium/certgen:v0.1.12@sha256:bbc5e65e9dc65bc6b58967fe536b7f3b54e12332908aeb0a96a36866b4372b4e"},
 
 		// Cluster-autoscaler addon
 		ClusterAutoscaler: {
