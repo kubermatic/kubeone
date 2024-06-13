@@ -227,8 +227,8 @@ func optionalResources() map[Resource]map[string]string {
 			">= 1.30.0": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.30.1",
 		},
 
-		CSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v6.3.3"},
-		CSISnapshotWebhook:    {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v6.3.3"},
+		CSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v8.0.1"},
+		CSISnapshotWebhook:    {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v8.0.1"},
 
 		// AWS EBS CSI driver
 		AwsEbsCSI:                    {"*": "public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.26.1"},
