@@ -25,7 +25,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
-	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
+	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates/images"
 
@@ -120,7 +120,7 @@ func listImages(opts *listImagesOpts) error {
 	if configErr == nil {
 		// Custom loading of the config is needed to avoid "normal" validation process, but we here don't care about
 		// validity of the config, the only part that's needed is `.RegistryConfiguration`
-		var conf kubeonev1beta1.KubeOneCluster
+		var conf kubeonev1beta3.KubeOneCluster
 		if err := yaml.Unmarshal(configBuf, &conf); err != nil {
 			return err
 		}
@@ -132,11 +132,14 @@ func listImages(opts *listImagesOpts) error {
 
 			return ""
 		})
+
 		kubeVerGetter := images.WithKubernetesVersionGetter(func() string {
 			return conf.Versions.Kubernetes
 		})
+
 		resolveropts = append(resolveropts, overRegGetter, kubeVerGetter)
 	}
+
 	if opts.KubernetesVersion != "" {
 		if configErr == nil {
 			return fail.RuntimeError{

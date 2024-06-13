@@ -1,9 +1,9 @@
 +++
-title = "v1beta2 API Reference"
+title = "v1beta3 API Reference"
 date = 2024-06-05T16:21:27+03:00
 weight = 11
 +++
-## v1beta2
+## v1beta3
 
 * [APIEndpoint](#apiendpoint)
 * [AWSSpec](#awsspec)
@@ -17,7 +17,6 @@ weight = 11
 * [ClusterNetworkConfig](#clusternetworkconfig)
 * [ContainerRuntimeConfig](#containerruntimeconfig)
 * [ContainerRuntimeContainerd](#containerruntimecontainerd)
-* [ContainerRuntimeDocker](#containerruntimedocker)
 * [ContainerdRegistry](#containerdregistry)
 * [ContainerdRegistryAuthConfig](#containerdregistryauthconfig)
 * [ContainerdTLSConfig](#containerdtlsconfig)
@@ -80,7 +79,7 @@ APIEndpoint is the endpoint used to communicate with the Kubernetes API
 | port | Port is the port used to reach to the API. Default value is 6443. | int | false |
 | alternativeNames | AlternativeNames is a list of Subject Alternative Names for the API Server signing cert. | []string | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### AWSSpec
 
@@ -89,7 +88,7 @@ AWSSpec defines the AWS cloud provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### Addon
 
@@ -102,7 +101,7 @@ Addon config
 | disableTemplating | DisableTemplating is used to disable templatization for the addon. | bool | false |
 | delete | Delete flag to ensure the named addon with all its contents to be deleted | bool | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### Addons
 
@@ -115,7 +114,7 @@ Addons config
 | globalParams | GlobalParams to the addon, to render all addons using text/template | map[string]string | false |
 | addons | Addons is a list of config options for named addon | [][Addon](#addon) | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### AzureSpec
 
@@ -124,7 +123,7 @@ AzureSpec defines the Azure cloud provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### CNI
 
@@ -137,7 +136,7 @@ CNI config. Only one CNI provider must be used at the single time.
 | weaveNet | WeaveNet | *[WeaveNetSpec](#weavenetspec) | false |
 | external | External | *[ExternalCNISpec](#externalcnispec) | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### CanalSpec
 
@@ -147,7 +146,7 @@ CanalSpec defines the Canal CNI plugin
 | ----- | ----------- | ------ | -------- |
 | mtu | MTU automatically detected based on the cloudProvider default value is 1450 | int | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### CiliumSpec
 
@@ -158,7 +157,7 @@ CiliumSpec defines the Cilium CNI plugin
 | kubeProxyReplacement | KubeProxyReplacement defines weather cilium relies on underlying Kernel support to replace kube-proxy functionality by eBPF (strict), or disables a subset of those features so cilium does not bail out if the kernel support is missing (disabled). default is \"disabled\" | KubeProxyReplacementType | true |
 | enableHubble | EnableHubble to deploy Hubble relay and UI default value is false | bool | true |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### CloudProviderSpec
 
@@ -184,7 +183,7 @@ Only one cloud provider must be defined at the single time.
 | vsphere | Vsphere | *[VsphereSpec](#vspherespec) | false |
 | none | None | *[NoneSpec](#nonespec) | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### ClusterNetworkConfig
 
@@ -204,7 +203,7 @@ ClusterNetworkConfig describes the cluster network
 | nodeCIDRMaskSizeIPv4 | NodeCIDRMaskSizeIPv4 is the mask size used to address the nodes within provided IPv4 Pods CIDR. It has to be larger than the provided IPv4 Pods CIDR. Defaults to 24. | *int | false |
 | nodeCIDRMaskSizeIPv6 | NodeCIDRMaskSizeIPv6 is the mask size used to address the nodes within provided IPv6 Pods CIDR. It has to be larger than the provided IPv6 Pods CIDR. Defaults to 64. | *int | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### ContainerRuntimeConfig
 
@@ -212,10 +211,9 @@ ContainerRuntimeConfig
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| docker | Dockerd related configurations | *[ContainerRuntimeDocker](#containerruntimedocker) | false |
 | containerd | Containerd related configurations | *[ContainerRuntimeContainerd](#containerruntimecontainerd) | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### ContainerRuntimeContainerd
 
@@ -225,17 +223,7 @@ ContainerRuntimeContainerd defines docker container runtime
 | ----- | ----------- | ------ | -------- |
 | registries | A map of registries to use to render configs and mirrors for containerd registries | map[string][ContainerdRegistry](#containerdregistry) | false |
 
-[Back to Group](#v1beta2)
-
-### ContainerRuntimeDocker
-
-ContainerRuntimeDocker defines docker container runtime
-
-| Field | Description | Scheme | Required |
-| ----- | ----------- | ------ | -------- |
-| registryMirrors | Configures dockerd with \"registry-mirrors\" | []string | true |
-
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### ContainerdRegistry
 
@@ -247,7 +235,7 @@ ContainerdRegistry defines endpoints and security for given container registry
 | tlsConfig | TLSConfig for the registry | *[ContainerdTLSConfig](#containerdtlsconfig) | false |
 | auth | Registry authentication | *[ContainerdRegistryAuthConfig](#containerdregistryauthconfig) | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### ContainerdRegistryAuthConfig
 
@@ -260,7 +248,7 @@ Containerd per-registry credentials config
 | auth |  | string | false |
 | identityToken |  | string | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### ContainerdTLSConfig
 
@@ -270,7 +258,7 @@ Configures containerd TLS for a registry
 | ----- | ----------- | ------ | -------- |
 | insecureSkipVerify | Don't validate remote TLS certificate | bool | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### ControlPlaneComponentConfig
 
@@ -281,7 +269,7 @@ Configures containerd TLS for a registry
 | flags | Flags is a set of additional flags that will be passed to the control plane component. KubeOne internally configures some flags that are eseeential for the cluster to work. Those flags set by KubeOne will be merged with the ones specified in the configuration. In case of conflict the value provided by the user will be used. Usage of `feature-gates` is not allowed here, use `FeatureGates` field instead. IMPORTANT: Use of these flags is at the user's own risk, as KubeOne does not provide support for issues caused by invalid values and configurations. | map[string]string | false |
 | featureGates | FeatureGates is a map of additional feature gates that will be passed on to the control plane component. KubeOne internally configures some feature gates that are eseeential for the cluster to work. Those feature gates set by KubeOne will be merged with the ones specified in the configuration. In case of conflict the value provided by the user will be used. IMPORTANT: Use of these featureGates is at the user's own risk, as KubeOne does not provide support for issues caused by invalid values and configurations. | map[string]bool | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### ControlPlaneComponents
 
@@ -293,7 +281,7 @@ Configures containerd TLS for a registry
 | scheduler | Scheduler configures the Kubernetes Scheduler | *[ControlPlaneComponentConfig](#controlplanecomponentconfig) | false |
 | apiServer | APIServer configures the Kubernetes API Server | *[ControlPlaneComponentConfig](#controlplanecomponentconfig) | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### ControlPlaneConfig
 
@@ -303,7 +291,7 @@ ControlPlaneConfig defines control plane nodes
 | ----- | ----------- | ------ | -------- |
 | hosts | Hosts array of all control plane hosts. | [][HostConfig](#hostconfig) | true |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### CoreDNS
 
@@ -315,7 +303,7 @@ ControlPlaneConfig defines control plane nodes
 | deployPodDisruptionBudget |  | *bool | false |
 | imageRepository | ImageRepository allows users to specify the image registry to be used for CoreDNS. Kubeadm automatically appends `/coredns` at the end, so it's not necessary to specify it. By default it's empty, which means it'll be defaulted based on kubeadm defaults and if overwriteRegistry feature is used. ImageRepository has the highest priority, meaning that it'll override overwriteRegistry if specified. | string | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### DNSConfig
 
@@ -325,7 +313,7 @@ DNSConfig contains a machine's DNS configuration
 | ----- | ----------- | ------ | -------- |
 | servers | Servers | []string | true |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### DigitalOceanSpec
 
@@ -334,7 +322,7 @@ DigitalOceanSpec defines the DigitalOcean cloud provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### DynamicAuditLog
 
@@ -344,7 +332,7 @@ DynamicAuditLog feature flag
 | ----- | ----------- | ------ | -------- |
 | enable | Enable Default value is false. | bool | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### DynamicWorkerConfig
 
@@ -356,7 +344,7 @@ DynamicWorkerConfig describes a set of worker machines
 | replicas | Replicas | *int | true |
 | providerSpec | Config | [ProviderSpec](#providerspec) | true |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### EncryptionProviders
 
@@ -367,7 +355,7 @@ Encryption Providers feature flag
 | enable | Enable | bool | true |
 | customEncryptionConfiguration | CustomEncryptionConfiguration | string | true |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### EquinixMetalSpec
 
@@ -376,7 +364,7 @@ EquinixMetalSpec defines the Equinix Metal cloud provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### ExternalCNISpec
 
@@ -386,7 +374,7 @@ It's up to the user's responsibility to deploy the external CNI plugin manually 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### Features
 
@@ -404,7 +392,7 @@ Features controls what features will be enabled on the cluster
 | encryptionProviders | Encryption Providers | *[EncryptionProviders](#encryptionproviders) | false |
 | nodeLocalDNS | NodeLocalDNS config | *[NodeLocalDNS](#nodelocaldns) | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### GCESpec
 
@@ -413,7 +401,7 @@ GCESpec defines the GCE cloud provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### HelmRelease
 
@@ -431,7 +419,7 @@ GCESpec defines the GCE cloud provider
 | timeout | WaitTimeout --timeout flag of the `helm install` command. | time.Duration | false |
 | values | Values provide optional overrides of the helm values. | [][HelmValues](#helmvalues) | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### HelmValues
 
@@ -442,7 +430,7 @@ HelmValues configure inputs to `helm upgrade --install` command analog.
 | valuesFile | ValuesFile is an optional path on the local file system containing helm values to override. An analog of --values flag of the `helm upgrade` command. | string | false |
 | inline | Inline is optionally used as a convenient way to provide short user input overrides to the helm upgrade process. Is written to a temporary file and used as an analog of the `helm upgrade --values=/tmp/inline-helm-values-XXX` command. | [json.RawMessage](https://golang.org/pkg/encoding/json/#RawMessage) | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### HetznerSpec
 
@@ -452,7 +440,7 @@ HetznerSpec defines the Hetzner cloud provider
 | ----- | ----------- | ------ | -------- |
 | networkID | NetworkID | string | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### HostConfig
 
@@ -461,7 +449,7 @@ HostConfig describes a single control plane node.
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | publicAddress | PublicAddress is externally accessible IP address from public internet. | string | true |
-| ipv6Addresses | IPv6Addresses is IPv6 addresses of the node, only the first one will be announced to the k8s control plane. It is a list because you can request lots of IPv6 addresses (for example in case you want to assign one address per service). | []string | true |
+| ipv6Addresses | IPv6Addresses is a list of IPv6 addresses for the node. Only the first IPv6 address will be announced to the Kubernetes control plane. It is a list because you can request lots of IPv6 addresses (for example in case you want to assign one address per service). | []string | true |
 | privateAddress | PrivateAddress is internal RFC-1918 IP address. | string | true |
 | sshPort | SSHPort is port to connect ssh to. Default value is 22. | int | false |
 | sshUsername | SSHUsername is system login name. Default value is \"root\". | string | false |
@@ -480,7 +468,7 @@ HostConfig describes a single control plane node.
 | kubelet | Kubelet | [KubeletConfig](#kubeletconfig) | false |
 | operatingSystem | OperatingSystem information, can be populated at the runtime. | OperatingSystemName | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### IPTables
 
@@ -489,7 +477,7 @@ IPTables
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### IPVSConfig
 
@@ -504,7 +492,7 @@ IPVSConfig contains different options to configure IPVS kube-proxy mode
 | tcpFinTimeout | tcpFinTimeout is the timeout value used for IPVS TCP sessions after receiving a FIN. The default value is 0, which preserves the current timeout value on the system. | metav1.Duration | true |
 | udpTimeout | udpTimeout is the timeout value used for IPVS UDP packets. The default value is 0, which preserves the current timeout value on the system. | metav1.Duration | true |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### KubeOneCluster
 
@@ -534,7 +522,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | tlsCipherSuites | TLSCipherSuites allows to configure TLS cipher suites for different components. See https://pkg.go.dev/crypto/tls#pkg-constants for possible values. | [TLSCipherSuites](#tlsciphersuites) | true |
 | controlPlaneComponents | ControlPlaneComponents configures the Kubernetes control plane components | *[ControlPlaneComponents](#controlplanecomponents) | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### KubeProxyConfig
 
@@ -546,7 +534,7 @@ KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
 | ipvs | IPVS config | *[IPVSConfig](#ipvsconfig) | true |
 | iptables | IPTables config | *[IPTables](#iptables) | true |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### KubeletConfig
 
@@ -559,7 +547,7 @@ KubeletConfig provides some kubelet configuration options
 | evictionHard | EvictionHard configure --eviction-hard command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
 | maxPods | MaxPods configures maximum number of pods per node. If not provided, default value provided by kubelet will be used (max. 110 pods per node) | *int32 | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### LoggingConfig
 
@@ -570,7 +558,7 @@ LoggingConfig configures the Kubelet's log rotation
 | containerLogMaxSize | ContainerLogMaxSize configures the maximum size of container log file before it is rotated See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/ | string | false |
 | containerLogMaxFiles | ContainerLogMaxFiles configures the maximum number of container log files that can be present for a container See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/ | int32 | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### MachineControllerConfig
 
@@ -580,7 +568,7 @@ MachineControllerConfig configures kubermatic machine-controller deployment
 | ----- | ----------- | ------ | -------- |
 | deploy | Deploy | bool | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### MetricsServer
 
@@ -590,7 +578,7 @@ MetricsServer feature flag
 | ----- | ----------- | ------ | -------- |
 | enable | Enable deployment of metrics-server. Default value is true. | bool | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### NodeLocalDNS
 
@@ -600,7 +588,7 @@ MetricsServer feature flag
 | ----- | ----------- | ------ | -------- |
 | deploy | Deploy is enabled by default | bool | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### NoneSpec
 
@@ -609,7 +597,7 @@ NoneSpec defines a none provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### NutanixSpec
 
@@ -618,7 +606,7 @@ NutanixSpec defines the Nutanix provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### OpenIDConnect
 
@@ -629,7 +617,7 @@ OpenIDConnect feature flag
 | enable | Enable | bool | false |
 | config | Config | [OpenIDConnectConfig](#openidconnectconfig) | true |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### OpenIDConnectConfig
 
@@ -647,7 +635,7 @@ OpenIDConnectConfig config
 | signingAlgs | SigningAlgs | string | false |
 | caFile | CAFile | string | true |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### OpenstackSpec
 
@@ -656,7 +644,7 @@ OpenstackSpec defines the Openstack provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### OperatingSystemManagerConfig
 
@@ -666,7 +654,7 @@ OperatingSystemManagerConfig configures kubermatic operating-system-manager depl
 | ----- | ----------- | ------ | -------- |
 | deploy | Deploy | bool | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### PodNodeSelector
 
@@ -677,7 +665,7 @@ PodNodeSelector feature flag
 | enable | Enable | bool | false |
 | config | Config | [PodNodeSelectorConfig](#podnodeselectorconfig) | true |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### PodNodeSelectorConfig
 
@@ -687,7 +675,7 @@ PodNodeSelectorConfig config
 | ----- | ----------- | ------ | -------- |
 | configFilePath | ConfigFilePath is a path on the local file system to the PodNodeSelector configuration file. ConfigFilePath is a required field. More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podnodeselector | string | true |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### PodSecurityPolicy
 
@@ -699,7 +687,7 @@ Kubernetes 1.24 reaches EOL.
 | ----- | ----------- | ------ | -------- |
 | enable | Enable | bool | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### ProviderSpec
 
@@ -720,7 +708,7 @@ ProviderSpec describes a worker node
 | network | Network | *[ProviderStaticNetworkConfig](#providerstaticnetworkconfig) | false |
 | overwriteCloudConfig | OverwriteCloudConfig | *string | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### ProviderStaticNetworkConfig
 
@@ -733,7 +721,7 @@ ProviderStaticNetworkConfig contains a machine's static network configuration
 | dns | DNS | [DNSConfig](#dnsconfig) | true |
 | ipFamily | IPFamily | IPFamily | true |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### ProxyConfig
 
@@ -745,7 +733,7 @@ ProxyConfig configures proxy for the Docker daemon and is used by KubeOne script
 | https | HTTPS | string | false |
 | noProxy | NoProxy | string | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### RegistryConfiguration
 
@@ -757,7 +745,7 @@ KubeOne and kubeadm are pulled from an image registry
 | overwriteRegistry | OverwriteRegistry specifies a custom Docker registry which will be used for all images required for KubeOne and kubeadm. This also applies to addons deployed by KubeOne. This field doesn't modify the user/organization part of the image. For example, if OverwriteRegistry is set to 127.0.0.1:5000/example, image called calico/cni would translate to 127.0.0.1:5000/example/calico/cni. Default: \"\" | string | false |
 | insecureRegistry | InsecureRegistry configures Docker to threat the registry specified in OverwriteRegistry as an insecure registry. This is also propagated to the worker nodes managed by machine-controller and/or KubeOne. | bool | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### StaticAuditLog
 
@@ -768,7 +756,7 @@ StaticAuditLog feature flag
 | enable | Enable | bool | false |
 | config | Config | [StaticAuditLogConfig](#staticauditlogconfig) | true |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### StaticAuditLogConfig
 
@@ -782,7 +770,7 @@ StaticAuditLogConfig config
 | logMaxBackup | LogMaxBackup is maximum number of audit log files to retain. Default value is 3. | int | false |
 | logMaxSize | LogMaxSize is maximum size in megabytes of audit log file before it gets rotated. Default value is 100. | int | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### StaticWorkersConfig
 
@@ -792,7 +780,7 @@ StaticWorkersConfig defines static worker nodes provisioned by KubeOne and kubea
 | ----- | ----------- | ------ | -------- |
 | hosts | Hosts | [][HostConfig](#hostconfig) | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### SystemPackages
 
@@ -802,7 +790,7 @@ SystemPackages controls configurations of APT/YUM
 | ----- | ----------- | ------ | -------- |
 | configureRepositories | ConfigureRepositories (true by default) is a flag to control automatic configuration of kubeadm / docker repositories. | bool | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### TLSCipherSuites
 
@@ -814,7 +802,7 @@ SystemPackages controls configurations of APT/YUM
 | etcd | Etcd is a list of TLS cipher suites to use in etcd. | []string | false |
 | kubelet | Kubelet is a list of TLS cipher suites to use in kubelet. | []string | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### VMwareCloudDirectorSpec
 
@@ -825,7 +813,7 @@ VMwareCloudDirectorSpec defines the VMware Cloud Director provider
 | vApp | VApp is the name of vApp for VMs. | string | false |
 | storageProfile | StorageProfile is the name of storage profile to be used for disks. | string | true |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### VersionConfig
 
@@ -835,7 +823,7 @@ VersionConfig describes the versions of components that are installed on the mac
 | ----- | ----------- | ------ | -------- |
 | kubernetes |  | string | true |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### VsphereSpec
 
@@ -844,7 +832,7 @@ VsphereSpec defines the vSphere provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)
 
 ### WeaveNetSpec
 
@@ -854,4 +842,4 @@ WeaveNetSpec defines the WeaveNet CNI plugin
 | ----- | ----------- | ------ | -------- |
 | encrypted | Encrypted | bool | false |
 
-[Back to Group](#v1beta2)
+[Back to Group](#v1beta3)

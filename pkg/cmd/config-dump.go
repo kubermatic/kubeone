@@ -26,8 +26,8 @@ import (
 
 	"k8c.io/kubeone/pkg/apis/kubeone/config"
 	kubeonescheme "k8c.io/kubeone/pkg/apis/kubeone/scheme"
-	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
+	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates"
 
@@ -94,15 +94,15 @@ func dumpConfig(opts *configDumpOpts) error {
 	// to validate the merged manifest, we can't avoid this step.
 	var objs []runtime.Object
 	switch typeMeta.APIVersion {
-	case kubeonev1beta1.SchemeGroupVersion.String():
-		versionedCluster := kubeonev1beta1.NewKubeOneCluster()
+	case kubeonev1beta2.SchemeGroupVersion.String():
+		versionedCluster := kubeonev1beta2.NewKubeOneCluster()
 		if cErr := kubeonescheme.Scheme.Convert(cluster, versionedCluster, nil); cErr != nil {
 			return fail.Config(cErr, fmt.Sprintf("converting %s to internal object", versionedCluster.GroupVersionKind()))
 		}
 
 		objs = append(objs, versionedCluster)
-	case kubeonev1beta2.SchemeGroupVersion.String():
-		versionedCluster := kubeonev1beta2.NewKubeOneCluster()
+	case kubeonev1beta3.SchemeGroupVersion.String():
+		versionedCluster := kubeonev1beta3.NewKubeOneCluster()
 		if cErr := kubeonescheme.Scheme.Convert(cluster, versionedCluster, nil); cErr != nil {
 			return fail.Config(cErr, fmt.Sprintf("converting %s to internal object", versionedCluster.GroupVersionKind()))
 		}

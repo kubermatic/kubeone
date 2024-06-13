@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The KubeOne Authors.
+Copyright 2024 The KubeOne Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package v1beta1
+package v1beta3
 
 import (
 	"fmt"
@@ -38,10 +38,14 @@ func SetCloudProvider(cp *CloudProviderSpec, name string) error {
 		cp.GCE = &GCESpec{}
 	case "hetzner":
 		cp.Hetzner = &HetznerSpec{}
+	case "nutanix":
+		cp.Nutanix = &NutanixSpec{}
 	case "openstack":
 		cp.Openstack = &OpenstackSpec{}
-	case "packet", "equinixmetal":
-		cp.Packet = &PacketSpec{}
+	case "equinixmetal", "packet":
+		cp.EquinixMetal = &EquinixMetalSpec{}
+	case "vmwareCloudDirector":
+		cp.VMwareCloudDirector = &VMwareCloudDirectorSpec{}
 	case "vsphere":
 		cp.Vsphere = &VsphereSpec{}
 	case "none":
@@ -51,6 +55,35 @@ func SetCloudProvider(cp *CloudProviderSpec, name string) error {
 	}
 
 	return nil
+}
+
+func (cps *CloudProviderSpec) Name() string {
+	switch {
+	case cps.AWS != nil:
+		return "aws"
+	case cps.Azure != nil:
+		return "azure"
+	case cps.DigitalOcean != nil:
+		return "digitalocean"
+	case cps.GCE != nil:
+		return "gce"
+	case cps.Hetzner != nil:
+		return "hetzner"
+	case cps.Nutanix != nil:
+		return "nutanix"
+	case cps.Openstack != nil:
+		return "openstack"
+	case cps.EquinixMetal != nil:
+		return "equinixmetal"
+	case cps.VMwareCloudDirector != nil:
+		return "vmwareCloudDirector"
+	case cps.Vsphere != nil:
+		return "vsphere"
+	case cps.None != nil:
+		return "none"
+	}
+
+	return "unknown"
 }
 
 // NewKubeOneCluster initialize KubeOneCluster with correct typeMeta

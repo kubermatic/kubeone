@@ -28,13 +28,13 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	kubeonescheme "k8c.io/kubeone/pkg/apis/kubeone/scheme"
-	kubeonev1beta1 "k8c.io/kubeone/pkg/apis/kubeone/v1beta1"
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
+	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
 	kubeonevalidation "k8c.io/kubeone/pkg/apis/kubeone/validation"
 	"k8c.io/kubeone/pkg/containerruntime"
 	"k8c.io/kubeone/pkg/fail"
-	terraformv1beta1 "k8c.io/kubeone/pkg/terraform/v1beta1"
 	terraformv1beta2 "k8c.io/kubeone/pkg/terraform/v1beta2"
+	terraformv1beta3 "k8c.io/kubeone/pkg/terraform/v1beta3"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/yaml"
@@ -50,13 +50,13 @@ const (
 var (
 	// AllowedAPIs contains APIs which are allowed to be used
 	AllowedAPIs = map[string]string{
-		kubeonev1beta1.SchemeGroupVersion.String(): "",
 		kubeonev1beta2.SchemeGroupVersion.String(): "",
+		kubeonev1beta3.SchemeGroupVersion.String(): "",
 	}
 
 	// DeprecatedAPIs contains APIs which are deprecated
 	DeprecatedAPIs = map[string]string{
-		kubeonev1beta1.SchemeGroupVersion.String(): "",
+		kubeonev1beta2.SchemeGroupVersion.String(): "",
 	}
 )
 
@@ -124,13 +124,6 @@ func BytesToKubeOneCluster(cluster, tfOutput, credentialsFile []byte, logger log
 
 	// Parse the cluster bytes depending on the GVK
 	switch typeMeta.APIVersion {
-	case kubeonev1beta1.SchemeGroupVersion.String():
-		v1beta1Cluster := kubeonev1beta1.NewKubeOneCluster()
-		if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, v1beta1Cluster); err != nil {
-			return nil, fail.Config(err, fmt.Sprintf("decoding %s", v1beta1Cluster.GroupVersionKind()))
-		}
-
-		return DefaultedV1Beta1KubeOneCluster(v1beta1Cluster, tfOutput, credentialsFile, logger)
 	case kubeonev1beta2.SchemeGroupVersion.String():
 		v1beta2Cluster := kubeonev1beta2.NewKubeOneCluster()
 		if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, v1beta2Cluster); err != nil {
@@ -138,17 +131,24 @@ func BytesToKubeOneCluster(cluster, tfOutput, credentialsFile []byte, logger log
 		}
 
 		return DefaultedV1Beta2KubeOneCluster(v1beta2Cluster, tfOutput, credentialsFile, logger)
+	case kubeonev1beta3.SchemeGroupVersion.String():
+		v1beta3Cluster := kubeonev1beta3.NewKubeOneCluster()
+		if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, v1beta3Cluster); err != nil {
+			return nil, fail.Config(err, fmt.Sprintf("decoding %s", v1beta3Cluster.GroupVersionKind()))
+		}
+
+		return DefaultedV1Beta3KubeOneCluster(v1beta3Cluster, tfOutput, credentialsFile, logger)
 	default:
 		return nil, fail.Config(fmt.Errorf("invalid api version %q", typeMeta.APIVersion), "api version")
 	}
 }
 
-// DefaultedV1Beta1KubeOneCluster converts a v1beta1 KubeOneCluster object to an internal representation of KubeOneCluster
+// DefaultedV1Beta2KubeOneCluster converts a v1beta2 KubeOneCluster object to an internal representation of KubeOneCluster
 // object while sourcing information from Terraform output, applying default values and validating the KubeOneCluster
 // object
-func DefaultedV1Beta1KubeOneCluster(versionedCluster *kubeonev1beta1.KubeOneCluster, tfOutput, credentialsFile []byte, logger logrus.FieldLogger) (*kubeoneapi.KubeOneCluster, error) {
+func DefaultedV1Beta2KubeOneCluster(versionedCluster *kubeonev1beta2.KubeOneCluster, tfOutput, credentialsFile []byte, logger logrus.FieldLogger) (*kubeoneapi.KubeOneCluster, error) {
 	if tfOutput != nil {
-		tfConfig, err := terraformv1beta1.NewConfigFromJSON(tfOutput)
+		tfConfig, err := terraformv1beta2.NewConfigFromJSON(tfOutput)
 		if err != nil {
 			return nil, err
 		}
@@ -169,18 +169,6 @@ func DefaultedV1Beta1KubeOneCluster(versionedCluster *kubeonev1beta1.KubeOneClus
 		return nil, err
 	}
 
-	// this can be nil if v1beta1 API was used as a source to convert into the internal API, since v1beta1 lacks the
-	// OperatingSystemManager field at all.
-	internalCluster.OperatingSystemManager = &kubeoneapi.OperatingSystemManagerConfig{
-		// but we don't want to enable the OSM for older v1beta1 API
-		Deploy: false,
-	}
-
-	// v1beta1 has no idea about NodeLocalDNS
-	internalCluster.Features.NodeLocalDNS = &kubeoneapi.NodeLocalDNS{
-		Deploy: true,
-	}
-
 	// Validate the configuration
 	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
 		return nil, fail.ConfigValidation(err)
@@ -192,12 +180,12 @@ func DefaultedV1Beta1KubeOneCluster(versionedCluster *kubeonev1beta1.KubeOneClus
 	return internalCluster, nil
 }
 
-// DefaultedV1Beta2KubeOneCluster converts a v1beta2 KubeOneCluster object to an internal representation of KubeOneCluster
+// DefaultedV1Beta3KubeOneCluster converts a v1beta3 KubeOneCluster object to an internal representation of KubeOneCluster
 // object while sourcing information from Terraform output, applying default values and validating the KubeOneCluster
 // object
-func DefaultedV1Beta2KubeOneCluster(versionedCluster *kubeonev1beta2.KubeOneCluster, tfOutput, credentialsFile []byte, logger logrus.FieldLogger) (*kubeoneapi.KubeOneCluster, error) {
+func DefaultedV1Beta3KubeOneCluster(versionedCluster *kubeonev1beta3.KubeOneCluster, tfOutput, credentialsFile []byte, logger logrus.FieldLogger) (*kubeoneapi.KubeOneCluster, error) {
 	if tfOutput != nil {
-		tfConfig, err := terraformv1beta2.NewConfigFromJSON(tfOutput)
+		tfConfig, err := terraformv1beta3.NewConfigFromJSON(tfOutput)
 		if err != nil {
 			return nil, err
 		}

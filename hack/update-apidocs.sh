@@ -48,3 +48,4 @@ EOF
 }
 
 genVersionedDoc "v1beta2"
+genVersionedDoc "v1beta3"
