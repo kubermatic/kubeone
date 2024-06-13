@@ -13,18 +13,6 @@ metadata:
     app.kubernetes.io/component: controller
 automountServiceAccountToken: true
 ---
-# Source: hcloud-csi/templates/core/storageclass.yaml
-kind: StorageClass
-apiVersion: storage.k8s.io/v1
-metadata:
-  name: hcloud-volumes
-  annotations:
-    storageclass.kubernetes.io/is-default-class: "true"
-provisioner: csi.hetzner.cloud
-volumeBindingMode: WaitForFirstConsumer
-allowVolumeExpansion: true
-reclaimPolicy: "Delete"
----
 # Source: hcloud-csi/templates/controller/clusterrole.yaml
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -119,7 +107,7 @@ metadata:
     app.kubernetes.io/instance: hcloud-csi
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: node
-    app: hcloud-csi 
+    app: hcloud-csi
 spec:
   updateStrategy:
     type: RollingUpdate
@@ -137,7 +125,7 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: node
     spec:
-      
+
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -245,7 +233,7 @@ metadata:
     app.kubernetes.io/instance: hcloud-csi
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
-    app: hcloud-csi-controller 
+    app: hcloud-csi-controller
 spec:
   replicas: 1
   strategy:
@@ -277,7 +265,7 @@ spec:
         - key: "node-role.kubernetes.io/control-plane"
           effect: NoSchedule
       serviceAccountName: hcloud-csi-controller
-      
+
       securityContext:
         fsGroup: 1001
       initContainers:
