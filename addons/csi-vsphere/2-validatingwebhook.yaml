@@ -14,6 +14,7 @@ data:
   "webhook.config": |
 {{ vSphereCSIWebhookConfig | b64enc | indent 4 }}
 
+# Source https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v3.2.0/manifests/vanilla/validatingwebhook.yaml
 ---
 apiVersion: v1
 kind: Service
@@ -47,6 +48,10 @@ webhooks:
         apiVersions: ["v1", "v1beta1"]
         operations:  ["CREATE", "UPDATE"]
         resources:   ["storageclasses"]
+      - apiGroups:   [""]
+        apiVersions: ["v1", "v1beta1"]
+        operations:  ["CREATE"]
+        resources:   ["persistentvolumes"]
       - apiGroups:   [""]
         apiVersions: ["v1", "v1beta1"]
         operations:  ["UPDATE", "DELETE"]

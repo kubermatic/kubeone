@@ -222,8 +222,9 @@ metadata:
     component: nodeplugin
     app: openstack-cinder-csi
     release: cinder-csi
-    chart: openstack-cinder-csi-2.27.1
+    chart: openstack-cinder-csi-2.30.0
     heritage: Helm
+  annotations:
 spec:
   selector:
     matchLabels:
@@ -236,13 +237,17 @@ spec:
         component: nodeplugin
         app: openstack-cinder-csi
         release: cinder-csi
-        chart: openstack-cinder-csi-2.27.1
+        chart: openstack-cinder-csi-2.30.0
         heritage: Helm
+      annotations:
     spec:
       serviceAccount: csi-cinder-node-sa
       hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: node-driver-registrar
+          securityContext:
+            {}
           image: {{ .InternalImages.Get "OpenstackCSINodeDriverRegistar" }}
           imagePullPolicy: IfNotPresent
           args:
@@ -263,9 +268,11 @@ spec:
               mountPath: /csi
             - name: registration-dir
               mountPath: /registration
-          resources:
+          resources: 
             {}
         - name: liveness-probe
+          securityContext:
+            {}
           image: {{ .InternalImages.Get "OpenstackCSILivenessProbe" }}
           imagePullPolicy: IfNotPresent
           args:
@@ -274,7 +281,7 @@ spec:
           volumeMounts:
             - name: socket-dir
               mountPath: /csi
-          resources:
+          resources: 
             {}
         - name: cinder-csi-plugin
           securityContext:
@@ -328,7 +335,7 @@ spec:
 {{ if .Config.CABundle }}
 {{ caBundleVolumeMount | indent 12 }}
 {{ end }}
-          resources:
+          resources: 
             {}
       volumes:
         - name: socket-dir
@@ -354,18 +361,17 @@ spec:
         - name: cloud-config
           secret:
             secretName: cloud-config
-
         - hostPath:
             path: /etc/cacert
           name: cacert
 {{ if .Config.CABundle }}
 {{ caBundleVolume | indent 8 }}
 {{ end }}
-      affinity:
+      affinity: 
         {}
-      nodeSelector:
+      nodeSelector: 
         {}
-      tolerations:
+      tolerations: 
         - operator: Exists
       priorityClassName: system-cluster-critical
 ---
@@ -380,8 +386,9 @@ metadata:
     component: controllerplugin
     app: openstack-cinder-csi
     release: cinder-csi
-    chart: openstack-cinder-csi-2.27.1
+    chart: openstack-cinder-csi-2.30.0
     heritage: Helm
+  annotations:
 spec:
   replicas: 1
   strategy:
@@ -400,12 +407,17 @@ spec:
         component: controllerplugin
         app: openstack-cinder-csi
         release: cinder-csi
-        chart: openstack-cinder-csi-2.27.1
+        chart: openstack-cinder-csi-2.30.0
         heritage: Helm
+      annotations:
     spec:
       serviceAccount: csi-cinder-controller-sa
+      securityContext:
+        {}
       containers:
         - name: csi-attacher
+          securityContext:
+            {}
           image: {{ .InternalImages.Get "OpenstackCSIAttacher" }}
           imagePullPolicy: IfNotPresent
           args:
@@ -422,9 +434,11 @@ spec:
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
-          resources:
+          resources: 
             {}
         - name: csi-provisioner
+          securityContext:
+            {}
           image: {{ .InternalImages.Get "OpenstackCSIProvisioner" }}
           imagePullPolicy: IfNotPresent
           args:
@@ -441,9 +455,11 @@ spec:
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
-          resources:
+          resources: 
             {}
         - name: csi-snapshotter
+          securityContext:
+            {}
           image: {{ .InternalImages.Get "OpenstackCSISnapshotter" }}
           imagePullPolicy: IfNotPresent
           args:
@@ -457,9 +473,11 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
-          resources:
+          resources: 
             {}
         - name: csi-resizer
+          securityContext:
+            {}
           image: {{ .InternalImages.Get "OpenstackCSIResizer" }}
           imagePullPolicy: IfNotPresent
           args:
@@ -474,9 +492,11 @@ spec:
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
-          resources:
+          resources: 
             {}
         - name: liveness-probe
+          securityContext:
+            {}
           image: {{ .InternalImages.Get "OpenstackCSILivenessProbe" }}
           imagePullPolicy: IfNotPresent
           args:
@@ -488,9 +508,11 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
-          resources:
+          resources: 
             {}
         - name: cinder-csi-plugin
+          securityContext:
+            {}
           image: {{ .InternalImages.Get "OpenstackCSI" }}
           imagePullPolicy: IfNotPresent
           args:
@@ -534,7 +556,7 @@ spec:
 {{ if .Config.CABundle }}
 {{ caBundleVolumeMount | indent 12 }}
 {{ end }}
-          resources:
+          resources: 
             {}
       volumes:
         - name: socket-dir
@@ -542,18 +564,17 @@ spec:
         - name: cloud-config
           secret:
             secretName: cloud-config
-
         - hostPath:
             path: /etc/cacert
           name: cacert
 {{ if .Config.CABundle }}
 {{ caBundleVolume | indent 8 }}
 {{ end }}
-      affinity:
+      affinity: 
         {}
-      nodeSelector:
+      nodeSelector: 
         {}
-      tolerations:
+      tolerations: 
         - effect: NoSchedule
           key: node-role.kubernetes.io/master
         - effect: NoSchedule

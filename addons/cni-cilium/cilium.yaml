@@ -447,6 +447,7 @@ metadata:
   name: hubble-peer
   namespace: kube-system
 spec:
+  internalTrafficPolicy: Local
   ports:
     - name: peer-service
       port: 443
