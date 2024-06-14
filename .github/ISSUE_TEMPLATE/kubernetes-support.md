@@ -25,14 +25,18 @@ This is a collector issue for Kubernetes 1.2x support in KubeOne. The following 
 * [ ] Update the `build` image to update Sonobuoy (and other dependencies if needed)
 * [ ] Update the latest supported Kubernetes version in [the API validation](https://github.com/kubermatic/kubeone/blob/main/pkg/apis/kubeone/validation/validation.go#L40-L41) <!-- (link to the PR) -->
 * [ ] Update [default admission controllers](https://github.com/kubermatic/kubeone/blob/main/pkg/kubeflags/data.go) if needed <!-- (link to the PR) -->
-* [ ] Update `pause` image version in `pkg/apis/kubeone`  if needed <!-- (link to the PR) -->
+* [ ] Update `pause` image version in `pkg/apis/kubeone/helpers.go` if needed <!-- (link to the PR) -->
 * [ ] Update [the stable version marker in Makefile](https://github.com/kubermatic/kubeone/blob/5273f9a372736569c6b09b38f2959019d29e4d6a/Makefile#L24) <!-- (link to the PR) -->
-* [ ] Update [machine-controller and operating-system-manager](https://github.com/kubermatic/kubeone/blob/a5c3a14725bf135cb2682c4ec96d5872b165b98f/pkg/templates/images/images.go#L222-L224) <!-- (link to the PR) -->
-* [ ] Add E2E tests <!-- (link to the PR) -->
+* [ ] Add E2E tests inside `tests.yml` <!-- (link to the PR) -->
 * [ ] Update daily periodics to use the latest Kubernetes release
 * [ ] Update [the Compatibility Matrix](https://docs.kubermatic.com/kubeone/main/architecture/compatibility/supported-versions/) <!-- (link to the PR) -->
 * [ ] Create an issue to track updating [images](https://github.com/kubermatic/kubeone/blob/main/pkg/templates/images/images.go) <!-- link to the issue -->
 * [ ] Run the full conformance tests suite using [Sonobuoy](https://github.com/vmware-tanzu/sonobuoy)
+
+Tips & Tricks:
+
+* Sometimes the image tag does no match any official GitHub Release name. In these cases `crane ls <url of the image>` can be used to check if a new version of an image exists. Nonetheless, changelog still needs to be checked if the new version introduces any breaking changes
+* Default Admission Controllers can be obtained via `docker run --rm registry.k8s.io/kube-apiserver:v${KUBERNETES_VERSION} kube-apiserver -h | grep "admission-control"`
 
 <!--
 **Action items:**
