@@ -358,7 +358,7 @@ func optionalResources() map[Resource]map[string]string {
 		NutanixCSISnapshotter:   {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v3.0.3"},
 
 		// GCP CCM
-		GCPCCM: {"*": "registry.k8s.io/cloud-provider-gcp/cloud-controller-manager:v28.2.1"},
+		GCPCCM: {"*": "gcr.io/k8s-staging-cloud-provider-gcp/cloud-controller-manager:v30.0.0"},
 
 		// GCP Compute Persistent Disk CSI
 		// see: https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver/blob/master/deploy/kubernetes/images/stable-master/image.yaml
