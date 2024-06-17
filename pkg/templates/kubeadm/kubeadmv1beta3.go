@@ -48,7 +48,7 @@ func (*kubeadmv1beta3) ConfigWorker(s *state.State, instance kubeoneapi.HostConf
 }
 
 func (k *kubeadmv1beta3) UpgradeLeaderCommand() string {
-	return fmt.Sprintf("kubeadm upgrade apply -y --certificate-renewal=true %s", k.version)
+	return fmt.Sprintf("kubeadm upgrade apply -y %s", k.version)
 }
 
 func (*kubeadmv1beta3) UpgradeFollowerCommand() string {
