@@ -66,7 +66,7 @@ var (
 	`)
 
 	kubeadmUpgradeScriptTemplate = heredoc.Doc(`
-		sudo {{ .KUBEADM_UPGRADE }}{{ if .LEADER }} --config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml{{ end }}
+		echo yes | sudo {{ .KUBEADM_UPGRADE }}{{ if .LEADER }} --config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml{{ end }}
 		sudo find /etc/kubernetes/pki/ -name *.crt -exec chmod 600 {} \;
 	`)
 
