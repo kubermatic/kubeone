@@ -56,10 +56,10 @@ sudo mv /tmp/yum.conf /etc/yum.conf
 cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
-baseurl=https://pkgs.k8s.io/core:/stable:/v1.26/rpm/
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.30/rpm/
 enabled=1
 gpgcheck=1
-gpgkey=https://pkgs.k8s.io/core:/stable:/v1.26/rpm/repodata/repomd.xml.key
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.30/rpm/repodata/repomd.xml.key
 EOF
 
 source /etc/os-release
@@ -133,7 +133,7 @@ sudo systemctl restart containerd
 sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools || true
 
 sudo yum install -y \
-	kubeadm-1.26.0 \
+	kubeadm-1.30.0 \
 	kubernetes-cni \
 	cri-tools
 sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni cri-tools
