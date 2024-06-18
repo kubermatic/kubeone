@@ -23,7 +23,6 @@ package v1beta3
 
 import (
 	json "encoding/json"
-	time "time"
 	unsafe "unsafe"
 
 	kubeone "k8c.io/kubeone/pkg/apis/kubeone"
@@ -1343,7 +1342,7 @@ func autoConvert_v1beta3_HelmRelease_To_kubeone_HelmRelease(in *HelmRelease, out
 	out.ReleaseName = in.ReleaseName
 	out.Namespace = in.Namespace
 	out.Wait = in.Wait
-	out.WaitTimeout = time.Duration(in.WaitTimeout)
+	out.WaitTimeout = in.WaitTimeout
 	out.Values = *(*[]kubeone.HelmValues)(unsafe.Pointer(&in.Values))
 	return nil
 }
@@ -1361,7 +1360,7 @@ func autoConvert_kubeone_HelmRelease_To_v1beta3_HelmRelease(in *kubeone.HelmRele
 	out.ReleaseName = in.ReleaseName
 	out.Namespace = in.Namespace
 	out.Wait = in.Wait
-	out.WaitTimeout = time.Duration(in.WaitTimeout)
+	out.WaitTimeout = in.WaitTimeout
 	out.Values = *(*[]HelmValues)(unsafe.Pointer(&in.Values))
 	return nil
 }
