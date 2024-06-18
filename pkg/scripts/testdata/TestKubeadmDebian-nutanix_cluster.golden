@@ -61,6 +61,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 	ca-certificates \
 	curl \
 	gnupg \
+	apparmor-utils \
 	lsb-release \
 	open-iscsi \
 	nfs-common \
