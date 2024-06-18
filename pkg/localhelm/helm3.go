@@ -295,7 +295,7 @@ func newHelmInstallClient(cfg *helmaction.Configuration, release kubeoneapi.Helm
 	helmInstall.RepoURL = release.RepoURL
 	helmInstall.Version = release.Version
 	helmInstall.Wait = release.Wait
-	helmInstall.Timeout = release.WaitTimeout
+	helmInstall.Timeout = release.WaitTimeout.Duration
 
 	return helmInstall
 }

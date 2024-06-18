@@ -256,8 +256,8 @@ func SetDefaults_HelmReleases(obj *KubeOneCluster) {
 			obj.HelmReleases[idx].ReleaseName = hr.Chart
 		}
 
-		if hr.WaitTimeout == 0 {
-			obj.HelmReleases[idx].WaitTimeout = time.Minute * 5
+		if hr.WaitTimeout.Duration == 0 {
+			obj.HelmReleases[idx].WaitTimeout.Duration = time.Minute * 5
 		}
 	}
 }
