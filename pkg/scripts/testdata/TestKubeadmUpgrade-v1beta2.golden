@@ -1,4 +1,4 @@
 set -xeuo pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
-sudo kubeadm upgrade node
+echo yes | sudo kubeadm upgrade node
 sudo find /etc/kubernetes/pki/ -name *.crt -exec chmod 600 {} \;
