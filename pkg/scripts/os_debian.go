@@ -57,6 +57,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 	ca-certificates \
 	curl \
 	gnupg \
+	apparmor-utils \
 	lsb-release \
 	{{- if .INSTALL_ISCSI_AND_NFS }}
 	open-iscsi \
