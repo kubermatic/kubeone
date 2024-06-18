@@ -88,7 +88,7 @@ func withDefaultAssetConfiguration(cls *kubeoneapi.KubeOneCluster) {
 func genCluster(opts ...genClusterOpts) kubeoneapi.KubeOneCluster {
 	cls := &kubeoneapi.KubeOneCluster{
 		Versions: kubeoneapi.VersionConfig{
-			Kubernetes: "1.26.0",
+			Kubernetes: "1.30.0",
 		},
 		ContainerRuntime: kubeoneapi.ContainerRuntimeConfig{
 			Containerd: &kubeoneapi.ContainerRuntimeContainerd{},
