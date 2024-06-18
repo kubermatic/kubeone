@@ -26,6 +26,7 @@ This is a collector issue for Kubernetes 1.2x support in KubeOne. The following 
 * [ ] Update the latest supported Kubernetes version in [the API validation](https://github.com/kubermatic/kubeone/blob/main/pkg/apis/kubeone/validation/validation.go#L40-L41) <!-- (link to the PR) -->
 * [ ] Update [default admission controllers](https://github.com/kubermatic/kubeone/blob/main/pkg/kubeflags/data.go) if needed <!-- (link to the PR) -->
 * [ ] Update `pause` image version in `pkg/apis/kubeone/helpers.go` if needed <!-- (link to the PR) -->
+* [ ] Add the appropriate `cri-tools` version in `pkg/scripts/os_flatcar.go` <!-- (link to the PR) -->
 * [ ] Update [the stable version marker in Makefile](https://github.com/kubermatic/kubeone/blob/5273f9a372736569c6b09b38f2959019d29e4d6a/Makefile#L24) <!-- (link to the PR) -->
 * [ ] Add E2E tests inside `tests.yml` <!-- (link to the PR) -->
 * [ ] Update daily periodics to use the latest Kubernetes release

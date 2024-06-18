@@ -7,4 +7,3 @@ control_plane_type        = "t3a.medium"
 control_plane_volume_size = 25
 worker_type               = "t3a.medium"
 worker_volume_size        = 25
-bastion_type              = "t3a.nano"

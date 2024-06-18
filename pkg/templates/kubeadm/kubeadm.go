@@ -22,7 +22,7 @@ import (
 )
 
 const (
-	kubeadmUpgradeNodeCommand = "kubeadm upgrade node --certificate-renewal=true"
+	kubeadmUpgradeNodeCommand = "kubeadm upgrade node"
 )
 
 // Kubedm interface abstract differences between different kubeadm versions

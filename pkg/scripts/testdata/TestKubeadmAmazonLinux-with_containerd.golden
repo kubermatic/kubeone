@@ -56,10 +56,10 @@ sudo mv /tmp/yum.conf /etc/yum.conf
 cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
-baseurl=https://pkgs.k8s.io/core:/stable:/v1.26/rpm/
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.30/rpm/
 enabled=1
 gpgcheck=1
-gpgkey=https://pkgs.k8s.io/core:/stable:/v1.26/rpm/repodata/repomd.xml.key
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.30/rpm/repodata/repomd.xml.key
 EOF
 
 # We must clean 'yum' cache upon changing the package repository
@@ -135,9 +135,9 @@ cd /tmp/k8s-binaries
 # cri-tools in the AL2 repos. We disable the priorities plugin  to allow yum
 # to install cri-tools from the Kubernetes repos.
 sudo yum install -y --disableplugin=priorities \
-	kubelet-1.26.0 \
-	kubeadm-1.26.0 \
-	kubectl-1.26.0 \
+	kubelet-1.30.0 \
+	kubeadm-1.30.0 \
+	kubectl-1.30.0 \
 	kubernetes-cni \
 	cri-tools
 sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni cri-tools

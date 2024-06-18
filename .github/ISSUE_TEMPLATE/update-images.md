@@ -19,18 +19,23 @@ Reference to the previous issue for updating images: <!-- (issue reference) -->
 
 Action items:
 
-- [ ] Update the issue template to add/remove [images](https://github.com/kubermatic/kubeone/blob/main/pkg/templates/images/images.go) as appropriate
+- [ ] Update the issue template to add/remove [images](https://github.com/kubermatic/kubeone/blob/main/pkg/templates/images/images.go) as appropriate <!-- (PR reference|already the latest) -->
 
 The following components/images should be updated:
 
 ### General
 
+- [ ] [machine-controller](https://github.com/kubermatic/machine-controller) <!-- (PR reference|already the latest) -->
+- [ ] [operating-system-manager](https://github.com/kubermatic/operating-system-manager)
+- [ ] [metrics-server](https://github.com/kubernetes-sigs/metrics-server) <!-- (PR reference|already the latest) -->
+- [ ] [NodeLocalDNS](https://github.com/kubernetes/kubernetes/blob/master/cluster/addons/dns/nodelocaldns/nodelocaldns.yaml) <!-- (PR reference|already the latest) -->
+- [ ] [Cluster Autoscaler](https://github.com/kubernetes/autoscaler) <!-- (PR reference|already the latest) -->
+
+### CNIs
+
 - [ ] [Canal CNI](https://github.com/projectcalico/calico) <!-- (PR reference|already the latest) -->
 - [ ] [Calico VXLAN CNI](https://github.com/projectcalico/calico) <!-- (PR reference|already the latest) -->
 - [ ] [Cilium CNI](https://github.com/cilium/cilium) <!-- (PR reference|already the latest) -->
-- [ ] [NodeLocalDNS](https://github.com/kubernetes/kubernetes/blob/master/cluster/addons/dns/nodelocaldns/nodelocaldns.yaml) <!-- (PR reference|already the latest) -->
-- [ ] [metrics-server](https://github.com/kubernetes-sigs/metrics-server) <!-- (PR reference|already the latest) -->
-- [ ] [Cluster Autoscaler](https://github.com/kubernetes/autoscaler) <!-- (PR reference|already the latest) -->
 
 ### Cloud provider components
 
@@ -53,12 +58,11 @@ The following components/images should be updated:
 - [ ] [vSphere CCM](https://github.com/kubernetes/cloud-provider-vsphere) <!-- (PR reference|already the latest) -->
 - [ ] [vSphere CSI](https://github.com/kubernetes-sigs/vsphere-csi-driver) <!-- (PR reference|already the latest) -->
 - [ ] [VMware Cloud Director CSI](https://github.com/vmware/cloud-director-named-disk-csi-driver) <!-- (PR reference|already the latest) -->
+- [ ] [External Snapshotter](https://github.com/kubernetes-csi/external-snapshotter) <!-- (PR reference|already the latest) -->
 
 ### Addons
 
 - [ ] [Restic Backups](https://github.com/kubermatic/kubeone/tree/main/addons/backups-restic) <!-- (PR reference|already the latest) -->
 - [ ] [Unattended upgrades](https://github.com/kubermatic/kubeone/tree/main/addons/unattended-upgrades) <!-- (PR reference|already the latest) -->
-- [ ] [Secret Store CSI driver](https://github.com/kubernetes-sigs/secrets-store-csi-driver) <!-- (PR reference|already the latest) -->
-- [ ] [Vault CSI Secret Provider](https://github.com/hashicorp/vault-csi-provider) <!-- (PR reference|already the latest) -->
 
 Relevant to <!-- epic number -->
