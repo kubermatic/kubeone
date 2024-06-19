@@ -260,6 +260,12 @@ func WithResources(t Tasks) Tasks {
 				Predicate:   func(s *state.State) bool { return s.Cluster.CloudProvider.SecretProviderClassName == "" },
 			},
 			{
+				Fn:          ensureCABundleConfigMap,
+				Operation:   "ensuring caBundle configMap",
+				Description: "ensure caBundle configMap",
+				Predicate:   func(s *state.State) bool { return s.Cluster.CABundle != "" },
+			},
+			{
 				Fn:          addons.Ensure,
 				Operation:   "applying addons",
 				Description: "ensure embedded addons",
@@ -273,12 +279,6 @@ func WithResources(t Tasks) Tasks {
 			{
 				Fn:        localhelm.Deploy,
 				Operation: "releasing core helm charts",
-			},
-			{
-				Fn:          ensureCABundleConfigMap,
-				Operation:   "ensuring caBundle configMap",
-				Description: "ensure caBundle configMap",
-				Predicate:   func(s *state.State) bool { return s.Cluster.CABundle != "" },
 			},
 			{
 				Fn:          externalccm.Ensure,
