@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
 	"sort"
 
 	"github.com/google/go-cmp/cmp"
@@ -37,6 +38,7 @@ import (
 	"helm.sh/helm/v3/pkg/registry"
 	helmrelease "helm.sh/helm/v3/pkg/release"
 	"helm.sh/helm/v3/pkg/storage/driver"
+	"sigs.k8s.io/yaml"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/fail"
@@ -169,11 +171,16 @@ func Deploy(st *state.State) error {
 func releasesFilterFn(helmReleases []kubeoneapi.HelmRelease, logger logrus.FieldLogger) func(rel *helmrelease.Release) bool {
 	return func(rel *helmrelease.Release) bool {
 		for _, hr := range helmReleases {
-			if rel.Name == hr.ReleaseName && rel.Namespace == hr.Namespace && rel.Chart.Name() == hr.Chart {
-				return false
+			if rel.Name == hr.ReleaseName && rel.Namespace == hr.Namespace {
+				chartName := hr.Chart
+				if hr.RepoURL == "" {
+					chartName, _ = GetChartNameFromChartYAML(chartName)
+				}
+				if chartName == rel.Chart.Name() {
+					return false
+				}
 			}
 		}
-
 		_, found := rel.Labels[releasedByKubeone]
 		if found {
 			logger.Infof("queue %s/%s v%d helm release to uninstall", rel.Namespace, rel.Name, rel.Version)
@@ -181,6 +188,25 @@ func releasesFilterFn(helmReleases []kubeoneapi.HelmRelease, logger logrus.Field
 
 		return found
 	}
+}
+
+// Function to extract chart name from Chart.yaml in case of local charts
+func GetChartNameFromChartYAML(chartPath string) (string, error) {
+	chartYAMLPath := path.Join(chartPath, "Chart.yaml")
+	yamlFile, err := os.ReadFile(chartYAMLPath)
+	if err != nil {
+		return "", fmt.Errorf("failed to read Chart.yaml: %w", err)
+	}
+
+	var chartMetadata struct {
+		Name string `yaml:"name"`
+	}
+	err = yaml.Unmarshal(yamlFile, &chartMetadata)
+	if err != nil {
+		return "", fmt.Errorf("failed to unmarshal Chart.yaml: %w", err)
+	}
+
+	return chartMetadata.Name, nil
 }
 
 func newHelmSettings(verbose bool) *helmcli.EnvSettings {
