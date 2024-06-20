@@ -93,7 +93,7 @@ func (opts *localOpts) BuildState() (*state.State, error) {
 		}
 
 		// Check if only embedded addons are being used; path is not required for embedded addons and no validation is required
-		embeddedAddonsOnly, err := addons.EmbeddedAddonsOnly(s.Cluster.Addons.Addons)
+		embeddedAddonsOnly, err := addons.EmbeddedAddonsOnly(s.Cluster.Addons)
 		if err != nil {
 			return nil, err
 		}
