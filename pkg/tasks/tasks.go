@@ -324,6 +324,7 @@ func WithUpgrade(t Tasks) Tasks {
 		append(kubernetesConfigFiles()...). // this, in the upgrade process where config rails are handled
 		append(Tasks{
 			{Fn: kubeconfig.BuildKubernetesClientset, Operation: "building kubernetes clientset"},
+			{Fn: uploadKubeadmToConfigMaps, Operation: "updating kubeadm configmaps"},
 			{Fn: runPreflightChecks, Operation: "checking preflight safetynet", Retries: 1},
 			{Fn: upgradeLeader, Operation: "upgrading leader control plane"},
 			{Fn: upgradeFollower, Operation: "upgrading follower control plane"},

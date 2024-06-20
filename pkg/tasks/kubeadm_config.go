@@ -17,6 +17,7 @@ limitations under the License.
 package tasks
 
 import (
+	"context"
 	"fmt"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -25,6 +26,11 @@ import (
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/kubeadm"
+
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/util/retry"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 func determinePauseImage(s *state.State) error {
@@ -58,10 +64,7 @@ func generateKubeadm(s *state.State) error {
 		return err
 	}
 
-	kubeadmProvider, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
-	if err != nil {
-		return err
-	}
+	kubeadmProvider := kubeadm.New(s.Cluster.Versions.Kubernetes)
 
 	for idx := range s.Cluster.ControlPlane.Hosts {
 		node := s.Cluster.ControlPlane.Hosts[idx]
@@ -70,7 +73,7 @@ func generateKubeadm(s *state.State) error {
 			return err
 		}
 
-		s.Configuration.AddFile(fmt.Sprintf("cfg/master_%d.yaml", node.ID), kubeadmConf)
+		s.Configuration.AddFile(fmt.Sprintf("cfg/master_%d.yaml", node.ID), kubeadmConf.FullConfiguration)
 	}
 
 	for idx := range s.Cluster.StaticWorkers.Hosts {
@@ -80,7 +83,7 @@ func generateKubeadm(s *state.State) error {
 			return err
 		}
 
-		s.Configuration.AddFile(fmt.Sprintf("cfg/worker_%d.yaml", node.ID), kubeadmConf)
+		s.Configuration.AddFile(fmt.Sprintf("cfg/worker_%d.yaml", node.ID), kubeadmConf.JoinConfiguration)
 	}
 
 	return s.RunTaskOnAllNodes(uploadKubeadmToNode, state.RunParallel)
@@ -88,4 +91,63 @@ func generateKubeadm(s *state.State) error {
 
 func uploadKubeadmToNode(s *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
 	return s.Configuration.UploadTo(conn, s.WorkDir)
+}
+
+func uploadKubeadmToConfigMaps(s *state.State) error {
+	s.Logger.Info("Updating kubeadm ConfigMaps...")
+
+	leader, err := s.Cluster.Leader()
+	if err != nil {
+		return err
+	}
+
+	kubeadmProvider := kubeadm.New(s.Cluster.Versions.Kubernetes)
+
+	kubeadmConfig, err := kubeadmProvider.Config(s, leader)
+	if err != nil {
+		return err
+	}
+
+	s.Logger.Debug("Updating kube-system/kubeadm-config ConfigMap...")
+	updateErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
+		return updateConfigMap(s, "kubeadm-config", metav1.NamespaceSystem, "ClusterConfiguration", kubeadmConfig.ClusterConfiguration)
+	})
+	if updateErr != nil {
+		return fail.Runtime(err, "updating kubeadm ConfigMaps")
+	}
+
+	s.Logger.Debug("Updating kube-system/kubelet-config ConfigMap...")
+	updateErr = retry.RetryOnConflict(retry.DefaultRetry, func() error {
+		return updateConfigMap(s, "kubelet-config", metav1.NamespaceSystem, "kubelet", kubeadmConfig.KubeletConfiguration)
+	})
+	if updateErr != nil {
+		return fail.Runtime(err, "updating kubeadm ConfigMaps")
+	}
+
+	s.Logger.Debug("Updating kube-system/kube-proxy ConfigMap...")
+	updateErr = retry.RetryOnConflict(retry.DefaultRetry, func() error {
+		return updateConfigMap(s, "kube-proxy", metav1.NamespaceSystem, "config.conf", kubeadmConfig.KubeProxyConfiguration)
+	})
+	if updateErr != nil {
+		return fail.Runtime(err, "updating kubeadm ConfigMaps")
+	}
+
+	return nil
+}
+
+func updateConfigMap(s *state.State, name, namespace, key, value string) error {
+	configMap := corev1.ConfigMap{}
+	objKey := client.ObjectKey{
+		Name:      name,
+		Namespace: namespace,
+	}
+
+	err := s.DynamicClient.Get(context.Background(), objKey, &configMap)
+	if err != nil {
+		return fmt.Errorf("updating %s/%s ConfigMap: %w", objKey.Namespace, objKey.Name, err)
+	}
+
+	configMap.Data[key] = value
+
+	return s.DynamicClient.Update(s.Context, &configMap)
 }

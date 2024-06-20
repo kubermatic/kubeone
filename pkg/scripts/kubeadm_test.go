@@ -280,7 +280,7 @@ func TestKubeadmUpgrade(t *testing.T) {
 			name: "leader",
 			args: args{
 				workdir:    "some",
-				kubeadmCmd: "kubeadm upgrade apply v1.1.1",
+				kubeadmCmd: "kubeadm upgrade apply --yes v1.1.1",
 				leader:     true,
 			},
 		},
