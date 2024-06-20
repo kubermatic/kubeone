@@ -320,7 +320,7 @@ func migrateDaemonsetIfPodSelectorDifferent(s *state.State, key client.ObjectKey
 }
 
 // EmbeddedAddonsOnly checks if all specified addons are embedded addons
-func EmbeddedAddonsOnly(addons []kubeoneapi.Addon) (bool, error) {
+func EmbeddedAddonsOnly(addons *kubeoneapi.Addons) (bool, error) {
 	// Read the directory entries for embedded addons
 	embeddedAddons, err := fs.ReadDir(embeddedaddons.FS, ".")
 	if err != nil {
@@ -328,7 +328,7 @@ func EmbeddedAddonsOnly(addons []kubeoneapi.Addon) (bool, error) {
 	}
 
 	// Iterate over addons specified in the KubeOneCluster object
-	for _, addon := range addons {
+	for _, addon := range addons.OnlyAddons() {
 		embedded := false
 		// Iterate over embedded addons directory to check if the addon exists
 		for _, embeddedAddon := range embeddedAddons {
