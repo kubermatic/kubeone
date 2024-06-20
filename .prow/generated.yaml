@@ -6569,6 +6569,2198 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-amzn-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsAmznExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-default-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsDefaultExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-flatcar-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsFlatcarExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rhel-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsRhelExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rockylinux-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsRockylinuxExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-default-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureDefaultExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-flatcar-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureFlatcarExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+    preset-rhel: "true"
+  name: pull-kubeone-e2e-azure-rhel-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureRhelExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-rockylinux-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureRockylinuxExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-default-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-rockylinux-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestDigitaloceanRockylinuxExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-default-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestEquinixmetalDefaultExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-flatcar-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestEquinixmetalFlatcarExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestEquinixmetalRockylinuxExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: gce
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-default-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestHetznerDefaultExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-rockylinux-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestHetznerRockylinuxExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-default-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackDefaultExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-flatcar-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackFlatcarExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rhel-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackRhelExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rockylinux-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackRockylinuxExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-default-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereDefaultExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: vsphere
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-flatcar-external-cni-flannel-helm-chart-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereFlatcarExternalCniFlannelHelmChartV1_27_11
+      env:
+      - name: PROVIDER
+        value: vsphere
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-amzn-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsAmznExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-default-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsDefaultExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-flatcar-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsFlatcarExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rhel-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsRhelExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rockylinux-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsRockylinuxExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-default-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureDefaultExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-flatcar-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureFlatcarExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+    preset-rhel: "true"
+  name: pull-kubeone-e2e-azure-rhel-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureRhelExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-rockylinux-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureRockylinuxExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-default-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-rockylinux-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestDigitaloceanRockylinuxExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-default-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestEquinixmetalDefaultExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-flatcar-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestEquinixmetalFlatcarExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestEquinixmetalRockylinuxExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: gce
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-default-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestHetznerDefaultExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-rockylinux-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestHetznerRockylinuxExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-default-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackDefaultExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-flatcar-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackFlatcarExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rhel-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackRhelExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rockylinux-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackRockylinuxExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-default-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereDefaultExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: vsphere
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-flatcar-external-cni-flannel-helm-chart-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereFlatcarExternalCniFlannelHelmChartV1_28_7
+      env:
+      - name: PROVIDER
+        value: vsphere
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-amzn-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsAmznExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-default-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsDefaultExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-flatcar-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsFlatcarExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rhel-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsRhelExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rockylinux-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsRockylinuxExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-default-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureDefaultExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-flatcar-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureFlatcarExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+    preset-rhel: "true"
+  name: pull-kubeone-e2e-azure-rhel-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureRhelExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-rockylinux-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureRockylinuxExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-default-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-rockylinux-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestDigitaloceanRockylinuxExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-default-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestEquinixmetalDefaultExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-flatcar-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestEquinixmetalFlatcarExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestEquinixmetalRockylinuxExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: gce
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-default-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestHetznerDefaultExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-rockylinux-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestHetznerRockylinuxExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-default-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackDefaultExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-flatcar-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackFlatcarExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rhel-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackRhelExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rockylinux-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackRockylinuxExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-default-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereDefaultExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: vsphere
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-flatcar-external-cni-flannel-helm-chart-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereFlatcarExternalCniFlannelHelmChartV1_29_2
+      env:
+      - name: PROVIDER
+        value: vsphere
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-amzn-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsAmznExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-default-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsDefaultExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-flatcar-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsFlatcarExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rhel-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsRhelExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rockylinux-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsRockylinuxExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-default-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureDefaultExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-flatcar-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureFlatcarExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+    preset-rhel: "true"
+  name: pull-kubeone-e2e-azure-rhel-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureRhelExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-rockylinux-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureRockylinuxExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-default-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-rockylinux-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestDigitaloceanRockylinuxExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-default-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestEquinixmetalDefaultExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-flatcar-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestEquinixmetalFlatcarExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-equinix-metal: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-equinixmetal-rockylinux-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestEquinixmetalRockylinuxExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: equinixmetal
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: gce
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-default-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestHetznerDefaultExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-rockylinux-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestHetznerRockylinuxExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-default-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackDefaultExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-flatcar-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackFlatcarExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rhel-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackRhelExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rockylinux-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackRockylinuxExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-default-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereDefaultExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: vsphere
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-flatcar-external-cni-flannel-helm-chart-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereFlatcarExternalCniFlannelHelmChartV1_30_1
+      env:
+      - name: PROVIDER
+        value: vsphere
+      - name: TEST_TIMEOUT
+        value: 120m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
   extra_refs:
   - base_ref: release/v1.8
     org: kubermatic
