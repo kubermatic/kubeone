@@ -25,16 +25,24 @@ const (
 	kubeadmUpgradeNodeCommand = "kubeadm upgrade node"
 )
 
+type Config struct {
+	FullConfiguration      string
+	ClusterConfiguration   string
+	JoinConfiguration      string
+	KubeletConfiguration   string
+	KubeProxyConfiguration string
+}
+
 // Kubedm interface abstract differences between different kubeadm versions
 type Kubedm interface {
-	Config(s *state.State, instance kubeoneapi.HostConfig) (string, error)
-	ConfigWorker(s *state.State, instance kubeoneapi.HostConfig) (string, error)
+	Config(s *state.State, instance kubeoneapi.HostConfig) (*Config, error)
+	ConfigWorker(s *state.State, instance kubeoneapi.HostConfig) (*Config, error)
 	UpgradeLeaderCommand() string
 	UpgradeFollowerCommand() string
 	UpgradeStaticWorkerCommand() string
 }
 
 // New constructor
-func New(ver string) (Kubedm, error) {
-	return &kubeadmv1beta3{version: ver}, nil
+func New(ver string) Kubedm {
+	return &kubeadmv1beta3{version: ver}
 }

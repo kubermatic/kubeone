@@ -20,35 +20,76 @@ import (
 	"fmt"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates"
 	"k8c.io/kubeone/pkg/templates/kubeadm/v1beta3"
+
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 type kubeadmv1beta3 struct {
 	version string
 }
 
-func (*kubeadmv1beta3) Config(s *state.State, instance kubeoneapi.HostConfig) (string, error) {
+func (*kubeadmv1beta3) Config(s *state.State, instance kubeoneapi.HostConfig) (*Config, error) {
 	config, err := v1beta3.NewConfig(s, instance)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return templates.KubernetesToYAML(config)
+	fullConfig, err := templates.KubernetesToYAML([]runtime.Object{
+		config.InitConfiguration,
+		config.JoinConfiguration,
+		config.ClusterConfiguration,
+		config.KubeletConfiguration,
+		config.KubeProxyConfiguration,
+	})
+	if err != nil {
+		return nil, fail.Runtime(err, "converting kubeadm configuration to yaml")
+	}
+
+	clusterConfig, err := templates.KubernetesToYAML([]runtime.Object{config.ClusterConfiguration})
+	if err != nil {
+		return nil, fail.Runtime(err, "converting kubeadm ClusterConfiguration to yaml")
+	}
+
+	kubeletConfig, err := templates.KubernetesToYAML([]runtime.Object{config.KubeletConfiguration})
+	if err != nil {
+		return nil, fail.Runtime(err, "converting kubeadm KubeletConfiguration to yaml")
+	}
+
+	kubeProxyConfig, err := templates.KubernetesToYAML([]runtime.Object{config.KubeProxyConfiguration})
+	if err != nil {
+		return nil, fail.Runtime(err, "converting kubeadm KubeProxyConfiguration to yaml")
+	}
+
+	return &Config{
+		FullConfiguration:      fullConfig,
+		ClusterConfiguration:   clusterConfig,
+		KubeletConfiguration:   kubeletConfig,
+		KubeProxyConfiguration: kubeProxyConfig,
+	}, nil
 }
 
-func (*kubeadmv1beta3) ConfigWorker(s *state.State, instance kubeoneapi.HostConfig) (string, error) {
+func (*kubeadmv1beta3) ConfigWorker(s *state.State, instance kubeoneapi.HostConfig) (*Config, error) {
 	config, err := v1beta3.NewConfigWorker(s, instance)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return templates.KubernetesToYAML(config)
+	joinConfig, err := templates.KubernetesToYAML([]runtime.Object{config.JoinConfiguration})
+	if err != nil {
+		return nil, fail.Runtime(err, "converting kubeadm JoinConfiguration to yaml")
+	}
+
+	return &Config{
+		JoinConfiguration: joinConfig,
+	}, nil
 }
 
 func (k *kubeadmv1beta3) UpgradeLeaderCommand() string {
-	return fmt.Sprintf("kubeadm upgrade apply %s", k.version)
+	return fmt.Sprintf("kubeadm upgrade apply --yes %s", k.version)
 }
 
 func (*kubeadmv1beta3) UpgradeFollowerCommand() string {
