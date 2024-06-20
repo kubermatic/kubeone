@@ -393,6 +393,10 @@ func (ads *Addons) Enabled() bool {
 }
 
 func (ads *Addons) OnlyAddons() []Addon {
+	if ads == nil {
+		return nil
+	}
+
 	var result []Addon
 
 	for _, addon := range ads.Addons {
@@ -405,6 +409,10 @@ func (ads *Addons) OnlyAddons() []Addon {
 }
 
 func (ads *Addons) OnlyHelmReleases() []HelmRelease {
+	if ads == nil {
+		return nil
+	}
+
 	var result []HelmRelease
 
 	for _, addon := range ads.Addons {
