@@ -54,7 +54,7 @@ func Convert_v1beta2_ContainerRuntimeConfig_To_kubeone_ContainerRuntimeConfig(in
 	return autoConvert_v1beta2_ContainerRuntimeConfig_To_kubeone_ContainerRuntimeConfig(in, out, scope)
 }
 
-func Convert_v1beta2_Addon_To_kubeone_AddonRef(in *Addon, out *kubeoneapi.AddonRef, s conversion.Scope) error {
+func Convert_v1beta2_Addon_To_kubeone_AddonRef(in *Addon, out *kubeoneapi.AddonRef, _ conversion.Scope) error {
 	out.Addon = &kubeoneapi.Addon{
 		Name:              in.Name,
 		DisableTemplating: in.DisableTemplating,
@@ -65,7 +65,8 @@ func Convert_v1beta2_Addon_To_kubeone_AddonRef(in *Addon, out *kubeoneapi.AddonR
 	return nil
 }
 
-func Convert_kubeone_AddonRef_To_v1beta2_Addon(in *kubeoneapi.AddonRef, out *Addon, s conversion.Scope) error {
+func Convert_kubeone_AddonRef_To_v1beta2_Addon(*kubeoneapi.AddonRef, *Addon, conversion.Scope) error {
+	// TODO: do something ?
 	return nil
 }
 
