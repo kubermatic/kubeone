@@ -31,7 +31,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 
 	"k8c.io/kubeone/pkg/apis/kubeone/config"
-	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
+	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
 	"k8c.io/kubeone/pkg/containerruntime"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
@@ -199,10 +199,10 @@ func configPrintCmd() *cobra.Command {
 func configMigrateCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "migrate",
-		Short: "Migrate the v1alpha1 KubeOneCluster manifest to the v1beta1 version",
+		Short: "Migrate the v1beta2 KubeOneCluster manifest to the v1beta3 version",
 		Long: `
-Migrate the v1beta1 KubeOneCluster manifest to the v1beta2 version.
-The v1beta1 version of the KubeOneCluster manifest is deprecated and will be
+Migrate the v1beta2 KubeOneCluster manifest to the v1beta3 version.
+The v1beta2 version of the KubeOneCluster manifest is deprecated and will be
 removed in one of the next versions.
 The new manifest is printed on the standard output.
 `,
@@ -275,7 +275,7 @@ func runPrint(printOptions *printOpts) error {
 			return fail.Runtime(err, "executing example-manifest template")
 		}
 
-		cfg := kubeonev1beta2.NewKubeOneCluster()
+		cfg := kubeonev1beta3.NewKubeOneCluster()
 		err = kyaml.UnmarshalStrict(buffer.Bytes(), &cfg)
 		if err != nil {
 			return fail.Runtime(err, "testing marshal/unmarshal")
@@ -463,13 +463,19 @@ func parseControlPlaneHosts(cfg *yamled.Document, hostList string) error {
 
 // runMigrate migrates the KubeOneCluster manifest from v1alpha1 to v1beta1
 func runMigrate(opts *globalOptions) error {
-	// Convert old config yaml to new config yaml
-	newConfigYAML, err := config.MigrateOldConfig(opts.ManifestFile)
+	v1beta3Manifest, err := config.MigrateV1beta2V1beta3(opts.ManifestFile)
 	if err != nil {
 		return err
 	}
 
-	return validateAndPrintConfig(newConfigYAML)
+	buf, err := kyaml.Marshal(v1beta3Manifest)
+	if err != nil {
+		return fail.Runtime(err, "marshalling new config as YAML")
+	}
+
+	fmt.Printf("%s\n", buf)
+
+	return nil
 }
 
 // runGenerateMachineDeployments generates the MachineDeployments manifest
@@ -498,15 +504,13 @@ func validateAndPrintConfig(cfgYaml interface{}) error {
 		return fail.Runtime(err, "marshalling new config as YAML")
 	}
 
-	cfg := kubeonev1beta2.NewKubeOneCluster()
-	err = kyaml.UnmarshalStrict(buffer.Bytes(), &cfg)
-	if err != nil {
+	cfg := kubeonev1beta3.NewKubeOneCluster()
+	if err = kyaml.UnmarshalStrict(buffer.Bytes(), &cfg); err != nil {
 		return fail.Runtime(err, "testing marshal/unmarshal")
 	}
 
 	// Print new config yaml
-	err = yaml.NewEncoder(os.Stdout).Encode(cfgYaml)
-	if err != nil {
+	if err = yaml.NewEncoder(os.Stdout).Encode(cfgYaml); err != nil {
 		return fail.Runtime(err, "marshalling new config as YAML")
 	}
 
@@ -514,7 +518,7 @@ func validateAndPrintConfig(cfgYaml interface{}) error {
 }
 
 const exampleManifest = `
-apiVersion: kubeone.k8c.io/v1beta2
+apiVersion: kubeone.k8c.io/v1beta3
 kind: KubeOneCluster
 name: {{ .ClusterName }}
 
@@ -779,33 +783,40 @@ registryConfiguration:
 
 # Addons are Kubernetes manifests to be deployed after provisioning the cluster
 addons:
-  enable: false
   # In case when the relative path is provided, the path is relative
   # to the KubeOne configuration file.
   # This path is required only if you want to provide custom addons or override
   # embedded addons.
   path: "./addons"
-  # globalParams is a key-value map of values passed to the addons templating engine,
-  # to be used in the addons' manifests. The values defined here are passed to all
-  # addons.
-  globalParams:
-    key: value
   # addons is used to enable addons embedded in the KubeOne binary.
   # Currently backups-restic, default-storage-class, and unattended-upgrades are
   # available addons.
   # Check out the documentation to find more information about what are embedded
   # addons and how to use them:
-  # https://docs.kubermatic.com/kubeone/v1.8/guides/addons/
+  # https://docs.kubermatic.com/kubeone/main/guides/addons/
   addons:
-    # name of the addon to be enabled/deployed (e.g. backups-restic)
-    - name: ""
-      # delete triggers deletion of the deployed addon
-      delete: false
-      # params is a key-value map of values passed to the addons templating engine,
-      # to be used in the addon's manifests. Values defined here override the values
-      # defined in globalParams.
-      params:
-        key: value
+    - addon:
+        # name of the addon to be enabled/deployed (e.g. backups-restic)
+        name: "custom-addon"
+        # delete triggers deletion of the deployed addon
+        delete: false
+        # params is a key-value map of values passed to the addons templating engine,
+        # to be used in the addon's manifests. Values defined here override the values
+        # defined in globalParams.
+        params:
+          key: value
+
+    # helm chart can be also deployed as an addon
+    - helmRelease:
+        chart: flannel
+        repoURL: https://flannel-io.github.io/flannel/
+        namespace: kube-system
+        version: v0.25.4
+        values:
+          - valuesFile: path/to/custom-values.yaml
+          - inline:
+              custom:
+                values: variable-value
 
 # The list of nodes can be overwritten by providing Terraform output.
 # You are strongly encouraged to provide an odd number of nodes and
