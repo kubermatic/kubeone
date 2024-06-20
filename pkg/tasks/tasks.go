@@ -279,7 +279,7 @@ func WithResources(t Tasks) Tasks {
 				Fn:          addons.EnsureUserAddons,
 				Operation:   "applying addons",
 				Description: "ensure custom addons",
-				Predicate:   func(s *state.State) bool { return s.Cluster.Addons != nil && s.Cluster.Addons.Enable },
+				Predicate:   func(s *state.State) bool { return s.Cluster.Addons != nil },
 			},
 			{
 				Fn:        localhelm.Deploy,

@@ -107,7 +107,7 @@ func List(s *state.State, outputFormat string) error {
 			}
 		}
 
-		for _, embeddedAddon := range s.Cluster.Addons.Addons {
+		for _, embeddedAddon := range s.Cluster.Addons.OnlyAddons() {
 			combinedAddons[embeddedAddon.Name] = addonItem{
 				Name:   embeddedAddon.Name,
 				Status: addonStatusInstall,

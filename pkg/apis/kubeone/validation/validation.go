@@ -27,7 +27,6 @@ import (
 
 	"github.com/Masterminds/semver/v3"
 
-	"k8c.io/kubeone/pkg/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	helm "k8c.io/kubeone/pkg/localhelm"
 	"k8c.io/kubeone/pkg/semverutil"
@@ -78,7 +77,6 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateCABundle(c.CABundle, field.NewPath("caBundle"))...)
 	allErrs = append(allErrs, ValidateFeatures(c.Features, field.NewPath("features"))...)
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
-	allErrs = append(allErrs, ValidateHelmReleases(c.HelmReleases, field.NewPath("helmReleases"))...)
 	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
 	allErrs = append(allErrs, ValidateControlPlaneComponents(c.ControlPlaneComponents, field.NewPath("controlPlaneComponents"))...)
 	allErrs = append(allErrs,
@@ -704,30 +702,14 @@ func ValidateOIDCConfig(o kubeoneapi.OpenIDConnectConfig, fldPath *field.Path) f
 
 // ValidateAddons validates the Addons configuration
 func ValidateAddons(o *kubeoneapi.Addons, fldPath *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
+	var allErrs field.ErrorList
 
-	if o == nil || !o.Enable {
-		return allErrs
-	}
-	if o.Enable && len(o.Path) == 0 {
-		// Addons are enabled, path is empty, and no embedded addon is specified
-		if len(o.Addons) == 0 {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("enable"), o.Enable, ".addons.enable cannot be set to true without specifying either custom addon path or embedded addon"))
-		}
-
-		// Check if only embedded addons are being used; path is not required for embedded addons
-		embeddedAddonsOnly, err := addons.EmbeddedAddonsOnly(o.Addons)
-		if err != nil {
-			allErrs = append(allErrs, field.Invalid(fldPath, "", "failed to read embedded addons directory"))
-		} else if !embeddedAddonsOnly {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("path"), "", ".addons.path must be specified when using non-embedded addon(s)"))
-		}
-	}
+	allErrs = append(allErrs, validateHelmReleases(o.OnlyHelmReleases(), fldPath)...)
 
 	return allErrs
 }
 
-func ValidateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.Path) field.ErrorList {
+func validateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	for _, hr := range helmReleases {

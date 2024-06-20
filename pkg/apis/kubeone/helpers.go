@@ -389,7 +389,31 @@ func (r *RegistryConfiguration) InsecureRegistryAddress() string {
 }
 
 func (ads *Addons) Enabled() bool {
-	return ads != nil && ads.Enable
+	return ads != nil && len(ads.Addons) > 0
+}
+
+func (ads *Addons) OnlyAddons() []Addon {
+	var result []Addon
+
+	for _, addon := range ads.Addons {
+		if addon.Addon != nil {
+			result = append(result, *addon.Addon)
+		}
+	}
+
+	return result
+}
+
+func (ads *Addons) OnlyHelmReleases() []HelmRelease {
+	var result []HelmRelease
+
+	for _, addon := range ads.Addons {
+		if addon.HelmRelease != nil {
+			result = append(result, *addon.HelmRelease)
+		}
+	}
+
+	return result
 }
 
 // RelativePath returns addons path relative to the KubeOneCluster manifest file

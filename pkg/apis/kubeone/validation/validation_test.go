@@ -23,7 +23,6 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/pointer"
-	"k8c.io/kubeone/pkg/templates/resources"
 
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
@@ -2062,37 +2061,18 @@ func TestValidateAddons(t *testing.T) {
 		{
 			name: "valid addons config (enabled)",
 			addons: &kubeoneapi.Addons{
-				Enable: true,
-				Path:   "./addons",
+				Path: "./addons",
 			},
 			expectedError: false,
 		},
 		{
-			name: "addons enabled, no path set and no embedded addons specified",
-			addons: &kubeoneapi.Addons{
-				Enable: true,
-				Path:   "",
-			},
-			expectedError: true,
-		},
-		{
-			name: "embedded addon enabled, no path set",
-			addons: &kubeoneapi.Addons{
-				Enable: true,
-				Path:   "",
-				Addons: []kubeoneapi.Addon{
-					{
-						Name: resources.AddonMachineController,
-					},
-				},
-			},
+			name:          "no path set and no embedded addons specified",
+			addons:        &kubeoneapi.Addons{},
 			expectedError: false,
 		},
 		{
-			name: "valid addons config (disabled)",
-			addons: &kubeoneapi.Addons{
-				Enable: false,
-			},
+			name:          "valid addons config (disabled)",
+			addons:        &kubeoneapi.Addons{},
 			expectedError: false,
 		},
 		{
