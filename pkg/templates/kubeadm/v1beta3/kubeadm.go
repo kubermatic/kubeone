@@ -77,8 +77,17 @@ var (
 	fixedEtcd129Constraint = semverutil.MustParseConstraint(">= 1.29")
 )
 
+type Config struct {
+	InitConfiguration    *kubeadmv1beta3.InitConfiguration
+	JoinConfiguration    *kubeadmv1beta3.JoinConfiguration
+	ClusterConfiguration *kubeadmv1beta3.ClusterConfiguration
+
+	KubeletConfiguration   runtime.Object
+	KubeProxyConfiguration runtime.Object
+}
+
 // NewConfig returns all required configs to init a cluster via a set of v1beta3 configs
-func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, error) {
+func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 	cluster := s.Cluster
 	kubeSemVer, err := semver.NewVersion(cluster.Versions.Kubernetes)
 	if err != nil {
@@ -386,12 +395,18 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, er
 		return nil, err
 	}
 
-	kubeproxyConfig, err := kubernetesconfigs.NewKubeProxyConfiguration(s.Cluster)
+	kubeProxyConfig, err := kubernetesconfigs.NewKubeProxyConfiguration(s.Cluster)
 	if err != nil {
 		return nil, err
 	}
 
-	return []runtime.Object{initConfig, joinConfig, clusterConfig, kubeletConfig, kubeproxyConfig}, nil
+	return &Config{
+		InitConfiguration:      initConfig,
+		JoinConfiguration:      joinConfig,
+		ClusterConfiguration:   clusterConfig,
+		KubeletConfiguration:   kubeletConfig,
+		KubeProxyConfiguration: kubeProxyConfig,
+	}, nil
 }
 
 func addControllerManagerNetworkArgs(m map[string]string, clusterNetwork kubeoneapi.ClusterNetworkConfig) {
@@ -418,36 +433,36 @@ func addControllerManagerNetworkArgs(m map[string]string, clusterNetwork kubeone
 	}
 }
 
-func addControlPlaneComponentsAdditionalArgs(cluster *kubeoneapi.KubeOneCluster, clusterConfig *kubeadmv1beta3.ClusterConfiguration) {
+func addControlPlaneComponentsAdditionalArgs(cluster *kubeoneapi.KubeOneCluster, clusterCfg *kubeadmv1beta3.ClusterConfiguration) {
 	if cluster.ControlPlaneComponents != nil {
 		if cluster.ControlPlaneComponents.ControllerManager != nil {
 			if cluster.ControlPlaneComponents.ControllerManager.Flags != nil {
 				for k, v := range cluster.ControlPlaneComponents.ControllerManager.Flags {
-					clusterConfig.ControllerManager.ExtraArgs[k] = v
+					clusterCfg.ControllerManager.ExtraArgs[k] = v
 				}
 			}
 			if cluster.ControlPlaneComponents.ControllerManager.FeatureGates != nil {
-				clusterConfig.ControllerManager.ExtraArgs["feature-gates"] = mergeFeatureGates(clusterConfig.ControllerManager.ExtraArgs["feature-gates"], cluster.ControlPlaneComponents.ControllerManager.FeatureGates)
+				clusterCfg.ControllerManager.ExtraArgs["feature-gates"] = mergeFeatureGates(clusterCfg.ControllerManager.ExtraArgs["feature-gates"], cluster.ControlPlaneComponents.ControllerManager.FeatureGates)
 			}
 		}
 		if cluster.ControlPlaneComponents.Scheduler != nil {
 			if cluster.ControlPlaneComponents.Scheduler.Flags != nil {
 				for k, v := range cluster.ControlPlaneComponents.Scheduler.Flags {
-					clusterConfig.Scheduler.ExtraArgs[k] = v
+					clusterCfg.Scheduler.ExtraArgs[k] = v
 				}
 			}
 			if cluster.ControlPlaneComponents.Scheduler.FeatureGates != nil {
-				clusterConfig.Scheduler.ExtraArgs["feature-gates"] = mergeFeatureGates(clusterConfig.Scheduler.ExtraArgs["feature-gates"], cluster.ControlPlaneComponents.Scheduler.FeatureGates)
+				clusterCfg.Scheduler.ExtraArgs["feature-gates"] = mergeFeatureGates(clusterCfg.Scheduler.ExtraArgs["feature-gates"], cluster.ControlPlaneComponents.Scheduler.FeatureGates)
 			}
 		}
 		if cluster.ControlPlaneComponents.APIServer != nil {
 			if cluster.ControlPlaneComponents.APIServer.Flags != nil {
 				for k, v := range cluster.ControlPlaneComponents.APIServer.Flags {
-					clusterConfig.APIServer.ExtraArgs[k] = v
+					clusterCfg.APIServer.ExtraArgs[k] = v
 				}
 			}
 			if cluster.ControlPlaneComponents.APIServer.FeatureGates != nil {
-				clusterConfig.APIServer.ExtraArgs["feature-gates"] = mergeFeatureGates(clusterConfig.APIServer.ExtraArgs["feature-gates"], cluster.ControlPlaneComponents.APIServer.FeatureGates)
+				clusterCfg.APIServer.ExtraArgs["feature-gates"] = mergeFeatureGates(clusterCfg.APIServer.ExtraArgs["feature-gates"], cluster.ControlPlaneComponents.APIServer.FeatureGates)
 			}
 		}
 	}
@@ -469,7 +484,7 @@ func join(ipFamily kubeoneapi.IPFamily, ipv4Subnet, ipv6Subnet string) string {
 }
 
 // NewConfig returns all required configs to init a cluster via a set of v13 configs
-func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Object, error) {
+func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 	cluster := s.Cluster
 
 	nodeRegistration := newNodeRegistration(s, host)
@@ -519,7 +534,9 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) ([]runtime.Obje
 
 	joinConfig.NodeRegistration = nodeRegistration
 
-	return []runtime.Object{joinConfig}, nil
+	return &Config{
+		JoinConfiguration: joinConfig,
+	}, nil
 }
 
 func newNodeIP(host kubeoneapi.HostConfig) string {
