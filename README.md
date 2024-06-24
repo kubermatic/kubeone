@@ -127,3 +127,5 @@ See [the list of releases][changelog] to find out about feature changes.
 [github-issue]: https://github.com/kubermatic/kubeone/issues
 [security-vulnerability]: https://github.com/kubermatic/kubeone/blob/main/CONTRIBUTING.md#reporting-a-security-vulnerability
 [changelog]: https://github.com/kubermatic/kubeone/releases
+
+EquinixMetal testing
