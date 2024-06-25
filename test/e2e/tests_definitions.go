@@ -52,7 +52,8 @@ var (
 				"preset-aws-e2e-kubeone": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "aws",
+				"PROVIDER":     "aws",
+				"TEST_TIMEOUT": "90m",
 			},
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/aws",
@@ -87,7 +88,8 @@ var (
 		"aws_centos_stable": {
 			name: "aws_centos_stable",
 			environ: map[string]string{
-				"PROVIDER": "aws",
+				"PROVIDER":     "aws",
+				"TEST_TIMEOUT": "90m",
 			},
 			labels: map[string]string{
 				"preset-goproxy":         "true",
@@ -129,7 +131,8 @@ var (
 		"aws_rhel_stable": {
 			name: "aws_rhel_stable",
 			environ: map[string]string{
-				"PROVIDER": "aws",
+				"PROVIDER":     "aws",
+				"TEST_TIMEOUT": "90m",
 			},
 			labels: map[string]string{
 				"preset-goproxy":         "true",
@@ -168,7 +171,8 @@ var (
 		"aws_rockylinux_stable": {
 			name: "aws_rockylinux_stable",
 			environ: map[string]string{
-				"PROVIDER": "aws",
+				"PROVIDER":     "aws",
+				"TEST_TIMEOUT": "90m",
 			},
 			labels: map[string]string{
 				"preset-goproxy":         "true",
@@ -210,7 +214,8 @@ var (
 		"aws_flatcar_stable": {
 			name: "aws_flatcar_stable",
 			environ: map[string]string{
-				"PROVIDER": "aws",
+				"PROVIDER":     "aws",
+				"TEST_TIMEOUT": "90m",
 			},
 			labels: map[string]string{
 				"preset-goproxy":         "true",
@@ -253,7 +258,8 @@ var (
 		"aws_flatcar_cloud_init_stable": {
 			name: "aws_flatcar_cloud_init_stable",
 			environ: map[string]string{
-				"PROVIDER": "aws",
+				"PROVIDER":     "aws",
+				"TEST_TIMEOUT": "90m",
 			},
 			labels: map[string]string{
 				"preset-goproxy":         "true",
@@ -296,7 +302,8 @@ var (
 		"aws_amzn_stable": {
 			name: "aws_amzn_stable",
 			environ: map[string]string{
-				"PROVIDER": "aws",
+				"PROVIDER":     "aws",
+				"TEST_TIMEOUT": "90m",
 			},
 			labels: map[string]string{
 				"preset-goproxy":         "true",
@@ -568,7 +575,8 @@ var (
 				"preset-digitalocean": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "digitalocean",
+				"PROVIDER":     "digitalocean",
+				"TEST_TIMEOUT": "90m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/digitalocean",
@@ -609,7 +617,8 @@ var (
 				"preset-digitalocean": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "digitalocean",
+				"PROVIDER":     "digitalocean",
+				"TEST_TIMEOUT": "90m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/digitalocean",
@@ -652,7 +661,8 @@ var (
 				"preset-digitalocean": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "digitalocean",
+				"PROVIDER":     "digitalocean",
+				"TEST_TIMEOUT": "90m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/digitalocean",
@@ -691,7 +701,8 @@ var (
 				"preset-equinix-metal": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "equinixmetal",
+				"PROVIDER":     "equinixmetal",
+				"TEST_TIMEOUT": "90m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/equinixmetal",
@@ -733,7 +744,8 @@ var (
 				"preset-equinix-metal": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "equinixmetal",
+				"PROVIDER":     "equinixmetal",
+				"TEST_TIMEOUT": "90m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/equinixmetal",
@@ -776,7 +788,8 @@ var (
 				"preset-equinix-metal": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "equinixmetal",
+				"PROVIDER":     "equinixmetal",
+				"TEST_TIMEOUT": "90m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/equinixmetal",
@@ -818,7 +831,8 @@ var (
 				"preset-equinix-metal": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "equinixmetal",
+				"PROVIDER":     "equinixmetal",
+				"TEST_TIMEOUT": "90m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/equinixmetal",
@@ -860,7 +874,8 @@ var (
 				"preset-gce":     "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "gce",
+				"PROVIDER":     "gce",
+				"TEST_TIMEOUT": "90m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/gce",
@@ -900,7 +915,8 @@ var (
 				"preset-hetzner": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "hetzner",
+				"PROVIDER":     "hetzner",
+				"TEST_TIMEOUT": "90m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/hetzner",
@@ -941,7 +957,8 @@ var (
 				"preset-hetzner": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "hetzner",
+				"PROVIDER":     "hetzner",
+				"TEST_TIMEOUT": "90m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/hetzner",
@@ -984,7 +1001,8 @@ var (
 				"preset-hetzner": "true",
 			},
 			environ: map[string]string{
-				"PROVIDER": "hetzner",
+				"PROVIDER":     "hetzner",
+				"TEST_TIMEOUT": "90m",
 			},
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/hetzner",
