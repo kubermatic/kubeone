@@ -16,4 +16,4 @@ helm template openstack-ccm cpo/openstack-cloud-controller-manager \
 kubectl kustomize --output ccm-openstack.yaml .
 ```
 
-**Note:** some manual adjustments are required (e.g. CA certs env/volumes), images...
+**Note:** some manual adjustments are required (e.g. CA certs env/volumes)
