@@ -9,6 +9,20 @@ patches:
       namespace: kube-system
       name: openstack-cloud-controller-manager
     patch: |-
+      - op: add
+        path: "/spec/template/metadata/labels/k8s-app"
+        value: "openstack-cloud-controller-manager"
+      - op: add
+        path: "/spec/template/metadata/annotations"
+        value:
+          "kubeone.k8c.io/cabundle-hash": '{{.Config.CABundle | sha256sum}}'
+          "kubeone.k8c.io/cloudconfig-hash": '{{.Config.CloudProvider.CloudConfig | sha256sum}}'
       - op: replace
         path: "/spec/template/spec/containers/0/env/0/value"
         value: "/etc/config/cloud-config"
+      - op: replace
+        path: "/spec/template/spec/containers/0/image"
+        value: '{{ .InternalImages.Get "OpenstackCCM" }}'
+      - op: replace
+        path: "/spec/template/spec/containers/0/env/1/value"
+        value: '{{ default "kubernetes" .CCMClusterName }}'
