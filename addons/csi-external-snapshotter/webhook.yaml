@@ -21,9 +21,9 @@ webhooks:
 - name: "validation-webhook.snapshot.storage.k8s.io"
   rules:
   - apiGroups:   ["snapshot.storage.k8s.io"]
-    apiVersions: ["v1", "v1beta1"]
+    apiVersions: ["v1"]
     operations:  ["CREATE", "UPDATE"]
-    resources:   ["volumesnapshots", "volumesnapshotcontents", "volumesnapshotclasses"]
+    resources:   ["volumesnapshotclasses"]
     scope:       "*"
   clientConfig:
     service:
@@ -32,11 +32,10 @@ webhooks:
       path: "/volumesnapshot"
     caBundle: |
 {{ .Certificates.KubernetesCA | b64enc | indent 6 }}
-  admissionReviewVersions: ["v1", "v1beta1"]
+  admissionReviewVersions: ["v1"]
   sideEffects: None
   failurePolicy: Fail
   timeoutSeconds: 2
-
 ---
 apiVersion: apps/v1
 kind: Deployment
