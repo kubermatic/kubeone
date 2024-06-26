@@ -29,6 +29,7 @@ import (
 
 	"k8c.io/kubeone/pkg/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	helm "k8c.io/kubeone/pkg/localhelm"
 	"k8c.io/kubeone/pkg/semverutil"
 
 	"k8s.io/apimachinery/pkg/util/validation"
@@ -695,6 +696,13 @@ func ValidateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.
 
 		if hr.Namespace == "" {
 			allErrs = append(allErrs, field.Required(fldPath.Child("namespace"), hr.Namespace))
+		}
+
+		if hr.RepoURL == "" {
+			_, err := helm.GetChartNameFromChartYAML(hr.Chart)
+			if err != nil {
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("chart"), hr.Chart, fmt.Sprintf("invalid local chart: %v", err)))
+			}
 		}
 
 		for idx, helmValues := range hr.Values {
