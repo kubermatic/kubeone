@@ -55,8 +55,15 @@ type sonobuoyBin struct {
 	proxyURL   string
 }
 
-func (sbb *sonobuoyBin) Run(ctx context.Context, mode sonobuoyMode) error {
+func (sbb *sonobuoyBin) Run(ctx context.Context, mode sonobuoyMode, fail bool) error {
+	if fail {
+		return sbb.RunFailed(ctx)
+	}
 	return sbb.run(ctx, "run", fmt.Sprintf("--mode=%s", mode))
+}
+
+func (sbb *sonobuoyBin) RunFailed(ctx context.Context) error {
+	return sbb.run(ctx, "run", fmt.Sprintf("--rerun-failed=%s", sonobuoyResultsFile))
 }
 
 func (sbb *sonobuoyBin) Wait(ctx context.Context) error {
@@ -65,6 +72,10 @@ func (sbb *sonobuoyBin) Wait(ctx context.Context) error {
 
 func (sbb *sonobuoyBin) Retrieve(ctx context.Context) error {
 	return sbb.run(ctx, "retrieve", "--filename", sonobuoyResultsFile)
+}
+
+func (sbb *sonobuoyBin) Delete(ctx context.Context) error {
+	return sbb.run(ctx, "delete", "--all", "--wait")
 }
 
 func (sbb *sonobuoyBin) Results(ctx context.Context) ([]sonobuoyReport, error) {

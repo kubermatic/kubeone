@@ -604,38 +604,56 @@ func sonobuoyRun(ctx context.Context, t *testing.T, k1 *kubeoneBin, mode sonobuo
 		proxyURL:   proxyURL,
 	}
 
-	if err = retryFnWithBackoff(SonobuoyRetry, func() error { return sb.Run(ctx, mode) }); err != nil {
-		t.Fatalf("sonobuoy run failed: %v", err)
-	}
+	fail := false
 
-	if err = retryFnWithBackoff(SonobuoyRetry, func() error { return sb.Wait(ctx) }); err != nil {
-		t.Fatalf("sonobuoy wait failed: %v", err)
-	}
-
-	err = retryFnWithBackoff(SonobuoyRetry, func() error { return sb.Retrieve(ctx) })
-	if err != nil {
-		t.Fatalf("sonobuoy retrieve failed: %v", err)
-	}
-
-	var report []sonobuoyReport
-	err = retryFnWithBackoff(SonobuoyRetry, func() error {
-		report, err = sb.Results(ctx)
-
-		return err
-	})
-	if err != nil {
-		t.Fatalf("sonobuoy results failed: %v", err)
-	}
-
-	if len(report) > 0 {
-		var buf strings.Builder
-
-		enc := json.NewEncoder(&buf)
-		enc.SetIndent("", "  ")
-		if err = enc.Encode(report); err != nil {
-			t.Errorf("failed to json encode sonobuoy report: %v", err)
+	for i := 0; i < 3; i++ {
+		if err = retryFnWithBackoff(SonobuoyRetry, func() error { return sb.Run(ctx, mode, fail) }); err != nil {
+			t.Fatalf("sonobuoy run failed: %v", err)
 		}
-		t.Fatalf("some e2e tests failed:\n%s", buf.String())
+
+		if err = retryFnWithBackoff(SonobuoyRetry, func() error { return sb.Wait(ctx) }); err != nil {
+			t.Fatalf("sonobuoy wait failed: %v", err)
+		}
+
+		err = retryFnWithBackoff(SonobuoyRetry, func() error { return sb.Retrieve(ctx) })
+		if err != nil {
+			t.Fatalf("sonobuoy retrieve failed: %v", err)
+		}
+
+		var report []sonobuoyReport
+		err = retryFnWithBackoff(SonobuoyRetry, func() error {
+			report, err = sb.Results(ctx)
+
+			return err
+		})
+		if err != nil {
+			t.Fatalf("sonobuoy results failed: %v", err)
+		}
+
+		if len(report) > 0 {
+			var buf strings.Builder
+
+			enc := json.NewEncoder(&buf)
+			enc.SetIndent("", "  ")
+			if err = enc.Encode(report); err != nil {
+				t.Errorf("failed to json encode sonobuoy report: %v", err)
+			}
+
+			fail = true
+			if i == 3 {
+				t.Fatalf("some e2e tests failed:\n%s", buf.String())
+			} else {
+				if err := retryFnWithBackoff(SonobuoyRetry, func() error {
+					return sb.Delete(ctx)
+				}); err != nil {
+					t.Fatalf("sonobuoy delete failed: %v", err)
+				}
+				time.Sleep(1 * time.Minute)
+				continue
+			}
+		}
+
+		break
 	}
 }
 
