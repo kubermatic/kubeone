@@ -58,11 +58,14 @@ No modules.
 | Name | Type |
 |------|------|
 | [vcd_network_routed.network](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/resources/network_routed) | resource |
+| [vcd_nsxv_dnat.rule_ssh_bastion](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/resources/nsxv_dnat) | resource |
 | [vcd_nsxv_firewall_rule.rule_internet](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/resources/nsxv_firewall_rule) | resource |
+| [vcd_nsxv_firewall_rule.rule_ssh_bastion](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/resources/nsxv_firewall_rule) | resource |
 | [vcd_nsxv_snat.rule_internal](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/resources/nsxv_snat) | resource |
 | [vcd_nsxv_snat.rule_internet](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/resources/nsxv_snat) | resource |
 | [vcd_vapp.cluster](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/resources/vapp) | resource |
 | [vcd_vapp_org_network.network](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/resources/vapp_org_network) | resource |
+| [vcd_vapp_vm.bastion](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/resources/vapp_vm) | resource |
 | [vcd_vapp_vm.control_plane](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/resources/vapp_vm) | resource |
 | [vcd_catalog.catalog](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/data-sources/catalog) | data source |
 | [vcd_catalog_vapp_template.vapp_template](https://registry.terraform.io/providers/vmware/vcd/3.8.2/docs/data-sources/catalog_vapp_template) | data source |
@@ -74,7 +77,11 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_allow_insecure"></a> [allow\_insecure](#input\_allow\_insecure) | allow insecure https connection to VMware Cloud Director API | `bool` | `false` | no |
 | <a name="input_apiserver_alternative_names"></a> [apiserver\_alternative\_names](#input\_apiserver\_alternative\_names) | Subject alternative names for the API Server signing certificate | `list(string)` | `[]` | no |
+| <a name="input_bastion_host_cpu_cores"></a> [bastion\_host\_cpu\_cores](#input\_bastion\_host\_cpu\_cores) | Number of cores per socket for the bastion host VM | `number` | `1` | no |
+| <a name="input_bastion_host_cpus"></a> [bastion\_host\_cpus](#input\_bastion\_host\_cpus) | Number of CPUs for the bastion host VM | `number` | `1` | no |
 | <a name="input_bastion_host_key"></a> [bastion\_host\_key](#input\_bastion\_host\_key) | Bastion SSH host public key | `string` | `null` | no |
+| <a name="input_bastion_host_memory"></a> [bastion\_host\_memory](#input\_bastion\_host\_memory) | Memory size of the bastion host in MB | `number` | `2048` | no |
+| <a name="input_bastion_host_ssh_port"></a> [bastion\_host\_ssh\_port](#input\_bastion\_host\_ssh\_port) | SSH port to be used for the bastion host | `number` | `22` | no |
 | <a name="input_catalog_name"></a> [catalog\_name](#input\_catalog\_name) | Name of catalog that contains vApp templates | `string` | n/a | yes |
 | <a name="input_cluster_autoscaler_max_replicas"></a> [cluster\_autoscaler\_max\_replicas](#input\_cluster\_autoscaler\_max\_replicas) | maximum number of replicas per MachineDeployment (requires cluster-autoscaler) | `number` | `0` | no |
 | <a name="input_cluster_autoscaler_min_replicas"></a> [cluster\_autoscaler\_min\_replicas](#input\_cluster\_autoscaler\_min\_replicas) | minimum number of replicas per MachineDeployment (requires cluster-autoscaler) | `number` | `0` | no |
@@ -87,6 +94,7 @@ No modules.
 | <a name="input_control_plane_vm_count"></a> [control\_plane\_vm\_count](#input\_control\_plane\_vm\_count) | number of control plane instances | `number` | `3` | no |
 | <a name="input_dhcp_end_address"></a> [dhcp\_end\_address](#input\_dhcp\_end\_address) | Last address for the DHCP IP Pool range | `string` | `"192.168.1.50"` | no |
 | <a name="input_dhcp_start_address"></a> [dhcp\_start\_address](#input\_dhcp\_start\_address) | Starting address for the DHCP IP Pool range | `string` | `"192.168.1.2"` | no |
+| <a name="input_enable_bastion_host"></a> [enable\_bastion\_host](#input\_enable\_bastion\_host) | Enable bastion host | `bool` | `false` | no |
 | <a name="input_external_network_ip"></a> [external\_network\_ip](#input\_external\_network\_ip) | IP address to which source addresses (the virtual machines) on outbound packets are translated to when they send traffic to the external network.<br>Defaults to default external network IP for the edge gateway. | `string` | `""` | no |
 | <a name="input_external_network_name"></a> [external\_network\_name](#input\_external\_network\_name) | Name of the external network to be used to send traffic to the external networks. Defaults to edge gateway's default external network. | `string` | `""` | no |
 | <a name="input_gateway_ip"></a> [gateway\_ip](#input\_gateway\_ip) | Gateway IP for the routed network | `string` | `"192.168.1.1"` | no |
@@ -121,3 +129,4 @@ No modules.
 | <a name="output_kubeone_api"></a> [kubeone\_api](#output\_kubeone\_api) | kube-apiserver LB endpoint |
 | <a name="output_kubeone_hosts"></a> [kubeone\_hosts](#output\_kubeone\_hosts) | Control plane endpoints to SSH to |
 | <a name="output_kubeone_workers"></a> [kubeone\_workers](#output\_kubeone\_workers) | Workers definitions, that will be transformed into MachineDeployment object |
+| <a name="output_ssh_commands"></a> [ssh\_commands](#output\_ssh\_commands) | n/a |
