@@ -213,3 +213,98 @@ resource "vcd_nsxv_snat" "rule_internal" {
   original_address   = "${var.gateway_ip}/24"
   translated_address = var.gateway_ip
 }
+
+#################################### Bastion ####################################
+resource "vcd_vapp_vm" "bastion" {
+  count         = var.enable_bastion_host ? 1 : 0
+  vapp_name     = vcd_vapp.cluster.name
+  name          = "${var.cluster_name}-bastion"
+  computer_name = "${var.cluster_name}-bastion"
+
+  metadata_entry {
+    key         = "provisioner"
+    value       = "KubeOne"
+    type        = "MetadataStringValue"
+    user_access = "READWRITE"
+    is_system   = false
+  }
+  metadata_entry {
+    key         = "cluster_name"
+    value       = var.cluster_name
+    type        = "MetadataStringValue"
+    user_access = "READWRITE"
+    is_system   = false
+  }
+  metadata_entry {
+    key         = "role"
+    value       = "bastion"
+    type        = "MetadataStringValue"
+    user_access = "READWRITE"
+    is_system   = false
+  }
+
+  guest_properties = {
+    "instance-id" = "${var.cluster_name}-bastion"
+    "hostname"    = "${var.cluster_name}-bastion"
+    "public-keys" = file(var.ssh_public_key_file)
+  }
+
+  vapp_template_id = data.vcd_catalog_vapp_template.vapp_template.id
+
+  # resource allocation for the VM
+  memory    = var.bastion_host_memory
+  cpus      = var.bastion_host_cpus
+  cpu_cores = var.bastion_host_cpu_cores
+
+  cpu_hot_add_enabled    = false
+  memory_hot_add_enabled = false
+
+  # Wait upto 5 minutes for IP addresses to be assigned
+  network_dhcp_wait_seconds = 300
+
+  network {
+    type               = "org"
+    name               = vcd_vapp_org_network.network.org_network_name
+    ip_allocation_mode = "DHCP"
+    is_primary         = true
+  }
+
+  depends_on = [vcd_vapp_org_network.network]
+}
+
+# Create the firewall rule to allow SSH from the Internet
+resource "vcd_nsxv_firewall_rule" "rule_ssh_bastion" {
+  count        = var.enable_bastion_host ? 1 : 0
+  edge_gateway = data.vcd_edgegateway.edge_gateway.name
+  name         = "${var.cluster_name}-firewall-rule-ssh"
+
+  action = "accept"
+
+  source {
+    ip_addresses = ["any"]
+  }
+
+  destination {
+    ip_addresses = [local.external_network_ip]
+  }
+
+  service {
+    protocol = "tcp"
+    port     = var.bastion_host_ssh_port
+  }
+}
+
+# Create DNAT rule to allow SSH from the Internet
+resource "vcd_nsxv_dnat" "rule_ssh_bastion" {
+  count        = var.enable_bastion_host ? 1 : 0
+  edge_gateway = data.vcd_edgegateway.edge_gateway.name
+  network_type = "ext"
+  network_name = local.external_network_name
+
+  original_address = local.external_network_ip
+  original_port    = var.bastion_host_ssh_port
+
+  translated_address = vcd_vapp_vm.bastion[0].network[0].ip
+  translated_port    = 22
+  protocol           = "tcp"
+}
