@@ -359,7 +359,7 @@ func optionalResources() map[Resource]map[string]string {
 
 		// GCP CCM
 		GCPCCM: {
-			"1.27.x":    "registry.k8s.io/cloud-provider-gcp/cloud-controller-manager:v27.1.6",
+			"1.27.x":    "registry.k8s.io/cloud-provider-gcp/cloud-controller-manager:v28.2.1",
 			"1.28.x":    "registry.k8s.io/cloud-provider-gcp/cloud-controller-manager:v28.2.1",
 			"1.29.x":    "registry.k8s.io/cloud-provider-gcp/cloud-controller-manager:v29.0.0",
 			">= 1.30.0": "registry.k8s.io/cloud-provider-gcp/cloud-controller-manager:v30.0.0",
