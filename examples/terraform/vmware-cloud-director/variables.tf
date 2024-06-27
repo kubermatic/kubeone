@@ -299,3 +299,33 @@ Name of operating system profile for MachineDeployments, only applicable if oper
 If not specified, the default value will be added by machine-controller addon.
 EOF
 }
+
+variable "enable_bastion_host" {
+  description = "Enable bastion host"
+  default     = false
+  type        = bool
+}
+
+variable "bastion_host_memory" {
+  description = "Memory size of the bastion host in MB"
+  default     = 2048
+  type        = number
+}
+
+variable "bastion_host_cpus" {
+  description = "Number of CPUs for the bastion host VM"
+  default     = 1
+  type        = number
+}
+
+variable "bastion_host_cpu_cores" {
+  description = "Number of cores per socket for the bastion host VM"
+  default     = 1
+  type        = number
+}
+
+variable "bastion_host_ssh_port" {
+  description = "SSH port to be used for the bastion host"
+  default     = 22
+  type        = number
+}

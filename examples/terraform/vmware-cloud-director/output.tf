@@ -23,6 +23,10 @@ output "kubeone_api" {
   }
 }
 
+output "ssh_commands" {
+  value = var.enable_bastion_host ? formatlist("ssh -J ${var.ssh_username}@${local.external_network_ip}:${var.bastion_host_ssh_port} ${var.ssh_username}@%s", vcd_vapp_vm.control_plane.*.network.0.ip) : formatlist("ssh ${var.ssh_username}@%s", vcd_vapp_vm.control_plane.*.network.0.ip)
+}
+
 output "kubeone_hosts" {
   description = "Control plane endpoints to SSH to"
 
@@ -40,6 +44,9 @@ output "kubeone_hosts" {
       storage_profile      = var.worker_disk_storage_profile
       ssh_hosts_keys       = var.ssh_hosts_keys
       bastion_host_key     = var.bastion_host_key
+      bastion              = var.enable_bastion_host ? local.external_network_ip : null
+      bastion_port         = var.enable_bastion_host ? var.bastion_host_ssh_port : null
+      bastion_user         = var.enable_bastion_host ? var.ssh_username : null
     }
   }
 }
