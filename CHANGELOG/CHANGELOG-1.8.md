@@ -1,3 +1,51 @@
+# [v1.8.1](https://github.com/kubermatic/kubeone/releases/tag/v1.8.1) - 2024-06-28
+
+## Changelog since v1.8.0
+
+## Changes by Kind
+
+### Feature
+
+- Add support for Kubernetes 1.30 ([#3215](https://github.com/kubermatic/kubeone/pull/3215), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Refactor the cluster upgrade process to adhere to the [Kubernetes recommendations](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-reconfigure/) by updating ConfigMaps used by Kubeadm instead of providing the full config to Kubeadm itself. This change should not have any effect to cluster upgrades, but if you encounter any issue, please [create an issue](https://github.com/kubermatic/kubeone/issues/new/choose) in the KubeOne repository ([#3253](https://github.com/kubermatic/kubeone/pull/3253), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- KubeOne now runs `kubeadm upgrade apply` without the `--certificate-renewal=true` flag. This change should not have any effect to the upgrade process, but if you discover any issue, please [create a new issue](https://github.com/kubermatic/kubeone/issues/new/choose) in the KubeOne repository ([#3242](https://github.com/kubermatic/kubeone/pull/3242), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Add default VolumeSnapshotClass for all supported providers as part of the `default-storage-class` addon ([#3275](https://github.com/kubermatic/kubeone/pull/3275), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Bug or Regression
+
+- Fix snapshot-webhook admitting non-supported objects (`VolumeSnapshots` and `VolumeSnapshotContents`). This fixes an issue that caused inability to create new `VolumeSnapshots` ([#3275](https://github.com/kubermatic/kubeone/pull/3275), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Ensure `apparmor-utils` package is installed on Ubuntu as it's required for `kubelet` to function properly ([#3235](https://github.com/kubermatic/kubeone/pull/3235), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Load the CA bundle before any addon installations to resolve issues with untrusted  TLS connections in environments with self-signed certificates ([#3247](https://github.com/kubermatic/kubeone/pull/3247), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix deletion issues for local Helm charts ([#3268](https://github.com/kubermatic/kubeone/pull/3268), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Updates
+
+- Upgrade control plane components:
+  - Update NodeLocalDNS to v1.23.1
+  - Update AWS CCM to v1.30.1, v1.29.3, v1.28.6, and v1.27.7
+  - Update CSI snapshot controller and webhook to v8.0.1
+  - Update AWS EBS CSI driver to v1.31.0
+  - Update Azure CCM to v1.30.3 for Kubernetes 1.30 clusters
+  - Update AzureFile CSI driver to v1.30.2
+  - Update AzureDisk CSI driver to v1.30.1
+  - Update DigitalOcean CCM to v0.1.53
+  - Update DigitalOcean CSI to v4.10.0
+  - Update Hetzner CSI to v2.7.0
+  - Update OpenStack CCM and CSI to v1.30.0 for Kubernetes 1.30 clusters
+  - Update vSphere CCM to v1.30.1 for Kubernetes 1.30 clusters
+  - Update vSphere CSI driver to v3.2.0
+  - Update GCP Compute CSI driver to v1.13.2
+  - Update Cilium to v1.15.6
+  - Update cluster-autoscaler to v1.30.1, v1.29.3, v1.28.5, and v1.27.8 ([#3214](https://github.com/kubermatic/kubeone/pull/3214), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Update GCP CCM to v30.0.0 (Kubernetes 1.30), v29.0.0 (Kubernetes 1.29), v28.2.1 (Kubernetes 1.28 and 1.27) ([#3241](https://github.com/kubermatic/kubeone/pull/3241), [#3284](https://github.com/kubermatic/kubeone/pull/3284), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Update Canal CNI to v3.27.3 ([#3200](https://github.com/kubermatic/kubeone/pull/3200), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Bind the `csi-snapshotter` image to v8.0.1 for all providers that are supporting snapshotting volumes ([#3270](https://github.com/kubermatic/kubeone/pull/3270), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Terraform Configs
+
+- Fix the default Rocky Linux EC2 image filter query in the example Terraform configs for AWS ([#3262](https://github.com/kubermatic/kubeone/pull/3262), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Add bastion host support to the example Terraform configs for VMware Virtual Cloud Director (VCD) ([#3278](https://github.com/kubermatic/kubeone/pull/3278), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.8.0](https://github.com/kubermatic/kubeone/releases/tag/v1.8.0) - 2024-05-14
 
 We're happy to announce a new KubeOne minor release — KubeOne 1.8! Please
