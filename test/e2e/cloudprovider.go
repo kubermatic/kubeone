@@ -23,6 +23,7 @@ import (
 	"testing"
 	"time"
 
+	snapshotv1 "github.com/kubernetes-csi/external-snapshotter/client/v8/apis/volumesnapshot/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
@@ -59,16 +60,30 @@ func supportsLoadBalancerTests(provider string) bool {
 	}
 }
 
+func supportsSnapshotterTests(provider string) bool {
+	switch provider {
+	case "aws", "azure", "digitalocean", "gce", "nutanix", "openstack", "vsphere":
+		return true
+	default:
+		return false
+	}
+}
+
 const (
 	cpTestNamespaceName   = "test-cloud-provider"
 	cpTestStatefulSetName = "test-sts"
 	cpTestServiceName     = "test-svc"
+	cpTestSnapshotName    = "test-snapshot"
 
 	cpTestPollPeriod = 10 * time.Second
 	cpTestTimeout    = 10 * time.Minute
 )
 
-var cloudProviderPodLabels = map[string]string{"app": "test-cp"}
+var (
+	cpTestVolumeName = "data-test-cp-0"
+
+	cloudProviderPodLabels = map[string]string{"app": "test-cp"}
+)
 
 type cloudProviderTests struct {
 	ctx      context.Context
@@ -86,6 +101,7 @@ func newCloudProviderTests(client ctrlruntimeclient.Client, provider string) *cl
 
 func (c *cloudProviderTests) run(t *testing.T) {
 	c.createStatefulSetWithStorage(t)
+	c.createVolumeSnapshot(t)
 	c.exposeStatefulSet(t)
 }
 
@@ -329,6 +345,63 @@ func (c *cloudProviderTests) validateLoadBalancerReadiness(t *testing.T) {
 	t.Log("Successfully validated the Load Balancer support")
 }
 
+func (c *cloudProviderTests) createVolumeSnapshot(t *testing.T) {
+	if !supportsSnapshotterTests(c.provider) {
+		t.Logf("Skipping snapshotter tests because cloud provider %q is not supported.", c.provider)
+
+		return
+	}
+
+	t.Log("Testing CSI snapshotter support...")
+
+	snapshot := &snapshotv1.VolumeSnapshot{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      cpTestSnapshotName,
+			Namespace: cpTestNamespaceName,
+		},
+		Spec: snapshotv1.VolumeSnapshotSpec{
+			Source: snapshotv1.VolumeSnapshotSource{
+				PersistentVolumeClaimName: &cpTestVolumeName,
+			},
+		},
+	}
+
+	err := retryFn(func() error {
+		return c.client.Create(c.ctx, snapshot)
+	})
+	if err != nil {
+		t.Fatalf("creating test volumesnapshot: %v", err)
+	}
+
+	c.validateVolumeSnapshot(t)
+}
+
+func (c *cloudProviderTests) validateVolumeSnapshot(t *testing.T) {
+	t.Log("Waiting for VolumeSnapshot to become ready to use...")
+
+	err := wait.PollUntilContextTimeout(c.ctx, cpTestPollPeriod, cpTestTimeout, false, func(ctx context.Context) (done bool, err error) {
+		currentSnap := &snapshotv1.VolumeSnapshot{}
+		name := types.NamespacedName{Namespace: cpTestNamespaceName, Name: cpTestSnapshotName}
+
+		if err := c.client.Get(ctx, name, currentSnap); err != nil {
+			t.Logf("Failed to fetch VolumeSnapshot %s/%s: %v", cpTestNamespaceName, cpTestSnapshotName, err)
+
+			return false, nil
+		}
+
+		if currentSnap.Status != nil && currentSnap.Status.ReadyToUse != nil {
+			return *currentSnap.Status.ReadyToUse, nil
+		}
+
+		return false, nil
+	})
+	if err != nil {
+		t.Fatalf("waiting for statefulset to become exposed: %v", err)
+	}
+
+	t.Log("Successfully validated the CSI snapshotter support")
+}
+
 func (c *cloudProviderTests) cleanUp(t *testing.T) {
 	t.Log("Cleaning up Load Balancer...")
 
@@ -396,6 +469,39 @@ func (c *cloudProviderTests) cleanUp(t *testing.T) {
 	})
 	if err != nil {
 		t.Fatalf("error waiting for statefulset to get removed: %v", err)
+	}
+
+	t.Log("Cleaning up VolumeSnapshot...")
+
+	err = wait.PollUntilContextTimeout(c.ctx, cpTestPollPeriod, cpTestTimeout, false, func(ctx context.Context) (done bool, err error) {
+		var snaps snapshotv1.VolumeSnapshotList
+		if err := c.client.List(ctx, &snaps, ctrlruntimeclient.InNamespace(cpTestNamespaceName)); err != nil {
+			t.Error(err)
+		}
+
+		if len(snaps.Items) == 0 {
+			return true, nil
+		}
+
+		for _, snap := range snaps.Items {
+			s := snap
+			if s.ObjectMeta.DeletionTimestamp != nil {
+				continue
+			}
+
+			if err := c.client.Delete(ctx, &s); err != nil {
+				// Make error transient so that we try to remove it again and
+				// not leak any resources
+				t.Logf("error removing volumesnapshot %q: %v", s.Name, err)
+
+				return false, nil
+			}
+		}
+
+		return false, nil
+	})
+	if err != nil {
+		t.Fatalf("error waiting for pvc to get removed: %v", err)
 	}
 
 	t.Log("Cleaning up PVC...")
