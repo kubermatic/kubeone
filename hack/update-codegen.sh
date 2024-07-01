@@ -36,7 +36,7 @@ export GOFLAGS=-mod=vendor
 # * the external types dir
 # * group and versions to generate code for
 cd $(dirname ${BASH_SOURCE})/..
-bash vendor/k8s.io/code-generator/generate-internal-groups.sh \
+bash vendor/k8s.io/code-generator/kube_codegen.sh \
   "deepcopy,conversion,defaulter" "" ./pkg/apis ./pkg/apis \
   "kubeone:v1beta2,v1beta3" \
   --go-header-file hack/boilerplate/boilerplate.generatego.txt
