@@ -173,7 +173,7 @@ func verifyVersionSkew(s *state.State, nodes *corev1.NodeList, verbose bool) (bo
 			fmt.Printf("Node %s is running kubelet version %s\n", n.ObjectMeta.Name, kubeletVer.String())
 		}
 		// Check is requested version different than current and ensure version skew policy
-		err = checkVersionSkew(reqVer, kubeletVer, 2)
+		err = checkVersionSkew(reqVer, kubeletVer, 3)
 		if err != nil {
 			return true, err
 		}
