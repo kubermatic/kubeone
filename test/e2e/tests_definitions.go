@@ -1433,6 +1433,10 @@ var (
 			OldManifestTemplatePath: "testdata/containerd_simple.yaml",
 			NewManifestTemplatePath: "testdata/containerd_simple_external.yaml",
 		},
+		"external_cni_flannel_helm_chart": &scenarioInstall{
+			Name:                 "external_cni_flannel_helm_chart",
+			ManifestTemplatePath: "testdata/containerd_flannel_helm_external.yaml",
+		},
 	}
 )
 
