@@ -1,4 +1,4 @@
-# [v1.8.1](https://github.com/kubermatic/kubeone/releases/tag/v1.8.1) - TBD
+# [v1.8.1](https://github.com/kubermatic/kubeone/releases/tag/v1.8.1) - 2024-07-01
 
 ## Changelog since v1.8.0
 
