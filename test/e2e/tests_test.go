@@ -19,15 +19,6 @@ func TestAwsAmznInstallContainerdExternalV1_27_11(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAwsCentosInstallContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
 func TestAwsDefaultInstallContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
@@ -58,15 +49,6 @@ func TestAwsRhelInstallContainerdExternalV1_27_11(t *testing.T) {
 func TestAwsRockylinuxInstallContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureCentosInstallContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11")
@@ -109,15 +91,6 @@ func TestAzureRockylinuxInstallContainerdExternalV1_27_11(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosInstallContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultInstallContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
@@ -130,15 +103,6 @@ func TestDigitaloceanDefaultInstallContainerdExternalV1_27_11(t *testing.T) {
 func TestDigitaloceanRockylinuxInstallContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosInstallContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11")
@@ -181,15 +145,6 @@ func TestGceDefaultInstallContainerdExternalV1_27_11(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosInstallContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultInstallContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
@@ -202,15 +157,6 @@ func TestHetznerDefaultInstallContainerdExternalV1_27_11(t *testing.T) {
 func TestHetznerRockylinuxInstallContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosInstallContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11")
@@ -253,15 +199,6 @@ func TestOpenstackRockylinuxInstallContainerdExternalV1_27_11(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosInstallContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultInstallContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
@@ -283,15 +220,6 @@ func TestVsphereFlatcarInstallContainerdExternalV1_27_11(t *testing.T) {
 func TestAwsAmznInstallContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosInstallContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7")
@@ -334,15 +262,6 @@ func TestAwsRockylinuxInstallContainerdExternalV1_28_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosInstallContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultInstallContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
@@ -379,15 +298,6 @@ func TestAzureRockylinuxInstallContainerdExternalV1_28_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosInstallContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultInstallContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
@@ -400,15 +310,6 @@ func TestDigitaloceanDefaultInstallContainerdExternalV1_28_7(t *testing.T) {
 func TestDigitaloceanRockylinuxInstallContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosInstallContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7")
@@ -451,15 +352,6 @@ func TestGceDefaultInstallContainerdExternalV1_28_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosInstallContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultInstallContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
@@ -472,15 +364,6 @@ func TestHetznerDefaultInstallContainerdExternalV1_28_7(t *testing.T) {
 func TestHetznerRockylinuxInstallContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosInstallContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7")
@@ -523,15 +406,6 @@ func TestOpenstackRockylinuxInstallContainerdExternalV1_28_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosInstallContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultInstallContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
@@ -553,15 +427,6 @@ func TestVsphereFlatcarInstallContainerdExternalV1_28_7(t *testing.T) {
 func TestAwsAmznInstallContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosInstallContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2")
@@ -604,15 +469,6 @@ func TestAwsRockylinuxInstallContainerdExternalV1_29_2(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosInstallContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultInstallContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
@@ -649,15 +505,6 @@ func TestAzureRockylinuxInstallContainerdExternalV1_29_2(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosInstallContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultInstallContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
@@ -670,15 +517,6 @@ func TestDigitaloceanDefaultInstallContainerdExternalV1_29_2(t *testing.T) {
 func TestDigitaloceanRockylinuxInstallContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosInstallContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2")
@@ -721,15 +559,6 @@ func TestGceDefaultInstallContainerdExternalV1_29_2(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosInstallContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultInstallContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
@@ -742,15 +571,6 @@ func TestHetznerDefaultInstallContainerdExternalV1_29_2(t *testing.T) {
 func TestHetznerRockylinuxInstallContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosInstallContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2")
@@ -793,15 +613,6 @@ func TestOpenstackRockylinuxInstallContainerdExternalV1_29_2(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosInstallContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultInstallContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
@@ -823,15 +634,6 @@ func TestVsphereFlatcarInstallContainerdExternalV1_29_2(t *testing.T) {
 func TestAwsAmznInstallContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosInstallContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.30.1")
@@ -874,15 +676,6 @@ func TestAwsRockylinuxInstallContainerdExternalV1_30_1(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosInstallContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultInstallContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
@@ -919,15 +712,6 @@ func TestAzureRockylinuxInstallContainerdExternalV1_30_1(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosInstallContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultInstallContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
@@ -940,15 +724,6 @@ func TestDigitaloceanDefaultInstallContainerdExternalV1_30_1(t *testing.T) {
 func TestDigitaloceanRockylinuxInstallContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosInstallContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.30.1")
@@ -991,15 +766,6 @@ func TestGceDefaultInstallContainerdExternalV1_30_1(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosInstallContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultInstallContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
@@ -1012,15 +778,6 @@ func TestHetznerDefaultInstallContainerdExternalV1_30_1(t *testing.T) {
 func TestHetznerRockylinuxInstallContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosInstallContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.30.1")
@@ -1063,15 +820,6 @@ func TestOpenstackRockylinuxInstallContainerdExternalV1_30_1(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosInstallContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultInstallContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
@@ -1087,15 +835,6 @@ func TestVsphereFlatcarInstallContainerdExternalV1_30_1(t *testing.T) {
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureCentosInstallContainerdV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["install_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
 	scenario.Run(ctx, t)
 }
 
@@ -1144,15 +883,6 @@ func TestGceDefaultInstallContainerdV1_27_11(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosInstallContainerdV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["install_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultInstallContainerdV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
@@ -1195,15 +925,6 @@ func TestGceDefaultInstallContainerdV1_28_7(t *testing.T) {
 	scenario := Scenarios["install_containerd"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureCentosStableUpgradeContainerdFromV1_27_11_ToV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos_stable"]
-	scenario := Scenarios["upgrade_containerd"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11", "v1.28.7")
 	scenario.Run(ctx, t)
 }
 
@@ -1261,15 +982,6 @@ func TestAwsAmznStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing
 	scenario.Run(ctx, t)
 }
 
-func TestAwsCentosStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11", "v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestAwsDefaultStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default_stable"]
@@ -1300,15 +1012,6 @@ func TestAwsRhelStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing
 func TestAwsRockylinuxStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11", "v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureCentosStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11", "v1.28.7")
@@ -1351,15 +1054,6 @@ func TestAzureRockylinuxStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t 
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11", "v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default_stable"]
@@ -1372,15 +1066,6 @@ func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_
 func TestDigitaloceanRockylinuxStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11", "v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11", "v1.28.7")
@@ -1423,15 +1108,6 @@ func TestGceDefaultStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *test
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11", "v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default_stable"]
@@ -1444,15 +1120,6 @@ func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *
 func TestHetznerRockylinuxStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11", "v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11", "v1.28.7")
@@ -1495,15 +1162,6 @@ func TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *t
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11", "v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default_stable"]
@@ -1525,15 +1183,6 @@ func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *
 func TestAwsAmznStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7", "v1.29.2")
@@ -1576,15 +1225,6 @@ func TestAwsRockylinuxStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *te
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default_stable"]
@@ -1621,15 +1261,6 @@ func TestAzureRockylinuxStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default_stable"]
@@ -1642,15 +1273,6 @@ func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
 func TestDigitaloceanRockylinuxStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7", "v1.29.2")
@@ -1693,15 +1315,6 @@ func TestGceDefaultStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *testi
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default_stable"]
@@ -1714,15 +1327,6 @@ func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *t
 func TestHetznerRockylinuxStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7", "v1.29.2")
@@ -1765,15 +1369,6 @@ func TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *te
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default_stable"]
@@ -1795,15 +1390,6 @@ func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *t
 func TestAwsAmznStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2", "v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2", "v1.30.1")
@@ -1846,15 +1432,6 @@ func TestAwsRockylinuxStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *te
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2", "v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default_stable"]
@@ -1891,15 +1468,6 @@ func TestAzureRockylinuxStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2", "v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default_stable"]
@@ -1912,15 +1480,6 @@ func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1
 func TestDigitaloceanRockylinuxStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2", "v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2", "v1.30.1")
@@ -1963,15 +1522,6 @@ func TestGceDefaultStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *testi
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2", "v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default_stable"]
@@ -1984,15 +1534,6 @@ func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *t
 func TestHetznerRockylinuxStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2", "v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2", "v1.30.1")
@@ -2035,15 +1576,6 @@ func TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *te
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2", "v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default_stable"]
@@ -2065,15 +1597,6 @@ func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *t
 func TestAwsAmznCalicoContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosCalicoContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11")
@@ -2116,15 +1639,6 @@ func TestAwsRockylinuxCalicoContainerdExternalV1_27_11(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosCalicoContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultCalicoContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
@@ -2161,15 +1675,6 @@ func TestAzureRockylinuxCalicoContainerdExternalV1_27_11(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosCalicoContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultCalicoContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
@@ -2182,15 +1687,6 @@ func TestDigitaloceanDefaultCalicoContainerdExternalV1_27_11(t *testing.T) {
 func TestDigitaloceanRockylinuxCalicoContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosCalicoContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11")
@@ -2233,15 +1729,6 @@ func TestGceDefaultCalicoContainerdExternalV1_27_11(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosCalicoContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultCalicoContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
@@ -2254,15 +1741,6 @@ func TestHetznerDefaultCalicoContainerdExternalV1_27_11(t *testing.T) {
 func TestHetznerRockylinuxCalicoContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosCalicoContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11")
@@ -2305,15 +1783,6 @@ func TestOpenstackRockylinuxCalicoContainerdExternalV1_27_11(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosCalicoContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultCalicoContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
@@ -2335,15 +1804,6 @@ func TestVsphereFlatcarCalicoContainerdExternalV1_27_11(t *testing.T) {
 func TestAwsAmznCalicoContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosCalicoContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7")
@@ -2386,15 +1846,6 @@ func TestAwsRockylinuxCalicoContainerdExternalV1_28_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosCalicoContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultCalicoContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
@@ -2431,15 +1882,6 @@ func TestAzureRockylinuxCalicoContainerdExternalV1_28_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosCalicoContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultCalicoContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
@@ -2452,15 +1894,6 @@ func TestDigitaloceanDefaultCalicoContainerdExternalV1_28_7(t *testing.T) {
 func TestDigitaloceanRockylinuxCalicoContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosCalicoContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7")
@@ -2503,15 +1936,6 @@ func TestGceDefaultCalicoContainerdExternalV1_28_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosCalicoContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultCalicoContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
@@ -2524,15 +1948,6 @@ func TestHetznerDefaultCalicoContainerdExternalV1_28_7(t *testing.T) {
 func TestHetznerRockylinuxCalicoContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosCalicoContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7")
@@ -2575,15 +1990,6 @@ func TestOpenstackRockylinuxCalicoContainerdExternalV1_28_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosCalicoContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultCalicoContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
@@ -2605,15 +2011,6 @@ func TestVsphereFlatcarCalicoContainerdExternalV1_28_7(t *testing.T) {
 func TestAwsAmznCalicoContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosCalicoContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2")
@@ -2656,15 +2053,6 @@ func TestAwsRockylinuxCalicoContainerdExternalV1_29_2(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosCalicoContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultCalicoContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
@@ -2701,15 +2089,6 @@ func TestAzureRockylinuxCalicoContainerdExternalV1_29_2(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosCalicoContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultCalicoContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
@@ -2722,15 +2101,6 @@ func TestDigitaloceanDefaultCalicoContainerdExternalV1_29_2(t *testing.T) {
 func TestDigitaloceanRockylinuxCalicoContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosCalicoContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2")
@@ -2773,15 +2143,6 @@ func TestGceDefaultCalicoContainerdExternalV1_29_2(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosCalicoContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultCalicoContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
@@ -2794,15 +2155,6 @@ func TestHetznerDefaultCalicoContainerdExternalV1_29_2(t *testing.T) {
 func TestHetznerRockylinuxCalicoContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosCalicoContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2")
@@ -2845,15 +2197,6 @@ func TestOpenstackRockylinuxCalicoContainerdExternalV1_29_2(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosCalicoContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultCalicoContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
@@ -2875,15 +2218,6 @@ func TestVsphereFlatcarCalicoContainerdExternalV1_29_2(t *testing.T) {
 func TestAwsAmznCalicoContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosCalicoContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.30.1")
@@ -2926,15 +2260,6 @@ func TestAwsRockylinuxCalicoContainerdExternalV1_30_1(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosCalicoContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultCalicoContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
@@ -2971,15 +2296,6 @@ func TestAzureRockylinuxCalicoContainerdExternalV1_30_1(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosCalicoContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultCalicoContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
@@ -2992,15 +2308,6 @@ func TestDigitaloceanDefaultCalicoContainerdExternalV1_30_1(t *testing.T) {
 func TestDigitaloceanRockylinuxCalicoContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosCalicoContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.30.1")
@@ -3043,15 +2350,6 @@ func TestGceDefaultCalicoContainerdExternalV1_30_1(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosCalicoContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultCalicoContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
@@ -3064,15 +2362,6 @@ func TestHetznerDefaultCalicoContainerdExternalV1_30_1(t *testing.T) {
 func TestHetznerRockylinuxCalicoContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosCalicoContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["calico_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.30.1")
@@ -3115,15 +2404,6 @@ func TestOpenstackRockylinuxCalicoContainerdExternalV1_30_1(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosCalicoContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos"]
-	scenario := Scenarios["calico_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultCalicoContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
@@ -3145,15 +2425,6 @@ func TestVsphereFlatcarCalicoContainerdExternalV1_30_1(t *testing.T) {
 func TestAwsAmznCiliumContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosCiliumContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11")
@@ -3196,15 +2467,6 @@ func TestAwsRockylinuxCiliumContainerdExternalV1_27_11(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosCiliumContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultCiliumContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
@@ -3241,15 +2503,6 @@ func TestAzureRockylinuxCiliumContainerdExternalV1_27_11(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosCiliumContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultCiliumContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
@@ -3262,15 +2515,6 @@ func TestDigitaloceanDefaultCiliumContainerdExternalV1_27_11(t *testing.T) {
 func TestDigitaloceanRockylinuxCiliumContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosCiliumContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11")
@@ -3313,15 +2557,6 @@ func TestGceDefaultCiliumContainerdExternalV1_27_11(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosCiliumContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultCiliumContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
@@ -3334,15 +2569,6 @@ func TestHetznerDefaultCiliumContainerdExternalV1_27_11(t *testing.T) {
 func TestHetznerRockylinuxCiliumContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosCiliumContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11")
@@ -3385,15 +2611,6 @@ func TestOpenstackRockylinuxCiliumContainerdExternalV1_27_11(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosCiliumContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultCiliumContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
@@ -3415,15 +2632,6 @@ func TestVsphereFlatcarCiliumContainerdExternalV1_27_11(t *testing.T) {
 func TestAwsAmznCiliumContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosCiliumContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7")
@@ -3466,15 +2674,6 @@ func TestAwsRockylinuxCiliumContainerdExternalV1_28_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosCiliumContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultCiliumContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
@@ -3511,15 +2710,6 @@ func TestAzureRockylinuxCiliumContainerdExternalV1_28_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosCiliumContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultCiliumContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
@@ -3532,15 +2722,6 @@ func TestDigitaloceanDefaultCiliumContainerdExternalV1_28_7(t *testing.T) {
 func TestDigitaloceanRockylinuxCiliumContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosCiliumContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7")
@@ -3583,15 +2764,6 @@ func TestGceDefaultCiliumContainerdExternalV1_28_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosCiliumContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultCiliumContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
@@ -3604,15 +2776,6 @@ func TestHetznerDefaultCiliumContainerdExternalV1_28_7(t *testing.T) {
 func TestHetznerRockylinuxCiliumContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosCiliumContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7")
@@ -3655,15 +2818,6 @@ func TestOpenstackRockylinuxCiliumContainerdExternalV1_28_7(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosCiliumContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultCiliumContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
@@ -3685,15 +2839,6 @@ func TestVsphereFlatcarCiliumContainerdExternalV1_28_7(t *testing.T) {
 func TestAwsAmznCiliumContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosCiliumContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2")
@@ -3736,15 +2881,6 @@ func TestAwsRockylinuxCiliumContainerdExternalV1_29_2(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosCiliumContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultCiliumContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
@@ -3781,15 +2917,6 @@ func TestAzureRockylinuxCiliumContainerdExternalV1_29_2(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosCiliumContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultCiliumContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
@@ -3802,15 +2929,6 @@ func TestDigitaloceanDefaultCiliumContainerdExternalV1_29_2(t *testing.T) {
 func TestDigitaloceanRockylinuxCiliumContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosCiliumContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2")
@@ -3853,15 +2971,6 @@ func TestGceDefaultCiliumContainerdExternalV1_29_2(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosCiliumContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultCiliumContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
@@ -3874,15 +2983,6 @@ func TestHetznerDefaultCiliumContainerdExternalV1_29_2(t *testing.T) {
 func TestHetznerRockylinuxCiliumContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosCiliumContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2")
@@ -3925,15 +3025,6 @@ func TestOpenstackRockylinuxCiliumContainerdExternalV1_29_2(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosCiliumContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultCiliumContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
@@ -3955,15 +3046,6 @@ func TestVsphereFlatcarCiliumContainerdExternalV1_29_2(t *testing.T) {
 func TestAwsAmznCiliumContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosCiliumContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.30.1")
@@ -4006,15 +3088,6 @@ func TestAwsRockylinuxCiliumContainerdExternalV1_30_1(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosCiliumContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultCiliumContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
@@ -4051,15 +3124,6 @@ func TestAzureRockylinuxCiliumContainerdExternalV1_30_1(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosCiliumContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultCiliumContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
@@ -4072,15 +3136,6 @@ func TestDigitaloceanDefaultCiliumContainerdExternalV1_30_1(t *testing.T) {
 func TestDigitaloceanRockylinuxCiliumContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosCiliumContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.30.1")
@@ -4123,15 +3178,6 @@ func TestGceDefaultCiliumContainerdExternalV1_30_1(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosCiliumContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultCiliumContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
@@ -4144,15 +3190,6 @@ func TestHetznerDefaultCiliumContainerdExternalV1_30_1(t *testing.T) {
 func TestHetznerRockylinuxCiliumContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosCiliumContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.30.1")
@@ -4195,15 +3232,6 @@ func TestOpenstackRockylinuxCiliumContainerdExternalV1_30_1(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosCiliumContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultCiliumContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
@@ -4225,15 +3253,6 @@ func TestVsphereFlatcarCiliumContainerdExternalV1_30_1(t *testing.T) {
 func TestAwsAmznStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11", "v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11", "v1.28.7")
@@ -4276,15 +3295,6 @@ func TestAwsRockylinuxStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28_
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11", "v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default_stable"]
@@ -4321,15 +3331,6 @@ func TestAzureRockylinuxStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_2
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11", "v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default_stable"]
@@ -4342,15 +3343,6 @@ func TestDigitaloceanDefaultStableUpgradeCiliumContainerdExternalFromV1_27_11_To
 func TestDigitaloceanRockylinuxStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11", "v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11", "v1.28.7")
@@ -4393,15 +3385,6 @@ func TestGceDefaultStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28_7(t
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11", "v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default_stable"]
@@ -4414,15 +3397,6 @@ func TestHetznerDefaultStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28
 func TestHetznerRockylinuxStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11", "v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11", "v1.28.7")
@@ -4465,15 +3439,6 @@ func TestOpenstackRockylinuxUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28_
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11", "v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default_stable"]
@@ -4495,15 +3460,6 @@ func TestVsphereFlatcarStableUpgradeCiliumContainerdExternalFromV1_27_11_ToV1_28
 func TestAwsAmznStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7", "v1.29.2")
@@ -4546,15 +3502,6 @@ func TestAwsRockylinuxStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_2
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default_stable"]
@@ -4591,15 +3538,6 @@ func TestAzureRockylinuxStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default_stable"]
@@ -4612,15 +3550,6 @@ func TestDigitaloceanDefaultStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV
 func TestDigitaloceanRockylinuxStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7", "v1.29.2")
@@ -4663,15 +3592,6 @@ func TestGceDefaultStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_2(t 
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default_stable"]
@@ -4684,15 +3604,6 @@ func TestHetznerDefaultStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_
 func TestHetznerRockylinuxStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7", "v1.29.2")
@@ -4735,15 +3646,6 @@ func TestOpenstackRockylinuxUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_2
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7", "v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default_stable"]
@@ -4765,15 +3667,6 @@ func TestVsphereFlatcarStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_
 func TestAwsAmznStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2", "v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2", "v1.30.1")
@@ -4816,15 +3709,6 @@ func TestAwsRockylinuxStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30_1
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2", "v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default_stable"]
@@ -4861,15 +3745,6 @@ func TestAzureRockylinuxStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2", "v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default_stable"]
@@ -4882,15 +3757,6 @@ func TestDigitaloceanDefaultStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV
 func TestDigitaloceanRockylinuxStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2", "v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2", "v1.30.1")
@@ -4933,15 +3799,6 @@ func TestGceDefaultStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30_1(t 
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2", "v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default_stable"]
@@ -4954,15 +3811,6 @@ func TestHetznerDefaultStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30_
 func TestHetznerRockylinuxStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2", "v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2", "v1.30.1")
@@ -4999,15 +3847,6 @@ func TestOpenstackRhelStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30_1
 func TestOpenstackRockylinuxUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2", "v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestVsphereCentosStableUpgradeCiliumContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2", "v1.30.1")
@@ -5086,15 +3925,6 @@ func TestAwsAmznLegacyMachineControllerContainerdExternalV1_27_11(t *testing.T) 
 	scenario.Run(ctx, t)
 }
 
-func TestAwsCentosLegacyMachineControllerContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
 func TestAwsDefaultLegacyMachineControllerContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
@@ -5125,15 +3955,6 @@ func TestAwsRhelLegacyMachineControllerContainerdExternalV1_27_11(t *testing.T) 
 func TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureCentosLegacyMachineControllerContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11")
@@ -5176,15 +3997,6 @@ func TestAzureRockylinuxLegacyMachineControllerContainerdExternalV1_27_11(t *tes
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
@@ -5197,15 +4009,6 @@ func TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_27_11(t 
 func TestDigitaloceanRockylinuxLegacyMachineControllerContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11")
@@ -5248,15 +4051,6 @@ func TestGceDefaultLegacyMachineControllerContainerdExternalV1_27_11(t *testing.
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosLegacyMachineControllerContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
@@ -5269,15 +4063,6 @@ func TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_27_11(t *test
 func TestHetznerRockylinuxLegacyMachineControllerContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11")
@@ -5320,15 +4105,6 @@ func TestOpenstackRockylinuxLegacyMachineControllerContainerdExternalV1_27_11(t 
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosLegacyMachineControllerContainerdExternalV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
@@ -5350,15 +4126,6 @@ func TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_27_11(t *test
 func TestAwsAmznLegacyMachineControllerContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosLegacyMachineControllerContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7")
@@ -5401,15 +4168,6 @@ func TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_28_7(t *testin
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosLegacyMachineControllerContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultLegacyMachineControllerContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
@@ -5446,15 +4204,6 @@ func TestAzureRockylinuxLegacyMachineControllerContainerdExternalV1_28_7(t *test
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
@@ -5467,15 +4216,6 @@ func TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_28_7(t *
 func TestDigitaloceanRockylinuxLegacyMachineControllerContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7")
@@ -5518,15 +4258,6 @@ func TestGceDefaultLegacyMachineControllerContainerdExternalV1_28_7(t *testing.T
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosLegacyMachineControllerContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
@@ -5539,15 +4270,6 @@ func TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_28_7(t *testi
 func TestHetznerRockylinuxLegacyMachineControllerContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7")
@@ -5590,15 +4312,6 @@ func TestOpenstackRockylinuxLegacyMachineControllerContainerdExternalV1_28_7(t *
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosLegacyMachineControllerContainerdExternalV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
@@ -5620,15 +4333,6 @@ func TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_28_7(t *testi
 func TestAwsAmznLegacyMachineControllerContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosLegacyMachineControllerContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2")
@@ -5671,15 +4375,6 @@ func TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_29_2(t *testin
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosLegacyMachineControllerContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultLegacyMachineControllerContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
@@ -5716,15 +4411,6 @@ func TestAzureRockylinuxLegacyMachineControllerContainerdExternalV1_29_2(t *test
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
@@ -5737,15 +4423,6 @@ func TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_29_2(t *
 func TestDigitaloceanRockylinuxLegacyMachineControllerContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2")
@@ -5788,15 +4465,6 @@ func TestGceDefaultLegacyMachineControllerContainerdExternalV1_29_2(t *testing.T
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosLegacyMachineControllerContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
@@ -5809,15 +4477,6 @@ func TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_29_2(t *testi
 func TestHetznerRockylinuxLegacyMachineControllerContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2")
@@ -5860,15 +4519,6 @@ func TestOpenstackRockylinuxLegacyMachineControllerContainerdExternalV1_29_2(t *
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosLegacyMachineControllerContainerdExternalV1_29_2(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.29.2")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
@@ -5890,15 +4540,6 @@ func TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_29_2(t *testi
 func TestAwsAmznLegacyMachineControllerContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestAwsCentosLegacyMachineControllerContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["aws_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.30.1")
@@ -5941,15 +4582,6 @@ func TestAwsRockylinuxLegacyMachineControllerContainerdExternalV1_30_1(t *testin
 	scenario.Run(ctx, t)
 }
 
-func TestAzureCentosLegacyMachineControllerContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestAzureDefaultLegacyMachineControllerContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["azure_default"]
@@ -5986,15 +4618,6 @@ func TestAzureRockylinuxLegacyMachineControllerContainerdExternalV1_30_1(t *test
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["digitalocean_centos"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_default"]
@@ -6007,15 +4630,6 @@ func TestDigitaloceanDefaultLegacyMachineControllerContainerdExternalV1_30_1(t *
 func TestDigitaloceanRockylinuxLegacyMachineControllerContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["equinixmetal_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.30.1")
@@ -6058,15 +4672,6 @@ func TestGceDefaultLegacyMachineControllerContainerdExternalV1_30_1(t *testing.T
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerCentosLegacyMachineControllerContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["hetzner_centos"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_default"]
@@ -6079,15 +4684,6 @@ func TestHetznerDefaultLegacyMachineControllerContainerdExternalV1_30_1(t *testi
 func TestHetznerRockylinuxLegacyMachineControllerContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_centos"]
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.30.1")
@@ -6130,15 +4726,6 @@ func TestOpenstackRockylinuxLegacyMachineControllerContainerdExternalV1_30_1(t *
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereCentosLegacyMachineControllerContainerdExternalV1_30_1(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["vsphere_centos"]
-	scenario := Scenarios["legacy_machine_controller_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
 func TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["vsphere_default"]
@@ -6154,15 +4741,6 @@ func TestVsphereFlatcarLegacyMachineControllerContainerdExternalV1_30_1(t *testi
 	scenario := Scenarios["legacy_machine_controller_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.30.1")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureCentosCsiCcmMigrationV1_27_11(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.27.11")
 	scenario.Run(ctx, t)
 }
 
@@ -6208,15 +4786,6 @@ func TestGceDefaultCsiCcmMigrationV1_27_11(t *testing.T) {
 	scenario := Scenarios["csi_ccm_migration"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.27.11")
-	scenario.Run(ctx, t)
-}
-
-func TestAzureCentosCsiCcmMigrationV1_28_7(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["azure_centos"]
-	scenario := Scenarios["csi_ccm_migration"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.28.7")
 	scenario.Run(ctx, t)
 }
 
