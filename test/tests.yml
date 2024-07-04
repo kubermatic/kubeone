@@ -6,34 +6,27 @@
   initVersion: v1.27.11
   infrastructures:
     - name: aws_amzn
-    - name: aws_centos
     - name: aws_default
       runIfChanged: "(.prow/|addons/|examples/|hack/|pkg/|test/)"
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
-    - name: azure_centos
     - name: azure_default
     - name: azure_flatcar
     - name: azure_rhel
     - name: azure_rockylinux
-    - name: digitalocean_centos
     - name: digitalocean_default
     - name: digitalocean_rockylinux
-    - name: equinixmetal_centos
     - name: equinixmetal_default
     - name: equinixmetal_flatcar
     - name: equinixmetal_rockylinux
     - name: gce_default
-    - name: hetzner_centos
     - name: hetzner_default
     - name: hetzner_rockylinux
-    - name: openstack_centos
     - name: openstack_default
     - name: openstack_flatcar
     - name: openstack_rhel
     - name: openstack_rockylinux
-    - name: vsphere_centos
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -41,34 +34,27 @@
   initVersion: v1.28.7
   infrastructures:
     - name: aws_amzn
-    - name: aws_centos
     - name: aws_default
       runIfChanged: "(.prow/|addons/|examples/|hack/|pkg/|test/)"
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
-    - name: azure_centos
     - name: azure_default
     - name: azure_flatcar
     - name: azure_rhel
     - name: azure_rockylinux
-    - name: digitalocean_centos
     - name: digitalocean_default
     - name: digitalocean_rockylinux
-    - name: equinixmetal_centos
     - name: equinixmetal_default
     - name: equinixmetal_flatcar
     - name: equinixmetal_rockylinux
     - name: gce_default
-    - name: hetzner_centos
     - name: hetzner_default
     - name: hetzner_rockylinux
-    - name: openstack_centos
     - name: openstack_default
     - name: openstack_flatcar
     - name: openstack_rhel
     - name: openstack_rockylinux
-    - name: vsphere_centos
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -76,34 +62,27 @@
   initVersion: v1.29.2
   infrastructures:
     - name: aws_amzn
-    - name: aws_centos
     - name: aws_default
       runIfChanged: "(.prow/|addons/|examples/|hack/|pkg/|test/)"
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
-    - name: azure_centos
     - name: azure_default
     - name: azure_flatcar
     - name: azure_rhel
     - name: azure_rockylinux
-    - name: digitalocean_centos
     - name: digitalocean_default
     - name: digitalocean_rockylinux
-    - name: equinixmetal_centos
     - name: equinixmetal_default
     - name: equinixmetal_flatcar
     - name: equinixmetal_rockylinux
     - name: gce_default
-    - name: hetzner_centos
     - name: hetzner_default
     - name: hetzner_rockylinux
-    - name: openstack_centos
     - name: openstack_default
     - name: openstack_flatcar
     - name: openstack_rhel
     - name: openstack_rockylinux
-    - name: vsphere_centos
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -111,41 +90,33 @@
   initVersion: v1.30.1
   infrastructures:
     - name: aws_amzn
-    - name: aws_centos
     - name: aws_default
       runIfChanged: "(.prow/|addons/|examples/|hack/|pkg/|test/)"
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
-    - name: azure_centos
     - name: azure_default
     - name: azure_flatcar
     - name: azure_rhel
     - name: azure_rockylinux
-    - name: digitalocean_centos
     - name: digitalocean_default
     - name: digitalocean_rockylinux
-    - name: equinixmetal_centos
     - name: equinixmetal_default
     - name: equinixmetal_flatcar
     - name: equinixmetal_rockylinux
     - name: gce_default
-    - name: hetzner_centos
     - name: hetzner_default
     - name: hetzner_rockylinux
-    - name: openstack_centos
     - name: openstack_default
     - name: openstack_flatcar
     - name: openstack_rhel
     - name: openstack_rockylinux
-    - name: vsphere_centos
     - name: vsphere_default
     - name: vsphere_flatcar
 
 - scenario: install_containerd
   initVersion: v1.27.11
   infrastructures:
-    - name: azure_centos
     - name: azure_default
     - name: azure_flatcar
     - name: azure_rhel
@@ -155,7 +126,6 @@
 - scenario: install_containerd
   initVersion: v1.28.7
   infrastructures:
-    - name: azure_centos
     - name: azure_default
     - name: azure_flatcar
     - name: azure_rhel
@@ -170,7 +140,6 @@
   initVersion: v1.27.11
   upgradedVersion: v1.28.7
   infrastructures:
-    - name: azure_centos_stable
     - name: azure_default_stable
     - name: azure_flatcar_stable
     - name: azure_rhel_stable
@@ -182,33 +151,26 @@
   upgradedVersion: v1.28.7
   infrastructures:
     - name: aws_amzn_stable
-    - name: aws_centos_stable
     - name: aws_default_stable
     - name: aws_flatcar_stable
     - name: aws_rhel_stable
     - name: aws_rockylinux_stable
-    - name: azure_centos_stable
     - name: azure_default_stable
     - name: azure_flatcar_stable
     - name: azure_rhel_stable
     - name: azure_rockylinux_stable
-    - name: digitalocean_centos_stable
     - name: digitalocean_default_stable
     - name: digitalocean_rockylinux_stable
-    - name: equinixmetal_centos_stable
     - name: equinixmetal_default_stable
     - name: equinixmetal_flatcar_stable
     - name: equinixmetal_rockylinux_stable
     - name: gce_default_stable
-    - name: hetzner_centos_stable
     - name: hetzner_default_stable
     - name: hetzner_rockylinux_stable
-    - name: openstack_centos_stable
     - name: openstack_default_stable
     - name: openstack_flatcar_stable
     - name: openstack_rhel_stable
     - name: openstack_rockylinux_stable
-    - name: vsphere_centos_stable
     - name: vsphere_default_stable
     - name: vsphere_flatcar_stable
 
@@ -217,33 +179,26 @@
   upgradedVersion: v1.29.2
   infrastructures:
     - name: aws_amzn_stable
-    - name: aws_centos_stable
     - name: aws_default_stable
     - name: aws_flatcar_stable
     - name: aws_rhel_stable
     - name: aws_rockylinux_stable
-    - name: azure_centos_stable
     - name: azure_default_stable
     - name: azure_flatcar_stable
     - name: azure_rhel_stable
     - name: azure_rockylinux_stable
-    - name: digitalocean_centos_stable
     - name: digitalocean_default_stable
     - name: digitalocean_rockylinux_stable
-    - name: equinixmetal_centos_stable
     - name: equinixmetal_default_stable
     - name: equinixmetal_flatcar_stable
     - name: equinixmetal_rockylinux_stable
     - name: gce_default_stable
-    - name: hetzner_centos_stable
     - name: hetzner_default_stable
     - name: hetzner_rockylinux_stable
-    - name: openstack_centos_stable
     - name: openstack_default_stable
     - name: openstack_flatcar_stable
     - name: openstack_rhel_stable
     - name: openstack_rockylinux_stable
-    - name: vsphere_centos_stable
     - name: vsphere_default_stable
     - name: vsphere_flatcar_stable
 
@@ -252,33 +207,26 @@
   upgradedVersion: v1.30.1
   infrastructures:
     - name: aws_amzn_stable
-    - name: aws_centos_stable
     - name: aws_default_stable
     - name: aws_flatcar_stable
     - name: aws_rhel_stable
     - name: aws_rockylinux_stable
-    - name: azure_centos_stable
     - name: azure_default_stable
     - name: azure_flatcar_stable
     - name: azure_rhel_stable
     - name: azure_rockylinux_stable
-    - name: digitalocean_centos_stable
     - name: digitalocean_default_stable
     - name: digitalocean_rockylinux_stable
-    - name: equinixmetal_centos_stable
     - name: equinixmetal_default_stable
     - name: equinixmetal_flatcar_stable
     - name: equinixmetal_rockylinux_stable
     - name: gce_default_stable
-    - name: hetzner_centos_stable
     - name: hetzner_default_stable
     - name: hetzner_rockylinux_stable
-    - name: openstack_centos_stable
     - name: openstack_default_stable
     - name: openstack_flatcar_stable
     - name: openstack_rhel_stable
     - name: openstack_rockylinux_stable
-    - name: vsphere_centos_stable
     - name: vsphere_default_stable
     - name: vsphere_flatcar_stable
 
@@ -290,33 +238,26 @@
   initVersion: v1.27.11
   infrastructures:
     - name: aws_amzn
-    - name: aws_centos
     - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
-    - name: azure_centos
     - name: azure_default
     - name: azure_flatcar
     - name: azure_rhel
     - name: azure_rockylinux
-    - name: digitalocean_centos
     - name: digitalocean_default
     - name: digitalocean_rockylinux
-    - name: equinixmetal_centos
     - name: equinixmetal_default
     - name: equinixmetal_flatcar
     - name: equinixmetal_rockylinux
     - name: gce_default
-    - name: hetzner_centos
     - name: hetzner_default
     - name: hetzner_rockylinux
-    - name: openstack_centos
     - name: openstack_default
     - name: openstack_flatcar
     - name: openstack_rhel
     - name: openstack_rockylinux
-    - name: vsphere_centos
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -324,33 +265,26 @@
   initVersion: v1.28.7
   infrastructures:
     - name: aws_amzn
-    - name: aws_centos
     - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
-    - name: azure_centos
     - name: azure_default
     - name: azure_flatcar
     - name: azure_rhel
     - name: azure_rockylinux
-    - name: digitalocean_centos
     - name: digitalocean_default
     - name: digitalocean_rockylinux
-    - name: equinixmetal_centos
     - name: equinixmetal_default
     - name: equinixmetal_flatcar
     - name: equinixmetal_rockylinux
     - name: gce_default
-    - name: hetzner_centos
     - name: hetzner_default
     - name: hetzner_rockylinux
-    - name: openstack_centos
     - name: openstack_default
     - name: openstack_flatcar
     - name: openstack_rhel
     - name: openstack_rockylinux
-    - name: vsphere_centos
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -358,33 +292,26 @@
   initVersion: v1.29.2
   infrastructures:
     - name: aws_amzn
-    - name: aws_centos
     - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
-    - name: azure_centos
     - name: azure_default
     - name: azure_flatcar
     - name: azure_rhel
     - name: azure_rockylinux
-    - name: digitalocean_centos
     - name: digitalocean_default
     - name: digitalocean_rockylinux
-    - name: equinixmetal_centos
     - name: equinixmetal_default
     - name: equinixmetal_flatcar
     - name: equinixmetal_rockylinux
     - name: gce_default
-    - name: hetzner_centos
     - name: hetzner_default
     - name: hetzner_rockylinux
-    - name: openstack_centos
     - name: openstack_default
     - name: openstack_flatcar
     - name: openstack_rhel
     - name: openstack_rockylinux
-    - name: vsphere_centos
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -392,33 +319,26 @@
   initVersion: v1.30.1
   infrastructures:
     - name: aws_amzn
-    - name: aws_centos
     - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
-    - name: azure_centos
     - name: azure_default
     - name: azure_flatcar
     - name: azure_rhel
     - name: azure_rockylinux
-    - name: digitalocean_centos
     - name: digitalocean_default
     - name: digitalocean_rockylinux
-    - name: equinixmetal_centos
     - name: equinixmetal_default
     - name: equinixmetal_flatcar
     - name: equinixmetal_rockylinux
     - name: gce_default
-    - name: hetzner_centos
     - name: hetzner_default
     - name: hetzner_rockylinux
-    - name: openstack_centos
     - name: openstack_default
     - name: openstack_flatcar
     - name: openstack_rhel
     - name: openstack_rockylinux
-    - name: vsphere_centos
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -426,33 +346,26 @@
   initVersion: v1.27.11
   infrastructures:
     - name: aws_amzn
-    - name: aws_centos
     - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
-    - name: azure_centos
     - name: azure_default
     - name: azure_flatcar
     - name: azure_rhel
     - name: azure_rockylinux
-    - name: digitalocean_centos
     - name: digitalocean_default
     - name: digitalocean_rockylinux
-    - name: equinixmetal_centos
     - name: equinixmetal_default
     - name: equinixmetal_flatcar
     - name: equinixmetal_rockylinux
     - name: gce_default
-    - name: hetzner_centos
     - name: hetzner_default
     - name: hetzner_rockylinux
-    - name: openstack_centos
     - name: openstack_default
     - name: openstack_flatcar
     - name: openstack_rhel
     - name: openstack_rockylinux
-    - name: vsphere_centos
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -460,33 +373,26 @@
   initVersion: v1.28.7
   infrastructures:
     - name: aws_amzn
-    - name: aws_centos
     - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
-    - name: azure_centos
     - name: azure_default
     - name: azure_flatcar
     - name: azure_rhel
     - name: azure_rockylinux
-    - name: digitalocean_centos
     - name: digitalocean_default
     - name: digitalocean_rockylinux
-    - name: equinixmetal_centos
     - name: equinixmetal_default
     - name: equinixmetal_flatcar
     - name: equinixmetal_rockylinux
     - name: gce_default
-    - name: hetzner_centos
     - name: hetzner_default
     - name: hetzner_rockylinux
-    - name: openstack_centos
     - name: openstack_default
     - name: openstack_flatcar
     - name: openstack_rhel
     - name: openstack_rockylinux
-    - name: vsphere_centos
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -494,33 +400,26 @@
   initVersion: v1.29.2
   infrastructures:
     - name: aws_amzn
-    - name: aws_centos
     - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
-    - name: azure_centos
     - name: azure_default
     - name: azure_flatcar
     - name: azure_rhel
     - name: azure_rockylinux
-    - name: digitalocean_centos
     - name: digitalocean_default
     - name: digitalocean_rockylinux
-    - name: equinixmetal_centos
     - name: equinixmetal_default
     - name: equinixmetal_flatcar
     - name: equinixmetal_rockylinux
     - name: gce_default
-    - name: hetzner_centos
     - name: hetzner_default
     - name: hetzner_rockylinux
-    - name: openstack_centos
     - name: openstack_default
     - name: openstack_flatcar
     - name: openstack_rhel
     - name: openstack_rockylinux
-    - name: vsphere_centos
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -528,33 +427,26 @@
   initVersion: v1.30.1
   infrastructures:
     - name: aws_amzn
-    - name: aws_centos
     - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
-    - name: azure_centos
     - name: azure_default
     - name: azure_flatcar
     - name: azure_rhel
     - name: azure_rockylinux
-    - name: digitalocean_centos
     - name: digitalocean_default
     - name: digitalocean_rockylinux
-    - name: equinixmetal_centos
     - name: equinixmetal_default
     - name: equinixmetal_flatcar
     - name: equinixmetal_rockylinux
     - name: gce_default
-    - name: hetzner_centos
     - name: hetzner_default
     - name: hetzner_rockylinux
-    - name: openstack_centos
     - name: openstack_default
     - name: openstack_flatcar
     - name: openstack_rhel
     - name: openstack_rockylinux
-    - name: vsphere_centos
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -563,33 +455,26 @@
   upgradedVersion: v1.28.7
   infrastructures:
     - name: aws_amzn_stable
-    - name: aws_centos_stable
     - name: aws_default_stable
     - name: aws_flatcar_stable
     - name: aws_rhel_stable
     - name: aws_rockylinux_stable
-    - name: azure_centos_stable
     - name: azure_default_stable
     - name: azure_flatcar_stable
     - name: azure_rhel_stable
     - name: azure_rockylinux_stable
-    - name: digitalocean_centos_stable
     - name: digitalocean_default_stable
     - name: digitalocean_rockylinux_stable
-    - name: equinixmetal_centos_stable
     - name: equinixmetal_default_stable
     - name: equinixmetal_flatcar_stable
     - name: equinixmetal_rockylinux_stable
     - name: gce_default_stable
-    - name: hetzner_centos_stable
     - name: hetzner_default_stable
     - name: hetzner_rockylinux_stable
-    - name: openstack_centos_stable
     - name: openstack_default_stable
     - name: openstack_flatcar_stable
     - name: openstack_rhel_stable
     - name: openstack_rockylinux_stable
-    - name: vsphere_centos_stable
     - name: vsphere_default_stable
     - name: vsphere_flatcar_stable
 
@@ -598,33 +483,26 @@
   upgradedVersion: v1.29.2
   infrastructures:
     - name: aws_amzn_stable
-    - name: aws_centos_stable
     - name: aws_default_stable
     - name: aws_flatcar_stable
     - name: aws_rhel_stable
     - name: aws_rockylinux_stable
-    - name: azure_centos_stable
     - name: azure_default_stable
     - name: azure_flatcar_stable
     - name: azure_rhel_stable
     - name: azure_rockylinux_stable
-    - name: digitalocean_centos_stable
     - name: digitalocean_default_stable
     - name: digitalocean_rockylinux_stable
-    - name: equinixmetal_centos_stable
     - name: equinixmetal_default_stable
     - name: equinixmetal_flatcar_stable
     - name: equinixmetal_rockylinux_stable
     - name: gce_default_stable
-    - name: hetzner_centos_stable
     - name: hetzner_default_stable
     - name: hetzner_rockylinux_stable
-    - name: openstack_centos_stable
     - name: openstack_default_stable
     - name: openstack_flatcar_stable
     - name: openstack_rhel_stable
     - name: openstack_rockylinux_stable
-    - name: vsphere_centos_stable
     - name: vsphere_default_stable
     - name: vsphere_flatcar_stable
 
@@ -633,33 +511,26 @@
   upgradedVersion: v1.30.1
   infrastructures:
     - name: aws_amzn_stable
-    - name: aws_centos_stable
     - name: aws_default_stable
     - name: aws_flatcar_stable
     - name: aws_rhel_stable
     - name: aws_rockylinux_stable
-    - name: azure_centos_stable
     - name: azure_default_stable
     - name: azure_flatcar_stable
     - name: azure_rhel_stable
     - name: azure_rockylinux_stable
-    - name: digitalocean_centos_stable
     - name: digitalocean_default_stable
     - name: digitalocean_rockylinux_stable
-    - name: equinixmetal_centos_stable
     - name: equinixmetal_default_stable
     - name: equinixmetal_flatcar_stable
     - name: equinixmetal_rockylinux_stable
     - name: gce_default_stable
-    - name: hetzner_centos_stable
     - name: hetzner_default_stable
     - name: hetzner_rockylinux_stable
-    - name: openstack_centos_stable
     - name: openstack_default_stable
     - name: openstack_flatcar_stable
     - name: openstack_rhel_stable
     - name: openstack_rockylinux_stable
-    - name: vsphere_centos_stable
     - name: vsphere_default_stable
     - name: vsphere_flatcar_stable
 ####################
@@ -698,7 +569,6 @@
 - scenario: csi_ccm_migration
   initVersion: v1.27.11
   infrastructures:
-    - name: azure_centos
     - name: azure_default
     - name: azure_flatcar
     - name: azure_rhel
@@ -708,7 +578,6 @@
 - scenario: csi_ccm_migration
   initVersion: v1.28.7
   infrastructures:
-    - name: azure_centos
     - name: azure_default
     - name: azure_flatcar
     - name: azure_rhel
