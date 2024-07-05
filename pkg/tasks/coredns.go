@@ -18,6 +18,7 @@ package tasks
 
 import (
 	"context"
+	"slices"
 
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
@@ -47,13 +48,19 @@ func patchCoreDNS(s *state.State) error {
 		return fail.KubeClient(err, "getting %T %s", dep, key)
 	}
 
-	dep.Spec.Template.Spec.Tolerations = append(dep.Spec.Template.Spec.Tolerations,
-		corev1.Toleration{
-			Key:    "node.cloudprovider.kubernetes.io/uninitialized",
-			Value:  "true",
-			Effect: corev1.TaintEffectNoSchedule,
-		},
-	)
+	toleration := corev1.Toleration{
+		Key:    "node.cloudprovider.kubernetes.io/uninitialized",
+		Value:  "true",
+		Effect: corev1.TaintEffectNoSchedule,
+	}
+
+	// older KubeOne releases accidentally put multiple identical tolerations
+	// on the Deployment; clean them all up
+	dep.Spec.Template.Spec.Tolerations = slices.DeleteFunc(dep.Spec.Template.Spec.Tolerations, func(t corev1.Toleration) bool {
+		return t.Key == toleration.Key
+	})
+
+	dep.Spec.Template.Spec.Tolerations = append(dep.Spec.Template.Spec.Tolerations, toleration)
 
 	if s.Cluster.Features.CoreDNS.Replicas != nil {
 		dep.Spec.Replicas = s.Cluster.Features.CoreDNS.Replicas
