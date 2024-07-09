@@ -17,6 +17,7 @@ limitations under the License.
 package tasks
 
 import (
+	"fmt"
 	"time"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -25,8 +26,20 @@ import (
 	"k8c.io/kubeone/pkg/state"
 )
 
-func upgradeFollower(s *state.State) error {
-	return s.RunTaskOnFollowers(upgradeFollowerExecutor, state.RunSequentially)
+func generateUpgradeFollowersTasks(followers []kubeoneapi.HostConfig) []Task {
+	var upgradeFollowersTasks []Task
+
+	for _, follower := range followers {
+		upgradeFollowersTasks = append(upgradeFollowersTasks, Task{
+			Fn: func(s *state.State) error {
+				return s.RunTaskOnNodes([]kubeoneapi.HostConfig{follower}, upgradeFollowerExecutor, state.RunSequentially, nil)
+			},
+			Description: fmt.Sprintf("upgrading %s follower control plane", follower.PrivateAddress),
+			Operation:   "upgrading follower control plane",
+		})
+	}
+
+	return upgradeFollowersTasks
 }
 
 func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {

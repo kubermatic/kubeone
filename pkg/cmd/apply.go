@@ -343,7 +343,7 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 			tasksToRun = tasks.WithDisableEncryptionProviders(tasksToRun, s.LiveCluster.EncryptionConfiguration.Custom)
 		}
 
-		tasksToRun = tasks.WithUpgrade(tasksToRun)
+		tasksToRun = tasks.WithUpgrade(tasksToRun, s.Cluster.Followers()...)
 
 		if s.ShouldEnableEncryption() {
 			operations = append(operations, "enable Encryption Provider support")
