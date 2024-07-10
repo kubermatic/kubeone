@@ -108,7 +108,7 @@ No modules.
 | <a name="input_ssh_private_key_file"></a> [ssh\_private\_key\_file](#input\_ssh\_private\_key\_file) | SSH private key file used to access instances | `string` | `""` | no |
 | <a name="input_ssh_public_key_file"></a> [ssh\_public\_key\_file](#input\_ssh\_public\_key\_file) | SSH public key file | `string` | `"~/.ssh/id_rsa.pub"` | no |
 | <a name="input_ssh_username"></a> [ssh\_username](#input\_ssh\_username) | SSH user, used only in output | `string` | `"root"` | no |
-| <a name="input_template_name"></a> [template\_name](#input\_template\_name) | template name | `string` | `"ubuntu-22.04"` | no |
+| <a name="input_template_name"></a> [template\_name](#input\_template\_name) | template name | `string` | `"ubuntu-24.04"` | no |
 | <a name="input_vrrp_interface"></a> [vrrp\_interface](#input\_vrrp\_interface) | network interface for API virtual IP | `string` | `"ens192"` | no |
 | <a name="input_vrrp_router_id"></a> [vrrp\_router\_id](#input\_vrrp\_router\_id) | vrrp router id for API virtual IP. Must be unique in used subnet | `number` | `42` | no |
 | <a name="input_worker_disk"></a> [worker\_disk](#input\_worker\_disk) | disk size of each worker node in GB | `number` | `10` | no |
