@@ -64,6 +64,24 @@ var (
 				outputDir:  "/logs/artifacts/logs",
 			},
 		},
+		"aws_ubuntu_previous_lts": {
+			name: "aws_ubuntu_previous_lts",
+			labels: map[string]string{
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "aws",
+			},
+			terraform: terraformBin{
+				path:    "../../examples/terraform/aws",
+				varFile: "testdata/aws_small_ubuntu_previous_lts.tfvars",
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
+		},
 		"aws_rhel": {
 			name: "aws_rhel",
 			environ: map[string]string{
