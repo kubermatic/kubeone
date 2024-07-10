@@ -8,6 +8,7 @@
     - name: aws_amzn
     - name: aws_default
       runIfChanged: "(.prow/|addons/|examples/|hack/|pkg/|test/)"
+    - name: aws_ubuntu_previous_lts
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -36,6 +37,7 @@
     - name: aws_amzn
     - name: aws_default
       runIfChanged: "(.prow/|addons/|examples/|hack/|pkg/|test/)"
+    - name: aws_ubuntu_previous_lts
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -64,6 +66,7 @@
     - name: aws_amzn
     - name: aws_default
       runIfChanged: "(.prow/|addons/|examples/|hack/|pkg/|test/)"
+    - name: aws_ubuntu_previous_lts
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -92,6 +95,7 @@
     - name: aws_amzn
     - name: aws_default
       runIfChanged: "(.prow/|addons/|examples/|hack/|pkg/|test/)"
+    - name: aws_ubuntu_previous_lts
     - name: aws_flatcar
     - name: aws_rhel
     - name: aws_rockylinux
@@ -152,6 +156,7 @@
   infrastructures:
     - name: aws_amzn_stable
     - name: aws_default_stable
+    - name: aws_ubuntu_previous_lts
     - name: aws_flatcar_stable
     - name: aws_rhel_stable
     - name: aws_rockylinux_stable
@@ -180,6 +185,7 @@
   infrastructures:
     - name: aws_amzn_stable
     - name: aws_default_stable
+    - name: aws_ubuntu_previous_lts
     - name: aws_flatcar_stable
     - name: aws_rhel_stable
     - name: aws_rockylinux_stable
@@ -208,6 +214,7 @@
   infrastructures:
     - name: aws_amzn_stable
     - name: aws_default_stable
+    - name: aws_ubuntu_previous_lts
     - name: aws_flatcar_stable
     - name: aws_rhel_stable
     - name: aws_rockylinux_stable

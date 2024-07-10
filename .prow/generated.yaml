@@ -53,6 +53,29 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-ubuntu-previous-lts-install-containerd-external-v1.27.11
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsUbuntuPreviousLtsInstallContainerdExternalV1_27_11
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-install-containerd-external-v1.27.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -587,6 +610,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAwsDefaultInstallContainerdExternalV1_28_7
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-ubuntu-previous-lts-install-containerd-external-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsUbuntuPreviousLtsInstallContainerdExternalV1_28_7
       env:
       - name: PROVIDER
         value: aws
@@ -1151,6 +1197,29 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-ubuntu-previous-lts-install-containerd-external-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsUbuntuPreviousLtsInstallContainerdExternalV1_29_2
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-install-containerd-external-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
@@ -1685,6 +1754,29 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAwsDefaultInstallContainerdExternalV1_30_1
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-ubuntu-previous-lts-install-containerd-external-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsUbuntuPreviousLtsInstallContainerdExternalV1_30_1
       env:
       - name: PROVIDER
         value: aws
@@ -2666,6 +2758,34 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-ubuntu-previous-lts-upgrade-containerd-external-from-v1.27.11-to-v1.28.7
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsUbuntuPreviousLtsUpgradeContainerdExternalFromV1_27_11_ToV1_28_7
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  extra_refs:
+  - base_ref: release/v1.8
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-containerd-external-from-v1.27.11-to-v1.28.7
   optional: false
   path_alias: k8c.io/kubeone
@@ -3357,6 +3477,34 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-ubuntu-previous-lts-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsUbuntuPreviousLtsUpgradeContainerdExternalFromV1_28_7_ToV1_29_2
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  extra_refs:
+  - base_ref: release/v1.8
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-containerd-external-from-v1.28.7-to-v1.29.2
   optional: false
   path_alias: k8c.io/kubeone
@@ -4031,6 +4179,34 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
+      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  extra_refs:
+  - base_ref: release/v1.8
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-ubuntu-previous-lts-upgrade-containerd-external-from-v1.29.2-to-v1.30.1
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsUbuntuPreviousLtsUpgradeContainerdExternalFromV1_29_2_ToV1_30_1
+      env:
+      - name: PROVIDER
+        value: aws
       image: quay.io/kubermatic/build:go-1.22-node-20-6
       imagePullPolicy: Always
       name: ""
