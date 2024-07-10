@@ -152,7 +152,7 @@ variable "compute_cluster_name" {
 }
 
 variable "template_name" {
-  default     = "ubuntu-22.04"
+  default     = "ubuntu-24.04"
   description = "template name"
   type        = string
 }
