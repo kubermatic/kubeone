@@ -64,6 +64,24 @@ var (
 				outputDir:  "/logs/artifacts/logs",
 			},
 		},
+		"aws_ubuntu_previous_lts": {
+			name: "aws_ubuntu_previous_lts",
+			labels: map[string]string{
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "aws",
+			},
+			terraform: terraformBin{
+				path:    "../../examples/terraform/aws",
+				varFile: "testdata/aws_small_ubuntu_previous_lts.tfvars",
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
+		},
 		"aws_rhel": {
 			name: "aws_rhel",
 			environ: map[string]string{
@@ -982,7 +1000,7 @@ var (
 				path:    "../../examples/terraform/vsphere",
 				varFile: "testdata/vsphere.tfvars",
 				vars: []string{
-					"template_name=kubeone-ubuntu-22.04",
+					"template_name=kubeone-ubuntu-24.04",
 					"worker_os=ubuntu",
 					"ssh_username=ubuntu",
 				},
@@ -1006,7 +1024,7 @@ var (
 				path:    "../../../kubeone-stable/examples/terraform/vsphere",
 				varFile: "testdata/vsphere.tfvars",
 				vars: []string{
-					"template_name=kubeone-ubuntu-22.04",
+					"template_name=kubeone-ubuntu-24.04",
 					"worker_os=ubuntu",
 					"ssh_username=ubuntu",
 				},

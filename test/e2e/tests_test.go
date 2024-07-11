@@ -28,6 +28,15 @@ func TestAwsDefaultInstallContainerdExternalV1_27_11(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestAwsUbuntuPreviousLtsInstallContainerdExternalV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_ubuntu_previous_lts"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
 func TestAwsFlatcarInstallContainerdExternalV1_27_11(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
@@ -229,6 +238,15 @@ func TestAwsAmznInstallContainerdExternalV1_28_7(t *testing.T) {
 func TestAwsDefaultInstallContainerdExternalV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsUbuntuPreviousLtsInstallContainerdExternalV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_ubuntu_previous_lts"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.28.7")
@@ -442,6 +460,15 @@ func TestAwsDefaultInstallContainerdExternalV1_29_2(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestAwsUbuntuPreviousLtsInstallContainerdExternalV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_ubuntu_previous_lts"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
 func TestAwsFlatcarInstallContainerdExternalV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar"]
@@ -643,6 +670,15 @@ func TestAwsAmznInstallContainerdExternalV1_30_1(t *testing.T) {
 func TestAwsDefaultInstallContainerdExternalV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsUbuntuPreviousLtsInstallContainerdExternalV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_ubuntu_previous_lts"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.30.1")
@@ -991,6 +1027,15 @@ func TestAwsDefaultStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *test
 	scenario.Run(ctx, t)
 }
 
+func TestAwsUbuntuPreviousLtsUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_ubuntu_previous_lts"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11", "v1.28.7")
+	scenario.Run(ctx, t)
+}
+
 func TestAwsFlatcarStableUpgradeContainerdExternalFromV1_27_11_ToV1_28_7(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar_stable"]
@@ -1198,6 +1243,15 @@ func TestAwsDefaultStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *testi
 	scenario.Run(ctx, t)
 }
 
+func TestAwsUbuntuPreviousLtsUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_ubuntu_previous_lts"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7", "v1.29.2")
+	scenario.Run(ctx, t)
+}
+
 func TestAwsFlatcarStableUpgradeContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_flatcar_stable"]
@@ -1399,6 +1453,15 @@ func TestAwsAmznStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.
 func TestAwsDefaultStableUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_default_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2", "v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsUbuntuPreviousLtsUpgradeContainerdExternalFromV1_29_2_ToV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_ubuntu_previous_lts"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29.2", "v1.30.1")

@@ -41,7 +41,7 @@ variable "image_properties_query" {
   description = "in absence of var.image, this will be used to query API for the image"
   default = {
     os_distro  = "ubuntu"
-    os_version = "22.04"
+    os_version = "24.04"
   }
   type = map(any)
 }
