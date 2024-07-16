@@ -181,6 +181,8 @@ spec:
             - --namespace=kube-system
             - --skip-nodes-with-local-storage={{ default "true" .Params.CLUSTER_AUTOSCALER_SKIP_LOCAL_STORAGE }}
             - --node-group-auto-discovery=clusterapi:namespace=kube-system
+            - --enforce-node-group-min-size={{ default "false" .Params.CLUSTER_AUTOSCALER_ENFORCE_NODE_GROUP_MIN_SIZE }}
+            - --balance-similar-node-groups={{ default "false" .Params.CLUSTER_AUTOSCALER_BALANCE_SIMILAR_NODE_GROUP }}
             - --logtostderr=true
             - --stderrthreshold=info
             - --v=4
