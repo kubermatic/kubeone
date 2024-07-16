@@ -117,14 +117,20 @@ You need to replace the following values with the actual ones:
 
 * `CLUSTER_AUTOSCALER_IMAGE` can be used to replace the Cluster Autoscaler image
   * The minor versions of Cluster Autoscaler and Kubernetes cluster should
-    match, as per
-    [Cluster Autoscaler recommendations][recommended-autoscaler-versions]
+    match, as per [Cluster Autoscaler recommendations][recommended-autoscaler-versions].
   * You can find the available Cluster Autoscaler versions by searching for
-    Cluster Autoscaler in the
-    [autoscaler GitHub repository][autoscaler-releases]
+    Cluster Autoscaler in the [autoscaler GitHub repository][autoscaler-releases].
 * `CLUSTER_AUTOSCALER_SKIP_LOCAL_STORAGE` can be used to define the value of `--skip-nodes-with-local-storage=`.
   * Possible values are `"true"`or `"false"`
   * Default is `"true"`, as described in the [FAQ][autoscaler-faq].
+* `CLUSTER_AUTOSCALER_ENFORCE_NODE_GROUP_MIN_SIZE` can be used to define the value of `--enforce-node-group-min-size=`.
+  * Possible values are `"true"` or `"false"`.
+  * Default is `"false"`, as described in the [FAQ][autoscaler-faq].
+  * Set the value to `"true"`, if you are facing issue similare to the one described over [here][enforce-node-group-min-size] in the [FAQ][autoscaler-faq].
+* `CLUSTER_AUTOSCALER_BALANCE_SIMILAR_NODE_GROUP` can be used to define the value of `--balance-similar-node-groups=`.
+  * Possible values are `"true"` or `"false"`.
+  * Default is `"false"`, as described in the [FAQ][autoscaler-faq].
+  * Set the value to `"true"`, if you are facing issue similare to the one described over [here][balance-similar-node-groups] in the [FAQ][autoscaler-faq].
 
 You can find more information about deploying addons in the
 [Addons document][using-addons].
@@ -138,3 +144,5 @@ You can find more information about deploying addons in the
 [autoscaler-releases]: https://github.com/kubernetes/autoscaler/releases
 [using-addons]: https://docs.kubermatic.com/kubeone/v1.8/guides/addons/
 [autoscaler-faq]: https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md
+[enforce-node-group-min-size]: https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#my-cluster-is-below-minimum--above-maximum-number-of-nodes-but-ca-did-not-fix-that-why
+[balance-similar-node-groups]: https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#im-running-cluster-with-nodes-in-multiple-zones-for-ha-purposes-is-that-supported-by-cluster-autoscaler
