@@ -134,7 +134,7 @@ variable "image_references" {
       image = {
         publisher = "Canonical"
         offer     = "ubuntu-24_04-lts"
-        sku       = "server"
+        sku       = "server-gen1"
         version   = "latest"
       }
       plan         = []
