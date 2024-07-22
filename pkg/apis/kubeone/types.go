@@ -839,6 +839,9 @@ type Features struct {
 	// DynamicAuditLog
 	DynamicAuditLog *DynamicAuditLog `json:"dynamicAuditLog,omitempty"`
 
+	// WebHookAuditLog
+	WebHookAuditLog *WebHookAuditLog `json:"webHookAuditLog,omitempty"`
+
 	// MetricsServer
 	MetricsServer *MetricsServer `json:"metricsServer,omitempty"`
 
@@ -921,6 +924,43 @@ type StaticAuditLogConfig struct {
 	// LogMaxSize is maximum size in megabytes of audit log file before it gets rotated.
 	// Default value is 100.
 	LogMaxSize int `json:"logMaxSize,omitempty"`
+}
+
+type WebHookAuditLog struct {
+	// Enable
+	// Default value is false.
+	Enable bool `json:"enable,omitempty"`
+
+	// Config
+	Config WebHookAuditLogConfig `json:"config"`
+}
+
+type WebHookAuditLogConfig struct {
+	// PolicyFilePath is a path on local file system to the audit policy manifest
+	// which defines what events should be recorded and what data they should include.
+	// PolicyFilePath is a required field.
+	// More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy
+	PolicyFilePath string `json:"policyFilePath"`
+
+	// ConfigFilePath is a path on local file system to a kubeconfig formatted file that
+	// defines how kube-apiserver can connect to the audit webhook.
+	// ConfigFilePath is a required field.
+	// More info: https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/#webhook-backend
+	ConfigFilePath string `json:"configFilePath"`
+
+	// TODO TBD if we want to support these flags as well
+	// --audit-webhook-batch-buffer-size int     Default: 10000
+	// --audit-webhook-batch-max-size int     Default: 400
+	// --audit-webhook-batch-max-wait duration     Default: 30s
+	// --audit-webhook-batch-throttle-burst int     Default: 15
+	// --audit-webhook-batch-throttle-enable     Default: true
+	// --audit-webhook-batch-throttle-qps float     Default: 10
+	// --audit-webhook-initial-backoff duration     Default: 10s
+	// --audit-webhook-mode string     Default: "batch"
+	// --audit-webhook-truncate-enabled
+	// --audit-webhook-truncate-max-batch-size int     Default: 10485760
+	// --audit-webhook-truncate-max-event-size int     Default: 102400
+	// --audit-webhook-version string     Default: "audit.k8s.io/v1"
 }
 
 // DynamicAuditLog feature flag

@@ -88,6 +88,14 @@ func generateConfigurationFiles(s *state.State) error {
 			return err
 		}
 	}
+	if s.Cluster.Features.WebHookAuditLog != nil && s.Cluster.Features.WebHookAuditLog.Enable {
+		if err := s.Configuration.AddFilePath("cfg/audit-policy.yaml", s.Cluster.Features.WebHookAuditLog.Config.PolicyFilePath, s.ManifestFilePath); err != nil {
+			return err
+		}
+		if err := s.Configuration.AddFilePath("cfg/audit-webhook-config.yaml", s.Cluster.Features.WebHookAuditLog.Config.ConfigFilePath, s.ManifestFilePath); err != nil {
+			return err
+		}
+	}
 	if s.Cluster.Features.PodNodeSelector != nil && s.Cluster.Features.PodNodeSelector.Enable {
 		admissionCfg, err := admissionconfig.NewAdmissionConfig(s.Cluster.Versions.Kubernetes, s.Cluster.Features.PodNodeSelector)
 		if err != nil {
@@ -275,6 +283,12 @@ func uploadConfigurationFilesToNode(s *state.State, _ *kubeoneapi.HostConfig, co
 	if err != nil {
 		return err
 	}
+
+	cmd, err = scripts.SaveAuditWebHookConfig(s.WorkDir)
+	if err != nil {
+		return err
+	}
+
 	_, _, err = s.Runner.RunRaw(cmd)
 	if err != nil {
 		return fail.SSH(err, "saving audit-policy")
