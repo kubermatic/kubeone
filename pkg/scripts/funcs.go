@@ -83,6 +83,5 @@ var libraryTemplate = heredoc.Doc(`
 	`)
 
 const (
-	defaultContainerdVersion       = "'1.7.*'"
-	defaultAmazonContainerdVersion = "'1.6.*'"
+	defaultContainerdVersion = "'1.7.*'"
 )

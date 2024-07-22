@@ -105,7 +105,7 @@ var containerRuntimeTemplates = map[string]string{
 			{{ template "container-runtime-daemon-config" . }}
 			{{ template "containerd-systemd-setup" . -}}
 			`,
-		defaultAmazonContainerdVersion,
+		defaultContainerdVersion,
 	),
 
 	"flatcar-containerd": heredoc.Doc(`
