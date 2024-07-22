@@ -1,6 +1,10 @@
 +++
 title = "v1beta3 API Reference"
+<<<<<<< HEAD
 date = 2024-07-30T12:07:24+03:00
+=======
+date = 2024-07-22T13:35:43+02:00
+>>>>>>> fe9bb682 (update codegen)
 weight = 11
 +++
 ## v1beta3
@@ -67,6 +71,8 @@ weight = 11
 * [VersionConfig](#versionconfig)
 * [VsphereSpec](#vspherespec)
 * [WeaveNetSpec](#weavenetspec)
+* [WebHookAuditLog](#webhookauditlog)
+* [WebHookAuditLogConfig](#webhookauditlogconfig)
 
 ### APIEndpoint
 
@@ -385,6 +391,7 @@ Features controls what features will be enabled on the cluster
 | podNodeSelector | PodNodeSelector | *[PodNodeSelector](#podnodeselector) | false |
 | staticAuditLog | StaticAuditLog | *[StaticAuditLog](#staticauditlog) | false |
 | dynamicAuditLog | DynamicAuditLog | *[DynamicAuditLog](#dynamicauditlog) | false |
+| webHookAuditLog | WebHookAuditLog | *[WebHookAuditLog](#webhookauditlog) | false |
 | metricsServer | MetricsServer | *[MetricsServer](#metricsserver) | false |
 | openidConnect | OpenIDConnect | *[OpenIDConnect](#openidconnect) | false |
 | encryptionProviders | Encryption Providers | *[EncryptionProviders](#encryptionproviders) | false |
@@ -827,5 +834,27 @@ WeaveNetSpec defines the WeaveNet CNI plugin
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | encrypted | Encrypted | bool | false |
+
+[Back to Group](#v1beta3)
+
+### WebHookAuditLog
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| enable | Enable Default value is false. | bool | false |
+| config | Config | [WebHookAuditLogConfig](#webhookauditlogconfig) | true |
+
+[Back to Group](#v1beta3)
+
+### WebHookAuditLogConfig
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| policyFilePath | PolicyFilePath is a path on local file system to the audit policy manifest which defines what events should be recorded and what data they should include. PolicyFilePath is a required field. More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy | string | true |
+| configFilePath | ConfigFilePath is a path on local file system to a kubeconfig formatted file that defines how kube-apiserver can connect to the audit webhook. ConfigFilePath is a required field. More info: https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/#webhook-backend | string | true |
 
 [Back to Group](#v1beta3)
