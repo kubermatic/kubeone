@@ -284,6 +284,11 @@ func uploadConfigurationFilesToNode(s *state.State, _ *kubeoneapi.HostConfig, co
 		return err
 	}
 
+	_, _, err = s.Runner.RunRaw(cmd)
+	if err != nil {
+		return fail.SSH(err, "saving audit-policy")
+	}
+
 	cmd, err = scripts.SaveAuditWebHookConfig(s.WorkDir)
 	if err != nil {
 		return err
@@ -291,7 +296,7 @@ func uploadConfigurationFilesToNode(s *state.State, _ *kubeoneapi.HostConfig, co
 
 	_, _, err = s.Runner.RunRaw(cmd)
 	if err != nil {
-		return fail.SSH(err, "saving audit-policy")
+		return fail.SSH(err, "saving audit-webhook-config")
 	}
 
 	cmd, err = scripts.SavePodNodeSelectorConfig(s.WorkDir)
