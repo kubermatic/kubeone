@@ -18,6 +18,7 @@ package tasks
 
 import (
 	"k8c.io/kubeone/pkg/addons"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate"
 	"k8c.io/kubeone/pkg/clusterstatus"
 	"k8c.io/kubeone/pkg/credentials"
@@ -319,7 +320,7 @@ func WithResources(t Tasks) Tasks {
 	)
 }
 
-func WithUpgrade(t Tasks) Tasks {
+func WithUpgrade(t Tasks, followers ...kubeoneapi.HostConfig) Tasks {
 	return WithHostnameOSAndProbes(t).
 		append(kubernetesConfigFiles()...). // this, in the upgrade process where config rails are handled
 		append(Tasks{
@@ -327,16 +328,16 @@ func WithUpgrade(t Tasks) Tasks {
 			{Fn: uploadKubeadmToConfigMaps, Operation: "updating kubeadm configmaps"},
 			{Fn: runPreflightChecks, Operation: "checking preflight safetynet", Retries: 1},
 			{Fn: upgradeLeader, Operation: "upgrading leader control plane"},
-			{Fn: upgradeFollower, Operation: "upgrading follower control plane"},
-			{
-				Fn: func(s *state.State) error {
-					s.Logger.Info("Downloading PKI...")
-
-					return s.RunTaskOnLeader(certificate.DownloadKubePKI)
-				},
-				Operation: "downloading Kubernetes PKI from the leader",
-			},
 		}...).
+		append(generateUpgradeFollowersTasks(followers)...).
+		append(Task{
+			Fn: func(s *state.State) error {
+				s.Logger.Info("Downloading PKI...")
+
+				return s.RunTaskOnLeader(certificate.DownloadKubePKI)
+			},
+			Operation: "downloading Kubernetes PKI from the leader",
+		}).
 		append(WithResources(nil)...).
 		append(
 			Task{Fn: restartKubeAPIServer, Operation: "restarting unhealthy kube-apiserver"},

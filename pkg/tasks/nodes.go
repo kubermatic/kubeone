@@ -211,10 +211,8 @@ func patchStaticPods(s *state.State) error {
 			Value: filepath.Join("/etc/ssl/certs", cabundle.FileName),
 		}
 
-		for idx := range pod.Spec.Containers[0].Env {
-			env := pod.Spec.Containers[0].Env[idx]
+		for _, env := range pod.Spec.Containers[0].Env {
 			if env.Name == envVar.Name {
-				env.Value = envVar.Value
 				foundEnvVar = true
 			}
 		}
