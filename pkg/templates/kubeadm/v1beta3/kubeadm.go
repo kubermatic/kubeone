@@ -87,6 +87,8 @@ type Config struct {
 }
 
 // NewConfig returns all required configs to init a cluster via a set of v1beta3 configs
+//
+//nolint:gocyclo
 func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 	cluster := s.Cluster
 	kubeSemVer, err := semver.NewVersion(cluster.Versions.Kubernetes)
