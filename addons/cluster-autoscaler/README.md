@@ -126,11 +126,11 @@ You need to replace the following values with the actual ones:
 * `CLUSTER_AUTOSCALER_ENFORCE_NODE_GROUP_MIN_SIZE` can be used to define the value of `--enforce-node-group-min-size=`.
   * Possible values are `"true"` or `"false"`.
   * Default is `"false"`, as described in the [FAQ][autoscaler-faq].
-  * Set the value to `"true"`, if you are facing issue similare to the one described over [here][enforce-node-group-min-size] in the [FAQ][autoscaler-faq].
+  * Set the value to `"true"`, if you are facing issue similar to the one described over [here][enforce-node-group-min-size] in the [FAQ][autoscaler-faq].
 * `CLUSTER_AUTOSCALER_BALANCE_SIMILAR_NODE_GROUP` can be used to define the value of `--balance-similar-node-groups=`.
   * Possible values are `"true"` or `"false"`.
   * Default is `"false"`, as described in the [FAQ][autoscaler-faq].
-  * Set the value to `"true"`, if you are facing issue similare to the one described over [here][balance-similar-node-groups] in the [FAQ][autoscaler-faq].
+  * Set the value to `"true"`, if you are facing issue similar to the one described over [here][balance-similar-node-groups] in the [FAQ][autoscaler-faq].
 
 You can find more information about deploying addons in the
 [Addons document][using-addons].
