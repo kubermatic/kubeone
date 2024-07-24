@@ -79,12 +79,7 @@ var containerRuntimeTemplates = map[string]string{
 	"yum-containerd": heredoc.Docf(`
 			{{ if .CONFIGURE_REPOSITORIES }}
 			sudo yum install -y yum-utils
-			sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
-			{{- /*
-			Due to DNF modules we have to do this on docker-ce repo
-			More info at: https://bugzilla.redhat.com/show_bug.cgi?id=1756473
-			*/}}
-			sudo yum-config-manager --save --setopt=docker-ce-stable.module_hotfixes=true
+			sudo yum-config-manager --add-repo=https://download.docker.com/linux/rhel/docker-ce.repo
 			{{ end }}
 
 			sudo yum versionlock delete containerd.io || true
