@@ -163,6 +163,12 @@ variable "ssh_agent_socket" {
   type        = string
 }
 
+variable "config_drive" {
+  description = "If enabled, metadata for machines is stored on a configuration drive instead of the metadata service."
+  default     = false
+  type        = bool
+}
+
 # Machine Deployment Variables
 variable "initial_machinedeployment_replicas" {
   description = "Number of replicas per MachineDeployment"
