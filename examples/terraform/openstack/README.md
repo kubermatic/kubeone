@@ -71,6 +71,7 @@ No modules.
 | <a name="input_cluster_autoscaler_max_replicas"></a> [cluster\_autoscaler\_max\_replicas](#input\_cluster\_autoscaler\_max\_replicas) | maximum number of replicas per MachineDeployment (requires cluster-autoscaler) | `number` | `0` | no |
 | <a name="input_cluster_autoscaler_min_replicas"></a> [cluster\_autoscaler\_min\_replicas](#input\_cluster\_autoscaler\_min\_replicas) | minimum number of replicas per MachineDeployment (requires cluster-autoscaler) | `number` | `0` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster | `string` | n/a | yes |
+| <a name="input_config_drive"></a> [config\_drive](#input\_config\_drive) | If enabled, metadata for machines is stored on a configuration drive instead of the metadata service. | `bool` | `false` | no |
 | <a name="input_control_plane_flavor"></a> [control\_plane\_flavor](#input\_control\_plane\_flavor) | OpenStack instance flavor for the control plane nodes | `string` | `"m1.small"` | no |
 | <a name="input_control_plane_vm_count"></a> [control\_plane\_vm\_count](#input\_control\_plane\_vm\_count) | number of control plane instances | `number` | `3` | no |
 | <a name="input_external_network_name"></a> [external\_network\_name](#input\_external\_network\_name) | OpenStack external network name | `string` | n/a | yes |

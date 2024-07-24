@@ -238,6 +238,7 @@ func updateOpenStackWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerCon
 		{key: "nodeVolumeAttachLimit", value: openstackConfig.NodeVolumeAttachLimit},
 		{key: "tags", value: openstackConfig.Tags},
 		{key: "trustDevicePath", value: openstackConfig.TrustDevicePath},
+		{key: "configDrive", value: openstackConfig.ConfigDrive},
 	}
 
 	for _, flag := range flags {

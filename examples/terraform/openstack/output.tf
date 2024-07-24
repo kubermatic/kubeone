@@ -95,6 +95,7 @@ output "kubeone_workers" {
           securityGroups = [openstack_networking_secgroup_v2.securitygroup.name]
           network        = openstack_networking_network_v2.network.name
           subnet         = openstack_networking_subnet_v2.subnet.name
+          configDrive    = var.config_drive
           # floatingIpPool = var.external_network_name
           # Optional: If set, the rootDisk will be a volume.
           # Otherwise, the rootDisk will be on ephemeral storage and its size will

@@ -66,6 +66,7 @@ type OpenStackSpec struct {
 	NodeVolumeAttachLimit *uint             `json:"nodeVolumeAttachLimit,omitempty"`
 	TrustDevicePath       bool              `json:"trustDevicePath"`
 	Tags                  map[string]string `json:"tags"`
+	ConfigDrive           bool              `json:"configDrive,omitempty"`
 }
 
 // GCESpec holds cloudprovider spec for GCE

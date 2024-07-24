@@ -31,6 +31,7 @@ resource "openstack_compute_instance_v2" "bastion" {
   flavor_name     = var.bastion_flavor
   key_pair        = openstack_compute_keypair_v2.deployer.name
   security_groups = [openstack_networking_secgroup_v2.securitygroup.name]
+  config_drive    = var.config_drive
 
   network {
     port = openstack_networking_port_v2.bastion.id
