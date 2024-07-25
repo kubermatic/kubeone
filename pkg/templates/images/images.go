@@ -214,7 +214,7 @@ func baseResources() map[Resource]map[string]string {
 		Flannel:                {"*": "docker.io/flannel/flannel:v0.24.3"},
 		MachineController:      {"*": "quay.io/kubermatic/machine-controller:b030806dc31d1b7efad3249b201c374b3faee1e4"},
 		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.7.1"},
-		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:75e6ecdddda6b834a138d3a234f57015aa7d1dbc"},
+		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:5503e90320dfc1f130c18cd001970e8aa03ed09b"},
 	}
 }
 
