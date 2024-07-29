@@ -648,23 +648,23 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*WebHookAuditLog)(nil), (*kubeone.WebHookAuditLog)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1beta3_WebHookAuditLog_To_kubeone_WebHookAuditLog(a.(*WebHookAuditLog), b.(*kubeone.WebHookAuditLog), scope)
+	if err := s.AddGeneratedConversionFunc((*WebhookAuditLog)(nil), (*kubeone.WebhookAuditLog)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1beta3_WebhookAuditLog_To_kubeone_WebhookAuditLog(a.(*WebhookAuditLog), b.(*kubeone.WebhookAuditLog), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*kubeone.WebHookAuditLog)(nil), (*WebHookAuditLog)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_kubeone_WebHookAuditLog_To_v1beta3_WebHookAuditLog(a.(*kubeone.WebHookAuditLog), b.(*WebHookAuditLog), scope)
+	if err := s.AddGeneratedConversionFunc((*kubeone.WebhookAuditLog)(nil), (*WebhookAuditLog)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_WebhookAuditLog_To_v1beta3_WebhookAuditLog(a.(*kubeone.WebhookAuditLog), b.(*WebhookAuditLog), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*WebHookAuditLogConfig)(nil), (*kubeone.WebHookAuditLogConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1beta3_WebHookAuditLogConfig_To_kubeone_WebHookAuditLogConfig(a.(*WebHookAuditLogConfig), b.(*kubeone.WebHookAuditLogConfig), scope)
+	if err := s.AddGeneratedConversionFunc((*WebhookAuditLogConfig)(nil), (*kubeone.WebhookAuditLogConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1beta3_WebhookAuditLogConfig_To_kubeone_WebhookAuditLogConfig(a.(*WebhookAuditLogConfig), b.(*kubeone.WebhookAuditLogConfig), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*kubeone.WebHookAuditLogConfig)(nil), (*WebHookAuditLogConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_kubeone_WebHookAuditLogConfig_To_v1beta3_WebHookAuditLogConfig(a.(*kubeone.WebHookAuditLogConfig), b.(*WebHookAuditLogConfig), scope)
+	if err := s.AddGeneratedConversionFunc((*kubeone.WebhookAuditLogConfig)(nil), (*WebhookAuditLogConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_WebhookAuditLogConfig_To_v1beta3_WebhookAuditLogConfig(a.(*kubeone.WebhookAuditLogConfig), b.(*WebhookAuditLogConfig), scope)
 	}); err != nil {
 		return err
 	}
@@ -1295,7 +1295,7 @@ func autoConvert_v1beta3_Features_To_kubeone_Features(in *Features, out *kubeone
 	out.PodNodeSelector = (*kubeone.PodNodeSelector)(unsafe.Pointer(in.PodNodeSelector))
 	out.StaticAuditLog = (*kubeone.StaticAuditLog)(unsafe.Pointer(in.StaticAuditLog))
 	out.DynamicAuditLog = (*kubeone.DynamicAuditLog)(unsafe.Pointer(in.DynamicAuditLog))
-	out.WebHookAuditLog = (*kubeone.WebHookAuditLog)(unsafe.Pointer(in.WebHookAuditLog))
+	out.WebhookAuditLog = (*kubeone.WebhookAuditLog)(unsafe.Pointer(in.WebhookAuditLog))
 	out.MetricsServer = (*kubeone.MetricsServer)(unsafe.Pointer(in.MetricsServer))
 	out.OpenIDConnect = (*kubeone.OpenIDConnect)(unsafe.Pointer(in.OpenIDConnect))
 	out.EncryptionProviders = (*kubeone.EncryptionProviders)(unsafe.Pointer(in.EncryptionProviders))
@@ -1313,7 +1313,7 @@ func autoConvert_kubeone_Features_To_v1beta3_Features(in *kubeone.Features, out 
 	out.PodNodeSelector = (*PodNodeSelector)(unsafe.Pointer(in.PodNodeSelector))
 	out.StaticAuditLog = (*StaticAuditLog)(unsafe.Pointer(in.StaticAuditLog))
 	out.DynamicAuditLog = (*DynamicAuditLog)(unsafe.Pointer(in.DynamicAuditLog))
-	out.WebHookAuditLog = (*WebHookAuditLog)(unsafe.Pointer(in.WebHookAuditLog))
+	out.WebhookAuditLog = (*WebhookAuditLog)(unsafe.Pointer(in.WebhookAuditLog))
 	out.MetricsServer = (*MetricsServer)(unsafe.Pointer(in.MetricsServer))
 	out.OpenIDConnect = (*OpenIDConnect)(unsafe.Pointer(in.OpenIDConnect))
 	out.EncryptionProviders = (*EncryptionProviders)(unsafe.Pointer(in.EncryptionProviders))
@@ -2262,50 +2262,50 @@ func Convert_kubeone_WeaveNetSpec_To_v1beta3_WeaveNetSpec(in *kubeone.WeaveNetSp
 	return autoConvert_kubeone_WeaveNetSpec_To_v1beta3_WeaveNetSpec(in, out, s)
 }
 
-func autoConvert_v1beta3_WebHookAuditLog_To_kubeone_WebHookAuditLog(in *WebHookAuditLog, out *kubeone.WebHookAuditLog, s conversion.Scope) error {
+func autoConvert_v1beta3_WebhookAuditLog_To_kubeone_WebhookAuditLog(in *WebhookAuditLog, out *kubeone.WebhookAuditLog, s conversion.Scope) error {
 	out.Enable = in.Enable
-	if err := Convert_v1beta3_WebHookAuditLogConfig_To_kubeone_WebHookAuditLogConfig(&in.Config, &out.Config, s); err != nil {
+	if err := Convert_v1beta3_WebhookAuditLogConfig_To_kubeone_WebhookAuditLogConfig(&in.Config, &out.Config, s); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Convert_v1beta3_WebHookAuditLog_To_kubeone_WebHookAuditLog is an autogenerated conversion function.
-func Convert_v1beta3_WebHookAuditLog_To_kubeone_WebHookAuditLog(in *WebHookAuditLog, out *kubeone.WebHookAuditLog, s conversion.Scope) error {
-	return autoConvert_v1beta3_WebHookAuditLog_To_kubeone_WebHookAuditLog(in, out, s)
+// Convert_v1beta3_WebhookAuditLog_To_kubeone_WebhookAuditLog is an autogenerated conversion function.
+func Convert_v1beta3_WebhookAuditLog_To_kubeone_WebhookAuditLog(in *WebhookAuditLog, out *kubeone.WebhookAuditLog, s conversion.Scope) error {
+	return autoConvert_v1beta3_WebhookAuditLog_To_kubeone_WebhookAuditLog(in, out, s)
 }
 
-func autoConvert_kubeone_WebHookAuditLog_To_v1beta3_WebHookAuditLog(in *kubeone.WebHookAuditLog, out *WebHookAuditLog, s conversion.Scope) error {
+func autoConvert_kubeone_WebhookAuditLog_To_v1beta3_WebhookAuditLog(in *kubeone.WebhookAuditLog, out *WebhookAuditLog, s conversion.Scope) error {
 	out.Enable = in.Enable
-	if err := Convert_kubeone_WebHookAuditLogConfig_To_v1beta3_WebHookAuditLogConfig(&in.Config, &out.Config, s); err != nil {
+	if err := Convert_kubeone_WebhookAuditLogConfig_To_v1beta3_WebhookAuditLogConfig(&in.Config, &out.Config, s); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Convert_kubeone_WebHookAuditLog_To_v1beta3_WebHookAuditLog is an autogenerated conversion function.
-func Convert_kubeone_WebHookAuditLog_To_v1beta3_WebHookAuditLog(in *kubeone.WebHookAuditLog, out *WebHookAuditLog, s conversion.Scope) error {
-	return autoConvert_kubeone_WebHookAuditLog_To_v1beta3_WebHookAuditLog(in, out, s)
+// Convert_kubeone_WebhookAuditLog_To_v1beta3_WebhookAuditLog is an autogenerated conversion function.
+func Convert_kubeone_WebhookAuditLog_To_v1beta3_WebhookAuditLog(in *kubeone.WebhookAuditLog, out *WebhookAuditLog, s conversion.Scope) error {
+	return autoConvert_kubeone_WebhookAuditLog_To_v1beta3_WebhookAuditLog(in, out, s)
 }
 
-func autoConvert_v1beta3_WebHookAuditLogConfig_To_kubeone_WebHookAuditLogConfig(in *WebHookAuditLogConfig, out *kubeone.WebHookAuditLogConfig, s conversion.Scope) error {
+func autoConvert_v1beta3_WebhookAuditLogConfig_To_kubeone_WebhookAuditLogConfig(in *WebhookAuditLogConfig, out *kubeone.WebhookAuditLogConfig, s conversion.Scope) error {
 	out.PolicyFilePath = in.PolicyFilePath
 	out.ConfigFilePath = in.ConfigFilePath
 	return nil
 }
 
-// Convert_v1beta3_WebHookAuditLogConfig_To_kubeone_WebHookAuditLogConfig is an autogenerated conversion function.
-func Convert_v1beta3_WebHookAuditLogConfig_To_kubeone_WebHookAuditLogConfig(in *WebHookAuditLogConfig, out *kubeone.WebHookAuditLogConfig, s conversion.Scope) error {
-	return autoConvert_v1beta3_WebHookAuditLogConfig_To_kubeone_WebHookAuditLogConfig(in, out, s)
+// Convert_v1beta3_WebhookAuditLogConfig_To_kubeone_WebhookAuditLogConfig is an autogenerated conversion function.
+func Convert_v1beta3_WebhookAuditLogConfig_To_kubeone_WebhookAuditLogConfig(in *WebhookAuditLogConfig, out *kubeone.WebhookAuditLogConfig, s conversion.Scope) error {
+	return autoConvert_v1beta3_WebhookAuditLogConfig_To_kubeone_WebhookAuditLogConfig(in, out, s)
 }
 
-func autoConvert_kubeone_WebHookAuditLogConfig_To_v1beta3_WebHookAuditLogConfig(in *kubeone.WebHookAuditLogConfig, out *WebHookAuditLogConfig, s conversion.Scope) error {
+func autoConvert_kubeone_WebhookAuditLogConfig_To_v1beta3_WebhookAuditLogConfig(in *kubeone.WebhookAuditLogConfig, out *WebhookAuditLogConfig, s conversion.Scope) error {
 	out.PolicyFilePath = in.PolicyFilePath
 	out.ConfigFilePath = in.ConfigFilePath
 	return nil
 }
 
-// Convert_kubeone_WebHookAuditLogConfig_To_v1beta3_WebHookAuditLogConfig is an autogenerated conversion function.
-func Convert_kubeone_WebHookAuditLogConfig_To_v1beta3_WebHookAuditLogConfig(in *kubeone.WebHookAuditLogConfig, out *WebHookAuditLogConfig, s conversion.Scope) error {
-	return autoConvert_kubeone_WebHookAuditLogConfig_To_v1beta3_WebHookAuditLogConfig(in, out, s)
+// Convert_kubeone_WebhookAuditLogConfig_To_v1beta3_WebhookAuditLogConfig is an autogenerated conversion function.
+func Convert_kubeone_WebhookAuditLogConfig_To_v1beta3_WebhookAuditLogConfig(in *kubeone.WebhookAuditLogConfig, out *WebhookAuditLogConfig, s conversion.Scope) error {
+	return autoConvert_kubeone_WebhookAuditLogConfig_To_v1beta3_WebhookAuditLogConfig(in, out, s)
 }

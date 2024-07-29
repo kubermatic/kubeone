@@ -93,7 +93,7 @@ func SaveAuditPolicyConfig(workdir string) (string, error) {
 	return result, fail.Runtime(err, "rendering auditPolicyScriptTemplate script")
 }
 
-func SaveAuditWebHookConfig(workdir string) (string, error) {
+func SaveAuditWebhookConfig(workdir string) (string, error) {
 	result, err := Render(auditWebHookConfigTemplate, Data{
 		"WORK_DIR": workdir,
 	})

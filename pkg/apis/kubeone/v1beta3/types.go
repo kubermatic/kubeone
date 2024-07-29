@@ -759,8 +759,8 @@ type Features struct {
 	// DynamicAuditLog
 	DynamicAuditLog *DynamicAuditLog `json:"dynamicAuditLog,omitempty"`
 
-	// WebHookAuditLog
-	WebHookAuditLog *WebHookAuditLog `json:"webHookAuditLog,omitempty"`
+	// WebhookAuditLog
+	WebhookAuditLog *WebhookAuditLog `json:"webhookAuditLog,omitempty"`
 
 	// MetricsServer
 	MetricsServer *MetricsServer `json:"metricsServer,omitempty"`
@@ -846,16 +846,16 @@ type StaticAuditLogConfig struct {
 	LogMaxSize int `json:"logMaxSize,omitempty"`
 }
 
-type WebHookAuditLog struct {
+type WebhookAuditLog struct {
 	// Enable
 	// Default value is false.
 	Enable bool `json:"enable,omitempty"`
 
 	// Config
-	Config WebHookAuditLogConfig `json:"config"`
+	Config WebhookAuditLogConfig `json:"config"`
 }
 
-type WebHookAuditLogConfig struct {
+type WebhookAuditLogConfig struct {
 	// PolicyFilePath is a path on local file system to the audit policy manifest
 	// which defines what events should be recorded and what data they should include.
 	// PolicyFilePath is a required field.

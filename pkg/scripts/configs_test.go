@@ -79,7 +79,7 @@ func TestSaveAuditPolicyConfig(t *testing.T) {
 	}
 }
 
-func TestSaveAuditWebHookConfig(t *testing.T) {
+func TestSaveAuditWebhookConfig(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
@@ -95,7 +95,7 @@ func TestSaveAuditWebHookConfig(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			got, err := SaveAuditWebHookConfig(tt.workdir)
+			got, err := SaveAuditWebhookConfig(tt.workdir)
 			if !errors.Is(err, tt.err) {
 				t.Errorf("SaveAuditWebHookConfig() error = %v, wantErr %v", err, tt.err)
 

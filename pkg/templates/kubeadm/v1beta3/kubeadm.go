@@ -318,9 +318,9 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 		}
 	}
 
-	// StaticAuditLog and WebHookAuditLog both share the audit-conf volume and since both
+	// StaticAuditLog and WebhookAuditLog both share the audit-conf volume and since both
 	// can be activated simultaneously, we need to make sure to add the ExtraVolume only once
-	if (cluster.Features.StaticAuditLog != nil && cluster.Features.StaticAuditLog.Enable) || (cluster.Features.WebHookAuditLog != nil && cluster.Features.WebHookAuditLog.Enable) {
+	if (cluster.Features.StaticAuditLog != nil && cluster.Features.StaticAuditLog.Enable) || (cluster.Features.WebhookAuditLog != nil && cluster.Features.WebhookAuditLog.Enable) {
 		auditPolicyVol := kubeadmv1beta3.HostPathMount{
 			Name:      "audit-conf",
 			HostPath:  "/etc/kubernetes/audit",

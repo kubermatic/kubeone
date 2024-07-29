@@ -1,10 +1,14 @@
 +++
 title = "v1beta3 API Reference"
 <<<<<<< HEAD
+<<<<<<< HEAD
 date = 2024-07-30T12:07:24+03:00
 =======
 date = 2024-07-22T13:35:43+02:00
 >>>>>>> fe9bb682 (update codegen)
+=======
+date = 2024-07-29T19:59:33+02:00
+>>>>>>> c86d45e4 (webHook -> webhook)
 weight = 11
 +++
 ## v1beta3
@@ -71,8 +75,8 @@ weight = 11
 * [VersionConfig](#versionconfig)
 * [VsphereSpec](#vspherespec)
 * [WeaveNetSpec](#weavenetspec)
-* [WebHookAuditLog](#webhookauditlog)
-* [WebHookAuditLogConfig](#webhookauditlogconfig)
+* [WebhookAuditLog](#webhookauditlog)
+* [WebhookAuditLogConfig](#webhookauditlogconfig)
 
 ### APIEndpoint
 
@@ -391,7 +395,7 @@ Features controls what features will be enabled on the cluster
 | podNodeSelector | PodNodeSelector | *[PodNodeSelector](#podnodeselector) | false |
 | staticAuditLog | StaticAuditLog | *[StaticAuditLog](#staticauditlog) | false |
 | dynamicAuditLog | DynamicAuditLog | *[DynamicAuditLog](#dynamicauditlog) | false |
-| webHookAuditLog | WebHookAuditLog | *[WebHookAuditLog](#webhookauditlog) | false |
+| webhookAuditLog | WebhookAuditLog | *[WebhookAuditLog](#webhookauditlog) | false |
 | metricsServer | MetricsServer | *[MetricsServer](#metricsserver) | false |
 | openidConnect | OpenIDConnect | *[OpenIDConnect](#openidconnect) | false |
 | encryptionProviders | Encryption Providers | *[EncryptionProviders](#encryptionproviders) | false |
@@ -837,18 +841,18 @@ WeaveNetSpec defines the WeaveNet CNI plugin
 
 [Back to Group](#v1beta3)
 
-### WebHookAuditLog
+### WebhookAuditLog
 
 
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | enable | Enable Default value is false. | bool | false |
-| config | Config | [WebHookAuditLogConfig](#webhookauditlogconfig) | true |
+| config | Config | [WebhookAuditLogConfig](#webhookauditlogconfig) | true |
 
 [Back to Group](#v1beta3)
 
-### WebHookAuditLogConfig
+### WebhookAuditLogConfig
 
 
 

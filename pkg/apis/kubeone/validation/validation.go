@@ -596,8 +596,8 @@ func ValidateFeatures(f kubeoneapi.Features, fldPath *field.Path) field.ErrorLis
 	if f.StaticAuditLog != nil && f.StaticAuditLog.Enable {
 		allErrs = append(allErrs, ValidateStaticAuditLogConfig(f.StaticAuditLog.Config, fldPath.Child("staticAuditLog"))...)
 	}
-	if f.WebHookAuditLog != nil && f.WebHookAuditLog.Enable {
-		allErrs = append(allErrs, ValidateWebHookAuditLogConfig(f.WebHookAuditLog.Config, fldPath.Child("webHookAuditLog"))...)
+	if f.WebhookAuditLog != nil && f.WebhookAuditLog.Enable {
+		allErrs = append(allErrs, ValidateWebhookAuditLogConfig(f.WebhookAuditLog.Config, fldPath.Child("webhookAuditLog"))...)
 	}
 	if f.OpenIDConnect != nil && f.OpenIDConnect.Enable {
 		allErrs = append(allErrs, ValidateOIDCConfig(f.OpenIDConnect.Config, fldPath.Child("openidConnect"))...)
@@ -640,15 +640,15 @@ func ValidateStaticAuditLogConfig(s kubeoneapi.StaticAuditLogConfig, fldPath *fi
 	return allErrs
 }
 
-// ValidateWebHookAuditLogConfig validates the WebHookAuditLogConfig structure
-func ValidateWebHookAuditLogConfig(s kubeoneapi.WebHookAuditLogConfig, fldPath *field.Path) field.ErrorList {
+// ValidateWebhookAuditLogConfig validates the WebhookAuditLogConfig structure
+func ValidateWebhookAuditLogConfig(s kubeoneapi.WebhookAuditLogConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	if len(s.PolicyFilePath) == 0 {
 		allErrs = append(allErrs, field.Required(fldPath.Child("policyFilePath"), ".staticAuditLog.config.policyFilePath is a required field"))
 	}
 	if len(s.ConfigFilePath) == 0 {
-		allErrs = append(allErrs, field.Required(fldPath.Child("configFilePath"), ".webHookAuditLog.config.configFilePath is a required field"))
+		allErrs = append(allErrs, field.Required(fldPath.Child("configFilePath"), ".webhookAuditLog.config.configFilePath is a required field"))
 	}
 
 	return allErrs

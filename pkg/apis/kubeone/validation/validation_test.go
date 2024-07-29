@@ -1806,9 +1806,9 @@ func TestValidateFeatures(t *testing.T) {
 		{
 			name: "invalid webHookAudit config",
 			features: kubeoneapi.Features{
-				WebHookAuditLog: &kubeoneapi.WebHookAuditLog{
+				WebhookAuditLog: &kubeoneapi.WebhookAuditLog{
 					Enable: true,
-					Config: kubeoneapi.WebHookAuditLogConfig{},
+					Config: kubeoneapi.WebhookAuditLogConfig{},
 				},
 			},
 			versions: kubeoneapi.VersionConfig{

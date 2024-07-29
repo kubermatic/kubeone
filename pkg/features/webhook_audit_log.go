@@ -25,7 +25,7 @@ const (
 	auditWebHookConfigFileFlag = "audit-webhook-config-file"
 )
 
-func activateKubeadmWebHookAuditLogs(feature *kubeoneapi.WebHookAuditLog, args *kubeadmargs.Args) {
+func activateKubeadmWebhookAuditLogs(feature *kubeoneapi.WebhookAuditLog, args *kubeadmargs.Args) {
 	if feature == nil || !feature.Enable {
 		return
 	}
