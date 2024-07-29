@@ -239,6 +239,10 @@ func WithResources(t Tasks) Tasks {
 				Operation: "saving kubeconfig",
 			},
 			{
+				Fn:        removeSuperKubeconfig,
+				Operation: "removing " + superAdminConfPath,
+			},
+			{
 				Fn: func(s *state.State) error {
 					s.Logger.Info("Downloading PKI...")
 

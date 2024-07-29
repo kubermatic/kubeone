@@ -137,7 +137,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	}
 
 	// Certs for machine-controller-webhook
-	mcCertsMap, err := certificate.NewSignedTLSCert(
+	mcCertsMap, err := certificate.NewSignedKubernetesServiceTLSCert(
 		resources.MachineControllerWebhookName,
 		resources.MachineControllerNameSpace,
 		s.Cluster.ClusterNetwork.ServiceDomainName,
@@ -149,7 +149,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	}
 
 	// Certs for metrics-server
-	msCertsMap, err := certificate.NewSignedTLSCert(
+	msCertsMap, err := certificate.NewSignedKubernetesServiceTLSCert(
 		resources.MetricsServerName,
 		resources.MetricsServerNamespace,
 		s.Cluster.ClusterNetwork.ServiceDomainName,
@@ -304,7 +304,7 @@ func csiWebhookCerts(s *state.State, data *templateData, csiMigration bool, kube
 }
 
 func webhookCerts(certs map[string]string, prefix, webhookName, webhookNamespace, serviceDomainName string, kubeCAPrivateKey *rsa.PrivateKey, kubeCACert *x509.Certificate) error {
-	certsMap, err := certificate.NewSignedTLSCert(
+	certsMap, err := certificate.NewSignedKubernetesServiceTLSCert(
 		webhookName,
 		webhookNamespace,
 		serviceDomainName,

@@ -17,12 +17,18 @@ limitations under the License.
 package kubeconfig
 
 import (
+	"bytes"
 	"context"
+	"crypto/rsa"
+	"crypto/x509"
+	"fmt"
 	"io/fs"
 	"net"
 	"os"
+	"time"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/certificate"
 	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/executor/executorfs"
 	"k8c.io/kubeone/pkg/fail"
@@ -30,8 +36,104 @@ import (
 
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
+	clientapi "k8s.io/client-go/tools/clientcmd/api"
+	clientapipublic "k8s.io/client-go/tools/clientcmd/api/latest"
+	certutil "k8s.io/client-go/util/cert"
+	"k8s.io/client-go/util/keyutil"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
+
+const (
+	pkiCAcrt = "/etc/kubernetes/pki/ca.crt"
+	pkiCAkey = "/etc/kubernetes/pki/ca.key"
+)
+
+func GenerateSuperAdmin(st *state.State) ([]byte, error) {
+	host, err := st.Cluster.Leader()
+	if err != nil {
+		return nil, err
+	}
+
+	conn, err := st.Executor.Open(host)
+	if err != nil {
+		return nil, err
+	}
+
+	caCertsPEM, err := fs.ReadFile(executorfs.New(conn), pkiCAcrt)
+	if err != nil {
+		return nil, err
+	}
+
+	caCerts, err := certutil.ParseCertsPEM(caCertsPEM)
+	if err != nil {
+		return nil, err
+	}
+	if len(caCerts) == 0 {
+		return nil, fmt.Errorf("no certificates found in %s", pkiCAcrt)
+	}
+
+	caKeyPEM, err := fs.ReadFile(executorfs.New(conn), pkiCAkey)
+	if err != nil {
+		return nil, err
+	}
+
+	possibleCAKey, err := keyutil.ParsePrivateKeyPEM(caKeyPEM)
+	if err != nil {
+		return nil, fail.Runtime(err, "parsing private key %s PEM", pkiCAkey)
+	}
+
+	caRSAKey, ok := possibleCAKey.(*rsa.PrivateKey)
+	if !ok {
+		return nil, fail.NewRuntimeError("type asserting rsa.PrivateKey type", "private key is not a RSA private key")
+	}
+
+	superAdminUserKey, err := certificate.NewPrivateKey()
+	if err != nil {
+		return nil, err
+	}
+
+	certCfg := certutil.Config{
+		CommonName:   "short-lived-super-admin",
+		Organization: []string{"system:masters"},
+		Usages:       []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth},
+	}
+
+	superAdminUserCert, err := certificate.NewSignedCert(&certCfg, superAdminUserKey, caCerts[0], caRSAKey, time.Now().Add(1*time.Hour))
+	if err != nil {
+		return nil, err
+	}
+
+	superAdminUserKeyPEM, err := keyutil.MarshalPrivateKeyToPEM(superAdminUserKey)
+	if err != nil {
+		return nil, fail.Runtime(err, "marshal super-admin private key to PEM")
+	}
+
+	superAdminUserCertPEM, err := certutil.EncodeCertificates(superAdminUserCert)
+	if err != nil {
+		return nil, fail.Runtime(err, "marshal super-admin certificate to PEM")
+	}
+
+	contextName := fmt.Sprintf("short-super-admin@%s", st.Cluster.Name)
+	kubeconfig := clientapi.NewConfig()
+	kubeconfig.Clusters[st.Cluster.Name] = &clientapi.Cluster{
+		Server:                   fmt.Sprintf("https://%s:%d", st.Cluster.APIEndpoint.Host, st.Cluster.APIEndpoint.Port),
+		CertificateAuthorityData: caCertsPEM,
+	}
+	kubeconfig.Contexts[contextName] = &clientapi.Context{
+		Cluster:  st.Cluster.Name,
+		AuthInfo: contextName,
+	}
+	kubeconfig.AuthInfos[contextName] = &clientapi.AuthInfo{
+		ClientCertificateData: superAdminUserCertPEM,
+		ClientKeyData:         superAdminUserKeyPEM,
+	}
+	kubeconfig.CurrentContext = contextName
+
+	var buf bytes.Buffer
+	err = clientapipublic.Codec.Encode(kubeconfig, &buf)
+
+	return buf.Bytes(), fail.Runtime(err, "marshalling client kubeconfig")
+}
 
 // Download downloads Kubeconfig over SSH
 func Download(s *state.State) ([]byte, error) {

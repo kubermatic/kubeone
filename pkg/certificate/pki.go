@@ -87,17 +87,20 @@ func encodePrivateKeyPEM(key *rsa.PrivateKey) []byte {
 	return pem.EncodeToMemory(&block)
 }
 
-// newPrivateKey creates an RSA private key
-func newPrivateKey() (*rsa.PrivateKey, error) {
-	return rsa.GenerateKey(rand.Reader, rsaKeySize)
+// NewPrivateKey creates an RSA private key
+func NewPrivateKey() (*rsa.PrivateKey, error) {
+	key, err := rsa.GenerateKey(rand.Reader, rsaKeySize)
+
+	return key, fail.Runtime(err, "generating RSA private key")
 }
 
-// newSignedCert creates a signed certificate using the given CA certificate and key
-func newSignedCert(cfg *certutil.Config, key crypto.Signer, caCert *x509.Certificate, caKey crypto.Signer) (*x509.Certificate, error) {
+// NewSignedCert creates a signed certificate using the given CA certificate and key
+func NewSignedCert(cfg *certutil.Config, key crypto.Signer, caCert *x509.Certificate, caKey crypto.Signer, notAfter time.Time) (*x509.Certificate, error) {
 	serial, err := rand.Int(rand.Reader, new(big.Int).SetInt64(math.MaxInt64))
 	if err != nil {
-		return nil, err
+		return nil, fail.Runtime(err, "generating random int")
 	}
+
 	if len(cfg.CommonName) == 0 {
 		return nil, fail.RuntimeError{
 			Op:  "checking requested CommonName",
@@ -112,6 +115,11 @@ func newSignedCert(cfg *certutil.Config, key crypto.Signer, caCert *x509.Certifi
 		}
 	}
 
+	notBefore := cfg.NotBefore.UTC()
+	if notBefore.IsZero() {
+		notBefore = time.Now().UTC()
+	}
+
 	certTmpl := x509.Certificate{
 		Subject: pkix.Name{
 			CommonName:   cfg.CommonName,
@@ -120,8 +128,8 @@ func newSignedCert(cfg *certutil.Config, key crypto.Signer, caCert *x509.Certifi
 		DNSNames:     cfg.AltNames.DNSNames,
 		IPAddresses:  cfg.AltNames.IPs,
 		SerialNumber: serial,
-		NotBefore:    caCert.NotBefore,
-		NotAfter:     time.Now().Add(duration365d).UTC(),
+		NotBefore:    notBefore,
+		NotAfter:     notAfter.UTC(),
 		KeyUsage:     x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
 		ExtKeyUsage:  cfg.Usages,
 	}

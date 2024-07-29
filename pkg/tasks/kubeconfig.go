@@ -25,16 +25,42 @@ import (
 	"k8c.io/kubeone/pkg/state"
 )
 
-func saveKubeconfig(s *state.State) error {
-	s.Logger.Info("Downloading kubeconfig...")
+const (
+	superAdminConfPath = "/etc/kubernetes/super-admin.conf"
+)
 
-	kc, err := kubeconfig.Download(s)
+func saveKubeconfig(st *state.State) error {
+	st.Logger.Info("Downloading kubeconfig...")
+
+	kc, err := kubeconfig.Download(st)
 	if err != nil {
 		return err
 	}
 
-	fileName := fmt.Sprintf("%s-kubeconfig", s.Cluster.Name)
-	err = os.WriteFile(fileName, kc, 0600)
+	fileName := fmt.Sprintf("%s-kubeconfig", st.Cluster.Name)
+	err = os.WriteFile(fileName, kc, 0o600)
 
 	return fail.Runtime(err, "saving kubeconfig file")
+}
+
+func removeSuperKubeconfig(st *state.State) error {
+	st.Logger.Info("Removing %s...", superAdminConfPath)
+
+	host, err := st.Cluster.Leader()
+	if err != nil {
+		return err
+	}
+
+	conn, err := st.Executor.Open(host)
+	if err != nil {
+		return err
+	}
+
+	// The constant superAdminConfPath is NOT used here for safety reasons, to avoid
+	// accidental and catastrophic changes in the future.
+	//
+	// We don't care if file doesn't exist.
+	conn.Exec("sudo rm -rf /etc/kubernetes/super-admin.conf") //nolint:errcheck
+
+	return nil
 }

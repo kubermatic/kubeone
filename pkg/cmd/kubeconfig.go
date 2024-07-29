@@ -24,10 +24,18 @@ import (
 	"github.com/spf13/pflag"
 
 	"k8c.io/kubeone/pkg/kubeconfig"
+	"k8c.io/kubeone/pkg/state"
 )
+
+type kubeconfigOpts struct {
+	globalOptions
+	SuperAdmin bool `longflag:"super-admin" shortflag:"s"`
+}
 
 // KubeconfigCommand returns the structure for declaring the "install" subcommand.
 func kubeconfigCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+	opts := &kubeconfigOpts{}
+
 	cmd := &cobra.Command{
 		Use:   "kubeconfig",
 		Short: "Download the kubeconfig file from master",
@@ -45,21 +53,38 @@ func kubeconfigCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 				return err
 			}
 
-			return runKubeconfig(gopts)
+			opts.globalOptions = *gopts
+			st, err := opts.BuildState()
+			if err != nil {
+				return err
+			}
+
+			return runKubeconfig(st, opts.SuperAdmin)
 		},
 	}
+
+	cmd.Flags().BoolVarP(
+		&opts.SuperAdmin,
+		longFlagName(opts, "SuperAdmin"),
+		shortFlagName(opts, "SuperAdmin"),
+		false,
+		"generate short-lived system:masters kubeconfig")
 
 	return cmd
 }
 
 // runKubeconfig downloads kubeconfig file
-func runKubeconfig(opts *globalOptions) error {
-	s, err := opts.BuildState()
-	if err != nil {
-		return err
-	}
+func runKubeconfig(st *state.State, generateSuperAdmin bool) error {
+	var (
+		konfig []byte
+		err    error
+	)
 
-	konfig, err := kubeconfig.Download(s)
+	if generateSuperAdmin {
+		konfig, err = kubeconfig.GenerateSuperAdmin(st)
+	} else {
+		konfig, err = kubeconfig.Download(st)
+	}
 	if err != nil {
 		return err
 	}

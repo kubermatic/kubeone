@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -82,7 +83,7 @@ func CAKeyPair(config *configupload.Configuration) (*rsa.PrivateKey, *x509.Certi
 	return rsaKey, certs[0], nil
 }
 
-func NewSignedTLSCert(name, namespace, domain string, caKey crypto.Signer, caCert *x509.Certificate) (map[string]string, error) {
+func NewSignedKubernetesServiceTLSCert(name, namespace, domain string, caKey crypto.Signer, caCert *x509.Certificate) (map[string]string, error) {
 	serviceCommonName := strings.Join([]string{name, namespace, "svc"}, ".")
 	serviceFQDNCommonName := strings.Join([]string{serviceCommonName, domain, ""}, ".")
 
@@ -91,7 +92,7 @@ func NewSignedTLSCert(name, namespace, domain string, caKey crypto.Signer, caCer
 		serviceCommonName,
 	}
 
-	newKPKey, err := newPrivateKey()
+	newKPKey, err := NewPrivateKey()
 	if err != nil {
 		return nil, fail.Runtime(err, "generating RSA private key")
 	}
@@ -104,7 +105,7 @@ func NewSignedTLSCert(name, namespace, domain string, caKey crypto.Signer, caCer
 		Usages:     []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
 	}
 
-	newKPCert, err := newSignedCert(&certCfg, newKPKey, caCert, caKey)
+	newKPCert, err := NewSignedCert(&certCfg, newKPKey, caCert, caKey, time.Now().Add(duration365d))
 	if err != nil {
 		return nil, fail.Runtime(err, "generating certificate")
 	}
