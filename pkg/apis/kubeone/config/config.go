@@ -330,9 +330,6 @@ func isDir(dirname string) bool {
 
 // checkClusterConfiguration checks clusters for usage of alpha, deprecated fields, flags, unrecommended features etc. and print a warning if any are found.
 func checkClusterConfiguration(cluster kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) {
-	if cluster.Features.PodSecurityPolicy != nil && cluster.Features.PodSecurityPolicy.Enable {
-		logger.Warnf("PodSecurityPolicy is deprecated and will be removed with Kubernetes 1.25 release")
-	}
 	if cluster.CloudProvider.Nutanix != nil {
 		logger.Warnf("Nutanix support is considered as alpha, so the implementation might be changed in the future")
 		logger.Warnf("Nutanix support is planned to graduate to beta/stable in KubeOne 1.5+")
