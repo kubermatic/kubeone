@@ -48,7 +48,7 @@ const (
 	pkiCAkey = "/etc/kubernetes/pki/ca.key"
 )
 
-func GenerateSuperAdmin(st *state.State) ([]byte, error) {
+func GenerateSuperAdmin(st *state.State, cn string, on []string, ttl time.Duration) ([]byte, error) {
 	host, err := st.Cluster.Leader()
 	if err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func GenerateSuperAdmin(st *state.State) ([]byte, error) {
 		return nil, err
 	}
 	if len(caCerts) == 0 {
-		return nil, fmt.Errorf("no certificates found in %s", pkiCAcrt)
+		return nil, fail.NewRuntimeError("no certificates found in %s", pkiCAcrt)
 	}
 
 	caKeyPEM, err := fs.ReadFile(executorfs.New(conn), pkiCAkey)
@@ -93,8 +93,8 @@ func GenerateSuperAdmin(st *state.State) ([]byte, error) {
 	}
 
 	certCfg := certutil.Config{
-		CommonName:   "short-lived-super-admin",
-		Organization: []string{"system:masters"},
+		CommonName:   cn,
+		Organization: on,
 		Usages:       []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth},
 	}
 
@@ -105,15 +105,15 @@ func GenerateSuperAdmin(st *state.State) ([]byte, error) {
 
 	superAdminUserKeyPEM, err := keyutil.MarshalPrivateKeyToPEM(superAdminUserKey)
 	if err != nil {
-		return nil, fail.Runtime(err, "marshal super-admin private key to PEM")
+		return nil, fail.Runtime(err, "marshal generated private key to PEM")
 	}
 
 	superAdminUserCertPEM, err := certutil.EncodeCertificates(superAdminUserCert)
 	if err != nil {
-		return nil, fail.Runtime(err, "marshal super-admin certificate to PEM")
+		return nil, fail.Runtime(err, "marshal generated certificate to PEM")
 	}
 
-	contextName := fmt.Sprintf("short-super-admin@%s", st.Cluster.Name)
+	contextName := fmt.Sprintf("%s@%s", cn, st.Cluster.Name)
 	kubeconfig := clientapi.NewConfig()
 	kubeconfig.Clusters[st.Cluster.Name] = &clientapi.Cluster{
 		Server:                   fmt.Sprintf("https://%s:%d", st.Cluster.APIEndpoint.Host, st.Cluster.APIEndpoint.Port),
