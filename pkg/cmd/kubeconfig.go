@@ -85,7 +85,7 @@ func kubeconfigGenerateCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		Short:   "Generate kubeconfig",
 		Long:    "Generate kubeconfig with given certificate parameters.",
 		Example: `kubeone kubeconfig generate -m mycluster.yaml -t tf.json --super-admin`,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
 				return err

@@ -98,7 +98,7 @@ func GenerateSuperAdmin(st *state.State, cn string, on []string, ttl time.Durati
 		Usages:       []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth},
 	}
 
-	superAdminUserCert, err := certificate.NewSignedCert(&certCfg, superAdminUserKey, caCerts[0], caRSAKey, time.Now().Add(1*time.Hour))
+	superAdminUserCert, err := certificate.NewSignedCert(&certCfg, superAdminUserKey, caCerts[0], caRSAKey, time.Now().Add(ttl))
 	if err != nil {
 		return nil, err
 	}
