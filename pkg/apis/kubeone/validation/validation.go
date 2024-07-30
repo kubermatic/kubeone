@@ -76,7 +76,7 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	}
 
 	allErrs = append(allErrs, ValidateCABundle(c.CABundle, field.NewPath("caBundle"))...)
-	allErrs = append(allErrs, ValidateFeatures(c.Features, c.Versions, field.NewPath("features"))...)
+	allErrs = append(allErrs, ValidateFeatures(c.Features, field.NewPath("features"))...)
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
 	allErrs = append(allErrs, ValidateHelmReleases(c.HelmReleases, field.NewPath("helmReleases"))...)
 	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
@@ -584,7 +584,7 @@ func ValidateCABundle(caBundle string, fldPath *field.Path) field.ErrorList {
 }
 
 // ValidateFeatures validates the Features structure
-func ValidateFeatures(f kubeoneapi.Features, versions kubeoneapi.VersionConfig, fldPath *field.Path) field.ErrorList {
+func ValidateFeatures(f kubeoneapi.Features, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	if f.CoreDNS != nil && f.CoreDNS.Replicas != nil && *f.CoreDNS.Replicas < 0 {
