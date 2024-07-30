@@ -134,7 +134,7 @@ variable "image_references" {
       image = {
         publisher = "Canonical"
         offer     = "ubuntu-24_04-lts"
-        sku       = "server-gen1"
+        sku       = "server"
         version   = "latest"
       }
       plan         = []
@@ -206,13 +206,13 @@ variable "image_references" {
 
 variable "control_plane_vm_size" {
   description = "VM Size for control plane machines"
-  default     = "Standard_F2"
+  default     = "Standard_F2als_v6" // 2 vCPU, 4GiB
   type        = string
 }
 
 variable "worker_vm_size" {
   description = "VM Size for worker machines"
-  default     = "Standard_F2"
+  default     = "Standard_F2als_v6" // 2 vCPU, 4GiB
   type        = string
 }
 
