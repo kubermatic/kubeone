@@ -73,7 +73,7 @@ type kubeconfigGenerateOpts struct {
 	globalOptions
 	CommonName        string        `longflag:"cn"`
 	OrganizationNames []string      `longflag:"on"`
-	ShortSuperAdmin   bool          `longflag:"super-admin" shortflag:"s"`
+	SuperAdmin        bool          `longflag:"super-admin" shortflag:"s"`
 	TTL               time.Duration `longflag:"ttl"`
 }
 
@@ -114,9 +114,9 @@ func kubeconfigGenerateCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		"OrganizationName (ON) for the generated client certificate.")
 
 	cmd.Flags().BoolVarP(
-		&opts.ShortSuperAdmin,
-		longFlagName(opts, "ShortSuperAdmin"),
-		shortFlagName(opts, "ShortSuperAdmin"),
+		&opts.SuperAdmin,
+		longFlagName(opts, "SuperAdmin"),
+		shortFlagName(opts, "SuperAdmin"),
 		false,
 		"Generate superadmin kubeconfig, shorthand for --cn <USER>@<HOSTNAME> --on system:masters")
 
@@ -133,7 +133,10 @@ func runKubeconfigGenerate(st *state.State, opts *kubeconfigGenerateOpts) error 
 	cn := opts.CommonName
 	on := opts.OrganizationNames
 
-	if opts.ShortSuperAdmin {
+	if opts.SuperAdmin {
+		if len(on) > 0 {
+			return fail.NewConfigError("--on flag", "mutually exclusive with --super-admin")
+		}
 		on = []string{"system:masters"}
 	}
 
@@ -150,7 +153,7 @@ func runKubeconfigGenerate(st *state.State, opts *kubeconfigGenerateOpts) error 
 		cn = fmt.Sprintf("%s@%s", username, hostname)
 	}
 
-	konfig, err := kubeconfig.GenerateSuperAdmin(st, cn, on, opts.TTL)
+	konfig, err := kubeconfig.Generate(st, cn, on, opts.TTL)
 	if err != nil {
 		return err
 	}

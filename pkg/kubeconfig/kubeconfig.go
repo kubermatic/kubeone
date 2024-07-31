@@ -48,7 +48,7 @@ const (
 	pkiCAkey = "/etc/kubernetes/pki/ca.key"
 )
 
-func GenerateSuperAdmin(st *state.State, cn string, on []string, ttl time.Duration) ([]byte, error) {
+func Generate(st *state.State, cn string, on []string, ttl time.Duration) ([]byte, error) {
 	host, err := st.Cluster.Leader()
 	if err != nil {
 		return nil, err
