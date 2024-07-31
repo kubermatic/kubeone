@@ -18,12 +18,16 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"time"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
+	"k8c.io/kubeone/pkg/state"
 )
 
 // KubeconfigCommand returns the structure for declaring the "install" subcommand.
@@ -45,21 +49,111 @@ func kubeconfigCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 				return err
 			}
 
-			return runKubeconfig(gopts)
+			st, err := gopts.BuildState()
+			if err != nil {
+				return err
+			}
+
+			konfig, err := kubeconfig.Download(st)
+			if err != nil {
+				return err
+			}
+			fmt.Println(string(konfig))
+
+			return nil
 		},
 	}
+
+	cmd.AddCommand(kubeconfigGenerateCmd(rootFlags))
 
 	return cmd
 }
 
-// runKubeconfig downloads kubeconfig file
-func runKubeconfig(opts *globalOptions) error {
-	s, err := opts.BuildState()
-	if err != nil {
-		return err
+type kubeconfigGenerateOpts struct {
+	globalOptions
+	CommonName        string        `longflag:"cn"`
+	OrganizationNames []string      `longflag:"on"`
+	SuperAdmin        bool          `longflag:"super-admin" shortflag:"s"`
+	TTL               time.Duration `longflag:"ttl"`
+}
+
+func kubeconfigGenerateCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+	opts := &kubeconfigGenerateOpts{}
+
+	cmd := &cobra.Command{
+		Use:     "generate",
+		Short:   "Generate kubeconfig",
+		Long:    "Generate kubeconfig with given certificate parameters.",
+		Example: `kubeone kubeconfig generate -m mycluster.yaml -t tf.json --super-admin`,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			gopts, err := persistentGlobalOptions(rootFlags)
+			if err != nil {
+				return err
+			}
+			opts.globalOptions = *gopts
+
+			st, err := gopts.BuildState()
+			if err != nil {
+				return err
+			}
+
+			return runKubeconfigGenerate(st, opts)
+		},
 	}
 
-	konfig, err := kubeconfig.Download(s)
+	cmd.Flags().StringVar(
+		&opts.CommonName,
+		longFlagName(opts, "CommonName"),
+		"",
+		"CommonName (CN) for the generated client certificate.")
+
+	cmd.Flags().StringArrayVar(
+		&opts.OrganizationNames,
+		longFlagName(opts, "OrganizationNames"),
+		[]string{},
+		"OrganizationName (ON) for the generated client certificate.")
+
+	cmd.Flags().BoolVarP(
+		&opts.SuperAdmin,
+		longFlagName(opts, "SuperAdmin"),
+		shortFlagName(opts, "SuperAdmin"),
+		false,
+		"Generate superadmin kubeconfig, shorthand for --cn <USER>@<HOSTNAME> --on system:masters")
+
+	cmd.Flags().DurationVar(
+		&opts.TTL,
+		longFlagName(opts, "TTL"),
+		1*time.Hour,
+		"Time To Live for the generated certificate.")
+
+	return cmd
+}
+
+func runKubeconfigGenerate(st *state.State, opts *kubeconfigGenerateOpts) error {
+	cn := opts.CommonName
+	on := opts.OrganizationNames
+
+	if opts.SuperAdmin {
+		if len(on) > 0 {
+			return fail.NewConfigError("--on flag", "mutually exclusive with --super-admin")
+		}
+		on = []string{"system:masters"}
+	}
+
+	if len(on) == 0 {
+		return fail.NewConfigError("--on flag", "can not be empty")
+	}
+
+	if cn == "" {
+		hostname, _ := os.Hostname()
+		username := os.Getenv("USER")
+		if username == "" {
+			username = "DEFAULT"
+		}
+		cn = fmt.Sprintf("%s@%s", username, hostname)
+	}
+
+	konfig, err := kubeconfig.Generate(st, cn, on, opts.TTL)
 	if err != nil {
 		return err
 	}
