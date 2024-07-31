@@ -92,5 +92,4 @@ func activateKubeadmWebhookAuditLogs(feature *kubeoneapi.WebhookAuditLog, args *
 			args.APIServer.ExtraArgs[auditWebhookTruncateMaxEventSizeFlag] = strconv.Itoa(t.MaxEventSize)
 		}
 	}
-
 }
