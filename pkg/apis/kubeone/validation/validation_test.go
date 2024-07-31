@@ -2071,11 +2071,6 @@ func TestValidateAddons(t *testing.T) {
 			expectedError: false,
 		},
 		{
-			name:          "valid addons config (disabled)",
-			addons:        &kubeoneapi.Addons{},
-			expectedError: false,
-		},
-		{
 			name:          "valid addons config (empty)",
 			addons:        &kubeoneapi.Addons{},
 			expectedError: false,
