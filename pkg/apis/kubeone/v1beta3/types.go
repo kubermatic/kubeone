@@ -868,19 +868,46 @@ type WebhookAuditLogConfig struct {
 	// More info: https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/#webhook-backend
 	ConfigFilePath string `json:"configFilePath"`
 
-	// TODO TBD if we want to support these flags as well
-	// --audit-webhook-batch-buffer-size int     Default: 10000
-	// --audit-webhook-batch-max-size int     Default: 400
-	// --audit-webhook-batch-max-wait duration     Default: 30s
-	// --audit-webhook-batch-throttle-burst int     Default: 15
-	// --audit-webhook-batch-throttle-enable     Default: true
-	// --audit-webhook-batch-throttle-qps float     Default: 10
-	// --audit-webhook-initial-backoff duration     Default: 10s
-	// --audit-webhook-mode string     Default: "batch"
-	// --audit-webhook-truncate-enabled
-	// --audit-webhook-truncate-max-batch-size int     Default: 10485760
-	// --audit-webhook-truncate-max-event-size int     Default: 102400
-	// --audit-webhook-version string     Default: "audit.k8s.io/v1"
+	// InitialBackOff defines the amount of time to wait before retrying the first failed request.
+	// Defaults to 10s.
+	InitialBackOff metav1.Duration `json:"initialBackOff,omitempty"`
+
+	// Mode defines the strategy for sending audit events.
+	// Blocking indicates sending events should block server responses.
+	// Batch causes the backend to buffer and write events asynchronously.
+	// Known modes are batch,blocking,blocking-strict.
+	// Defaults to batch.
+	Mode string `json:"mode,omitempty"`
+
+	// Version defines API group and version used for serializing audit events written to webhook.
+	// Defaults to audit.k8s.io/v1
+	Version string `json:"version,omitempty"`
+
+	// Batch defines settings for controlling event batching.
+	// Only applicable if webhook mode is set to batch.
+	Batch WebHookAuditLogBatchConfig `json:"batch,omitempty"`
+
+	// Truncate defines settings for controlling event truncation.
+	Truncate WebHookAuditLogTruncateConfig `json:"truncate,omitempty"`
+}
+
+type WebHookAuditLogBatchConfig struct {
+	BufferSize int                           `json:"bufferSize,omitempty"`
+	MaxSize    int                           `json:"maxSize,omitempty"`
+	MaxWait    metav1.Duration               `json:"maxWait,omitempty"`
+	Throttle   WebHookAuditLogThrottleConfig `json:"throttle,omitempty"`
+}
+
+type WebHookAuditLogThrottleConfig struct {
+	Disable bool    `json:"disable,omitempty"` // we use the inverse of kube-apiserver here, so we can handle users omitting the field
+	Burst   int     `json:"burst,omitempty"`
+	QPS     float32 `json:"QPS,omitempty"`
+}
+
+type WebHookAuditLogTruncateConfig struct {
+	Enable       bool `json:"enable,omitempty"`
+	MaxBatchSize int  `json:"maxBatchSize,omitempty"`
+	MaxEventSize int  `json:"maxEventSize,omitempty"`
 }
 
 // DynamicAuditLog feature flag
