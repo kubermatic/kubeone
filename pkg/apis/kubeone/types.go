@@ -1080,7 +1080,7 @@ type Addon struct {
 }
 
 type AddonRef struct {
-	// KubeOne's internal Addon
+	// Addon represents a built-in KubeOne templated addon unit.
 	Addon *Addon `json:"addon,omitempty"`
 
 	// HelmReleases configure helm charts to reconcile. For each HelmRelease it will run analog of: `helm upgrade

@@ -66,7 +66,6 @@ func Convert_v1beta2_Addon_To_kubeone_AddonRef(in *Addon, out *kubeoneapi.AddonR
 }
 
 func Convert_kubeone_AddonRef_To_v1beta2_Addon(*kubeoneapi.AddonRef, *Addon, conversion.Scope) error {
-	// TODO: do something ?
 	return nil
 }
 
