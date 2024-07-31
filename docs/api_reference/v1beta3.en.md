@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2024-06-18T14:12:31+01:00
+date = 2024-07-30T12:07:24+03:00
 weight = 11
 +++
 ## v1beta3
@@ -54,7 +54,6 @@ weight = 11
 * [OperatingSystemManagerConfig](#operatingsystemmanagerconfig)
 * [PodNodeSelector](#podnodeselector)
 * [PodNodeSelectorConfig](#podnodeselectorconfig)
-* [PodSecurityPolicy](#podsecuritypolicy)
 * [ProviderSpec](#providerspec)
 * [ProviderStaticNetworkConfig](#providerstaticnetworkconfig)
 * [ProxyConfig](#proxyconfig)
@@ -384,7 +383,6 @@ Features controls what features will be enabled on the cluster
 | ----- | ----------- | ------ | -------- |
 | coreDNS | CoreDNS | *[CoreDNS](#coredns) | false |
 | podNodeSelector | PodNodeSelector | *[PodNodeSelector](#podnodeselector) | false |
-| podSecurityPolicy | PodSecurityPolicy Deprecated: will be removed once Kubernetes 1.24 reaches EOL | *[PodSecurityPolicy](#podsecuritypolicy) | false |
 | staticAuditLog | StaticAuditLog | *[StaticAuditLog](#staticauditlog) | false |
 | dynamicAuditLog | DynamicAuditLog | *[DynamicAuditLog](#dynamicauditlog) | false |
 | metricsServer | MetricsServer | *[MetricsServer](#metricsserver) | false |
@@ -674,18 +672,6 @@ PodNodeSelectorConfig config
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | configFilePath | ConfigFilePath is a path on the local file system to the PodNodeSelector configuration file. ConfigFilePath is a required field. More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podnodeselector | string | true |
-
-[Back to Group](#v1beta3)
-
-### PodSecurityPolicy
-
-PodSecurityPolicy feature flag
-This feature is deprecated and will be removed from the API once
-Kubernetes 1.24 reaches EOL.
-
-| Field | Description | Scheme | Required |
-| ----- | ----------- | ------ | -------- |
-| enable | Enable | bool | false |
 
 [Back to Group](#v1beta3)
 

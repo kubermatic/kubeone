@@ -30,3 +30,7 @@ func Convert_kubeone_KubeOneCluster_To_v1beta2_KubeOneCluster(in *kubeoneapi.Kub
 func Convert_v1beta2_ContainerRuntimeConfig_To_kubeone_ContainerRuntimeConfig(in *ContainerRuntimeConfig, out *kubeoneapi.ContainerRuntimeConfig, scope conversion.Scope) error {
 	return autoConvert_v1beta2_ContainerRuntimeConfig_To_kubeone_ContainerRuntimeConfig(in, out, scope)
 }
+
+func Convert_v1beta2_Features_To_kubeone_Features(in *Features, out *kubeoneapi.Features, s conversion.Scope) error {
+	return autoConvert_v1beta2_Features_To_kubeone_Features(in, out, s)
+}

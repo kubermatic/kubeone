@@ -753,10 +753,6 @@ type Features struct {
 	// PodNodeSelector
 	PodNodeSelector *PodNodeSelector `json:"podNodeSelector,omitempty"`
 
-	// PodSecurityPolicy
-	// Deprecated: will be removed once Kubernetes 1.24 reaches EOL
-	PodSecurityPolicy *PodSecurityPolicy `json:"podSecurityPolicy,omitempty"`
-
 	// StaticAuditLog
 	StaticAuditLog *StaticAuditLog `json:"staticAuditLog,omitempty"`
 
@@ -811,14 +807,6 @@ type PodNodeSelectorConfig struct {
 	// ConfigFilePath is a required field.
 	// More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podnodeselector
 	ConfigFilePath string `json:"configFilePath"`
-}
-
-// PodSecurityPolicy feature flag
-// This feature is deprecated and will be removed from the API once
-// Kubernetes 1.24 reaches EOL.
-type PodSecurityPolicy struct {
-	// Enable
-	Enable bool `json:"enable,omitempty"`
 }
 
 // StaticAuditLog feature flag

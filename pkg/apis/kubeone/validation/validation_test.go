@@ -1766,62 +1766,17 @@ func TestValidateFeatures(t *testing.T) {
 		expectedError bool
 	}{
 		{
-			name: "psp and auditing enabled",
-			features: kubeoneapi.Features{
-				PodSecurityPolicy: &kubeoneapi.PodSecurityPolicy{
-					Enable: true,
-				},
-				DynamicAuditLog: &kubeoneapi.DynamicAuditLog{
-					Enable: true,
-				},
-			},
-			versions: kubeoneapi.VersionConfig{
-				Kubernetes: "1.20.2",
-			},
-			expectedError: false,
-		},
-		{
-			name: "psp enabled on 1.25",
-			features: kubeoneapi.Features{
-				PodSecurityPolicy: &kubeoneapi.PodSecurityPolicy{
-					Enable: true,
-				},
-			},
-			versions: kubeoneapi.VersionConfig{
-				Kubernetes: "1.25.5",
-			},
-			expectedError: true,
-		},
-		{
-			name: "psp enabled on 1.26",
-			features: kubeoneapi.Features{
-				PodSecurityPolicy: &kubeoneapi.PodSecurityPolicy{
-					Enable: true,
-				},
-			},
-			versions: kubeoneapi.VersionConfig{
-				Kubernetes: "1.26.0",
-			},
-			expectedError: true,
-		},
-		{
 			name: "metrics server disabled",
 			features: kubeoneapi.Features{
 				MetricsServer: &kubeoneapi.MetricsServer{
 					Enable: false,
 				},
 			},
-			versions: kubeoneapi.VersionConfig{
-				Kubernetes: "1.20.2",
-			},
 			expectedError: false,
 		},
 		{
-			name:     "no feature configured",
-			features: kubeoneapi.Features{},
-			versions: kubeoneapi.VersionConfig{
-				Kubernetes: "1.20.2",
-			},
+			name:          "no feature configured",
+			features:      kubeoneapi.Features{},
 			expectedError: false,
 		},
 		{
@@ -1836,9 +1791,6 @@ func TestValidateFeatures(t *testing.T) {
 					},
 				},
 			},
-			versions: kubeoneapi.VersionConfig{
-				Kubernetes: "1.20.2",
-			},
 			expectedError: false,
 		},
 		{
@@ -1848,9 +1800,6 @@ func TestValidateFeatures(t *testing.T) {
 					Enable: true,
 					Config: kubeoneapi.StaticAuditLogConfig{},
 				},
-			},
-			versions: kubeoneapi.VersionConfig{
-				Kubernetes: "1.20.2",
 			},
 			expectedError: true,
 		},
@@ -1862,9 +1811,6 @@ func TestValidateFeatures(t *testing.T) {
 					Config: kubeoneapi.OpenIDConnectConfig{},
 				},
 			},
-			versions: kubeoneapi.VersionConfig{
-				Kubernetes: "1.20.2",
-			},
 			expectedError: true,
 		},
 		{
@@ -1875,9 +1821,6 @@ func TestValidateFeatures(t *testing.T) {
 					Config: kubeoneapi.PodNodeSelectorConfig{},
 				},
 			},
-			versions: kubeoneapi.VersionConfig{
-				Kubernetes: "1.20.2",
-			},
 			expectedError: true,
 		},
 		{
@@ -1886,9 +1829,6 @@ func TestValidateFeatures(t *testing.T) {
 				CoreDNS: &kubeoneapi.CoreDNS{
 					Replicas: pointer.New(int32(2)),
 				},
-			},
-			versions: kubeoneapi.VersionConfig{
-				Kubernetes: "1.20.2",
 			},
 			expectedError: false,
 		},
@@ -1899,9 +1839,6 @@ func TestValidateFeatures(t *testing.T) {
 					Replicas: pointer.New(int32(0)),
 				},
 			},
-			versions: kubeoneapi.VersionConfig{
-				Kubernetes: "1.20.2",
-			},
 			expectedError: false,
 		},
 		{
@@ -1911,9 +1848,6 @@ func TestValidateFeatures(t *testing.T) {
 					Replicas: pointer.New(int32(-1)),
 				},
 			},
-			versions: kubeoneapi.VersionConfig{
-				Kubernetes: "1.20.2",
-			},
 			expectedError: true,
 		},
 	}
@@ -1921,7 +1855,7 @@ func TestValidateFeatures(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateFeatures(tc.features, tc.versions, nil)
+			errs := ValidateFeatures(tc.features, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}
