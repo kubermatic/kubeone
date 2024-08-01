@@ -18,7 +18,7 @@ require (
 	github.com/google/go-cmp v0.6.0
 	github.com/iancoleman/orderedmap v0.3.0
 	github.com/koron-go/prefixw v1.0.0
-	github.com/kubermatic/machine-controller v1.57.3
+	github.com/kubermatic/machine-controller v1.57.9
 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
 	github.com/pkg/errors v0.9.1
 	github.com/pmezard/go-difflib v1.0.0
