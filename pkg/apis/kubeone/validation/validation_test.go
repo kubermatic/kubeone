@@ -1804,6 +1804,19 @@ func TestValidateFeatures(t *testing.T) {
 			expectedError: true,
 		},
 		{
+			name: "invalid webHookAudit config",
+			features: kubeoneapi.Features{
+				WebhookAuditLog: &kubeoneapi.WebhookAuditLog{
+					Enable: true,
+					Config: kubeoneapi.WebhookAuditLogConfig{},
+				},
+			},
+			versions: kubeoneapi.VersionConfig{
+				Kubernetes: "1.20.2",
+			},
+			expectedError: true,
+		},
+		{
 			name: "invalid oidc config",
 			features: kubeoneapi.Features{
 				OpenIDConnect: &kubeoneapi.OpenIDConnect{

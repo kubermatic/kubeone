@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2024-07-30T12:07:24+03:00
+date = 2024-08-02T11:33:54+02:00
 weight = 11
 +++
 ## v1beta3
@@ -67,6 +67,11 @@ weight = 11
 * [VersionConfig](#versionconfig)
 * [VsphereSpec](#vspherespec)
 * [WeaveNetSpec](#weavenetspec)
+* [WebHookAuditLogBatchConfig](#webhookauditlogbatchconfig)
+* [WebHookAuditLogThrottleConfig](#webhookauditlogthrottleconfig)
+* [WebHookAuditLogTruncateConfig](#webhookauditlogtruncateconfig)
+* [WebhookAuditLog](#webhookauditlog)
+* [WebhookAuditLogConfig](#webhookauditlogconfig)
 
 ### APIEndpoint
 
@@ -385,6 +390,7 @@ Features controls what features will be enabled on the cluster
 | podNodeSelector | PodNodeSelector | *[PodNodeSelector](#podnodeselector) | false |
 | staticAuditLog | StaticAuditLog | *[StaticAuditLog](#staticauditlog) | false |
 | dynamicAuditLog | DynamicAuditLog | *[DynamicAuditLog](#dynamicauditlog) | false |
+| webhookAuditLog | WebhookAuditLog | *[WebhookAuditLog](#webhookauditlog) | false |
 | metricsServer | MetricsServer | *[MetricsServer](#metricsserver) | false |
 | openidConnect | OpenIDConnect | *[OpenIDConnect](#openidconnect) | false |
 | encryptionProviders | Encryption Providers | *[EncryptionProviders](#encryptionproviders) | false |
@@ -827,5 +833,69 @@ WeaveNetSpec defines the WeaveNet CNI plugin
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | encrypted | Encrypted | bool | false |
+
+[Back to Group](#v1beta3)
+
+### WebHookAuditLogBatchConfig
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| bufferSize | BufferSize defines the number of events to buffer before batching. If the rate of incoming events overflows the buffer, events are dropped. | int | false |
+| maxSize | MaxSize defines the maximum number of events in one batch. | int | false |
+| maxWait | MaxWait defines the maximum amount of time to wait before unconditionally batching events in the queue. | metav1.Duration | false |
+| throttle | Throttle defines throttle configuration options. | [WebHookAuditLogThrottleConfig](#webhookauditlogthrottleconfig) | false |
+
+[Back to Group](#v1beta3)
+
+### WebHookAuditLogThrottleConfig
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| disable | Disable disables webhook throttling. Defaults to false, which corresponds to kube-apiservers default of enabling throttling. | bool | false |
+| burst | Burst defines the maximum number of batches generated at the same moment if the allowed QPS was underutilized previously. | int | false |
+| QPS | QPS defines the maximum average number of batches generated per second. | float32 | false |
+
+[Back to Group](#v1beta3)
+
+### WebHookAuditLogTruncateConfig
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| enable | Enable enables webhook truncating to support limiting the size of events. Defaults to false. | bool | false |
+| maxBatchSize | MaxBatchSize defines the maximum size in bytes of the batch sent to the underlying backend. | int | false |
+| maxEventSize | MaxEventSize defines the maximum size in bytes of the audit event sent to the underlying backend. | int | false |
+
+[Back to Group](#v1beta3)
+
+### WebhookAuditLog
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| enable | Enable Default value is false. | bool | false |
+| config | Config | [WebhookAuditLogConfig](#webhookauditlogconfig) | true |
+
+[Back to Group](#v1beta3)
+
+### WebhookAuditLogConfig
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| policyFilePath | PolicyFilePath is a path on local file system to the audit policy manifest which defines what events should be recorded and what data they should include. PolicyFilePath is a required field. More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy | string | true |
+| configFilePath | ConfigFilePath is a path on local file system to a kubeconfig formatted file that defines how kube-apiserver can connect to the audit webhook. ConfigFilePath is a required field. More info: https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/#webhook-backend | string | true |
+| initialBackOff | InitialBackOff defines the amount of time to wait before retrying the first failed request. Defaults to 10s. | metav1.Duration | false |
+| mode | Mode defines the strategy for sending audit events. Blocking indicates sending events should block server responses. Batch causes the backend to buffer and write events asynchronously. Known modes are batch,blocking,blocking-strict. Defaults to batch. | string | false |
+| version | Version defines API group and version used for serializing audit events written to webhook. Defaults to audit.k8s.io/v1 | string | false |
+| batch | Batch defines settings for controlling event batching. Only applicable if webhook mode is set to batch. | [WebHookAuditLogBatchConfig](#webhookauditlogbatchconfig) | false |
+| truncate | Truncate defines settings for controlling event truncation. | [WebHookAuditLogTruncateConfig](#webhookauditlogtruncateconfig) | false |
 
 [Back to Group](#v1beta3)

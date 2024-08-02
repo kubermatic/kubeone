@@ -44,6 +44,7 @@ func Activate(s *state.State) error {
 func UpdateKubeadmClusterConfiguration(featuresCfg kubeoneapi.Features, args *kubeadmargs.Args) {
 	activateKubeadmStaticAuditLogs(featuresCfg.StaticAuditLog, args)
 	activateKubeadmDynamicAuditLogs(featuresCfg.DynamicAuditLog, args)
+	activateKubeadmWebhookAuditLogs(featuresCfg.WebhookAuditLog, args)
 	activateKubeadmOIDC(featuresCfg.OpenIDConnect, args)
 	activateKubeadmPodNodeSelector(featuresCfg.PodNodeSelector, args)
 	activateEncryptionProviders(featuresCfg.EncryptionProviders, args)

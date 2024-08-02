@@ -759,6 +759,9 @@ type Features struct {
 	// DynamicAuditLog
 	DynamicAuditLog *DynamicAuditLog `json:"dynamicAuditLog,omitempty"`
 
+	// WebhookAuditLog
+	WebhookAuditLog *WebhookAuditLog `json:"webhookAuditLog,omitempty"`
+
 	// MetricsServer
 	MetricsServer *MetricsServer `json:"metricsServer,omitempty"`
 
@@ -841,6 +844,87 @@ type StaticAuditLogConfig struct {
 	// LogMaxSize is maximum size in megabytes of audit log file before it gets rotated.
 	// Default value is 100.
 	LogMaxSize int `json:"logMaxSize,omitempty"`
+}
+
+type WebhookAuditLog struct {
+	// Enable
+	// Default value is false.
+	Enable bool `json:"enable,omitempty"`
+
+	// Config
+	Config WebhookAuditLogConfig `json:"config"`
+}
+
+type WebhookAuditLogConfig struct {
+	// PolicyFilePath is a path on local file system to the audit policy manifest
+	// which defines what events should be recorded and what data they should include.
+	// PolicyFilePath is a required field.
+	// More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy
+	PolicyFilePath string `json:"policyFilePath"`
+
+	// ConfigFilePath is a path on local file system to a kubeconfig formatted file that
+	// defines how kube-apiserver can connect to the audit webhook.
+	// ConfigFilePath is a required field.
+	// More info: https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/#webhook-backend
+	ConfigFilePath string `json:"configFilePath"`
+
+	// InitialBackOff defines the amount of time to wait before retrying the first failed request.
+	// Defaults to 10s.
+	InitialBackOff metav1.Duration `json:"initialBackOff,omitempty"`
+
+	// Mode defines the strategy for sending audit events.
+	// Blocking indicates sending events should block server responses.
+	// Batch causes the backend to buffer and write events asynchronously.
+	// Known modes are batch,blocking,blocking-strict.
+	// Defaults to batch.
+	Mode string `json:"mode,omitempty"`
+
+	// Version defines API group and version used for serializing audit events written to webhook.
+	// Defaults to audit.k8s.io/v1
+	Version string `json:"version,omitempty"`
+
+	// Batch defines settings for controlling event batching.
+	// Only applicable if webhook mode is set to batch.
+	Batch WebHookAuditLogBatchConfig `json:"batch,omitempty"`
+
+	// Truncate defines settings for controlling event truncation.
+	Truncate WebHookAuditLogTruncateConfig `json:"truncate,omitempty"`
+}
+
+type WebHookAuditLogBatchConfig struct {
+	// BufferSize defines the number of events to buffer before batching. If the rate of incoming events overflows the buffer, events are dropped.
+	BufferSize int `json:"bufferSize,omitempty"`
+
+	// MaxSize defines the maximum number of events in one batch.
+	MaxSize int `json:"maxSize,omitempty"`
+
+	// MaxWait defines the maximum amount of time to wait before unconditionally batching events in the queue.
+	MaxWait metav1.Duration `json:"maxWait,omitempty"`
+
+	// Throttle defines throttle configuration options.
+	Throttle WebHookAuditLogThrottleConfig `json:"throttle,omitempty"`
+}
+
+type WebHookAuditLogThrottleConfig struct {
+	// Disable disables webhook throttling. Defaults to false, which corresponds to kube-apiservers default of enabling throttling.
+	Disable bool `json:"disable,omitempty"` // we use the inverse of kube-apiserver here, so we can handle users omitting the field without requiring a bool pointer
+
+	// Burst defines the maximum number of batches generated at the same moment if the allowed QPS was underutilized previously.
+	Burst int `json:"burst,omitempty"`
+
+	// QPS defines the maximum average number of batches generated per second.
+	QPS float32 `json:"QPS,omitempty"`
+}
+
+type WebHookAuditLogTruncateConfig struct {
+	// Enable enables webhook truncating to support limiting the size of events. Defaults to false.
+	Enable bool `json:"enable,omitempty"`
+
+	// MaxBatchSize defines the maximum size in bytes of the batch sent to the underlying backend.
+	MaxBatchSize int `json:"maxBatchSize,omitempty"`
+
+	// MaxEventSize defines the maximum size in bytes of the audit event sent to the underlying backend.
+	MaxEventSize int `json:"maxEventSize,omitempty"`
 }
 
 // DynamicAuditLog feature flag

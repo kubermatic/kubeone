@@ -78,3 +78,31 @@ func TestSaveAuditPolicyConfig(t *testing.T) {
 		})
 	}
 }
+
+func TestSaveAuditWebhookConfig(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name    string
+		workdir string
+		err     error
+	}{
+		{name: "kubeone1", workdir: "test-dir1"},
+		{name: "kubeone2", workdir: "./subdir/test"},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			got, err := SaveAuditWebhookConfig(tt.workdir)
+			if !errors.Is(err, tt.err) {
+				t.Errorf("SaveAuditWebHookConfig() error = %v, wantErr %v", err, tt.err)
+
+				return
+			}
+
+			testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
+		})
+	}
+}

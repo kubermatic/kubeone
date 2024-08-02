@@ -87,6 +87,8 @@ type Config struct {
 }
 
 // NewConfig returns all required configs to init a cluster via a set of v1beta3 configs
+//
+//nolint:gocyclo
 func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 	cluster := s.Cluster
 	kubeSemVer, err := semver.NewVersion(cluster.Versions.Kubernetes)
@@ -316,7 +318,9 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 		}
 	}
 
-	if cluster.Features.StaticAuditLog != nil && cluster.Features.StaticAuditLog.Enable {
+	// StaticAuditLog and WebhookAuditLog both share the audit-conf volume and since both
+	// can be activated simultaneously, we need to make sure to add the ExtraVolume only once
+	if (cluster.Features.StaticAuditLog != nil && cluster.Features.StaticAuditLog.Enable) || (cluster.Features.WebhookAuditLog != nil && cluster.Features.WebhookAuditLog.Enable) {
 		auditPolicyVol := kubeadmv1beta3.HostPathMount{
 			Name:      "audit-conf",
 			HostPath:  "/etc/kubernetes/audit",
@@ -324,6 +328,10 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 			ReadOnly:  true,
 			PathType:  corev1.HostPathDirectoryOrCreate,
 		}
+		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, auditPolicyVol)
+	}
+
+	if cluster.Features.StaticAuditLog != nil && cluster.Features.StaticAuditLog.Enable {
 		logVol := kubeadmv1beta3.HostPathMount{
 			Name:      "log",
 			HostPath:  filepath.Dir(cluster.Features.StaticAuditLog.Config.LogPath),
@@ -331,7 +339,6 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 			ReadOnly:  false,
 			PathType:  corev1.HostPathDirectoryOrCreate,
 		}
-		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, auditPolicyVol)
 		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, logVol)
 	}
 

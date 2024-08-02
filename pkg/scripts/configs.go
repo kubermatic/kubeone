@@ -39,6 +39,14 @@ var (
 		fi
 	`)
 
+	auditWebHookConfigTemplate = heredoc.Doc(`
+		if sudo test -f "{{ .WORK_DIR }}/cfg/audit-webhook-config.yaml"; then
+			sudo mkdir -p /etc/kubernetes/audit
+			sudo mv {{ .WORK_DIR }}/cfg/audit-webhook-config.yaml /etc/kubernetes/audit/webhook-config.yaml
+			sudo chown root:root /etc/kubernetes/audit/webhook-config.yaml
+		fi
+	`)
+
 	podNodeSelectorConfigTemplate = heredoc.Doc(`
 		if sudo test -f "{{ .WORK_DIR }}/cfg/podnodeselector.yaml"; then
 			sudo mkdir -p /etc/kubernetes/admission
@@ -83,6 +91,14 @@ func SaveAuditPolicyConfig(workdir string) (string, error) {
 	})
 
 	return result, fail.Runtime(err, "rendering auditPolicyScriptTemplate script")
+}
+
+func SaveAuditWebhookConfig(workdir string) (string, error) {
+	result, err := Render(auditWebHookConfigTemplate, Data{
+		"WORK_DIR": workdir,
+	})
+
+	return result, fail.Runtime(err, "rendering auditWebHookConfigScriptTemplate script")
 }
 
 func SavePodNodeSelectorConfig(workdir string) (string, error) {

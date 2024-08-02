@@ -31,6 +31,10 @@ func Convert_v1beta2_ContainerRuntimeConfig_To_kubeone_ContainerRuntimeConfig(in
 	return autoConvert_v1beta2_ContainerRuntimeConfig_To_kubeone_ContainerRuntimeConfig(in, out, scope)
 }
 
+func Convert_kubeone_Features_To_v1beta2_Features(in *kubeoneapi.Features, out *Features, s conversion.Scope) error {
+	return autoConvert_kubeone_Features_To_v1beta2_Features(in, out, s)
+}
+
 func Convert_v1beta2_Features_To_kubeone_Features(in *Features, out *kubeoneapi.Features, s conversion.Scope) error {
 	return autoConvert_v1beta2_Features_To_kubeone_Features(in, out, s)
 }
