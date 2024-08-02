@@ -302,6 +302,11 @@ resource "aws_instance" "control_plane" {
     volume_size = var.control_plane_volume_size
   }
 
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_put_response_hop_limit = var.control_plane_http_put_max_hops
+  }
+
   tags = tomap({
     "Name"                   = "${var.cluster_name}-cp-${count.index + 1}",
     (local.kube_cluster_tag) = "shared",
@@ -322,6 +327,11 @@ resource "aws_instance" "static_workers1" {
   root_block_device {
     volume_type = "gp2"
     volume_size = 50
+  }
+
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_put_response_hop_limit = var.static_workers_http_put_max_hops
   }
 
   tags = tomap({

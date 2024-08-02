@@ -66,6 +66,7 @@ No modules.
 | <a name="input_cluster_autoscaler_max_replicas"></a> [cluster\_autoscaler\_max\_replicas](#input\_cluster\_autoscaler\_max\_replicas) | maximum number of replicas per MachineDeployment (requires cluster-autoscaler) | `number` | `0` | no |
 | <a name="input_cluster_autoscaler_min_replicas"></a> [cluster\_autoscaler\_min\_replicas](#input\_cluster\_autoscaler\_min\_replicas) | minimum number of replicas per MachineDeployment (requires cluster-autoscaler) | `number` | `0` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster | `string` | n/a | yes |
+| <a name="input_control_plane_http_put_max_hops"></a> [control\_plane\_http\_put\_max\_hops](#input\_control\_plane\_http\_put\_max\_hops) | HTTP PUT response hop limit for the instance metadata requests | `number` | `3` | no |
 | <a name="input_control_plane_labels"></a> [control\_plane\_labels](#input\_control\_plane\_labels) | custom labels to add (and remove) to control plane | `map(string)` | <pre>{<br>  "custom-label-to-add": "custom-value",<br>  "custom-label-to-remove-": ""<br>}</pre> | no |
 | <a name="input_control_plane_type"></a> [control\_plane\_type](#input\_control\_plane\_type) | AWS instance type | `string` | `"t3.medium"` | no |
 | <a name="input_control_plane_vm_count"></a> [control\_plane\_vm\_count](#input\_control\_plane\_vm\_count) | number of control plane instances | `number` | `3` | no |
@@ -84,6 +85,7 @@ No modules.
 | <a name="input_ssh_public_key_file"></a> [ssh\_public\_key\_file](#input\_ssh\_public\_key\_file) | SSH public key file | `string` | `"~/.ssh/id_rsa.pub"` | no |
 | <a name="input_ssh_username"></a> [ssh\_username](#input\_ssh\_username) | SSH user, used only in output | `string` | `""` | no |
 | <a name="input_static_workers_count"></a> [static\_workers\_count](#input\_static\_workers\_count) | number of static workers | `number` | `0` | no |
+| <a name="input_static_workers_http_put_max_hops"></a> [static\_workers\_http\_put\_max\_hops](#input\_static\_workers\_http\_put\_max\_hops) | HTTP PUT response hop limit for the instance metadata requests | `number` | `3` | no |
 | <a name="input_subnets_cidr"></a> [subnets\_cidr](#input\_subnets\_cidr) | CIDR mask bits per subnet | `number` | `24` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC to use ('default' for default VPC) | `string` | `"default"` | no |
 | <a name="input_worker_deploy_ssh_key"></a> [worker\_deploy\_ssh\_key](#input\_worker\_deploy\_ssh\_key) | add provided ssh public key to MachineDeployments | `bool` | `true` | no |
