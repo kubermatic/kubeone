@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2024-08-02T09:59:34+02:00
+date = 2024-08-02T11:33:54+02:00
 weight = 11
 +++
 ## v1beta3
@@ -842,10 +842,10 @@ WeaveNetSpec defines the WeaveNet CNI plugin
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| bufferSize |  | int | false |
-| maxSize |  | int | false |
-| maxWait |  | metav1.Duration | false |
-| throttle |  | [WebHookAuditLogThrottleConfig](#webhookauditlogthrottleconfig) | false |
+| bufferSize | BufferSize defines the number of events to buffer before batching. If the rate of incoming events overflows the buffer, events are dropped. | int | false |
+| maxSize | MaxSize defines the maximum number of events in one batch. | int | false |
+| maxWait | MaxWait defines the maximum amount of time to wait before unconditionally batching events in the queue. | metav1.Duration | false |
+| throttle | Throttle defines throttle configuration options. | [WebHookAuditLogThrottleConfig](#webhookauditlogthrottleconfig) | false |
 
 [Back to Group](#v1beta3)
 
@@ -855,9 +855,9 @@ WeaveNetSpec defines the WeaveNet CNI plugin
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| disable |  | bool | false |
-| burst |  | int | false |
-| QPS |  | float32 | false |
+| disable | Disable disables webhook throttling. Defaults to false, which corresponds to kube-apiservers default of enabling throttling. | bool | false |
+| burst | Burst defines the maximum number of batches generated at the same moment if the allowed QPS was underutilized previously. | int | false |
+| QPS | QPS defines the maximum average number of batches generated per second. | float32 | false |
 
 [Back to Group](#v1beta3)
 
@@ -867,9 +867,9 @@ WeaveNetSpec defines the WeaveNet CNI plugin
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| enable |  | bool | false |
-| maxBatchSize |  | int | false |
-| maxEventSize |  | int | false |
+| enable | Enable enables webhook truncating to support limiting the size of events. Defaults to false. | bool | false |
+| maxBatchSize | MaxBatchSize defines the maximum size in bytes of the batch sent to the underlying backend. | int | false |
+| maxEventSize | MaxEventSize defines the maximum size in bytes of the audit event sent to the underlying backend. | int | false |
 
 [Back to Group](#v1beta3)
 
