@@ -935,6 +935,14 @@ type WebhookAuditLog struct {
 	Config WebhookAuditLogConfig `json:"config"`
 }
 
+type WebhookMode string
+
+const (
+	Batch          WebhookMode = "batch"
+	Blocking       WebhookMode = "blocking"
+	BlockingStrict WebhookMode = "blocking-strict"
+)
+
 type WebhookAuditLogConfig struct {
 	// PolicyFilePath is a path on local file system to the audit policy manifest
 	// which defines what events should be recorded and what data they should include.
@@ -957,7 +965,7 @@ type WebhookAuditLogConfig struct {
 	// Batch causes the backend to buffer and write events asynchronously.
 	// Known modes are batch,blocking,blocking-strict.
 	// Defaults to batch.
-	Mode string `json:"mode,omitempty"`
+	Mode WebhookMode `json:"mode,omitempty"`
 
 	// Version defines API group and version used for serializing audit events written to webhook.
 	// Defaults to audit.k8s.io/v1

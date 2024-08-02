@@ -49,7 +49,7 @@ func activateKubeadmWebhookAuditLogs(feature *kubeoneapi.WebhookAuditLog, args *
 	args.APIServer.ExtraArgs[auditWebhookConfigFileFlag] = "/etc/kubernetes/audit/webhook-config.yaml"
 
 	if feature.Config.Mode != "" {
-		args.APIServer.ExtraArgs[auditWebhookModeFlag] = feature.Config.Mode
+		args.APIServer.ExtraArgs[auditWebhookModeFlag] = string(feature.Config.Mode)
 	}
 
 	if feature.Config.Version != "" {

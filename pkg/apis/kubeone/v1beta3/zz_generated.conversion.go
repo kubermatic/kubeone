@@ -2400,7 +2400,7 @@ func autoConvert_v1beta3_WebhookAuditLogConfig_To_kubeone_WebhookAuditLogConfig(
 	out.PolicyFilePath = in.PolicyFilePath
 	out.ConfigFilePath = in.ConfigFilePath
 	out.InitialBackOff = in.InitialBackOff
-	out.Mode = in.Mode
+	out.Mode = kubeone.WebhookMode(in.Mode)
 	out.Version = in.Version
 	if err := Convert_v1beta3_WebHookAuditLogBatchConfig_To_kubeone_WebHookAuditLogBatchConfig(&in.Batch, &out.Batch, s); err != nil {
 		return err
@@ -2420,7 +2420,7 @@ func autoConvert_kubeone_WebhookAuditLogConfig_To_v1beta3_WebhookAuditLogConfig(
 	out.PolicyFilePath = in.PolicyFilePath
 	out.ConfigFilePath = in.ConfigFilePath
 	out.InitialBackOff = in.InitialBackOff
-	out.Mode = in.Mode
+	out.Mode = string(in.Mode)
 	out.Version = in.Version
 	if err := Convert_kubeone_WebHookAuditLogBatchConfig_To_v1beta3_WebHookAuditLogBatchConfig(&in.Batch, &out.Batch, s); err != nil {
 		return err
