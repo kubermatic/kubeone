@@ -980,22 +980,39 @@ type WebhookAuditLogConfig struct {
 }
 
 type WebHookAuditLogBatchConfig struct {
-	BufferSize int                           `json:"bufferSize,omitempty"`
-	MaxSize    int                           `json:"maxSize,omitempty"`
-	MaxWait    metav1.Duration               `json:"maxWait,omitempty"`
-	Throttle   WebHookAuditLogThrottleConfig `json:"throttle,omitempty"`
+	// BufferSize defines the number of events to buffer before batching. If the rate of incoming events overflows the buffer, events are dropped.
+	BufferSize int `json:"bufferSize,omitempty"`
+
+	// MaxSize defines the maximum number of events in one batch.
+	MaxSize int `json:"maxSize,omitempty"`
+
+	// MaxWait defines the maximum amount of time to wait before unconditionally batching events in the queue.
+	MaxWait metav1.Duration `json:"maxWait,omitempty"`
+
+	// Throttle defines throttle configuration options.
+	Throttle WebHookAuditLogThrottleConfig `json:"throttle,omitempty"`
 }
 
 type WebHookAuditLogThrottleConfig struct {
-	Disable bool    `json:"disable,omitempty"` // we use the inverse of kube-apiserver here, so we can handle users omitting the field
-	Burst   int     `json:"burst,omitempty"`
-	QPS     float32 `json:"QPS,omitempty"`
+	// Disable disables webhook throttling. Defaults to false, which corresponds to kube-apiservers default of enabling throttling.
+	Disable bool `json:"disable,omitempty"` // we use the inverse of kube-apiserver here, so we can handle users omitting the field without requiring a bool pointer
+
+	// Burst defines the maximum number of batches generated at the same moment if the allowed QPS was underutilized previously.
+	Burst int `json:"burst,omitempty"`
+
+	// QPS defines the maximum average number of batches generated per second.
+	QPS float32 `json:"QPS,omitempty"`
 }
 
 type WebHookAuditLogTruncateConfig struct {
-	Enable       bool `json:"enable,omitempty"`
-	MaxBatchSize int  `json:"maxBatchSize,omitempty"`
-	MaxEventSize int  `json:"maxEventSize,omitempty"`
+	// Enable enables webhook truncating to support limiting the size of events. Defaults to false.
+	Enable bool `json:"enable,omitempty"`
+
+	// MaxBatchSize defines the maximum size in bytes of the batch sent to the underlying backend.
+	MaxBatchSize int `json:"maxBatchSize,omitempty"`
+
+	// MaxEventSize defines the maximum size in bytes of the audit event sent to the underlying backend.
+	MaxEventSize int `json:"maxEventSize,omitempty"`
 }
 
 // DynamicAuditLog feature flag
