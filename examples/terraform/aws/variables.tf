@@ -231,6 +231,18 @@ variable "ami_filters" {
   }
 }
 
+variable "control_plane_http_put_max_hops" {
+  default     = 3
+  description = "HTTP PUT response hop limit for the instance metadata requests"
+  type        = number
+}
+
+variable "static_workers_http_put_max_hops" {
+  default     = 3
+  description = "HTTP PUT response hop limit for the instance metadata requests"
+  type        = number
+}
+
 variable "subnets_cidr" {
   default     = 24
   description = "CIDR mask bits per subnet"
