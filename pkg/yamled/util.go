@@ -16,29 +16,26 @@ limitations under the License.
 
 package yamled
 
-import yaml "gopkg.in/yaml.v2"
+import (
+	yaml "gopkg.in/yaml.v2"
+)
 
-func unifyMapType(thing interface{}) (yaml.MapSlice, bool) {
-	if m, ok := thing.(map[string]interface{}); ok {
+func unifyMapType(thing any) (yaml.MapSlice, bool) {
+	switch m := thing.(type) {
+	case map[string]any:
 		slice := makeMapSlice(m)
 
 		return slice, true
-	}
-
-	// dereference pointer
-	if m, ok := thing.(*yaml.MapSlice); ok {
+	case *yaml.MapSlice:
 		return *m, true
-	}
-
-	// handle any kind of map type
-	if m, ok := thing.(yaml.MapSlice); ok {
+	case yaml.MapSlice:
 		return m, true
 	}
 
 	return nil, false
 }
 
-func makeMapSlice(m map[string]interface{}) yaml.MapSlice {
+func makeMapSlice(m map[string]any) yaml.MapSlice {
 	result := make(yaml.MapSlice, 0)
 
 	for k, v := range m {
@@ -51,7 +48,7 @@ func makeMapSlice(m map[string]interface{}) yaml.MapSlice {
 	return result
 }
 
-func setValueInMapSlice(m yaml.MapSlice, key interface{}, value interface{}) yaml.MapSlice {
+func setValueInMapSlice(m yaml.MapSlice, key any, value any) yaml.MapSlice {
 	for idx, item := range m {
 		if item.Key == key {
 			m[idx].Value = value
@@ -66,7 +63,7 @@ func setValueInMapSlice(m yaml.MapSlice, key interface{}, value interface{}) yam
 	})
 }
 
-func removeArrayItem(array []interface{}, pos int) []interface{} {
+func removeArrayItem(array []any, pos int) []any {
 	if pos >= 0 && pos < len(array) {
 		array = append(array[:pos], array[pos+1:]...)
 	}
@@ -74,7 +71,7 @@ func removeArrayItem(array []interface{}, pos int) []interface{} {
 	return array
 }
 
-func removeKeyFromMapSlice(m yaml.MapSlice, key interface{}) yaml.MapSlice {
+func removeKeyFromMapSlice(m yaml.MapSlice, key any) yaml.MapSlice {
 	for idx, item := range m {
 		if item.Key == key {
 			return append(m[:idx], m[idx+1:]...)
@@ -84,7 +81,7 @@ func removeKeyFromMapSlice(m yaml.MapSlice, key interface{}) yaml.MapSlice {
 	return m
 }
 
-func mapSliceGet(haystack yaml.MapSlice, key interface{}) (interface{}, bool) {
+func mapSliceGet(haystack yaml.MapSlice, key any) (any, bool) {
 	for _, item := range haystack {
 		if item.Key == key {
 			return item.Value, true
