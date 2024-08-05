@@ -472,12 +472,7 @@ func runMigrate(opts *globalOptions) error {
 		return err
 	}
 
-	buf, err := kyaml.Marshal(v1beta3Manifest)
-	if err != nil {
-		return fail.Runtime(err, "marshalling new config as YAML")
-	}
-
-	fmt.Printf("%s\n", buf)
+	fmt.Printf("%s\n", v1beta3Manifest)
 
 	return nil
 }

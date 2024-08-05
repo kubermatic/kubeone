@@ -341,14 +341,14 @@ func (d *Document) Walk(path Path, walkFn func(Path, any)) {
 
 	switch value := target.(type) {
 	case yaml.MapSlice:
-		valueCopy := slices.Clone(value)
-		for _, mapItem := range valueCopy {
+		// we have to work with a clone, since walkFn can mutate value each iteration
+		for _, mapItem := range slices.Clone(value) {
 			next := append(path, mapItem.Key) //nolint:gocritic
 			d.Walk(next, walkFn)
 		}
 	case []any:
-		valueCopy := slices.Clone(value)
-		for idx := range valueCopy {
+		// we have to work with a clone, since walkFn can mutate value each iteration
+		for idx := range slices.Clone(value) {
 			next := append(path, idx) //nolint:gocritic
 			d.Walk(next, walkFn)
 		}
