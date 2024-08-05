@@ -22,7 +22,7 @@ import (
 	"strings"
 )
 
-type Step interface{}
+type Step any
 
 type Path []Step
 
