@@ -18,6 +18,7 @@ package yamled
 
 import (
 	"io"
+	"slices"
 
 	yaml "gopkg.in/yaml.v2"
 
@@ -330,4 +331,28 @@ func (d *Document) fillMap(source yaml.MapSlice, newMap yaml.MapSlice) yaml.MapS
 	}
 
 	return source
+}
+
+func (d *Document) Walk(path Path, walkFn func(Path, any)) {
+	target, exist := d.Get(path)
+	if !exist {
+		return
+	}
+
+	switch value := target.(type) {
+	case yaml.MapSlice:
+		valueCopy := slices.Clone(value)
+		for _, mapItem := range valueCopy {
+			next := append(path, mapItem.Key) //nolint:gocritic
+			d.Walk(next, walkFn)
+		}
+	case []any:
+		valueCopy := slices.Clone(value)
+		for idx := range valueCopy {
+			next := append(path, idx) //nolint:gocritic
+			d.Walk(next, walkFn)
+		}
+	}
+
+	walkFn(path, target)
 }
