@@ -1373,6 +1373,7 @@ func TestValidateStaticWorkersConfig(t *testing.T) {
 	tests := []struct {
 		name                string
 		staticWorkersConfig kubeoneapi.StaticWorkersConfig
+		controlPlane        kubeoneapi.ControlPlaneConfig
 		networkConfig       kubeoneapi.ClusterNetworkConfig
 		expectedError       bool
 	}{
@@ -1428,11 +1429,35 @@ func TestValidateStaticWorkersConfig(t *testing.T) {
 			},
 			expectedError: true,
 		},
+		{
+			name: "duplicate IP addresses between static workers and control-plane",
+			staticWorkersConfig: kubeoneapi.StaticWorkersConfig{
+				Hosts: []kubeoneapi.HostConfig{
+					{
+						PublicAddress:  "1.1.1.1",
+						PrivateAddress: "10.0.0.1",
+						SSHAgentSocket: "env:SSH_AUTH_SOCK",
+						SSHUsername:    "ubuntu",
+					},
+				},
+			},
+			controlPlane: kubeoneapi.ControlPlaneConfig{
+				Hosts: []kubeoneapi.HostConfig{
+					{
+						PublicAddress:  "1.1.1.1",
+						PrivateAddress: "10.0.0.1",
+						SSHAgentSocket: "env:SSH_AUTH_SOCK",
+						SSHUsername:    "ubuntu",
+					},
+				},
+			},
+			expectedError: true,
+		},
 	}
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateStaticWorkersConfig(tc.staticWorkersConfig, tc.networkConfig, nil)
+			errs := ValidateStaticWorkersConfig(tc.staticWorkersConfig, tc.controlPlane, tc.networkConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}

@@ -62,7 +62,7 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateKubernetesSupport(c, field.NewPath(""))...)
 	allErrs = append(allErrs, ValidateContainerRuntimeConfig(c.ContainerRuntime, c.Versions, field.NewPath("containerRuntime"))...)
 	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, c.CloudProvider, field.NewPath("clusterNetwork"))...)
-	allErrs = append(allErrs, ValidateStaticWorkersConfig(c.StaticWorkers, c.ClusterNetwork, field.NewPath("staticWorkers"))...)
+	allErrs = append(allErrs, ValidateStaticWorkersConfig(c.StaticWorkers, c.ControlPlane, c.ClusterNetwork, field.NewPath("staticWorkers"))...)
 
 	if c.MachineController != nil && c.MachineController.Deploy {
 		allErrs = append(allErrs, ValidateDynamicWorkerConfig(c.DynamicWorkers, c.CloudProvider, field.NewPath("dynamicWorkers"))...)
@@ -535,11 +535,23 @@ func ValidateCNI(c *kubeoneapi.CNI, fldPath *field.Path) field.ErrorList {
 }
 
 // ValidateStaticWorkersConfig validates the StaticWorkersConfig structure
-func ValidateStaticWorkersConfig(staticWorkers kubeoneapi.StaticWorkersConfig, clusterNetwork kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
+func ValidateStaticWorkersConfig(staticWorkers kubeoneapi.StaticWorkersConfig, controlPlane kubeoneapi.ControlPlaneConfig, clusterNetwork kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	if len(staticWorkers.Hosts) > 0 {
 		allErrs = append(allErrs, ValidateHostConfig(staticWorkers.Hosts, clusterNetwork, fldPath.Child("hosts"))...)
+	}
+
+	for idx, worker := range staticWorkers.Hosts {
+		for _, cp := range controlPlane.Hosts {
+			if cp.PrivateAddress == worker.PrivateAddress {
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("hosts").Index(idx), "PrivateAddress", "can not be the same as control plane"))
+			}
+
+			if cp.PublicAddress == worker.PublicAddress {
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("hosts").Index(idx), "PublicAddress", "can not be the same as control plane"))
+			}
+		}
 	}
 
 	return allErrs
