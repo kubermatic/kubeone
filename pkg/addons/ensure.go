@@ -19,21 +19,22 @@ package addons
 import (
 	"fmt"
 	"io/fs"
+	"slices"
 
 	"github.com/pkg/errors"
 
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
 	"k8c.io/kubeone/pkg/templates/weave"
+
+	storagev1 "k8s.io/api/storage/v1"
 )
 
 const (
 	// addonLabel is applied to all objects deployed using addons
 	addonLabel = "kubeone.io/addon"
-
-	// defaultStorageClass addon defines name of the default-storage-class addon
-	defaultStorageClassAddonName = "default-storage-class"
 )
 
 // embeddedAddons is a list of addons that are embedded in the KubeOne
@@ -140,6 +141,33 @@ func collectAddons(s *state.State) []addonAction {
 		addonsToDeploy = ensureCCMAddons(s, addonsToDeploy)
 	}
 
+	var foundDefaultStorageClass bool
+
+	if s.Cluster.Addons != nil && !slices.ContainsFunc(s.Cluster.Addons.Addons, func(addon kubeoneapi.Addon) bool {
+		return addon.Name == resources.AddonDefaultStorageClass
+	}) {
+		var existingStorageClasses storagev1.StorageClassList
+
+		if s.DynamicClient != nil {
+			if err := s.DynamicClient.List(s.Context, &existingStorageClasses); err != nil {
+				s.Logger.Error(fail.KubeClient(err, "listing existing storage classes"))
+			}
+		}
+
+		for _, sc := range existingStorageClasses.Items {
+			if sc.Annotations["storageclass.kubernetes.io/is-default-class"] == "true" {
+				foundDefaultStorageClass = true
+			}
+		}
+
+	}
+
+	if !foundDefaultStorageClass {
+		addonsToDeploy = append(addonsToDeploy, addonAction{
+			name: resources.AddonDefaultStorageClass,
+		})
+	}
+
 	return addonsToDeploy
 }
 
@@ -162,6 +190,7 @@ func Ensure(s *state.State) error {
 				return err
 			}
 		}
+
 		if err := EnsureAddonByName(s, add.name); err != nil {
 			return err
 		}
@@ -224,7 +253,7 @@ func EnsureUserAddons(s *state.State) error {
 		// NB: We can't migrate StorageClass when applying the CSI driver because
 		// CSI driver is deployed only for Kubernetes 1.23+ clusters, but this
 		// issue affects older clusters as well.
-		if addonName == defaultStorageClassAddonName && s.Cluster.CloudProvider.GCE != nil {
+		if addonName == resources.AddonDefaultStorageClass && s.Cluster.CloudProvider.GCE != nil {
 			if err := migrateGCEStandardStorageClass(s); err != nil {
 				return err
 			}

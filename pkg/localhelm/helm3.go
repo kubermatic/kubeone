@@ -38,7 +38,6 @@ import (
 	"helm.sh/helm/v3/pkg/registry"
 	helmrelease "helm.sh/helm/v3/pkg/release"
 	"helm.sh/helm/v3/pkg/storage/driver"
-	"sigs.k8s.io/yaml"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/fail"
@@ -52,6 +51,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/yaml"
 )
 
 const (
