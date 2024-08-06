@@ -75,7 +75,7 @@ type printOpts struct {
 	NoProxy    string `longflag:"proxy-no-proxy"`
 
 	EnablePodNodeSelector     bool `longflag:"enable-pod-node-selector"`
-	EnablePodSecurityPolicy   bool `longflag:"enable-pod-security-policy"`
+	EnablePodSecurityPolicy   bool `longflag:"enable-pod-security-policy"` // TODO: remove in future release
 	EnableStaticAuditLog      bool `longflag:"enable-static-audit-log"`
 	EnableDynamicAuditLog     bool `longflag:"enable-dynamic-audit-log"`
 	EnableMetricsServer       bool `longflag:"enable-metrics-server"`
@@ -173,7 +173,7 @@ func configPrintCmd() *cobra.Command {
 
 	// Features
 	cmd.Flags().BoolVar(&opts.EnablePodNodeSelector, longFlagName(opts, "EnablePodNodeSelector"), false, "enable PodNodeSelector admission plugin")
-	cmd.Flags().BoolVar(&opts.EnablePodSecurityPolicy, longFlagName(opts, "EnablePodSecurityPolicy"), false, "enable PodSecurityPolicy")
+	cmd.Flags().BoolVar(&opts.EnablePodSecurityPolicy, longFlagName(opts, "EnablePodSecurityPolicy"), false, "enable PodSecurityPolicy. NO-OP: this feature is removed")
 	cmd.Flags().BoolVar(&opts.EnableStaticAuditLog, longFlagName(opts, "EnableStaticAuditLog"), false, "enable StaticAuditLog")
 	cmd.Flags().BoolVar(&opts.EnableDynamicAuditLog, longFlagName(opts, "EnableDynamicAuditLog"), false, "enable DynamicAuditLog")
 	cmd.Flags().BoolVar(&opts.EnableMetricsServer, longFlagName(opts, "EnableMetricsServer"), true, "enable metrics-server")
@@ -402,11 +402,8 @@ func createAndPrintManifest(printOptions *printOpts) error {
 
 func printFeatures(cfg *yamled.Document, printOptions *printOpts) {
 	if printOptions.EnablePodNodeSelector {
-		cfg.Set(yamled.Path{"features", "podNodeSelector", "enable"}, printOptions.EnablePodSecurityPolicy)
+		cfg.Set(yamled.Path{"features", "podNodeSelector", "enable"}, printOptions.EnablePodNodeSelector)
 		cfg.Set(yamled.Path{"features", "podNodeSelector", "config", "configFilePath"}, "")
-	}
-	if printOptions.EnablePodSecurityPolicy {
-		cfg.Set(yamled.Path{"features", "podSecurityPolicy", "enable"}, printOptions.EnablePodSecurityPolicy)
 	}
 	if printOptions.EnableDynamicAuditLog {
 		cfg.Set(yamled.Path{"features", "dynamicAuditLog", "enable"}, printOptions.EnableDynamicAuditLog)
