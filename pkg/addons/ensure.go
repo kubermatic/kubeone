@@ -159,7 +159,6 @@ func collectAddons(s *state.State) []addonAction {
 				foundDefaultStorageClass = true
 			}
 		}
-
 	}
 
 	if !foundDefaultStorageClass {
