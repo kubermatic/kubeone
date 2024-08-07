@@ -1,0 +1,16 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+
+versions:
+  kubernetes: 1.30.1
+
+helmReleases:
+  - releaseName: ksm
+    chart: kube-state-metrics
+    repoURL: https://prometheus-community.github.io/helm-charts
+    namespace: kube-state-metrics
+    version: 4.22.3
+    values:
+      - valuesFile: ksm-values.yaml
+      - inline:
+          replicas: 3

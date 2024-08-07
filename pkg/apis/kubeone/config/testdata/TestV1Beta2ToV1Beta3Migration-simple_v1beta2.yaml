@@ -1,0 +1,5 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+
+versions:
+  kubernetes: 1.30.1
