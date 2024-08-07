@@ -16,7 +16,7 @@ require (
 	github.com/iancoleman/orderedmap v0.2.0
 	github.com/imdario/mergo v0.3.13
 	github.com/koron-go/prefixw v1.0.0
-	github.com/kubermatic/machine-controller v1.57.6
+	github.com/kubermatic/machine-controller v1.57.9
 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
 	github.com/pkg/errors v0.9.1
 	github.com/pmezard/go-difflib v1.0.0
