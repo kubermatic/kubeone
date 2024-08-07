@@ -76,7 +76,8 @@ func MigrateV1beta2V1beta3(clusterFilePath string) ([]byte, error) {
 		{
 			path: yamled.Path{"addons"},
 			convertor: func(p yamled.Path) {
-				if originalManifest.Has(p) {
+				// we moved helmReleases inside the addons
+				if originalManifest.Has(p) || originalManifest.Has(yamled.Path{"helmReleases"}) {
 					ybuf, _ := kyaml.Marshal(newManifest.Addons)
 					addons, _ := yamled.Load(bytes.NewBuffer(ybuf))
 					originalManifest.Set(p, addons)
@@ -86,6 +87,7 @@ func MigrateV1beta2V1beta3(clusterFilePath string) ([]byte, error) {
 		{
 			path: yamled.Path{"addons"},
 			convertor: func(p yamled.Path) {
+				// cleanup addons from all the nil/zero/invalid values
 				originalManifest.Walk(p, func(key yamled.Path, value any) {
 					refval := reflect.ValueOf(value)
 

@@ -26,10 +26,22 @@ import (
 	"github.com/pmezard/go-difflib/difflib"
 )
 
+func fsName(t *testing.T, ext ...string) string {
+	t.Helper()
+
+	return strings.Join(append([]string{strings.ReplaceAll(t.Name(), "/", "-")}, ext...), "")
+}
+
 func FSGoldenName(t *testing.T) string {
 	t.Helper()
 
-	return strings.ReplaceAll(t.Name(), "/", "-") + ".golden"
+	return fsName(t, ".golden")
+}
+
+func TestDataFSName(t *testing.T, ext ...string) string {
+	t.Helper()
+
+	return filepath.Join([]string{"testdata", fsName(t, ext...)}...)
 }
 
 func DiffOutput(t *testing.T, name, output string, update bool) {
@@ -40,7 +52,7 @@ func DiffOutput(t *testing.T, name, output string, update bool) {
 	}
 
 	if update {
-		if errw := os.WriteFile(golden, []byte(output), 0600); errw != nil {
+		if errw := os.WriteFile(golden, []byte(output), 0o600); errw != nil {
 			t.Fatalf("failed to write updated fixture: %v", errw)
 		}
 	}
