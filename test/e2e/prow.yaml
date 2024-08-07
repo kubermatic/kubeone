@@ -29,29 +29,6 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-install-containerd-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosInstallContainerdV1_25_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-install-containerd-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -153,31 +130,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAzureDefaultInstallContainerdV1_25_11
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-install-containerd-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosInstallContainerdV1_25_11
       env:
       - name: PROVIDER
         value: azure
@@ -317,31 +269,6 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-install-containerd-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackCentosInstallContainerdV1_25_11
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
   name: pull-kubeone-e2e-openstack-rockylinux-install-containerd-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -425,29 +352,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAwsAmznInstallContainerdV1_26_6
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-install-containerd-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosInstallContainerdV1_26_6
       env:
       - name: PROVIDER
         value: aws
@@ -564,31 +468,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAzureDefaultInstallContainerdV1_26_6
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-install-containerd-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosInstallContainerdV1_26_6
       env:
       - name: PROVIDER
         value: azure
@@ -730,31 +609,6 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-install-containerd-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosInstallContainerdV1_27_3
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-azure-flatcar-install-containerd-v1.27.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -867,36 +721,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAzureDefaultStableUpgradeContainerdFromV1_26_6_ToV1_27_3
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.6
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-stable-upgrade-containerd-from-v1.26.6-to-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosStableUpgradeContainerdFromV1_26_6_ToV1_27_3
       env:
       - name: PROVIDER
         value: azure
@@ -1066,34 +890,6 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-stable-upgrade-containerd-from-v1.25.11-to-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosStableUpgradeContainerdFromV1_25_11_ToV1_26_6
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.6
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-from-v1.25.11-to-v1.26.6
   optional: false
   path_alias: k8c.io/kubeone
@@ -1214,36 +1010,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAzureDefaultStableUpgradeContainerdFromV1_25_11_ToV1_26_6
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.6
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-stable-upgrade-containerd-from-v1.25.11-to-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosStableUpgradeContainerdFromV1_25_11_ToV1_26_6
       env:
       - name: PROVIDER
         value: azure
@@ -1413,34 +1179,6 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-stable-upgrade-containerd-from-v1.24.15-to-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosStableUpgradeContainerdFromV1_24_15_ToV1_25_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.6
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-from-v1.24.15-to-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -1561,36 +1299,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAzureDefaultStableUpgradeContainerdFromV1_24_15_ToV1_25_11
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.6
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-stable-upgrade-containerd-from-v1.24.15-to-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosStableUpgradeContainerdFromV1_24_15_ToV1_25_11
       env:
       - name: PROVIDER
         value: azure
@@ -1762,36 +1470,6 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-stable-upgrade-containerd-from-v1.24.15-to-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackCentosStableUpgradeContainerdFromV1_24_15_ToV1_25_11
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.6
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
   name: pull-kubeone-e2e-openstack-rockylinux-upgrade-containerd-from-v1.24.15-to-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -1885,31 +1563,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAzureDefaultCalicoContainerdV1_27_3
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-calico-containerd-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosCalicoContainerdV1_27_3
       env:
       - name: PROVIDER
         value: azure
@@ -2049,29 +1702,6 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-calico-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosCalicoContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-calico-containerd-external-v1.27.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -2189,31 +1819,6 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-calico-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosCalicoContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-azure-flatcar-calico-containerd-external-v1.27.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -2301,31 +1906,6 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-calico-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackCentosCalicoContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 120m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2435,29 +2015,6 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-centos-calico-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestVsphereCentosCalicoContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
     preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-calico-containerd-external-v1.27.3
   optional: false
@@ -2490,31 +2047,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAzureDefaultWeaveContainerdV1_27_3
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-weave-containerd-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosWeaveContainerdV1_27_3
       env:
       - name: PROVIDER
         value: azure
@@ -2656,31 +2188,6 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-cilium-containerd-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosCiliumContainerdV1_27_3
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-azure-flatcar-cilium-containerd-v1.27.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -2788,29 +2295,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAwsAmznCiliumContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-cilium-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosCiliumContainerdExternalV1_27_3
       env:
       - name: PROVIDER
         value: aws
@@ -2943,31 +2427,6 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-cilium-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosCiliumContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-azure-flatcar-cilium-containerd-external-v1.27.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -3055,31 +2514,6 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-cilium-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackCentosCiliumContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 120m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3189,29 +2623,6 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-centos-cilium-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestVsphereCentosCiliumContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
     preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-cilium-containerd-external-v1.27.3
   optional: false
@@ -3249,36 +2660,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAzureDefaultUpgradeCiliumContainerdFromV1_24_15_ToV1_25_11
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.6
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-upgrade-cilium-containerd-from-v1.24.15-to-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosUpgradeCiliumContainerdFromV1_24_15_ToV1_25_11
       env:
       - name: PROVIDER
         value: azure
@@ -3448,34 +2829,6 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-upgrade-cilium-containerd-external-from-v1.24.15-to-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosUpgradeCiliumContainerdExternalFromV1_24_15_ToV1_25_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.6
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-upgrade-cilium-containerd-external-from-v1.24.15-to-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -3618,36 +2971,6 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-upgrade-cilium-containerd-external-from-v1.24.15-to-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosUpgradeCiliumContainerdExternalFromV1_24_15_ToV1_25_11
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.6
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-azure-flatcar-upgrade-cilium-containerd-external-from-v1.24.15-to-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -3767,36 +3090,6 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-upgrade-cilium-containerd-external-from-v1.24.15-to-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackCentosUpgradeCiliumContainerdExternalFromV1_24_15_ToV1_25_11
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.6
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
   name: pull-kubeone-e2e-openstack-rockylinux-upgrade-cilium-containerd-external-from-v1.24.15-to-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -3895,34 +3188,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultUpgradeCiliumContainerdExternalFromV1_24_15_ToV1_25_11
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.6
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
-    preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-centos-upgrade-cilium-containerd-external-from-v1.24.15-to-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestVsphereCentosUpgradeCiliumContainerdExternalFromV1_24_15_ToV1_25_11
       env:
       - name: PROVIDER
         value: vsphere
@@ -4137,29 +3402,6 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-containerd-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosLegacyMachineControllerContainerdV1_25_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-legacy-machine-controller-containerd-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -4260,31 +3502,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAzureDefaultLegacyMachineControllerContainerdV1_25_11
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-legacy-machine-controller-containerd-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosLegacyMachineControllerContainerdV1_25_11
       env:
       - name: PROVIDER
         value: azure
@@ -4424,31 +3641,6 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-legacy-machine-controller-containerd-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackCentosLegacyMachineControllerContainerdV1_25_11
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
   name: pull-kubeone-e2e-openstack-rockylinux-legacy-machine-controller-containerd-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -4532,29 +3724,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAwsAmznLegacyMachineControllerContainerdV1_26_6
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-containerd-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosLegacyMachineControllerContainerdV1_26_6
       env:
       - name: PROVIDER
         value: aws
@@ -4670,31 +3839,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAzureDefaultLegacyMachineControllerContainerdV1_26_6
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-legacy-machine-controller-containerd-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosLegacyMachineControllerContainerdV1_26_6
       env:
       - name: PROVIDER
         value: azure
@@ -4836,31 +3980,6 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-legacy-machine-controller-containerd-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosLegacyMachineControllerContainerdV1_27_3
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-azure-flatcar-legacy-machine-controller-containerd-v1.27.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -4968,29 +4087,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAwsAmznCsiCcmMigrationV1_25_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-csi-ccm-migration-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosCsiCcmMigrationV1_25_11
       env:
       - name: PROVIDER
         value: aws
@@ -5121,31 +4217,6 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-csi-ccm-migration-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackCentosCsiCcmMigrationV1_25_11
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
   name: pull-kubeone-e2e-openstack-rockylinux-csi-ccm-migration-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -5229,31 +4300,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAzureDefaultCsiCcmMigrationV1_25_11
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-csi-ccm-migration-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosCsiCcmMigrationV1_25_11
       env:
       - name: PROVIDER
         value: azure
@@ -5355,29 +4401,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAwsAmznCsiCcmMigrationV1_26_6
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-csi-ccm-migration-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosCsiCcmMigrationV1_26_6
       env:
       - name: PROVIDER
         value: aws
@@ -5510,31 +4533,6 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-csi-ccm-migration-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosCsiCcmMigrationV1_26_6
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-azure-flatcar-csi-ccm-migration-v1.26.6
   optional: false
   path_alias: k8c.io/kubeone
@@ -5636,31 +4634,6 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-csi-ccm-migration-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosCsiCcmMigrationV1_27_3
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-azure-flatcar-csi-ccm-migration-v1.27.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -5745,29 +4718,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAwsAmznInstallContainerdExternalV1_25_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-install-containerd-external-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosInstallContainerdExternalV1_25_11
       env:
       - name: PROVIDER
         value: aws
@@ -5900,31 +4850,6 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-install-containerd-external-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosInstallContainerdExternalV1_25_11
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-azure-flatcar-install-containerd-external-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -6024,29 +4949,6 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-centos-install-containerd-external-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestDigitaloceanCentosInstallContainerdExternalV1_25_11
-      env:
-      - name: PROVIDER
-        value: digitalocean
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-digitalocean: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-digitalocean-rockylinux-install-containerd-external-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -6078,29 +4980,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultInstallContainerdExternalV1_25_11
-      env:
-      - name: PROVIDER
-        value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-equinix-metal: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-centos-install-containerd-external-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestEquinixmetalCentosInstallContainerdExternalV1_25_11
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -6185,29 +5064,6 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-centos-install-containerd-external-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestHetznerCentosInstallContainerdExternalV1_25_11
-      env:
-      - name: PROVIDER
-        value: hetzner
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-rockylinux-install-containerd-external-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -6242,31 +5098,6 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-install-containerd-external-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackCentosInstallContainerdExternalV1_25_11
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 120m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -6376,29 +5207,6 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-centos-install-containerd-external-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestVsphereCentosInstallContainerdExternalV1_25_11
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
     preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-external-v1.25.11
   optional: false
@@ -6431,29 +5239,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAwsAmznInstallContainerdExternalV1_26_6
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-install-containerd-external-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosInstallContainerdExternalV1_26_6
       env:
       - name: PROVIDER
         value: aws
@@ -6586,31 +5371,6 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-install-containerd-external-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosInstallContainerdExternalV1_26_6
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-azure-flatcar-install-containerd-external-v1.26.6
   optional: false
   path_alias: k8c.io/kubeone
@@ -6710,29 +5470,6 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-centos-install-containerd-external-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestDigitaloceanCentosInstallContainerdExternalV1_26_6
-      env:
-      - name: PROVIDER
-        value: digitalocean
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-digitalocean: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-digitalocean-rockylinux-install-containerd-external-v1.26.6
   optional: false
   path_alias: k8c.io/kubeone
@@ -6764,29 +5501,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultInstallContainerdExternalV1_26_6
-      env:
-      - name: PROVIDER
-        value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-equinix-metal: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-centos-install-containerd-external-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestEquinixmetalCentosInstallContainerdExternalV1_26_6
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -6871,29 +5585,6 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-centos-install-containerd-external-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestHetznerCentosInstallContainerdExternalV1_26_6
-      env:
-      - name: PROVIDER
-        value: hetzner
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-rockylinux-install-containerd-external-v1.26.6
   optional: false
   path_alias: k8c.io/kubeone
@@ -6928,31 +5619,6 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-install-containerd-external-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackCentosInstallContainerdExternalV1_26_6
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 120m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -7062,29 +5728,6 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-centos-install-containerd-external-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestVsphereCentosInstallContainerdExternalV1_26_6
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
     preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-external-v1.26.6
   optional: false
@@ -7117,29 +5760,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAwsAmznInstallContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-install-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosInstallContainerdExternalV1_27_3
       env:
       - name: PROVIDER
         value: aws
@@ -7273,31 +5893,6 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-install-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosInstallContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-azure-flatcar-install-containerd-external-v1.27.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -7397,29 +5992,6 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-centos-install-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestDigitaloceanCentosInstallContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: digitalocean
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-digitalocean: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-digitalocean-rockylinux-install-containerd-external-v1.27.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -7451,29 +6023,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultInstallContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-equinix-metal: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-centos-install-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestEquinixmetalCentosInstallContainerdExternalV1_27_3
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -7558,29 +6107,6 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-centos-install-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestHetznerCentosInstallContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: hetzner
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-rockylinux-install-containerd-external-v1.27.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -7615,31 +6141,6 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-install-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackCentosInstallContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 120m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -7749,29 +6250,6 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-centos-install-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestVsphereCentosInstallContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
     preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-external-v1.27.3
   optional: false
@@ -7809,34 +6287,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAwsAmznStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.6
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-stable-upgrade-containerd-external-from-v1.24.15-to-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11
       env:
       - name: PROVIDER
         value: aws
@@ -7999,36 +6449,6 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-stable-upgrade-containerd-external-from-v1.24.15-to-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.6
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-azure-flatcar-stable-upgrade-containerd-external-from-v1.24.15-to-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -8148,34 +6568,6 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-centos-stable-upgrade-containerd-external-from-v1.24.15-to-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestDigitaloceanCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11
-      env:
-      - name: PROVIDER
-        value: digitalocean
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.6
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-digitalocean: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-digitalocean-rockylinux-stable-upgrade-containerd-external-from-v1.24.15-to-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -8212,34 +6604,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11
-      env:
-      - name: PROVIDER
-        value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.6
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-equinix-metal: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-centos-stable-upgrade-containerd-external-from-v1.24.15-to-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestEquinixmetalCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -8344,34 +6708,6 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-centos-stable-upgrade-containerd-external-from-v1.24.15-to-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestHetznerCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11
-      env:
-      - name: PROVIDER
-        value: hetzner
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.6
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
-    preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-rockylinux-stable-upgrade-containerd-external-from-v1.24.15-to-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -8408,36 +6744,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.6
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-stable-upgrade-containerd-external-from-v1.24.15-to-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11
       env:
       - name: PROVIDER
         value: openstack
@@ -8577,34 +6883,6 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-centos-stable-upgrade-containerd-external-from-v1.24.15-to-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestVsphereCentosStableUpgradeContainerdExternalFromV1_24_15_ToV1_25_11
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: release/v1.6
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
     preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-stable-upgrade-containerd-external-from-v1.24.15-to-v1.25.11
   optional: false
@@ -8642,34 +6920,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAwsAmznStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: main
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-stable-upgrade-containerd-external-from-v1.25.11-to-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6
       env:
       - name: PROVIDER
         value: aws
@@ -8832,36 +7082,6 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-stable-upgrade-containerd-external-from-v1.25.11-to-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: main
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-azure-flatcar-stable-upgrade-containerd-external-from-v1.25.11-to-v1.26.6
   optional: false
   path_alias: k8c.io/kubeone
@@ -8981,34 +7201,6 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-centos-stable-upgrade-containerd-external-from-v1.25.11-to-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestDigitaloceanCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6
-      env:
-      - name: PROVIDER
-        value: digitalocean
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: main
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-digitalocean: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-digitalocean-rockylinux-stable-upgrade-containerd-external-from-v1.25.11-to-v1.26.6
   optional: false
   path_alias: k8c.io/kubeone
@@ -9045,34 +7237,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6
-      env:
-      - name: PROVIDER
-        value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: main
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-equinix-metal: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-centos-stable-upgrade-containerd-external-from-v1.25.11-to-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestEquinixmetalCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -9177,34 +7341,6 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-centos-stable-upgrade-containerd-external-from-v1.25.11-to-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestHetznerCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6
-      env:
-      - name: PROVIDER
-        value: hetzner
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: main
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
-    preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-rockylinux-stable-upgrade-containerd-external-from-v1.25.11-to-v1.26.6
   optional: false
   path_alias: k8c.io/kubeone
@@ -9241,36 +7377,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: main
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-stable-upgrade-containerd-external-from-v1.25.11-to-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6
       env:
       - name: PROVIDER
         value: openstack
@@ -9410,34 +7516,6 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-centos-stable-upgrade-containerd-external-from-v1.25.11-to-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestVsphereCentosStableUpgradeContainerdExternalFromV1_25_11_ToV1_26_6
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: main
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
     preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-stable-upgrade-containerd-external-from-v1.25.11-to-v1.26.6
   optional: false
@@ -9475,34 +7553,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAwsAmznStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: main
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-stable-upgrade-containerd-external-from-v1.26.6-to-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3
       env:
       - name: PROVIDER
         value: aws
@@ -9665,36 +7715,6 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-stable-upgrade-containerd-external-from-v1.26.6-to-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: main
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-azure-flatcar-stable-upgrade-containerd-external-from-v1.26.6-to-v1.27.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -9814,34 +7834,6 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-centos-stable-upgrade-containerd-external-from-v1.26.6-to-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestDigitaloceanCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3
-      env:
-      - name: PROVIDER
-        value: digitalocean
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: main
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-digitalocean: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-digitalocean-rockylinux-stable-upgrade-containerd-external-from-v1.26.6-to-v1.27.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -9878,34 +7870,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3
-      env:
-      - name: PROVIDER
-        value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: main
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-equinix-metal: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-centos-stable-upgrade-containerd-external-from-v1.26.6-to-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestEquinixmetalCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -10010,34 +7974,6 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-centos-stable-upgrade-containerd-external-from-v1.26.6-to-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestHetznerCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3
-      env:
-      - name: PROVIDER
-        value: hetzner
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: main
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
-    preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-rockylinux-stable-upgrade-containerd-external-from-v1.26.6-to-v1.27.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -10074,36 +8010,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: main
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-stable-upgrade-containerd-external-from-v1.26.6-to-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3
       env:
       - name: PROVIDER
         value: openstack
@@ -10243,34 +8149,6 @@ presubmits:
     repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-centos-stable-upgrade-containerd-external-from-v1.26.6-to-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestVsphereCentosStableUpgradeContainerdExternalFromV1_26_6_ToV1_27_3
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  extra_refs:
-  - base_ref: main
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
     preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-stable-upgrade-containerd-external-from-v1.26.6-to-v1.27.3
   optional: false
@@ -10303,29 +8181,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAwsAmznLegacyMachineControllerContainerdExternalV1_25_11
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-containerd-external-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosLegacyMachineControllerContainerdExternalV1_25_11
       env:
       - name: PROVIDER
         value: aws
@@ -10458,31 +8313,6 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-legacy-machine-controller-containerd-external-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosLegacyMachineControllerContainerdExternalV1_25_11
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-azure-flatcar-legacy-machine-controller-containerd-external-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -10582,29 +8412,6 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-centos-legacy-machine-controller-containerd-external-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_25_11
-      env:
-      - name: PROVIDER
-        value: digitalocean
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-digitalocean: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-digitalocean-rockylinux-legacy-machine-controller-containerd-external-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -10636,29 +8443,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultLegacyMachineControllerContainerdExternalV1_25_11
-      env:
-      - name: PROVIDER
-        value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-equinix-metal: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-centos-legacy-machine-controller-containerd-external-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_25_11
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -10743,29 +8527,6 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-centos-legacy-machine-controller-containerd-external-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestHetznerCentosLegacyMachineControllerContainerdExternalV1_25_11
-      env:
-      - name: PROVIDER
-        value: hetzner
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-rockylinux-legacy-machine-controller-containerd-external-v1.25.11
   optional: false
   path_alias: k8c.io/kubeone
@@ -10800,31 +8561,6 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-legacy-machine-controller-containerd-external-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_25_11
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 120m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -10934,29 +8670,6 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-centos-legacy-machine-controller-containerd-external-v1.25.11
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestVsphereCentosLegacyMachineControllerContainerdExternalV1_25_11
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
     preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-legacy-machine-controller-containerd-external-v1.25.11
   optional: false
@@ -10989,29 +8702,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAwsAmznLegacyMachineControllerContainerdExternalV1_26_6
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-containerd-external-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosLegacyMachineControllerContainerdExternalV1_26_6
       env:
       - name: PROVIDER
         value: aws
@@ -11144,31 +8834,6 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-legacy-machine-controller-containerd-external-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosLegacyMachineControllerContainerdExternalV1_26_6
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-azure-flatcar-legacy-machine-controller-containerd-external-v1.26.6
   optional: false
   path_alias: k8c.io/kubeone
@@ -11268,29 +8933,6 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-centos-legacy-machine-controller-containerd-external-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_26_6
-      env:
-      - name: PROVIDER
-        value: digitalocean
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-digitalocean: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-digitalocean-rockylinux-legacy-machine-controller-containerd-external-v1.26.6
   optional: false
   path_alias: k8c.io/kubeone
@@ -11322,29 +8964,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultLegacyMachineControllerContainerdExternalV1_26_6
-      env:
-      - name: PROVIDER
-        value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-equinix-metal: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-centos-legacy-machine-controller-containerd-external-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_26_6
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -11429,29 +9048,6 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-centos-legacy-machine-controller-containerd-external-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestHetznerCentosLegacyMachineControllerContainerdExternalV1_26_6
-      env:
-      - name: PROVIDER
-        value: hetzner
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-rockylinux-legacy-machine-controller-containerd-external-v1.26.6
   optional: false
   path_alias: k8c.io/kubeone
@@ -11486,31 +9082,6 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-legacy-machine-controller-containerd-external-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_26_6
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 120m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -11620,29 +9191,6 @@ presubmits:
   decorate: true
   labels:
     preset-goproxy: "true"
-    preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-centos-legacy-machine-controller-containerd-external-v1.26.6
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestVsphereCentosLegacyMachineControllerContainerdExternalV1_26_6
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
     preset-vsphere-legacy: "true"
   name: pull-kubeone-e2e-vsphere-flatcar-legacy-machine-controller-containerd-external-v1.26.6
   optional: false
@@ -11675,29 +9223,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestAwsAmznLegacyMachineControllerContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-centos-legacy-machine-controller-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsCentosLegacyMachineControllerContainerdExternalV1_27_3
       env:
       - name: PROVIDER
         value: aws
@@ -11830,31 +9355,6 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-centos-legacy-machine-controller-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureCentosLegacyMachineControllerContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 120m
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-azure-flatcar-legacy-machine-controller-containerd-external-v1.27.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -11954,29 +9454,6 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-centos-legacy-machine-controller-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestDigitaloceanCentosLegacyMachineControllerContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: digitalocean
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-digitalocean: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-digitalocean-rockylinux-legacy-machine-controller-containerd-external-v1.27.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -12008,29 +9485,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestEquinixmetalDefaultLegacyMachineControllerContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-equinix-metal: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-equinixmetal-centos-legacy-machine-controller-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestEquinixmetalCentosLegacyMachineControllerContainerdExternalV1_27_3
       env:
       - name: PROVIDER
         value: equinixmetal
@@ -12115,29 +9569,6 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-centos-legacy-machine-controller-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestHetznerCentosLegacyMachineControllerContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: hetzner
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-hetzner: "true"
   name: pull-kubeone-e2e-hetzner-rockylinux-legacy-machine-controller-containerd-external-v1.27.3
   optional: false
   path_alias: k8c.io/kubeone
@@ -12172,31 +9603,6 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-centos-legacy-machine-controller-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackCentosLegacyMachineControllerContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 120m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -12292,29 +9698,6 @@ presubmits:
     - command:
       - ./test/go-test-e2e.sh
       - TestVsphereDefaultLegacyMachineControllerContainerdExternalV1_27_3
-      env:
-      - name: PROVIDER
-        value: vsphere
-      image: quay.io/kubermatic/build:go-1.21-node-18-11
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  labels:
-    preset-goproxy: "true"
-    preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-centos-legacy-machine-controller-containerd-external-v1.27.3
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestVsphereCentosLegacyMachineControllerContainerdExternalV1_27_3
       env:
       - name: PROVIDER
         value: vsphere
