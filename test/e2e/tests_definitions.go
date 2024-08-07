@@ -64,48 +64,6 @@ var (
 				outputDir:  "/logs/artifacts/logs",
 			},
 		},
-		"aws_centos": {
-			name: "aws_centos",
-			environ: map[string]string{
-				"PROVIDER": "aws",
-			},
-			labels: map[string]string{
-				"preset-goproxy":         "true",
-				"preset-aws-e2e-kubeone": "true",
-			},
-			terraform: terraformBin{
-				path:    "../../examples/terraform/aws",
-				varFile: "testdata/aws_medium.tfvars",
-				vars: []string{
-					"os=centos",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
-		"aws_centos_stable": {
-			name: "aws_centos_stable",
-			environ: map[string]string{
-				"PROVIDER": "aws",
-			},
-			labels: map[string]string{
-				"preset-goproxy":         "true",
-				"preset-aws-e2e-kubeone": "true",
-			},
-			terraform: terraformBin{
-				path:    "../../../kubeone-stable/examples/terraform/aws",
-				varFile: "testdata/aws_stable_medium.tfvars",
-				vars: []string{
-					"os=centos",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
 		"aws_rhel": {
 			name: "aws_rhel",
 			environ: map[string]string{
@@ -376,50 +334,6 @@ var (
 				outputDir:  "/logs/artifacts/logs",
 			},
 		},
-		"azure_centos": {
-			name: "azure_centos",
-			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-azure":   "true",
-			},
-			environ: map[string]string{
-				"PROVIDER":     "azure",
-				"TEST_TIMEOUT": "120m",
-			},
-			terraform: terraformBin{
-				path: "../../examples/terraform/azure",
-				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"os=centos",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
-		"azure_centos_stable": {
-			name: "azure_centos_stable",
-			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-azure":   "true",
-			},
-			environ: map[string]string{
-				"PROVIDER":     "azure",
-				"TEST_TIMEOUT": "120m",
-			},
-			terraform: terraformBin{
-				path: "../../../kubeone-stable/examples/terraform/azure",
-				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"os=centos",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
 		"azure_flatcar": {
 			name: "azure_flatcar",
 			labels: map[string]string{
@@ -596,49 +510,6 @@ var (
 				outputDir:  "/logs/artifacts/logs",
 			},
 		},
-		"digitalocean_centos": {
-			name: "digitalocean_centos",
-			labels: map[string]string{
-				"preset-goproxy":      "true",
-				"preset-digitalocean": "true",
-			},
-			environ: map[string]string{
-				"PROVIDER": "digitalocean",
-			},
-			terraform: terraformBin{
-				path: "../../examples/terraform/digitalocean",
-				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"os=centos",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
-		"digitalocean_centos_stable": {
-			name: "digitalocean_centos_stable",
-			labels: map[string]string{
-				"preset-goproxy":      "true",
-				"preset-digitalocean": "true",
-			},
-			environ: map[string]string{
-				"PROVIDER": "digitalocean",
-			},
-			terraform: terraformBin{
-				path: "../../../kubeone-stable/examples/terraform/digitalocean",
-				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"control_plane_droplet_image=centos-7-x64",
-					"worker_os=centos",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
 		"digitalocean_rockylinux": {
 			name: "digitalocean_rockylinux",
 			labels: map[string]string{
@@ -713,49 +584,6 @@ var (
 				vars: []string{
 					"control_plane_operating_system=ubuntu_20_04",
 					"lb_operating_system=ubuntu_20_04",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
-		"equinixmetal_centos": {
-			name: "equinixmetal_centos",
-			labels: map[string]string{
-				"preset-goproxy":       "true",
-				"preset-equinix-metal": "true",
-			},
-			environ: map[string]string{
-				"PROVIDER": "equinixmetal",
-			},
-			terraform: terraformBin{
-				path: "../../examples/terraform/equinixmetal",
-				vars: []string{
-					"os=centos",
-					"lb_operating_system=centos_7",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
-		"equinixmetal_centos_stable": {
-			name: "equinixmetal_centos_stable",
-			labels: map[string]string{
-				"preset-goproxy":       "true",
-				"preset-equinix-metal": "true",
-			},
-			environ: map[string]string{
-				"PROVIDER": "equinixmetal",
-			},
-			terraform: terraformBin{
-				path: "../../../kubeone-stable/examples/terraform/equinixmetal",
-				vars: []string{
-					"control_plane_operating_system=centos_7",
-					"lb_operating_system=centos_7",
-					"worker_os=centos",
 				},
 			},
 			protokol: protokolBin{
@@ -928,49 +756,6 @@ var (
 				outputDir:  "/logs/artifacts/logs",
 			},
 		},
-		"hetzner_centos": {
-			name: "hetzner_centos",
-			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-hetzner": "true",
-			},
-			environ: map[string]string{
-				"PROVIDER": "hetzner",
-			},
-			terraform: terraformBin{
-				path: "../../examples/terraform/hetzner",
-				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"os=centos",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
-		"hetzner_centos_stable": {
-			name: "hetzner_centos_stable",
-			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-hetzner": "true",
-			},
-			environ: map[string]string{
-				"PROVIDER": "hetzner",
-			},
-			terraform: terraformBin{
-				path: "../../../kubeone-stable/examples/terraform/hetzner",
-				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-					"image=centos-7",
-					"worker_os=centos",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
 		"hetzner_rockylinux": {
 			name: "hetzner_rockylinux",
 			labels: map[string]string{
@@ -1045,44 +830,6 @@ var (
 			terraform: terraformBin{
 				path:    "../../../kubeone-stable/examples/terraform/openstack",
 				varFile: "testdata/openstack_ubuntu.tfvars",
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
-		"openstack_centos": {
-			name: "openstack_centos",
-			labels: map[string]string{
-				"preset-goproxy":   "true",
-				"preset-openstack": "true",
-			},
-			environ: map[string]string{
-				"PROVIDER":     "openstack",
-				"TEST_TIMEOUT": "120m",
-			},
-			terraform: terraformBin{
-				path:    "../../examples/terraform/openstack",
-				varFile: "testdata/openstack_centos.tfvars",
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
-		"openstack_centos_stable": {
-			name: "openstack_centos_stable",
-			labels: map[string]string{
-				"preset-goproxy":   "true",
-				"preset-openstack": "true",
-			},
-			environ: map[string]string{
-				"PROVIDER":     "openstack",
-				"TEST_TIMEOUT": "120m",
-			},
-			terraform: terraformBin{
-				path:    "../../../kubeone-stable/examples/terraform/openstack",
-				varFile: "testdata/openstack_centos.tfvars",
 			},
 			protokol: protokolBin{
 				namespaces: []string{"kube-system"},
@@ -1259,52 +1006,6 @@ var (
 					"template_name=kubeone-ubuntu-22.04",
 					"worker_os=ubuntu",
 					"ssh_username=ubuntu",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
-		"vsphere_centos": {
-			name: "vsphere_centos",
-			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-vsphere": "true",
-			},
-			environ: map[string]string{
-				"PROVIDER": "vsphere",
-			},
-			terraform: terraformBin{
-				path:    "../../examples/terraform/vsphere_centos",
-				varFile: "testdata/vsphere.tfvars",
-				vars: []string{
-					"template_name=kkp-centos-7",
-					"worker_os=centos",
-					"ssh_username=centos",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
-		"vsphere_centos_stable": {
-			name: "vsphere_centos_stable",
-			labels: map[string]string{
-				"preset-goproxy": "true",
-				"preset-vsphere": "true",
-			},
-			environ: map[string]string{
-				"PROVIDER": "vsphere",
-			},
-			terraform: terraformBin{
-				path:    "../../../kubeone-stable/examples/terraform/vsphere_centos",
-				varFile: "testdata/vsphere.tfvars",
-				vars: []string{
-					"template_name=kkp-centos-7",
-					"worker_os=centos",
-					"ssh_username=centos",
 				},
 			},
 			protokol: protokolBin{
