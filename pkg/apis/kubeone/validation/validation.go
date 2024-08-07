@@ -544,12 +544,34 @@ func ValidateStaticWorkersConfig(staticWorkers kubeoneapi.StaticWorkersConfig, c
 
 	for idx, worker := range staticWorkers.Hosts {
 		for _, cp := range controlPlane.Hosts {
+			if cp.Hostname != "" && worker.Hostname != "" && cp.Hostname == worker.Hostname {
+				allErrs = append(allErrs,
+					field.Invalid(
+						fldPath.Child("hosts").Index(idx),
+						"Hostname",
+						fmt.Sprintf("hostname %q already used for control-plane node", worker.Hostname),
+					),
+				)
+			}
+
 			if cp.PrivateAddress == worker.PrivateAddress {
-				allErrs = append(allErrs, field.Invalid(fldPath.Child("hosts").Index(idx), "PrivateAddress", "can not be the same as control plane"))
+				allErrs = append(allErrs,
+					field.Invalid(
+						fldPath.Child("hosts").Index(idx),
+						"PrivateAddress",
+						fmt.Sprintf("private IP address %q already used for control-plane node", worker.PrivateAddress),
+					),
+				)
 			}
 
 			if cp.PublicAddress == worker.PublicAddress {
-				allErrs = append(allErrs, field.Invalid(fldPath.Child("hosts").Index(idx), "PublicAddress", "can not be the same as control plane"))
+				allErrs = append(allErrs,
+					field.Invalid(
+						fldPath.Child("hosts").Index(idx),
+						"PublicAddress",
+						fmt.Sprintf("public IP address %q already used for control-plane node", worker.PublicAddress),
+					),
+				)
 			}
 		}
 	}
