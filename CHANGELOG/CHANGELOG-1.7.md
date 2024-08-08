@@ -1,3 +1,33 @@
+# [v1.7.5](https://github.com/kubermatic/kubeone/releases/tag/v1.7.5) - 2024-08-08
+
+## Changelog since v1.7.4
+
+## Urgent Upgrade Notes 
+
+### (No, really, you MUST read this before you upgrade)
+
+- Update operating-system-manager to v1.3.6. The latest Ubuntu 22.04 images on Azure have modified the configuration for `cloud-init` and how it accesses its datasource in Azure, in a breaking way. If you're having an Azure cluster, it's required to [refresh your machines](https://docs.kubermatic.com/kubeone/v1.7/cheat-sheets/rollout-machinedeployment/) with the latest provided OSPs to ensure that a system-wide package update doesn't result in broken machines. ([#3171](https://github.com/kubermatic/kubeone/pull/3171), [@xrstf](https://github.com/xrstf))
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Ensure `apparmor-utils` package is installed on Ubuntu as it's required for `kubelet` to function properly ([#3236](https://github.com/kubermatic/kubeone/pull/3236), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Do not put multiple identical tolerations on the CoreDNS deployment ([#3299](https://github.com/kubermatic/kubeone/pull/3299), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Load the CA bundle before any addon installations to resolve issues with untrusted TLS connections in environments with self-signed cerificates ([#3246](https://github.com/kubermatic/kubeone/pull/3246), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Use the RHEL-based upstream Docker package repository instead of the CentOS package repository as it's not maintained any longer ([#3316](https://github.com/kubermatic/kubeone/pull/3316), [@kron4eg](https://github.com/kron4eg))
+
+### Updates
+
+#### machine-controller
+
+- Update machine-controller to 1.57.9. This update includes support for IMDSv2 API on AWS for the worker nodes managed by machine-controller ([#3324](https://github.com/kubermatic/kubeone/pull/3324), [@xrstf](https://github.com/xrstf))
+
+### Terraform Configs
+
+- Set `HttpPutResponseHopLimit` to 3 in the example Terraform configs for AWS for the control plane nodes and the static worker nodes in order to support the IMSD v2 API ([#3330](https://github.com/kubermatic/kubeone/pull/3330), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix the default Rocky Linux EC2 image filter query in the example Terraform configs for AWS ([#3263](https://github.com/kubermatic/kubeone/pull/3263), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.7.4](https://github.com/kubermatic/kubeone/releases/tag/v1.7.4) - 2024-05-02
 
 ## Changelog since v1.7.3
