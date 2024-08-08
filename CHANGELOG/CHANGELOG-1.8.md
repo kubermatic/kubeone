@@ -1,3 +1,32 @@
+# [v1.8.2](https://github.com/kubermatic/kubeone/releases/tag/v1.8.2) - 2024-08-08
+
+## Changelog since v1.8.1
+
+## Changes by Kind
+
+### Feature
+
+- Allow the configuration of the upstream cluster-autoscaler flags  `--enforce-node-group-min-size` and `--balance-similar-node-groups` ([#3306](https://github.com/kubermatic/kubeone/pull/3306), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Bug or Regression
+
+- Do not put multiple identical tolerations on the CoreDNS deployment ([#3298](https://github.com/kubermatic/kubeone/pull/3298), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Use the RHEL-based upstream Docker package repository instead of the CentOS package repository as it's not maintained any longer ([#3336](https://github.com/kubermatic/kubeone/pull/3336), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Updates
+
+#### CNI
+
+- Update Calico CNI to fix the CPU usage spike issues ([#3326](https://github.com/kubermatic/kubeone/pull/3326), [@kron4eg](https://github.com/kron4eg))
+
+#### machine-controller
+
+- Update machine-controller to 1.59.3. This update includes support for IMDSv2 API on AWS for the worker nodes managed by machine-controller ([#3323](https://github.com/kubermatic/kubeone/pull/3323), [@xrstf](https://github.com/xrstf))
+
+### Terraform Configs
+
+- Set `HttpPutResponseHopLimit` to 3 in the example Terraform configs for AWS for the control plane nodes and the static worker nodes in order to support the IMSD v2 API ([#3329](https://github.com/kubermatic/kubeone/pull/3329), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.8.1](https://github.com/kubermatic/kubeone/releases/tag/v1.8.1) - 2024-07-01
 
 ## Changelog since v1.8.0
