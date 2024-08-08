@@ -62,7 +62,7 @@ No modules.
 | <a name="input_cluster_autoscaler_max_replicas"></a> [cluster\_autoscaler\_max\_replicas](#input\_cluster\_autoscaler\_max\_replicas) | maximum number of replicas per MachineDeployment (requires cluster-autoscaler) | `number` | `0` | no |
 | <a name="input_cluster_autoscaler_min_replicas"></a> [cluster\_autoscaler\_min\_replicas](#input\_cluster\_autoscaler\_min\_replicas) | minimum number of replicas per MachineDeployment (requires cluster-autoscaler) | `number` | `0` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster | `string` | n/a | yes |
-| <a name="input_control_plane_image_family"></a> [control\_plane\_image\_family](#input\_control\_plane\_image\_family) | Image family to use for provisioning instances | `string` | `"ubuntu-2204-lts"` | no |
+| <a name="input_control_plane_image_family"></a> [control\_plane\_image\_family](#input\_control\_plane\_image\_family) | Image family to use for provisioning instances | `string` | `"ubuntu-2404-lts-amd64"` | no |
 | <a name="input_control_plane_image_project"></a> [control\_plane\_image\_project](#input\_control\_plane\_image\_project) | Project of the image to use for provisioning instances | `string` | `"ubuntu-os-cloud"` | no |
 | <a name="input_control_plane_target_pool_members_count"></a> [control\_plane\_target\_pool\_members\_count](#input\_control\_plane\_target\_pool\_members\_count) | n/a | `number` | `3` | no |
 | <a name="input_control_plane_type"></a> [control\_plane\_type](#input\_control\_plane\_type) | GCE instance type | `string` | `"n1-standard-2"` | no |

@@ -113,7 +113,7 @@ variable "image_references" {
   }))
   default = {
     ubuntu = {
-      image_name   = "ubuntu_22_04"
+      image_name   = "ubuntu_24_04"
       ssh_username = "root"
       worker_os    = "ubuntu"
     }
@@ -151,7 +151,7 @@ variable "control_plane_operating_system" {
 }
 
 variable "lb_operating_system" {
-  default     = "ubuntu_22_04"
+  default     = "ubuntu_24_04"
   description = "Image to use for loadbalancer provisioning"
   type        = string
 }

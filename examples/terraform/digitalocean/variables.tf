@@ -118,7 +118,7 @@ variable "image_references" {
   }))
   default = {
     ubuntu = {
-      image_name   = "ubuntu-22-04-x64"
+      image_name   = "ubuntu-24-04-x64"
       ssh_username = "root"
       worker_os    = "ubuntu"
     }
