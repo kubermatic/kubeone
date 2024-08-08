@@ -71,7 +71,7 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_Proxy(obj)
 	SetDefaults_MachineController(obj)
 	SetDefaults_OperatingSystemManager(obj)
-	SetDefaults_HelmReleases(obj)
+	SetDefaults_Addons(obj)
 	SetDefaults_SystemPackages(obj)
 	SetDefaults_Features(obj)
 	SetDefaults_CloudConfig(obj)
@@ -250,14 +250,16 @@ func SetDefaults_OperatingSystemManager(obj *KubeOneCluster) {
 	}
 }
 
-func SetDefaults_HelmReleases(obj *KubeOneCluster) {
-	for idx, hr := range obj.HelmReleases {
-		if hr.ReleaseName == "" {
-			obj.HelmReleases[idx].ReleaseName = hr.Chart
-		}
+func SetDefaults_Addons(obj *KubeOneCluster) {
+	for _, ad := range obj.Addons.Addons {
+		if ad.HelmRelease != nil {
+			if ad.HelmRelease.ReleaseName == "" {
+				ad.HelmRelease.ReleaseName = ad.HelmRelease.Chart
+			}
 
-		if hr.WaitTimeout.Duration == 0 {
-			obj.HelmReleases[idx].WaitTimeout.Duration = time.Minute * 5
+			if ad.HelmRelease.WaitTimeout.Duration == 0 {
+				ad.HelmRelease.WaitTimeout.Duration = time.Minute * 5
+			}
 		}
 	}
 }

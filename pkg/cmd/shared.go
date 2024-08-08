@@ -43,9 +43,7 @@ import (
 	ctrlruntimelog "sigs.k8s.io/controller-runtime/pkg/log"
 )
 
-var (
-	defaultKubeVersion = ""
-)
+var defaultKubeVersion = ""
 
 const yes = "yes"
 
@@ -85,7 +83,7 @@ func (opts *globalOptions) BuildState() (*state.State, error) {
 		}
 
 		// Check if only embedded addons are being used; path is not required for embedded addons and no validation is required
-		embeddedAddonsOnly, err := addons.EmbeddedAddonsOnly(s.Cluster.Addons.Addons)
+		embeddedAddonsOnly, err := addons.EmbeddedAddonsOnly(s.Cluster.Addons)
 		if err != nil {
 			return nil, err
 		}
@@ -248,7 +246,7 @@ func initBackup(backupPath string) error {
 	}
 
 	// try to write to the file before doing anything else
-	backup, err := os.OpenFile(backupPath, os.O_RDWR|os.O_CREATE, 0600)
+	backup, err := os.OpenFile(backupPath, os.O_RDWR|os.O_CREATE, 0o600)
 	if err != nil {
 		return fail.Runtime(err, "opening backup file for write")
 	}

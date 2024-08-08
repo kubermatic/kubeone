@@ -18,6 +18,7 @@ package cmd
 
 import (
 	"bytes"
+	_ "embed"
 	"fmt"
 	"os"
 	"strconv"
@@ -31,7 +32,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 
 	"k8c.io/kubeone/pkg/apis/kubeone/config"
-	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
+	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
 	"k8c.io/kubeone/pkg/containerruntime"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
@@ -44,6 +45,9 @@ const (
 	// defaultCloudProviderName is cloud provider to build the example configuration file for
 	defaultCloudProviderName = "aws"
 )
+
+//go:embed example-manifest.tmpl.yaml
+var exampleManifest string
 
 type printOpts struct {
 	FullConfig bool `longflag:"full" shortflag:"f"`
@@ -71,7 +75,7 @@ type printOpts struct {
 	NoProxy    string `longflag:"proxy-no-proxy"`
 
 	EnablePodNodeSelector     bool `longflag:"enable-pod-node-selector"`
-	EnablePodSecurityPolicy   bool `longflag:"enable-pod-security-policy"`
+	EnablePodSecurityPolicy   bool `longflag:"enable-pod-security-policy"` // TODO: remove in future release
 	EnableStaticAuditLog      bool `longflag:"enable-static-audit-log"`
 	EnableDynamicAuditLog     bool `longflag:"enable-dynamic-audit-log"`
 	EnableMetricsServer       bool `longflag:"enable-metrics-server"`
@@ -169,7 +173,7 @@ func configPrintCmd() *cobra.Command {
 
 	// Features
 	cmd.Flags().BoolVar(&opts.EnablePodNodeSelector, longFlagName(opts, "EnablePodNodeSelector"), false, "enable PodNodeSelector admission plugin")
-	cmd.Flags().BoolVar(&opts.EnablePodSecurityPolicy, longFlagName(opts, "EnablePodSecurityPolicy"), false, "enable PodSecurityPolicy")
+	cmd.Flags().BoolVar(&opts.EnablePodSecurityPolicy, longFlagName(opts, "EnablePodSecurityPolicy"), false, "enable PodSecurityPolicy. NO-OP: this feature is removed")
 	cmd.Flags().BoolVar(&opts.EnableStaticAuditLog, longFlagName(opts, "EnableStaticAuditLog"), false, "enable StaticAuditLog")
 	cmd.Flags().BoolVar(&opts.EnableDynamicAuditLog, longFlagName(opts, "EnableDynamicAuditLog"), false, "enable DynamicAuditLog")
 	cmd.Flags().BoolVar(&opts.EnableMetricsServer, longFlagName(opts, "EnableMetricsServer"), true, "enable metrics-server")
@@ -199,10 +203,10 @@ func configPrintCmd() *cobra.Command {
 func configMigrateCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "migrate",
-		Short: "Migrate the v1alpha1 KubeOneCluster manifest to the v1beta1 version",
+		Short: "Migrate the v1beta2 KubeOneCluster manifest to the v1beta3 version",
 		Long: `
-Migrate the v1beta1 KubeOneCluster manifest to the v1beta2 version.
-The v1beta1 version of the KubeOneCluster manifest is deprecated and will be
+Migrate the v1beta2 KubeOneCluster manifest to the v1beta3 version.
+The v1beta2 version of the KubeOneCluster manifest is deprecated and will be
 removed in one of the next versions.
 The new manifest is printed on the standard output.
 `,
@@ -275,7 +279,7 @@ func runPrint(printOptions *printOpts) error {
 			return fail.Runtime(err, "executing example-manifest template")
 		}
 
-		cfg := kubeonev1beta2.NewKubeOneCluster()
+		cfg := kubeonev1beta3.NewKubeOneCluster()
 		err = kyaml.UnmarshalStrict(buffer.Bytes(), &cfg)
 		if err != nil {
 			return fail.Runtime(err, "testing marshal/unmarshal")
@@ -398,11 +402,8 @@ func createAndPrintManifest(printOptions *printOpts) error {
 
 func printFeatures(cfg *yamled.Document, printOptions *printOpts) {
 	if printOptions.EnablePodNodeSelector {
-		cfg.Set(yamled.Path{"features", "podNodeSelector", "enable"}, printOptions.EnablePodSecurityPolicy)
+		cfg.Set(yamled.Path{"features", "podNodeSelector", "enable"}, printOptions.EnablePodNodeSelector)
 		cfg.Set(yamled.Path{"features", "podNodeSelector", "config", "configFilePath"}, "")
-	}
-	if printOptions.EnablePodSecurityPolicy {
-		cfg.Set(yamled.Path{"features", "podSecurityPolicy", "enable"}, printOptions.EnablePodSecurityPolicy)
 	}
 	if printOptions.EnableDynamicAuditLog {
 		cfg.Set(yamled.Path{"features", "dynamicAuditLog", "enable"}, printOptions.EnableDynamicAuditLog)
@@ -463,13 +464,14 @@ func parseControlPlaneHosts(cfg *yamled.Document, hostList string) error {
 
 // runMigrate migrates the KubeOneCluster manifest from v1alpha1 to v1beta1
 func runMigrate(opts *globalOptions) error {
-	// Convert old config yaml to new config yaml
-	newConfigYAML, err := config.MigrateOldConfig(opts.ManifestFile)
+	v1beta3Manifest, err := config.MigrateV1beta2V1beta3(opts.ManifestFile)
 	if err != nil {
 		return err
 	}
 
-	return validateAndPrintConfig(newConfigYAML)
+	fmt.Printf("%s\n", v1beta3Manifest)
+
+	return nil
 }
 
 // runGenerateMachineDeployments generates the MachineDeployments manifest
@@ -498,526 +500,15 @@ func validateAndPrintConfig(cfgYaml interface{}) error {
 		return fail.Runtime(err, "marshalling new config as YAML")
 	}
 
-	cfg := kubeonev1beta2.NewKubeOneCluster()
-	err = kyaml.UnmarshalStrict(buffer.Bytes(), &cfg)
-	if err != nil {
+	cfg := kubeonev1beta3.NewKubeOneCluster()
+	if err = kyaml.UnmarshalStrict(buffer.Bytes(), &cfg); err != nil {
 		return fail.Runtime(err, "testing marshal/unmarshal")
 	}
 
 	// Print new config yaml
-	err = yaml.NewEncoder(os.Stdout).Encode(cfgYaml)
-	if err != nil {
+	if err = yaml.NewEncoder(os.Stdout).Encode(cfgYaml); err != nil {
 		return fail.Runtime(err, "marshalling new config as YAML")
 	}
 
 	return nil
 }
-
-const exampleManifest = `
-apiVersion: kubeone.k8c.io/v1beta2
-kind: KubeOneCluster
-name: {{ .ClusterName }}
-
-versions:
-  kubernetes: "{{ .KubernetesVersion }}"
-
-clusterNetwork:
-  # the subnet used for pods (default: 10.244.0.0/16)
-  podSubnet: "{{ .PodSubnet }}"
-  # the subnet used for services (default: 10.96.0.0/12)
-  serviceSubnet: "{{ .ServiceSubnet }}"
-  # the domain name used for services (default: cluster.local)
-  serviceDomainName: "{{ .ServiceDNS }}"
-  # a nodePort range to reserve for services (default: 30000-32767)
-  nodePortRange: "{{ .NodePortRange }}"
-  # kube-proxy configurations
-  kubeProxy:
-    # skipInstallation will skip the installation of kube-proxy
-    # skipInstallation: true
-    # if this set, kube-proxy mode will be set to ipvs
-    ipvs:
-      # different schedulers can be configured:
-      # * rr: round-robin
-      # * lc: least connection (smallest number of open connections)
-      # * dh: destination hashing
-      # * sh: source hashing
-      # * sed: shortest expected delay
-      # * nq: never queue
-      scheduler: rr
-      strictARP: false
-      tcpTimeout: "0"
-      tcpFinTimeout: "0"
-      udpTimeout: "0"
-      excludeCIDRs: []
-    # if mode is by default
-    iptables: {}
-  # CNI plugin of choice. CNI can not be changed later at upgrade time.
-  cni:
-    # Only one CNI plugin can be defined at the same time
-    # Supported CNI plugins:
-    # * canal
-    # * weave-net
-    # * cilium
-    # * external - The CNI plugin can be installed as an addon or manually
-    canal:
-      # MTU represents the maximum transmission unit.
-      # Default MTU value depends on the specified provider:
-      # * AWS - 8951 (9001 AWS Jumbo Frame - 50 VXLAN bytes)
-      # * GCE - 1410 (GCE specific 1460 bytes - 50 VXLAN bytes)
-      # * Hetzner - 1400 (Hetzner specific 1450 bytes - 50 VXLAN bytes)
-      # * OpenStack - 1400 (OpenStack specific 1450 bytes - 50 VXLAN bytes)
-      # * Default - 1450
-      mtu: 1450
-    # cilium:
-    #   # enableHubble to deploy Hubble relay and UI
-    #   enableHubble: true
-    #   # kubeProxyReplacement defines weather cilium relies on underlying Kernel support to replace kube-proxy functionality by eBPF (strict),
-    #   # or disables a subset of those features so cilium does not bail out if the kernel support is missing (disabled).
-    #   kubeProxyReplacement: "disabled"
-    # weaveNet:
-    #   # When true is set, secret will be automatically generated and
-    #   # referenced in appropriate manifests. Currently only weave-net
-    #   # supports encryption.
-    #   encrypted: true
-    # external: {}
-
-cloudProvider:
-  # Only one cloud provider can be defined at the same time.
-  # Possible values:
-  # aws: {}
-  # azure: {}
-  # digitalocean: {}
-  # gce: {}
-  # hetzner:
-  #   networkID: ""
-  # openstack: {}
-  # equinixmetal: {}
-  # vsphere: {}
-  # none: {}
-  {{ .CloudProviderName }}: {}
-  # Set the kubelet flag '--cloud-provider=external' and deploy the external CCM for supported providers
-  external: {{ .CloudProviderExternal }}
-  # Path to file that will be uploaded and used as custom '--cloud-config' file.
-  cloudConfig: "{{ .CloudProviderCloudCfg }}"
-  # CSIConfig is configuration passed to the CSI driver.
-  # This is currently used only for vSphere clusters.
-  csiConfig: ""
-
-# Controls which container runtime will be installed on instances.
-# By default:
-# * Docker will be installed for Kubernetes clusters up to 1.20
-# * containerd will be installed for Kubernetes clusters 1.21+
-# Currently, it's not possible to migrate existing clusters from one to another
-# container runtime, however, migration from Docker to containerd is planned
-# for one of the upcoming KubeOne releases.
-# Only one container runtime can be present at the time.
-#
-# Note: Kubernetes has announced deprecation of Docker (dockershim) support.
-# It's expected that the Docker support will be removed in Kubernetes 1.24.
-# It's highly advised to use containerd for all newly created clusters.
-containerRuntime:
-  # Installs containerd container runtime.
-  # Default for 1.21+ Kubernetes clusters.
-  # containerd:
-  #   registries:
-  #     registry.k8s.io:
-  #       mirrors:
-  #       - https://self-signed.pull-through.cache.tld
-  #       tlsConfig:
-  #         insecureSkipVerify: true
-  #     docker.io:
-  #       mirrors:
-  #       - http://plain-text2.tld
-  #       auth:
-  #         # all of the following fields are optional
-  #         username: "u5er"
-  #         password: "myc00lp455w0rd"
-  #         auth: "base64(user:password)"
-  #         identityToken: ""
-  #     "*":
-  #       mirrors:
-  #       - https://secure.tld
-  # Installs Docker container runtime.
-  # Default for Kubernetes clusters up to 1.20.
-  # This option will be removed once Kubernetes 1.23 reaches EOL.
-  # docker: {}
-
-features:
-  # Configure the CoreDNS deployment
-  coreDNS:
-    replicas: 2
-    deployPodDisruptionBudget: true
-    # imageRepository allows users to specify the image registry to be used
-    # for CoreDNS. Kubeadm automatically appends /coredns at the end, so it's
-    # not necessary to specify it.
-    # By default it's empty, which means it'll be defaulted based on kubeadm
-    # defaults and if overwriteRegistry feature is used.
-    # imageRepository has the highest priority, meaning that it'll override
-    # overwriteRegistry if specified.
-    imageRepository: ""
-
-  # nodeLocalDNS allows disabling deployment of node local DNS
-  nodeLocalDNS:
-    deploy: true
-
-  # Enable the PodNodeSelector admission plugin in API server.
-  # More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podnodeselector
-  podNodeSelector:
-    enable: {{ .EnablePodNodeSelector }}
-    config:
-      # configFilePath is a path on a local file system to the podNodeSelector
-      # plugin config, which defines default and allowed node selectors.
-      # configFilePath is is a required field.
-      # More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#configuration-file-format-1
-      configFilePath: ""
-  # Enables PodSecurityPolicy admission plugin in API server, as well as creates
-  # default 'privileged' PodSecurityPolicy, plus RBAC rules to authorize
-  # 'kube-system' namespace pods to 'use' it.
-  podSecurityPolicy:
-    enable: {{ .EnablePodSecurityPolicy }}
-  # Enables and configures audit log backend.
-  # More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#log-backend
-  staticAuditLog:
-    enable: {{ .EnableStaticAuditLog }}
-    config:
-      # PolicyFilePath is a path on local file system to the audit policy manifest
-      # which defines what events should be recorded and what data they should include.
-      # PolicyFilePath is a required field.
-      # More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy
-      policyFilePath: ""
-      # LogPath is path on control plane instances where audit log files are stored
-      logPath: "/var/log/kubernetes/audit.log"
-      # LogMaxAge is maximum number of days to retain old audit log files
-      logMaxAge: 30
-      # LogMaxBackup is maximum number of audit log files to retain
-      logMaxBackup: 3
-      # LogMaxSize is maximum size in megabytes of audit log file before it gets rotated
-      logMaxSize: 100
-  # Enables dynamic audit logs.
-  # After enablig this, operator should create auditregistration.k8s.io/v1alpha1
-  # AuditSink object.
-  # More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#dynamic-backend
-  dynamicAuditLog:
-    enable: {{ .EnableDynamicAuditLog }}
-  # Opt-out from deploying metrics-server
-  # more info: https://github.com/kubernetes-incubator/metrics-server
-  metricsServer:
-    # enabled by default
-    enable: {{ .EnableMetricsServer }}
-  # Enable OpenID-Connect support in API server
-  # More info: https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens
-  openidConnect:
-    enable: {{ .EnableOpenIDConnect }}
-    config:
-      # The URL of the OpenID issuer, only HTTPS scheme will be accepted. If
-      # set, it will be used to verify the OIDC JSON Web Token (JWT).
-      issuerUrl: ""
-      # The client ID for the OpenID Connect client, must be set if
-      # issuer_url is set.
-      clientId: "kubernetes"
-      # The OpenID claim to use as the user name. Note that claims other than
-      # the default ('sub') is not guaranteed to be unique and immutable. This
-      # flag is experimental in kubernetes, please see the kubernetes
-      # authentication documentation for further details.
-      usernameClaim: "sub"
-      # If provided, all usernames will be prefixed with this value. If not
-      # provided, username claims other than 'email' are prefixed by the issuer
-      # URL to avoid clashes. To skip any prefixing, provide the value '-'.
-      usernamePrefix: "oidc:"
-      # If provided, the name of a custom OpenID Connect claim for specifying
-      # user groups. The claim value is expected to be a string or array of
-      # strings. This flag is experimental in kubernetes, please see the
-      # kubernetes authentication documentation for further details.
-      groupsClaim: "groups"
-      # If provided, all groups will be prefixed with this value to prevent
-      # conflicts with other authentication strategies.
-      groupsPrefix: "oidc:"
-      # Comma-separated list of allowed JOSE asymmetric signing algorithms. JWTs
-      # with a 'alg' header value not in this list will be rejected. Values are
-      # defined by RFC 7518 https://tools.ietf.org/html/rfc7518#section-3.1.
-      signingAlgs: "RS256"
-      # A key=value pair that describes a required claim in the ID Token. If
-      # set, the claim is verified to be present in the ID Token with a matching
-      # value. Only single pair is currently supported.
-      requiredClaim: ""
-      # If set, the OpenID server's certificate will be verified by one of the
-      # authorities in the oidc-ca-file, otherwise the host's root CA set will
-      # be used.
-      caFile: ""
-
-  # Enable Kubernetes Encryption Providers
-  # For more information: https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/
-  encryptionProviders:
-    # disabled by default
-    enable: {{ .EnableEncryptionProviders }}
-    # inline string
-    customEncryptionConfiguration: ""
-
-## Bundle of Root CA Certificates extracted from Mozilla
-## can be found here: https://curl.se/ca/cacert.pem
-## caBundle should be empty for default root CAs to be used
-caBundle: ""
-
-systemPackages:
-  # will add Docker and Kubernetes repositories to OS package manager
-  configureRepositories: true # it's true by default
-
-# registryConfiguration controls how images used for components deployed by
-# KubeOne and kubeadm are pulled from an image registry
-registryConfiguration:
-  # overwriteRegistry specifies a custom Docker registry which will be used
-  # for all images required for KubeOne and kubeadm. This also applies to
-  # addons deployed by KubeOne.
-  # This field doesn't modify the user/organization part of the image. For example,
-  # if overwriteRegistry is set to 127.0.0.1:5000/example, image called
-  # calico/cni would translate to 127.0.0.1:5000/example/calico/cni.
-  overwriteRegistry: ""
-  # InsecureRegistry configures Docker to threat the registry specified
-  # in OverwriteRegistry as an insecure registry. This is also propagated
-  # to the worker nodes managed by machine-controller and/or KubeOne.
-  insecureRegistry: false
-
-# Addons are Kubernetes manifests to be deployed after provisioning the cluster
-addons:
-  enable: false
-  # In case when the relative path is provided, the path is relative
-  # to the KubeOne configuration file.
-  # This path is required only if you want to provide custom addons or override
-  # embedded addons.
-  path: "./addons"
-  # globalParams is a key-value map of values passed to the addons templating engine,
-  # to be used in the addons' manifests. The values defined here are passed to all
-  # addons.
-  globalParams:
-    key: value
-  # addons is used to enable addons embedded in the KubeOne binary.
-  # Currently backups-restic, default-storage-class, and unattended-upgrades are
-  # available addons.
-  # Check out the documentation to find more information about what are embedded
-  # addons and how to use them:
-  # https://docs.kubermatic.com/kubeone/v1.8/guides/addons/
-  addons:
-    # name of the addon to be enabled/deployed (e.g. backups-restic)
-    - name: ""
-      # delete triggers deletion of the deployed addon
-      delete: false
-      # params is a key-value map of values passed to the addons templating engine,
-      # to be used in the addon's manifests. Values defined here override the values
-      # defined in globalParams.
-      params:
-        key: value
-
-# The list of nodes can be overwritten by providing Terraform output.
-# You are strongly encouraged to provide an odd number of nodes and
-# have at least three of them.
-# Remember to only specify your *master* nodes.
-# controlPlane:
-#   hosts:
-#   - publicAddress: '1.2.3.4'
-#     privateAddress: '172.18.0.1'
-#     bastion: '4.3.2.1'
-#     bastionPort: 22  # can be left out if using the default (22)
-#     bastionUser: 'root'  # can be left out if using the default ('root')
-#     # Optional ssh host public key for verification of the connection to the bastion host
-#     bastionHostPublicKey: "AAAAC3NzaC1lZDI1NTE5AAAAIGpmWkI5dl7GB3E1hB9LDuju87x9hX5Umw9fih+xXNU+"
-#     sshPort: 22 # can be left out if using the default (22)
-#     sshUsername: root
-#     # You usually want to configure either a private key OR an
-#     # agent socket, but never both. The socket value can be
-#     # prefixed with "env:" to refer to an environment variable.
-#     sshPrivateKeyFile: '/home/me/.ssh/id_rsa'
-#     sshAgentSocket: 'env:SSH_AUTH_SOCK'
-#     # Optional ssh host public key for verification of the connection to the control plane host
-#     sshHostPublicKey: "AAAAC3NzaC1lZDI1NTE5AAAAIPwEDvXiKfvXrysf86VW5dJTKDlQ09e2tV0+T3KeFKmI"
-#     # Taints are taints applied to nodes. If not provided (i.e. nil) for control plane nodes,
-#     # it defaults to TaintEffectNoSchedule with key
-#     #     node-role.kubernetes.io/control-plane
-#     # Explicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes).
-#     taints:
-#     - key: "node-role.kubernetes.io/control-plane"
-#       effect: "NoSchedule"
-#     labels:
-#       # to add new custom label
-#       "new-custom-label": "custom-value"
-#       # to delete existing label (use minus symbol with empty value)
-#       "node.kubernetes.io/exclude-from-external-load-balancers-": ""
-#     # kubelet is used to control kubelet configuration
-#     # uncomment the following to set those kubelet parameters. More into at:
-#     # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/#
-#     # kubelet:
-#     #   systemReserved:
-#     #     cpu: 200m
-#     #     memory: 200Mi
-#     #   kubeReserved:
-#     #     cpu: 200m
-#     #     memory: 300Mi
-#     #   evictionHard: {}
-#     #   maxPods: 110
-
-# A list of static workers, not managed by MachineController.
-# The list of nodes can be overwritten by providing Terraform output.
-# staticWorkers:
-#   hosts:
-#   - publicAddress: '1.2.3.5'
-#     privateAddress: '172.18.0.2'
-#     bastion: '4.3.2.1'
-#     bastionPort: 22  # can be left out if using the default (22)
-#     bastionUser: 'root'  # can be left out if using the default ('root')
-#     bastionHostPublicKey: "AAAAC3NzaC1lZDI1NTE5AAAAIGpmWkI5dl7GB3E1hB9LDuju87x9hX5Umw9fih+xXNU+"
-#     sshPort: 22 # can be left out if using the default (22)
-#     sshUsername: root
-#     # You usually want to configure either a private key OR an
-#     # agent socket, but never both. The socket value can be
-#     # prefixed with "env:" to refer to an environment variable.
-#     sshPrivateKeyFile: '/home/me/.ssh/id_rsa'
-#     sshAgentSocket: 'env:SSH_AUTH_SOCK'
-#     # Optional ssh host public key for verification of the connection to the static worker host
-#     sshHostPublicKey: "AAAAC3NzaC1lZDI1NTE5AAAAIMBejAkW4AARsZZkC6PqWGuB14fkPzEQoZ4im4TuOkdD"
-#     # Taints is used to apply taints to the node.
-#     # Explicitly empty (i.e. taints: {}) means no taints will be applied.
-#     # taints:
-#     # - key: ""
-#     #   effect: ""
-#     # kubelet is used to control kubelet configuration
-#     # uncomment the following to set those kubelet parameters. More into at:
-#     # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/#
-#     # kubelet:
-#     #   systemReserved:
-#     #     cpu: 200m
-#     #     memory: 200Mi
-#     #   kubeReserved:
-#     #     cpu: 200m
-#     #     memory: 300Mi
-#     #   evictionHard: {}
-#     #   maxPods: 110
-
-# The API server can also be overwritten by Terraform. Provide the
-# external address of your load balancer or the public addresses of
-# the first control plane nodes.
-# apiEndpoint:
-#   host: '{{ .APIEndpointHost }}'
-#   port: {{ .APIEndpointPort }}
-#   alternativeNames: {{ .APIEndpointAlternativeNames }}
-
-# If the cluster runs on bare metal or an unsupported cloud provider,
-# you can disable the machine-controller deployment entirely. In this
-# case, anything you configure in your "workers" sections is ignored.
-machineController:
-  deploy: {{ .DeployMachineController }}
-
-# Proxy is used to configure HTTP_PROXY, HTTPS_PROXY and NO_PROXY
-# for Docker daemon and kubelet, and to be used when provisioning cluster
-# (e.g. for curl, apt-get..).
-# Also worker nodes managed by machine-controller will be configured according to
-# proxy settings here. The caveat is that only proxy.http and proxy.noProxy will
-# be used on worker machines.
-# proxy:
-#  http: '{{ .HTTPProxy }}'
-#  https: '{{ .HTTPSProxy }}'
-#  noProxy: '{{ .NoProxy }}'
-
-# KubeOne can automatically create MachineDeployments to create
-# worker nodes in your cluster. Each element in this "workers"
-# list is a single deployment and must have a unique name.
-# dynamicWorkers:
-# - name: fra1-a
-#   replicas: 1
-#   providerSpec:
-#     labels:
-#       mylabel: 'fra1-a'
-#     # SSH keys can be inferred from Terraform if this list is empty
-#     # and your tf output contains a "ssh_public_keys" field.
-#     # sshPublicKeys:
-#     # - 'ssh-rsa ......'
-#     # cloudProviderSpec corresponds 'provider.name' config
-#     cloudProviderSpec:
-#       ### the following params could be inferred by kubeone from terraform
-#       ### output JSON:
-#       # ami: 'ami-0332a5c40cf835528',
-#       # availabilityZone: 'eu-central-1a',
-#       # instanceProfile: 'mycool-profile',
-#       # region: 'eu-central-1',
-#       # securityGroupIDs: ['sg-01f34ffd8447e70c0']
-#       # subnetId: 'subnet-2bff4f43',
-#       # vpcId: 'vpc-819f62e9'
-#       ### end of terraform inferred kubeone params
-#       instanceType: 't3.medium'
-#       diskSize: 50
-#       diskType: 'gp2'
-#     operatingSystem: 'ubuntu'
-#     operatingSystemSpec:
-#       distUpgradeOnBoot: true
-# - name: fra1-b
-#   replicas: 1
-#   providerSpec:
-#     labels:
-#       mylabel: 'fra1-b'
-#     cloudProviderSpec:
-#       instanceType: 't3.medium'
-#       diskSize: 50
-#       diskType: 'gp2'
-#     operatingSystem: 'ubuntu'
-#     operatingSystemSpec:
-#       distUpgradeOnBoot: true
-# - name: fra1-c
-#   replicas: 1
-#   providerSpec:
-#     labels:
-#       mylabel: 'fra1-c'
-#     cloudProviderSpec:
-#       instanceType: 't3.medium'
-#       diskSize: 50
-#       diskType: 'gp2'
-#     operatingSystem: 'ubuntu'
-#     operatingSystemSpec:
-#       distUpgradeOnBoot: true
-
-loggingConfig:
-  containerLogMaxSize: "{{ .ContainerLogMaxSize }}"
-  containerLogMaxFiles: {{ .ContainerLogMaxFiles }}
-
-tlsCipherSuites:
-  apiServer:
-    - TLS_AES_128_GCM_SHA256
-    - TLS_AES_256_GCM_SHA384
-    - TLS_CHACHA20_POLY1305_SHA256
-    - TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
-    - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
-    - TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
-    - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
-    - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
-    - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
-    - TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
-    - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-    - TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
-    - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-    - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
-    - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-    - TLS_RSA_WITH_3DES_EDE_CBC_SHA
-    - TLS_RSA_WITH_AES_128_CBC_SHA
-    - TLS_RSA_WITH_AES_128_GCM_SHA256
-    - TLS_RSA_WITH_AES_256_CBC_SHA
-    - TLS_RSA_WITH_AES_256_GCM_SHA384
-    - TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA
-  etcd:
-    - TLS_AES_128_GCM_SHA256
-    - TLS_AES_256_GCM_SHA384
-    - TLS_CHACHA20_POLY1305_SHA256
-    - TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
-    - TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
-    - TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
-    - TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
-    - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
-    - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
-    - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-    - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-    - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-    - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
-  kubelet:
-    - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
-    - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-    - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
-    - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-    - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
-    - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
-`

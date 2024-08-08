@@ -326,6 +326,114 @@
     - name: vsphere_default
     - name: vsphere_flatcar
 
+- scenario: external_cni_flannel_helm_chart
+  initVersion: v1.27.11
+  infrastructures:
+    - name: aws_amzn
+    - name: aws_default
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: aws_rockylinux
+    - name: azure_default
+    - name: azure_flatcar
+    - name: azure_rhel
+    - name: azure_rockylinux
+    - name: digitalocean_default
+    - name: digitalocean_rockylinux
+    - name: equinixmetal_default
+    - name: equinixmetal_flatcar
+    - name: equinixmetal_rockylinux
+    - name: gce_default
+    - name: hetzner_default
+    - name: hetzner_rockylinux
+    - name: openstack_default
+    - name: openstack_flatcar
+    - name: openstack_rhel
+    - name: openstack_rockylinux
+    - name: vsphere_default
+    - name: vsphere_flatcar
+
+- scenario: external_cni_flannel_helm_chart
+  initVersion: v1.28.7
+  infrastructures:
+    - name: aws_amzn
+    - name: aws_default
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: aws_rockylinux
+    - name: azure_default
+    - name: azure_flatcar
+    - name: azure_rhel
+    - name: azure_rockylinux
+    - name: digitalocean_default
+    - name: digitalocean_rockylinux
+    - name: equinixmetal_default
+    - name: equinixmetal_flatcar
+    - name: equinixmetal_rockylinux
+    - name: gce_default
+    - name: hetzner_default
+    - name: hetzner_rockylinux
+    - name: openstack_default
+    - name: openstack_flatcar
+    - name: openstack_rhel
+    - name: openstack_rockylinux
+    - name: vsphere_default
+    - name: vsphere_flatcar
+
+- scenario: external_cni_flannel_helm_chart
+  initVersion: v1.29.2
+  infrastructures:
+    - name: aws_amzn
+    - name: aws_default
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: aws_rockylinux
+    - name: azure_default
+    - name: azure_flatcar
+    - name: azure_rhel
+    - name: azure_rockylinux
+    - name: digitalocean_default
+    - name: digitalocean_rockylinux
+    - name: equinixmetal_default
+    - name: equinixmetal_flatcar
+    - name: equinixmetal_rockylinux
+    - name: gce_default
+    - name: hetzner_default
+    - name: hetzner_rockylinux
+    - name: openstack_default
+    - name: openstack_flatcar
+    - name: openstack_rhel
+    - name: openstack_rockylinux
+    - name: vsphere_default
+    - name: vsphere_flatcar
+
+- scenario: external_cni_flannel_helm_chart
+  initVersion: v1.30.1
+  infrastructures:
+    - name: aws_amzn
+    - name: aws_default
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: aws_rockylinux
+    - name: azure_default
+    - name: azure_flatcar
+    - name: azure_rhel
+    - name: azure_rockylinux
+    - name: digitalocean_default
+    - name: digitalocean_rockylinux
+    - name: equinixmetal_default
+    - name: equinixmetal_flatcar
+    - name: equinixmetal_rockylinux
+    - name: gce_default
+    - name: hetzner_default
+    - name: hetzner_rockylinux
+    - name: openstack_default
+    - name: openstack_flatcar
+    - name: openstack_rhel
+    - name: openstack_rockylinux
+    - name: vsphere_default
+    - name: vsphere_flatcar
+
 - scenario: upgrade_cilium_containerd_external
   initVersion: v1.28.7
   upgradedVersion: v1.29.2
@@ -381,10 +489,10 @@
     - name: openstack_rockylinux_stable
     - name: vsphere_default_stable
     - name: vsphere_flatcar_stable
+
 ####################
 # CONFORMANCE TEST #
 ####################
-
 - scenario: conformance_containerd_external
   initVersion: v1.28.7
   infrastructures:

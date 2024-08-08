@@ -2377,6 +2377,834 @@ func TestVsphereFlatcarCiliumContainerdExternalV1_30_1(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestAwsAmznExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsDefaultExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsFlatcarExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRhelExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRockylinuxExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestAzureDefaultExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestAzureFlatcarExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestAzureRhelExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestAzureRockylinuxExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestDigitaloceanRockylinuxExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["digitalocean_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestEquinixmetalDefaultExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestEquinixmetalFlatcarExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["equinixmetal_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestEquinixmetalRockylinuxExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["equinixmetal_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestGceDefaultExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestHetznerDefaultExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestHetznerRockylinuxExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["hetzner_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackDefaultExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackFlatcarExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackRhelExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackRockylinuxExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereDefaultExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereFlatcarExternalCniFlannelHelmChartV1_27_11(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.27.11")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsAmznExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsDefaultExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsFlatcarExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRhelExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRockylinuxExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestAzureDefaultExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestAzureFlatcarExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestAzureRhelExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestAzureRockylinuxExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestDigitaloceanRockylinuxExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["digitalocean_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestEquinixmetalDefaultExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestEquinixmetalFlatcarExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["equinixmetal_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestEquinixmetalRockylinuxExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["equinixmetal_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestGceDefaultExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestHetznerDefaultExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestHetznerRockylinuxExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["hetzner_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackDefaultExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackFlatcarExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackRhelExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackRockylinuxExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereDefaultExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereFlatcarExternalCniFlannelHelmChartV1_28_7(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.28.7")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsAmznExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsDefaultExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsFlatcarExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRhelExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRockylinuxExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestAzureDefaultExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestAzureFlatcarExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestAzureRhelExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestAzureRockylinuxExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestDigitaloceanRockylinuxExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["digitalocean_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestEquinixmetalDefaultExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestEquinixmetalFlatcarExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["equinixmetal_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestEquinixmetalRockylinuxExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["equinixmetal_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestGceDefaultExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestHetznerDefaultExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestHetznerRockylinuxExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["hetzner_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackDefaultExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackFlatcarExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackRhelExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackRockylinuxExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereDefaultExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereFlatcarExternalCniFlannelHelmChartV1_29_2(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.29.2")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsAmznExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsDefaultExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsFlatcarExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRhelExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRockylinuxExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["aws_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestAzureDefaultExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestAzureFlatcarExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestAzureRhelExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestAzureRockylinuxExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestDigitaloceanRockylinuxExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["digitalocean_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestEquinixmetalDefaultExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["equinixmetal_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestEquinixmetalFlatcarExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["equinixmetal_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestEquinixmetalRockylinuxExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["equinixmetal_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestGceDefaultExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestHetznerDefaultExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestHetznerRockylinuxExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["hetzner_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackDefaultExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackFlatcarExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackRhelExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackRockylinuxExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["openstack_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereDefaultExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereFlatcarExternalCniFlannelHelmChartV1_30_1(t *testing.T) {
+	ctx := NewSignalContext(t.Logf)
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.30.1")
+	scenario.Run(ctx, t)
+}
+
 func TestAwsAmznStableUpgradeCiliumContainerdExternalFromV1_28_7_ToV1_29_2(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
 	infra := Infrastructures["aws_amzn_stable"]

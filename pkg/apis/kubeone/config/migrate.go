@@ -17,45 +17,115 @@ limitations under the License.
 package config
 
 import (
-	"fmt"
+	"bytes"
 	"os"
+	"reflect"
 
+	"gopkg.in/yaml.v2"
+
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/apis/kubeone/scheme"
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/yamled"
+
+	kyaml "sigs.k8s.io/yaml"
 )
 
-// MigrateOldConfig migrates KubeOneCluster v1beta1 object to v1beta2
-func MigrateOldConfig(clusterFilePath string) (interface{}, error) {
-	oldConfig, err := loadClusterConfig(clusterFilePath)
+// MigrateV1beta2V1beta3 migrates KubeOneCluster v1beta2 object to v1beta3
+func MigrateV1beta2V1beta3(clusterFilePath string) ([]byte, error) {
+	originalManifest, err := loadClusterConfig(clusterFilePath)
 	if err != nil {
 		return nil, fail.Runtime(err, "loading cluster config to migrate")
 	}
 
-	// Check is kubeone.k8c.io/v1beta2 config provided
-	apiVersion, apiVersionExists := oldConfig.GetString(yamled.Path{"apiVersion"})
-	if !apiVersionExists {
-		return nil, fail.Config(fmt.Errorf("apiVersion not present in the manifest"), "checking apiVersion presence")
+	var (
+		buffer           bytes.Buffer
+		oldManifest      = kubeonev1beta2.NewKubeOneCluster()
+		newManifest      = kubeonev1beta3.NewKubeOneCluster()
+		internalManifest = new(kubeoneapi.KubeOneCluster)
+	)
+
+	if err = yaml.NewEncoder(&buffer).Encode(originalManifest.Root()); err != nil {
+		return nil, fail.Config(err, "marshaling v1beta2 KubeOneCluster")
 	}
 
-	if apiVersion != kubeonev1beta2.SchemeGroupVersion.String() {
-		return nil, fail.Config(fmt.Errorf("migration is available only for %q API, but %q is given", kubeonev1beta2.SchemeGroupVersion.String(), apiVersion), "checking apiVersion compatibility")
+	if err = kyaml.UnmarshalStrict(buffer.Bytes(), oldManifest); err != nil {
+		return nil, fail.Runtime(err, "testing unmarshal v1beta2 KubeOneCluster")
 	}
 
-	// Ensure kind is KubeOneCluster
-	kind, kindExists := oldConfig.GetString(yamled.Path{"kind"})
-	if !kindExists {
-		return nil, fail.ConfigValidation(fmt.Errorf("kind not present in the manifest"))
-	}
-	if kind != KubeOneClusterKind {
-		return nil, fail.ConfigValidation(fmt.Errorf("migration is available only for kind %q, but %q is given", KubeOneClusterKind, kind))
+	if err = scheme.Scheme.Convert(oldManifest, internalManifest, kubeoneapi.SchemeGroupVersion); err != nil {
+		return nil, fail.Config(err, "converting v1beta2/KubeOneCluster into internal KubeOneCluster")
 	}
 
-	// The APIVersion has been changed to kubeone.k8c.io/v1beta3
-	oldConfig.Set(yamled.Path{"apiVersion"}, kubeonev1beta3.SchemeGroupVersion.String())
+	if err = scheme.Scheme.Convert(internalManifest, newManifest, kubeonev1beta3.SchemeGroupVersion); err != nil {
+		return nil, fail.Config(err, "converting internal KubeOneCluster into v1beta3/KubeOneCluster")
+	}
 
-	return oldConfig.Root(), nil
+	conversionsTab := []struct {
+		path      yamled.Path
+		convertor func(yamled.Path)
+	}{
+		{
+			path: yamled.Path{"apiVersion"},
+			convertor: func(p yamled.Path) {
+				originalManifest.Set(p, kubeonev1beta3.SchemeGroupVersion.String())
+			},
+		},
+		{
+			path: yamled.Path{"addons"},
+			convertor: func(p yamled.Path) {
+				// we moved helmReleases inside the addons
+				if originalManifest.Has(p) || originalManifest.Has(yamled.Path{"helmReleases"}) {
+					ybuf, _ := kyaml.Marshal(newManifest.Addons)
+					addons, _ := yamled.Load(bytes.NewBuffer(ybuf))
+					originalManifest.Set(p, addons)
+				}
+			},
+		},
+		{
+			path: yamled.Path{"addons"},
+			convertor: func(p yamled.Path) {
+				// cleanup addons from all the nil/zero/invalid values
+				originalManifest.Walk(p, func(key yamled.Path, value any) {
+					refval := reflect.ValueOf(value)
+
+					//nolint:exhaustive
+					switch refval.Kind() {
+					case reflect.Pointer, reflect.Map, reflect.Slice:
+						if refval.IsNil() {
+							originalManifest.Remove(key)
+						}
+					case reflect.Invalid:
+						originalManifest.Remove(key)
+					default:
+						if refval.IsZero() {
+							originalManifest.Remove(key)
+						}
+					}
+				})
+			},
+		},
+		{
+			path: yamled.Path{"helmReleases"},
+			convertor: func(p yamled.Path) {
+				originalManifest.Remove(p)
+			},
+		},
+	}
+
+	for _, conv := range conversionsTab {
+		conv.convertor(conv.path)
+		var buf bytes.Buffer
+		_ = yaml.NewEncoder(&buf).Encode(originalManifest)
+		originalManifest, err = yamled.Load(&buf)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return yaml.Marshal(originalManifest)
 }
 
 // loadClusterConfig takes path to the Cluster Config (old API) and returns yamled.Document

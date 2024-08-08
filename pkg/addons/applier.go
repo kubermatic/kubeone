@@ -160,13 +160,6 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		return nil, err
 	}
 
-	params := map[string]string{}
-	if s.Cluster.Addons.Enabled() {
-		for k, v := range s.Cluster.Addons.GlobalParams {
-			params[k] = v
-		}
-	}
-
 	credsCCM, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeCCM)
 	if err != nil {
 		return nil, err
@@ -215,7 +208,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 			resolver:   s.Images.Get,
 		},
 		Resources: resources.All(),
-		Params:    params,
+		Params:    map[string]string{},
 	}
 
 	if err := csiWebhookCerts(s, &data, csiMigration, kubeCAPrivateKey, kubeCACert); err != nil {

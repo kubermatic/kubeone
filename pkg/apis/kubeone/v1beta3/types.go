@@ -74,10 +74,6 @@ type KubeOneCluster struct {
 	// Addons are used to deploy additional manifests.
 	Addons *Addons `json:"addons,omitempty"`
 
-	// HelmReleases configure helm charts to reconcile. For each HelmRelease it will run analog of: `helm upgrade
-	// --namespace <NAMESPACE> --install --create-namespace <RELEASE> <CHART> [--values=values-override.yaml]`
-	HelmReleases []HelmRelease `json:"helmReleases,omitempty"`
-
 	// SystemPackages configure kubeone behaviour regarding OS packages.
 	SystemPackages *SystemPackages `json:"systemPackages,omitempty"`
 
@@ -155,7 +151,7 @@ type HelmRelease struct {
 	// Wait is --wait flag of the `helm install` command.
 	Wait bool `json:"wait,omitempty"`
 
-	// WaitTimeout --timeout flag of the `helm install` command.
+	// WaitTimeout --timeout flag of the `helm install` command. Default to 5m
 	WaitTimeout metav1.Duration `json:"timeout,omitempty"`
 
 	// Values provide optional overrides of the helm values.
@@ -995,19 +991,22 @@ type Addon struct {
 	Delete bool `json:"delete,omitempty"`
 }
 
+type AddonRef struct {
+	// KubeOne's internal Addon
+	Addon *Addon `json:"addon,omitempty"`
+
+	// HelmReleases configure helm charts to reconcile. For each HelmRelease it will run analog of: `helm upgrade
+	// --namespace <NAMESPACE> --install --create-namespace <RELEASE> <CHART> [--values=values-override.yaml]`
+	HelmRelease *HelmRelease `json:"helmRelease,omitempty"`
+}
+
 // Addons config
 type Addons struct {
-	// Enable
-	Enable bool `json:"enable,omitempty"`
-
 	// Path on the local file system to the directory with addons manifests.
 	Path string `json:"path,omitempty"`
 
-	// GlobalParams to the addon, to render all addons using text/template
-	GlobalParams map[string]string `json:"globalParams,omitempty"`
-
 	// Addons is a list of config options for named addon
-	Addons []Addon `json:"addons,omitempty"`
+	Addons []AddonRef `json:"addons,omitempty"`
 }
 
 // Encryption Providers feature flag
