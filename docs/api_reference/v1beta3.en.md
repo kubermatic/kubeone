@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2024-08-02T11:33:54+02:00
+date = 2024-08-05T19:41:51+03:00
 weight = 11
 +++
 ## v1beta3
@@ -8,6 +8,7 @@ weight = 11
 * [APIEndpoint](#apiendpoint)
 * [AWSSpec](#awsspec)
 * [Addon](#addon)
+* [AddonRef](#addonref)
 * [Addons](#addons)
 * [AzureSpec](#azurespec)
 * [CNI](#cni)
@@ -107,16 +108,25 @@ Addon config
 
 [Back to Group](#v1beta3)
 
+### AddonRef
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| addon | KubeOne's internal Addon | *[Addon](#addon) | false |
+| helmRelease | HelmReleases configure helm charts to reconcile. For each HelmRelease it will run analog of: `helm upgrade --namespace <NAMESPACE> --install --create-namespace <RELEASE> <CHART> [--values=values-override.yaml]` | *[HelmRelease](#helmrelease) | false |
+
+[Back to Group](#v1beta3)
+
 ### Addons
 
 Addons config
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| enable | Enable | bool | false |
 | path | Path on the local file system to the directory with addons manifests. | string | false |
-| globalParams | GlobalParams to the addon, to render all addons using text/template | map[string]string | false |
-| addons | Addons is a list of config options for named addon | [][Addon](#addon) | false |
+| addons | Addons is a list of config options for named addon | [][AddonRef](#addonref) | false |
 
 [Back to Group](#v1beta3)
 
@@ -420,7 +430,7 @@ GCESpec defines the GCE cloud provider
 | releaseName | ReleaseName is [RELEASE] part of the `helm upgrade [RELEASE] [CHART]` command. Empty is defaulted to chart. | string | false |
 | namespace | Namespace is --namespace flag of the `helm upgrade` command. A namespace to use for a release. | string | true |
 | wait | Wait is --wait flag of the `helm install` command. | bool | false |
-| timeout | WaitTimeout --timeout flag of the `helm install` command. | metav1.Duration | false |
+| timeout | WaitTimeout --timeout flag of the `helm install` command. Default to 5m | metav1.Duration | false |
 | values | Values provide optional overrides of the helm values. | [][HelmValues](#helmvalues) | false |
 
 [Back to Group](#v1beta3)
@@ -519,7 +529,6 @@ KubeOneCluster is KubeOne Cluster API Schema
 | caBundle | CABundle PEM encoded global CA | string | false |
 | features | Features enables and configures additional cluster features. | [Features](#features) | false |
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |
-| helmReleases | HelmReleases configure helm charts to reconcile. For each HelmRelease it will run analog of: `helm upgrade --namespace <NAMESPACE> --install --create-namespace <RELEASE> <CHART> [--values=values-override.yaml]` | [][HelmRelease](#helmrelease) | false |
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |
 | registryConfiguration | RegistryConfiguration configures how Docker images are pulled from an image registry | *[RegistryConfiguration](#registryconfiguration) | false |
 | loggingConfig | LoggingConfig configures the Kubelet's log rotation | [LoggingConfig](#loggingconfig) | false |
