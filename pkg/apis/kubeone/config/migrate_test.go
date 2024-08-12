@@ -31,6 +31,7 @@ func TestV1Beta2ToV1Beta3Migration(t *testing.T) {
 		"just addons",
 		"helm",
 		"addons and helm",
+		"default api endpoint",
 	}
 
 	for _, test := range tests {

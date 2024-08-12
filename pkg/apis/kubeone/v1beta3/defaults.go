@@ -145,14 +145,6 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 }
 
 func SetDefaults_APIEndpoints(obj *KubeOneCluster) {
-	// If no API endpoint is provided, assume the public address is an endpoint
-	if len(obj.APIEndpoint.Host) == 0 {
-		if len(obj.ControlPlane.Hosts) == 0 {
-			// No hosts, so can't default to the first one
-			return
-		}
-		obj.APIEndpoint.Host = obj.ControlPlane.Hosts[0].PublicAddress
-	}
 	obj.APIEndpoint.Port = defaults(obj.APIEndpoint.Port, 6443)
 }
 
