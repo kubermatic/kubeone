@@ -28,13 +28,14 @@ import (
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
 	"k8c.io/kubeone/pkg/fail"
+	terraformv1beta2 "k8c.io/kubeone/pkg/terraform/v1beta2"
 	"k8c.io/kubeone/pkg/yamled"
 
 	kyaml "sigs.k8s.io/yaml"
 )
 
 // MigrateV1beta2V1beta3 migrates KubeOneCluster v1beta2 object to v1beta3
-func MigrateV1beta2V1beta3(clusterFilePath string) ([]byte, error) {
+func MigrateV1beta2V1beta3(clusterFilePath string, tfOutput []byte) ([]byte, error) {
 	originalManifest, err := loadClusterConfig(clusterFilePath)
 	if err != nil {
 		return nil, fail.Runtime(err, "loading cluster config to migrate")
@@ -53,6 +54,16 @@ func MigrateV1beta2V1beta3(clusterFilePath string) ([]byte, error) {
 
 	if err = kyaml.UnmarshalStrict(buffer.Bytes(), v1beta2KubeOneCluster); err != nil {
 		return nil, fail.Runtime(err, "testing unmarshal v1beta2 KubeOneCluster")
+	}
+
+	if tfOutput != nil {
+		tfConfig, tferr := terraformv1beta2.NewConfigFromJSON(tfOutput)
+		if tferr != nil {
+			return nil, tferr
+		}
+		if err = tfConfig.Apply(v1beta2KubeOneCluster); err != nil {
+			return nil, err
+		}
 	}
 
 	if err = scheme.Scheme.Convert(v1beta2KubeOneCluster, internalKubeOneCluster, kubeoneapi.SchemeGroupVersion); err != nil {
@@ -118,7 +129,11 @@ func MigrateV1beta2V1beta3(clusterFilePath string) ([]byte, error) {
 			convertor: func(p yamled.Path) {
 				if v1beta2KubeOneCluster.APIEndpoint.Host == "" {
 					if len(v1beta2KubeOneCluster.ControlPlane.Hosts) > 0 {
-						originalManifest.Set(append(p, "host"), v1beta2KubeOneCluster.ControlPlane.Hosts[0].PublicAddress)
+						defaultAPIEndpoint := v1beta2KubeOneCluster.ControlPlane.Hosts[0].PublicAddress
+						if defaultAPIEndpoint == "" {
+							defaultAPIEndpoint = v1beta2KubeOneCluster.ControlPlane.Hosts[0].PrivateAddress
+						}
+						originalManifest.Set(append(p, "host"), defaultAPIEndpoint)
 					}
 				}
 			},
