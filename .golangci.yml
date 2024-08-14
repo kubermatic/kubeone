@@ -2,13 +2,6 @@ run:
   issues-exit-code: 1
   build-tags:
   - e2e
-  exclude-dirs:
-  - hack
-  - vendor
-  - pkg/apis/kubeadm
-
-  exclude-files:
-  - zz_generated.*.go
 
 linters:
   disable-all: true
@@ -74,6 +67,14 @@ linters-settings:
       alias: $1$2
 
 issues:
+  exclude-dirs:
+  - hack
+  - vendor
+  - pkg/apis/kubeadm
+
+  exclude-files:
+  - zz_generated.*.go
+
   exclude-rules:
   - path: pkg/apis/kubeone
     text: "func SetDefaults_"
