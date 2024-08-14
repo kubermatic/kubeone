@@ -35,6 +35,7 @@ linters:
   - govet
   - importas
   - ineffassign
+  - intrange
   - makezero
   - misspell
   - nakedret
