@@ -89,7 +89,7 @@ func upgradeCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		&opts.PruneImages,
 		longFlagName(opts, "PruneImages"),
 		false,
-		"delete unused container images")
+		"delete unused container images on control plane and static worker nodes")
 
 	return cmd
 }

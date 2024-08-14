@@ -45,13 +45,6 @@ func restartKubeAPIServer(s *state.State) error {
 		return restartKubeAPIServerOnOS(s, *node)
 	}, state.RunSequentially)
 }
-func pruneImages(s *state.State) error {
-	s.Logger.Infoln("Prune container Images...")
-
-	return s.RunTaskOnControlPlane(func(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
-		return pruneImagesOnOS(s, *node)
-	}, state.RunSequentially)
-}
 
 func ensureRestartKubeAPIServer(s *state.State) error {
 	s.Logger.Infoln("Restarting API servers...")
@@ -85,18 +78,6 @@ func ensureRestartKubeAPIServerOnOS(s *state.State, node kubeoneapi.HostConfig) 
 	})
 }
 
-func pruneImagesOnOS(s *state.State, node kubeoneapi.HostConfig) error {
-	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
-		kubeoneapi.OperatingSystemNameAmazon:     pruneImagesCrictl,
-		kubeoneapi.OperatingSystemNameCentOS:     pruneImagesCrictl,
-		kubeoneapi.OperatingSystemNameDebian:     pruneImagesCrictl,
-		kubeoneapi.OperatingSystemNameFlatcar:    pruneImagesCrictl,
-		kubeoneapi.OperatingSystemNameRHEL:       pruneImagesCrictl,
-		kubeoneapi.OperatingSystemNameRockyLinux: pruneImagesCrictl,
-		kubeoneapi.OperatingSystemNameUbuntu:     pruneImagesCrictl,
-	})
-}
-
 func restartKubeAPIServerCrictl(s *state.State) error {
 	cmd, err := scripts.RestartKubeAPIServerCrictl(false)
 	if err != nil {
@@ -117,11 +98,21 @@ func ensureRestartKubeAPIServerCrictl(s *state.State) error {
 	return fail.SSH(err, "restarting kubeapi-server pod")
 }
 
-func pruneImagesCrictl(s *state.State) error {
-	cmd := scripts.PruneImages()
-	_, _, err := s.Runner.RunRaw(cmd)
+func pruneImagesOnAllNodes(s *state.State) error {
+	s.Logger.Infof("Prune unused container Images...")
 
-	return fail.SSH(err, "deleting unused container images...")
+	// Prune unused container images on all nodes.
+	if err := s.RunTaskOnAllNodes(pruneImages, state.RunParallel); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func pruneImages(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
+	_, _, err := s.Runner.RunRaw(scripts.PruneImages())
+
+	return fail.SSH(err, "deleting unused container images")
 }
 
 func labelNodes(s *state.State) error {
