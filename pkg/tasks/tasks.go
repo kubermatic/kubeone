@@ -352,6 +352,11 @@ func WithUpgrade(t Tasks, followers ...kubeoneapi.HostConfig) Tasks {
 				Description: "upgrade MachineDeployments",
 				Predicate:   func(s *state.State) bool { return s.UpgradeMachineDeployments },
 			},
+			Task{
+				Fn: pruneImages, Operation: "deleting unused container images",
+				Description: "delete unused container images",
+				Predicate:   func(s *state.State) bool { return s.PruneImages },
+			},
 		)
 }
 
