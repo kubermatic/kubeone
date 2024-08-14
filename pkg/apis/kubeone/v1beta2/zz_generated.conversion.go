@@ -1665,6 +1665,7 @@ func autoConvert_v1beta2_KubeletConfig_To_kubeone_KubeletConfig(in *KubeletConfi
 	out.KubeReserved = *(*map[string]string)(unsafe.Pointer(&in.KubeReserved))
 	out.EvictionHard = *(*map[string]string)(unsafe.Pointer(&in.EvictionHard))
 	out.MaxPods = (*int32)(unsafe.Pointer(in.MaxPods))
+	out.PodPidsLimit = (*int64)(unsafe.Pointer(in.PodPidsLimit))
 	return nil
 }
 
@@ -1678,6 +1679,7 @@ func autoConvert_kubeone_KubeletConfig_To_v1beta2_KubeletConfig(in *kubeone.Kube
 	out.KubeReserved = *(*map[string]string)(unsafe.Pointer(&in.KubeReserved))
 	out.EvictionHard = *(*map[string]string)(unsafe.Pointer(&in.EvictionHard))
 	out.MaxPods = (*int32)(unsafe.Pointer(in.MaxPods))
+	out.PodPidsLimit = (*int64)(unsafe.Pointer(in.PodPidsLimit))
 	return nil
 }
 
