@@ -109,7 +109,7 @@ func pruneImagesOnAllNodes(s *state.State) error {
 	return nil
 }
 
-func pruneImages(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
+func pruneImages(s *state.State, _ *kubeoneapi.HostConfig, _ executor.Interface) error {
 	_, _, err := s.Runner.RunRaw(scripts.PruneImages())
 
 	return fail.SSH(err, "deleting unused container images")
