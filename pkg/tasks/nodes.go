@@ -99,7 +99,7 @@ func ensureRestartKubeAPIServerCrictl(s *state.State) error {
 }
 
 func pruneImagesOnAllNodes(s *state.State) error {
-	s.Logger.Infof("Deleting unused container Images...")
+	s.Logger.Infof("Deleting unused container images...")
 
 	// Prune unused container images on all nodes.
 	if err := s.RunTaskOnAllNodes(pruneImages, state.RunParallel); err != nil {
