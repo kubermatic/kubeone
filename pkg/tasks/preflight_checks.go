@@ -235,7 +235,7 @@ func checkHostnames(hostnames []string) error {
 	if len(allErrors) > 0 {
 		allErrors = append(allErrors, "Please rename host(s)")
 
-		return fail.Runtime(fmt.Errorf(strings.Join(allErrors, "\n")), "validating node hostnames")
+		return fail.Runtime(errors.New(strings.Join(allErrors, "\n")), "validating node hostnames")
 	}
 
 	return nil

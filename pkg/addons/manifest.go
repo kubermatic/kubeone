@@ -161,7 +161,7 @@ func (a *applier) loadAddonsManifests(
 		if !disableTemplating {
 			tpl, err := template.New("addons-base").Funcs(txtFuncMap(overwriteRegistry)).Parse(string(manifestBytes))
 			if err != nil {
-				return nil, fail.Runtime(err, fmt.Sprintf("parsing addons manifest template %q", file.Name()))
+				return nil, fail.Runtime(err, "parsing addons manifest template %q", file.Name())
 			}
 
 			// Make a copy and merge Params
@@ -193,7 +193,7 @@ func (a *applier) loadAddonsManifests(
 
 			manifest = bytes.NewBuffer([]byte{})
 			if err := tpl.Execute(manifest, tplData); err != nil {
-				return nil, fail.Runtime(err, fmt.Sprintf("executing addons manifest template %q", file.Name()))
+				return nil, fail.Runtime(err, "executing addons manifest template %q", file.Name())
 			}
 
 			if len(bytes.TrimSpace(manifest.Bytes())) == 0 {
@@ -209,7 +209,7 @@ func (a *applier) loadAddonsManifests(
 					break
 				}
 
-				return nil, fail.Runtime(err, fmt.Sprintf("reading YAML reader for manifest %q", file.Name()))
+				return nil, fail.Runtime(err, "reading YAML reader for manifest %q", file.Name())
 			}
 
 			yamlDoc = bytes.TrimSpace(yamlDoc)
@@ -220,7 +220,7 @@ func (a *applier) loadAddonsManifests(
 			decoder := kyaml.NewYAMLToJSONDecoder(bytes.NewBuffer(yamlDoc))
 			raw := runtime.RawExtension{}
 			if err := decoder.Decode(&raw); err != nil {
-				return nil, fail.Runtime(err, fmt.Sprintf("unmarshalling manifest %q", file.Name()))
+				return nil, fail.Runtime(err, "unmarshalling manifest %q", file.Name())
 			}
 
 			if len(raw.Raw) == 0 {
@@ -325,10 +325,10 @@ func txtFuncMap(overwriteRegistry string) template.FuncMap {
 func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {
 	switch val := input.(type) {
 	case nil:
-		return val, fmt.Errorf(warn)
+		return val, errors.New(warn)
 	case string:
 		if val == "" {
-			return val, fmt.Errorf(warn)
+			return val, errors.New(warn)
 		}
 	}
 

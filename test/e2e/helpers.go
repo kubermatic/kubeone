@@ -21,6 +21,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -123,10 +124,10 @@ func retryFn(fn func() error) error {
 func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {
 	switch val := input.(type) {
 	case nil:
-		return val, fmt.Errorf(warn)
+		return val, errors.New(warn)
 	case string:
 		if val == "" {
-			return val, fmt.Errorf(warn)
+			return val, errors.New(warn)
 		}
 	}
 

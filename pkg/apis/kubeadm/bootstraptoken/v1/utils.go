@@ -24,7 +24,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	v1 "k8s.io/api/core/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	bootstrapapi "k8s.io/cluster-bootstrap/token/api"
 	bootstraputil "k8s.io/cluster-bootstrap/token/util"
@@ -44,7 +44,7 @@ func (bts *BootstrapTokenString) UnmarshalJSON(b []byte) error {
 	}
 
 	// Remove unnecessary " characters coming from the JSON parser
-	token := strings.Replace(string(b), `"`, ``, -1)
+	token := strings.ReplaceAll(string(b), `"`, ``)
 	// Convert the string Token to a BootstrapTokenString object
 	newbts, err := NewBootstrapTokenString(token)
 	if err != nil {
@@ -52,6 +52,7 @@ func (bts *BootstrapTokenString) UnmarshalJSON(b []byte) error {
 	}
 	bts.ID = newbts.ID
 	bts.Secret = newbts.Secret
+
 	return nil
 }
 
@@ -60,6 +61,7 @@ func (bts BootstrapTokenString) String() string {
 	if len(bts.ID) > 0 && len(bts.Secret) > 0 {
 		return bootstraputil.TokenFromIDAndSecret(bts.ID, bts.Secret)
 	}
+
 	return ""
 }
 
@@ -85,13 +87,13 @@ func NewBootstrapTokenStringFromIDAndSecret(id, secret string) (*BootstrapTokenS
 
 // BootstrapTokenToSecret converts the given BootstrapToken object to its Secret representation that
 // may be submitted to the API Server in order to be stored.
-func BootstrapTokenToSecret(bt *BootstrapToken) *v1.Secret {
-	return &v1.Secret{
+func BootstrapTokenToSecret(bt *BootstrapToken) *corev1.Secret {
+	return &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      bootstraputil.BootstrapTokenSecretName(bt.Token.ID),
 			Namespace: metav1.NamespaceSystem,
 		},
-		Type: v1.SecretType(bootstrapapi.SecretTypeBootstrapToken),
+		Type: bootstrapapi.SecretTypeBootstrapToken,
 		Data: encodeTokenSecretData(bt, time.Now()),
 	}
 }
@@ -116,7 +118,6 @@ func encodeTokenSecretData(token *BootstrapToken, now time.Time) map[string][]by
 		// TODO: This maybe should be a helper function in bootstraputil?
 		expirationString := token.Expires.Time.UTC().Format(time.RFC3339)
 		data[bootstrapapi.BootstrapTokenExpirationKey] = []byte(expirationString)
-
 	} else if token.TTL != nil && token.TTL.Duration > 0 {
 		// Only if .Expires is unset, TTL might have an effect
 		// Get the current time, add the specified duration, and format it accordingly
@@ -131,11 +132,12 @@ func encodeTokenSecretData(token *BootstrapToken, now time.Time) map[string][]by
 	if len(token.Groups) > 0 {
 		data[bootstrapapi.BootstrapTokenExtraGroupsKey] = []byte(strings.Join(token.Groups, ","))
 	}
+
 	return data
 }
 
 // BootstrapTokenFromSecret returns a BootstrapToken object from the given Secret
-func BootstrapTokenFromSecret(secret *v1.Secret) (*BootstrapToken, error) {
+func BootstrapTokenFromSecret(secret *corev1.Secret) (*BootstrapToken, error) {
 	// Get the Token ID field from the Secret data
 	tokenID := bootstrapsecretutil.GetData(secret, bootstrapapi.BootstrapTokenIDKey)
 	if len(tokenID) == 0 {

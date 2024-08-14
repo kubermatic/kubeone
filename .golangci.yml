@@ -2,12 +2,12 @@ run:
   issues-exit-code: 1
   build-tags:
   - e2e
-  skip-dirs:
+  exclude-dirs:
   - hack
   - vendor
   - pkg/apis/kubeadm
 
-  skip-files:
+  exclude-files:
   - zz_generated.*.go
 
 linters:
@@ -55,7 +55,8 @@ linters:
 
 linters-settings:
   govet:
-    check-shadowing: true
+    enable:
+      - shadow
   goimports:
     local-prefixes: k8c.io/kubeone
   importas:
