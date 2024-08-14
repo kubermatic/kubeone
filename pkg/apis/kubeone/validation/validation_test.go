@@ -250,7 +250,6 @@ func TestValidateKubeOneCluster(t *testing.T) {
 
 	twentyFour := 24
 	for _, tc := range tests {
-		tc := tc
 		tc.cluster.ClusterNetwork = kubeoneapi.ClusterNetworkConfig{
 			IPFamily:             kubeoneapi.IPFamilyIPv4,
 			PodSubnet:            "10.20.30.40/16",
@@ -325,7 +324,6 @@ func TestValdiateName(t *testing.T) {
 		},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateName(tc.clusterName, nil)
 			if (len(errs) == 0) == tc.expectedError {
@@ -396,7 +394,6 @@ func TestValidateControlPlaneConfig(t *testing.T) {
 		},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateControlPlaneConfig(tc.controlPlaneConfig, tc.networkConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
@@ -460,7 +457,6 @@ func TestValidateAPIEndpoint(t *testing.T) {
 		},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateAPIEndpoint(tc.apiEndpoint, nil)
 			if (len(errs) == 0) == tc.expectedError {
@@ -780,7 +776,6 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 		},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateCloudProviderSpec(tc.providerConfig, tc.networkConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
@@ -861,7 +856,6 @@ func TestValidateVersionConfig(t *testing.T) {
 		},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateVersionConfig(tc.versionConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
@@ -1078,7 +1072,6 @@ func TestValidateKubernetesSupport(t *testing.T) {
 		},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			c := kubeoneapi.KubeOneCluster{
 				CloudProvider:  tc.providerConfig,
@@ -1280,7 +1273,6 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 		},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateClusterNetworkConfig(tc.clusterNetworkConfig, tc.provider, nil)
 			if (len(errs) == 0) == tc.expectedError {
@@ -1358,7 +1350,6 @@ func TestValidateCNIConfig(t *testing.T) {
 		},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateCNI(tc.cniConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
@@ -1454,7 +1445,6 @@ func TestValidateStaticWorkersConfig(t *testing.T) {
 		},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateStaticWorkersConfig(tc.staticWorkersConfig, tc.controlPlane, tc.networkConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
@@ -1706,7 +1696,6 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateDynamicWorkerConfig(tc.dynamicWorkerConfig, tc.provider, nil)
 			if (len(errs) == 0) == tc.expectedError {
@@ -1771,7 +1760,6 @@ func TestValidateCABundle(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateCABundle(tc.caBundle, field.NewPath("caBundle"))
 			if (len(errs) == 0) == tc.expectedError {
@@ -1890,7 +1878,6 @@ func TestValidateFeatures(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateFeatures(tc.features, nil)
 			if (len(errs) == 0) == tc.expectedError {
@@ -1920,7 +1907,6 @@ func TestValidatePodNodeSelectorConfig(t *testing.T) {
 		},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidatePodNodeSelectorConfig(tc.podNodeSelectorConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
@@ -2002,7 +1988,6 @@ func TestValidateStaticAuditLogConfig(t *testing.T) {
 		},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateStaticAuditLogConfig(tc.staticAuditLogConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
@@ -2042,7 +2027,6 @@ func TestValidateOIDCConfig(t *testing.T) {
 		},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateOIDCConfig(tc.oidcConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
@@ -2082,7 +2066,6 @@ func TestValidateAddons(t *testing.T) {
 		},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateAddons(tc.addons, nil)
 			if (len(errs) == 0) == tc.expectedError {
@@ -2331,7 +2314,6 @@ func TestValidateHostConfig(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateHostConfig(tc.hostConfig, tc.networkConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
@@ -2381,7 +2363,6 @@ func TestValidateRegistryConfiguration(t *testing.T) {
 		},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateRegistryConfiguration(tc.registryConfiguration, nil)
 			if (len(errs) == 0) == tc.expectedError {
@@ -2572,7 +2553,6 @@ func TestValidateAssetConfiguration(t *testing.T) {
 		},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateAssetConfiguration(tc.assetConfiguration, nil)
 			if (len(errs) == 0) == tc.expectedError {

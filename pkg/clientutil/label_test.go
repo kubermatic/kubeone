@@ -68,7 +68,6 @@ func TestAddLabels(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			if got := AddLabels(tt.args.labels, tt.args.objects...); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("AddLabels() = %v, want %v", got, tt.want)

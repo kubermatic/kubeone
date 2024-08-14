@@ -333,7 +333,6 @@ func migrateOpenStackPVs(s *state.State) error {
 	}
 
 	for i, pv := range pvList.Items {
-		pv := pv
 		if pv.Annotations[provisionedByAnnotation] == provisionedByOpenStackInTreeCinder {
 			pvKey := client.ObjectKeyFromObject(&pv)
 			if s.Verbose {

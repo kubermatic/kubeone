@@ -165,7 +165,6 @@ func TestShouldEnableInTreeCloudProvider(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			s := &State{
 				Cluster:     tc.cluster,
@@ -368,7 +367,6 @@ func TestShouldEnableCSIMigration(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			s := &State{
 				Cluster:      tc.cluster,
@@ -572,7 +570,6 @@ func TestShouldUnregisterInTreeProvider(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			s := &State{
 				Cluster:              tc.cluster,

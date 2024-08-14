@@ -16,6 +16,7 @@ linters:
   - asciicheck
   - bidichk
   - bodyclose
+  - copyloopvar
   - dogsled
   - durationcheck
   - errcheck
