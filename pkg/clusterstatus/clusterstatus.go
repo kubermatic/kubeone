@@ -123,7 +123,6 @@ func Fetch(s *state.State, preflightChecks bool) ([]NodeStatus, error) {
 	)
 
 	for _, host := range s.Cluster.ControlPlane.Hosts {
-		host := host
 		statusWG.Add(1)
 
 		go func() {

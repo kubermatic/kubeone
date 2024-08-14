@@ -155,7 +155,6 @@ func Test_setRegistriesAuth(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			if err := setRegistriesAuth(tt.args.cluster, tt.args.buf); (err != nil) != tt.wantErr {
 				t.Errorf("setRegistriesAuth() error = %v, wantErr %v", err, tt.wantErr)

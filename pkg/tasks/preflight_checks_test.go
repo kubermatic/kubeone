@@ -60,7 +60,6 @@ func TestParseContainerImageVersionValid(t *testing.T) {
 		},
 	}
 	for _, tc := range testcases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			ver, err := parseContainerImageVersion(corev1.Container{Image: tc.image})
@@ -99,7 +98,6 @@ func TestParseContainerImageVersionInvalid(t *testing.T) {
 		},
 	}
 	for _, tc := range testcases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			_, err := parseContainerImageVersion(corev1.Container{Image: tc.image})
@@ -175,7 +173,6 @@ func TestCheckVersionSkewValid(t *testing.T) {
 		},
 	}
 	for _, tc := range testcases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			err := checkVersionSkew(tc.desiredVersion, tc.currentVersion, tc.diff)
@@ -257,7 +254,6 @@ func TestCheckVersionSkewInvalid(t *testing.T) {
 		},
 	}
 	for _, tc := range testcases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			err := checkVersionSkew(tc.desiredVersion, tc.currentVersion, tc.diff)
@@ -299,7 +295,6 @@ Please rename host(s)`),
 	}
 
 	for _, tc := range testcases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			err := checkHostnames(tc.hostnames)

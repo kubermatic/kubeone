@@ -36,7 +36,6 @@ func TestSaveCloudConfig(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			got, err := SaveCloudConfig(tt.workdir)
@@ -64,7 +63,6 @@ func TestSaveAuditPolicyConfig(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			got, err := SaveAuditPolicyConfig(tt.workdir)
@@ -92,7 +90,6 @@ func TestSaveAuditWebhookConfig(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			got, err := SaveAuditWebhookConfig(tt.workdir)

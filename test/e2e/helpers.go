@@ -21,6 +21,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -57,7 +58,7 @@ import (
 
 const (
 	labelControlPlaneNode = "node-role.kubernetes.io/control-plane"
-	prowImage             = "quay.io/kubermatic/build:go-1.22-node-20-6"
+	prowImage             = "quay.io/kubermatic/build:go-1.23-node-20-0"
 	k1CloneURI            = "ssh://git@github.com/kubermatic/kubeone.git"
 )
 
@@ -123,10 +124,10 @@ func retryFn(fn func() error) error {
 func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {
 	switch val := input.(type) {
 	case nil:
-		return val, fmt.Errorf(warn)
+		return val, errors.New(warn)
 	case string:
 		if val == "" {
-			return val, fmt.Errorf(warn)
+			return val, errors.New(warn)
 		}
 	}
 

@@ -196,7 +196,6 @@ func TestEnsureAddonsLabelsOnResources(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			addonsDir := t.TempDir()
@@ -274,7 +273,6 @@ func TestImageRegistryParsing(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			addonsDir := t.TempDir()
 
@@ -328,7 +326,6 @@ func TestCABundleFuncs(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt, func(t *testing.T) {
 			tpl, err := template.New("addons-base").Funcs(txtFuncMap("")).Parse(fmt.Sprintf(`{{ %s }}`, tt))
 
@@ -652,7 +649,6 @@ func TestDisableTemplateForLoadManifests(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			addonsDir := t.TempDir()

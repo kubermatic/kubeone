@@ -17,6 +17,8 @@ limitations under the License.
 package tasks
 
 import (
+	"github.com/pkg/errors"
+
 	"k8c.io/kubeone/pkg/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate"
@@ -40,7 +42,10 @@ func (t Tasks) Run(s *state.State) error {
 			continue
 		}
 		if err := step.Run(s); err != nil {
-			return fail.Runtime(err, step.Operation)
+			return fail.RuntimeError{
+				Op:  step.Operation,
+				Err: errors.WithStack(err),
+			}
 		}
 	}
 

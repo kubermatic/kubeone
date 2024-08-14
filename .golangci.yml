@@ -2,13 +2,6 @@ run:
   issues-exit-code: 1
   build-tags:
   - e2e
-  skip-dirs:
-  - hack
-  - vendor
-  - pkg/apis/kubeadm
-
-  skip-files:
-  - zz_generated.*.go
 
 linters:
   disable-all: true
@@ -16,6 +9,7 @@ linters:
   - asciicheck
   - bidichk
   - bodyclose
+  - copyloopvar
   - dogsled
   - durationcheck
   - errcheck
@@ -34,6 +28,7 @@ linters:
   - govet
   - importas
   - ineffassign
+  - intrange
   - makezero
   - misspell
   - nakedret
@@ -55,7 +50,8 @@ linters:
 
 linters-settings:
   govet:
-    check-shadowing: true
+    enable:
+      - shadow
   goimports:
     local-prefixes: k8c.io/kubeone
   importas:
@@ -71,6 +67,14 @@ linters-settings:
       alias: $1$2
 
 issues:
+  exclude-dirs:
+  - hack
+  - vendor
+  - pkg/apis/kubeadm
+
+  exclude-files:
+  - zz_generated.*.go
+
   exclude-rules:
   - path: pkg/apis/kubeone
     text: "func SetDefaults_"

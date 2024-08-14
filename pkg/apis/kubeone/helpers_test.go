@@ -64,7 +64,6 @@ func TestFeatureGatesString(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			got := marshalFeatureGates(tc.featureGates)
@@ -151,7 +150,6 @@ func TestMapStringStringToString(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			if got := MapStringStringToString(tt.m1, "="); got != tt.want {
 				t.Errorf("MapStringStringToString() = %v, want %v", got, tt.want)
@@ -265,7 +263,6 @@ func TestDefaultAssetConfiguration(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			tt.cluster.DefaultAssetConfiguration()
 			if !reflect.DeepEqual(tt.cluster.AssetConfiguration, tt.expectedAssetConfiguration) {

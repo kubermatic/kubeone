@@ -17,7 +17,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -41,7 +41,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -64,7 +64,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -87,7 +87,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -110,7 +110,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -133,7 +133,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -158,7 +158,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -183,7 +183,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -209,7 +209,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -234,7 +234,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -257,7 +257,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -280,7 +280,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -303,7 +303,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -326,7 +326,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -349,7 +349,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -372,7 +372,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -395,7 +395,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -418,7 +418,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -441,7 +441,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -466,7 +466,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -491,7 +491,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -516,7 +516,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -541,7 +541,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -566,7 +566,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -589,7 +589,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -613,7 +613,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -636,7 +636,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -659,7 +659,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -682,7 +682,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -705,7 +705,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -730,7 +730,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -755,7 +755,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -781,7 +781,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -806,7 +806,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -829,7 +829,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -852,7 +852,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -875,7 +875,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -898,7 +898,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -921,7 +921,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -944,7 +944,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -967,7 +967,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -990,7 +990,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1013,7 +1013,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1038,7 +1038,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1063,7 +1063,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1088,7 +1088,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1113,7 +1113,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1138,7 +1138,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1161,7 +1161,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1185,7 +1185,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1208,7 +1208,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1231,7 +1231,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1254,7 +1254,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1277,7 +1277,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1302,7 +1302,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1327,7 +1327,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1353,7 +1353,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1378,7 +1378,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1401,7 +1401,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1424,7 +1424,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1447,7 +1447,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1470,7 +1470,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1493,7 +1493,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1516,7 +1516,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1539,7 +1539,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1562,7 +1562,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1585,7 +1585,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1610,7 +1610,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1635,7 +1635,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1660,7 +1660,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1685,7 +1685,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1710,7 +1710,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1735,7 +1735,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1760,7 +1760,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1786,7 +1786,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1811,7 +1811,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1834,7 +1834,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1864,7 +1864,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1894,7 +1894,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1922,7 +1922,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1952,7 +1952,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -1982,7 +1982,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2012,7 +2012,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2042,7 +2042,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2072,7 +2072,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2103,7 +2103,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2133,7 +2133,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2163,7 +2163,7 @@ presubmits:
         value: digitalocean
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2193,7 +2193,7 @@ presubmits:
         value: digitalocean
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2223,7 +2223,7 @@ presubmits:
         value: equinixmetal
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2253,7 +2253,7 @@ presubmits:
         value: equinixmetal
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2283,7 +2283,7 @@ presubmits:
         value: equinixmetal
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2313,7 +2313,7 @@ presubmits:
         value: gce
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2343,7 +2343,7 @@ presubmits:
         value: hetzner
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2373,7 +2373,7 @@ presubmits:
         value: hetzner
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2403,7 +2403,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2433,7 +2433,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2463,7 +2463,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2493,7 +2493,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2523,7 +2523,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2553,7 +2553,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2583,7 +2583,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2613,7 +2613,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2641,7 +2641,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2671,7 +2671,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2701,7 +2701,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2731,7 +2731,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2761,7 +2761,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2791,7 +2791,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2822,7 +2822,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2852,7 +2852,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2882,7 +2882,7 @@ presubmits:
         value: digitalocean
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2912,7 +2912,7 @@ presubmits:
         value: digitalocean
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2942,7 +2942,7 @@ presubmits:
         value: equinixmetal
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -2972,7 +2972,7 @@ presubmits:
         value: equinixmetal
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3002,7 +3002,7 @@ presubmits:
         value: equinixmetal
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3032,7 +3032,7 @@ presubmits:
         value: gce
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3062,7 +3062,7 @@ presubmits:
         value: hetzner
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3092,7 +3092,7 @@ presubmits:
         value: hetzner
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3122,7 +3122,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3152,7 +3152,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3182,7 +3182,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3212,7 +3212,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3242,7 +3242,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3272,7 +3272,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3295,7 +3295,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3318,7 +3318,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3341,7 +3341,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3364,7 +3364,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3387,7 +3387,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3412,7 +3412,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3437,7 +3437,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3463,7 +3463,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3488,7 +3488,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3511,7 +3511,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3534,7 +3534,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3557,7 +3557,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3580,7 +3580,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3603,7 +3603,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3626,7 +3626,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3649,7 +3649,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3672,7 +3672,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3695,7 +3695,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3720,7 +3720,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3745,7 +3745,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3770,7 +3770,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3795,7 +3795,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3820,7 +3820,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3843,7 +3843,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3866,7 +3866,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3889,7 +3889,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3912,7 +3912,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3935,7 +3935,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3960,7 +3960,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -3985,7 +3985,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4011,7 +4011,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4036,7 +4036,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4059,7 +4059,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4082,7 +4082,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4105,7 +4105,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4128,7 +4128,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4151,7 +4151,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4174,7 +4174,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4197,7 +4197,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4220,7 +4220,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4243,7 +4243,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4268,7 +4268,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4293,7 +4293,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4318,7 +4318,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4343,7 +4343,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4368,7 +4368,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4391,7 +4391,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4414,7 +4414,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4437,7 +4437,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4460,7 +4460,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4483,7 +4483,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4508,7 +4508,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4533,7 +4533,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4559,7 +4559,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4584,7 +4584,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4607,7 +4607,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4630,7 +4630,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4653,7 +4653,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4676,7 +4676,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4699,7 +4699,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4722,7 +4722,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4745,7 +4745,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4768,7 +4768,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4791,7 +4791,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4816,7 +4816,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4841,7 +4841,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4866,7 +4866,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4891,7 +4891,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4916,7 +4916,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4939,7 +4939,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4962,7 +4962,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -4985,7 +4985,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5008,7 +5008,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5031,7 +5031,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5056,7 +5056,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5081,7 +5081,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5107,7 +5107,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5132,7 +5132,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5155,7 +5155,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5178,7 +5178,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5201,7 +5201,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5224,7 +5224,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5247,7 +5247,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5270,7 +5270,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5293,7 +5293,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5316,7 +5316,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5339,7 +5339,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5364,7 +5364,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5389,7 +5389,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5414,7 +5414,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5439,7 +5439,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5464,7 +5464,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5487,7 +5487,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5510,7 +5510,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5533,7 +5533,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5556,7 +5556,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5579,7 +5579,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5604,7 +5604,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5629,7 +5629,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5655,7 +5655,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5680,7 +5680,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5703,7 +5703,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5726,7 +5726,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5749,7 +5749,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5772,7 +5772,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5795,7 +5795,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5818,7 +5818,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5841,7 +5841,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5864,7 +5864,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5887,7 +5887,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5912,7 +5912,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5937,7 +5937,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5962,7 +5962,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -5987,7 +5987,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6012,7 +6012,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6035,7 +6035,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6058,7 +6058,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6081,7 +6081,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6104,7 +6104,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6127,7 +6127,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6152,7 +6152,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6177,7 +6177,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6203,7 +6203,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6228,7 +6228,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6251,7 +6251,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6274,7 +6274,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6297,7 +6297,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6320,7 +6320,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6343,7 +6343,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6366,7 +6366,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6389,7 +6389,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6412,7 +6412,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6435,7 +6435,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6460,7 +6460,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6485,7 +6485,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6510,7 +6510,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6535,7 +6535,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6560,7 +6560,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6583,7 +6583,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6606,7 +6606,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6629,7 +6629,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6652,7 +6652,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6675,7 +6675,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6700,7 +6700,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6725,7 +6725,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6751,7 +6751,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6776,7 +6776,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6799,7 +6799,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6822,7 +6822,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6845,7 +6845,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6868,7 +6868,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6891,7 +6891,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6914,7 +6914,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6937,7 +6937,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6960,7 +6960,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -6983,7 +6983,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7008,7 +7008,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7033,7 +7033,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7058,7 +7058,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7083,7 +7083,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7108,7 +7108,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7131,7 +7131,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7154,7 +7154,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7177,7 +7177,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7200,7 +7200,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7223,7 +7223,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7248,7 +7248,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7273,7 +7273,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7299,7 +7299,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7324,7 +7324,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7347,7 +7347,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7370,7 +7370,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7393,7 +7393,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7416,7 +7416,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7439,7 +7439,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7462,7 +7462,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7485,7 +7485,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7508,7 +7508,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7531,7 +7531,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7556,7 +7556,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7581,7 +7581,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7606,7 +7606,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7631,7 +7631,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7656,7 +7656,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7679,7 +7679,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7702,7 +7702,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7725,7 +7725,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7748,7 +7748,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7771,7 +7771,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7796,7 +7796,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7821,7 +7821,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7847,7 +7847,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7872,7 +7872,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7895,7 +7895,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7918,7 +7918,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7941,7 +7941,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7964,7 +7964,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -7987,7 +7987,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8010,7 +8010,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8033,7 +8033,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8056,7 +8056,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8079,7 +8079,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8104,7 +8104,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8129,7 +8129,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8154,7 +8154,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8179,7 +8179,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8204,7 +8204,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8227,7 +8227,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8250,7 +8250,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8273,7 +8273,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8296,7 +8296,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8319,7 +8319,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8344,7 +8344,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8369,7 +8369,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8395,7 +8395,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8420,7 +8420,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8443,7 +8443,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8466,7 +8466,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8489,7 +8489,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8512,7 +8512,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8535,7 +8535,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: equinixmetal
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8558,7 +8558,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8581,7 +8581,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8604,7 +8604,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8627,7 +8627,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: openstack
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8652,7 +8652,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8677,7 +8677,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8702,7 +8702,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8727,7 +8727,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8752,7 +8752,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8782,7 +8782,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8812,7 +8812,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8842,7 +8842,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8872,7 +8872,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8902,7 +8902,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8932,7 +8932,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8962,7 +8962,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -8993,7 +8993,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9023,7 +9023,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9053,7 +9053,7 @@ presubmits:
         value: digitalocean
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9083,7 +9083,7 @@ presubmits:
         value: digitalocean
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9113,7 +9113,7 @@ presubmits:
         value: equinixmetal
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9143,7 +9143,7 @@ presubmits:
         value: equinixmetal
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9173,7 +9173,7 @@ presubmits:
         value: equinixmetal
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9203,7 +9203,7 @@ presubmits:
         value: gce
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9233,7 +9233,7 @@ presubmits:
         value: hetzner
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9263,7 +9263,7 @@ presubmits:
         value: hetzner
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9293,7 +9293,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9323,7 +9323,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9353,7 +9353,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9383,7 +9383,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9413,7 +9413,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9443,7 +9443,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9473,7 +9473,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9503,7 +9503,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9533,7 +9533,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9563,7 +9563,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9593,7 +9593,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9623,7 +9623,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9653,7 +9653,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9684,7 +9684,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9714,7 +9714,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9744,7 +9744,7 @@ presubmits:
         value: digitalocean
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9774,7 +9774,7 @@ presubmits:
         value: digitalocean
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9804,7 +9804,7 @@ presubmits:
         value: equinixmetal
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9834,7 +9834,7 @@ presubmits:
         value: equinixmetal
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9864,7 +9864,7 @@ presubmits:
         value: equinixmetal
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9894,7 +9894,7 @@ presubmits:
         value: gce
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9924,7 +9924,7 @@ presubmits:
         value: hetzner
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9954,7 +9954,7 @@ presubmits:
         value: hetzner
       - name: TEST_TIMEOUT
         value: 90m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -9984,7 +9984,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10014,7 +10014,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10044,7 +10044,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10074,7 +10074,7 @@ presubmits:
         value: openstack
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10104,7 +10104,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10134,7 +10134,7 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10159,7 +10159,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10184,7 +10184,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10209,7 +10209,7 @@ presubmits:
         value: aws
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10232,7 +10232,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10257,7 +10257,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10282,7 +10282,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10308,7 +10308,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10333,7 +10333,7 @@ presubmits:
         value: azure
       - name: TEST_TIMEOUT
         value: 120m
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:
@@ -10356,7 +10356,7 @@ presubmits:
       env:
       - name: PROVIDER
         value: gce
-      image: quay.io/kubermatic/build:go-1.22-node-20-6
+      image: quay.io/kubermatic/build:go-1.23-node-20-0
       imagePullPolicy: Always
       name: ""
       resources:

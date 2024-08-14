@@ -57,7 +57,6 @@ func patchCRISocketAnnotation(s *state.State) error {
 	}
 
 	for _, node := range nodes.Items {
-		node := node
 		if socketPath, found := node.Annotations[kubeadmCRISocket]; found {
 			if socketPath != "/var/run/dockershim.sock" {
 				continue

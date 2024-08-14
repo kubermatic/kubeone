@@ -156,8 +156,6 @@ func labelNodes(s *state.State) error {
 
 func applyHostLabels(ctx context.Context, hosts map[string]kubeoneapi.HostConfig, dynClient client.Client) error {
 	for nodeName, host := range hosts {
-		nodeName := nodeName
-		host := host
 		updateErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 			var node corev1.Node
 

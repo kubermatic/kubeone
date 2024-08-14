@@ -57,7 +57,6 @@ func Test_timeBefore(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			if got := timeBefore(tt.args.t1, tt.args.t2); got != tt.want {
 				t.Errorf("timeBefore() = %v, want %v", got, tt.want)

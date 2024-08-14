@@ -152,7 +152,6 @@ func TestKubeadmDebian(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			got, err := KubeadmDebian(&tt.args.cluster, false)
@@ -191,7 +190,6 @@ func TestMigrateToContainerd(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			cls := genCluster(
@@ -249,7 +247,6 @@ func TestKubeadmCentOS(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			got, err := KubeadmCentOS(&tt.args.cluster, tt.args.force)
@@ -333,7 +330,6 @@ func TestKubeadmAmazonLinux(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			got, err := KubeadmAmazonLinux(&tt.args.cluster, tt.args.force)
@@ -396,7 +392,6 @@ func TestKubeadmFlatcar(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			got, err := KubeadmFlatcar(&tt.args.cluster)
