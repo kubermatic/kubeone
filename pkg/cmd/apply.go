@@ -44,6 +44,7 @@ type applyOpts struct {
 	// Upgrade flags
 	ForceUpgrade              bool `longflag:"force-upgrade"`
 	UpgradeMachineDeployments bool `longflag:"upgrade-machine-deployments"`
+	PruneImages               bool `longflag:"prune-images"`
 	CreateMachineDeployments  bool `longflag:"create-machine-deployments"`
 	RotateEncryptionKey       bool `longflag:"rotate-encryption-key"`
 }
@@ -58,6 +59,7 @@ func (opts *applyOpts) BuildState() (*state.State, error) {
 	s.ForceInstall = opts.ForceInstall
 	s.ForceUpgrade = opts.ForceUpgrade
 	s.UpgradeMachineDeployments = opts.UpgradeMachineDeployments
+	s.PruneImages = opts.PruneImages
 	s.CreateMachineDeployments = opts.CreateMachineDeployments
 
 	return s, initBackup(s.BackupFile)
@@ -131,6 +133,12 @@ func applyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		longFlagName(opts, "UpgradeMachineDeployments"),
 		false,
 		"upgrade MachineDeployments objects")
+
+	cmd.Flags().BoolVar(
+		&opts.PruneImages,
+		longFlagName(opts, "PruneImages"),
+		false,
+		"delete unused container images on control plane and static worker nodes")
 
 	cmd.Flags().BoolVar(
 		&opts.CreateMachineDeployments,

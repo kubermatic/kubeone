@@ -110,6 +110,7 @@ type State struct {
 	RemoveBinaries            bool
 	ForceUpgrade              bool
 	ForceInstall              bool
+	PruneImages               bool
 	UpgradeMachineDeployments bool
 	CreateMachineDeployments  bool
 	CCMMigration              bool

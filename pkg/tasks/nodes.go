@@ -98,6 +98,23 @@ func ensureRestartKubeAPIServerCrictl(s *state.State) error {
 	return fail.SSH(err, "restarting kubeapi-server pod")
 }
 
+func pruneImagesOnAllNodes(s *state.State) error {
+	s.Logger.Infof("Deleting unused container images...")
+
+	// Prune unused container images on all nodes.
+	if err := s.RunTaskOnAllNodes(pruneImages, state.RunParallel); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func pruneImages(s *state.State, _ *kubeoneapi.HostConfig, _ executor.Interface) error {
+	_, _, err := s.Runner.RunRaw(scripts.PruneImages())
+
+	return fail.SSH(err, "deleting unused container images")
+}
+
 func labelNodes(s *state.State) error {
 	s.Logger.Infof("Labeling nodes...")
 

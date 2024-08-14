@@ -29,6 +29,7 @@ type upgradeOpts struct {
 	globalOptions
 	ForceUpgrade              bool `longflag:"force" shortflag:"f"`
 	UpgradeMachineDeployments bool `longflag:"upgrade-machine-deployments"`
+	PruneImages               bool `longflag:"prune-images"`
 }
 
 func (opts *upgradeOpts) BuildState() (*state.State, error) {
@@ -83,6 +84,12 @@ func upgradeCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		longFlagName(opts, "UpgradeMachineDeployments"),
 		false,
 		"upgrade MachineDeployments objects")
+
+	cmd.Flags().BoolVar(
+		&opts.PruneImages,
+		longFlagName(opts, "PruneImages"),
+		false,
+		"delete unused container images on control plane and static worker nodes")
 
 	return cmd
 }

@@ -55,6 +55,10 @@ var (
 	restartKubeletTemplate = heredoc.Doc(`
 		sudo systemctl restart kubelet
 	`)
+
+	pruneImages = heredoc.Doc(`
+		sudo crictl rmi --prune
+	`)
 )
 
 func Hostname() string {
@@ -71,4 +75,8 @@ func RestartKubeAPIServerCrictl(ensure bool) (string, error) {
 
 func RestartKubelet() string {
 	return restartKubeletTemplate
+}
+
+func PruneImages() string {
+	return pruneImages
 }
