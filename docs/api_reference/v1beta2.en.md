@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2024-08-14T17:25:19+01:00
+date = 2024-08-14T17:31:08+01:00
 weight = 11
 +++
 ## v1beta2
@@ -456,7 +456,7 @@ HetznerSpec defines the Hetzner cloud provider
 
 ### HostConfig
 
-HostConfig describes a single control plane node.
+HostConfig describes a single control plane or worker node.
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |

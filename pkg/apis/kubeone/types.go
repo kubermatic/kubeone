@@ -236,7 +236,7 @@ const (
 	OperatingSystemNameUnknown    OperatingSystemName = ""
 )
 
-// HostConfig describes a single control plane node.
+// HostConfig describes a single control plane or worker node.
 type HostConfig struct {
 	// ID automatically assigned at runtime.
 	ID int `json:"-"`
