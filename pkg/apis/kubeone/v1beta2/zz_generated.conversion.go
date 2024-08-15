@@ -373,11 +373,6 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*kubeone.KubeletConfig)(nil), (*KubeletConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_kubeone_KubeletConfig_To_v1beta2_KubeletConfig(a.(*kubeone.KubeletConfig), b.(*KubeletConfig), scope)
-	}); err != nil {
-		return err
-	}
 	if err := s.AddGeneratedConversionFunc((*LoggingConfig)(nil), (*kubeone.LoggingConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1beta2_LoggingConfig_To_kubeone_LoggingConfig(a.(*LoggingConfig), b.(*kubeone.LoggingConfig), scope)
 	}); err != nil {
@@ -640,6 +635,11 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}
 	if err := s.AddConversionFunc((*kubeone.KubeOneCluster)(nil), (*KubeOneCluster)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_kubeone_KubeOneCluster_To_v1beta2_KubeOneCluster(a.(*kubeone.KubeOneCluster), b.(*KubeOneCluster), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*kubeone.KubeletConfig)(nil), (*KubeletConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_kubeone_KubeletConfig_To_v1beta2_KubeletConfig(a.(*kubeone.KubeletConfig), b.(*KubeletConfig), scope)
 	}); err != nil {
 		return err
 	}
