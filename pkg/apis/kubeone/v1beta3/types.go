@@ -233,7 +233,7 @@ const (
 	OperatingSystemNameUnknown    OperatingSystemName = ""
 )
 
-// HostConfig describes a single control plane node.
+// HostConfig describes a single control plane or worker node.
 type HostConfig struct {
 	// ID automatically assigned at runtime.
 	ID int `json:"-"`
@@ -340,6 +340,11 @@ type KubeletConfig struct {
 	// If not provided, default value provided by kubelet will be used
 	// (max. 110 pods per node)
 	MaxPods *int32 `json:"maxPods,omitempty"`
+
+	// PodPidsLimit configures the maximum number of processes running in a Pod
+	// If not provided, default value provided by kubelet will be used -1
+	// See more about pid-limiting at: https://kubernetes.io/docs/concepts/policy/pid-limiting/
+	PodPidsLimit *int64 `json:"podPidsLimit,omitempty"`
 }
 
 // APIEndpoint is the endpoint used to communicate with the Kubernetes API

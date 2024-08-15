@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2024-08-05T19:41:51+03:00
+date = 2024-08-15T09:52:25+01:00
 weight = 11
 +++
 ## v1beta3
@@ -458,7 +458,7 @@ HetznerSpec defines the Hetzner cloud provider
 
 ### HostConfig
 
-HostConfig describes a single control plane node.
+HostConfig describes a single control plane or worker node.
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
@@ -559,6 +559,7 @@ KubeletConfig provides some kubelet configuration options
 | kubeReserved | KubeReserved configure --kube-reserved command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
 | evictionHard | EvictionHard configure --eviction-hard command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
 | maxPods | MaxPods configures maximum number of pods per node. If not provided, default value provided by kubelet will be used (max. 110 pods per node) | *int32 | false |
+| podPidsLimit | PodPidsLimit configures the maximum number of processes running in a Pod If not provided, default value provided by kubelet will be used -1 See more about pid-limiting at: https://kubernetes.io/docs/concepts/policy/pid-limiting/ | *int64 | false |
 
 [Back to Group](#v1beta3)
 

@@ -590,6 +590,14 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 		kubeletCLIFlags["max-pods"] = strconv.Itoa(int(*m))
 	}
 
+	if m := host.Kubelet.PodPidsLimit; m != nil {
+		kubeletCLIFlags["pod-max-pids"] = strconv.Itoa(int(*m))
+	} else {
+		// Set default value if PodsPidsLimits is nil
+		// in order to pass the 4.2.13 Check in CIS Benchmark 1.8
+		kubeletCLIFlags["pod-max-pids"] = strconv.Itoa(-1)
+	}
+
 	return kubeadmv1beta3.NodeRegistrationOptions{
 		Name:             host.Hostname,
 		Taints:           host.Taints,

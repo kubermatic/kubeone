@@ -65,6 +65,10 @@ func Convert_v1beta2_Addon_To_kubeone_AddonRef(in *Addon, out *kubeoneapi.AddonR
 	return nil
 }
 
+func Convert_kubeone_KubeletConfig_To_v1beta2_KubeletConfig(in *kubeoneapi.KubeletConfig, out *KubeletConfig, s conversion.Scope) error {
+	return autoConvert_kubeone_KubeletConfig_To_v1beta2_KubeletConfig(in, out, s)
+}
+
 func Convert_kubeone_AddonRef_To_v1beta2_Addon(*kubeoneapi.AddonRef, *Addon, conversion.Scope) error {
 	return nil
 }
