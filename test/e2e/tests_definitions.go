@@ -1107,10 +1107,6 @@ var (
 			Name:                 "install_containerd",
 			ManifestTemplatePath: "testdata/containerd_simple.yaml",
 		},
-		"upgrade_containerd": &scenarioUpgrade{
-			Name:                 "upgrade_containerd",
-			ManifestTemplatePath: "testdata/containerd_simple.yaml",
-		},
 
 		// external containerd
 		"install_containerd_external": &scenarioInstall{
@@ -1119,7 +1115,7 @@ var (
 		},
 		"upgrade_containerd_external": &scenarioUpgrade{
 			Name:                 "upgrade_containerd_external",
-			ManifestTemplatePath: "testdata/containerd_simple_external.yaml",
+			ManifestTemplatePath: "testdata/containerd_simple_external_v1beta2.yaml",
 		},
 		"conformance_containerd_external": &scenarioConformance{
 			Name:                 "conformance_containerd_external",
@@ -1137,7 +1133,7 @@ var (
 		},
 		"upgrade_cilium_containerd_external": &scenarioUpgrade{
 			Name:                 "upgrade_cilium_containerd_external",
-			ManifestTemplatePath: "testdata/containerd_cilium_external.yaml",
+			ManifestTemplatePath: "testdata/containerd_cilium_external_v1beta2.yaml",
 		},
 		"kube_proxy_ipvs_external": &scenarioInstall{
 			Name:                 "kube_proxy_ipvs_external",
