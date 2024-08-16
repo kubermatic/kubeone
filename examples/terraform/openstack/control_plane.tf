@@ -14,6 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+resource "openstack_compute_servergroup_v2" "control_plane" {
+  name     = "${var.cluster_name}-control_plane"
+  policies = [var.control_plane_group_policy]
+}
+
 resource "openstack_networking_port_v2" "control_plane" {
   count = var.control_plane_vm_count
   name  = "${var.cluster_name}-control_plane-${count.index}"
@@ -36,6 +41,10 @@ resource "openstack_compute_instance_v2" "control_plane" {
   key_pair        = openstack_compute_keypair_v2.deployer.name
   security_groups = [openstack_networking_secgroup_v2.securitygroup.name]
   config_drive    = var.config_drive
+
+  scheduler_hints {
+    group = openstack_compute_servergroup_v2.control_plane.id
+  }
 
   network {
     port = element(openstack_networking_port_v2.control_plane[*].id, count.index)

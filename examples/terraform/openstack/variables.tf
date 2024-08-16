@@ -88,6 +88,12 @@ variable "control_plane_flavor" {
   type        = string
 }
 
+variable "control_plane_group_policy" {
+  description = "OpenStack instance group policy for the control plane nodes. Cannot be changed without recreating VMs!"
+  default     = "soft-anti-affinity"
+  type        = string
+}
+
 # Worker Node Variables
 variable "worker_os" {
   description = "OS to run on worker machines"
