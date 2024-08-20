@@ -7,7 +7,7 @@ versions:
 cloudProvider:
   external: true
 
-aaddons:
+addons:
   enable: true
   addons:
   - name: default-storage-class
