@@ -245,14 +245,14 @@ func criToolsVersion(cluster *kubeoneapi.KubeOneCluster) string {
 	kubeSemVer := semver.MustParse(cluster.Versions.Kubernetes)
 
 	switch kubeSemVer.Minor() {
-	case 27:
-		return "1.27.1"
 	case 28:
 		return "1.28.0"
 	case 29:
 		return "1.29.0"
 	case 30:
-		return "1.30.0"
+		return "1.30.1"
+	case 31:
+		return "1.31.1"
 	}
 
 	return ""

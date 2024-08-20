@@ -22,5 +22,5 @@ import (
 
 // DefaultAdmissionControllers return list of default admission controllers for given kubernetes version
 func DefaultAdmissionControllers() string {
-	return strings.Join(defaultAdmissionControllersv1_27v1_28v1_29, ",")
+	return strings.Join(defaultAdmissionControllers, ",")
 }
