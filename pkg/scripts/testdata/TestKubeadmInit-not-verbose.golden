@@ -5,5 +5,5 @@ if [[ -f /etc/kubernetes/admin.conf ]]; then
 	exit 0;
 fi
 
-sudo kubeadm  init --config=test-wd/cfg/master_0.yaml
+sudo kubeadm  init --config=test-wd/cfg/control_plane_0.yaml
 sudo find /etc/kubernetes/pki/ -name *.crt -exec chmod 600 {} \;
