@@ -385,10 +385,9 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 	addControllerManagerNetworkArgs(clusterConfig.ControllerManager.ExtraArgs, cluster.ClusterNetwork)
 
 	args := kubeadmargs.NewFrom(clusterConfig.APIServer.ExtraArgs)
-	features.UpdateKubeadmClusterConfiguration(cluster.Features, args)
+	features.UpdateKubeadmArguments(cluster.Features, args)
 
 	clusterConfig.APIServer.ExtraArgs = args.APIServer.ExtraArgs
-	clusterConfig.FeatureGates = args.FeatureGates
 
 	// This function call must be at the very end to ensure flags and feature gates
 	// can be overridden.

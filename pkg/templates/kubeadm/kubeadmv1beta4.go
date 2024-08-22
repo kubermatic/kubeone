@@ -23,17 +23,17 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates"
-	"k8c.io/kubeone/pkg/templates/kubeadm/v1beta3"
+	"k8c.io/kubeone/pkg/templates/kubeadm/v1beta4"
 
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
-type kubeadmv1beta3 struct {
+type kubeadmv1beta4 struct {
 	version string
 }
 
-func (*kubeadmv1beta3) Config(s *state.State, instance kubeoneapi.HostConfig) (*Config, error) {
-	config, err := v1beta3.NewConfig(s, instance)
+func (*kubeadmv1beta4) Config(s *state.State, instance kubeoneapi.HostConfig) (*Config, error) {
+	config, err := v1beta4.NewConfig(s, instance)
 	if err != nil {
 		return nil, err
 	}
@@ -77,8 +77,8 @@ func (*kubeadmv1beta3) Config(s *state.State, instance kubeoneapi.HostConfig) (*
 	}, nil
 }
 
-func (*kubeadmv1beta3) ConfigWorker(s *state.State, instance kubeoneapi.HostConfig) (*Config, error) {
-	config, err := v1beta3.NewConfigWorker(s, instance)
+func (*kubeadmv1beta4) ConfigWorker(s *state.State, instance kubeoneapi.HostConfig) (*Config, error) {
+	config, err := v1beta4.NewConfigWorker(s, instance)
 	if err != nil {
 		return nil, err
 	}
@@ -93,14 +93,14 @@ func (*kubeadmv1beta3) ConfigWorker(s *state.State, instance kubeoneapi.HostConf
 	}, nil
 }
 
-func (k *kubeadmv1beta3) UpgradeLeaderCommand() string {
+func (k *kubeadmv1beta4) UpgradeLeaderCommand() string {
 	return fmt.Sprintf("kubeadm upgrade apply --yes %s", k.version)
 }
 
-func (*kubeadmv1beta3) UpgradeFollowerCommand() string {
+func (*kubeadmv1beta4) UpgradeFollowerCommand() string {
 	return kubeadmUpgradeNodeCommand
 }
 
-func (*kubeadmv1beta3) UpgradeStaticWorkerCommand() string {
+func (*kubeadmv1beta4) UpgradeStaticWorkerCommand() string {
 	return kubeadmUpgradeNodeCommand
 }

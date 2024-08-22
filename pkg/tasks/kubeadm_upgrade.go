@@ -24,7 +24,10 @@ import (
 )
 
 func upgradeLeaderControlPlane(s *state.State, nodeID int) error {
-	kadm := kubeadm.New(s.Cluster.Versions.Kubernetes)
+	kadm, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return err
+	}
 
 	cmd, err := scripts.KubeadmUpgrade(kadm.UpgradeLeaderCommand(), s.WorkDir, true, nodeID)
 	if err != nil {
@@ -37,7 +40,10 @@ func upgradeLeaderControlPlane(s *state.State, nodeID int) error {
 }
 
 func upgradeFollowerControlPlane(s *state.State, nodeID int) error {
-	kadm := kubeadm.New(s.Cluster.Versions.Kubernetes)
+	kadm, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return err
+	}
 
 	cmd, err := scripts.KubeadmUpgrade(kadm.UpgradeFollowerCommand(), s.WorkDir, false, nodeID)
 	if err != nil {
@@ -50,9 +56,12 @@ func upgradeFollowerControlPlane(s *state.State, nodeID int) error {
 }
 
 func upgradeStaticWorker(s *state.State) error {
-	kadm := kubeadm.New(s.Cluster.Versions.Kubernetes)
+	kadm, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return err
+	}
 
-	_, _, err := s.Runner.Run(`sudo `+kadm.UpgradeStaticWorkerCommand(), nil)
+	_, _, err = s.Runner.Run(`sudo `+kadm.UpgradeStaticWorkerCommand(), nil)
 
 	return fail.SSH(err, "running kubeadm upgrade on static worker")
 }
