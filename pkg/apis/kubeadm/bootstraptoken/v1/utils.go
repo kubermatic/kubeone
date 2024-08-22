@@ -24,11 +24,23 @@ import (
 
 	"github.com/pkg/errors"
 
-	corev1 "k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	bootstrapapi "k8s.io/cluster-bootstrap/token/api"
 	bootstraputil "k8s.io/cluster-bootstrap/token/util"
 	bootstrapsecretutil "k8s.io/cluster-bootstrap/util/secrets"
+)
+
+const (
+	// When a token is matched with 'BootstrapTokenPattern', the size of validated substrings returned by
+	// regexp functions which contains 'Submatch' in their names will be 3.
+	// Submatch 0 is the match of the entire expression, submatch 1 is
+	// the match of the first parenthesized subexpression, and so on.
+	// e.g.:
+	// result := bootstraputil.BootstrapTokenRegexp.FindStringSubmatch("abcdef.1234567890123456")
+	// result == []string{"abcdef.1234567890123456","abcdef","1234567890123456"}
+	// len(result) == 3
+	validatedSubstringsSize = 3
 )
 
 // MarshalJSON implements the json.Marshaler interface.
@@ -44,7 +56,7 @@ func (bts *BootstrapTokenString) UnmarshalJSON(b []byte) error {
 	}
 
 	// Remove unnecessary " characters coming from the JSON parser
-	token := strings.ReplaceAll(string(b), `"`, ``)
+	token := strings.Replace(string(b), `"`, ``, -1)
 	// Convert the string Token to a BootstrapTokenString object
 	newbts, err := NewBootstrapTokenString(token)
 	if err != nil {
@@ -52,7 +64,6 @@ func (bts *BootstrapTokenString) UnmarshalJSON(b []byte) error {
 	}
 	bts.ID = newbts.ID
 	bts.Secret = newbts.Secret
-
 	return nil
 }
 
@@ -61,7 +72,6 @@ func (bts BootstrapTokenString) String() string {
 	if len(bts.ID) > 0 && len(bts.Secret) > 0 {
 		return bootstraputil.TokenFromIDAndSecret(bts.ID, bts.Secret)
 	}
-
 	return ""
 }
 
@@ -71,8 +81,7 @@ func (bts BootstrapTokenString) String() string {
 // is of the right format
 func NewBootstrapTokenString(token string) (*BootstrapTokenString, error) {
 	substrs := bootstraputil.BootstrapTokenRegexp.FindStringSubmatch(token)
-	// TODO: Add a constant for the 3 value here, and explain better why it's needed (other than because how the regexp parsing works)
-	if len(substrs) != 3 {
+	if len(substrs) != validatedSubstringsSize {
 		return nil, errors.Errorf("the bootstrap token %q was not of the form %q", token, bootstrapapi.BootstrapTokenPattern)
 	}
 
@@ -87,8 +96,8 @@ func NewBootstrapTokenStringFromIDAndSecret(id, secret string) (*BootstrapTokenS
 
 // BootstrapTokenToSecret converts the given BootstrapToken object to its Secret representation that
 // may be submitted to the API Server in order to be stored.
-func BootstrapTokenToSecret(bt *BootstrapToken) *corev1.Secret {
-	return &corev1.Secret{
+func BootstrapTokenToSecret(bt *BootstrapToken) *v1.Secret {
+	return &v1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      bootstraputil.BootstrapTokenSecretName(bt.Token.ID),
 			Namespace: metav1.NamespaceSystem,
@@ -118,6 +127,7 @@ func encodeTokenSecretData(token *BootstrapToken, now time.Time) map[string][]by
 		// TODO: This maybe should be a helper function in bootstraputil?
 		expirationString := token.Expires.Time.UTC().Format(time.RFC3339)
 		data[bootstrapapi.BootstrapTokenExpirationKey] = []byte(expirationString)
+
 	} else if token.TTL != nil && token.TTL.Duration > 0 {
 		// Only if .Expires is unset, TTL might have an effect
 		// Get the current time, add the specified duration, and format it accordingly
@@ -132,12 +142,11 @@ func encodeTokenSecretData(token *BootstrapToken, now time.Time) map[string][]by
 	if len(token.Groups) > 0 {
 		data[bootstrapapi.BootstrapTokenExtraGroupsKey] = []byte(strings.Join(token.Groups, ","))
 	}
-
 	return data
 }
 
 // BootstrapTokenFromSecret returns a BootstrapToken object from the given Secret
-func BootstrapTokenFromSecret(secret *corev1.Secret) (*BootstrapToken, error) {
+func BootstrapTokenFromSecret(secret *v1.Secret) (*BootstrapToken, error) {
 	// Get the Token ID field from the Secret data
 	tokenID := bootstrapsecretutil.GetData(secret, bootstrapapi.BootstrapTokenIDKey)
 	if len(tokenID) == 0 {
