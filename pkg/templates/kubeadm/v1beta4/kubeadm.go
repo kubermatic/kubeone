@@ -189,8 +189,8 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 		clusterConfig.DNS.Disabled = cluster.ClusterNetwork.KubeProxy.SkipInstallation
 	}
 
-	if err := addFeaturesExtraMounts(s, clusterConfig); err != nil {
-		return nil, err
+	if fErr := addFeaturesExtraMounts(s, clusterConfig); err != nil {
+		return nil, fErr
 	}
 	addControllerManagerNetworkArgs(clusterConfig, cluster.ClusterNetwork)
 
