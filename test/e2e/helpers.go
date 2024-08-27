@@ -58,7 +58,7 @@ import (
 
 const (
 	labelControlPlaneNode = "node-role.kubernetes.io/control-plane"
-	prowImage             = "quay.io/kubermatic/build:go-1.23-node-20-0"
+	prowjobImage          = "quay.io/kubermatic/build:go-1.23-node-20-1"
 	k1CloneURI            = "ssh://git@github.com/kubermatic/kubeone.git"
 )
 
@@ -449,7 +449,7 @@ func newProwJob(prowJobName string, labels map[string]string, testTitle string, 
 		Spec: &corev1.PodSpec{
 			Containers: []corev1.Container{
 				{
-					Image:           prowImage,
+					Image:           prowjobImage,
 					ImagePullPolicy: corev1.PullAlways,
 					Command: []string{
 						"./test/go-test-e2e.sh",

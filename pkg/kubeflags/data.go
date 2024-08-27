@@ -16,7 +16,7 @@ limitations under the License.
 
 package kubeflags
 
-var defaultAdmissionControllersv1_27v1_28v1_29 = []string{
+var defaultAdmissionControllers = []string{
 	"NamespaceLifecycle",
 	"LimitRanger",
 	"ServiceAccount",

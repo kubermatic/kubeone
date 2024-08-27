@@ -25,13 +25,13 @@ import (
 var (
 	ccmMigrationRegenerateControlPlaneConfigs = heredoc.Doc(`
 		sudo kubeadm {{ .VERBOSE }} init phase control-plane apiserver \
-			--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+			--config={{ .WORK_DIR }}/cfg/control_plane_{{ .NODE_ID }}.yaml
 
 		sudo kubeadm {{ .VERBOSE }} init phase control-plane controller-manager \
-			--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+			--config={{ .WORK_DIR }}/cfg/control_plane_{{ .NODE_ID }}.yaml
 		
 		sudo kubeadm {{ .VERBOSE }} init phase kubelet-start \
-			--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+			--config={{ .WORK_DIR }}/cfg/control_plane_{{ .NODE_ID }}.yaml
 	`)
 )
 

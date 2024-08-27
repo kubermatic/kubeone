@@ -27,7 +27,7 @@ var (
 		[[ -f /etc/kubernetes/admin.conf ]] && exit 0
 
 		sudo kubeadm {{ .VERBOSE }} join \
-			--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+			--config={{ .WORK_DIR }}/cfg/control_plane_{{ .NODE_ID }}.yaml
 		sudo find /etc/kubernetes/pki/ -name *.crt -exec chmod 600 {} \;
 	`)
 
@@ -41,7 +41,7 @@ var (
 
 	kubeadmCertScriptTemplate = heredoc.Doc(`
 		sudo kubeadm {{ .VERBOSE }} init phase certs all \
-			--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+			--config={{ .WORK_DIR }}/cfg/control_plane_full_{{ .NODE_ID }}.yaml
 		sudo find /etc/kubernetes/pki/ -name *.crt -exec chmod 600 {} \;
 	`)
 
@@ -51,7 +51,7 @@ var (
 			exit 0;
 		fi
 
-		sudo kubeadm {{ .VERBOSE }} init {{ if .SKIP_PHASE }}--skip-phases={{ .SKIP_PHASE }} {{ end}}--config={{ .WORK_DIR }}/cfg/master_{{ .NODE_ID }}.yaml
+		sudo kubeadm {{ .VERBOSE }} init {{ if .SKIP_PHASE }}--skip-phases={{ .SKIP_PHASE }} {{ end}}--config={{ .WORK_DIR }}/cfg/control_plane_{{ .NODE_ID }}.yaml
 		sudo find /etc/kubernetes/pki/ -name *.crt -exec chmod 600 {} \;
 	`)
 

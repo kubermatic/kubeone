@@ -64,7 +64,10 @@ func generateKubeadm(s *state.State) error {
 		return err
 	}
 
-	kubeadmProvider := kubeadm.New(s.Cluster.Versions.Kubernetes)
+	kubeadmProvider, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return err
+	}
 
 	for idx := range s.Cluster.ControlPlane.Hosts {
 		node := s.Cluster.ControlPlane.Hosts[idx]
@@ -73,7 +76,16 @@ func generateKubeadm(s *state.State) error {
 			return err
 		}
 
-		s.Configuration.AddFile(fmt.Sprintf("cfg/master_%d.yaml", node.ID), kubeadmConf.FullConfiguration)
+		// TODO: This needs further refactoring. The follower control plane nodes should not need the full
+		// configuration under any circumstances. However, the PR where this is being introduced is already
+		// huge, and I don't want to make the reviewer's life miserable. :)
+		if node.IsLeader {
+			s.Configuration.AddFile(fmt.Sprintf("cfg/control_plane_full_%d.yaml", node.ID), kubeadmConf.ControlPlaneInitConfiguration)
+			s.Configuration.AddFile(fmt.Sprintf("cfg/control_plane_%d.yaml", node.ID), kubeadmConf.ControlPlaneInitConfiguration)
+		} else {
+			s.Configuration.AddFile(fmt.Sprintf("cfg/control_plane_full_%d.yaml", node.ID), kubeadmConf.ControlPlaneInitConfiguration)
+			s.Configuration.AddFile(fmt.Sprintf("cfg/control_plane_%d.yaml", node.ID), kubeadmConf.JoinConfiguration)
+		}
 	}
 
 	for idx := range s.Cluster.StaticWorkers.Hosts {
@@ -101,7 +113,10 @@ func uploadKubeadmToConfigMaps(s *state.State) error {
 		return err
 	}
 
-	kubeadmProvider := kubeadm.New(s.Cluster.Versions.Kubernetes)
+	kubeadmProvider, err := kubeadm.New(s.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return err
+	}
 
 	kubeadmConfig, err := kubeadmProvider.Config(s, leader)
 	if err != nil {

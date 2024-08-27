@@ -18,6 +18,7 @@ package v1beta3
 
 import (
 	"fmt"
+	"net"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -114,7 +115,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 		return nil, fail.Runtime(err, "generating kubeadm bootstrap token")
 	}
 
-	controlPlaneEndpoint := fmt.Sprintf("%s:%d", cluster.APIEndpoint.Host, cluster.APIEndpoint.Port)
+	controlPlaneEndpoint := net.JoinHostPort(cluster.APIEndpoint.Host, strconv.Itoa(cluster.APIEndpoint.Port))
 
 	var advertiseAddress string
 	if s.Cluster.ClusterNetwork.IPFamily.IsIPv6Primary() {
@@ -385,10 +386,9 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 	addControllerManagerNetworkArgs(clusterConfig.ControllerManager.ExtraArgs, cluster.ClusterNetwork)
 
 	args := kubeadmargs.NewFrom(clusterConfig.APIServer.ExtraArgs)
-	features.UpdateKubeadmClusterConfiguration(cluster.Features, args)
+	features.UpdateKubeadmArguments(cluster.Features, args)
 
 	clusterConfig.APIServer.ExtraArgs = args.APIServer.ExtraArgs
-	clusterConfig.FeatureGates = args.FeatureGates
 
 	// This function call must be at the very end to ensure flags and feature gates
 	// can be overridden.

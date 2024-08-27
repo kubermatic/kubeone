@@ -17,7 +17,10 @@ limitations under the License.
 package kubeadm
 
 import (
+	"github.com/Masterminds/semver/v3"
+
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/semverutil"
 	"k8c.io/kubeone/pkg/state"
 )
 
@@ -25,12 +28,14 @@ const (
 	kubeadmUpgradeNodeCommand = "kubeadm upgrade node"
 )
 
+var preV131Constraint = semverutil.MustParseConstraint("< 1.31")
+
 type Config struct {
-	FullConfiguration      string
-	ClusterConfiguration   string
-	JoinConfiguration      string
-	KubeletConfiguration   string
-	KubeProxyConfiguration string
+	ControlPlaneInitConfiguration string
+	ClusterConfiguration          string
+	JoinConfiguration             string
+	KubeletConfiguration          string
+	KubeProxyConfiguration        string
 }
 
 // Kubedm interface abstract differences between different kubeadm versions
@@ -42,7 +47,16 @@ type Kubedm interface {
 	UpgradeStaticWorkerCommand() string
 }
 
-// New constructor
-func New(ver string) Kubedm {
-	return &kubeadmv1beta3{version: ver}
+// New is a constructor for the kubeadm configuration
+func New(ver string) (Kubedm, error) {
+	sver, err := semver.NewVersion(ver)
+	if err != nil {
+		return nil, err
+	}
+
+	if preV131Constraint.Check(sver) {
+		return &kubeadmv1beta3{version: ver}, nil
+	}
+
+	return &kubeadmv1beta4{version: ver}, nil
 }

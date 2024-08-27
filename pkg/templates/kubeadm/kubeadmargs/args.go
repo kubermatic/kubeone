@@ -18,8 +18,7 @@ package kubeadmargs
 
 // Args is a wrapper abstract type on top of kubeadm
 type Args struct {
-	APIServer    APIServer
-	FeatureGates map[string]bool
+	APIServer APIServer
 }
 
 // APIServer arguments
@@ -51,6 +50,5 @@ func NewFrom(apiServerExtraArgs map[string]string) *Args {
 		APIServer: APIServer{
 			ExtraArgs: apiServerExtraArgs,
 		},
-		FeatureGates: map[string]bool{},
 	}
 }

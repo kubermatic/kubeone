@@ -35,11 +35,7 @@ const (
 	credentialSecretName = "kube-system/kubeone-registry-credentials" //nolint:gosec
 )
 
-var (
-	v124Constraint         = semverutil.MustParseConstraint(">= 1.24.0, < 1.25.0")
-	v125Constraint         = semverutil.MustParseConstraint(">= 1.25.0, < 1.26.0")
-	v126AndNewerConstraint = semverutil.MustParseConstraint(">= 1.26.0")
-)
+var preV131Constraint = semverutil.MustParseConstraint("< 1.31")
 
 // Leader returns the first configured host. Only call this after
 // validating the cluster config to ensure a leader exists.
@@ -214,8 +210,8 @@ func (crc ContainerRuntimeConfig) CRISocket() string {
 // depending on the desired Kubernetes version. It's important to use the same
 // pause image version for both container runtime and kubeadm to avoid issues.
 // Values come from:
-//   - https://github.com/kubernetes/kubernetes/blob/master/cmd/kubeadm/app/constants/constants.go#L423
-//   - https://github.com/containerd/containerd/blob/main/pkg/cri/config/config_unix.go#L90
+//   - https://github.com/kubernetes/kubernetes/blob/master/cmd/kubeadm/app/constants/constants.go#L438
+//   - https://github.com/containerd/containerd/blob/main/internal/cri/config/config.go#L73
 func (v VersionConfig) SandboxImage(imageRegistry func(string) string) (string, error) {
 	kubeSemVer, err := semver.NewVersion(v.Kubernetes)
 	if err != nil {
@@ -225,14 +221,10 @@ func (v VersionConfig) SandboxImage(imageRegistry func(string) string) (string, 
 	registry := imageRegistry("registry.k8s.io")
 
 	switch {
-	case v124Constraint.Check(kubeSemVer):
-		return fmt.Sprintf("%s/pause:3.7", registry), nil
-	case v125Constraint.Check(kubeSemVer):
-		return fmt.Sprintf("%s/pause:3.8", registry), nil
-	case v126AndNewerConstraint.Check(kubeSemVer):
-		fallthrough
-	default:
+	case preV131Constraint.Check(kubeSemVer):
 		return fmt.Sprintf("%s/pause:3.9", registry), nil
+	default:
+		return fmt.Sprintf("%s/pause:3.10", registry), nil
 	}
 }
 
