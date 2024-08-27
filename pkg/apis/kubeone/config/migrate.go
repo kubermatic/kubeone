@@ -28,38 +28,49 @@ import (
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
 	"k8c.io/kubeone/pkg/fail"
+	terraformv1beta2 "k8c.io/kubeone/pkg/terraform/v1beta2"
 	"k8c.io/kubeone/pkg/yamled"
 
 	kyaml "sigs.k8s.io/yaml"
 )
 
 // MigrateV1beta2V1beta3 migrates KubeOneCluster v1beta2 object to v1beta3
-func MigrateV1beta2V1beta3(clusterFilePath string) ([]byte, error) {
+func MigrateV1beta2V1beta3(clusterFilePath string, tfOutput []byte) ([]byte, error) {
 	originalManifest, err := loadClusterConfig(clusterFilePath)
 	if err != nil {
 		return nil, fail.Runtime(err, "loading cluster config to migrate")
 	}
 
 	var (
-		buffer           bytes.Buffer
-		oldManifest      = kubeonev1beta2.NewKubeOneCluster()
-		newManifest      = kubeonev1beta3.NewKubeOneCluster()
-		internalManifest = new(kubeoneapi.KubeOneCluster)
+		buffer                 bytes.Buffer
+		v1beta2KubeOneCluster  = kubeonev1beta2.NewKubeOneCluster()
+		v1beta3KubeOneCluster  = kubeonev1beta3.NewKubeOneCluster()
+		internalKubeOneCluster = new(kubeoneapi.KubeOneCluster)
 	)
 
 	if err = yaml.NewEncoder(&buffer).Encode(originalManifest.Root()); err != nil {
 		return nil, fail.Config(err, "marshaling v1beta2 KubeOneCluster")
 	}
 
-	if err = kyaml.UnmarshalStrict(buffer.Bytes(), oldManifest); err != nil {
+	if err = kyaml.UnmarshalStrict(buffer.Bytes(), v1beta2KubeOneCluster); err != nil {
 		return nil, fail.Runtime(err, "testing unmarshal v1beta2 KubeOneCluster")
 	}
 
-	if err = scheme.Scheme.Convert(oldManifest, internalManifest, kubeoneapi.SchemeGroupVersion); err != nil {
+	if tfOutput != nil {
+		tfConfig, tferr := terraformv1beta2.NewConfigFromJSON(tfOutput)
+		if tferr != nil {
+			return nil, tferr
+		}
+		if err = tfConfig.Apply(v1beta2KubeOneCluster); err != nil {
+			return nil, err
+		}
+	}
+
+	if err = scheme.Scheme.Convert(v1beta2KubeOneCluster, internalKubeOneCluster, kubeoneapi.SchemeGroupVersion); err != nil {
 		return nil, fail.Config(err, "converting v1beta2/KubeOneCluster into internal KubeOneCluster")
 	}
 
-	if err = scheme.Scheme.Convert(internalManifest, newManifest, kubeonev1beta3.SchemeGroupVersion); err != nil {
+	if err = scheme.Scheme.Convert(internalKubeOneCluster, v1beta3KubeOneCluster, kubeonev1beta3.SchemeGroupVersion); err != nil {
 		return nil, fail.Config(err, "converting internal KubeOneCluster into v1beta3/KubeOneCluster")
 	}
 
@@ -78,7 +89,7 @@ func MigrateV1beta2V1beta3(clusterFilePath string) ([]byte, error) {
 			convertor: func(p yamled.Path) {
 				// we moved helmReleases inside the addons
 				if originalManifest.Has(p) || originalManifest.Has(yamled.Path{"helmReleases"}) {
-					ybuf, _ := kyaml.Marshal(newManifest.Addons)
+					ybuf, _ := kyaml.Marshal(v1beta3KubeOneCluster.Addons)
 					addons, _ := yamled.Load(bytes.NewBuffer(ybuf))
 					originalManifest.Set(p, addons)
 				}
@@ -111,6 +122,20 @@ func MigrateV1beta2V1beta3(clusterFilePath string) ([]byte, error) {
 			path: yamled.Path{"helmReleases"},
 			convertor: func(p yamled.Path) {
 				originalManifest.Remove(p)
+			},
+		},
+		{
+			path: yamled.Path{"apiEndpoint"},
+			convertor: func(p yamled.Path) {
+				if v1beta2KubeOneCluster.APIEndpoint.Host == "" {
+					if len(v1beta2KubeOneCluster.ControlPlane.Hosts) > 0 {
+						defaultAPIEndpoint := v1beta2KubeOneCluster.ControlPlane.Hosts[0].PublicAddress
+						if defaultAPIEndpoint == "" {
+							defaultAPIEndpoint = v1beta2KubeOneCluster.ControlPlane.Hosts[0].PrivateAddress
+						}
+						originalManifest.Set(append(p, "host"), defaultAPIEndpoint)
+					}
+				}
 			},
 		},
 	}

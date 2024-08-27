@@ -464,7 +464,19 @@ func parseControlPlaneHosts(cfg *yamled.Document, hostList string) error {
 
 // runMigrate migrates the KubeOneCluster manifest from v1alpha1 to v1beta1
 func runMigrate(opts *globalOptions) error {
-	v1beta3Manifest, err := config.MigrateV1beta2V1beta3(opts.ManifestFile)
+	var (
+		tfOutput []byte
+		err      error
+	)
+
+	if opts.TerraformState != "" {
+		tfOutput, err = config.TFOutput(opts.TerraformState)
+		if err != nil {
+			return err
+		}
+	}
+
+	v1beta3Manifest, err := config.MigrateV1beta2V1beta3(opts.ManifestFile, tfOutput)
 	if err != nil {
 		return err
 	}

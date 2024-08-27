@@ -213,7 +213,7 @@ func NewConfigFromJSON(buf []byte) (*Config, error) {
 }
 
 // Apply adds the terraform configuration options to the given cluster config.
-func (output *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error {
+func (output *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error { //nolint:gocyclo
 	if output.KubeOneAPI.Value.Endpoint != "" {
 		cluster.APIEndpoint.Host = output.KubeOneAPI.Value.Endpoint
 	}
@@ -234,7 +234,9 @@ func (output *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error {
 		}
 	}
 
-	cluster.Name = cp.ClusterName
+	if cp.ClusterName != "" {
+		cluster.Name = cp.ClusterName
+	}
 
 	idIncrementer := idIncrementerHostConfigsOpts(0)
 	isLeader := isLeaderHostConfigsOpts(cp.LeaderIP)

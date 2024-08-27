@@ -18,6 +18,7 @@ package config
 
 import (
 	"flag"
+	"os"
 	"testing"
 
 	"k8c.io/kubeone/pkg/testhelper"
@@ -31,13 +32,25 @@ func TestV1Beta2ToV1Beta3Migration(t *testing.T) {
 		"just addons",
 		"helm",
 		"addons and helm",
+		"default api endpoint",
+		"default api endpoint with terraform output",
 	}
 
 	for _, test := range tests {
 		t.Run(test, func(t *testing.T) {
-			got, err := MigrateV1beta2V1beta3(testhelper.TestDataFSName(t, "_v1beta2.yaml"))
+			optionalTFOutputFile := testhelper.TestDataFSName(t, ".tfoutput.json")
+			tfoutput, err := os.ReadFile(optionalTFOutputFile)
 			if err != nil {
-				t.Fatalf("%s", err)
+				if !os.IsNotExist(err) {
+					t.Fatalf("unexpected error: %v", err)
+				} else {
+					t.Logf("optional terrform output %q doesn't exist, skipping", optionalTFOutputFile)
+				}
+			}
+
+			got, err := MigrateV1beta2V1beta3(testhelper.TestDataFSName(t, "_v1beta2.yaml"), tfoutput)
+			if err != nil {
+				t.Fatalf("%v", err)
 			}
 
 			testhelper.DiffOutput(t, testhelper.FSGoldenName(t), string(got), *updateFlag)

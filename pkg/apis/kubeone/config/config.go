@@ -72,7 +72,27 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath, credentialsFilePath string
 		return nil, fail.Runtime(err, "reading cluster configuration")
 	}
 
-	var tfOutput []byte
+	tfOutput, err := TFOutput(tfOutputPath)
+	if err != nil {
+		return nil, err
+	}
+
+	var credentialsFile []byte
+	if len(credentialsFilePath) != 0 {
+		credentialsFile, err = os.ReadFile(credentialsFilePath)
+		if err != nil {
+			return nil, fail.Runtime(err, "reading credentials file")
+		}
+	}
+
+	return BytesToKubeOneCluster(cluster, tfOutput, credentialsFile, logger)
+}
+
+func TFOutput(tfOutputPath string) ([]byte, error) {
+	var (
+		tfOutput []byte
+		err      error
+	)
 
 	switch {
 	case tfOutputPath == "-":
@@ -91,15 +111,7 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath, credentialsFilePath string
 		}
 	}
 
-	var credentialsFile []byte
-	if len(credentialsFilePath) != 0 {
-		credentialsFile, err = os.ReadFile(credentialsFilePath)
-		if err != nil {
-			return nil, fail.Runtime(err, "reading credentials file")
-		}
-	}
-
-	return BytesToKubeOneCluster(cluster, tfOutput, credentialsFile, logger)
+	return tfOutput, nil
 }
 
 // BytesToKubeOneCluster parses the bytes of the versioned KubeOneCluster manifests
