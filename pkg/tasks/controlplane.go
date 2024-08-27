@@ -31,7 +31,7 @@ import (
 
 const kubeadmPhaseKubeProxy = "addon/kube-proxy"
 
-var olderThanV131Constraint = semverutil.MustParseConstraint("< 1.31")
+var preV131Constraint = semverutil.MustParseConstraint("< 1.31")
 
 func joinControlplaneNode(s *state.State) error {
 	s.Logger.Infoln("Joining controlplane node...")
@@ -83,7 +83,7 @@ func initKubernetesLeader(s *state.State) error {
 			return err
 		}
 
-		if olderThanV131Constraint.Check(sver) && s.Cluster.ClusterNetwork.KubeProxy != nil && s.Cluster.ClusterNetwork.KubeProxy.SkipInstallation {
+		if preV131Constraint.Check(sver) && s.Cluster.ClusterNetwork.KubeProxy != nil && s.Cluster.ClusterNetwork.KubeProxy.SkipInstallation {
 			skipPhase = kubeadmPhaseKubeProxy
 		}
 

@@ -28,7 +28,7 @@ const (
 	kubeadmUpgradeNodeCommand = "kubeadm upgrade node"
 )
 
-var olderThanV131Constraint = semverutil.MustParseConstraint("< 1.31")
+var preV131Constraint = semverutil.MustParseConstraint("< 1.31")
 
 type Config struct {
 	ControlPlaneInitConfiguration string
@@ -47,14 +47,14 @@ type Kubedm interface {
 	UpgradeStaticWorkerCommand() string
 }
 
-// New constructor
+// New is a constructor for the kubeadm configuration
 func New(ver string) (Kubedm, error) {
 	sver, err := semver.NewVersion(ver)
 	if err != nil {
 		return nil, err
 	}
 
-	if olderThanV131Constraint.Check(sver) {
+	if preV131Constraint.Check(sver) {
 		return &kubeadmv1beta3{version: ver}, nil
 	}
 

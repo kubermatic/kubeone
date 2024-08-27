@@ -35,7 +35,7 @@ const (
 	credentialSecretName = "kube-system/kubeone-registry-credentials" //nolint:gosec
 )
 
-var olderThanV131Constraint = semverutil.MustParseConstraint("< 1.31")
+var preV131Constraint = semverutil.MustParseConstraint("< 1.31")
 
 // Leader returns the first configured host. Only call this after
 // validating the cluster config to ensure a leader exists.
@@ -221,7 +221,7 @@ func (v VersionConfig) SandboxImage(imageRegistry func(string) string) (string, 
 	registry := imageRegistry("registry.k8s.io")
 
 	switch {
-	case olderThanV131Constraint.Check(kubeSemVer):
+	case preV131Constraint.Check(kubeSemVer):
 		return fmt.Sprintf("%s/pause:3.9", registry), nil
 	default:
 		return fmt.Sprintf("%s/pause:3.10", registry), nil

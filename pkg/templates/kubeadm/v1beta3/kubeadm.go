@@ -18,6 +18,7 @@ package v1beta3
 
 import (
 	"fmt"
+	"net"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -114,7 +115,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 		return nil, fail.Runtime(err, "generating kubeadm bootstrap token")
 	}
 
-	controlPlaneEndpoint := fmt.Sprintf("%s:%d", cluster.APIEndpoint.Host, cluster.APIEndpoint.Port)
+	controlPlaneEndpoint := net.JoinHostPort(cluster.APIEndpoint.Host, strconv.Itoa(cluster.APIEndpoint.Port))
 
 	var advertiseAddress string
 	if s.Cluster.ClusterNetwork.IPFamily.IsIPv6Primary() {

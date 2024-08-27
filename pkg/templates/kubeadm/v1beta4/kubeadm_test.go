@@ -1,5 +1,5 @@
 /*
-Copyright 2022 The KubeOne Authors.
+Copyright 2024 The KubeOne Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package v1beta4
 
 import (
 	"reflect"
-	"strings"
 	"testing"
 
 	kubeadmv1beta4 "k8c.io/kubeone/pkg/apis/kubeadm/v1beta4"
@@ -264,37 +263,15 @@ func TestAddControlPlaneComponentsAdditionalArgs(t *testing.T) {
 
 // areFeatureGatesEqual compares two feature gates strings irrespective of the order of the feature gates.
 func areFeatureGatesEqual(result, expected string) bool {
-	resultMap := make(map[string]bool)
-	expectedMap := make(map[string]bool)
-
-	// Parse the result string into a map
-	for _, fg := range strings.Split(result, ",") {
-		kv := strings.Split(fg, "=")
-		if len(kv) == 2 {
-			resultMap[kv[0]] = kv[1] == "true"
-		}
-	}
-
-	// Parse the expected string into a map
-	for _, fg := range strings.Split(expected, ",") {
-		kv := strings.Split(fg, "=")
-		if len(kv) == 2 {
-			expectedMap[kv[0]] = kv[1] == "true"
-		}
-	}
+	resultMap := splitFeatureGates(result)
+	expectedMap := splitFeatureGates(expected)
 
 	// Compare the maps
 	if len(resultMap) != len(expectedMap) {
 		return false
 	}
 
-	for k, v := range resultMap {
-		if expectedMap[k] != v {
-			return false
-		}
-	}
-
-	return true
+	return featureGatesToString(resultMap) == featureGatesToString(expectedMap)
 }
 
 // areArgsEqual compares two maps irrespective of the order of the keys.

@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The KubeOne Authors.
+Copyright 2024 The KubeOne Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package v1beta4
 
 import (
 	"fmt"
+	"net"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -74,7 +75,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 		advertiseAddress = newNodeIP(host)
 	}
 
-	controlPlaneEndpoint := fmt.Sprintf("%s:%d", cluster.APIEndpoint.Host, cluster.APIEndpoint.Port)
+	controlPlaneEndpoint := net.JoinHostPort(cluster.APIEndpoint.Host, strconv.Itoa(cluster.APIEndpoint.Port))
 	certSANS := certificate.GetCertificateSANs(cluster.APIEndpoint.Host, cluster.APIEndpoint.AlternativeNames)
 
 	initConfig := newInitConfiguration(bootstrapToken, advertiseAddress)
@@ -186,15 +187,15 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 	}
 
 	if cluster.ClusterNetwork.KubeProxy != nil && cluster.ClusterNetwork.KubeProxy.SkipInstallation {
-		clusterConfig.DNS.Disabled = cluster.ClusterNetwork.KubeProxy.SkipInstallation
+		clusterConfig.DNS.Disabled = true
 	}
 
-	if fErr := addFeaturesExtraMounts(s, clusterConfig); err != nil {
-		return nil, fErr
+	if err = addFeaturesExtraMounts(s, clusterConfig); err != nil {
+		return nil, err
 	}
 	addControllerManagerNetworkArgs(clusterConfig, cluster.ClusterNetwork)
 
-	args := kubeadmargs.NewFrom(argsToStringStringMap(clusterConfig.APIServer.ExtraArgs))
+	args := kubeadmargs.NewFrom(argsToMap(clusterConfig.APIServer.ExtraArgs))
 	features.UpdateKubeadmArguments(cluster.Features, args)
 	clusterConfig.APIServer.ExtraArgs = stringStringMapToArgs(args.APIServer.ExtraArgs)
 
@@ -296,7 +297,7 @@ func addFeaturesExtraMounts(s *state.State, clusterConfig *kubeadmv1beta4.Cluste
 
 	// this is not exactly as s.EncryptionEnabled(). We need this to be true during the enable/disable or disable/enable transition.
 	if (cluster.Features.EncryptionProviders != nil && cluster.Features.EncryptionProviders.Enable) ||
-		s.LiveCluster.EncryptionConfiguration.Enable {
+		(s.LiveCluster.EncryptionConfiguration != nil && s.LiveCluster.EncryptionConfiguration.Enable) {
 		encryptionProvidersVol := kubeadmv1beta4.HostPathMount{
 			Name:      "encryption-providers-conf",
 			HostPath:  "/etc/kubernetes/encryption-providers",
@@ -398,7 +399,7 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) (*Config, error
 		"DirAvailable--etc-kubernetes-manifests",
 	}
 
-	controlPlaneEndpoint := fmt.Sprintf("%s:%d", cluster.APIEndpoint.Host, cluster.APIEndpoint.Port)
+	controlPlaneEndpoint := net.JoinHostPort(cluster.APIEndpoint.Host, strconv.Itoa(cluster.APIEndpoint.Port))
 
 	joinConfig := &kubeadmv1beta4.JoinConfiguration{
 		TypeMeta: metav1.TypeMeta{
@@ -487,8 +488,9 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 		})
 	}
 
-	// If external or in-tree CCM is in use we don't need to set --node-ip
-	// as the cloud provider will know what IPs to return.
+	// --node-ip flag must be set on kubelet when:
+	//   - when running IPv6 Dualstack without CCM
+	//   - when IPv6 Dualstack is disabled
 	if s.Cluster.ClusterNetwork.IPFamily.IsDualstack() {
 		if !s.Cluster.CloudProvider.External {
 			switch {
@@ -549,7 +551,7 @@ func stringStringMapToArgs(m map[string]string) []kubeadmv1beta4.Arg {
 	return args
 }
 
-func argsToStringStringMap(args []kubeadmv1beta4.Arg) map[string]string {
+func argsToMap(args []kubeadmv1beta4.Arg) map[string]string {
 	m := map[string]string{}
 	for _, arg := range args {
 		m[arg.Name] = arg.Value
@@ -559,12 +561,7 @@ func argsToStringStringMap(args []kubeadmv1beta4.Arg) map[string]string {
 }
 
 func newNodeIP(host kubeoneapi.HostConfig) string {
-	nodeIP := host.PrivateAddress
-	if nodeIP == "" {
-		nodeIP = host.PublicAddress
-	}
-
-	return nodeIP
+	return defaults(host.PrivateAddress, host.PublicAddress)
 }
 
 func join(ipFamily kubeoneapi.IPFamily, ipv4Subnet, ipv6Subnet string) string {
@@ -591,6 +588,16 @@ func defaults(input, defaultValue string) string {
 }
 
 func mergeFeatureGates(featureGates string, additionalFeatureGates map[string]bool) string {
+	fgs := splitFeatureGates(featureGates)
+
+	for k, v := range additionalFeatureGates {
+		fgs[k] = v
+	}
+
+	return featureGatesToString(fgs)
+}
+
+func splitFeatureGates(featureGates string) map[string]bool {
 	featureGatesMap := make(map[string]bool)
 	featureGatesArr := strings.Split(featureGates, ",")
 	for _, fg := range featureGatesArr {
@@ -606,15 +613,15 @@ func mergeFeatureGates(featureGates string, additionalFeatureGates map[string]bo
 		}
 	}
 
-	for k, v := range additionalFeatureGates {
-		featureGatesMap[k] = v
-	}
+	return featureGatesMap
+}
 
-	featureGatesKeys := sets.List(sets.KeySet(featureGatesMap))
+func featureGatesToString(featureGates map[string]bool) string {
+	featureGatesKeys := sets.List(sets.KeySet(featureGates))
 
 	var featureGatesStr []string
 	for _, k := range featureGatesKeys {
-		featureGatesStr = append(featureGatesStr, fmt.Sprintf("%s=%t", k, featureGatesMap[k]))
+		featureGatesStr = append(featureGatesStr, fmt.Sprintf("%s=%t", k, featureGates[k]))
 	}
 
 	return strings.Join(featureGatesStr, ",")
