@@ -175,12 +175,12 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 			Kind:       "ClusterConfiguration",
 		},
 		Networking: kubeadmv1beta3.Networking{
-			PodSubnet: join(
+			PodSubnet: joinSubnets(
 				cluster.ClusterNetwork.IPFamily,
 				cluster.ClusterNetwork.PodSubnet,
 				cluster.ClusterNetwork.PodSubnetIPv6,
 			),
-			ServiceSubnet: join(
+			ServiceSubnet: joinSubnets(
 				cluster.ClusterNetwork.IPFamily,
 				cluster.ClusterNetwork.ServiceSubnet,
 				cluster.ClusterNetwork.ServiceSubnetIPv6,
@@ -206,8 +206,14 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 		},
 		ControllerManager: kubeadmv1beta3.ControlPlaneComponent{
 			ExtraArgs: map[string]string{
-				"flex-volume-plugin-dir":      "/var/lib/kubelet/volumeplugins",
-				"profiling":                   "false",
+				"flex-volume-plugin-dir": "/var/lib/kubelet/volumeplugins",
+				"profiling":              "false",
+				// Setting this flag is required by the CIS benchmark.
+				// At the moment of writing this comment, the default value
+				// is 12500, which we consider too large, so we decided to use
+				// more "sensible" value from our point of view.
+				// See https://github.com/kubermatic/kubeone/pull/2797#discussion_r1208498909
+				// for more details.
 				"terminated-pod-gc-threshold": "1000",
 			},
 			ExtraVolumes: []kubeadmv1beta3.HostPathMount{},
@@ -475,7 +481,7 @@ func addControlPlaneComponentsAdditionalArgs(cluster *kubeoneapi.KubeOneCluster,
 	}
 }
 
-func join(ipFamily kubeoneapi.IPFamily, ipv4Subnet, ipv6Subnet string) string {
+func joinSubnets(ipFamily kubeoneapi.IPFamily, ipv4Subnet, ipv6Subnet string) string {
 	switch ipFamily {
 	case kubeoneapi.IPFamilyIPv4:
 		return ipv4Subnet
@@ -486,7 +492,10 @@ func join(ipFamily kubeoneapi.IPFamily, ipv4Subnet, ipv6Subnet string) string {
 	case kubeoneapi.IPFamilyIPv6IPv4:
 		return strings.Join([]string{ipv6Subnet, ipv4Subnet}, ",")
 	default:
-		return "unknown IP family"
+		// This code path should not ever be reachable, if we ever reach it,
+		// it means we have a serious bug and panic is the most appropriate
+		// way to communicate it.
+		panic("unknown IP family")
 	}
 }
 
