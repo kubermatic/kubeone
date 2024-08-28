@@ -17,6 +17,7 @@ limitations under the License.
 package tasks
 
 import (
+	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 
 	"k8c.io/kubeone/pkg/addons"
@@ -351,6 +352,28 @@ func WithUpgrade(t Tasks, followers ...kubeoneapi.HostConfig) Tasks {
 		append(
 			Task{Fn: restartKubeAPIServer, Operation: "restarting unhealthy kube-apiserver"},
 			Task{Fn: upgradeStaticWorkers, Operation: "upgrading static worker nodes"},
+			Task{
+				Fn:          migratePVCAllocatedResourceStatus,
+				Operation:   "migrating PVCs",
+				Description: "migrate PVCs with AllocatedResourceStatuses",
+				Predicate: func(s *state.State) bool {
+					targetVersion, err := semver.NewVersion(s.Cluster.Versions.Kubernetes)
+					if err != nil {
+						// This should never ever happen because we validate the version.
+						panic(err)
+					}
+
+					liveCP := s.LiveCluster.ControlPlane
+					if len(liveCP) == 0 || liveCP[0].Kubelet.Version == nil {
+						// This might only happen if the control plane doesn't exist,
+						// but that's not the case when upgrading the cluster.
+						return false
+					}
+
+					// Run operation only when upgrading to Kubernetes 1.31.
+					return targetVersion.Minor() == 31 && liveCP[0].Kubelet.Version.Minor() == 30
+				},
+			},
 			Task{
 				Fn:          upgradeMachineDeployments,
 				Operation:   "upgrading MachineDeployments",
