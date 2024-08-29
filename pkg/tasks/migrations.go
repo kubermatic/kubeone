@@ -41,7 +41,7 @@ func migratePVCAllocatedResourceStatus(s *state.State) error {
 		var found bool
 		for k, v := range pvc.Status.AllocatedResourceStatuses {
 			if k == corev1.ResourceStorage &&
-				(v == corev1.PersistentVolumeClaimControllerResizeFailed || v == corev1.PersistentVolumeClaimNodeResizeFailed) {
+				(v == "ControllerResizeFailed" || v == "NodeResizeFailed") {
 				log.Info("Removing AllocatedResourceStatus from PVC...")
 				found = true
 
