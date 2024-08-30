@@ -218,9 +218,6 @@ spec:
             - --route-reconciliation-period=10s
             - --secure-port=10268
             - --v=2
-            {{- with .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
-            - --concurrent-service-syncs={{ . }}
-            {{- end }}
           command:
             - cloud-controller-manager
           env:
