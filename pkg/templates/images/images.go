@@ -221,22 +221,23 @@ func baseResources() map[Resource]map[string]string {
 func optionalResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
 		AwsCCM: {
-			"1.27.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.27.7",
-			"1.28.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.28.6",
-			"1.29.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.29.3",
-			">= 1.30.0": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.30.1",
+			"1.27.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.27.9",
+			"1.28.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.28.9",
+			"1.29.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.29.6",
+			"1.30.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.30.3",
+			">= 1.31.0": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.31.0",
 		},
 
 		CSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v8.0.1"},
 		CSISnapshotWebhook:    {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v8.0.1"},
 
 		// AWS EBS CSI driver
-		AwsEbsCSI:                    {"*": "public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.31.0"},
-		AwsEbsCSIAttacher:            {"*": "public.ecr.aws/eks-distro/kubernetes-csi/external-attacher:v4.5.1-eks-1-30-4"},
-		AwsEbsCSILivenessProbe:       {"*": "public.ecr.aws/eks-distro/kubernetes-csi/livenessprobe:v2.12.0-eks-1-30-4"},
-		AwsEbsCSINodeDriverRegistrar: {"*": "public.ecr.aws/eks-distro/kubernetes-csi/node-driver-registrar:v2.10.1-eks-1-30-4"},
-		AwsEbsCSIProvisioner:         {"*": "public.ecr.aws/eks-distro/kubernetes-csi/external-provisioner:v4.0.1-eks-1-30-4"},
-		AwsEbsCSIResizer:             {"*": "public.ecr.aws/eks-distro/kubernetes-csi/external-resizer:v1.10.1-eks-1-30-4"},
+		AwsEbsCSI:                    {"*": "public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.34.0"},
+		AwsEbsCSIAttacher:            {"*": "public.ecr.aws/eks-distro/kubernetes-csi/external-attacher:v4.7.0-eks-1-31-2"},
+		AwsEbsCSILivenessProbe:       {"*": "public.ecr.aws/eks-distro/kubernetes-csi/livenessprobe:v2.14.0-eks-1-31-2"},
+		AwsEbsCSINodeDriverRegistrar: {"*": "public.ecr.aws/eks-distro/kubernetes-csi/node-driver-registrar:v2.12.0-eks-1-31-2"},
+		AwsEbsCSIProvisioner:         {"*": "public.ecr.aws/eks-distro/kubernetes-csi/external-provisioner:v5.1.0-eks-1-31-2"},
+		AwsEbsCSIResizer:             {"*": "public.ecr.aws/eks-distro/kubernetes-csi/external-resizer:v1.12.0-eks-1-31-2"},
 		AwsEbsCSISnapshotter:         {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.0.1"}, // use non-EKS image until 8.x is mirrored in MCR
 
 		// Azure CCM
@@ -396,9 +397,10 @@ func optionalResources() map[Resource]map[string]string {
 		// Cluster-autoscaler addon
 		ClusterAutoscaler: {
 			"1.27.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.27.8",
-			"1.28.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.28.5",
-			"1.29.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.29.3",
-			">= 1.30.0": "registry.k8s.io/autoscaling/cluster-autoscaler:v1.30.1",
+			"1.28.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.28.6",
+			"1.29.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.29.4",
+			"1.30.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.30.2",
+			">= 1.31.0": "registry.k8s.io/autoscaling/cluster-autoscaler:v1.31.0",
 		},
 
 		// CSI Vault Secret Provider

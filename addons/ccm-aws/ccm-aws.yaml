@@ -152,9 +152,6 @@ spec:
             - --configure-cloud-routes=false
             - --cloud-config=/etc/kubernetes/cloud/cloud-config
             - --v=2
-            {{- with .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
-            - --concurrent-service-syncs={{ . }}
-            {{- end }}
           env: []
           image: '{{ .InternalImages.Get "AwsCCM" }}'
           name: aws-cloud-controller-manager
