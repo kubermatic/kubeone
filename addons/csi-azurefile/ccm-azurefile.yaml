@@ -45,7 +45,7 @@ metadata:
 rules:
   - apiGroups: [""]
     resources: ["persistentvolumes"]
-    verbs: ["get", "list", "watch", "create", "delete"]
+    verbs: ["get", "list", "watch", "create", "patch", "delete"]
   - apiGroups: [""]
     resources: ["persistentvolumeclaims"]
     verbs: ["get", "list", "watch", "update"]
@@ -410,6 +410,10 @@ spec:
             requests:
               cpu: 10m
               memory: 20Mi
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
         - name: node-driver-registrar
           image: {{ .InternalImages.Get "AzureFileCSINodeDriverRegistar" }}
           args:
@@ -441,6 +445,10 @@ spec:
             requests:
               cpu: 10m
               memory: 20Mi
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
         - name: azurefile
           image: {{ .InternalImages.Get "AzureFileCSI" }}
           args:
@@ -487,6 +495,9 @@ spec:
           imagePullPolicy: IfNotPresent
           securityContext:
             privileged: true
+            capabilities:
+              drop:
+              - ALL
           volumeMounts:
             - mountPath: /csi
               name: socket-dir
@@ -579,7 +590,7 @@ spec:
           operator: Exists
       containers:
         - name: csi-provisioner
-          image: "{{ .InternalImages.Get "AzureFileCSIProvisioner" }}"
+          image: {{ .InternalImages.Get "AzureFileCSIProvisioner" }}
           args:
             - "-v=2"
             - "--csi-address=$(ADDRESS)"
@@ -604,8 +615,12 @@ spec:
             requests:
               cpu: 10m
               memory: 20Mi
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
         - name: csi-snapshotter
-          image: "{{ .InternalImages.Get "AzureFileCSISnapshotter" }}"
+          image: {{ .InternalImages.Get "AzureFileCSISnapshotter" }}
           args:
             - "-csi-address=$(ADDRESS)"
             - "-leader-election"
@@ -624,8 +639,12 @@ spec:
             requests:
               cpu: 10m
               memory: 20Mi
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
         - name: csi-resizer
-          image: "{{ .InternalImages.Get "AzureFileCSIResizer" }}"
+          image: {{ .InternalImages.Get "AzureFileCSIResizer" }}
           args:
             - "-csi-address=$(ADDRESS)"
             - "-v=2"
@@ -648,8 +667,12 @@ spec:
             requests:
               cpu: 10m
               memory: 20Mi
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
         - name: liveness-probe
-          image: "{{ .InternalImages.Get "AzureFileCSILivenessProbe" }}"
+          image: {{ .InternalImages.Get "AzureFileCSILivenessProbe" }}
           args:
             - --csi-address=/csi/csi.sock
             - --probe-timeout=3s
@@ -666,8 +689,12 @@ spec:
             requests:
               cpu: 10m
               memory: 20Mi
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
         - name: azurefile
-          image: "{{ .InternalImages.Get "AzureFileCSI" }}"
+          image: {{ .InternalImages.Get "AzureFileCSI" }}
           args:
             - "--v=5"
             - "--endpoint=$(CSI_ENDPOINT)"
@@ -718,6 +745,10 @@ spec:
             requests:
               cpu: 10m
               memory: 20Mi
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
       volumes:
         - name: socket-dir
           emptyDir: {}
@@ -743,7 +774,7 @@ metadata:
     helm.sh/chart: azurefile-csi-driver-v1.30.2
   annotations:
     csiDriver: "v1.30.2"
-    snapshot: "v7.0.2"
+    snapshot: "v8.0.1"
 spec:
   attachRequired: false
   podInfoOnMount: true
