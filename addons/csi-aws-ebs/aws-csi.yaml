@@ -460,7 +460,7 @@ spec:
         runAsUser: 0
       containers:
         - name: ebs-plugin
-          image: {{ .InternalImages.Get "..." }}
+          image: {{ .InternalImages.Get "AwsEbsCSI" }}
           imagePullPolicy: IfNotPresent
           args:
             - node
@@ -508,7 +508,7 @@ spec:
               exec:
                 command: ["/bin/aws-ebs-csi-driver", "pre-stop-hook"]
         - name: node-driver-registrar
-          image: {{ .InternalImages.Get "..." }}
+          image: {{ .InternalImages.Get "AwsEbsCSINodeDriverRegistrar" }}
           imagePullPolicy: IfNotPresent
           args:
             - --csi-address=$(ADDRESS)
@@ -545,7 +545,7 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
         - name: liveness-probe
-          image: {{ .InternalImages.Get "..." }}
+          image: {{ .InternalImages.Get "AwsEbsCSILivenessProbe" }}
           imagePullPolicy: IfNotPresent
           args:
             - --csi-address=/csi/csi.sock
@@ -663,7 +663,7 @@ spec:
         runAsUser: 1000
       containers:
         - name: ebs-plugin
-          image: {{ .InternalImages.Get "..." }}
+          image: {{ .InternalImages.Get "AwsEbsCSI" }}
           imagePullPolicy: IfNotPresent
           args:
             - controller
@@ -720,7 +720,7 @@ spec:
             seccompProfile:
               type: RuntimeDefault
         - name: csi-provisioner
-          image: {{ .InternalImages.Get "..." }}
+          image: {{ .InternalImages.Get "AwsEbsCSIProvisioner" }}
           imagePullPolicy: IfNotPresent
           args:
             - --timeout=60s
@@ -752,7 +752,7 @@ spec:
             seccompProfile:
               type: RuntimeDefault
         - name: csi-attacher
-          image: {{ .InternalImages.Get "..." }}
+          image: {{ .InternalImages.Get "AwsEbsCSIAttacher" }}
           imagePullPolicy: IfNotPresent
           args:
             - --timeout=60s
@@ -781,7 +781,7 @@ spec:
             seccompProfile:
               type: RuntimeDefault
         - name: csi-snapshotter
-          image: {{ .InternalImages.Get "..." }}
+          image: {{ .InternalImages.Get "AwsEbsCSISnapshotter" }}
           imagePullPolicy: IfNotPresent
           args:
             - --csi-address=$(ADDRESS)
@@ -810,7 +810,7 @@ spec:
             seccompProfile:
               type: RuntimeDefault
         - name: csi-resizer
-          image: {{ .InternalImages.Get "..." }}
+          image: {{ .InternalImages.Get "AwsEbsCSIResizer" }}
           imagePullPolicy: IfNotPresent
           args:
             - --timeout=60s
@@ -840,7 +840,7 @@ spec:
             seccompProfile:
               type: RuntimeDefault
         - name: liveness-probe
-          image: {{ .InternalImages.Get "..." }}
+          image: {{ .InternalImages.Get "AwsEbsCSILivenessProbe" }}
           imagePullPolicy: IfNotPresent
           args:
             - --csi-address=/csi/csi.sock
