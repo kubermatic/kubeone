@@ -243,6 +243,10 @@ func SetDefaults_OperatingSystemManager(obj *KubeOneCluster) {
 }
 
 func SetDefaults_Addons(obj *KubeOneCluster) {
+	if obj.Addons == nil {
+		obj.Addons = &Addons{}
+	}
+
 	for _, ad := range obj.Addons.Addons {
 		if ad.HelmRelease != nil {
 			if ad.HelmRelease.ReleaseName == "" {
