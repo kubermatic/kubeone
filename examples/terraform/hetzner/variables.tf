@@ -131,7 +131,7 @@ variable "image_references" {
 }
 
 variable "control_plane_type" {
-  default = "cx21"
+  default = "cx22"
   type    = string
 }
 
@@ -153,7 +153,7 @@ variable "control_plane_vm_count" {
 }
 
 variable "worker_type" {
-  default = "cx21"
+  default = "cx22"
   type    = string
 }
 
