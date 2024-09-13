@@ -167,3 +167,15 @@ Name of operating system profile for MachineDeployments, only applicable if oper
 If not specified, the default value will be added by machine-controller addon.
 EOF
 }
+
+variable "google_compute_subnetwork" {
+  default     = "default"
+  type        = string
+  description = "if given, will be used as a subnet"
+}
+
+variable "google_compute_network" {
+  default     = "default"
+  type        = string
+  description = "if given, will be used as a network"
+}

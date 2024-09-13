@@ -38,11 +38,11 @@ data "google_compute_image" "control_plane_image" {
 }
 
 data "google_compute_network" "network" {
-  name = "default"
+  name = var.google_compute_network
 }
 
 data "google_compute_subnetwork" "subnet" {
-  name   = "default"
+  name   = var.google_compute_subnetwork
   region = var.region
 }
 
@@ -176,6 +176,12 @@ resource "google_compute_instance" "control_plane" {
     access_config {
       nat_ip = ""
     }
+
+    ipv6_access_config {
+      network_tier = "PREMIUM"
+    }
+
+    stack_type = "IPV4_IPV6"
   }
 
   metadata = {
@@ -195,4 +201,3 @@ resource "google_compute_instance" "control_plane" {
     ]
   }
 }
-
