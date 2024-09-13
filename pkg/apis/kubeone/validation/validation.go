@@ -52,7 +52,7 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateName(c.Name, field.NewPath("name"))...)
 	allErrs = append(allErrs, ValidateControlPlaneConfig(c.ControlPlane, c.ClusterNetwork, field.NewPath("controlPlane"))...)
 	allErrs = append(allErrs, ValidateAPIEndpoint(c.APIEndpoint, field.NewPath("apiEndpoint"))...)
-	allErrs = append(allErrs, ValidateCloudProviderSpec(c.CloudProvider, c.ClusterNetwork, field.NewPath("provider"))...)
+	allErrs = append(allErrs, ValidateCloudProviderSpec(c, field.NewPath("provider"))...)
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
 	allErrs = append(allErrs, ValidateKubernetesSupport(c, field.NewPath(""))...)
 	allErrs = append(allErrs, ValidateContainerRuntimeConfig(c.ContainerRuntime, c.Versions, field.NewPath("containerRuntime"))...)
@@ -164,8 +164,10 @@ func ValidateAPIEndpoint(a kubeoneapi.APIEndpoint, fldPath *field.Path) field.Er
 // ValidateCloudProviderSpec validates the CloudProviderSpec structure
 //
 //nolint:gocyclo
-func ValidateCloudProviderSpec(providerSpec kubeoneapi.CloudProviderSpec, networkConfig kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field.ErrorList {
+func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
+	providerSpec := cluster.CloudProvider
+	networkConfig := cluster.ClusterNetwork
 
 	providerFound := false
 	if providerSpec.AWS != nil {
@@ -261,6 +263,12 @@ func ValidateCloudProviderSpec(providerSpec kubeoneapi.CloudProviderSpec, networ
 	if providerSpec.None != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("none"), "only one provider can be used at the same time"))
+		}
+		if cluster.MachineController != nil && cluster.MachineController.Deploy {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("none"), "machine-controller requires a cloud provider"))
+		}
+		if cluster.OperatingSystemManager != nil && cluster.OperatingSystemManager.Deploy {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("none"), "operating-system-manager requires a cloud provider"))
 		}
 		providerFound = true
 	}

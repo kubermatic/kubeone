@@ -471,6 +471,8 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 		name           string
 		providerConfig kubeoneapi.CloudProviderSpec
 		networkConfig  kubeoneapi.ClusterNetworkConfig
+		mc             *kubeoneapi.MachineControllerConfig
+		osm            *kubeoneapi.OperatingSystemManagerConfig
 		expectedError  bool
 	}{
 		{
@@ -784,10 +786,36 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 			},
 			expectedError: false,
 		},
+		{
+			name: "cloudProvider.none and machine-controller is mutually exclusive",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
+			},
+			mc: &kubeoneapi.MachineControllerConfig{
+				Deploy: true,
+			},
+			expectedError: true,
+		},
+		{
+			name: "cloudProvider.none and OSM is mutually exclusive",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
+			},
+			osm: &kubeoneapi.OperatingSystemManagerConfig{
+				Deploy: true,
+			},
+			expectedError: true,
+		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateCloudProviderSpec(tc.providerConfig, tc.networkConfig, nil)
+			cluster := kubeoneapi.KubeOneCluster{
+				CloudProvider:          tc.providerConfig,
+				ClusterNetwork:         tc.networkConfig,
+				MachineController:      tc.mc,
+				OperatingSystemManager: tc.osm,
+			}
+			errs := ValidateCloudProviderSpec(cluster, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}
