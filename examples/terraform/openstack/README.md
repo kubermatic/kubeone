@@ -23,7 +23,7 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 
 | Name | Version |
 |------|---------|
-| <a name="provider_openstack"></a> [openstack](#provider\_openstack) | ~> 1.52.0 |
+| <a name="provider_openstack"></a> [openstack](#provider\_openstack) | 1.52.1 |
 
 ## Modules
 
@@ -36,6 +36,7 @@ No modules.
 | [openstack_compute_instance_v2.bastion](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/compute_instance_v2) | resource |
 | [openstack_compute_instance_v2.control_plane](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/compute_instance_v2) | resource |
 | [openstack_compute_keypair_v2.deployer](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/compute_keypair_v2) | resource |
+| [openstack_compute_servergroup_v2.control_plane](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/compute_servergroup_v2) | resource |
 | [openstack_lb_listener_v2.kube_apiserver](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/lb_listener_v2) | resource |
 | [openstack_lb_loadbalancer_v2.kube_apiserver](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/lb_loadbalancer_v2) | resource |
 | [openstack_lb_member_v2.kube_apiserver](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/lb_member_v2) | resource |
@@ -73,6 +74,7 @@ No modules.
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster | `string` | n/a | yes |
 | <a name="input_config_drive"></a> [config\_drive](#input\_config\_drive) | If enabled, metadata for machines is stored on a configuration drive instead of the metadata service. | `bool` | `false` | no |
 | <a name="input_control_plane_flavor"></a> [control\_plane\_flavor](#input\_control\_plane\_flavor) | OpenStack instance flavor for the control plane nodes | `string` | `"m1.small"` | no |
+| <a name="input_control_plane_group_policy"></a> [control\_plane\_group\_policy](#input\_control\_plane\_group\_policy) | OpenStack instance group policy for the control plane nodes. Cannot be changed without recreating VMs! | `string` | `"soft-anti-affinity"` | no |
 | <a name="input_control_plane_vm_count"></a> [control\_plane\_vm\_count](#input\_control\_plane\_vm\_count) | number of control plane instances | `number` | `3` | no |
 | <a name="input_external_network_name"></a> [external\_network\_name](#input\_external\_network\_name) | OpenStack external network name | `string` | n/a | yes |
 | <a name="input_image"></a> [image](#input\_image) | image name to use | `string` | `""` | no |
