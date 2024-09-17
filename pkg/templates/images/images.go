@@ -329,16 +329,16 @@ func optionalResources() map[Resource]map[string]string {
 
 		// vSphere CPI (A.K.A. CCM)
 		VsphereCCM: {
-			"1.26.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.26.2",
-			"1.27.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.27.0",
-			"1.28.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.28.0",
-			"1.29.x":    "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.29.0",
-			">= 1.30.0": "gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.30.1",
+			"1.26.x":    "quay.io/kubermatic/mirror/cloud-provider-vsphere/ccm:v1.26.2",
+			"1.27.x":    "quay.io/kubermatic/mirror/cloud-provider-vsphere/ccm:v1.27.0",
+			"1.28.x":    "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.28.0",
+			"1.29.x":    "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.29.0",
+			">= 1.30.0": "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.30.1",
 		},
 
 		// vSphere CSI
-		VsphereCSIDriver:             {"*": "gcr.io/cloud-provider-vsphere/csi/release/driver:v3.2.0"},
-		VsphereCSISyncer:             {"*": "gcr.io/cloud-provider-vsphere/csi/release/syncer:v3.2.0"},
+		VsphereCSIDriver:             {"*": "quay.io/kubermatic/mirror/cloud-provider-vsphere/csi/release/driver:v3.2.0"},
+		VsphereCSISyncer:             {"*": "quay.io/kubermatic/mirror/cloud-provider-vsphere/csi/release/syncer:v3.2.0"},
 		VsphereCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.5.0"},
 		VsphereCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.12.0"},
 		VsphereCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.10.0"},
