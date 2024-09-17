@@ -1,3 +1,14 @@
+# [v1.7.6](https://github.com/kubermatic/kubeone/releases/tag/v1.7.6) - 2024-09-17
+
+## Changelog since v1.7.5
+
+## Urgent Upgrade Notes 
+
+### (No, really, you MUST read this before you upgrade)
+
+- Fix vSphere CCM and CSI images. The CCM images for versions starting with v1.28.0 are pulled from the new community-owned image repository. The CCM images for versions prior to v1.28.0, and the CSI images, are pulled from the Kubermatic-managed mirror on `quay.io`. If you have a vSphere cluster, we strongly recommend upgrading to the latest KubeOne patch release and running `kubeone apply` **as soon as possible**, because the old image repository (`gcr.io/cloud-provider-vsphere`) is not available anymore, hence it's not possible to pull the needed images from that repository ([#3377](https://github.com/kubermatic/kubeone/pull/3377), [@xmudrii](https://github.com/xmudrii))
+- Example Terraform configs for Hetzner are now using `cx22` instead of `cx21` instance type by default. If you use the new Terraform configs with an existing cluster, make sure to override the instance type as needed, otherwise your instances/cluster will be destroyed ([#3372](https://github.com/kubermatic/kubeone/pull/3372), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.7.5](https://github.com/kubermatic/kubeone/releases/tag/v1.7.5) - 2024-08-08
 
 ## Changelog since v1.7.4
