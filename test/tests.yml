@@ -3,7 +3,7 @@
 ################
 
 - scenario: install_containerd_external
-  initVersion: v1.28.13
+  initVersion: v1.28
   infrastructures:
     - name: aws_amzn
     - name: aws_default
@@ -32,7 +32,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_containerd_external
-  initVersion: v1.29.8
+  initVersion: v1.29
   infrastructures:
     - name: aws_amzn
     - name: aws_default
@@ -61,7 +61,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_containerd_external
-  initVersion: v1.30.4
+  initVersion: v1.30
   infrastructures:
     - name: aws_amzn
     - name: aws_default
@@ -90,7 +90,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_containerd_external
-  initVersion: v1.31.0
+  initVersion: v1.31
   infrastructures:
     - name: aws_amzn
     - name: aws_default
@@ -119,7 +119,7 @@
     - name: vsphere_flatcar
 
 - scenario: install_containerd
-  initVersion: v1.28.13
+  initVersion: v1.28
   infrastructures:
     - name: azure_default
     - name: azure_flatcar
@@ -132,8 +132,8 @@
 ###################
 
 - scenario: upgrade_containerd_external
-  initVersion: v1.28.13
-  upgradedVersion: v1.29.8
+  initVersion: v1.28
+  upgradedVersion: v1.29
   infrastructures:
     - name: aws_amzn_stable
     - name: aws_default_stable
@@ -161,8 +161,8 @@
     - name: vsphere_flatcar_stable
 
 - scenario: upgrade_containerd_external
-  initVersion: v1.29.8
-  upgradedVersion: v1.30.4
+  initVersion: v1.29
+  upgradedVersion: v1.30
   infrastructures:
     - name: aws_amzn_stable
     - name: aws_default_stable
@@ -190,8 +190,8 @@
     - name: vsphere_flatcar_stable
 
 - scenario: upgrade_containerd_external
-  initVersion: v1.30.4
-  upgradedVersion: v1.31.0
+  initVersion: v1.30
+  upgradedVersion: v1.31
   infrastructures:
     - name: aws_amzn_stable
     - name: aws_default_stable
@@ -223,7 +223,7 @@
 ###########################
 
 - scenario: calico_containerd_external
-  initVersion: v1.28.13
+  initVersion: v1.28
   infrastructures:
     - name: aws_amzn
     - name: aws_default
@@ -250,7 +250,7 @@
     - name: vsphere_flatcar
 
 - scenario: calico_containerd_external
-  initVersion: v1.29.8
+  initVersion: v1.29
   infrastructures:
     - name: aws_amzn
     - name: aws_default
@@ -277,7 +277,7 @@
     - name: vsphere_flatcar
 
 - scenario: calico_containerd_external
-  initVersion: v1.30.4
+  initVersion: v1.30
   infrastructures:
     - name: aws_amzn
     - name: aws_default
@@ -304,7 +304,7 @@
     - name: vsphere_flatcar
 
 - scenario: calico_containerd_external
-  initVersion: v1.31.0
+  initVersion: v1.31
   infrastructures:
     - name: aws_amzn
     - name: aws_default
@@ -331,7 +331,7 @@
     - name: vsphere_flatcar
 
 - scenario: cilium_containerd_external
-  initVersion: v1.28.13
+  initVersion: v1.28
   infrastructures:
     - name: aws_amzn
     - name: aws_default
@@ -358,7 +358,7 @@
     - name: vsphere_flatcar
 
 - scenario: cilium_containerd_external
-  initVersion: v1.29.8
+  initVersion: v1.29
   infrastructures:
     - name: aws_amzn
     - name: aws_default
@@ -385,7 +385,7 @@
     - name: vsphere_flatcar
 
 - scenario: cilium_containerd_external
-  initVersion: v1.30.4
+  initVersion: v1.30
   infrastructures:
     - name: aws_amzn
     - name: aws_default
@@ -412,7 +412,7 @@
     - name: vsphere_flatcar
 
 - scenario: cilium_containerd_external
-  initVersion: v1.31.0
+  initVersion: v1.31
   infrastructures:
     - name: aws_amzn
     - name: aws_default
@@ -439,7 +439,7 @@
     - name: vsphere_flatcar
 
 - scenario: external_cni_flannel_helm_chart
-  initVersion: v1.28.13
+  initVersion: v1.28
   infrastructures:
     - name: aws_amzn
     - name: aws_default
@@ -466,7 +466,7 @@
     - name: vsphere_flatcar
 
 - scenario: external_cni_flannel_helm_chart
-  initVersion: v1.29.8
+  initVersion: v1.29
   infrastructures:
     - name: aws_amzn
     - name: aws_default
@@ -493,7 +493,7 @@
     - name: vsphere_flatcar
 
 - scenario: external_cni_flannel_helm_chart
-  initVersion: v1.30.4
+  initVersion: v1.30
   infrastructures:
     - name: aws_amzn
     - name: aws_default
@@ -520,7 +520,7 @@
     - name: vsphere_flatcar
 
 - scenario: external_cni_flannel_helm_chart
-  initVersion: v1.31.0
+  initVersion: v1.31
   infrastructures:
     - name: aws_amzn
     - name: aws_default
@@ -547,8 +547,8 @@
     - name: vsphere_flatcar
 
 - scenario: upgrade_cilium_containerd_external
-  initVersion: v1.28.13
-  upgradedVersion: v1.29.8
+  initVersion: v1.28
+  upgradedVersion: v1.29
   infrastructures:
     - name: aws_amzn_stable
     - name: aws_default_stable
@@ -575,8 +575,8 @@
     - name: vsphere_flatcar_stable
 
 - scenario: upgrade_cilium_containerd_external
-  initVersion: v1.29.8
-  upgradedVersion: v1.30.4
+  initVersion: v1.29
+  upgradedVersion: v1.30
   infrastructures:
     - name: aws_amzn_stable
     - name: aws_default_stable
@@ -603,8 +603,8 @@
     - name: vsphere_flatcar_stable
 
 - scenario: upgrade_cilium_containerd_external
-  initVersion: v1.30.4
-  upgradedVersion: v1.31.0
+  initVersion: v1.30
+  upgradedVersion: v1.31
   infrastructures:
     - name: aws_amzn_stable
     - name: aws_default_stable
@@ -634,27 +634,27 @@
 # CONFORMANCE TEST #
 ####################
 - scenario: conformance_containerd_external
-  initVersion: v1.28.13
+  initVersion: v1.28
   infrastructures:
     - name: aws_long_timeout_default
 
 - scenario: conformance_containerd_external
-  initVersion: v1.29.8
+  initVersion: v1.29
   infrastructures:
     - name: aws_long_timeout_default
 
 - scenario: conformance_containerd_external
-  initVersion: v1.30.4
+  initVersion: v1.30
   infrastructures:
     - name: aws_long_timeout_default
 
 - scenario: conformance_containerd_external
-  initVersion: v1.31.0
+  initVersion: v1.31
   infrastructures:
     - name: aws_long_timeout_default
 
 - scenario: kube_proxy_ipvs_external
-  initVersion: v1.31.0
+  initVersion: v1.31
   infrastructures:
     - name: aws_default
 
@@ -663,7 +663,7 @@
 #####################
 
 - scenario: csi_ccm_migration
-  initVersion: v1.28.13
+  initVersion: v1.28
   infrastructures:
     - name: azure_default
     - name: azure_flatcar
