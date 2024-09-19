@@ -3,6 +3,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -26,6 +28,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -50,6 +54,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -73,6 +79,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -96,6 +104,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -119,6 +129,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -134,7 +146,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -144,6 +156,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -159,7 +173,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -169,6 +183,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -185,7 +201,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -195,6 +211,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -210,7 +228,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -220,6 +238,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
@@ -243,6 +263,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -266,6 +288,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -281,7 +305,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -291,6 +315,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -306,7 +332,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -316,6 +342,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -331,7 +359,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -341,6 +369,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -364,6 +394,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -388,6 +420,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -411,6 +445,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -434,6 +470,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -457,6 +495,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -472,7 +512,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -482,6 +522,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -497,7 +539,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -507,6 +549,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -523,7 +567,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -533,6 +577,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -548,7 +594,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -558,6 +604,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
@@ -581,6 +629,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -596,7 +646,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -606,6 +656,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -621,7 +673,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -631,6 +683,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -647,7 +701,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -657,6 +711,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -672,7 +728,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -682,6 +738,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
@@ -705,6 +763,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -725,7 +785,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -735,6 +795,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -755,7 +817,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -765,6 +827,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -786,7 +850,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -796,6 +860,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -816,7 +882,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -826,6 +892,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -854,6 +922,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -882,6 +952,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -910,6 +982,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -938,6 +1012,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -966,6 +1042,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -994,6 +1072,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1014,7 +1094,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1024,6 +1104,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1044,7 +1126,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1054,6 +1136,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1075,7 +1159,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1085,6 +1169,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1105,7 +1191,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1115,6 +1201,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1143,6 +1231,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1171,6 +1261,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1199,6 +1291,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1227,6 +1321,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1255,6 +1351,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1283,6 +1381,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1303,7 +1403,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1313,6 +1413,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1333,7 +1435,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1343,6 +1445,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1364,7 +1468,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1374,6 +1478,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1394,7 +1500,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1404,6 +1510,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1432,6 +1540,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1452,7 +1562,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1462,6 +1572,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1482,7 +1594,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1492,6 +1604,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1512,7 +1626,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1522,6 +1636,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -1542,7 +1658,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1552,6 +1668,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -1567,7 +1685,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1577,6 +1695,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -1592,7 +1712,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1602,6 +1722,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -1618,7 +1740,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1628,6 +1750,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -1643,7 +1767,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1653,6 +1777,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
@@ -1676,6 +1802,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -1699,6 +1827,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -1722,6 +1852,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -1745,6 +1877,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -1768,6 +1902,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -1791,6 +1927,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -1806,7 +1944,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1816,6 +1954,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -1831,7 +1971,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1841,6 +1981,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -1857,7 +1999,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1867,6 +2009,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -1882,7 +2026,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1892,6 +2036,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -1915,6 +2061,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -1930,7 +2078,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1940,6 +2088,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -1955,7 +2105,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1965,6 +2115,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -1980,7 +2132,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -1990,6 +2142,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-vsphere: "true"
@@ -2004,6 +2158,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2013,6 +2169,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
@@ -2027,6 +2185,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2036,6 +2196,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -2051,7 +2213,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2061,6 +2223,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -2076,7 +2240,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2086,6 +2250,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -2102,7 +2268,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2112,6 +2278,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -2127,7 +2295,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2137,6 +2305,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
@@ -2160,6 +2330,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -2175,7 +2347,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2185,6 +2357,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -2200,7 +2374,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2210,6 +2384,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -2226,7 +2402,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2236,6 +2412,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -2251,7 +2429,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2261,6 +2439,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
@@ -2284,6 +2464,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -2307,6 +2489,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -2330,6 +2514,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -2353,6 +2539,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -2376,6 +2564,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -2399,6 +2589,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -2414,7 +2606,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2424,6 +2616,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -2439,7 +2633,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2449,6 +2643,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -2465,7 +2661,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2475,6 +2671,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -2490,7 +2688,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2500,6 +2698,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -2523,6 +2723,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -2538,7 +2740,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2548,6 +2750,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -2563,7 +2767,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2573,6 +2777,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -2588,7 +2794,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2598,6 +2804,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-vsphere: "true"
@@ -2612,6 +2820,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2621,6 +2831,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
@@ -2635,6 +2847,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2644,6 +2858,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -2664,7 +2880,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2674,6 +2890,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -2694,7 +2912,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2704,6 +2922,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -2725,7 +2945,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2735,6 +2955,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -2755,7 +2977,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2765,6 +2987,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -2793,6 +3017,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -2821,6 +3047,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -2849,6 +3077,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -2877,6 +3107,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -2905,6 +3137,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -2933,6 +3167,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -2953,7 +3189,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2963,6 +3199,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -2983,7 +3221,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -2993,6 +3231,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -3014,7 +3254,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3024,6 +3264,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -3044,7 +3286,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3054,6 +3296,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -3082,6 +3326,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -3102,7 +3348,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3112,6 +3358,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -3132,7 +3380,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3142,6 +3390,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -3162,7 +3412,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3172,6 +3422,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -3191,6 +3443,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3200,6 +3454,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -3219,6 +3475,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3228,6 +3486,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -3242,8 +3502,6 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      - name: TEST_TIMEOUT
-        value: 120m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3253,6 +3511,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -3267,8 +3527,6 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      - name: TEST_TIMEOUT
-        value: 120m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3278,6 +3536,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -3292,8 +3552,6 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      - name: TEST_TIMEOUT
-        value: 120m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3303,6 +3561,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -3317,8 +3577,6 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      - name: TEST_TIMEOUT
-        value: 120m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3328,6 +3586,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -3342,8 +3602,6 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
-      - name: TEST_TIMEOUT
-        value: 120m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3353,6 +3611,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -3376,6 +3636,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -3399,6 +3661,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -3422,6 +3686,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -3445,6 +3711,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -3468,6 +3736,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -3491,6 +3761,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -3506,7 +3778,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3516,6 +3788,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -3531,7 +3805,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3541,6 +3815,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -3557,7 +3833,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3567,6 +3843,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -3582,7 +3860,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3592,6 +3870,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
@@ -3615,6 +3895,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -3638,6 +3920,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -3653,7 +3937,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3663,6 +3947,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -3678,7 +3964,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3688,6 +3974,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -3703,7 +3991,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3713,6 +4001,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -3736,6 +4026,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -3759,6 +4051,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -3782,6 +4076,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -3805,6 +4101,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -3828,6 +4126,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -3843,7 +4143,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3853,6 +4153,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -3868,7 +4170,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3878,6 +4180,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -3894,7 +4198,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3904,6 +4208,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -3919,7 +4225,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3929,6 +4235,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
@@ -3952,6 +4260,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -3967,7 +4277,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -3977,6 +4287,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -3992,7 +4304,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4002,6 +4314,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -4018,7 +4332,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4028,6 +4342,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -4043,7 +4359,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4053,6 +4369,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
@@ -4076,6 +4394,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -4099,6 +4419,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -4122,6 +4444,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -4145,6 +4469,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -4168,6 +4494,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -4191,6 +4519,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -4214,6 +4544,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -4229,7 +4561,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4239,6 +4571,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -4254,7 +4588,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4264,6 +4598,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -4279,7 +4615,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4289,6 +4625,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -4304,7 +4642,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4314,6 +4652,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -4329,7 +4669,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4339,6 +4679,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -4355,7 +4697,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4365,6 +4707,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -4380,7 +4724,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4390,6 +4734,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -4413,6 +4759,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -4436,6 +4784,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -4459,6 +4809,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -4482,6 +4834,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -4505,6 +4859,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -4520,7 +4876,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4530,6 +4886,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -4545,7 +4903,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4555,6 +4913,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -4571,7 +4931,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4581,6 +4941,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -4596,7 +4958,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4606,6 +4968,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -4621,7 +4985,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4631,6 +4995,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -4646,7 +5012,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4656,6 +5022,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -4672,7 +5040,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4682,6 +5050,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -4697,7 +5067,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4707,6 +5077,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -4730,6 +5102,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -4753,6 +5127,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -4776,6 +5152,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -4799,6 +5177,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -4822,6 +5202,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -4837,7 +5219,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4847,6 +5229,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -4862,7 +5246,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4872,6 +5256,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -4888,7 +5274,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4898,6 +5284,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -4913,7 +5301,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -4923,6 +5311,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
@@ -4946,6 +5336,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
@@ -4969,6 +5361,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
@@ -4992,6 +5386,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
@@ -5015,6 +5411,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
@@ -5038,6 +5436,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
@@ -5061,6 +5461,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
@@ -5084,6 +5486,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -5107,6 +5511,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -5122,7 +5528,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -5132,6 +5538,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -5147,7 +5555,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -5157,6 +5565,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -5172,7 +5582,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -5182,6 +5592,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-vsphere: "true"
@@ -5196,6 +5608,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -5205,6 +5619,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
@@ -5219,6 +5635,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -5228,6 +5646,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -5251,6 +5671,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -5274,6 +5696,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -5297,6 +5721,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -5320,6 +5746,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -5343,6 +5771,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -5358,7 +5788,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -5368,6 +5798,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -5383,7 +5815,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -5393,6 +5825,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -5409,7 +5843,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -5419,6 +5853,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -5434,7 +5870,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -5444,6 +5880,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
@@ -5467,6 +5905,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
@@ -5490,6 +5930,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
@@ -5513,6 +5955,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
@@ -5536,6 +5980,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
@@ -5559,6 +6005,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
@@ -5582,6 +6030,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
@@ -5605,6 +6055,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -5628,6 +6080,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -5643,7 +6097,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -5653,6 +6107,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -5668,7 +6124,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -5678,6 +6134,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -5693,7 +6151,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -5703,6 +6161,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-vsphere: "true"
@@ -5717,6 +6177,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -5726,6 +6188,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
@@ -5740,6 +6204,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -5749,6 +6215,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -5772,6 +6240,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -5796,6 +6266,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -5819,6 +6291,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -5842,6 +6316,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -5865,6 +6341,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -5880,7 +6358,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -5890,6 +6368,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -5905,7 +6385,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -5915,6 +6395,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -5931,7 +6413,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -5941,6 +6423,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -5956,7 +6440,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -5966,6 +6450,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
@@ -5989,6 +6475,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
@@ -6012,6 +6500,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
@@ -6035,6 +6525,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
@@ -6058,6 +6550,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
@@ -6081,6 +6575,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
@@ -6104,6 +6600,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
@@ -6127,6 +6625,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -6150,6 +6650,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -6165,7 +6667,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -6175,6 +6677,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -6190,7 +6694,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -6200,6 +6704,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -6215,7 +6721,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -6225,6 +6731,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-vsphere: "true"
@@ -6239,6 +6747,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -6248,6 +6758,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
@@ -6262,6 +6774,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -6271,6 +6785,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6299,6 +6815,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6327,6 +6845,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6355,6 +6875,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6383,6 +6905,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6411,6 +6935,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6431,7 +6957,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -6441,6 +6967,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6461,7 +6989,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -6471,6 +6999,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6492,7 +7022,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -6502,6 +7032,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6522,7 +7054,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -6532,6 +7064,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6560,6 +7094,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6588,6 +7124,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6616,6 +7154,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6644,6 +7184,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6672,6 +7214,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6700,6 +7244,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6728,6 +7274,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6748,7 +7296,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -6758,6 +7306,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6778,7 +7328,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -6788,6 +7338,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6808,7 +7360,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -6818,6 +7370,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6838,7 +7392,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -6848,6 +7402,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6867,6 +7423,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -6876,6 +7434,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: release/v1.6
     org: kubermatic
@@ -6895,6 +7455,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -6904,6 +7466,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -6932,6 +7496,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -6960,6 +7526,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -6988,6 +7556,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7016,6 +7586,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7044,6 +7616,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7064,7 +7638,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -7074,6 +7648,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7094,7 +7670,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -7104,6 +7680,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7125,7 +7703,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -7135,6 +7713,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7155,7 +7735,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -7165,6 +7745,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7193,6 +7775,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7221,6 +7805,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7249,6 +7835,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7277,6 +7865,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7305,6 +7895,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7333,6 +7925,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7361,6 +7955,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7381,7 +7977,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -7391,6 +7987,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7411,7 +8009,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -7421,6 +8019,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7441,7 +8041,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -7451,6 +8051,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7471,7 +8073,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -7481,6 +8083,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7500,6 +8104,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -7509,6 +8115,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7528,6 +8136,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -7537,6 +8147,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7565,6 +8177,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7593,6 +8207,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7621,6 +8237,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7649,6 +8267,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7677,6 +8297,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7697,7 +8319,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -7707,6 +8329,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7727,7 +8351,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -7737,6 +8361,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7758,7 +8384,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -7768,6 +8394,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7788,7 +8416,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -7798,6 +8426,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7826,6 +8456,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7854,6 +8486,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7882,6 +8516,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7910,6 +8546,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7938,6 +8576,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7966,6 +8606,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -7994,6 +8636,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -8014,7 +8658,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8024,6 +8668,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -8044,7 +8690,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8054,6 +8700,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -8074,7 +8722,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8084,6 +8732,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -8104,7 +8754,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8114,6 +8764,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -8133,6 +8785,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8142,6 +8796,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   extra_refs:
   - base_ref: main
     org: kubermatic
@@ -8161,6 +8817,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8170,6 +8828,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -8193,6 +8853,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -8216,6 +8878,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -8239,6 +8903,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -8262,6 +8928,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -8285,6 +8953,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -8300,7 +8970,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8310,6 +8980,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -8325,7 +8997,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8335,6 +9007,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -8351,7 +9025,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8361,6 +9035,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -8376,7 +9052,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8386,6 +9062,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
@@ -8409,6 +9087,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
@@ -8432,6 +9112,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
@@ -8455,6 +9137,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
@@ -8478,6 +9162,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
@@ -8501,6 +9187,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
@@ -8524,6 +9212,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
@@ -8547,6 +9237,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -8570,6 +9262,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -8585,7 +9279,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8595,6 +9289,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -8610,7 +9306,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8620,6 +9316,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -8635,7 +9333,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8645,6 +9343,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-vsphere: "true"
@@ -8659,6 +9359,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8668,6 +9370,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
@@ -8682,6 +9386,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8691,6 +9397,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -8714,6 +9422,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -8737,6 +9447,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -8760,6 +9472,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -8783,6 +9497,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -8806,6 +9522,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -8821,7 +9539,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8831,6 +9549,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -8846,7 +9566,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8856,6 +9576,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -8872,7 +9594,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8882,6 +9604,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -8897,7 +9621,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -8907,6 +9631,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
@@ -8930,6 +9656,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
@@ -8953,6 +9681,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
@@ -8976,6 +9706,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
@@ -8999,6 +9731,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
@@ -9022,6 +9756,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
@@ -9045,6 +9781,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
@@ -9068,6 +9806,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -9091,6 +9831,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -9106,7 +9848,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -9116,6 +9858,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -9131,7 +9875,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -9141,6 +9885,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -9156,7 +9902,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -9166,6 +9912,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-vsphere: "true"
@@ -9180,6 +9928,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -9189,6 +9939,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
@@ -9203,6 +9955,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -9212,6 +9966,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -9235,6 +9991,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -9258,6 +10016,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -9281,6 +10041,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -9304,6 +10066,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
@@ -9327,6 +10091,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -9342,7 +10108,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -9352,6 +10118,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -9367,7 +10135,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -9377,6 +10145,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -9393,7 +10163,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -9403,6 +10173,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
@@ -9418,7 +10190,7 @@ presubmits:
       - name: PROVIDER
         value: azure
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -9428,6 +10200,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
@@ -9451,6 +10225,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
@@ -9474,6 +10250,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
@@ -9497,6 +10275,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
@@ -9520,6 +10300,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-equinix-metal: "true"
     preset-goproxy: "true"
@@ -9543,6 +10325,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
@@ -9566,6 +10350,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
@@ -9589,6 +10375,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -9612,6 +10400,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -9627,7 +10417,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -9637,6 +10427,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -9652,7 +10444,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -9662,6 +10454,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
@@ -9677,7 +10471,7 @@ presubmits:
       - name: PROVIDER
         value: openstack
       - name: TEST_TIMEOUT
-        value: 120m
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -9687,6 +10481,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-vsphere: "true"
@@ -9701,6 +10497,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
@@ -9710,6 +10508,8 @@ presubmits:
 - always_run: false
   clone_uri: ssh://git@github.com/kubermatic/kubeone.git
   decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-vsphere-legacy: "true"
@@ -9724,6 +10524,8 @@ presubmits:
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
       image: quay.io/kubermatic/build:go-1.21-node-18-11
       imagePullPolicy: Always
       name: ""
