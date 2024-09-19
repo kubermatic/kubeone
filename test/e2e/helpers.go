@@ -385,16 +385,17 @@ func parseContainerImageVersion(image string) (*semver.Version, error) {
 }
 
 type ProwJob struct {
-	Name         string            `json:"name"`
-	AlwaysRun    bool              `json:"always_run"`
-	RunIfChanged string            `json:"run_if_changed,omitempty"`
-	Optional     bool              `json:"optional"`
-	Decorate     bool              `json:"decorate"`
-	CloneURI     string            `json:"clone_uri"`
-	PathAlias    string            `json:"path_alias,omitempty"`
-	Labels       map[string]string `json:"labels,omitempty"`
-	ExtraRefs    []ProwRef         `json:"extra_refs,omitempty"`
-	Spec         *corev1.PodSpec   `json:"spec"`
+	Name             string                `json:"name"`
+	AlwaysRun        bool                  `json:"always_run"`
+	RunIfChanged     string                `json:"run_if_changed,omitempty"`
+	Optional         bool                  `json:"optional"`
+	Decorate         bool                  `json:"decorate"`
+	DecorationConfig *ProwDecorationConfig `json:"decoration_config,omitempty"`
+	CloneURI         string                `json:"clone_uri"`
+	PathAlias        string                `json:"path_alias,omitempty"`
+	Labels           map[string]string     `json:"labels,omitempty"`
+	ExtraRefs        []ProwRef             `json:"extra_refs,omitempty"`
+	Spec             *corev1.PodSpec       `json:"spec"`
 }
 
 type ProwRef struct {
@@ -402,6 +403,10 @@ type ProwRef struct {
 	Repo      string `json:"repo"`
 	BaseRef   string `json:"base_ref,omitempty"`
 	PathAlias string `json:"path_alias,omitempty"`
+}
+
+type ProwDecorationConfig struct {
+	Timeout string `json:"timeout,omitempty"`
 }
 
 func newProwJob(prowJobName string, labels map[string]string, testTitle string, settings ProwConfig, extraRefs []ProwRef) ProwJob {
@@ -424,10 +429,13 @@ func newProwJob(prowJobName string, labels map[string]string, testTitle string, 
 		RunIfChanged: settings.RunIfChanged,
 		Optional:     settings.Optional,
 		Decorate:     true,
-		CloneURI:     k1CloneURI,
-		Labels:       labels,
-		ExtraRefs:    extraRefs,
-		PathAlias:    "k8c.io/kubeone",
+		DecorationConfig: &ProwDecorationConfig{
+			Timeout: "210m",
+		},
+		CloneURI:  k1CloneURI,
+		Labels:    labels,
+		ExtraRefs: extraRefs,
+		PathAlias: "k8c.io/kubeone",
 		Spec: &corev1.PodSpec{
 			Containers: []corev1.Container{
 				{
