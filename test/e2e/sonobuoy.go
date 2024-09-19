@@ -60,7 +60,7 @@ type sonobuoyBin struct {
 
 func (sbb *sonobuoyBin) Run(ctx context.Context, mode sonobuoyMode, rerunFailed bool) error {
 	if rerunFailed {
-		return sbb.run(ctx, "run", fmt.Sprintf("--mode=%s", mode), fmt.Sprintf("--rerun-failed=%s", sonobuoyResultsFile))
+		return sbb.run(ctx, "run", fmt.Sprintf("--rerun-failed=%s", sonobuoyResultsFile))
 	}
 
 	return sbb.run(ctx, "run", fmt.Sprintf("--mode=%s", mode))
@@ -112,6 +112,10 @@ func (sbb *sonobuoyBin) Results(ctx context.Context) ([]sonobuoyReport, error) {
 	}
 
 	return failedCases, waitErr
+}
+
+func (sbb *sonobuoyBin) Delete(ctx context.Context) error {
+	return sbb.run(ctx, "delete", "--all", "--wait")
 }
 
 func (sbb *sonobuoyBin) run(ctx context.Context, args ...string) error {
