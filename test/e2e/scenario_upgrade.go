@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"io"
 	"path/filepath"
+	"strings"
 	"testing"
 	"text/template"
 	"time"
@@ -58,6 +59,19 @@ func (scenario *scenarioUpgrade) SetVersions(versions ...string) {
 	scenario.versions = versions
 }
 
+func (scenario *scenarioUpgrade) FetchVersions() error {
+	for i := range scenario.versions {
+		latestVer, err := latestUpstreamVersion(scenario.versions[i])
+		if err != nil {
+			return err
+		}
+
+		scenario.versions[i] = latestVer
+	}
+
+	return nil
+}
+
 func (scenario *scenarioUpgrade) SetInitKubeOneVersion(version string) {
 	scenario.initKubeOneVersion = version
 }
@@ -69,6 +83,8 @@ func (scenario *scenarioUpgrade) Run(ctx context.Context, t *testing.T) {
 	if err := makeBinWithPath(filepath.Clean("../../../kubeone-stable/"), "build").Run(); err != nil {
 		t.Fatalf("building kubeone-stable: %v", err)
 	}
+
+	t.Logf("Testing Kubernetes version(s): %s", strings.Join(scenario.versions, ","))
 
 	install := &scenarioInstall{
 		Name:                 scenario.Name,
@@ -326,6 +342,9 @@ func {{ .TestTitle }}(t *testing.T) {
 	scenario := Scenarios["{{ .Scenario }}"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("{{ .FromVersion }}", "{{ .ToVersion }}")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
 	scenario.Run(ctx, t)
 }
 {{ end -}}

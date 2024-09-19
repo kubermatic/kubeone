@@ -489,6 +489,34 @@ func dynamicClientRetriable(t *testing.T, k1 *kubeoneBin) ctrlruntimeclient.Clie
 	return client
 }
 
+func latestUpstreamVersion(majorMinorVersion string) (string, error) {
+	majorMinorSemver := semver.MustParse(majorMinorVersion)
+
+	const urlTemplate = "https://dl.k8s.io/release/stable-%d.%d.txt"
+	downloadURL := fmt.Sprintf(urlTemplate, majorMinorSemver.Major(), majorMinorSemver.Minor())
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, "GET", downloadURL, nil)
+	if err != nil {
+		return "", fmt.Errorf("building http request to download kubeone: %w", err)
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("http request to download kubeone: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("reading version marker http response: %w", err)
+	}
+
+	return strings.TrimSpace(string(body)), nil
+}
+
 func labelNodesSkipEviction(t *testing.T, client ctrlruntimeclient.Client) {
 	ctx := context.Background()
 

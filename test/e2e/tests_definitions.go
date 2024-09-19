@@ -1173,6 +1173,7 @@ const (
 type Scenario interface {
 	SetInfra(infrastructure Infra)
 	SetVersions(versions ...string)
+	FetchVersions() error
 	GenerateTests(output io.Writer, testType GeneratorType, cfg ProwConfig) error
 	Run(context.Context, *testing.T)
 }

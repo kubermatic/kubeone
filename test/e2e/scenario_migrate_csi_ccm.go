@@ -19,6 +19,7 @@ package e2e
 import (
 	"context"
 	"io"
+	"strings"
 	"testing"
 	"time"
 
@@ -47,6 +48,19 @@ func (scenario *scenarioMigrateCSIAndCCM) SetVersions(versions ...string) {
 	scenario.versions = versions
 }
 
+func (scenario *scenarioMigrateCSIAndCCM) FetchVersions() error {
+	for i := range scenario.versions {
+		latestVer, err := latestUpstreamVersion(scenario.versions[i])
+		if err != nil {
+			return err
+		}
+
+		scenario.versions[i] = latestVer
+	}
+
+	return nil
+}
+
 func (scenario *scenarioMigrateCSIAndCCM) GenerateTests(wr io.Writer, generatorType GeneratorType, cfg ProwConfig) error {
 	install := scenarioInstall{
 		Name:     scenario.Name,
@@ -61,6 +75,8 @@ func (scenario *scenarioMigrateCSIAndCCM) Run(ctx context.Context, t *testing.T)
 	if err := makeBin("build").Run(); err != nil {
 		t.Fatalf("building kubeone: %v", err)
 	}
+
+	t.Logf("Testing Kubernetes version(s): %s", strings.Join(scenario.versions, ","))
 
 	install := scenarioInstall{
 		Name:                 scenario.Name,
