@@ -622,10 +622,10 @@ func waitKubeOneNodesReady(ctx context.Context, t *testing.T, k1 *kubeoneBin) {
 }
 
 func sonobuoyRun(ctx context.Context, t *testing.T, k1 *kubeoneBin, mode sonobuoyMode, proxyURL string) {
-	sonobuoyRunWithRunCount(ctx, t, k1, mode, proxyURL, 0)
+	sonobuoyRunWithRunCount(ctx, t, k1, mode, t.TempDir(), 0, proxyURL)
 }
 
-func sonobuoyRunWithRunCount(ctx context.Context, t *testing.T, k1 *kubeoneBin, mode sonobuoyMode, proxyURL string, runCount int) {
+func sonobuoyRunWithRunCount(ctx context.Context, t *testing.T, k1 *kubeoneBin, mode sonobuoyMode, testDir string, runCount int, proxyURL string) {
 	kubeconfigPath, err := k1.kubeconfigPath(t.TempDir())
 	if err != nil {
 		t.Fatalf("fetching kubeconfig failed")
@@ -633,7 +633,7 @@ func sonobuoyRunWithRunCount(ctx context.Context, t *testing.T, k1 *kubeoneBin, 
 
 	sb := sonobuoyBin{
 		kubeconfig: kubeconfigPath,
-		dir:        t.TempDir(),
+		dir:        testDir,
 		proxyURL:   proxyURL,
 	}
 
@@ -676,8 +676,14 @@ func sonobuoyRunWithRunCount(ctx context.Context, t *testing.T, k1 *kubeoneBin, 
 
 		if runCount < sonobuoyRunRetries {
 			t.Logf("some e2e tests failed:\n%s", buf.String())
+
+			t.Logf("deleting previous sonobuoy run...")
+			if err = retryFnWithBackoff(SonobuoyRetry, func() error { return sb.Delete(ctx) }); err != nil {
+				t.Fatalf("sonobuoy delete failed: %v", err)
+			}
+
 			t.Logf("restarting failed e2e tests (try %d/%d)...", runCount+1, sonobuoyRunRetries)
-			sonobuoyRunWithRunCount(ctx, t, k1, mode, proxyURL, runCount+1)
+			sonobuoyRunWithRunCount(ctx, t, k1, mode, testDir, runCount+1, proxyURL)
 		} else {
 			t.Fatalf("some e2e tests failed:\n%s", buf.String())
 		}
