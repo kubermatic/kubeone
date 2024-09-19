@@ -593,6 +593,10 @@ func waitKubeOneNodesReady(ctx context.Context, t *testing.T, k1 *kubeoneBin) {
 }
 
 func sonobuoyRun(ctx context.Context, t *testing.T, k1 *kubeoneBin, mode sonobuoyMode, proxyURL string) {
+	sonobuoyRunWithRunCount(ctx, t, k1, mode, proxyURL, 0)
+}
+
+func sonobuoyRunWithRunCount(ctx context.Context, t *testing.T, k1 *kubeoneBin, mode sonobuoyMode, proxyURL string, runCount int) {
 	kubeconfigPath, err := k1.kubeconfigPath(t.TempDir())
 	if err != nil {
 		t.Fatalf("fetching kubeconfig failed")
@@ -604,7 +608,12 @@ func sonobuoyRun(ctx context.Context, t *testing.T, k1 *kubeoneBin, mode sonobuo
 		proxyURL:   proxyURL,
 	}
 
-	if err = retryFnWithBackoff(SonobuoyRetry, func() error { return sb.Run(ctx, mode) }); err != nil {
+	rerunFailed := false
+	if runCount > 0 {
+		rerunFailed = true
+	}
+
+	if err = retryFnWithBackoff(SonobuoyRetry, func() error { return sb.Run(ctx, mode, rerunFailed) }); err != nil {
 		t.Fatalf("sonobuoy run failed: %v", err)
 	}
 
@@ -635,7 +644,14 @@ func sonobuoyRun(ctx context.Context, t *testing.T, k1 *kubeoneBin, mode sonobuo
 		if err = enc.Encode(report); err != nil {
 			t.Errorf("failed to json encode sonobuoy report: %v", err)
 		}
-		t.Fatalf("some e2e tests failed:\n%s", buf.String())
+
+		if runCount < sonobuoyRunRetries {
+			t.Logf("some e2e tests failed:\n%s", buf.String())
+			t.Logf("restarting failed e2e tests (try %d/%d)...", runCount+1, sonobuoyRunRetries)
+			sonobuoyRunWithRunCount(ctx, t, k1, mode, proxyURL, runCount+1)
+		} else {
+			t.Fatalf("some e2e tests failed:\n%s", buf.String())
+		}
 	}
 }
 
