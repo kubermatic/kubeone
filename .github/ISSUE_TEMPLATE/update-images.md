@@ -12,6 +12,11 @@ NOT up-to-date!
 
 You should first check images.go file and update the list below as appropriate.
 https://github.com/kubermatic/kubeone/blob/main/pkg/templates/images/images.go
+
+Sometimes the image tags does not match any official GitHub Release name.
+In these cases `crane ls <url of the image>` can be used to check if a new version
+of an image exists. Nonetheless, changelog still needs to be checked if the new version
+introduces any breaking changes
 -->
 
 <!-- Search query: https://github.com/kubermatic/kubeone/issues?q=is%3Aissue+Update+images+to+support+Kubernetes+is%3Aclosed -->
