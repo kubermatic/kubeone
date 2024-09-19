@@ -402,16 +402,17 @@ func parseContainerImageVersion(image string) (*semver.Version, error) {
 }
 
 type ProwJob struct {
-	Name         string            `json:"name"`
-	AlwaysRun    bool              `json:"always_run"`
-	RunIfChanged string            `json:"run_if_changed,omitempty"`
-	Optional     bool              `json:"optional"`
-	Decorate     bool              `json:"decorate"`
-	CloneURI     string            `json:"clone_uri"`
-	PathAlias    string            `json:"path_alias,omitempty"`
-	Labels       map[string]string `json:"labels,omitempty"`
-	ExtraRefs    []ProwRef         `json:"extra_refs,omitempty"`
-	Spec         *corev1.PodSpec   `json:"spec"`
+	Name             string                `json:"name"`
+	AlwaysRun        bool                  `json:"always_run"`
+	RunIfChanged     string                `json:"run_if_changed,omitempty"`
+	Optional         bool                  `json:"optional"`
+	Decorate         bool                  `json:"decorate"`
+	DecorationConfig *ProwDecorationConfig `json:"decoration_config,omitempty"`
+	CloneURI         string                `json:"clone_uri"`
+	PathAlias        string                `json:"path_alias,omitempty"`
+	Labels           map[string]string     `json:"labels,omitempty"`
+	ExtraRefs        []ProwRef             `json:"extra_refs,omitempty"`
+	Spec             *corev1.PodSpec       `json:"spec"`
 }
 
 type ProwRef struct {
@@ -419,6 +420,10 @@ type ProwRef struct {
 	Repo      string `json:"repo"`
 	BaseRef   string `json:"base_ref,omitempty"`
 	PathAlias string `json:"path_alias,omitempty"`
+}
+
+type ProwDecorationConfig struct {
+	Timeout string `json:"timeout,omitempty"`
 }
 
 func newProwJob(prowJobName string, labels map[string]string, testTitle string, settings ProwConfig, extraRefs []ProwRef) ProwJob {
@@ -441,10 +446,13 @@ func newProwJob(prowJobName string, labels map[string]string, testTitle string, 
 		RunIfChanged: settings.RunIfChanged,
 		Optional:     settings.Optional,
 		Decorate:     true,
-		CloneURI:     k1CloneURI,
-		Labels:       labels,
-		ExtraRefs:    extraRefs,
-		PathAlias:    "k8c.io/kubeone",
+		DecorationConfig: &ProwDecorationConfig{
+			Timeout: "210m",
+		},
+		CloneURI:  k1CloneURI,
+		Labels:    labels,
+		ExtraRefs: extraRefs,
+		PathAlias: "k8c.io/kubeone",
 		Spec: &corev1.PodSpec{
 			Containers: []corev1.Container{
 				{
@@ -593,10 +601,10 @@ func waitKubeOneNodesReady(ctx context.Context, t *testing.T, k1 *kubeoneBin) {
 }
 
 func sonobuoyRun(ctx context.Context, t *testing.T, k1 *kubeoneBin, mode sonobuoyMode, proxyURL string) {
-	sonobuoyRunWithRunCount(ctx, t, k1, mode, proxyURL, 0)
+	sonobuoyRunWithRunCount(ctx, t, k1, mode, t.TempDir(), 0, proxyURL)
 }
 
-func sonobuoyRunWithRunCount(ctx context.Context, t *testing.T, k1 *kubeoneBin, mode sonobuoyMode, proxyURL string, runCount int) {
+func sonobuoyRunWithRunCount(ctx context.Context, t *testing.T, k1 *kubeoneBin, mode sonobuoyMode, testDir string, runCount int, proxyURL string) {
 	kubeconfigPath, err := k1.kubeconfigPath(t.TempDir())
 	if err != nil {
 		t.Fatalf("fetching kubeconfig failed")
@@ -604,7 +612,7 @@ func sonobuoyRunWithRunCount(ctx context.Context, t *testing.T, k1 *kubeoneBin, 
 
 	sb := sonobuoyBin{
 		kubeconfig: kubeconfigPath,
-		dir:        t.TempDir(),
+		dir:        testDir,
 		proxyURL:   proxyURL,
 	}
 
@@ -647,8 +655,14 @@ func sonobuoyRunWithRunCount(ctx context.Context, t *testing.T, k1 *kubeoneBin, 
 
 		if runCount < sonobuoyRunRetries {
 			t.Logf("some e2e tests failed:\n%s", buf.String())
+
+			t.Logf("deleting previous sonobuoy run...")
+			if err = retryFnWithBackoff(SonobuoyRetry, func() error { return sb.Delete(ctx) }); err != nil {
+				t.Fatalf("sonobuoy delete failed: %v", err)
+			}
+
 			t.Logf("restarting failed e2e tests (try %d/%d)...", runCount+1, sonobuoyRunRetries)
-			sonobuoyRunWithRunCount(ctx, t, k1, mode, proxyURL, runCount+1)
+			sonobuoyRunWithRunCount(ctx, t, k1, mode, testDir, runCount+1, proxyURL)
 		} else {
 			t.Fatalf("some e2e tests failed:\n%s", buf.String())
 		}
