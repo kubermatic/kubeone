@@ -27,7 +27,10 @@ import (
 	"k8c.io/kubeone/test/testexec"
 )
 
-const sonobuoyResultsFile = "results.tar.gz"
+const (
+	sonobuoyResultsFile = "results.tar.gz"
+	sonobuoyRunRetries  = 3
+)
 
 type sonobuoyReport struct {
 	Name    string                 `json:"name"`
@@ -55,7 +58,11 @@ type sonobuoyBin struct {
 	proxyURL   string
 }
 
-func (sbb *sonobuoyBin) Run(ctx context.Context, mode sonobuoyMode) error {
+func (sbb *sonobuoyBin) Run(ctx context.Context, mode sonobuoyMode, rerunFailed bool) error {
+	if rerunFailed {
+		return sbb.run(ctx, "run", fmt.Sprintf("--mode=%s", mode), fmt.Sprintf("--rerun-failed=%s", sonobuoyResultsFile))
+	}
+
 	return sbb.run(ctx, "run", fmt.Sprintf("--mode=%s", mode))
 }
 
