@@ -233,3 +233,9 @@ variable "is_vsphere_enterprise_plus_license" {
   type        = bool
   default     = true
 }
+
+variable "disable_auto_update" {
+  description = "Disable automatic flatcar updates (and reboot)"
+  type        = bool
+  default     = false
+}

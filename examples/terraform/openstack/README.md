@@ -73,6 +73,7 @@ No modules.
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster | `string` | n/a | yes |
 | <a name="input_control_plane_flavor"></a> [control\_plane\_flavor](#input\_control\_plane\_flavor) | OpenStack instance flavor for the control plane nodes | `string` | `"m1.small"` | no |
 | <a name="input_control_plane_vm_count"></a> [control\_plane\_vm\_count](#input\_control\_plane\_vm\_count) | number of control plane instances | `number` | `3` | no |
+| <a name="input_disable_auto_update"></a> [disable\_auto\_update](#input\_disable\_auto\_update) | Disable automatic flatcar updates (and reboot) | `bool` | `false` | no |
 | <a name="input_external_network_name"></a> [external\_network\_name](#input\_external\_network\_name) | OpenStack external network name | `string` | n/a | yes |
 | <a name="input_image"></a> [image](#input\_image) | image name to use | `string` | `""` | no |
 | <a name="input_image_properties_query"></a> [image\_properties\_query](#input\_image\_properties\_query) | in absence of var.image, this will be used to query API for the image | `map(any)` | <pre>{<br>  "os_distro": "ubuntu",<br>  "os_version": "22.04"<br>}</pre> | no |
