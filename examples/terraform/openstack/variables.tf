@@ -196,3 +196,9 @@ Name of operating system profile for MachineDeployments, only applicable if oper
 If not specified, the default value will be added by machine-controller addon.
 EOF
 }
+
+variable "disable_auto_update" {
+  description = "Disable automatic flatcar updates (and reboot)"
+  type        = bool
+  default     = false
+}

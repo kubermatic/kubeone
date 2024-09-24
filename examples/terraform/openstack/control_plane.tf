@@ -37,6 +37,10 @@ resource "openstack_compute_instance_v2" "control_plane" {
   security_groups = [openstack_networking_secgroup_v2.securitygroup.name]
   config_drive    = var.config_drive
 
+  user_data = var.disable_auto_update ? templatefile("./userdata_flatcar_upgrades.json", {
+    ssh_key = trimspace(file(pathexpand(var.ssh_public_key_file)))
+  }) : null
+
   network {
     port = element(openstack_networking_port_v2.control_plane[*].id, count.index)
   }

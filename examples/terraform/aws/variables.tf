@@ -313,3 +313,9 @@ Name of operating system profile for MachineDeployments, only applicable if oper
 If not specified default is used based on the OS specified for workers.
 EOF
 }
+
+variable "disable_auto_update" {
+  description = "Disable automatic flatcar updates (and reboot)"
+  type        = bool
+  default     = false
+}
