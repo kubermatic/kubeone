@@ -345,6 +345,11 @@ func (in *ContainerRuntimeContainerd) DeepCopyInto(out *ContainerRuntimeContaine
 			(*out)[key] = *val.DeepCopy()
 		}
 	}
+	if in.DeviceOwnershipFromSecurityContext != nil {
+		in, out := &in.DeviceOwnershipFromSecurityContext, &out.DeviceOwnershipFromSecurityContext
+		*out = new(bool)
+		**out = **in
+	}
 	return
 }
 

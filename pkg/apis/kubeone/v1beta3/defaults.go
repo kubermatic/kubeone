@@ -157,6 +157,9 @@ func SetDefaults_ContainerRuntime(obj *KubeOneCluster) {
 	if obj.ContainerRuntime.Containerd == nil {
 		obj.ContainerRuntime.Containerd = &ContainerRuntimeContainerd{}
 	}
+	if obj.ContainerRuntime.Containerd.DeviceOwnershipFromSecurityContext == nil {
+		obj.ContainerRuntime.Containerd.DeviceOwnershipFromSecurityContext = ptr.To(true)
+	}
 }
 
 func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {

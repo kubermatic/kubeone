@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2024-08-15T09:52:25+01:00
+date = 2024-09-24T22:27:32+03:00
 weight = 11
 +++
 ## v1beta2
@@ -224,6 +224,7 @@ ContainerRuntimeContainerd defines docker container runtime
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | registries | A map of registries to use to render configs and mirrors for containerd registries | map[string][ContainerdRegistry](#containerdregistry) | false |
+| deviceOwnershipFromSecurityContext | Enable or disable device_ownership_from_security_context containerd CRI config. Default to false. | *bool | false |
 
 [Back to Group](#v1beta2)
 

@@ -22,6 +22,8 @@ import (
 
 	"github.com/BurntSushi/toml"
 
+	"k8s.io/utils/ptr"
+
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/fail"
 )
@@ -37,9 +39,10 @@ type containerdMetrics struct {
 }
 
 type containerdCRIPlugin struct {
-	SandboxImage string                 `toml:"sandbox_image"`
-	Containerd   *containerdCRISettings `toml:"containerd"`
-	Registry     *containerdCRIRegistry `toml:"registry"`
+	SandboxImage                       string                 `toml:"sandbox_image"`
+	Containerd                         *containerdCRISettings `toml:"containerd"`
+	Registry                           *containerdCRIRegistry `toml:"registry"`
+	DeviceOwnershipFromSecurityContext bool                   `toml:"device_ownership_from_security_context"`
 }
 
 type containerdCRISettings struct {
@@ -87,7 +90,8 @@ func marshalContainerdConfig(cluster *kubeoneapi.KubeOneCluster) (string, error)
 	}
 
 	criPlugin := containerdCRIPlugin{
-		SandboxImage: sandboxImage,
+		DeviceOwnershipFromSecurityContext: ptr.Deref(cluster.ContainerRuntime.Containerd.DeviceOwnershipFromSecurityContext, true),
+		SandboxImage:                       sandboxImage,
 		Containerd: &containerdCRISettings{
 			Runtimes: map[string]containerdCRIRuntime{
 				"runc": {
