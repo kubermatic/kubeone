@@ -176,6 +176,7 @@ var (
 				varFile: "testdata/aws_medium.tfvars",
 				vars: []string{
 					"os=flatcar",
+					"disable_auto_update=true",
 				},
 			},
 			protokol: protokolBin{
@@ -218,6 +219,7 @@ var (
 				varFile: "testdata/aws_medium.tfvars",
 				vars: []string{
 					"os=flatcar",
+					"disable_auto_update=true",
 					"worker_deploy_ssh_key=false",
 				},
 			},
@@ -1034,6 +1036,7 @@ var (
 				varFile: "testdata/vsphere.tfvars",
 				vars: []string{
 					"template_name=kkp-flatcar-stable",
+					"disable_auto_update=true",
 				},
 			},
 			protokol: protokolBin{
