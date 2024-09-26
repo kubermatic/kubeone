@@ -27,13 +27,13 @@ import (
 	"text/template"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
-	"k8c.io/kubeone/pkg/pointer"
 
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/yaml"
 )
 
@@ -68,7 +68,8 @@ metadata:
     app: test
 data:
   foo: bar
-`}
+`,
+}
 
 const (
 	testManifest1WithoutLabel = `apiVersion: v1
@@ -167,10 +168,8 @@ spec:
 `
 )
 
-var (
-	// testManifest1 & testManifest3 have a linebreak at the end, testManifest2 not
-	combinedTestManifest = fmt.Sprintf("%s---\n%s\n---\n%s", testManifests[0], testManifests[1], testManifests[2])
-)
+// testManifest1 & testManifest3 have a linebreak at the end, testManifest2 not
+var combinedTestManifest = fmt.Sprintf("%s---\n%s\n---\n%s", testManifests[0], testManifests[1], testManifests[2])
 
 func TestEnsureAddonsLabelsOnResources(t *testing.T) {
 	t.Parallel()
@@ -200,7 +199,7 @@ func TestEnsureAddonsLabelsOnResources(t *testing.T) {
 			t.Parallel()
 			addonsDir := t.TempDir()
 
-			if writeErr := os.WriteFile(path.Join(addonsDir, "testManifest.yaml"), []byte(tc.addonManifest), 0600); writeErr != nil {
+			if writeErr := os.WriteFile(path.Join(addonsDir, "testManifest.yaml"), []byte(tc.addonManifest), 0o600); writeErr != nil {
 				t.Fatalf("unable to create temporary addon manifest: %v", writeErr)
 			}
 
@@ -276,7 +275,7 @@ func TestImageRegistryParsing(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			addonsDir := t.TempDir()
 
-			if writeErr := os.WriteFile(path.Join(addonsDir, "testManifest.yaml"), []byte(tc.inputManifest), 0600); writeErr != nil {
+			if writeErr := os.WriteFile(path.Join(addonsDir, "testManifest.yaml"), []byte(tc.inputManifest), 0o600); writeErr != nil {
 				t.Fatalf("unable to create temporary addon manifest: %v", writeErr)
 			}
 
@@ -328,7 +327,6 @@ func TestCABundleFuncs(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt, func(t *testing.T) {
 			tpl, err := template.New("addons-base").Funcs(txtFuncMap("")).Parse(fmt.Sprintf(`{{ %s }}`, tt))
-
 			if err != nil {
 				t.Errorf("failed to parse template: %v", err)
 				t.FailNow()
@@ -391,7 +389,7 @@ func Test_addSecretCSIVolume(t *testing.T) {
 				VolumeSource: corev1.VolumeSource{
 					CSI: &corev1.CSIVolumeSource{
 						Driver:   "secrets-store.csi.k8s.io",
-						ReadOnly: pointer.New(true),
+						ReadOnly: ptr.To(true),
 						VolumeAttributes: map[string]string{
 							"secretProviderClass": secretProviderClassName,
 						},
@@ -653,7 +651,7 @@ func TestDisableTemplateForLoadManifests(t *testing.T) {
 			t.Parallel()
 			addonsDir := t.TempDir()
 
-			if writeErr := os.WriteFile(path.Join(addonsDir, "testManifest.yaml"), []byte(tc.addonManifest), 0600); writeErr != nil {
+			if writeErr := os.WriteFile(path.Join(addonsDir, "testManifest.yaml"), []byte(tc.addonManifest), 0o600); writeErr != nil {
 				t.Fatalf("unable to create temporary addon manifest: %v", writeErr)
 			}
 

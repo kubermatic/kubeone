@@ -42,7 +42,6 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
-	"k8c.io/kubeone/pkg/pointer"
 	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
@@ -50,6 +49,7 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	"k8s.io/utils/ptr"
 	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/yaml"
 )
@@ -218,8 +218,8 @@ func newHelmSettings(verbose bool) *helmcli.EnvSettings {
 
 func newRestClientGetter(kubeConfigFileName, namespace string, st *state.State) *genericclioptions.ConfigFlags {
 	return &genericclioptions.ConfigFlags{
-		Namespace:  pointer.New(namespace),
-		KubeConfig: pointer.New(kubeConfigFileName),
+		Namespace:  ptr.To(namespace),
+		KubeConfig: ptr.To(kubeConfigFileName),
 		WrapConfigFn: func(rc *rest.Config) *rest.Config {
 			tunnelErr := kubeconfig.TunnelRestConfig(st, rc)
 			if tunnelErr != nil {

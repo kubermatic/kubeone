@@ -194,6 +194,8 @@ type ContainerRuntimeConfig struct {
 type ContainerRuntimeContainerd struct {
 	// A map of registries to use to render configs and mirrors for containerd registries
 	Registries map[string]ContainerdRegistry `json:"registries,omitempty"`
+	// Enable or disable device_ownership_from_security_context containerd CRI config. Default to true.
+	DeviceOwnershipFromSecurityContext *bool `json:"deviceOwnershipFromSecurityContext,omitempty"`
 }
 
 // ContainerdRegistry defines endpoints and security for given container registry

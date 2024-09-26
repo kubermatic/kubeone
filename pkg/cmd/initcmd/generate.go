@@ -32,9 +32,9 @@ import (
 	"k8c.io/kubeone/examples"
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/pointer"
 	"k8c.io/kubeone/pkg/tabwriter"
 
+	"k8s.io/utils/ptr"
 	kyaml "sigs.k8s.io/yaml"
 )
 
@@ -105,7 +105,7 @@ func GenerateConfigs(opts *GenerateOpts) error {
 		return err
 	}
 
-	err = os.MkdirAll(opts.path, 0750)
+	err = os.MkdirAll(opts.path, 0o750)
 	if err != nil {
 		return err
 	}
@@ -323,7 +323,7 @@ func clusterAdditionalParams(cluster *kubeonev1beta2.KubeOneCluster, generateOpt
 	}
 	if generateOpts.enableFeatureCoreDNSPDB {
 		cluster.Features.CoreDNS = &kubeonev1beta2.CoreDNS{
-			DeployPodDisruptionBudget: pointer.New(true),
+			DeployPodDisruptionBudget: ptr.To(true),
 		}
 	}
 
