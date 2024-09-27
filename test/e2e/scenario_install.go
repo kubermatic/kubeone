@@ -30,11 +30,16 @@ import (
 
 type scenarioInstall struct {
 	Name                 string
+	HumanReadableName    string
 	ManifestTemplatePath string
 
 	versions    []string
 	infra       Infra
 	kubeonePath string
+}
+
+func (scenario scenarioInstall) GetHumanReadableName() string {
+	return scenario.HumanReadableName
 }
 
 func (scenario scenarioInstall) KubeonePath() string {
@@ -216,7 +221,7 @@ func (scenario *scenarioInstall) GenerateTests(wr io.Writer, generatorType Gener
 
 	prowJobs = append(prowJobs,
 		newProwJob(
-			pullProwJobName(scenario.infra.name, scenario.Name, version),
+			PullProwJobName(scenario.infra.name, scenario.Name, version),
 			scenario.infra.labels,
 			testTitle,
 			cfg,

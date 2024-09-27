@@ -28,7 +28,8 @@ import (
 var (
 	Infrastructures = map[string]Infra{
 		"aws_default": {
-			name: "aws_default",
+			name:   "aws_default",
+			osName: "Ubuntu",
 			labels: map[string]string{
 				"preset-goproxy":         "true",
 				"preset-aws-e2e-kubeone": "true",
@@ -46,7 +47,8 @@ var (
 			},
 		},
 		"aws_default_stable": {
-			name: "aws_default_stable",
+			name:   "aws_default_stable",
+			osName: "Ubuntu",
 			labels: map[string]string{
 				"preset-goproxy":         "true",
 				"preset-aws-e2e-kubeone": "true",
@@ -64,7 +66,8 @@ var (
 			},
 		},
 		"aws_ubuntu_previous_lts": {
-			name: "aws_ubuntu_previous_lts",
+			name:   "aws_ubuntu_previous_lts",
+			osName: "Ubuntu (Previous LTS)",
 			labels: map[string]string{
 				"preset-goproxy":         "true",
 				"preset-aws-e2e-kubeone": "true",
@@ -82,7 +85,8 @@ var (
 			},
 		},
 		"aws_rhel": {
-			name: "aws_rhel",
+			name:   "aws_rhel",
+			osName: "RHEL",
 			environ: map[string]string{
 				"PROVIDER": "aws",
 			},
@@ -103,7 +107,8 @@ var (
 			},
 		},
 		"aws_rhel_stable": {
-			name: "aws_rhel_stable",
+			name:   "aws_rhel_stable",
+			osName: "RHEL",
 			environ: map[string]string{
 				"PROVIDER": "aws",
 			},
@@ -121,7 +126,8 @@ var (
 			},
 		},
 		"aws_rockylinux": {
-			name: "aws_rockylinux",
+			name:   "aws_rockylinux",
+			osName: "Rocky Linux",
 			environ: map[string]string{
 				"PROVIDER": "aws",
 			},
@@ -142,7 +148,8 @@ var (
 			},
 		},
 		"aws_rockylinux_stable": {
-			name: "aws_rockylinux_stable",
+			name:   "aws_rockylinux_stable",
+			osName: "Rocky Linux",
 			environ: map[string]string{
 				"PROVIDER": "aws",
 			},
@@ -163,7 +170,8 @@ var (
 			},
 		},
 		"aws_flatcar": {
-			name: "aws_flatcar",
+			name:   "aws_flatcar",
+			osName: "Flatcar",
 			environ: map[string]string{
 				"PROVIDER": "aws",
 			},
@@ -185,7 +193,8 @@ var (
 			},
 		},
 		"aws_flatcar_stable": {
-			name: "aws_flatcar_stable",
+			name:   "aws_flatcar_stable",
+			osName: "Flatcar",
 			environ: map[string]string{
 				"PROVIDER": "aws",
 			},
@@ -206,7 +215,8 @@ var (
 			},
 		},
 		"aws_flatcar_cloud_init": {
-			name: "aws_flatcar_cloud_init",
+			name:   "aws_flatcar_cloud_init",
+			osName: "Flatcar",
 			environ: map[string]string{
 				"PROVIDER": "aws",
 			},
@@ -229,7 +239,8 @@ var (
 			},
 		},
 		"aws_flatcar_cloud_init_stable": {
-			name: "aws_flatcar_cloud_init_stable",
+			name:   "aws_flatcar_cloud_init_stable",
+			osName: "Flatcar",
 			environ: map[string]string{
 				"PROVIDER": "aws",
 			},
@@ -251,7 +262,8 @@ var (
 			},
 		},
 		"aws_amzn": {
-			name: "aws_amzn",
+			name:   "aws_amzn",
+			osName: "Amazon Linux 2",
 			environ: map[string]string{
 				"PROVIDER": "aws",
 			},
@@ -272,7 +284,8 @@ var (
 			},
 		},
 		"aws_amzn_stable": {
-			name: "aws_amzn_stable",
+			name:   "aws_amzn_stable",
+			osName: "Amazon Linux 2",
 			environ: map[string]string{
 				"PROVIDER": "aws",
 			},
@@ -293,7 +306,9 @@ var (
 			},
 		},
 		"aws_long_timeout_default": {
-			name: "aws_long_timeout_default",
+			name:              "aws_long_timeout_default",
+			osName:            "Ubuntu",
+			discludeFromIssue: true,
 			labels: map[string]string{
 				"preset-goproxy":         "true",
 				"preset-aws-e2e-kubeone": "true",
@@ -311,7 +326,8 @@ var (
 			},
 		},
 		"azure_default": {
-			name: "azure_default",
+			name:   "azure_default",
+			osName: "Ubuntu",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-azure":   "true",
@@ -329,7 +345,8 @@ var (
 			},
 		},
 		"azure_default_stable": {
-			name: "azure_default_stable",
+			name:   "azure_default_stable",
+			osName: "Ubuntu",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-azure":   "true",
@@ -347,7 +364,8 @@ var (
 			},
 		},
 		"azure_flatcar": {
-			name: "azure_flatcar",
+			name:   "azure_flatcar",
+			osName: "Flatcar",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-azure":   "true",
@@ -369,7 +387,8 @@ var (
 			},
 		},
 		"azure_flatcar_stable": {
-			name: "azure_flatcar_stable",
+			name:   "azure_flatcar_stable",
+			osName: "Flatcar",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-azure":   "true",
@@ -391,7 +410,8 @@ var (
 			},
 		},
 		"azure_rhel": {
-			name: "azure_rhel",
+			name:   "azure_rhel",
+			osName: "RHEL",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-azure":   "true",
@@ -413,7 +433,8 @@ var (
 			},
 		},
 		"azure_rhel_stable": {
-			name: "azure_rhel_stable",
+			name:   "azure_rhel_stable",
+			osName: "RHEL",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-azure":   "true",
@@ -435,7 +456,8 @@ var (
 			},
 		},
 		"azure_rockylinux": {
-			name: "azure_rockylinux",
+			name:   "azure_rockylinux",
+			osName: "Rocky Linux",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-azure":   "true",
@@ -456,7 +478,8 @@ var (
 			},
 		},
 		"azure_rockylinux_stable": {
-			name: "azure_rockylinux_stable",
+			name:   "azure_rockylinux_stable",
+			osName: "Rocky Linux",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-azure":   "true",
@@ -477,7 +500,8 @@ var (
 			},
 		},
 		"digitalocean_default": {
-			name: "digitalocean_default",
+			name:   "digitalocean_default",
+			osName: "Ubuntu",
 			labels: map[string]string{
 				"preset-goproxy":      "true",
 				"preset-digitalocean": "true",
@@ -497,7 +521,8 @@ var (
 			},
 		},
 		"digitalocean_default_stable": {
-			name: "digitalocean_default_stable",
+			name:   "digitalocean_default_stable",
+			osName: "Ubuntu",
 			labels: map[string]string{
 				"preset-goproxy":      "true",
 				"preset-digitalocean": "true",
@@ -517,7 +542,8 @@ var (
 			},
 		},
 		"digitalocean_rockylinux": {
-			name: "digitalocean_rockylinux",
+			name:   "digitalocean_rockylinux",
+			osName: "Rocky Linux",
 			labels: map[string]string{
 				"preset-goproxy":      "true",
 				"preset-digitalocean": "true",
@@ -538,7 +564,8 @@ var (
 			},
 		},
 		"digitalocean_rockylinux_stable": {
-			name: "digitalocean_rockylinux_stable",
+			name:   "digitalocean_rockylinux_stable",
+			osName: "Rocky Linux",
 			labels: map[string]string{
 				"preset-goproxy":      "true",
 				"preset-digitalocean": "true",
@@ -560,7 +587,8 @@ var (
 			},
 		},
 		"equinixmetal_default": {
-			name: "equinixmetal_default",
+			name:   "equinixmetal_default",
+			osName: "Ubuntu",
 			labels: map[string]string{
 				"preset-goproxy":       "true",
 				"preset-equinix-metal": "true",
@@ -577,7 +605,8 @@ var (
 			},
 		},
 		"equinixmetal_default_stable": {
-			name: "equinixmetal_default_stable",
+			name:   "equinixmetal_default_stable",
+			osName: "Ubuntu",
 			labels: map[string]string{
 				"preset-goproxy":       "true",
 				"preset-equinix-metal": "true",
@@ -598,7 +627,8 @@ var (
 			},
 		},
 		"equinixmetal_rockylinux": {
-			name: "equinixmetal_rockylinux",
+			name:   "equinixmetal_rockylinux",
+			osName: "Rocky Linux",
 			labels: map[string]string{
 				"preset-goproxy":       "true",
 				"preset-equinix-metal": "true",
@@ -619,7 +649,8 @@ var (
 			},
 		},
 		"equinixmetal_rockylinux_stable": {
-			name: "equinixmetal_rockylinux_stable",
+			name:   "equinixmetal_rockylinux_stable",
+			osName: "Rocky Linux",
 			labels: map[string]string{
 				"preset-goproxy":       "true",
 				"preset-equinix-metal": "true",
@@ -641,7 +672,8 @@ var (
 			},
 		},
 		"equinixmetal_flatcar": {
-			name: "equinixmetal_flatcar",
+			name:   "equinixmetal_flatcar",
+			osName: "Flatcar",
 			labels: map[string]string{
 				"preset-goproxy":       "true",
 				"preset-equinix-metal": "true",
@@ -661,7 +693,8 @@ var (
 			},
 		},
 		"equinixmetal_flatcar_stable": {
-			name: "equinixmetal_flatcar_stable",
+			name:   "equinixmetal_flatcar_stable",
+			osName: "Flatcar",
 			labels: map[string]string{
 				"preset-goproxy":       "true",
 				"preset-equinix-metal": "true",
@@ -683,7 +716,8 @@ var (
 			},
 		},
 		"gce_default": {
-			name: "gce_default",
+			name:   "gce_default",
+			osName: "Ubuntu",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-gce":     "true",
@@ -703,7 +737,8 @@ var (
 			},
 		},
 		"gce_default_stable": {
-			name: "gce_default_stable",
+			name:   "gce_default_stable",
+			osName: "Ubuntu",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-gce":     "true",
@@ -723,7 +758,8 @@ var (
 			},
 		},
 		"hetzner_default": {
-			name: "hetzner_default",
+			name:   "hetzner_default",
+			osName: "Ubuntu",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-hetzner": "true",
@@ -743,7 +779,8 @@ var (
 			},
 		},
 		"hetzner_default_stable": {
-			name: "hetzner_default_stable",
+			name:   "hetzner_default_stable",
+			osName: "Ubuntu",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-hetzner": "true",
@@ -763,7 +800,8 @@ var (
 			},
 		},
 		"hetzner_rockylinux": {
-			name: "hetzner_rockylinux",
+			name:   "hetzner_rockylinux",
+			osName: "Rocky Linux",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-hetzner": "true",
@@ -784,7 +822,8 @@ var (
 			},
 		},
 		"hetzner_rockylinux_stable": {
-			name: "hetzner_rockylinux_stable",
+			name:   "hetzner_rockylinux_stable",
+			osName: "Rocky Linux",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-hetzner": "true",
@@ -806,7 +845,8 @@ var (
 			},
 		},
 		"openstack_default": {
-			name: "openstack_default",
+			name:   "openstack_default",
+			osName: "Ubuntu",
 			labels: map[string]string{
 				"preset-goproxy":   "true",
 				"preset-openstack": "true",
@@ -824,7 +864,8 @@ var (
 			},
 		},
 		"openstack_default_stable": {
-			name: "openstack_default_stable",
+			name:   "openstack_default_stable",
+			osName: "Ubuntu",
 			labels: map[string]string{
 				"preset-goproxy":   "true",
 				"preset-openstack": "true",
@@ -843,7 +884,8 @@ var (
 			},
 		},
 		"openstack_rockylinux": {
-			name: "openstack_rockylinux",
+			name:   "openstack_rockylinux",
+			osName: "Rocky Linux",
 			labels: map[string]string{
 				"preset-goproxy":   "true",
 				"preset-openstack": "true",
@@ -862,7 +904,8 @@ var (
 			},
 		},
 		"openstack_rockylinux_stable": {
-			name: "openstack_rockylinux",
+			name:   "openstack_rockylinux",
+			osName: "Rocky Linux",
 			labels: map[string]string{
 				"preset-goproxy":   "true",
 				"preset-openstack": "true",
@@ -881,7 +924,8 @@ var (
 			},
 		},
 		"openstack_rhel": {
-			name: "openstack_rhel",
+			name:   "openstack_rhel",
+			osName: "RHEL",
 			labels: map[string]string{
 				"preset-goproxy":   "true",
 				"preset-openstack": "true",
@@ -900,7 +944,8 @@ var (
 			},
 		},
 		"openstack_rhel_stable": {
-			name: "openstack_rhel_stable",
+			name:   "openstack_rhel_stable",
+			osName: "RHEL",
 			labels: map[string]string{
 				"preset-goproxy":   "true",
 				"preset-openstack": "true",
@@ -919,7 +964,8 @@ var (
 			},
 		},
 		"openstack_flatcar": {
-			name: "openstack_flatcar",
+			name:   "openstack_flatcar",
+			osName: "Flatcar",
 			labels: map[string]string{
 				"preset-goproxy":   "true",
 				"preset-openstack": "true",
@@ -938,7 +984,8 @@ var (
 			},
 		},
 		"openstack_flatcar_stable": {
-			name: "openstack_flatcar_stable",
+			name:   "openstack_flatcar_stable",
+			osName: "Flatcar",
 			labels: map[string]string{
 				"preset-goproxy":   "true",
 				"preset-openstack": "true",
@@ -974,7 +1021,8 @@ var (
 		// 	},
 		// },
 		"vsphere_default": {
-			name: "vsphere_default",
+			name:   "vsphere_default",
+			osName: "Ubuntu",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-vsphere": "true",
@@ -998,7 +1046,8 @@ var (
 			},
 		},
 		"vsphere_default_stable": {
-			name: "vsphere_default_stable",
+			name:   "vsphere_default_stable",
+			osName: "Ubuntu",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-vsphere": "true",
@@ -1022,7 +1071,8 @@ var (
 			},
 		},
 		"vsphere_flatcar": {
-			name: "vsphere_flatcar",
+			name:   "vsphere_flatcar",
+			osName: "Flatcar",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-vsphere": "true",
@@ -1045,7 +1095,8 @@ var (
 			},
 		},
 		"vsphere_flatcar_stable": {
-			name: "vsphere_flatcar_stable",
+			name:   "vsphere_flatcar_stable",
+			osName: "Flatcar",
 			labels: map[string]string{
 				"preset-goproxy": "true",
 				"preset-vsphere": "true",
@@ -1093,72 +1144,94 @@ var (
 		// containerd
 		"install_containerd": &scenarioInstall{
 			Name:                 "install_containerd",
+			HumanReadableName:    "Cluster Provisioning (In-Tree)",
 			ManifestTemplatePath: "testdata/containerd_simple.yaml",
 		},
 
 		// external containerd
 		"install_containerd_external": &scenarioInstall{
 			Name:                 "install_containerd_external",
+			HumanReadableName:    "Cluster Provisioning (External)",
 			ManifestTemplatePath: "testdata/containerd_simple_external.yaml",
 		},
 		"upgrade_containerd_external": &scenarioUpgrade{
 			Name:                 "upgrade_containerd_external",
+			HumanReadableName:    "Cluster Upgrading (External)",
 			ManifestTemplatePath: "testdata/containerd_simple_external_v1beta2.yaml",
 		},
 		"conformance_containerd_external": &scenarioConformance{
 			Name:                 "conformance_containerd_external",
+			HumanReadableName:    "Cluster Conformance (External)",
 			ManifestTemplatePath: "testdata/containerd_simple_external.yaml",
 		},
 
 		// Various features
 		"calico_containerd_external": &scenarioInstall{
 			Name:                 "calico_containerd_external",
+			HumanReadableName:    "Cluster Provisioning (External, Calico)",
 			ManifestTemplatePath: "testdata/containerd_calico_external.yaml",
 		},
 		"cilium_containerd_external": &scenarioInstall{
 			Name:                 "cilium_containerd_external",
+			HumanReadableName:    "Cluster Provisioning (External, Cilium)",
 			ManifestTemplatePath: "testdata/containerd_cilium_external.yaml",
 		},
 		"upgrade_cilium_containerd_external": &scenarioUpgrade{
 			Name:                 "upgrade_cilium_containerd_external",
+			HumanReadableName:    "Cluster Upgrading (External, Calico)",
 			ManifestTemplatePath: "testdata/containerd_cilium_external_v1beta2.yaml",
 		},
 		"kube_proxy_ipvs_external": &scenarioInstall{
 			Name:                 "kube_proxy_ipvs_external",
+			HumanReadableName:    "Cluster Provisioning (External, kube-proxy IPVS)",
 			ManifestTemplatePath: "testdata/kube_proxy_ipvs_external.yaml",
 		},
 		"csi_ccm_migration": &scenarioMigrateCSIAndCCM{
 			Name:                    "csi_ccm_migration",
 			OldManifestTemplatePath: "testdata/containerd_simple.yaml",
+			HumanReadableName:       "CCM/CSI Migration",
 			NewManifestTemplatePath: "testdata/containerd_simple_external.yaml",
 		},
 		"external_cni_flannel_helm_chart": &scenarioInstall{
 			Name:                 "external_cni_flannel_helm_chart",
+			HumanReadableName:    "CCM/CSI Migration",
 			ManifestTemplatePath: "testdata/containerd_flannel_helm_external.yaml",
 		},
 	}
 )
 
 type Infra struct {
-	name      string
-	environ   map[string]string
-	terraform terraformBin
-	protokol  protokolBin
-	labels    map[string]string
+	name              string
+	osName            string
+	discludeFromIssue bool
+	environ           map[string]string
+	terraform         terraformBin
+	protokol          protokolBin
+	labels            map[string]string
 }
 
 func (i Infra) Provider() string {
 	return i.environ["PROVIDER"]
 }
 
+func (i Infra) OperatingSystem() string {
+	return i.osName
+}
+
+func (i Infra) DiscludeFromIssue() bool {
+	return i.discludeFromIssue
+}
+
 type GeneratorType int
 
 const (
-	GeneratorTypeGo   = 1
-	GeneratorTypeYAML = 2
+	GeneratorTypeGo     = 1
+	GeneratorTypeYAML   = 2
+	GeneratorTypeGitHub = 3
 )
 
 type Scenario interface {
+	GetHumanReadableName() string
 	SetInfra(infrastructure Infra)
 	SetVersions(versions ...string)
 	FetchVersions() error

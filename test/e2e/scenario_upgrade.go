@@ -42,11 +42,16 @@ const (
 
 type scenarioUpgrade struct {
 	Name                 string
+	HumanReadableName    string
 	ManifestTemplatePath string
 
 	versions           []string
 	initKubeOneVersion string
 	infra              Infra
+}
+
+func (scenario scenarioUpgrade) GetHumanReadableName() string {
+	return scenario.HumanReadableName
 }
 
 func (scenario scenarioUpgrade) Title() string { return titleize(scenario.Name) }
@@ -241,7 +246,7 @@ func (scenario *scenarioUpgrade) GenerateTests(wr io.Writer, generatorType Gener
 
 	prowJobs = append(prowJobs,
 		newProwJob(
-			pullProwJobName(scenario.infra.name, scenario.Name, "from", up.From, "to", up.To),
+			PullProwJobName(scenario.infra.name, scenario.Name, "from", up.From, "to", up.To),
 			scenario.infra.labels,
 			testTitle,
 			cfg,
