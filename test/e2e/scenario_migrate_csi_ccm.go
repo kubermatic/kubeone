@@ -31,11 +31,16 @@ import (
 
 type scenarioMigrateCSIAndCCM struct {
 	Name                    string
+	HumanReadableName       string
 	OldManifestTemplatePath string
 	NewManifestTemplatePath string
 
 	versions []string
 	infra    Infra
+}
+
+func (scenario scenarioMigrateCSIAndCCM) GetHumanReadableName() string {
+	return scenario.HumanReadableName
 }
 
 func (scenario scenarioMigrateCSIAndCCM) Title() string { return titleize(scenario.Name) }

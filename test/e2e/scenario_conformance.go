@@ -26,10 +26,15 @@ import (
 
 type scenarioConformance struct {
 	Name                 string
+	HumanReadableName    string
 	ManifestTemplatePath string
 
 	versions []string
 	infra    Infra
+}
+
+func (scenario scenarioConformance) GetHumanReadableName() string {
+	return scenario.HumanReadableName
 }
 
 func (scenario *scenarioConformance) SetInfra(infrastructure Infra) {

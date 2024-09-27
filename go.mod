@@ -16,6 +16,7 @@ require (
 	github.com/dominodatalab/os-release v0.0.0-20190522011736-bcdb4a3e3c2f
 	github.com/go-logr/logr v1.3.0
 	github.com/google/go-cmp v0.6.0
+	github.com/google/go-github/v65 v65.0.0
 	github.com/iancoleman/orderedmap v0.3.0
 	github.com/koron-go/prefixw v1.0.0
 	github.com/kubermatic/machine-controller v1.57.9
@@ -94,6 +95,7 @@ require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/btree v1.0.1 // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/google/uuid v1.3.1 // indirect
