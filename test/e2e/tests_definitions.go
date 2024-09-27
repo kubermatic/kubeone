@@ -183,8 +183,8 @@ var (
 				path:    "../../examples/terraform/aws",
 				varFile: "testdata/aws_medium.tfvars",
 				vars: []string{
-					"os=flatcar",
 					"disable_auto_update=true",
+					"os=flatcar",
 				},
 			},
 			protokol: protokolBin{
@@ -206,6 +206,7 @@ var (
 				path:    "../../../kubeone-stable/examples/terraform/aws",
 				varFile: "testdata/aws_stable_medium.tfvars",
 				vars: []string{
+					"disable_auto_update=true",
 					"os=flatcar",
 				},
 			},
@@ -228,8 +229,8 @@ var (
 				path:    "../../examples/terraform/aws",
 				varFile: "testdata/aws_medium.tfvars",
 				vars: []string{
-					"os=flatcar",
 					"disable_auto_update=true",
+					"os=flatcar",
 					"worker_deploy_ssh_key=false",
 				},
 			},
@@ -252,6 +253,7 @@ var (
 				path:    "../../../kubeone-stable/examples/terraform/aws",
 				varFile: "testdata/aws_stable_medium.tfvars",
 				vars: []string{
+					"disable_auto_update=true",
 					"os=flatcar",
 					"worker_deploy_ssh_key=false",
 				},
@@ -684,6 +686,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/equinixmetal",
 				vars: []string{
+					"disable_auto_update=true",
 					"os=flatcar",
 				},
 			},
@@ -705,9 +708,8 @@ var (
 			terraform: terraformBin{
 				path: "../../../kubeone-stable/examples/terraform/equinixmetal",
 				vars: []string{
-					"control_plane_operating_system=flatcar_stable",
-					"worker_os=flatcar",
-					"ssh_username=core",
+					"disable_auto_update=true",
+					"os=flatcar",
 				},
 			},
 			protokol: protokolBin{
@@ -1085,8 +1087,8 @@ var (
 				path:    "../../examples/terraform/vsphere_flatcar",
 				varFile: "testdata/vsphere.tfvars",
 				vars: []string{
-					"template_name=kkp-flatcar-stable",
 					"disable_auto_update=true",
+					"template_name=kkp-flatcar-stable",
 				},
 			},
 			protokol: protokolBin{
@@ -1109,6 +1111,7 @@ var (
 				path:    "../../../kubeone-stable/examples/terraform/vsphere_flatcar",
 				varFile: "testdata/vsphere.tfvars",
 				vars: []string{
+					"disable_auto_update=true",
 					"template_name=kkp-flatcar-stable",
 				},
 			},
