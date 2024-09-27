@@ -1,0 +1,1 @@
+{"ignition":{"version":"3.3.0"},"storage":{"files":[{"overwrite":true,"path":"/etc/flatcar/update.conf","contents":{"compression":"","source":"data:,SERVER%3Ddisabled%0A"},"mode":420}]}}

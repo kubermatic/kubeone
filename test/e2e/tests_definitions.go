@@ -685,6 +685,7 @@ var (
 				path: "../../examples/terraform/equinixmetal",
 				vars: []string{
 					"os=flatcar",
+					"disable_auto_update=true",
 				},
 			},
 			protokol: protokolBin{
