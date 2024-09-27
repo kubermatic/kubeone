@@ -307,6 +307,8 @@ resource "aws_instance" "control_plane" {
     http_put_response_hop_limit = var.control_plane_http_put_max_hops
   }
 
+  user_data = var.disable_auto_update ? file("./userdata_flatcar_upgrades.json") : null
+
   tags = tomap({
     "Name"                   = "${var.cluster_name}-cp-${count.index + 1}",
     (local.kube_cluster_tag) = "shared",
@@ -334,6 +336,8 @@ resource "aws_instance" "static_workers1" {
     http_put_response_hop_limit = var.static_workers_http_put_max_hops
   }
 
+  user_data = var.disable_auto_update ? file("./userdata_flatcar_upgrades.json") : null
+
   tags = tomap({
     "Name"                   = "${var.cluster_name}-workers1-${count.index + 1}",
     (local.kube_cluster_tag) = "shared",
@@ -355,6 +359,8 @@ resource "aws_instance" "bastion" {
     volume_type = "gp2"
     volume_size = 100
   }
+
+  user_data = var.disable_auto_update ? file("./userdata_flatcar_upgrades.json") : null
 
   tags = tomap({
     "Cluster"                = var.cluster_name,

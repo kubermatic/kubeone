@@ -96,6 +96,8 @@ output "kubeone_workers" {
         operatingSystem = local.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot   = false
+          disableAutoUpdate   = var.disable_auto_update
+          disableLocksmithD   = var.disable_auto_update
           provisioningUtility = var.provisioning_utility
         }
         labels = {
@@ -156,6 +158,8 @@ output "kubeone_workers" {
         operatingSystem = local.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot   = false
+          disableAutoUpdate   = var.disable_auto_update
+          disableLocksmithD   = var.disable_auto_update
           provisioningUtility = var.provisioning_utility
         }
         labels = {
@@ -216,6 +220,8 @@ output "kubeone_workers" {
         operatingSystem = local.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot   = false
+          disableAutoUpdate   = var.disable_auto_update
+          disableLocksmithD   = var.disable_auto_update
           provisioningUtility = var.provisioning_utility
         }
         labels = {

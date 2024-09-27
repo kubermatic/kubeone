@@ -64,6 +64,8 @@ output "kubeone_workers" {
         operatingSystem = var.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot = false
+          disableAutoUpdate = var.disable_auto_update
+          disableLocksmithD = var.disable_auto_update
         }
         # nodeAnnotations are applied on resulting Node objects
         # nodeAnnotations = {

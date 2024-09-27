@@ -43,6 +43,8 @@ resource "metal_device" "control_plane" {
   billing_cycle    = "hourly"
   project_id       = var.project_id
   tags             = [local.kube_cluster_tag]
+
+  user_data = var.disable_auto_update ? file("./userdata_flatcar_upgrades.json") : null
 }
 
 resource "metal_device" "lb" {
@@ -55,6 +57,8 @@ resource "metal_device" "lb" {
   billing_cycle    = "hourly"
   project_id       = var.project_id
   tags             = [local.kube_cluster_tag]
+
+  user_data = var.disable_auto_update ? file("./userdata_flatcar_upgrades.json") : null
 
   connection {
     type = "ssh"
