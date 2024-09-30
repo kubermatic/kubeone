@@ -16,9 +16,6 @@
 
 importOrder: [std, external, project, machine-controller, kubernetes]
 sets:
-  - name: machine-controller
-    patterns:
-      - 'github.com/kubermatic/machine-controller/**'
   - name: kubernetes
     patterns:
       - 'k8s.io/**'
