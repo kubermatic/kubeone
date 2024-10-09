@@ -182,3 +182,5 @@ require (
 	sigs.k8s.io/kustomize/kyaml v0.17.1 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
 )
+
+replace k8s.io/gengo/v2 v2.0.0-20240826214909-a7b603a56eb7 => k8s.io/gengo/v2 v2.0.0-20240228010128-51d4e06bde70
