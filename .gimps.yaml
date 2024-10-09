@@ -14,8 +14,11 @@
 
 # This is the configuration for https://github.com/xrstf/gimps.
 
-importOrder: [std, external, project, machine-controller, kubernetes]
+importOrder: [std, external, kubermatic, kubernetes]
 sets:
+  - name: kubermatic
+    patterns:
+      - 'k8c.io/**'
   - name: kubernetes
     patterns:
       - 'k8s.io/**'
