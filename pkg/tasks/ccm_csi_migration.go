@@ -107,6 +107,7 @@ func getKubeletFlags(annotations map[string]string) map[common.KubeletFlags]stri
 			result[common.KubeletFlags(nameFlagValue[1])] = value
 		}
 	}
+
 	return result
 }
 
