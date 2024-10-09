@@ -183,4 +183,9 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
 )
 
+// This is required because the Kubernetes code generator tools
+// require a specific gengo version, but Go toolchain is fetching
+// the latest available version. When the latest version is used,
+// the code generation tools are throwing errors on the compilation
+// time.
 replace k8s.io/gengo/v2 v2.0.0-20240826214909-a7b603a56eb7 => k8s.io/gengo/v2 v2.0.0-20240228010128-51d4e06bde70
