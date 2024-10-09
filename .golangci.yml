@@ -53,7 +53,7 @@ linters-settings:
     enable:
       - shadow
   goimports:
-    local-prefixes: k8c.io/kubeone
+    local-prefixes: k8c.io
   importas:
     no-unaliased: true
     alias:
@@ -61,6 +61,8 @@ linters-settings:
       alias: kubeoneapi
     - pkg: k8c.io/kubeone/pkg/apis/(\w+)/(v[\w\d]+)
       alias: $1$2
+    - pkg: k8c.io/machine-controller/pkg/apis/cluster/v1alpha1
+      alias: clusterv1alpha1
     - pkg: k8s.io/apimachinery/pkg/apis/meta/v1
       alias: metav1
     - pkg: k8s.io/api/(\w+)/(v[\w\d]+)

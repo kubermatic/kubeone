@@ -31,7 +31,7 @@ import (
 	"k8c.io/kubeone/pkg/ssh"
 	"k8c.io/kubeone/pkg/templates/images"
 
-	apiserverconfigv1 "k8s.io/apiserver/pkg/apis/config/v1"
+	apiserverconfigv1 "k8s.io/apiserver/pkg/apis/apiserver/v1"
 	"k8s.io/client-go/rest"
 	bootstraputil "k8s.io/cluster-bootstrap/token/util"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"

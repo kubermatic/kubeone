@@ -16,8 +16,14 @@
 
 set -eu -o pipefail
 
+SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")/..
+CODEGEN_PKG=${CODEGEN_PKG:-$(cd "${SCRIPT_ROOT}"; ls -d -1 ./vendor/k8s.io/code-generator 2>/dev/null || echo ../code-generator)}
 TERRAFORM_DOCS="go run github.com/terraform-docs/terraform-docs@v0.16.0"
 
+source "${SCRIPT_ROOT}/hack/lib.sh"
+source "${CODEGEN_PKG}/kube_codegen.sh"
+
+echodate "Generating Terraform documentation..."
 for input in examples/terraform/*/README.md.in; do
   dir=$(dirname "$input")
   target=$(basename "$input" .in)
@@ -27,18 +33,10 @@ for input in examples/terraform/*/README.md.in; do
   $TERRAFORM_DOCS --lockfile=false md "$dir" >> "$dir/$target"
 done
 
-export GOFLAGS=-mod=vendor
+echodate "Generating Kubernetes helpers..."
+kube::codegen::gen_helpers \
+    --boilerplate "${SCRIPT_ROOT}/hack/boilerplate/boilerplate.go.txt" \
+    "${SCRIPT_ROOT}/pkg/apis/kubeone"
 
-# The code generation script takes the following arguments:
-# * generators (we use only deepcopy, conversion and defaulter)
-# * output path for clientset (we don't generate clienset, therefore it's empty)
-# * the internal types dir
-# * the external types dir
-# * group and versions to generate code for
-cd $(dirname ${BASH_SOURCE})/..
-bash vendor/k8s.io/code-generator/generate-internal-groups.sh \
-  "deepcopy,conversion,defaulter" "" ./pkg/apis ./pkg/apis \
-  "kubeone:v1beta2,v1beta3" \
-  --go-header-file hack/boilerplate/boilerplate.generatego.txt
-
+echodate "Generating Go code..."
 make gogenerate

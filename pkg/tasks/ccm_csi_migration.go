@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -28,9 +29,8 @@ import (
 	"k8c.io/kubeone/pkg/nodeutils"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/state"
-
-	"github.com/kubermatic/machine-controller/pkg/apis/cluster/common"
-	clusterv1alpha1 "github.com/kubermatic/machine-controller/pkg/apis/cluster/v1alpha1"
+	"k8c.io/machine-controller/pkg/apis/cluster/common"
+	clusterv1alpha1 "k8c.io/machine-controller/pkg/apis/cluster/v1alpha1"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -78,7 +78,7 @@ func readyToCompleteCCMMigration(s *state.State) error {
 
 	migrated := true
 	for i := range machines.Items {
-		flag := common.GetKubeletFlags(machines.Items[i].Annotations)[common.ExternalCloudProviderKubeletFlag]
+		flag := getKubeletFlags(machines.Items[i].Annotations)[common.ExternalCloudProviderKubeletFlag]
 		if boolFlag, err := strconv.ParseBool(flag); !boolFlag || err != nil {
 			migrated = false
 
@@ -91,6 +91,23 @@ func readyToCompleteCCMMigration(s *state.State) error {
 	}
 
 	return nil
+}
+
+// getKubeletFlags was removed too early from machine-controller in
+// https://github.com/kubermatic/machine-controller/pull/1789, but is still needed here.
+func getKubeletFlags(annotations map[string]string) map[common.KubeletFlags]string {
+	result := map[common.KubeletFlags]string{}
+	for name, value := range annotations {
+		if strings.HasPrefix(name, common.KubeletFlagsGroupAnnotationPrefixV1) {
+			nameFlagValue := strings.SplitN(name, "/", 2)
+			if len(nameFlagValue) != 2 {
+				continue
+			}
+			result[common.KubeletFlags(nameFlagValue[1])] = value
+		}
+	}
+
+	return result
 }
 
 func ccmMigrationRegenerateControlPlaneManifestsAndKubeletConfig(s *state.State) error {

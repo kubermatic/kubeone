@@ -22,10 +22,10 @@ import (
 
 	"github.com/BurntSushi/toml"
 
-	"k8s.io/utils/ptr"
-
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/fail"
+
+	"k8s.io/utils/ptr"
 )
 
 type containerdConfig struct {
