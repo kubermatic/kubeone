@@ -51,7 +51,7 @@ var (
 	// AllowedAPIs contains APIs which are allowed to be used
 	AllowedAPIs = map[string]string{
 		kubeonev1beta2.SchemeGroupVersion.String(): "",
-		kubeonev1beta3.SchemeGroupVersion.String(): "",
+		// kubeonev1beta3.SchemeGroupVersion.String(): "",
 	}
 
 	// DeprecatedAPIs contains APIs which are deprecated
@@ -143,13 +143,13 @@ func BytesToKubeOneCluster(cluster, tfOutput, credentialsFile []byte, logger log
 		}
 
 		return DefaultedV1Beta2KubeOneCluster(v1beta2Cluster, tfOutput, credentialsFile, logger)
-	case kubeonev1beta3.SchemeGroupVersion.String():
-		v1beta3Cluster := kubeonev1beta3.NewKubeOneCluster()
-		if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, v1beta3Cluster); err != nil {
-			return nil, fail.Config(err, fmt.Sprintf("decoding %s", v1beta3Cluster.GroupVersionKind()))
-		}
+	// case kubeonev1beta3.SchemeGroupVersion.String():
+	// 	v1beta3Cluster := kubeonev1beta3.NewKubeOneCluster()
+	// 	if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, v1beta3Cluster); err != nil {
+	// 		return nil, fail.Config(err, fmt.Sprintf("decoding %s", v1beta3Cluster.GroupVersionKind()))
+	// 	}
 
-		return DefaultedV1Beta3KubeOneCluster(v1beta3Cluster, tfOutput, credentialsFile, logger)
+	// 	return DefaultedV1Beta3KubeOneCluster(v1beta3Cluster, tfOutput, credentialsFile, logger)
 	default:
 		return nil, fail.Config(fmt.Errorf("invalid api version %q", typeMeta.APIVersion), "api version")
 	}
