@@ -1,4 +1,4 @@
-apiVersion: kubeone.k8c.io/v1beta3
+apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
 name: {{ .ClusterName }}
 
@@ -154,6 +154,11 @@ features:
       # configFilePath is is a required field.
       # More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#configuration-file-format-1
       configFilePath: ""
+  # Enables PodSecurityPolicy admission plugin in API server, as well as creates
+  # default 'privileged' PodSecurityPolicy, plus RBAC rules to authorize
+  # 'kube-system' namespace pods to 'use' it.
+  podSecurityPolicy:
+    enable: {{ .EnablePodSecurityPolicy }}
   # Enables and configures audit log backend.
   # More info: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#log-backend
   staticAuditLog:
@@ -258,40 +263,33 @@ registryConfiguration:
 
 # Addons are Kubernetes manifests to be deployed after provisioning the cluster
 addons:
+  enable: false
   # In case when the relative path is provided, the path is relative
   # to the KubeOne configuration file.
   # This path is required only if you want to provide custom addons or override
   # embedded addons.
   path: "./addons"
+  # globalParams is a key-value map of values passed to the addons templating engine,
+  # to be used in the addons' manifests. The values defined here are passed to all
+  # addons.
+  globalParams:
+    key: value
   # addons is used to enable addons embedded in the KubeOne binary.
   # Currently backups-restic, default-storage-class, and unattended-upgrades are
   # available addons.
   # Check out the documentation to find more information about what are embedded
   # addons and how to use them:
-  # https://docs.kubermatic.com/kubeone/main/guides/addons/
+  # https://docs.kubermatic.com/kubeone/v1.8/guides/addons/
   addons:
-    - addon:
-        # name of the addon to be enabled/deployed (e.g. backups-restic)
-        name: "custom-addon"
-        # delete triggers deletion of the deployed addon
-        delete: false
-        # params is a key-value map of values passed to the addons templating engine,
-        # to be used in the addon's manifests. Values defined here override the values
-        # defined in globalParams.
-        params:
-          key: value
-
-    # helm chart can be also deployed as an addon
-    - helmRelease:
-        chart: flannel
-        repoURL: https://flannel-io.github.io/flannel/
-        namespace: kube-system
-        version: v0.25.4
-        values:
-          - valuesFile: path/to/custom-values.yaml
-          - inline:
-              custom:
-                values: variable-value
+    # name of the addon to be enabled/deployed (e.g. backups-restic)
+    - name: ""
+      # delete triggers deletion of the deployed addon
+      delete: false
+      # params is a key-value map of values passed to the addons templating engine,
+      # to be used in the addon's manifests. Values defined here override the values
+      # defined in globalParams.
+      params:
+        key: value
 
 # The list of nodes can be overwritten by providing Terraform output.
 # You are strongly encouraged to provide an odd number of nodes and

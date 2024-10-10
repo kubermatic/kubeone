@@ -27,7 +27,6 @@ import (
 	"k8c.io/kubeone/pkg/apis/kubeone/config"
 	kubeonescheme "k8c.io/kubeone/pkg/apis/kubeone/scheme"
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
-	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates"
 
@@ -101,13 +100,13 @@ func dumpConfig(opts *configDumpOpts) error {
 		}
 
 		objs = append(objs, versionedCluster)
-	case kubeonev1beta3.SchemeGroupVersion.String():
-		versionedCluster := kubeonev1beta3.NewKubeOneCluster()
-		if cErr := kubeonescheme.Scheme.Convert(cluster, versionedCluster, nil); cErr != nil {
-			return fail.Config(cErr, fmt.Sprintf("converting %s to internal object", versionedCluster.GroupVersionKind()))
-		}
+	// case kubeonev1beta3.SchemeGroupVersion.String():
+	// 	versionedCluster := kubeonev1beta3.NewKubeOneCluster()
+	// 	if cErr := kubeonescheme.Scheme.Convert(cluster, versionedCluster, nil); cErr != nil {
+	// 		return fail.Config(cErr, fmt.Sprintf("converting %s to internal object", versionedCluster.GroupVersionKind()))
+	// 	}
 
-		objs = append(objs, versionedCluster)
+	// 	objs = append(objs, versionedCluster)
 	default:
 		return fail.ConfigError{
 			Op:  "checking KubeOneCluster apiVersion",

@@ -1,19 +1,23 @@
-apiVersion: kubeone.k8c.io/v1beta3
+apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
 
 versions:
   kubernetes: "{{ required ".VERSION is required" .VERSION }}"
+
+containerRuntime:
+  containerd: {}
 
 clusterNetwork:
   cni:
     external: {}
 
 addons:
+  enable: true
   addons:
-    - addon:
-        name: default-storage-class
-    - helmRelease:
-        chart: flannel
-        repoURL: https://flannel-io.github.io/flannel/
-        namespace: kube-system
-        version: v0.25.4
+  - name: default-storage-class
+
+helmReleases:
+  - chart: flannel
+    repoURL: https://flannel-io.github.io/flannel/
+    namespace: kube-system
+    version: v0.25.4
