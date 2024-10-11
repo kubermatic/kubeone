@@ -31,8 +31,7 @@ import (
 	"github.com/spf13/pflag"
 	yaml "gopkg.in/yaml.v2"
 
-	"k8c.io/kubeone/pkg/apis/kubeone/config"
-	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
+	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/pkg/containerruntime"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
@@ -200,7 +199,7 @@ func configPrintCmd() *cobra.Command {
 }
 
 // configMigrateCmd setups the migrate command
-func configMigrateCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+func configMigrateCmd(_ *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "migrate",
 		Short: "Migrate the v1beta2 KubeOneCluster manifest to the v1beta3 version",
@@ -214,12 +213,14 @@ The new manifest is printed on the standard output.
 		Example:       `kubeone config migrate --manifest mycluster.yaml`,
 		SilenceErrors: true,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			gopts, err := persistentGlobalOptions(rootFlags)
-			if err != nil {
-				return err
-			}
+			// gopts, err := persistentGlobalOptions(rootFlags)
+			// if err != nil {
+			// 	return err
+			// }
 
-			return runMigrate(gopts)
+			// return runMigrate(gopts)
+
+			return errors.New("migrating to the v1beta3 API is not possible in this KubeOne version")
 		},
 	}
 
@@ -279,7 +280,8 @@ func runPrint(printOptions *printOpts) error {
 			return fail.Runtime(err, "executing example-manifest template")
 		}
 
-		cfg := kubeonev1beta3.NewKubeOneCluster()
+		// cfg := kubeonev1beta3.NewKubeOneCluster()
+		cfg := kubeonev1beta2.NewKubeOneCluster()
 		err = kyaml.UnmarshalStrict(buffer.Bytes(), &cfg)
 		if err != nil {
 			return fail.Runtime(err, "testing marshal/unmarshal")
@@ -463,28 +465,28 @@ func parseControlPlaneHosts(cfg *yamled.Document, hostList string) error {
 }
 
 // runMigrate migrates the KubeOneCluster manifest from v1alpha1 to v1beta1
-func runMigrate(opts *globalOptions) error {
-	var (
-		tfOutput []byte
-		err      error
-	)
+// func runMigrate(opts *globalOptions) error {
+// 	var (
+// 		tfOutput []byte
+// 		err      error
+// 	)
 
-	if opts.TerraformState != "" {
-		tfOutput, err = config.TFOutput(opts.TerraformState)
-		if err != nil {
-			return err
-		}
-	}
+// 	if opts.TerraformState != "" {
+// 		tfOutput, err = config.TFOutput(opts.TerraformState)
+// 		if err != nil {
+// 			return err
+// 		}
+// 	}
 
-	v1beta3Manifest, err := config.MigrateV1beta2V1beta3(opts.ManifestFile, tfOutput)
-	if err != nil {
-		return err
-	}
+// 	v1beta3Manifest, err := config.MigrateV1beta2V1beta3(opts.ManifestFile, tfOutput)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	fmt.Printf("%s\n", v1beta3Manifest)
+// 	fmt.Printf("%s\n", v1beta3Manifest)
 
-	return nil
-}
+// 	return nil
+// }
 
 // runGenerateMachineDeployments generates the MachineDeployments manifest
 func runGenerateMachineDeployments(opts *globalOptions) error {
@@ -512,7 +514,7 @@ func validateAndPrintConfig(cfgYaml interface{}) error {
 		return fail.Runtime(err, "marshalling new config as YAML")
 	}
 
-	cfg := kubeonev1beta3.NewKubeOneCluster()
+	cfg := kubeonev1beta2.NewKubeOneCluster()
 	if err = kyaml.UnmarshalStrict(buffer.Bytes(), &cfg); err != nil {
 		return fail.Runtime(err, "testing marshal/unmarshal")
 	}
