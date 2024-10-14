@@ -225,7 +225,7 @@ func optionalResources() map[Resource]map[string]string {
 			"1.28.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.28.9",
 			"1.29.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.29.6",
 			"1.30.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.30.3",
-			">= 1.31.0": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.31.0",
+			">= 1.31.0": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.31.1",
 		},
 
 		CSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v8.0.1"},
