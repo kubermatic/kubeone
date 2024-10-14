@@ -11,7 +11,7 @@ helm repo update hcloud
 helm template hccm hcloud/hcloud-cloud-controller-manager \
     --namespace=kube-system \
     --values=generate-values-ccm \
-    --version=v1.19.0 \
+    --version=v1.20.0 \
     > ccm-hetzner.yaml
 ```
 
