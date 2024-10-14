@@ -12,7 +12,7 @@ helm template \
     --version v1.30.5 \
     --values=generate-values-ccm \
     azurefile-csi-driver azurefile-csi-driver/azurefile-csi-driver \
-    > ccm-azurefile.yaml
+    > csi-azurefile.yaml
 ```
 
 **Note:** some manual adjustments are required (e.g. CA certs env/volumes), images...
