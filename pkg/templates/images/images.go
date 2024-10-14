@@ -228,8 +228,8 @@ func optionalResources() map[Resource]map[string]string {
 			">= 1.31.0": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.31.1",
 		},
 
-		CSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v8.0.1"},
-		CSISnapshotWebhook:    {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v8.0.1"},
+		CSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v8.1.0"},
+		CSISnapshotWebhook:    {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v8.1.0"},
 
 		// AWS EBS CSI driver
 		AwsEbsCSI:                    {"*": "public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.35.0"},
@@ -238,7 +238,7 @@ func optionalResources() map[Resource]map[string]string {
 		AwsEbsCSINodeDriverRegistrar: {"*": "public.ecr.aws/eks-distro/kubernetes-csi/node-driver-registrar:v2.12.0-eks-1-31-3"},
 		AwsEbsCSIProvisioner:         {"*": "public.ecr.aws/eks-distro/kubernetes-csi/external-provisioner:v5.1.0-eks-1-31-3"},
 		AwsEbsCSIResizer:             {"*": "public.ecr.aws/eks-distro/kubernetes-csi/external-resizer:v1.12.0-eks-1-31-3"},
-		AwsEbsCSISnapshotter:         {"*": "public.ecr.aws/eks-distro/kubernetes-csi/external-snapshotter/csi-snapshotter:v8.0.1-eks-1-31-3"},
+		AwsEbsCSISnapshotter:         {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.1.0"},
 
 		// Azure CCM
 		AzureCCM: {
@@ -262,7 +262,7 @@ func optionalResources() map[Resource]map[string]string {
 		AzureFileCSINodeDriverRegistar: {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-node-driver-registrar:v2.12.0"},
 		AzureFileCSIProvisioner:        {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-provisioner:v5.1.0"},
 		AzureFileCSIResizer:            {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-resizer:v1.11.1"},
-		AzureFileCSISnapshotter:        {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-snapshotter:v8.0.1"},
+		AzureFileCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.1.0"},
 
 		// AzureDisk CSI driver
 		AzureDiskCSI:                   {"*": "mcr.microsoft.com/oss/kubernetes-csi/azuredisk-csi:v1.30.3"},
@@ -271,7 +271,7 @@ func optionalResources() map[Resource]map[string]string {
 		AzureDiskCSINodeDriverRegistar: {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-node-driver-registrar:v2.12.0"},
 		AzureDiskCSIProvisioner:        {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-provisioner:v5.1.0"},
 		AzureDiskCSIResizer:            {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-resizer:v1.11.1"},
-		AzureDiskCSISnapshotter:        {"*": "mcr.microsoft.com/oss/kubernetes-csi/csi-snapshotter:v8.0.1"},
+		AzureDiskCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.1.0"},
 
 		// DigitalOcean CCM
 		DigitaloceanCCM: {"*": "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.56"},
@@ -283,7 +283,7 @@ func optionalResources() map[Resource]map[string]string {
 		DigitalOceanCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.12.0"},
 		DigitalOceanCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v5.1.0"},
 		DigitalOceanCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.12.0"},
-		DigitalOceanCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.0.1"},
+		DigitalOceanCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.1.0"},
 
 		// Hetzner CCM
 		HetznerCCM: {"*": "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.20.0"},
@@ -320,7 +320,7 @@ func optionalResources() map[Resource]map[string]string {
 		OpenstackCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.4.2"},
 		OpenstackCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.6.2"},
 		OpenstackCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.9.2"},
-		OpenstackCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.0.1"},
+		OpenstackCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.1.0"},
 
 		// Equinix Metal CCM
 		EquinixMetalCCM: {"*": "quay.io/equinix-oss/cloud-provider-equinix-metal:v3.8.1"},
@@ -350,7 +350,7 @@ func optionalResources() map[Resource]map[string]string {
 		VsphereCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.10.1"},
 		VsphereCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v4.0.1"},
 		VsphereCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.10.1"},
-		VsphereCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.0.1"},
+		VsphereCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.1.0"},
 
 		// Nutanix CCM
 		NutanixCCM: {"*": "ghcr.io/nutanix-cloud-native/cloud-provider-nutanix/controller:v0.4.1"},
@@ -361,14 +361,15 @@ func optionalResources() map[Resource]map[string]string {
 		NutanixCSIProvisioner:   {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.6.2"},
 		NutanixCSIRegistrar:     {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.9.1"},
 		NutanixCSIResizer:       {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.9.2"},
-		NutanixCSISnapshotter:   {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.0.1"},
+		NutanixCSISnapshotter:   {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.1.0"},
 
 		// GCP CCM
 		GCPCCM: {
 			"1.27.x":    "registry.k8s.io/cloud-provider-gcp/cloud-controller-manager:v28.2.1",
 			"1.28.x":    "registry.k8s.io/cloud-provider-gcp/cloud-controller-manager:v28.2.1",
 			"1.29.x":    "registry.k8s.io/cloud-provider-gcp/cloud-controller-manager:v29.0.0",
-			">= 1.30.0": "registry.k8s.io/cloud-provider-gcp/cloud-controller-manager:v30.0.0",
+			"1.30.x":    "registry.k8s.io/cloud-provider-gcp/cloud-controller-manager:v30.0.0",
+			">= 1.31.0": "registry.k8s.io/cloud-provider-gcp/cloud-controller-manager:v30.0.0",
 		},
 
 		// GCP Compute Persistent Disk CSI
@@ -377,7 +378,7 @@ func optionalResources() map[Resource]map[string]string {
 		GCPComputeCSIProvisioner:         {"*": "registry.k8s.io/sig-storage/csi-provisioner:v5.1.0"},
 		GCPComputeCSIAttacher:            {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.4.3"},
 		GCPComputeCSIResizer:             {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.11.1"},
-		GCPComputeCSISnapshotter:         {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.0.1"},
+		GCPComputeCSISnapshotter:         {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.1.0"},
 		GCPComputeCSINodeDriverRegistrar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.9.3"},
 
 		// WeaveNet CNI plugin
