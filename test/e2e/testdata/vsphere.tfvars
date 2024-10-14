@@ -4,6 +4,7 @@ datastore_name       = "vsan"
 compute_cluster_name = "Kubermatic"
 network_name         = "Default Network"
 folder_name          = "Kubermatic-ci"
+template_name        = "kkp-ubuntu-24.04"
 control_plane_memory = 4096
 worker_memory        = 4096
 disk_size            = 25
