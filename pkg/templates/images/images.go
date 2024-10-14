@@ -310,9 +310,10 @@ func optionalResources() map[Resource]map[string]string {
 		OpenstackCSI: {
 			"1.26.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.26.4",
 			"1.27.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.27.3",
-			"1.28.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.28.1",
-			"1.29.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.29.0",
-			">= 1.30.0": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.30.0",
+			"1.28.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.28.3",
+			"1.29.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.29.1",
+			"1.30.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.30.1",
+			">= 1.31.0": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.31.1",
 		},
 		OpenstackCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.9.2"},
 		OpenstackCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.11.0"},

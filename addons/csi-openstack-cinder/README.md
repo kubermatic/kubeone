@@ -10,7 +10,7 @@ helm repo update
 helm template cinder-csi cpo/openstack-cinder-csi \
     --namespace=kube-system \
     --values=generate-values-csi \
-    --version 2.30.0 \
+    --version 2.31.1 \
     > openstack-csi-cinder.yaml
 ```
 
