@@ -1,11 +1,11 @@
-# Source: https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v3.2.0/manifests/vanilla/namespace.yaml
+# Source: https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v3.3.1/manifests/vanilla/namespace.yaml
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: vmware-system-csi
 
-# Source: https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v3.2.0/manifests/vanilla/vsphere-csi-driver.yaml
+# Source: https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v3.3.1/manifests/vanilla/vsphere-csi-driver.yaml
 ---
 apiVersion: v1
 kind: Secret
@@ -232,6 +232,18 @@ spec:
                     values:
                       - vsphere-csi-controller
               topologyKey: "kubernetes.io/hostname"
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: node-role.kubernetes.io/control-plane
+                operator: Exists
+            - matchExpressions:
+              - key: node-role.kubernetes.io/controlplane
+                operator: Exists
+            - matchExpressions:
+              - key: node-role.kubernetes.io/master
+                operator: Exists
       serviceAccountName: vsphere-csi-controller
       nodeSelector:
         node-role.kubernetes.io/control-plane: ""
@@ -314,8 +326,6 @@ spec:
               value: "100"
             - name: INCLUSTER_CLIENT_BURST
               value: "100"
-            - name: GODEBUG
-              value: x509sha1=1,tlsmaxrsasize=16384
             - name: CSI_NAMESPACE
               valueFrom:
                 fieldRef:
@@ -384,8 +394,6 @@ spec:
               value: "100"
             - name: INCLUSTER_CLIENT_BURST
               value: "100"
-            - name: GODEBUG
-              value: x509sha1=1,tlsmaxrsasize=16384
             - name: CSI_NAMESPACE
               valueFrom:
                 fieldRef:

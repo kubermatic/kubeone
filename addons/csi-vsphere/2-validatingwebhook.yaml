@@ -14,7 +14,7 @@ data:
   "webhook.config": |
 {{ vSphereCSIWebhookConfig | b64enc | indent 4 }}
 
-# Source https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v3.2.0/manifests/vanilla/validatingwebhook.yaml
+# Source https://github.com/kubernetes-sigs/vsphere-csi-driver/blob/v3.3.1/manifests/vanilla/validatingwebhook.yaml
 ---
 apiVersion: v1
 kind: Service
@@ -136,8 +136,19 @@ spec:
         "csiConfig-hash": "{{ .Config.CloudProvider.CSIConfig | sha256sum }}"
     spec:
       serviceAccountName: vsphere-csi-webhook
-      nodeSelector:
-        node-role.kubernetes.io/control-plane: ""
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: node-role.kubernetes.io/control-plane
+                operator: Exists
+            - matchExpressions:
+              - key: node-role.kubernetes.io/controlplane
+                operator: Exists
+            - matchExpressions:
+              - key: node-role.kubernetes.io/master
+                operator: Exists
       tolerations:
         - key: node-role.kubernetes.io/master
           operator: Exists
@@ -176,6 +187,10 @@ spec:
 {{ if .Config.CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            runAsGroup: 65532
           volumeMounts:
             - mountPath: /run/secrets/tls
               name: webhook-certs
