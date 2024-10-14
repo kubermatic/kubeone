@@ -565,6 +565,8 @@ honnef.co/go/tools v0.0.0-20190102054323-c2f93a96b099/go.mod h1:rf3lG4BRIbNafJWh
 honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
 k8c.io/machine-controller v1.59.1-0.20240926082130-cb8d1977ff47 h1:c5W+vAyHQRhr+ybx3Muaa8sMSiyujGWgpw+GLrGY9JU=
 k8c.io/machine-controller v1.59.1-0.20240926082130-cb8d1977ff47/go.mod h1:j9SHRLpzFj5wOMlhdPJL+ub08P8rvVvQOFtg7JaLYb4=
+k8c.io/machine-controller v1.60.0 h1:0ShjXyAnv0hpo59UsV9VFjEfgyG/2XrljBaEUV6JzwM=
+k8c.io/machine-controller v1.60.0/go.mod h1:j9SHRLpzFj5wOMlhdPJL+ub08P8rvVvQOFtg7JaLYb4=
 k8s.io/api v0.31.1 h1:Xe1hX/fPW3PXYYv8BlozYqw63ytA92snr96zMW9gWTU=
 k8s.io/api v0.31.1/go.mod h1:sbN1g6eY6XVLeqNsZGLnI5FwVseTrZX7Fv3O26rhAaI=
 k8s.io/apiextensions-apiserver v0.31.1 h1:L+hwULvXx+nvTYX/MKM3kKMZyei+UiSXQWciX/N6E40=
