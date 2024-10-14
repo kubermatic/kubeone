@@ -50,7 +50,7 @@ Please make sure to redact all secrets (e.g. passwords, URLs...)! -->
 
 ### What operating system are you running in your cluster?
 
-<!-- Ubuntu 20.04/22.04, CentOS 7, Rocky Linux 8, Flatcar Linux, ... -->
+<!-- Ubuntu 20.04/22.04/24.04, CentOS 7, Rocky Linux 8, Flatcar Linux, ... -->
 
 ### Additional information
 
