@@ -300,9 +300,10 @@ func optionalResources() map[Resource]map[string]string {
 		OpenstackCCM: {
 			"1.26.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.26.4",
 			"1.27.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.27.3",
-			"1.28.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.28.1",
-			"1.29.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.29.0",
-			">= 1.30.0": "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.30.0",
+			"1.28.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.28.3",
+			"1.29.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.29.1",
+			"1.30.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.30.1",
+			">= 1.31.0": "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.31.1",
 		},
 
 		// OpenStack CSI
