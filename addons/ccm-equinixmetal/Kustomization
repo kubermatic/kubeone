@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: kube-system
 
 resources:
-  - https://github.com/kubernetes-sigs/cloud-provider-equinix-metal/releases/download/v3.8.0/deployment.yaml
+  - https://github.com/kubernetes-sigs/cloud-provider-equinix-metal/releases/download/v3.8.1/deployment.yaml
   - base/secret.yaml
 
 patches:

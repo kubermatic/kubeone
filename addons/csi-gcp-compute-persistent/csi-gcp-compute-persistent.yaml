@@ -159,6 +159,14 @@ rules:
   - list
   - watch
 - apiGroups:
+  - storage.k8s.io
+  resources:
+  - volumeattributesclasses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
   - ""
   resources:
   - events
@@ -237,6 +245,14 @@ rules:
   verbs:
   - update
   - patch
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - volumeattributesclasses
+  verbs:
+  - get
+  - list
+  - watch
 - apiGroups:
   - ""
   resources:
@@ -466,6 +482,7 @@ spec:
         - --leader-election
         - --default-fstype=ext4
         - --controller-publish-readonly=true
+        - --feature-gates=VolumeAttributesClass=true
         env:
         - name: PDCSI_NAMESPACE
           valueFrom:
@@ -525,6 +542,7 @@ spec:
         - --leader-election
         - --leader-election-namespace=$(PDCSI_NAMESPACE)
         - --handle-volume-inuse-error=false
+        - --feature-gates=VolumeAttributesClass=true
         env:
         - name: PDCSI_NAMESPACE
           valueFrom:

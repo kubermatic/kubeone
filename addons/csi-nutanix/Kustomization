@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
 - name: nutanix-csi-storage
   repo: https://nutanix.github.io/helm/
-  version: 2.6.6
+  version: 2.6.10
   releaseName: nutanix-csi-storage
   namespace: kube-system
   valuesFile: generate-values-csi-storage

@@ -63,8 +63,7 @@ spec:
           effect: "NoExecute"
       containers:
         - name: hcloud-cloud-controller-manager
-          command:
-            - "/bin/hcloud-cloud-controller-manager"
+          args:
             - "--allocate-node-cidrs=false"
             - "--allow-untagged-cloud"
             - "--cloud-provider=hcloud"

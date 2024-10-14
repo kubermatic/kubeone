@@ -17,6 +17,5 @@ Required manual modifications include:
 
 * Images must be changed to `{{ .InternalImages.Get "..." }}` as appropriate
   * Make sure that you update the appropriate entries in images list
-* Remove `AWS_` environment variables in controller Deployment and node DaemonSet
 
 [helm-chart]: https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/charts/aws-ebs-csi-driver
