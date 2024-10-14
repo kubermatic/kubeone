@@ -11,7 +11,7 @@ helm repo update
 helm template vsphere-cpi vsphere-cpi/vsphere-cpi \
     --namespace=kube-system \
     --values=generate-values-ccm \
-    --version=1.30.1 \
+    --version=1.31.0 \
     > ccm-vsphere.yaml
 
 # unwrap List objects into standalone documents

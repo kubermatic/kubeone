@@ -336,9 +336,10 @@ func optionalResources() map[Resource]map[string]string {
 		VsphereCCM: {
 			"1.26.x":    "quay.io/kubermatic/mirror/cloud-provider-vsphere/ccm:v1.26.2",
 			"1.27.x":    "quay.io/kubermatic/mirror/cloud-provider-vsphere/ccm:v1.27.0",
-			"1.28.x":    "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.28.0",
+			"1.28.x":    "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.28.1",
 			"1.29.x":    "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.29.0",
-			">= 1.30.0": "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.30.1",
+			"1.30.x":    "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.30.1",
+			">= 1.31.0": "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.31.0",
 		},
 
 		// vSphere CSI
