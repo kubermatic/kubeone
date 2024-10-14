@@ -1,9 +1,9 @@
 allow_insecure       = true
 dc_name              = "Hamburg"
-datastore_name       = "vsan"
-compute_cluster_name = "Kubermatic"
-network_name         = "Default Network"
-folder_name          = "Kubermatic-ci"
+datastore_name       = "Datastore0-truenas"
+compute_cluster_name = "vSAN Cluster"
+network_name         = "VM Network"
+folder_name          = "KubeOne-E2E"
 template_name        = "kkp-ubuntu-24.04"
 control_plane_memory = 4096
 worker_memory        = 4096
