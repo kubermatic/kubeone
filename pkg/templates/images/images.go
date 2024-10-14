@@ -353,7 +353,7 @@ func optionalResources() map[Resource]map[string]string {
 		NutanixCCM: {"*": "ghcr.io/nutanix-cloud-native/cloud-provider-nutanix/controller:v0.4.1"},
 
 		// Nutanix CSI
-		NutanixCSI:              {"*": "quay.io/karbon/ntnx-csi:v2.6.6"},
+		NutanixCSI:              {"*": "quay.io/karbon/ntnx-csi:v2.6.10"},
 		NutanixCSILivenessProbe: {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.11.0"},
 		NutanixCSIProvisioner:   {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.6.2"},
 		NutanixCSIRegistrar:     {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.9.1"},
