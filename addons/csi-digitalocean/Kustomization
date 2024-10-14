@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: kube-system
 
 resources:
-  - https://raw.githubusercontent.com/digitalocean/csi-digitalocean/v4.10.0/deploy/kubernetes/releases/csi-digitalocean-v4.8.0/driver.yaml
+  - https://raw.githubusercontent.com/digitalocean/csi-digitalocean/v4.12.0/deploy/kubernetes/releases/csi-digitalocean-v4.12.0/driver.yaml
 
 patches:
   - patch: |-
