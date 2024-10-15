@@ -44,7 +44,7 @@ func saveKubeconfig(st *state.State) error {
 }
 
 func removeSuperKubeconfig(st *state.State) error {
-	st.Logger.Info("Removing %s...", superAdminConfPath)
+	st.Logger.Infof("Removing %s...", superAdminConfPath)
 
 	host, err := st.Cluster.Leader()
 	if err != nil {
