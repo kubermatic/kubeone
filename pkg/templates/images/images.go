@@ -207,13 +207,13 @@ func FindResource(name string) (Resource, error) {
 
 func baseResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
-		CalicoCNI:              {"*": "quay.io/calico/cni:v3.28.1"},
-		CalicoController:       {"*": "quay.io/calico/kube-controllers:v3.28.1"},
-		CalicoNode:             {"*": "quay.io/calico/node:v3.28.1"},
+		CalicoCNI:              {"*": "quay.io/calico/cni:v3.28.2"},
+		CalicoController:       {"*": "quay.io/calico/kube-controllers:v3.28.2"},
+		CalicoNode:             {"*": "quay.io/calico/node:v3.28.2"},
 		DNSNodeCache:           {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.23.1"},
 		Flannel:                {"*": "docker.io/flannel/flannel:v0.24.3"},
 		MachineController:      {"*": "quay.io/kubermatic/machine-controller:v1.60.0"},
-		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.7.1"},
+		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.7.2"},
 		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v1.6.0"},
 	}
 }
@@ -386,9 +386,9 @@ func optionalResources() map[Resource]map[string]string {
 		WeaveNetCNINPC:  {"*": "docker.io/weaveworks/weave-npc:2.8.1"},
 
 		// Calico VXLAN
-		CalicoVXLANCNI:        {"*": "quay.io/calico/cni:v3.26.3"},
-		CalicoVXLANController: {"*": "quay.io/calico/kube-controllers:v3.26.3"},
-		CalicoVXLANNode:       {"*": "quay.io/calico/node:v3.26.3"},
+		CalicoVXLANCNI:        {"*": "quay.io/calico/cni:v3.28.2"},
+		CalicoVXLANController: {"*": "quay.io/calico/kube-controllers:v3.28.2"},
+		CalicoVXLANNode:       {"*": "quay.io/calico/node:v3.28.2"},
 
 		// Cilium
 		Cilium:         {"*": "quay.io/cilium/cilium:v1.15.6@sha256:6aa840986a3a9722cd967ef63248d675a87add7e1704740902d5d3162f0c0def"},

@@ -5,7 +5,7 @@ namespace: kube-system
 helmCharts:
 - name: metrics-server
   repo: https://kubernetes-sigs.github.io/metrics-server/
-  version: v3.12.0
+  version: v3.12.2
   releaseName: metrics-server
   namespace: kube-system
   valuesFile: values
