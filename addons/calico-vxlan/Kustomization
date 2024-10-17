@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: kube-system
 
 resources:
-  - https://raw.githubusercontent.com/projectcalico/calico/v3.27.2/manifests/calico-vxlan.yaml
+  - https://raw.githubusercontent.com/projectcalico/calico/v3.28.2/manifests/calico-vxlan.yaml
 
 patches:
   - patch: |-
