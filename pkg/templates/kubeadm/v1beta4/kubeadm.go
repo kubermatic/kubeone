@@ -193,7 +193,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 	}
 
 	if cluster.ClusterNetwork.KubeProxy != nil && cluster.ClusterNetwork.KubeProxy.SkipInstallation {
-		clusterConfig.DNS.Disabled = true
+		clusterConfig.Proxy.Disabled = true
 	}
 
 	if err = addFeaturesExtraMounts(s, clusterConfig); err != nil {
