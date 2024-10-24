@@ -28,6 +28,7 @@ import (
 	"k8c.io/kubeone/pkg/templates/resources"
 
 	appsv1 "k8s.io/api/apps/v1"
+	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	storagev1 "k8s.io/api/storage/v1"
@@ -66,6 +67,24 @@ var (
 		"release": "cinder-csi",
 	}
 )
+
+func migrateCiliumHubbleCertsJob(s *state.State) error {
+	key := client.ObjectKey{
+		Name:      "hubble-generate-certs",
+		Namespace: metav1.NamespaceSystem,
+	}
+
+	job := &batchv1.Job{}
+	if err := s.DynamicClient.Get(s.Context, key, job); err != nil {
+		if k8serrors.IsNotFound(err) {
+			return nil
+		}
+
+		return err
+	}
+
+	return clientutil.DeleteIfExists(s.Context, s.DynamicClient, job)
+}
 
 func migrateAWSCSIDriver(s *state.State) error {
 	if err := migrateAWSCSIController(s); err != nil {

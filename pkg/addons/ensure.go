@@ -98,6 +98,9 @@ func collectAddons(s *state.State) []addonAction {
 	case s.Cluster.ClusterNetwork.CNI.Cilium != nil:
 		addonsToDeploy = append(addonsToDeploy, addonAction{
 			name: resources.AddonCNICilium,
+			supportFn: func() error {
+				return migrateCiliumHubbleCertsJob(s)
+			},
 		})
 	case s.Cluster.ClusterNetwork.CNI.WeaveNet != nil:
 		addonsToDeploy = append(addonsToDeploy, addonAction{
