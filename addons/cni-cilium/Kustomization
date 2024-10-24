@@ -5,7 +5,7 @@ namespace: kube-system
 helmCharts:
 - name: cilium
   repo: https://helm.cilium.io/
-  version: 1.15.6
+  version: 1.16.3
   releaseName: cilium
   namespace: kube-system
   valuesFile: helm-values
@@ -16,20 +16,6 @@ patches:
       kind: ConfigMap
       metadata:
         name: cilium-config
-        namespace: kube-system
-      $patch: delete
-  - patch: |-
-      apiVersion: batch/v1
-      kind: Job
-      metadata:
-        name: hubble-generate-certs
-        namespace: kube-system
-      $patch: delete
-  - patch: |-
-      apiVersion: batch/v1
-      kind: CronJob
-      metadata:
-        name: hubble-generate-certs
         namespace: kube-system
       $patch: delete
 
