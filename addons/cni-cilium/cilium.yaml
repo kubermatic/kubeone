@@ -1375,7 +1375,6 @@ spec:
       k8s-app: cilium-envoy
   template:
     metadata:
-      annotations: null
       labels:
         app.kubernetes.io/name: cilium-envoy
         app.kubernetes.io/part-of: cilium

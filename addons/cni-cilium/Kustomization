@@ -119,3 +119,28 @@ patches:
                         name: cilium-config
                         key: KUBERNETES_SERVICE_PORT
                         optional: true
+  - patch: |-
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: cilium-envoy
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: cilium-envoy
+                image: '{{ .InternalImages.Get "CiliumEnvoy" }}'
+                env:
+                  - name: KUBERNETES_SERVICE_HOST
+                    valueFrom:
+                      configMapKeyRef:
+                        name: cilium-config
+                        key: KUBERNETES_SERVICE_HOST
+                        optional: true
+                  - name: KUBERNETES_SERVICE_PORT
+                    valueFrom:
+                      configMapKeyRef:
+                        name: cilium-config
+                        key: KUBERNETES_SERVICE_PORT
+                        optional: true
