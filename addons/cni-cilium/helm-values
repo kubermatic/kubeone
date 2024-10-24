@@ -3,14 +3,14 @@ cni:
 
 hubble:
   relay:
-    enabled: false
+    enabled: true
   tls:
     auto:
       method: cronJob
   ui:
-    enabled: false
+    enabled: true
 
-kubeProxyReplacement: strict
+kubeProxyReplacement: true
 
 operator:
   enabled: true
