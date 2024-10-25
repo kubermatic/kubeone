@@ -47,6 +47,7 @@ func migrateToContainerdCmd(fs *pflag.FlagSet) *cobra.Command {
 			Following the dockershim deprecation https://kubernetes.io/blog/2020/12/02/dockershim-faq/
 			this command helps to migrate Container Runtime to ContainerD.
 		`),
+		Hidden: true,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(fs)
 			if err != nil {
