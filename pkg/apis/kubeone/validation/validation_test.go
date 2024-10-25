@@ -813,16 +813,9 @@ func TestValidateVersionConfig(t *testing.T) {
 			expectedError: false,
 		},
 		{
-			name: "valid version config (1.28.0)",
+			name: "invalid version config (1.28.0)",
 			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.28.0",
-			},
-			expectedError: false,
-		},
-		{
-			name: "invalid version config (1.27.0)",
-			versionConfig: kubeoneapi.VersionConfig{
-				Kubernetes: "1.27.0",
 			},
 			expectedError: true,
 		},
@@ -1054,28 +1047,6 @@ func TestValidateKubernetesSupport(t *testing.T) {
 				Kubernetes: "1.26.0",
 			},
 			expectedError: false,
-		},
-		{
-			name: "AWS 1.27.0 cluster with in-tree cloud provider",
-			providerConfig: kubeoneapi.CloudProviderSpec{
-				AWS:      &kubeoneapi.AWSSpec{},
-				External: false,
-			},
-			versionConfig: kubeoneapi.VersionConfig{
-				Kubernetes: "1.27.0",
-			},
-			expectedError: true,
-		},
-		{
-			name: "AWS 1.28.0 cluster with in-tree cloud provider",
-			providerConfig: kubeoneapi.CloudProviderSpec{
-				AWS:      &kubeoneapi.AWSSpec{},
-				External: false,
-			},
-			versionConfig: kubeoneapi.VersionConfig{
-				Kubernetes: "1.28.0",
-			},
-			expectedError: true,
 		},
 	}
 	for _, tc := range tests {
