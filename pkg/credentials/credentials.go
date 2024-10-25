@@ -51,6 +51,7 @@ const (
 	DigitalOceanTokenKey                 = "DIGITALOCEAN_TOKEN"
 	GoogleServiceAccountKey              = "GOOGLE_CREDENTIALS"
 	HetznerTokenKey                      = "HCLOUD_TOKEN"
+	KubevirtKubeconfigKey                = "KUBEVIRT_KUBECONFIG"
 	NutanixEndpoint                      = "NUTANIX_ENDPOINT"
 	NutanixPort                          = "NUTANIX_PORT"
 	NutanixUsername                      = "NUTANIX_USERNAME"
@@ -216,6 +217,10 @@ func ProviderCredentials(cloudProvider kubeoneapi.CloudProviderSpec, credentials
 	case cloudProvider.Hetzner != nil:
 		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: HetznerTokenKey, MachineControllerName: HetznerTokenKeyMC},
+		}, defaultValidationFunc)
+	case cloudProvider.Kubevirt != nil:
+		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
+			{Name: KubevirtKubeconfigKey},
 		}, defaultValidationFunc)
 	case cloudProvider.Nutanix != nil:
 		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{

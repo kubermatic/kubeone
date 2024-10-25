@@ -403,6 +403,9 @@ type CloudProviderSpec struct {
 	// Hetzner
 	Hetzner *HetznerSpec `json:"hetzner,omitempty"`
 
+	// Kubevirt
+	Kubevirt *KubevirtSpec `json:"kubevirt,omitempty"`
+
 	// Nutanix
 	Nutanix *NutanixSpec `json:"nutanix,omitempty"`
 
@@ -439,6 +442,9 @@ type HetznerSpec struct {
 	// NetworkID
 	NetworkID string `json:"networkID,omitempty"`
 }
+
+// KubevirtSpec defines the Kubevirt provider
+type KubevirtSpec struct{}
 
 // NutanixSpec defines the Nutanix provider
 type NutanixSpec struct{}
