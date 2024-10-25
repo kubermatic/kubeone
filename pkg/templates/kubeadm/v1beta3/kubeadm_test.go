@@ -47,66 +47,6 @@ func TestEtcdVersionCorruptCheckExtraArgs(t *testing.T) {
 		expectedEtcdArgs     map[string]string
 	}{
 		{
-			name:                 "any 1.24",
-			kubeVersion:          semver.MustParse("1.24"),
-			expectedEtcdImageTag: fixedEtcdVersion,
-			expectedEtcdArgs:     etcdExtraArgs,
-		},
-		{
-			name:                 "any 1.24 high",
-			kubeVersion:          semver.MustParse("1.24.999"),
-			expectedEtcdImageTag: fixedEtcdVersion,
-			expectedEtcdArgs:     etcdExtraArgs,
-		},
-		{
-			name:                 "any 1.25",
-			kubeVersion:          semver.MustParse("1.25"),
-			expectedEtcdImageTag: fixedEtcdVersion,
-			expectedEtcdArgs:     etcdExtraArgs,
-		},
-		{
-			name:                 "any 1.25 high",
-			kubeVersion:          semver.MustParse("1.25.999"),
-			expectedEtcdImageTag: fixedEtcdVersion,
-			expectedEtcdArgs:     etcdExtraArgs,
-		},
-		{
-			name:                 "fixed 1.26",
-			kubeVersion:          semver.MustParse("1.26.13"),
-			expectedEtcdImageTag: "",
-			expectedEtcdArgs:     etcdExtraArgs,
-		},
-		{
-			name:                 "unfixed 1.26",
-			kubeVersion:          semver.MustParse("1.26.12"),
-			expectedEtcdImageTag: fixedEtcdVersion,
-			expectedEtcdArgs:     etcdExtraArgs,
-		},
-		{
-			name:                 "fixed 1.27",
-			kubeVersion:          semver.MustParse("1.27.9"),
-			expectedEtcdImageTag: "",
-			expectedEtcdArgs:     etcdExtraArgs,
-		},
-		{
-			name:                 "unfixed 1.27",
-			kubeVersion:          semver.MustParse("1.27.8"),
-			expectedEtcdImageTag: fixedEtcdVersion,
-			expectedEtcdArgs:     etcdExtraArgs,
-		},
-		{
-			name:                 "fixed 1.28",
-			kubeVersion:          semver.MustParse("1.28.6"),
-			expectedEtcdImageTag: "",
-			expectedEtcdArgs:     etcdExtraArgs,
-		},
-		{
-			name:                 "unfixed 1.28",
-			kubeVersion:          semver.MustParse("1.28.5"),
-			expectedEtcdImageTag: fixedEtcdVersion,
-			expectedEtcdArgs:     etcdExtraArgs,
-		},
-		{
 			name:                 "any 1.29",
 			kubeVersion:          semver.MustParse("1.29"),
 			expectedEtcdImageTag: "",
