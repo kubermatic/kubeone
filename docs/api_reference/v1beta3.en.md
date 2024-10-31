@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2024-09-24T22:27:32+03:00
+date = 2024-10-25T14:43:23+02:00
 weight = 11
 +++
 ## v1beta3
@@ -43,6 +43,7 @@ weight = 11
 * [KubeOneCluster](#kubeonecluster)
 * [KubeProxyConfig](#kubeproxyconfig)
 * [KubeletConfig](#kubeletconfig)
+* [KubevirtSpec](#kubevirtspec)
 * [LoggingConfig](#loggingconfig)
 * [MachineControllerConfig](#machinecontrollerconfig)
 * [MetricsServer](#metricsserver)
@@ -190,6 +191,7 @@ Only one cloud provider must be defined at the single time.
 | digitalocean | DigitalOcean | *[DigitalOceanSpec](#digitaloceanspec) | false |
 | gce | GCE | *[GCESpec](#gcespec) | false |
 | hetzner | Hetzner | *[HetznerSpec](#hetznerspec) | false |
+| kubevirt | Kubevirt | *[KubevirtSpec](#kubevirtspec) | false |
 | nutanix | Nutanix | *[NutanixSpec](#nutanixspec) | false |
 | openstack | Openstack | *[OpenstackSpec](#openstackspec) | false |
 | equinixmetal | EquinixMetal | *[EquinixMetalSpec](#equinixmetalspec) | false |
@@ -561,6 +563,15 @@ KubeletConfig provides some kubelet configuration options
 | evictionHard | EvictionHard configure --eviction-hard command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
 | maxPods | MaxPods configures maximum number of pods per node. If not provided, default value provided by kubelet will be used (max. 110 pods per node) | *int32 | false |
 | podPidsLimit | PodPidsLimit configures the maximum number of processes running in a Pod If not provided, default value provided by kubelet will be used -1 See more about pid-limiting at: https://kubernetes.io/docs/concepts/policy/pid-limiting/ | *int64 | false |
+
+[Back to Group](#v1beta3)
+
+### KubevirtSpec
+
+KubevirtSpec defines the Kubevirt provider
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
 
 [Back to Group](#v1beta3)
 

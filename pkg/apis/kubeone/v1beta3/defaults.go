@@ -88,9 +88,10 @@ func SetDefaults_CloudProvider(obj *KubeOneCluster) {
 	// if kubernetes version is 1.29+
 	// and cloud provider is configured
 	if gteKube129Condition.Check(actualVer) && obj.CloudProvider.None == nil {
-		// and cloud provider is NOT VMwareCloudDirector, to prevent kubelet --cloud-provider=external situation where
-		// there will be no CCM (VMwareCloudDirector have no CCM) to initialize the Node
-		if obj.CloudProvider.VMwareCloudDirector == nil {
+		// and cloud provider is NOT VMwareCloudDirector and NOT Kubevirt,
+		// to prevent kubelet --cloud-provider=external situation where
+		// there will be no CCM to initialize the Node
+		if obj.CloudProvider.Kubevirt == nil && obj.CloudProvider.VMwareCloudDirector == nil {
 			obj.CloudProvider.External = true
 		}
 	}

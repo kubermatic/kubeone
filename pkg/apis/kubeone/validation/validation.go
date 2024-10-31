@@ -200,6 +200,15 @@ func ValidateCloudProviderSpec(providerSpec kubeoneapi.CloudProviderSpec, networ
 		}
 		providerFound = true
 	}
+	if providerSpec.Kubevirt != nil {
+		if providerFound {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("kubevirt"), "only one provider can be used at the same time"))
+		}
+		providerFound = true
+		if providerSpec.External {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("external"), "external cloud provider is not supported for Kubevirt clusters"))
+		}
+	}
 	if providerSpec.Nutanix != nil {
 		if providerFound {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("nutanix"), "only one provider can be used at the same time"))
