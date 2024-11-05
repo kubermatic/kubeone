@@ -202,7 +202,7 @@ func machineSpec(cluster *kubeoneapi.KubeOneCluster, workerset kubeoneapi.Dynami
 
 	specRaw := workerset.Config.CloudProviderSpec
 	if specRaw == nil {
-		return nil, fail.Config(errors.New("could't find cloudProviderSpec"), "sanity check")
+		return nil, fail.Config(errors.New("couldn't find cloudProviderSpec"), "sanity check")
 	}
 
 	if provider.AWS != nil {
