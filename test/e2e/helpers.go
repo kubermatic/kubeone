@@ -706,7 +706,7 @@ func NewSignalContext(logger func(format string, args ...any)) context.Context {
 	// but `sonobuoy wait` will continue running until the ProwJob doesn't
 	// timeout. This also means, because the main process has been terminated,
 	// there will be NO cleanup, so we'll leak resources.
-	testTimeout := time.Hour
+	testTimeout := 120 * time.Minute
 	if timeout, ok := os.LookupEnv("TEST_TIMEOUT"); ok {
 		if parsedDuration, err := time.ParseDuration(timeout); err == nil {
 			testTimeout = parsedDuration
