@@ -1,3 +1,4 @@
+{{ $kubernetesVersion := semver .Config.Versions.Kubernetes }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -897,6 +898,13 @@ spec:
       k8s-app: cilium
   template:
     metadata:
+      {{ if lt $kubernetesVersion.Minor 30 }}
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/apply-sysctl-overwrites: unconfined
+        container.apparmor.security.beta.kubernetes.io/cilium-agent: unconfined
+        container.apparmor.security.beta.kubernetes.io/clean-cilium-state: unconfined
+        container.apparmor.security.beta.kubernetes.io/mount-cgroup: unconfined
+      {{ end }}
       labels:
         app.kubernetes.io/name: cilium-agent
         app.kubernetes.io/part-of: cilium
@@ -1260,9 +1268,11 @@ spec:
         kubernetes.io/os: linux
       priorityClassName: system-node-critical
       restartPolicy: Always
+      {{ if ge $kubernetesVersion.Minor 30 }}
       securityContext:
         appArmorProfile:
           type: Unconfined
+      {{ end }}
       serviceAccountName: cilium
       terminationGracePeriodSeconds: 1
       tolerations:
@@ -1375,6 +1385,10 @@ spec:
       k8s-app: cilium-envoy
   template:
     metadata:
+      {{ if lt $kubernetesVersion.Minor 30 }}
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/cilium-envoy: unconfined
+      {{ end }}
       labels:
         app.kubernetes.io/name: cilium-envoy
         app.kubernetes.io/part-of: cilium
@@ -1502,9 +1516,11 @@ spec:
         kubernetes.io/os: linux
       priorityClassName: system-node-critical
       restartPolicy: Always
+      {{ if ge $kubernetesVersion.Minor 30 }}
       securityContext:
         appArmorProfile:
           type: Unconfined
+      {{ end }}
       serviceAccountName: cilium-envoy
       terminationGracePeriodSeconds: 1
       tolerations:
