@@ -34,6 +34,7 @@ type scenarioMigrateCSIAndCCM struct {
 	HumanReadableName       string
 	OldManifestTemplatePath string
 	NewManifestTemplatePath string
+	SkipTests               string
 
 	versions []string
 	infra    Infra

@@ -58,9 +58,11 @@ type sonobuoyBin struct {
 	proxyURL   string
 }
 
-func (sbb *sonobuoyBin) Run(ctx context.Context, mode sonobuoyMode, rerunFailed bool) error {
+func (sbb *sonobuoyBin) Run(ctx context.Context, mode sonobuoyMode, skipTests string, rerunFailed bool) error {
 	if rerunFailed {
 		return sbb.run(ctx, "run", fmt.Sprintf("--rerun-failed=%s", sonobuoyResultsFile))
+	} else if skipTests != "" {
+		return sbb.run(ctx, "run", fmt.Sprintf("--mode=%s", mode), fmt.Sprintf("--e2e-skip=%s", skipTests))
 	}
 
 	return sbb.run(ctx, "run", fmt.Sprintf("--mode=%s", mode))

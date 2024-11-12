@@ -44,6 +44,7 @@ type scenarioUpgrade struct {
 	Name                 string
 	HumanReadableName    string
 	ManifestTemplatePath string
+	SkipTests            string
 
 	versions           []string
 	initKubeOneVersion string
@@ -191,7 +192,7 @@ func (scenario *scenarioUpgrade) test(ctx context.Context, t *testing.T) {
 	cpTests.runWithCleanup(t)
 
 	// sonobuoyRun(t, k1, sonobuoyConformanceLite, proxyURL)
-	sonobuoyRun(ctx, t, k1, sonobuoyQuick, proxyURL)
+	sonobuoyRun(ctx, t, k1, sonobuoyQuick, scenario.SkipTests, proxyURL)
 }
 
 func (scenario *scenarioUpgrade) GenerateTests(wr io.Writer, generatorType GeneratorType, cfg ProwConfig) error {

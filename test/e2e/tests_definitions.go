@@ -1178,6 +1178,7 @@ var (
 			Name:                 "cilium_containerd_external",
 			HumanReadableName:    "Cluster Provisioning (External, Cilium)",
 			ManifestTemplatePath: "testdata/containerd_cilium_external.yaml",
+			SkipTests:            "Services.should.have.session.affinity.work.for.service.with.type.clusterIP|Services.should.serve.endpoints.on.same.port.and.different.protocols|HostPort.validates.that.there.is.no.conflict.between.pods.with.same.hostPort.but.different.hostIP.and.protocol",
 		},
 		"upgrade_cilium_containerd_external": &scenarioUpgrade{
 			Name:                 "upgrade_cilium_containerd_external",

@@ -28,6 +28,7 @@ type scenarioConformance struct {
 	Name                 string
 	HumanReadableName    string
 	ManifestTemplatePath string
+	SkipTests            string
 
 	versions []string
 	infra    Infra
@@ -146,5 +147,5 @@ func (scenario *scenarioConformance) test(ctx context.Context, t *testing.T) {
 	cpTests := newCloudProviderTests(client, scenario.infra.Provider())
 	cpTests.runWithCleanup(t)
 
-	sonobuoyRun(ctx, t, k1, sonobuoyConformance, proxyURL)
+	sonobuoyRun(ctx, t, k1, sonobuoyConformance, scenario.SkipTests, proxyURL)
 }
