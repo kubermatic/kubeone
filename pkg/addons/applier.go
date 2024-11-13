@@ -78,6 +78,7 @@ type templateData struct {
 	CSIMigrationFeatureGates                 string
 	CalicoIptablesBackend                    string
 	DeployCSIAddon                           bool
+	SnapshotterWebhookFailurePolicy          string
 	MachineControllerCredentialsEnvVars      string
 	MachineControllerCredentialsHash         string
 	OperatingSystemManagerEnabled            bool
@@ -199,6 +200,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		CSIMigrationFeatureGates:            csiMigrationFeatureGates,
 		CalicoIptablesBackend:               calicoIptablesBackend,
 		DeployCSIAddon:                      deployCSI,
+		SnapshotterWebhookFailurePolicy:     "Fail",
 		MachineControllerCredentialsEnvVars: string(credsEnvVarsMC),
 		MachineControllerCredentialsHash:    mcCredsHash,
 		OperatingSystemManagerEnabled:       s.Cluster.OperatingSystemManager.Deploy,
@@ -209,6 +211,10 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		},
 		Resources: resources.All(),
 		Params:    map[string]string{},
+	}
+
+	if !s.LiveCluster.IsProvisioned() {
+		data.SnapshotterWebhookFailurePolicy = "Ignore"
 	}
 
 	if err := csiWebhookCerts(s, &data, csiMigration, kubeCAPrivateKey, kubeCACert); err != nil {

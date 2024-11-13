@@ -34,7 +34,7 @@ webhooks:
 {{ .Certificates.KubernetesCA | b64enc | indent 6 }}
   admissionReviewVersions: ["v1"]
   sideEffects: None
-  failurePolicy: Fail
+  failurePolicy: {{ .SnapshotterWebhookFailurePolicy }}
   timeoutSeconds: 2
 ---
 apiVersion: admissionregistration.k8s.io/v1
@@ -59,7 +59,7 @@ webhooks:
 {{ .Certificates.KubernetesCA | b64enc | indent 6 }}
   admissionReviewVersions: ["v1"]
   sideEffects: None
-  failurePolicy: Fail
+  failurePolicy: {{ .SnapshotterWebhookFailurePolicy }}
   timeoutSeconds: 2
 ---
 apiVersion: apps/v1
