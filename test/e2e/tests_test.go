@@ -1126,9 +1126,9 @@ func TestOpenstackRhelStableUpgradeContainerdExternalFromV1_29_ToV1_30(t *testin
 	scenario.Run(ctx, t)
 }
 
-func TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_29_ToV1_30(t *testing.T) {
+func TestOpenstackRockylinuxStableUpgradeContainerdExternalFromV1_29_ToV1_30(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_rockylinux"]
+	infra := Infrastructures["openstack_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29", "v1.30")
@@ -1414,9 +1414,9 @@ func TestOpenstackRhelStableUpgradeContainerdExternalFromV1_30_ToV1_31(t *testin
 	scenario.Run(ctx, t)
 }
 
-func TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_30_ToV1_31(t *testing.T) {
+func TestOpenstackRockylinuxStableUpgradeContainerdExternalFromV1_30_ToV1_31(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_rockylinux"]
+	infra := Infrastructures["openstack_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.30", "v1.31")
@@ -4174,9 +4174,9 @@ func TestOpenstackRhelStableUpgradeCiliumContainerdExternalFromV1_29_ToV1_30(t *
 	scenario.Run(ctx, t)
 }
 
-func TestOpenstackRockylinuxUpgradeCiliumContainerdExternalFromV1_29_ToV1_30(t *testing.T) {
+func TestOpenstackRockylinuxStableUpgradeCiliumContainerdExternalFromV1_29_ToV1_30(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_rockylinux"]
+	infra := Infrastructures["openstack_rockylinux_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.29", "v1.30")
@@ -4450,9 +4450,9 @@ func TestOpenstackRhelStableUpgradeCiliumContainerdExternalFromV1_30_ToV1_31(t *
 	scenario.Run(ctx, t)
 }
 
-func TestOpenstackRockylinuxUpgradeCiliumContainerdExternalFromV1_30_ToV1_31(t *testing.T) {
+func TestOpenstackRockylinuxStableUpgradeCiliumContainerdExternalFromV1_30_ToV1_31(t *testing.T) {
 	ctx := NewSignalContext(t.Logf)
-	infra := Infrastructures["openstack_rockylinux"]
+	infra := Infrastructures["openstack_rockylinux_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.30", "v1.31")

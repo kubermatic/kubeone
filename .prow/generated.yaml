@@ -2518,14 +2518,14 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rockylinux-upgrade-containerd-external-from-v1.29-to-v1.30
+  name: pull-kubeone-e2e-openstack-rockylinux-stable-upgrade-containerd-external-from-v1.29-to-v1.30
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_29_ToV1_30
+      - TestOpenstackRockylinuxStableUpgradeContainerdExternalFromV1_29_ToV1_30
       env:
       - name: PROVIDER
         value: openstack
@@ -3259,14 +3259,14 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rockylinux-upgrade-containerd-external-from-v1.30-to-v1.31
+  name: pull-kubeone-e2e-openstack-rockylinux-stable-upgrade-containerd-external-from-v1.30-to-v1.31
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_30_ToV1_31
+      - TestOpenstackRockylinuxStableUpgradeContainerdExternalFromV1_30_ToV1_31
       env:
       - name: PROVIDER
         value: openstack
@@ -9316,14 +9316,14 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rockylinux-upgrade-cilium-containerd-external-from-v1.29-to-v1.30
+  name: pull-kubeone-e2e-openstack-rockylinux-stable-upgrade-cilium-containerd-external-from-v1.29-to-v1.30
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackRockylinuxUpgradeCiliumContainerdExternalFromV1_29_ToV1_30
+      - TestOpenstackRockylinuxStableUpgradeCiliumContainerdExternalFromV1_29_ToV1_30
       env:
       - name: PROVIDER
         value: openstack
@@ -10027,14 +10027,14 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rockylinux-upgrade-cilium-containerd-external-from-v1.30-to-v1.31
+  name: pull-kubeone-e2e-openstack-rockylinux-stable-upgrade-cilium-containerd-external-from-v1.30-to-v1.31
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackRockylinuxUpgradeCiliumContainerdExternalFromV1_30_ToV1_31
+      - TestOpenstackRockylinuxStableUpgradeCiliumContainerdExternalFromV1_30_ToV1_31
       env:
       - name: PROVIDER
         value: openstack
