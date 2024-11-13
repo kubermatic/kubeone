@@ -906,7 +906,7 @@ var (
 			},
 		},
 		"openstack_rockylinux_stable": {
-			name:   "openstack_rockylinux",
+			name:   "openstack_rockylinux_stable",
 			osName: "Rocky Linux",
 			labels: map[string]string{
 				"preset-goproxy":   "true",
