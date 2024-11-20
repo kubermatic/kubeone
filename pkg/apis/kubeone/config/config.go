@@ -56,7 +56,7 @@ var (
 
 	// DeprecatedAPIs contains APIs which are deprecated
 	DeprecatedAPIs = map[string]string{
-		kubeonev1beta2.SchemeGroupVersion.String(): "",
+		// kubeonev1beta2.SchemeGroupVersion.String(): "",
 	}
 )
 
