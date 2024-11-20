@@ -138,11 +138,11 @@ You can find more information about deploying addons in the
 [addon]: ./cluster-autoscaler.yaml
 [autoscaler]: https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler
 [machine-controller]: https://github.com/kubermatic/machine-controller
-[docs-concepts]: https://docs.kubermatic.com/kubeone/v1.8/architecture/concepts/
-[docs-machinedeployment]: https://docs.kubermatic.com/kubeone/v1.8/architecture/concepts/#machinedeployments
+[docs-concepts]: https://docs.kubermatic.com/kubeone/v1.9/architecture/concepts/
+[docs-machinedeployment]: https://docs.kubermatic.com/kubeone/v1.9/architecture/concepts/#machinedeployments
 [recommended-autoscaler-versions]: https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler#releases
 [autoscaler-releases]: https://github.com/kubernetes/autoscaler/releases
-[using-addons]: https://docs.kubermatic.com/kubeone/v1.8/guides/addons/
+[using-addons]: https://docs.kubermatic.com/kubeone/v1.9/guides/addons/
 [autoscaler-faq]: https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md
 [enforce-node-group-min-size]: https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#my-cluster-is-below-minimum--above-maximum-number-of-nodes-but-ca-did-not-fix-that-why
 [balance-similar-node-groups]: https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#im-running-cluster-with-nodes-in-multiple-zones-for-ha-purposes-is-that-supported-by-cluster-autoscaler
