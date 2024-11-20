@@ -92,8 +92,8 @@ We're happy to announce a new KubeOne minor release — KubeOne 1.8! Please
 consult the changelog below, as well as, the following two documents before
 upgrading:
 
-- [Upgrading from KubeOne 1.7 to 1.8 guide](https://docs.kubermatic.com/kubeone/v1.8/tutorials/upgrading/upgrading-from-1.7-to-1.8/)
-- [Known Issues in KubeOne 1.8](https://docs.kubermatic.com/kubeone/v1.8/known-issues/)
+- [Upgrading from KubeOne 1.7 to 1.8 guide](https://docs.kubermatic.com/kubeone/v1.9/tutorials/upgrading/upgrading-from-1.7-to-1.8/)
+- [Known Issues in KubeOne 1.8](https://docs.kubermatic.com/kubeone/v1.9/known-issues/)
 
 ## Changelog since v1.7.0
 

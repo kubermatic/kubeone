@@ -2,7 +2,7 @@
 
 ## User Documentation
 
-KubeOne user documentation can be found at [KubeOne docs website](https://docs.kubermatic.com/kubeone/v1.8/)
+KubeOne user documentation can be found at [KubeOne docs website](https://docs.kubermatic.com/kubeone/v1.9/)
 
 ## Development Documentation
 
