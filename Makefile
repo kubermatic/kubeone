@@ -48,8 +48,7 @@ GOLDFLAGS?=-s -w -extldflags=-zrelro -extldflags=-znow \
 	-X k8c.io/kubeone/pkg/cmd.commit=$(GITCOMMIT) \
 	-X k8c.io/kubeone/pkg/cmd.date=$(BUILD_DATE)
 
-# TODO(xmudrii): Rename the flag to "--clean" after updating goreleaser.
-GORELEASER_FLAGS ?= --rm-dist
+GORELEASER_FLAGS ?= --clean
 
 .PHONY: all
 all: install
