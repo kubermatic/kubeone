@@ -193,6 +193,11 @@ func getMachineDeployments(state *state.State) ([]machineDeployment, error) {
 		return nil, fail.NoKubeClient()
 	}
 
+	result := []machineDeployment{}
+	if !state.Cluster.MachineController.Deploy {
+		return result, nil
+	}
+
 	machineDeployments := clusterv1alpha1.MachineDeploymentList{}
 	err := state.DynamicClient.List(
 		state.Context,
@@ -203,7 +208,6 @@ func getMachineDeployments(state *state.State) ([]machineDeployment, error) {
 		return nil, err
 	}
 
-	result := []machineDeployment{}
 	for i := range machineDeployments.Items {
 		currMachineDeployment := &machineDeployments.Items[i]
 		machines, err := getMachines(state, currMachineDeployment)
