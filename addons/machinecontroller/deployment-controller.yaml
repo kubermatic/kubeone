@@ -54,6 +54,12 @@ spec:
             {{ end -}}
             - -join-cluster-timeout=15m
           env:
+  {{ with .Config.CloudProvider.Kubevirt -}}
+  {{ with .InfraNamespace }}
+            - name: POD_NAMESPACE
+              value: "{{ . }}"
+  {{ end }}
+  {{ end }}
             - name: HTTPS_PROXY
               value: "{{ .Config.Proxy.HTTPS }}"
             - name: NO_PROXY
