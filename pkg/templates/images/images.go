@@ -299,7 +299,7 @@ func optionalResources() map[Resource]map[string]string {
 			"1.27.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.27.3",
 			"1.28.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.28.1",
 			"1.29.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.29.0",
-			">= 1.30.0": "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.30.0",
+			">= 1.30.0": "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.30.2",
 		},
 
 		// OpenStack CSI
@@ -308,7 +308,7 @@ func optionalResources() map[Resource]map[string]string {
 			"1.27.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.27.3",
 			"1.28.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.28.1",
 			"1.29.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.29.0",
-			">= 1.30.0": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.30.0",
+			">= 1.30.0": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.30.2",
 		},
 		OpenstackCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.9.2"},
 		OpenstackCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.11.0"},
