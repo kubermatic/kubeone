@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2024-10-25T14:43:23+02:00
+date = 2024-12-18T11:22:29+01:00
 weight = 11
 +++
 ## v1beta2
@@ -570,6 +570,7 @@ KubevirtSpec defines the Kubevirt provider
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+| infraNamespace | InfraNamespace is the namespace that KubeVirt provider will use to create and manage resources in the infra cluster, such as VirtualMachines, VirtualMachineInstances, etc... | string | false |
 
 [Back to Group](#v1beta2)
 

@@ -439,7 +439,11 @@ type HetznerSpec struct {
 }
 
 // KubevirtSpec defines the Kubevirt provider
-type KubevirtSpec struct{}
+type KubevirtSpec struct {
+	// InfraNamespace is the namespace that KubeVirt provider will use to create and manage resources in the infra cluster,
+	// such as VirtualMachines, VirtualMachineInstances, etc...
+	InfraNamespace string `json:"infraNamespace,omitempty"`
+}
 
 // NutanixSpec defines the Nutanix provider
 type NutanixSpec struct{}
