@@ -422,6 +422,8 @@ func WithUpgrade(t Tasks, followers ...kubeoneapi.HostConfig) Tasks {
 
 func WithReset(t Tasks) Tasks {
 	return t.append(Tasks{
+		{Fn: CleanupLoadBalancers, Operation: "cleanup load balancers"},
+		{Fn: CleanupVolumes, Operation: "cleanup dynamically provisioned and unretained volumes"},
 		{Fn: destroyWorkers, Operation: "destroying workers"},
 		{Fn: resetAllNodes, Operation: "resetting all nodes"},
 		{Fn: removeBinariesAllNodes, Operation: "removing kubernetes binaries from nodes"},
