@@ -1,3 +1,21 @@
+# [v1.9.1](https://github.com/kubermatic/kubeone/releases/tag/v1.9.1) - 2024-12-17
+
+## Changelog since v1.9.0
+
+## Changes by Kind
+
+### Feature
+
+- Update OpenStack CCM and CSI driver to v1.31.2 and v1.30.2 ([#3489](https://github.com/kubermatic/kubeone/pull/3489), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Bug or Regression
+
+- Fix an error message appearing in the KubeOne UI for clusters that don't have any Machine/MachineDeployment ([#3480](https://github.com/kubermatic/kubeone/pull/3480), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Other (Cleanup or Flake)
+
+- Use dedicated keyring for Docker repositories to solve `apt-key` deprecation warning upon installing/upgrading containerd ([#3485](https://github.com/kubermatic/kubeone/pull/3485), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.9.0](https://github.com/kubermatic/kubeone/releases/tag/v1.9.0) - 2024-11-22
 
 We're happy to announce a new KubeOne minor release — KubeOne 1.9! Please
