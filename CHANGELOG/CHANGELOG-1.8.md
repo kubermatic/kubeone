@@ -1,3 +1,22 @@
+# [v1.8.4](https://github.com/kubermatic/kubeone/releases/tag/v1.8.4) - 2024-12-17
+
+## Changelog since v1.8.3
+
+## Changes by Kind
+
+### Chore
+
+- Update operating-system-manager (OSM) to v1.5.3 ([#3390](https://github.com/kubermatic/kubeone/pull/3390), [@kron4eg](https://github.com/kron4eg))
+
+### Feature
+
+- Add `disable_auto_update` option to example Terraform configs for AWS, Azure, Equinix Metal, OpenStack, and vSphere, used to disable automatic updates for all Flatcar nodes ([#3393](https://github.com/kubermatic/kubeone/pull/3393), [@xmudrii](https://github.com/xmudrii))
+- Update OpenStack CCM and CSI driver to v1.30.2, v1.29.1 and v1.28.3 ([#3488](https://github.com/kubermatic/kubeone/pull/3488), [@rajaSahil](https://github.com/rajaSahil))
+
+### Other (Cleanup or Flake)
+
+- Use dedicated keyring for Docker repositories to solve `apt-key` deprecation warning upon installing/upgrading containerd ([#3486](https://github.com/kubermatic/kubeone/pull/3486), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.8.3](https://github.com/kubermatic/kubeone/releases/tag/v1.8.3) - 2024-09-17
 
 ## Changelog since v1.8.2
@@ -131,7 +150,6 @@ upgrading:
 - Improve error messaging when working with remote files over SSH ([#3052](https://github.com/kubermatic/kubeone/pull/3052), [@kron4eg](https://github.com/kron4eg))
 - Canal CNI: Add `IFACE` and `IFACE_REGEX` parameters to allow explicitly selecting network interface to be used for inter-node communication and VXLAN ([#3152](https://github.com/kubermatic/kubeone/pull/3152), [@xmudrii](https://github.com/xmudrii))
 - Update to Go 1.22.1 ([#3072](https://github.com/kubermatic/kubeone/pull/3072), [@xrstf](https://github.com/xrstf))
-
 
 ### Bug or Regression
 
