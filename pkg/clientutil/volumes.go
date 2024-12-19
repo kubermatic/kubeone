@@ -79,7 +79,6 @@ func CleanupUnretainedVolumes(ctx context.Context, logger logrus.FieldLogger, c 
 }
 
 func disablePVCreation(ctx context.Context, c client.Client) error {
-
 	// Prevent re-creation of PVs and PVCs by using an intentionally defunct admissionWebhook
 	creatorGetters := []reconciling.NamedValidatingWebhookConfigurationReconcilerFactory{
 		creationPreventingWebhook("", VolumeResources),
@@ -122,6 +121,7 @@ func podUsesPV(p *corev1.Pod) bool {
 			return true
 		}
 	}
+	
 	return false
 }
 

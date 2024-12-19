@@ -67,6 +67,7 @@ func creationPreventingWebhook(apiGroup string, resources []string) reconciling.
 				vwc.Webhooks[0].FailurePolicy = &failurePolicy
 				vwc.Webhooks[0].SideEffects = &sideEffects
 				vwc.Webhooks[0].AdmissionReviewVersions = []string{"v1"}
+
 				return vwc, nil
 			}
 	}
@@ -80,5 +81,6 @@ func DeletePreventingWebhook(ctx context.Context, c client.Client, resourceName 
 	if err := DeleteIfExists(ctx, c, &vwc); err != nil {
 		return err
 	}
+
 	return nil
 }

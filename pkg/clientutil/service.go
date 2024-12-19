@@ -27,7 +27,6 @@ import (
 )
 
 func CleanupLBs(ctx context.Context, logger logrus.FieldLogger, c client.Client) error {
-
 	serviceList := &corev1.ServiceList{}
 	if err := c.List(ctx, serviceList); err != nil {
 		return fail.KubeClient(err, "failed to list Service.")
@@ -54,7 +53,6 @@ func WaitCleanupLbs(ctx context.Context, logger logrus.FieldLogger, c client.Cli
 	logger.Infoln("Waiting for all load balancer services to get deleted...")
 
 	return wait.PollUntilContextTimeout(ctx, 5*time.Second, 5*time.Minute, false, func(ctx context.Context) (bool, error) {
-
 		serviceList := &corev1.ServiceList{}
 		if err := c.List(ctx, serviceList); err != nil {
 			return false, nil

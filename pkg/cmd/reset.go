@@ -131,7 +131,6 @@ func runReset(opts *resetOpts) error {
 				s.Logger.Warnln("Unable to list and delete dynamically provisioned and unretained volumes in the cluster.")
 				s.Logger.Warnln("You can skip this phase by using '--cleanup-volumes=false'.")
 				s.Logger.Warnln("If there are unretained volumes in the cluster, you might have to delete them manually.")
-
 			}
 			if opts.DestroyWorkers {
 				s.Logger.Warnln("Unable to list and delete machine-controller managed nodes.")
@@ -147,14 +146,14 @@ func runReset(opts *resetOpts) error {
 	if opts.CleanupLoadBalancers {
 		s.Logger.Warnln("cleanup-load-balancers command will PERMANENTLY delete the load balancers from the cluster.")
 		svcList := v1.ServiceList{}
-		if err := s.DynamicClient.List(s.Context, &svcList); err != nil {
+		if err = s.DynamicClient.List(s.Context, &svcList); err != nil {
 			s.Logger.Errorln("Failed to list load balancer services.")
 			s.Logger.Warnln("Load balancer Service might not be deleted. If there are services of type load balancer in the cluster, you might have to delete them manually.")
 		}
-		services := []*v1.Service{}
+		services := []v1.Service{}
 		for _, svc := range svcList.Items {
 			if svc.Spec.Type == v1.ServiceTypeLoadBalancer {
-				services = append(services, &svc)
+				services = append(services, svc)
 			}
 		}
 		if len(services) > 0 {
@@ -169,14 +168,14 @@ func runReset(opts *resetOpts) error {
 		s.Logger.Warnln("cleanup-volumes command will PERMANENTLY delete the unretained volumes from the cluster.")
 
 		pvList := v1.PersistentVolumeList{}
-		if err := s.DynamicClient.List(s.Context, &pvList); err != nil {
+		if err = s.DynamicClient.List(s.Context, &pvList); err != nil {
 			s.Logger.Errorln("Failed to list persistent volumes.")
 			s.Logger.Warnln("Volumes might not be deleted. If there are volumes in the cluster, you might have to delete them manually.")
 		}
-		pvs := []*v1.PersistentVolume{}
+		pvs := []v1.PersistentVolume{}
 		for _, pv := range pvList.Items {
 			if pv.Annotations[clientutil.AnnDynamicallyProvisioned] != "" && pv.Spec.PersistentVolumeReclaimPolicy == v1.PersistentVolumeReclaimDelete {
-				pvs = append(pvs, &pv)
+				pvs = append(pvs, pv)
 			}
 		}
 		if len(pvs) > 0 {
