@@ -1,4 +1,4 @@
-# [v1.9.1](https://github.com/kubermatic/kubeone/releases/tag/v1.9.1) - 2024-12-19
+# [v1.9.1](https://github.com/kubermatic/kubeone/releases/tag/v1.9.1) - 2024-12-20
 
 ## Changelog since v1.9.0
 
