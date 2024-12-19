@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2024-12-19T12:13:27+01:00
+date = 2024-12-19T13:09:56+01:00
 weight = 11
 +++
 ## v1beta3
@@ -573,7 +573,7 @@ KubevirtSpec defines the Kubevirt provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | infraNamespace | InfraNamespace is the namespace that KubeVirt provider will use to create and manage resources in the infra cluster, such as VirtualMachines, VirtualMachineInstances, etc... | string | false |
-| infraClusterKubeconfig | InfraClusterKubeconfig represents the kubeconfig that points to KubeVirt infra cluster(a cluster with kubevirt is installed). This Kubeconfig will be used to create and manage KubeVirt specific resources such as DataVolumes. The value must be set in a base64 format. | string | false |
+| infraClusterKubeconfig | InfraClusterKubeconfig is a base64-encoded kubeconfig file that points to a KubeVirt infra cluster (a cluster where KubeVirt is installed). This Kubeconfig will be used to create and manage KubeVirt specific resources such as DataVolumes. | string | false |
 
 [Back to Group](#v1beta3)
 
