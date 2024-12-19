@@ -448,6 +448,10 @@ type KubevirtSpec struct {
 	// InfraNamespace is the namespace that KubeVirt provider will use to create and manage resources in the infra cluster,
 	// such as VirtualMachines, VirtualMachineInstances, etc...
 	InfraNamespace string `json:"infraNamespace,omitempty"`
+	// InfraClusterKubeconfig represents the kubeconfig that points to KubeVirt infra cluster(a cluster with kubevirt is installed).
+	// This Kubeconfig will be used to create and manage KubeVirt specific resources such as DataVolumes. The value must be
+	// set in a base64 format.
+	InfraClusterKubeconfig string `json:"infraClusterKubeconfig,omitempty"`
 }
 
 // NutanixSpec defines the Nutanix provider
