@@ -32,6 +32,7 @@ output "kubeone_hosts" {
       cloud_provider       = "gce"
       private_address      = google_compute_instance.control_plane.*.network_interface.0.network_ip
       public_address       = google_compute_instance.control_plane.*.network_interface.0.access_config.0.nat_ip
+      ipv6_addresses       = [for ip in google_compute_instance.control_plane.*.network_interface.0.ipv6_access_config.0.external_ipv6 : [ip]]
       hostnames            = google_compute_instance.control_plane.*.name
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
