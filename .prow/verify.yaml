@@ -31,11 +31,11 @@ presubmits:
             - verify-codegen
           resources:
             requests:
-              memory: 512Mi
-              cpu: 500m
+              memory: 4Gi
+              cpu: 2
             limits:
-              memory: 1Gi
-              cpu: 1
+              memory: 4Gi
+              cpu: 2
   - name: pull-kubeone-verify-apidocs
     run_if_changed: "(pkg/apis/kubeone|hack/)"
     decorate: true
