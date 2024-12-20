@@ -194,6 +194,13 @@ const (
 	CalicoVXLANCNI
 	CalicoVXLANController
 	CalicoVXLANNode
+
+	// KubeVirt CSI
+	KubeVirtCSI
+	KubeVirtCSINodeDriverRegistrar
+	KubeVirtCSILivenessProbe
+	KubeVirtCSIProvisioner
+	KubeVirtCSIAttacher
 )
 
 func FindResource(name string) (Resource, error) {
@@ -400,6 +407,13 @@ func optionalResources() map[Resource]map[string]string {
 		SecretStoreCSIDriver:              {"*": "registry.k8s.io/csi-secrets-store/driver:v1.2.1"},
 		SecretStoreCSIDriverLivenessProbe: {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.7.0"},
 		SecretStoreCSIDriverCRDs:          {"*": "registry.k8s.io/csi-secrets-store/driver-crds:v1.2.1"},
+
+		// KubeVirt CSI
+		KubeVirtCSI:                    {"*": "quay.io/kubevirt/csi-driver:20240920145955"},
+		KubeVirtCSINodeDriverRegistrar: {"*": "quay.io/openshift/origin-csi-node-driver-registrar:4.20.0"},
+		KubeVirtCSILivenessProbe:       {"*": "quay.io/openshift/origin-csi-livenessprobe:4.20.0"},
+		KubeVirtCSIProvisioner:         {"*": "quay.io/openshift/origin-csi-external-provisioner:4.20.0"},
+		KubeVirtCSIAttacher:            {"*": "quay.io/openshift/origin-csi-external-attacher:4.20.0"},
 	}
 }
 

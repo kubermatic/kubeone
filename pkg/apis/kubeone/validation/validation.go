@@ -19,6 +19,7 @@ package validation
 import (
 	"bytes"
 	"crypto/x509"
+	"encoding/base64"
 	"fmt"
 	"net"
 	"os"
@@ -207,6 +208,12 @@ func ValidateCloudProviderSpec(providerSpec kubeoneapi.CloudProviderSpec, networ
 		providerFound = true
 		if providerSpec.External {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("external"), "external cloud provider is not supported for Kubevirt clusters"))
+		}
+		if providerSpec.Kubevirt.InfraClusterKubeconfig != "" {
+			_, err := base64.StdEncoding.DecodeString(providerSpec.Kubevirt.InfraClusterKubeconfig)
+			if err != nil {
+				allErrs = append(allErrs, field.Forbidden(fldPath.Child("kubevirt").Child("infraClusterKubeconfig"), "infraClusterKubeconfig must be base64-encoded"))
+			}
 		}
 	}
 	if providerSpec.Nutanix != nil {
