@@ -209,6 +209,12 @@ func ValidateCloudProviderSpec(providerSpec kubeoneapi.CloudProviderSpec, networ
 		if providerSpec.External {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("external"), "external cloud provider is not supported for Kubevirt clusters"))
 		}
+		if providerSpec.Kubevirt.InfraClusterKubeconfig != "" {
+			_, err := base64.StdEncoding.DecodeString(providerSpec.Kubevirt.InfraClusterKubeconfig)
+			if err != nil {
+				allErrs = append(allErrs, field.Forbidden(fldPath.Child("infraClusterKubeconfig"), "infraClusterKubeconfig must be base64-encoded"))
+			}
+		}
 	}
 	if providerSpec.Nutanix != nil {
 		if providerFound {
@@ -251,18 +257,6 @@ func ValidateCloudProviderSpec(providerSpec kubeoneapi.CloudProviderSpec, networ
 			allErrs = append(allErrs, field.Required(fldPath.Child("csiConfig"), ".cloudProvider.csiConfig is required for vSphere provider"))
 		}
 		providerFound = true
-	}
-	if providerSpec.Kubevirt != nil {
-		if providerFound {
-			allErrs = append(allErrs, field.Forbidden(fldPath.Child("kubevirt"), "only one provider can be used at the same time"))
-		}
-
-		if providerSpec.Kubevirt.InfraClusterKubeconfig != "" {
-			_, err := base64.StdEncoding.DecodeString(providerSpec.Kubevirt.InfraClusterKubeconfig)
-			if err != nil {
-				allErrs = append(allErrs, field.Forbidden(fldPath.Child("infraClusterKubeconfig"), "infraClusterKubeconfig must be base64-encoded"))
-			}
-		}
 	}
 	if providerSpec.None != nil {
 		if providerFound {
