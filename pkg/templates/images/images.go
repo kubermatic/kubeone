@@ -196,11 +196,11 @@ const (
 	CalicoVXLANNode
 
 	// KubeVirt CSI
-	KubeVirtCSIDriver
+	KubeVirtCSI
 	KubeVirtCSINodeDriverRegistrar
-	KubeVirtCSILivenessprobe
-	KubeVirtCSIExternalProvisioner
-	KubeVirtCSIExternalAttacher
+	KubeVirtCSILivenessProbe
+	KubeVirtCSIProvisioner
+	KubeVirtCSIAttacher
 )
 
 func FindResource(name string) (Resource, error) {
@@ -409,11 +409,11 @@ func optionalResources() map[Resource]map[string]string {
 		SecretStoreCSIDriverCRDs:          {"*": "registry.k8s.io/csi-secrets-store/driver-crds:v1.2.1"},
 
 		// KubeVirt CSI
-		KubeVirtCSIDriver:              {"*": "quay.io/kubevirt/csi-driver:20240920145955"},
+		KubeVirtCSI:                    {"*": "quay.io/kubevirt/csi-driver:20240920145955"},
 		KubeVirtCSINodeDriverRegistrar: {"*": "quay.io/openshift/origin-csi-node-driver-registrar:4.20.0"},
-		KubeVirtCSILivenessprobe:       {"*": "quay.io/openshift/origin-csi-livenessprobe:4.20.0"},
-		KubeVirtCSIExternalProvisioner: {"*": "quay.io/openshift/origin-csi-external-provisioner:4.20.0"},
-		KubeVirtCSIExternalAttacher:    {"*": "quay.io/openshift/origin-csi-external-attacher:4.20.0"},
+		KubeVirtCSILivenessProbe:       {"*": "quay.io/openshift/origin-csi-livenessprobe:4.20.0"},
+		KubeVirtCSIProvisioner:         {"*": "quay.io/openshift/origin-csi-external-provisioner:4.20.0"},
+		KubeVirtCSIAttacher:            {"*": "quay.io/openshift/origin-csi-external-attacher:4.20.0"},
 	}
 }
 

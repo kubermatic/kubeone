@@ -212,7 +212,7 @@ func ValidateCloudProviderSpec(providerSpec kubeoneapi.CloudProviderSpec, networ
 		if providerSpec.Kubevirt.InfraClusterKubeconfig != "" {
 			_, err := base64.StdEncoding.DecodeString(providerSpec.Kubevirt.InfraClusterKubeconfig)
 			if err != nil {
-				allErrs = append(allErrs, field.Forbidden(fldPath.Child("infraClusterKubeconfig"), "infraClusterKubeconfig must be base64-encoded"))
+				allErrs = append(allErrs, field.Forbidden(fldPath.Child("kubevirt").Child("infraClusterKubeconfig"), "infraClusterKubeconfig must be base64-encoded"))
 			}
 		}
 	}
