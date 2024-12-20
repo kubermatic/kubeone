@@ -117,7 +117,7 @@ spec:
       containers:
         - name: csi-driver
           imagePullPolicy: Always
-          image: quay.io/kubevirt/csi-driver:latest
+          image: '{{ .InternalImages.Get "KubeVirtCSIDriver" }}'
           args:
             - "--endpoint=$(CSI_ENDPOINT)"
             - "--infra-cluster-namespace=$(INFRACLUSTER_NAMESPACE)"
@@ -163,7 +163,7 @@ spec:
               memory: 50Mi
               cpu: 10m
         - name: csi-provisioner
-          image: quay.io/openshift/origin-csi-external-provisioner:latest
+          image: '{{ .InternalImages.Get "KubeVirtCSIExternalProvisioner" }}'
           args:
             - "--csi-address=$(ADDRESS)"
             - "--default-fstype=ext4"
@@ -180,7 +180,7 @@ spec:
             - name: tenantcluster
               mountPath: "/var/run/secrets/tenantcluster"
         - name: csi-attacher
-          image: quay.io/openshift/origin-csi-external-attacher:latest
+          image:  '{{ .InternalImages.Get "KubeVirtCSIExternalAttacher" }}'
           args:
             - "--csi-address=$(ADDRESS)"
             - "--kubeconfig=/var/run/secrets/tenantcluster/value"
@@ -200,7 +200,7 @@ spec:
               memory: 50Mi
               cpu: 10m
         - name: csi-liveness-probe
-          image: quay.io/openshift/origin-csi-livenessprobe:latest
+          image: '{{ .InternalImages.Get "KubeVirtCSILivenessprobe" }}'
           args:
             - "--csi-address=/csi/csi.sock"
             - "--probe-timeout=3s"

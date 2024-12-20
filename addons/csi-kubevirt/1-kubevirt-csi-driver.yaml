@@ -96,7 +96,7 @@ spec:
             privileged: true
             allowPrivilegeEscalation: true
           imagePullPolicy: Always
-          image: quay.io/kubevirt/csi-driver:latest
+          image: '{{ .InternalImages.Get "KubeVirtCSIDriver" }}'
           args:
             - "--endpoint=unix:/csi/csi.sock"
             - "--node-name=$(KUBE_NODE_NAME)"
@@ -135,7 +135,7 @@ spec:
               memory: 50Mi
               cpu: 10m
         - name: csi-node-driver-registrar
-          image: quay.io/openshift/origin-csi-node-driver-registrar:latest
+          image: '{{ .InternalImages.Get "KubeVirtCSINodeDriverRegistrar" }}'
           args:
             - "--csi-address=$(ADDRESS)"
             - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"
@@ -159,7 +159,7 @@ spec:
               memory: 20Mi
               cpu: 5m
         - name: csi-liveness-probe
-          image: quay.io/openshift/origin-csi-livenessprobe:latest
+          image: '{{ .InternalImages.Get "KubeVirtCSILivenessprobe" }}'
           args:
             - "--csi-address=/csi/csi.sock"
             - "--probe-timeout=3s"
