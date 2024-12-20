@@ -56,6 +56,7 @@ var embeddedAddons = map[string]string{
 	resources.AddonCSIAzureFile:           "",
 	resources.AddonCSIDigitalOcean:        "",
 	resources.AddonCSIHetzner:             "",
+	resources.AddonCSIKubeVirt:            "",
 	resources.AddonCSIGCPComputePD:        "",
 	resources.AddonCSINutanix:             "",
 	resources.AddonCSIOpenStackCinder:     "",
@@ -389,6 +390,12 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 				supportFn: func() error {
 					return migrateHetznerCSI(s)
 				},
+			},
+		)
+	case s.Cluster.CloudProvider.Kubevirt != nil:
+		addonsToDeploy = append(addonsToDeploy,
+			addonAction{
+				name: resources.AddonCSIKubeVirt,
 			},
 		)
 	case s.Cluster.CloudProvider.Nutanix != nil:
