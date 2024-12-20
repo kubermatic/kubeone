@@ -167,7 +167,6 @@ spec:
           args:
             - "--csi-address=$(ADDRESS)"
             - "--default-fstype=ext4"
-            - "--kubeconfig=/var/run/secrets/tenantcluster/value"
             - "--v=5"
             - "--timeout=3m"
             - "--retry-interval-max=1m"
@@ -177,13 +176,10 @@ spec:
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
-            - name: tenantcluster
-              mountPath: "/var/run/secrets/tenantcluster"
         - name: csi-attacher
           image:  '{{ .InternalImages.Get "KubeVirtCSIExternalAttacher" }}'
           args:
             - "--csi-address=$(ADDRESS)"
-            - "--kubeconfig=/var/run/secrets/tenantcluster/value"
             - "--v=5"
             - "--timeout=3m"
             - "--retry-interval-max=1m"
@@ -193,8 +189,6 @@ spec:
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
-            - name: tenantcluster
-              mountPath: "/var/run/secrets/tenantcluster"
           resources:
             requests:
               memory: 50Mi
@@ -208,8 +202,6 @@ spec:
           volumeMounts:
             - name: socket-dir
               mountPath: /csi
-            - name: tenantcluster
-              mountPath: "/var/run/secrets/tenantcluster"
           resources:
             requests:
               memory: 50Mi
