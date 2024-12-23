@@ -6,6 +6,7 @@
 
 ### Chore
 
+- KubeOne is now built with Go 1.22.10 ([#3514](https://github.com/kubermatic/kubeone/pull/3514), [@xmudrii](https://github.com/xmudrii))
 - Update operating-system-manager (OSM) to v1.5.3 ([#3390](https://github.com/kubermatic/kubeone/pull/3390), [@kron4eg](https://github.com/kron4eg))
 
 ### Feature
