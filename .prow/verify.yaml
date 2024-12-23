@@ -24,18 +24,18 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.23-node-20-1
+        - image: quay.io/kubermatic/build:go-1.23-node-20-6
           command:
             - make
           args:
             - verify-codegen
           resources:
             requests:
-              memory: 512Mi
-              cpu: 500m
+              memory: 4Gi
+              cpu: 2
             limits:
-              memory: 1Gi
-              cpu: 1
+              memory: 4Gi
+              cpu: 2
   - name: pull-kubeone-verify-apidocs
     run_if_changed: "(pkg/apis/kubeone|hack/)"
     decorate: true
@@ -45,7 +45,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.23-node-20-1
+        - image: quay.io/kubermatic/build:go-1.23-node-20-6
           command:
             - make
           args:
@@ -65,7 +65,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.23-node-20-1
+        - image: quay.io/kubermatic/build:go-1.23-node-20-6
           command:
             - make
           args:
@@ -85,7 +85,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.23-node-20-1
+        - image: quay.io/kubermatic/build:go-1.23-node-20-6
           command:
             - make
           args:
@@ -105,7 +105,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.23-node-20-1
+        - image: quay.io/kubermatic/build:go-1.23-node-20-6
           command:
             - make
           args:
@@ -125,7 +125,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.23-node-20-1
+        - image: quay.io/kubermatic/build:go-1.23-node-20-6
           command:
             - make
           args:
@@ -145,7 +145,7 @@ presubmits:
       preset-docker-mirror: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.23-node-20-kind-0.24-1
+        - image: quay.io/kubermatic/build:go-1.23-node-20-kind-0.25-6
           command:
             - /bin/bash
             - -c
