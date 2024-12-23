@@ -1,12 +1,8 @@
-# [v1.8.4](https://github.com/kubermatic/kubeone/releases/tag/v1.8.4) - 2024-12-20
+# [v1.8.4](https://github.com/kubermatic/kubeone/releases/tag/v1.8.4) - 2024-12-23
 
 ## Changelog since v1.8.3
 
 ## Changes by Kind
-
-### Chore
-
-- Update operating-system-manager (OSM) to v1.5.3 ([#3390](https://github.com/kubermatic/kubeone/pull/3390), [@kron4eg](https://github.com/kron4eg))
 
 ### Feature
 
@@ -16,6 +12,17 @@
 ### Other (Cleanup or Flake)
 
 - Use dedicated keyring for Docker repositories to solve `apt-key` deprecation warning upon installing/upgrading containerd ([#3486](https://github.com/kubermatic/kubeone/pull/3486), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Updates
+
+#### operating-system-manager
+
+- Update operating-system-manager (OSM) to v1.5.3 ([#3390](https://github.com/kubermatic/kubeone/pull/3390), [@kron4eg](https://github.com/kron4eg))
+
+#### Others
+
+- KubeOne is now built with Go 1.22.10 ([#3514](https://github.com/kubermatic/kubeone/pull/3514), [@xmudrii](https://github.com/xmudrii))
+
 
 # [v1.8.3](https://github.com/kubermatic/kubeone/releases/tag/v1.8.3) - 2024-09-17
 
