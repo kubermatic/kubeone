@@ -1,4 +1,4 @@
-# [v1.9.1](https://github.com/kubermatic/kubeone/releases/tag/v1.9.1) - 2024-12-20
+# [v1.9.1](https://github.com/kubermatic/kubeone/releases/tag/v1.9.1) - 2024-12-23
 
 ## Changelog since v1.9.0
 
@@ -6,6 +6,8 @@
 
 ### Feature
 
+- Add `.cloudProvider.kubevirt.infraNamespace` field to the KubeOneCluster API used to control what namespace will be used by the KubeVirt provider to create and manage resources in the infra cluster, such as VirtualMachines and VirtualMachineInstances ([#3503](https://github.com/kubermatic/kubeone/pull/3503), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Add support for the KubeVirt CSI driver. The CSI driver is deployed automatically for all KubeVirt clusters (unless `.cloudProvider.disableBundledCSIDrivers` is set to `true`). A new optional field, `.cloudProvider.kubevirt.infraClusterKubeconfig`, has been added to the KubeOneCluster API used to provide a kubeconfig file for a KubeVirt infra cluster (a cluster where KubeVirt is installed). This kubeconfig can be used by the CSI driver for provisioning volumes. ([#3512](https://github.com/kubermatic/kubeone/pull/3512), [@kubermatic-bot](https://github.com/kubermatic-bot))
 - Update OpenStack CCM and CSI driver to v1.31.2 and v1.30.2 ([#3489](https://github.com/kubermatic/kubeone/pull/3489), [@kubermatic-bot](https://github.com/kubermatic-bot))
 
 ### Bug or Regression
@@ -15,6 +17,12 @@
 ### Other (Cleanup or Flake)
 
 - Use dedicated keyring for Docker repositories to solve `apt-key` deprecation warning upon installing/upgrading containerd ([#3485](https://github.com/kubermatic/kubeone/pull/3485), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Updates
+
+#### Others
+
+- KubeOne is now built with Go 1.23.4 ([#3513](https://github.com/kubermatic/kubeone/pull/3513), [@kubermatic-bot](https://github.com/kubermatic-bot))
 
 # [v1.9.0](https://github.com/kubermatic/kubeone/releases/tag/v1.9.0) - 2024-11-22
 
