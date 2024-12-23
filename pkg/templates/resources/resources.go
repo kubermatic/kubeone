@@ -45,6 +45,7 @@ const (
 	AddonCSIDigitalOcean        = "csi-digitalocean"
 	AddonCSIGCPComputePD        = "csi-gcp-compute-persistent"
 	AddonCSIHetzner             = "csi-hetzner"
+	AddonCSIKubeVirt            = "csi-kubevirt"
 	AddonCSINutanix             = "csi-nutanix"
 	AddonCSIOpenStackCinder     = "csi-openstack-cinder"
 	AddonCSIVMwareCloudDirector = "csi-vmware-cloud-director"
@@ -74,6 +75,7 @@ func CloudAddons() []string {
 		AddonCSIDigitalOcean,
 		AddonCSIGCPComputePD,
 		AddonCSIHetzner,
+		AddonCSIKubeVirt,
 		AddonCSINutanix,
 		AddonCSIOpenStackCinder,
 		AddonCSIVMwareCloudDirector,

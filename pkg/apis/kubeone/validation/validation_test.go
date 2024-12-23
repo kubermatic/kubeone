@@ -512,7 +512,10 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 		{
 			name: "valid Kubevirt provider config",
 			providerConfig: kubeoneapi.CloudProviderSpec{
-				Kubevirt: &kubeoneapi.KubevirtSpec{},
+				Kubevirt: &kubeoneapi.KubevirtSpec{
+					InfraClusterKubeconfig: "YXBpVmVyc2lvbjogdjEKY2x1c3RlcnM6Ci0gY2x1c3RlcjoKICAgIGNlcnRpZmljYXRlLWF1dGhvcml0eS1kYXRhOiBMU1hZWgogICAgc2VydmVyOiBodHRwczovL3h5ei5leGFtcGxlLmNvbTo2NDQzCiAgbmFtZTogeHl6CmNvbnRleHRzOgotIGNvbnRleHQ6CiAgICBjbHVzdGVyOiB4eXoKICAgIHVzZXI6IGRlZmF1bHQKICBuYW1lOiB4eXoKY3VycmVudC1jb250ZXh0OiB4eXoKa2luZDogQ29uZmlnCnByZWZlcmVuY2VzOiB7fQp1c2VyczoKLSBuYW1lOiBkZWZhdWx0CiAgdXNlcjoKICAgIHRva2VuOiB4eXphdzI1Lnh5ego=",
+					InfraNamespace:         "tenant-xyz",
+				},
 			},
 			expectedError: false,
 		},
