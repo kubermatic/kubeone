@@ -1,4 +1,8 @@
-# [v1.8.4](https://github.com/kubermatic/kubeone/releases/tag/v1.8.4) - 2024-12-23
+# [v1.8.5](https://github.com/kubermatic/kubeone/releases/tag/v1.8.5) - 2024-12-23
+
+## Changelog since v1.8.4
+
+**Note: the v1.8.4 release has been abandoned due to an issue with the [deprecated `goreleaser` flags](https://github.com/kubermatic/kubeone/pull/3519).**
 
 ## Changelog since v1.8.3
 
