@@ -17,6 +17,8 @@ limitations under the License.
 package tasks
 
 import (
+	"strings"
+
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/executor"
@@ -28,6 +30,91 @@ import (
 
 	"k8s.io/apimachinery/pkg/util/wait"
 )
+
+// CleanupLoadBalancers Deletes all the load balancers services from the cluster.
+func CleanupLoadBalancers(s *state.State) error {
+	if !s.CleanupLoadBalancers {
+		return nil
+	}
+	var lastErr error
+	s.Logger.Infoln("Deleting load balancer services...")
+	_ = wait.ExponentialBackoff(defaultRetryBackoff(3), func() (bool, error) {
+		lastErr = clientutil.CleanupLBs(s.Context, s.Logger, s.DynamicClient)
+		if lastErr != nil {
+			s.Logger.Warn("Unable to delete services of type load balancer. Retrying...")
+
+			return false, nil
+		}
+
+		return true, nil
+	})
+
+	_ = wait.ExponentialBackoff(defaultRetryBackoff(3), func() (bool, error) {
+		lastErr = clientutil.WaitCleanupLbs(s.Context, s.Logger, s.DynamicClient)
+		if lastErr != nil {
+			s.Logger.Warn("Waiting for all load balancer services to be deleted...")
+
+			return false, nil
+		}
+
+		return true, nil
+	})
+	if lastErr != nil {
+		return lastErr
+	}
+
+	return lastErr
+}
+
+// CleanupVolumes Deletes all the dynamically provisioned and unretained volumes from the cluster.
+func CleanupVolumes(s *state.State) error {
+	if !s.CleanupVolumes {
+		return nil
+	}
+	var lastErr error
+	s.Logger.Infoln("Deleting dynamically provisioned and unretained volumes...")
+	_ = wait.ExponentialBackoff(defaultRetryBackoff(3), func() (bool, error) {
+		lastErr = clientutil.CleanupUnretainedVolumes(s.Context, s.Logger, s.DynamicClient)
+		if lastErr != nil {
+			s.Logger.Warn("Unable to delete volumes. Retrying...")
+
+			return false, nil
+		}
+
+		return true, nil
+	})
+	if lastErr != nil {
+		s.Logger.Infoln("Deleting ValidatingWebhookConfiguration to enable future PV & PVC creation...")
+		_ = wait.ExponentialBackoff(defaultRetryBackoff(3), func() (bool, error) {
+			if err := clientutil.DeletePreventingWebhook(s.Context, s.DynamicClient,
+				"kubernetes-cluster-cleanup-"+strings.Join(clientutil.VolumeResources, "-")); err != nil {
+				s.Logger.Warn("Unable to delete ValidatingWebhookConfiguration. Retrying...")
+
+				return false, nil
+			}
+
+			return true, nil
+		})
+
+		return lastErr
+	}
+
+	_ = wait.ExponentialBackoff(defaultRetryBackoff(3), func() (bool, error) {
+		lastErr = clientutil.WaitCleanUpVolumes(s.Context, s.Logger, s.DynamicClient)
+		if lastErr != nil {
+			s.Logger.Warn("Waiting for all dynamically provisioned and unretained volumes to be deleted...")
+
+			return false, nil
+		}
+
+		return true, nil
+	})
+	if lastErr != nil {
+		return lastErr
+	}
+
+	return lastErr
+}
 
 func destroyWorkers(s *state.State) error {
 	if !s.DestroyWorkers {
