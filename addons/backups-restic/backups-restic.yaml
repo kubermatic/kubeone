@@ -100,9 +100,9 @@ spec:
               cp -a /etc/kubernetes/pki/front-proxy-ca.key /backup/pki/kubernetes
               cp -a /etc/kubernetes/pki/sa.key /backup/pki/kubernetes
               cp -a /etc/kubernetes/pki/sa.pub /backup/pki/kubernetes
-              restic snapshots -q || restic init -q
-              restic backup --tag=etcd --host=${ETCD_HOSTNAME} /backup
-              restic forget --prune --keep-last 48
+              restic snapshots {{- if eq .Params.insecure "true" }} --insecure-tls{{ end }} -q || restic init {{- if eq .Params.insecure "true" }} --insecure-tls{{ end }} -q
+              restic backup {{- if eq .Params.insecure "true" }} --insecure-tls{{ end }} --tag=etcd --host=${ETCD_HOSTNAME} /backup
+              restic forget {{- if eq .Params.insecure "true" }} --insecure-tls{{ end }} --prune --keep-last 48
             env:
             - name: ETCD_HOSTNAME
               valueFrom:
