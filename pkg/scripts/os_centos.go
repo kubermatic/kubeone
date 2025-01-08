@@ -44,13 +44,14 @@ echo -n "${yum_proxy}" >> /tmp/yum.conf
 sudo mv /tmp/yum.conf /etc/yum.conf
 
 {{ if .CONFIGURE_REPOSITORIES }}
+LATEST_STABLE=$(curl -sL https://dl.k8s.io/release/stable.txt | sed 's/\.[0-9]*$//')
 cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
 baseurl=https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/rpm/
 enabled=1
 gpgcheck=1
-gpgkey=https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/rpm/repodata/repomd.xml.key
+gpgkey=https://pkgs.k8s.io/core:/stable:/${LATEST_STABLE}/rpm/repodata/repomd.xml.key
 EOF
 
 source /etc/os-release
