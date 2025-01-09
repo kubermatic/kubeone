@@ -326,6 +326,12 @@ func WithResources(t Tasks) Tasks {
 				Operation: "waiting for operating-system-manager",
 				Predicate: func(s *state.State) bool { return s.Cluster.OperatingSystemManager.Deploy },
 			},
+			{
+				Fn:          upgradeMachineDeployments,
+				Operation:   "upgrading MachineDeployments",
+				Description: "upgrade MachineDeployments",
+				Predicate:   func(s *state.State) bool { return s.UpgradeMachineDeployments },
+			},
 		}...,
 	)
 }
@@ -373,12 +379,6 @@ func WithUpgrade(t Tasks, followers ...kubeoneapi.HostConfig) Tasks {
 					// Run operation only when upgrading to Kubernetes 1.31.
 					return targetVersion.Minor() == 31 && liveCP[0].Kubelet.Version.Minor() == 30
 				},
-			},
-			Task{
-				Fn:          upgradeMachineDeployments,
-				Operation:   "upgrading MachineDeployments",
-				Description: "upgrade MachineDeployments",
-				Predicate:   func(s *state.State) bool { return s.UpgradeMachineDeployments },
 			},
 			Task{
 				Fn:          pruneImagesOnAllNodes,
