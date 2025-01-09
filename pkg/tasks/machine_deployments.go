@@ -56,6 +56,10 @@ func upgradeMachineDeployments(s *state.State) error {
 		return nil
 	}
 
+	if !s.Cluster.MachineController.Deploy {
+		return nil
+	}
+
 	s.Logger.Info("Upgrade MachineDeployments...")
 
 	machineDeployments := clusterv1alpha1.MachineDeploymentList{}
