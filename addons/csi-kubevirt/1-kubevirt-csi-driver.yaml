@@ -96,7 +96,7 @@ spec:
             privileged: true
             allowPrivilegeEscalation: true
           imagePullPolicy: Always
-          image: '{{ .InternalImages.Get "KubeVirtCSIDriver" }}'
+          image: '{{ .InternalImages.Get "KubeVirtCSI" }}'
           args:
             - "--endpoint=unix:/csi/csi.sock"
             - "--node-name=$(KUBE_NODE_NAME)"

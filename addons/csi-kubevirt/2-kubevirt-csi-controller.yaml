@@ -117,7 +117,7 @@ spec:
       containers:
         - name: csi-driver
           imagePullPolicy: Always
-          image: '{{ .InternalImages.Get "KubeVirtCSIDriver" }}'
+          image: '{{ .InternalImages.Get "KubeVirtCSI" }}'
           args:
             - "--endpoint=$(CSI_ENDPOINT)"
             - "--infra-cluster-namespace=$(INFRACLUSTER_NAMESPACE)"
