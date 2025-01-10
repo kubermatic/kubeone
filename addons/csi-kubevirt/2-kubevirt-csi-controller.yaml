@@ -80,7 +80,7 @@ data:
 kind: Secret
 metadata:
     labels:
-    app: kubevirt-csi-driver
+      app: kubevirt-csi-driver
   name: infra-kubeconfig
   namespace: kube-system
 type: Opaque
