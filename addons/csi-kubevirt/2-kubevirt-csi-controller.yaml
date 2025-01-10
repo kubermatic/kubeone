@@ -79,8 +79,8 @@ data:
     value: "{{ . }}"
 kind: Secret
 metadata:
-    labels:
-      app: kubevirt-csi-driver
+  labels:
+    app: kubevirt-csi-driver
   name: infra-kubeconfig
   namespace: kube-system
 type: Opaque
