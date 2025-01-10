@@ -159,7 +159,7 @@ spec:
               memory: 20Mi
               cpu: 5m
         - name: csi-liveness-probe
-          image: '{{ .InternalImages.Get "KubeVirtCSILivenessprobe" }}'
+          image: '{{ .InternalImages.Get "KubeVirtCSILivenessProbe" }}'
           args:
             - "--csi-address=/csi/csi.sock"
             - "--probe-timeout=3s"

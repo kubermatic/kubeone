@@ -163,7 +163,7 @@ spec:
               memory: 50Mi
               cpu: 10m
         - name: csi-provisioner
-          image: '{{ .InternalImages.Get "KubeVirtCSIExternalProvisioner" }}'
+          image: '{{ .InternalImages.Get "KubeVirtCSIProvisioner" }}'
           args:
             - "--csi-address=$(ADDRESS)"
             - "--default-fstype=ext4"
@@ -177,7 +177,7 @@ spec:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: csi-attacher
-          image:  '{{ .InternalImages.Get "KubeVirtCSIExternalAttacher" }}'
+          image:  '{{ .InternalImages.Get "KubeVirtCSIAttacher" }}'
           args:
             - "--csi-address=$(ADDRESS)"
             - "--v=5"
@@ -194,7 +194,7 @@ spec:
               memory: 50Mi
               cpu: 10m
         - name: csi-liveness-probe
-          image: '{{ .InternalImages.Get "KubeVirtCSILivenessprobe" }}'
+          image: '{{ .InternalImages.Get "KubeVirtCSILivenessProbe" }}'
           args:
             - "--csi-address=/csi/csi.sock"
             - "--probe-timeout=3s"
