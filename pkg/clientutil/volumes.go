@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The KubeOne Authors.
+Copyright 2025 The KubeOne Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -21,10 +21,11 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/sirupsen/logrus"
+
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/reconciler/pkg/reconciling"
 
-	"github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"sigs.k8s.io/controller-runtime/pkg/client"

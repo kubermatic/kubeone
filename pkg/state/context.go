@@ -107,8 +107,8 @@ type State struct {
 	Verbose                   bool
 	BackupFile                string
 	DestroyWorkers            bool
-	CleanupVolumes            bool
-	CleanupLoadBalancers      bool
+	RemoveVolumes             bool
+	RemoveLBServices          bool
 	RemoveBinaries            bool
 	ForceUpgrade              bool
 	ForceInstall              bool
