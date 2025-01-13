@@ -61,7 +61,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: driver-config
-  namespace: kubevirt-csi-driver
+  namespace: kube-system
 data:
 {{ with .Config.CloudProvider.Kubevirt -}}
 {{ with .InfraNamespace }}
