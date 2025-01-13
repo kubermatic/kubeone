@@ -104,7 +104,7 @@ spec:
       labels:
         app: kubevirt-csi-driver
     spec:
-      serviceAccount: kubevirt-csi
+      serviceAccount: kubevirt-csi-controller-sa
       priorityClassName: system-cluster-critical
       nodeSelector:
         node-role.kubernetes.io/control-plane: ""
