@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2024-12-20T14:29:10+01:00
+date = 2025-01-14T22:49:49+01:00
 weight = 11
 +++
 ## v1beta3
@@ -169,7 +169,7 @@ CiliumSpec defines the Cilium CNI plugin
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| kubeProxyReplacement | KubeProxyReplacement defines weather cilium relies on underlying Kernel support to replace kube-proxy functionality by eBPF (strict), or disables a subset of those features so cilium does not bail out if the kernel support is missing (disabled). default is \"disabled\" | KubeProxyReplacementType | true |
+| kubeProxyReplacement | KubeProxyReplacement defines weather cilium relies on underlying Kernel support to replace kube-proxy functionality by eBPF (strict), or disables a subset of those features so cilium does not bail out if the kernel support is missing (disabled). default is \"disabled\" | bool | true |
 | enableHubble | EnableHubble to deploy Hubble relay and UI default value is false | bool | true |
 
 [Back to Group](#v1beta3)
