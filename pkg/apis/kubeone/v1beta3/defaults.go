@@ -208,10 +208,6 @@ func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
 	if obj.ClusterNetwork.CNI.Canal != nil && obj.ClusterNetwork.CNI.Canal.MTU == 0 {
 		obj.ClusterNetwork.CNI.Canal.MTU = defaultCanal.MTU
 	}
-
-	if obj.ClusterNetwork.CNI.Cilium != nil && obj.ClusterNetwork.CNI.Cilium.KubeProxyReplacement == "" {
-		obj.ClusterNetwork.CNI.Cilium.KubeProxyReplacement = "disabled"
-	}
 }
 
 func SetDefaults_Proxy(obj *KubeOneCluster) {

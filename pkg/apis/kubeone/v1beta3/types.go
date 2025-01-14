@@ -604,20 +604,13 @@ type CanalSpec struct {
 	MTU int `json:"mtu,omitempty"`
 }
 
-type KubeProxyReplacementType string
-
-const (
-	KubeProxyReplacementStrict   KubeProxyReplacementType = "strict"
-	KubeProxyReplacementDisabled KubeProxyReplacementType = "disabled"
-)
-
 // CiliumSpec defines the Cilium CNI plugin
 type CiliumSpec struct {
 	// KubeProxyReplacement defines weather cilium relies on underlying Kernel support
 	// to replace kube-proxy functionality by eBPF (strict), or disables a subset of those
 	// features so cilium does not bail out if the kernel support is missing (disabled).
 	// default is "disabled"
-	KubeProxyReplacement KubeProxyReplacementType `json:"kubeProxyReplacement"`
+	KubeProxyReplacement bool `json:"kubeProxyReplacement"`
 
 	// EnableHubble to deploy Hubble relay and UI
 	// default value is false

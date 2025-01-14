@@ -381,7 +381,7 @@ func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, prov kubeon
 		allErrs = append(allErrs, ValidateCNI(c.CNI, fldPath.Child("cni"))...)
 
 		// validated cilium kube-proxy replacement
-		if c.CNI.Cilium != nil && c.CNI.Cilium.KubeProxyReplacement != kubeoneapi.KubeProxyReplacementDisabled && (c.KubeProxy == nil || !c.KubeProxy.SkipInstallation) {
+		if c.CNI.Cilium != nil && c.CNI.Cilium.KubeProxyReplacement && (c.KubeProxy == nil || !c.KubeProxy.SkipInstallation) {
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("cni"), c.CNI.Cilium.KubeProxyReplacement, ".cilium.kubeProxyReplacement cannot be set with kube-proxy enabled"))
 		}
 	}
