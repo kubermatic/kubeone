@@ -18,7 +18,6 @@ package v1beta3
 
 import (
 	"crypto/tls"
-	"fmt"
 	"strings"
 	"time"
 
@@ -74,7 +73,6 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_Addons(obj)
 	SetDefaults_SystemPackages(obj)
 	SetDefaults_Features(obj)
-	SetDefaults_CloudConfig(obj)
 	SetDefaults_TLSCipherSuites(obj)
 }
 
@@ -93,14 +91,6 @@ func SetDefaults_CloudProvider(obj *KubeOneCluster) {
 		// there will be no CCM to initialize the Node
 		if obj.CloudProvider.Kubevirt == nil && obj.CloudProvider.VMwareCloudDirector == nil {
 			obj.CloudProvider.External = true
-		}
-	}
-}
-
-func SetDefaults_CloudConfig(obj *KubeOneCluster) {
-	if obj.CloudProvider.AWS != nil && obj.CloudProvider.External {
-		if obj.CloudProvider.CloudConfig == "" {
-			obj.CloudProvider.CloudConfig = defaultAWSCCMCloudConfig(obj.Name, obj.ClusterNetwork.IPFamily)
 		}
 	}
 }
@@ -345,28 +335,6 @@ func defaultHostConfig(obj *HostConfig) {
 	obj.SSHPort = defaults(obj.SSHPort, 22)
 	obj.BastionPort = defaults(obj.BastionPort, 22)
 	obj.BastionUser = defaults(obj.BastionUser, obj.SSHUsername)
-}
-
-func defaultAWSCCMCloudConfig(name string, ipFamily IPFamily) string {
-	lines := []string{
-		"[global]",
-		fmt.Sprintf("KubernetesClusterID=%q", name),
-	}
-
-	switch ipFamily {
-	case IPFamilyIPv4:
-		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv4"))
-	case IPFamilyIPv6:
-		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv6"))
-	case IPFamilyIPv4IPv6:
-		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv4"))
-		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv6"))
-	case IPFamilyIPv6IPv4:
-		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv6"))
-		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv4"))
-	}
-
-	return strings.Join(lines, "\n")
 }
 
 func defaults[T comparable](input, defaultValue T) T {
