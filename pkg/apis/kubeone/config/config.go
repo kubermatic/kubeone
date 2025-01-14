@@ -22,6 +22,7 @@ import (
 	"os"
 	"os/exec"
 	"reflect"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -231,6 +232,8 @@ func DefaultedV1Beta3KubeOneCluster(versionedCluster *kubeonev1beta3.KubeOneClus
 
 // SetKubeOneClusterDynamicDefaults sets the dynamic defaults for a given KubeOneCluster object
 func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, credentialsFile []byte) error {
+	// Set the default cloud config
+	SetDefaultsCloudConfig(cluster)
 	// Parse the credentials file
 	credentials := make(map[string]string)
 
@@ -287,6 +290,42 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 	}
 
 	return nil
+}
+
+// SetDefaultsCloudConfig sets default values for the CloudConfig field in the KubeOneCluster object.
+// this function assigns a default cloud configuration.
+func SetDefaultsCloudConfig(obj *kubeoneapi.KubeOneCluster) {
+	if obj.CloudProvider.AWS != nil && obj.CloudProvider.External {
+		if obj.CloudProvider.CloudConfig == "" {
+			obj.CloudProvider.CloudConfig = defaultAWSCCMCloudConfig(obj.Name, obj.ClusterNetwork.IPFamily)
+		}
+	}
+}
+
+// defaultAWSCCMCloudConfig generates a default cloud configuration for AWS when using the Cloud Controller Manager (CCM).
+// The configuration includes the Kubernetes cluster ID and optionally sets NodeIPFamilies based on the IPFamily setting.
+func defaultAWSCCMCloudConfig(name string, ipFamily kubeoneapi.IPFamily) string {
+	// Initialize the configuration with the global section and cluster ID.
+	lines := []string{
+		"[global]",
+		fmt.Sprintf("KubernetesClusterID=%q", name),
+	}
+
+	// Set NodeIPFamilies based on the IP family configuration.
+	switch ipFamily {
+	case kubeoneapi.IPFamilyIPv4:
+		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv4"))
+	case kubeoneapi.IPFamilyIPv6:
+		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv6"))
+	case kubeoneapi.IPFamilyIPv4IPv6:
+		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv4"))
+		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv6"))
+	case kubeoneapi.IPFamilyIPv6IPv4:
+		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv6"))
+		lines = append(lines, fmt.Sprintf("NodeIPFamilies=%q", "ipv4"))
+	}
+
+	return strings.Join(lines, "\n")
 }
 
 func setRegistriesAuth(cluster *kubeoneapi.KubeOneCluster, buf string) error {
