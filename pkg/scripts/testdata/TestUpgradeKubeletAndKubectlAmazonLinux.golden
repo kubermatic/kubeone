@@ -169,6 +169,8 @@ rm /tmp/k8s-binaries/kubectl
 
 
 
+sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni cri-tools
+
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet
 sudo systemctl restart kubelet

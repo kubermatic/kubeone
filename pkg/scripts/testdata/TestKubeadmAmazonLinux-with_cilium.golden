@@ -128,6 +128,7 @@ mkdir -p /tmp/k8s-binaries
 cd /tmp/k8s-binaries
 
 
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools
 
 # Amazon Linux 2 repos include the cri-tools package. These AL2 repos have higher
 # priority over the Kubernetes repos, so it's not possible to install cri-tools
@@ -142,6 +143,7 @@ sudo yum install -y --disableplugin=priorities \
 	kubectl-1.30.0 \
 	kubernetes-cni \
 	cri-tools
+
 sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni cri-tools
 
 sudo systemctl daemon-reload

@@ -131,7 +131,8 @@ sudo systemctl enable containerd
 sudo systemctl restart containerd
 
 
-sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools || true
+
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools
 
 sudo yum install -y \
 	kubeadm-1.30.0 \

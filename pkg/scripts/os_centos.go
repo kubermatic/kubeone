@@ -89,9 +89,7 @@ sudo systemctl enable --now iscsid
 {{ template "yum-containerd" . }}
 {{ end }}
 
-{{- if or .FORCE .UPGRADE }}
-sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools || true
-{{- end }}
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools
 
 sudo yum install -y \
 {{- if .KUBELET }}
@@ -114,7 +112,7 @@ sudo systemctl restart kubelet
 {{ end }}
 `
 	removeBinariesCentOSScriptTemplate = `
-sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools || true
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools
 sudo yum remove -y \
 	kubelet \
 	kubeadm \

@@ -3,7 +3,7 @@ export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
 sudo systemctl stop kubelet || true
 
-sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools || true
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools
 sudo yum remove -y \
 	kubelet \
 	kubeadm \

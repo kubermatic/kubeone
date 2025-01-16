@@ -75,6 +75,8 @@ sudo apt-get update
 
 kube_ver="1.30.0-*"
 
+sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni cri-tools
+
 
 
 sudo apt-get update

@@ -82,9 +82,7 @@ sudo apt-get update
 
 kube_ver="{{ .KUBERNETES_VERSION }}-*"
 
-{{- if or .FORCE .UPGRADE }}
 sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni cri-tools
-{{- end }}
 
 {{ if .INSTALL_CONTAINERD }}
 {{ template "apt-containerd" . }}
