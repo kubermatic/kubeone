@@ -609,7 +609,7 @@ type CiliumSpec struct {
 	// KubeProxyReplacement defines weather cilium relies on underlying Kernel support
 	// to replace kube-proxy functionality by eBPF (strict), or disables a subset of those
 	// features so cilium does not bail out if the kernel support is missing (disabled).
-	// default is "disabled"
+	// default is false
 	KubeProxyReplacement bool `json:"kubeProxyReplacement"`
 
 	// EnableHubble to deploy Hubble relay and UI
