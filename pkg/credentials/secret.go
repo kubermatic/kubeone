@@ -211,6 +211,7 @@ func vsphereSecret(credentials map[string]string) *corev1.Secret {
 	vscreds := map[string]string{}
 
 	vcenterPrefix := strings.ReplaceAll(credentials[VSphereAddressMC], "https://", "")
+	vcenterPrefix, _ = strings.CutSuffix(vcenterPrefix, "/")
 	// Save credentials in Secret and configure vSphere cloud controller
 	// manager to read it, in replace of storing those in /etc/kubernates/cloud-config
 	// see more: https://vmware.github.io/vsphere-storage-for-kubernetes/documentation/k8s-secret.html
