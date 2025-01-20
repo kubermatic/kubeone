@@ -40,5 +40,6 @@ func Convert_v1beta3_CiliumSpec_To_kubeone_CiliumSpec(in *CiliumSpec, out *kubeo
 
 func Convert_kubeone_CiliumSpec_To_v1beta3_CiliumSpec(in *kubeoneapi.CiliumSpec, out *CiliumSpec, s conversion.Scope) error {
 	out.KubeProxyReplacement = in.KubeProxyReplacement
+
 	return autoConvert_kubeone_CiliumSpec_To_v1beta3_CiliumSpec(in, out, s)
 }
