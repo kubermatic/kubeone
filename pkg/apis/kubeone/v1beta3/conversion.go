@@ -30,3 +30,16 @@ func Convert_kubeone_KubeOneCluster_To_v1beta3_KubeOneCluster(in *kubeoneapi.Kub
 func Convert_v1beta3_ContainerRuntimeConfig_To_kubeone_ContainerRuntimeConfig(in *ContainerRuntimeConfig, out *kubeoneapi.ContainerRuntimeConfig, scope conversion.Scope) error {
 	return autoConvert_v1beta3_ContainerRuntimeConfig_To_kubeone_ContainerRuntimeConfig(in, out, scope)
 }
+
+func Convert_v1beta3_CiliumSpec_To_kubeone_CiliumSpec(in *CiliumSpec, out *kubeoneapi.CiliumSpec, _ conversion.Scope) error {
+	out.KubeProxyReplacement = in.KubeProxyReplacement
+	out.EnableHubble = in.EnableHubble
+
+	return nil
+}
+
+func Convert_kubeone_CiliumSpec_To_v1beta3_CiliumSpec(in *kubeoneapi.CiliumSpec, out *CiliumSpec, s conversion.Scope) error {
+	out.KubeProxyReplacement = in.KubeProxyReplacement
+
+	return autoConvert_kubeone_CiliumSpec_To_v1beta3_CiliumSpec(in, out, s)
+}

@@ -102,7 +102,7 @@ data:
   k8s-client-qps: "10"
   k8s-require-ipv4-pod-cidr: "false"
   k8s-require-ipv6-pod-cidr: "false"
-{{ if eq .Config.ClusterNetwork.CNI.Cilium.KubeProxyReplacement "strict" }}
+{{ if .Config.ClusterNetwork.CNI.Cilium.KubeProxyReplacement }}
   kube-proxy-replacement-healthz-bind-address: ""
   kube-proxy-replacement: "true"
 {{ else }}
@@ -151,7 +151,7 @@ data:
   vtep-mac: ""
   vtep-mask: ""
   write-cni-conf-when-ready: /host/etc/cni/net.d/05-cilium.conflist
-{{ if eq .Config.ClusterNetwork.CNI.Cilium.KubeProxyReplacement "strict" }}
+{{ if .Config.ClusterNetwork.CNI.Cilium.KubeProxyReplacement }}
   KUBERNETES_SERVICE_HOST: "{{ .Config.APIEndpoint.Host }}"
   KUBERNETES_SERVICE_PORT: "{{ .Config.APIEndpoint.Port }}"
 {{ end }}

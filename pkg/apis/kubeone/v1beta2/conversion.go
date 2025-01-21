@@ -84,3 +84,20 @@ func Convert_kubeone_Features_To_v1beta2_Features(in *kubeoneapi.Features, out *
 func Convert_v1beta2_Features_To_kubeone_Features(in *Features, out *kubeoneapi.Features, s conversion.Scope) error {
 	return autoConvert_v1beta2_Features_To_kubeone_Features(in, out, s)
 }
+
+func Convert_v1beta2_CiliumSpec_To_kubeone_CiliumSpec(in *CiliumSpec, out *kubeoneapi.CiliumSpec, _ conversion.Scope) error {
+	out.KubeProxyReplacement = in.KubeProxyReplacement == KubeProxyReplacementStrict
+	out.EnableHubble = in.EnableHubble
+
+	return nil
+}
+
+func Convert_kubeone_CiliumSpec_To_v1beta2_CiliumSpec(in *kubeoneapi.CiliumSpec, out *CiliumSpec, _ conversion.Scope) error {
+	out.KubeProxyReplacement = KubeProxyReplacementDisabled
+	if in.KubeProxyReplacement {
+		out.KubeProxyReplacement = KubeProxyReplacementStrict
+	}
+	out.EnableHubble = in.EnableHubble
+
+	return nil
+}
