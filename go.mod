@@ -26,7 +26,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.1
-	github.com/spf13/pflag v1.0.5
+	github.com/spf13/pflag v1.0.6-0.20210604193023-d5e0c0615ace
 	go.etcd.io/etcd/client/v3 v3.5.16
 	golang.org/x/crypto v0.31.0
 	golang.org/x/term v0.27.0
@@ -36,6 +36,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 	helm.sh/helm/v3 v3.16.1
 	k8c.io/machine-controller v1.60.0
+	k8c.io/reconciler v0.5.0
 	k8s.io/api v0.31.1
 	k8s.io/apiextensions-apiserver v0.31.1
 	k8s.io/apimachinery v0.31.1
@@ -99,7 +100,7 @@ require (
 	github.com/google/btree v1.0.1 // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
-	github.com/google/gofuzz v1.2.0 // indirect
+	github.com/google/gofuzz v1.2.1-0.20210504230335-f78f29fc09ea // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect

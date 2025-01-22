@@ -31,9 +31,11 @@ import (
 
 type resetOpts struct {
 	globalOptions
-	AutoApprove    bool `longflag:"auto-approve" shortflag:"y"`
-	DestroyWorkers bool `longflag:"destroy-workers"`
-	RemoveBinaries bool `longflag:"remove-binaries"`
+	AutoApprove      bool `longflag:"auto-approve" shortflag:"y"`
+	DestroyWorkers   bool `longflag:"destroy-workers"`
+	RemoveVolumes    bool `longflag:"remove-volumes"`
+	RemoveLBServices bool `longflag:"remove-lb-services"`
+	RemoveBinaries   bool `longflag:"remove-binaries"`
 }
 
 func (opts *resetOpts) BuildState() (*state.State, error) {
@@ -43,6 +45,8 @@ func (opts *resetOpts) BuildState() (*state.State, error) {
 	}
 
 	s.DestroyWorkers = opts.DestroyWorkers
+	s.RemoveVolumes = opts.RemoveVolumes
+	s.RemoveLBServices = opts.RemoveLBServices
 	s.RemoveBinaries = opts.RemoveBinaries
 
 	return s, nil
@@ -93,6 +97,18 @@ func resetCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		false,
 		"remove kubernetes binaries after resetting the cluster")
 
+	cmd.Flags().BoolVar(
+		&opts.RemoveVolumes,
+		longFlagName(opts, "RemoveVolumes"),
+		true,
+		"remove all dynamically provisioned and unretained volumes before resetting the cluster")
+
+	cmd.Flags().BoolVar(
+		&opts.RemoveLBServices,
+		longFlagName(opts, "RemoveLBServices"),
+		true,
+		"remove all load balancers services before resetting the cluster")
+
 	return cmd
 }
 
@@ -103,27 +119,40 @@ func runReset(opts *resetOpts) error {
 		return err
 	}
 
-	if opts.DestroyWorkers {
+	if opts.DestroyWorkers || opts.RemoveVolumes || opts.RemoveLBServices {
 		if cErr := kubeconfig.BuildKubernetesClientset(s); cErr != nil {
 			s.Logger.Errorln("Failed to build the Kubernetes clientset.")
-			s.Logger.Warnln("Unable to list and delete machine-controller managed nodes.")
-			s.Logger.Warnln("You can skip this phase by using '--destroy-workers=false' flag.")
-			s.Logger.Warnln("If there are worker nodes in the cluster, you might have to delete them manually.")
+			if opts.RemoveLBServices {
+				s.Logger.Warnln("Unable to list and delete load balancers in the cluster.")
+				s.Logger.Warnln("You can skip this phase by using '--cleanup-load-balancer=false'.")
+				s.Logger.Warnln("If there are load balancers in the cluster, you might have to delete them manually.")
+			}
+			if opts.RemoveVolumes {
+				s.Logger.Warnln("Unable to list and delete dynamically provisioned and unretained volumes in the cluster.")
+				s.Logger.Warnln("You can skip this phase by using '--cleanup-volumes=false'.")
+				s.Logger.Warnln("If there are unretained volumes in the cluster, you might have to delete them manually.")
+			}
+			if opts.DestroyWorkers {
+				s.Logger.Warnln("Unable to list and delete machine-controller managed nodes.")
+				s.Logger.Warnln("You can skip this phase by using '--destroy-workers=false' flag.")
+				s.Logger.Warnln("If there are worker nodes in the cluster, you might have to delete them manually.")
+			}
 
 			return cErr
 		}
 	}
 
-	s.Logger.Warnln("This command will PERMANENTLY destroy the Kubernetes cluster running on the following nodes:")
-
-	for _, node := range s.Cluster.ControlPlane.Hosts {
-		fmt.Printf("\t- reset control plane node %q (%s)\n", node.Hostname, node.PrivateAddress)
+	if opts.RemoveLBServices {
+		s.Logger.Warnln("remove-lb-services command will PERMANENTLY delete the load balancers from the cluster.")
 	}
-	for _, node := range s.Cluster.StaticWorkers.Hosts {
-		fmt.Printf("\t- reset static worker nodes %q (%s)\n", node.Hostname, node.PrivateAddress)
+
+	if opts.RemoveVolumes {
+		s.Logger.Warnln("remove-volumes command will PERMANENTLY delete the unretained volumes from the cluster.")
 	}
 
 	if opts.DestroyWorkers {
+		s.Logger.Warnln("destroy-workers command will PERMANENTLY destroy the Kubernetes cluster running on the following nodes:")
+
 		// Gather information about machine-controller managed nodes
 		machines := clusterv1alpha1.MachineList{}
 		if err = s.DynamicClient.List(s.Context, &machines); err != nil {
@@ -140,6 +169,13 @@ func runReset(opts *resetOpts) error {
 	} else {
 		s.Logger.Warnln("KubeOne will NOT remove machine-controller managed Machines.")
 		s.Logger.Warnln("If there are worker nodes in the cluster, you might have to delete them manually.")
+	}
+
+	for _, node := range s.Cluster.ControlPlane.Hosts {
+		fmt.Printf("\t- reset control plane node %q (%s)\n", node.Hostname, node.PrivateAddress)
+	}
+	for _, node := range s.Cluster.StaticWorkers.Hosts {
+		fmt.Printf("\t- reset static worker nodes %q (%s)\n", node.Hostname, node.PrivateAddress)
 	}
 
 	fmt.Printf("\nAfter the command is complete, there's NO way to recover the cluster or its data!\n")
