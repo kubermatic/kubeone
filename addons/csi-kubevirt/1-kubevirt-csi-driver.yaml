@@ -61,7 +61,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: driver-config
-  namespace: kubevirt-csi-driver
+  namespace: kube-system
 data:
 {{ with .Config.CloudProvider.Kubevirt -}}
 {{ with .InfraNamespace }}
@@ -96,7 +96,7 @@ spec:
             privileged: true
             allowPrivilegeEscalation: true
           imagePullPolicy: Always
-          image: '{{ .InternalImages.Get "KubeVirtCSIDriver" }}'
+          image: '{{ .InternalImages.Get "KubeVirtCSI" }}'
           args:
             - "--endpoint=unix:/csi/csi.sock"
             - "--node-name=$(KUBE_NODE_NAME)"
@@ -159,7 +159,7 @@ spec:
               memory: 20Mi
               cpu: 5m
         - name: csi-liveness-probe
-          image: '{{ .InternalImages.Get "KubeVirtCSILivenessprobe" }}'
+          image: '{{ .InternalImages.Get "KubeVirtCSILivenessProbe" }}'
           args:
             - "--csi-address=/csi/csi.sock"
             - "--probe-timeout=3s"
