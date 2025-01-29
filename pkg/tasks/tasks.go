@@ -266,6 +266,11 @@ func WithResources(t Tasks) Tasks {
 				Predicate:   func(s *state.State) bool { return s.Cluster.CABundle != "" },
 			},
 			{
+				Fn:          labelNodes,
+				Operation:   "labeling control-plane nodes",
+				Description: "labeling control-plane nodes",
+			},
+			{
 				Fn:          addons.Ensure,
 				Operation:   "applying addons",
 				Description: "ensure embedded addons",
@@ -299,8 +304,9 @@ func WithResources(t Tasks) Tasks {
 				Operation: "joining static worker nodes to the cluster",
 			},
 			{
-				Fn:        labelNodes,
-				Operation: "labeling nodes",
+				Fn:          labelNodes,
+				Operation:   "labeling nodes",
+				Description: "labeling nodes",
 			},
 			{
 				Fn:        fixFilePermissions,
