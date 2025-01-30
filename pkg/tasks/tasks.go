@@ -277,6 +277,11 @@ func WithResources(t Tasks) Tasks {
 				Predicate:   func(s *state.State) bool { return s.Cluster.CABundle != "" },
 			},
 			{
+				Fn:          cleanupLeftovers,
+				Operation:   "cleaning up any addons leftovers",
+				Description: "clean up  any addons leftovers",
+			},
+			{
 				Fn:          addons.Ensure,
 				Operation:   "applying addons",
 				Description: "ensure embedded addons",
