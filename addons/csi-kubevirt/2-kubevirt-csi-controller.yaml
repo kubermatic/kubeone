@@ -79,7 +79,7 @@ data:
     value: "{{ . }}"
 kind: Secret
 metadata:
-    labels:
+  labels:
     app: kubevirt-csi-driver
   name: infra-kubeconfig
   namespace: kube-system
@@ -104,11 +104,14 @@ spec:
       labels:
         app: kubevirt-csi-driver
     spec:
-      serviceAccount: kubevirt-csi
+      serviceAccount: kubevirt-csi-controller-sa
       priorityClassName: system-cluster-critical
       nodeSelector:
         node-role.kubernetes.io/control-plane: ""
       tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: Exists
+          effect: NoSchedule
         - key: CriticalAddonsOnly
           operator: Exists
         - key: node-role.kubernetes.io/master
@@ -117,7 +120,7 @@ spec:
       containers:
         - name: csi-driver
           imagePullPolicy: Always
-          image: '{{ .InternalImages.Get "KubeVirtCSIDriver" }}'
+          image: '{{ .InternalImages.Get "KubeVirtCSI" }}'
           args:
             - "--endpoint=$(CSI_ENDPOINT)"
             - "--infra-cluster-namespace=$(INFRACLUSTER_NAMESPACE)"
@@ -163,7 +166,7 @@ spec:
               memory: 50Mi
               cpu: 10m
         - name: csi-provisioner
-          image: '{{ .InternalImages.Get "KubeVirtCSIExternalProvisioner" }}'
+          image: '{{ .InternalImages.Get "KubeVirtCSIProvisioner" }}'
           args:
             - "--csi-address=$(ADDRESS)"
             - "--default-fstype=ext4"
@@ -177,7 +180,7 @@ spec:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: csi-attacher
-          image:  '{{ .InternalImages.Get "KubeVirtCSIExternalAttacher" }}'
+          image:  '{{ .InternalImages.Get "KubeVirtCSIAttacher" }}'
           args:
             - "--csi-address=$(ADDRESS)"
             - "--v=5"
@@ -194,7 +197,7 @@ spec:
               memory: 50Mi
               cpu: 10m
         - name: csi-liveness-probe
-          image: '{{ .InternalImages.Get "KubeVirtCSILivenessprobe" }}'
+          image: '{{ .InternalImages.Get "KubeVirtCSILivenessProbe" }}'
           args:
             - "--csi-address=/csi/csi.sock"
             - "--probe-timeout=3s"
