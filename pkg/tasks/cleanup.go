@@ -29,7 +29,7 @@ import (
 	crclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-func cleanupLeftovers(st *state.State) error {
+func cleanupStaleObjects(st *state.State) error {
 	st.Logger.Infoln("Cleanup stale objects...")
 
 	var cleanupObjects []crclient.Object
