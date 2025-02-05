@@ -282,6 +282,11 @@ func WithResources(t Tasks) Tasks {
 				Description: "labeling control-plane nodes",
 			},
 			{
+				Fn:          cleanupStaleObjects,
+				Operation:   "cleaning up any leftovers from addons",
+				Description: "clean up any leftovers from addons",
+			},
+			{
 				Fn:          addons.Ensure,
 				Operation:   "applying addons",
 				Description: "ensure embedded addons",
