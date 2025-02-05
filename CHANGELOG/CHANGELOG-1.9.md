@@ -1,3 +1,28 @@
+# [v1.9.2](https://github.com/kubermatic/kubeone/releases/tag/v1.9.2) - 2025-02-05
+
+## Changelog since v1.9.1
+
+## Changes by Kind
+
+### Feature
+
+- Label the control plane nodes before applying addons and Helm charts to allow addons and Helm charts to utilize the label selectors ([#3547](https://github.com/kubermatic/kubeone/pull/3547), [@xmudrii](https://github.com/xmudrii))
+- Add parameter `insecure` to the `backups-restic` addon used to disable/skip the TLS verification ([#3547](https://github.com/kubermatic/kubeone/pull/3547), [@xmudrii](https://github.com/xmudrii))
+
+### Bug or Regression
+
+- Resolve the `clusterID` conflicts in cloud-config for AWS by prioritizing the cluster name from the Terraform configuration ([#3547](https://github.com/kubermatic/kubeone/pull/3547), [@xmudrii](https://github.com/xmudrii))
+- Drop trailing slash from the `VSPHERE_SERVER` variable to ensure compatibility with machine-controller and vSphere CCM and CSI ([#3547](https://github.com/kubermatic/kubeone/pull/3547), [@xmudrii](https://github.com/xmudrii))
+- Use the GPG key from the latest Kubernetes package repository to fix failures to install older versions of Kubernetes packages ([#3526](https://github.com/kubermatic/kubeone/pull/3526), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Configure the `POD_NAMESPACE` environment variable for machine-controller-webhook on the KubeVirt clusters ([#3549](https://github.com/kubermatic/kubeone/pull/3549), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix incorrect image references and tolerations in the KubeVirt CSI addon ([#3547](https://github.com/kubermatic/kubeone/pull/3547), [@xmudrii](https://github.com/xmudrii))
+
+### Updates
+
+#### machine-controller
+
+- Update machine-controller to v1.61.0 ([#3547](https://github.com/kubermatic/kubeone/pull/3547), [@xmudrii](https://github.com/xmudrii))
+
 # [v1.9.1](https://github.com/kubermatic/kubeone/releases/tag/v1.9.1) - 2024-12-23
 
 ## Changelog since v1.9.0
