@@ -1,3 +1,13 @@
+# [v1.8.6](https://github.com/kubermatic/kubeone/releases/tag/v1.8.6) - 2025-02-05
+
+## Changelog since v1.8.5
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Use the GPG key from the latest Kubernetes package repository to fix failures to install older versions of Kubernetes packages ([#3525](https://github.com/kubermatic/kubeone/pull/3525), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.8.5](https://github.com/kubermatic/kubeone/releases/tag/v1.8.5) - 2024-12-23
 
 ## Changelog since v1.8.4
