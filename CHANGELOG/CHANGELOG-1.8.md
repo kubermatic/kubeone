@@ -1,3 +1,19 @@
+# [v1.8.6](https://github.com/kubermatic/kubeone/releases/tag/v1.8.6) - 2025-02-06
+
+## Changelog since v1.8.5
+
+## Changes by Kind
+
+### Feature
+
+- Add parameter `insecure` to the `backups-restic` addon used to disable/skip the TLS verification ([#3554](https://github.com/kubermatic/kubeone/pull/3554), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Label the control plane nodes before applying addons and Helm charts to allow addons and Helm charts to utilize the label selectors ([#3553](https://github.com/kubermatic/kubeone/pull/3553), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Bug or Regression
+
+- Drop trailing slash from the `VSPHERE_SERVER` variable to ensure compatibility with machine-controller and vSphere CCM and CSI ([#3552](https://github.com/kubermatic/kubeone/pull/3552), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Use the GPG key from the latest Kubernetes package repository to fix failures to install older versions of Kubernetes packages ([#3525](https://github.com/kubermatic/kubeone/pull/3525), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.8.5](https://github.com/kubermatic/kubeone/releases/tag/v1.8.5) - 2024-12-23
 
 ## Changelog since v1.8.4
