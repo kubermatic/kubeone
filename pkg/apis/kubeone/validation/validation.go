@@ -40,9 +40,9 @@ import (
 
 var (
 	// minVersionConstraint defines the minimum Kubernetes version supported by KubeOne
-	minVersionConstraint = semverutil.MustParseConstraint(">= 1.29")
+	minVersionConstraint = semverutil.MustParseConstraint(">= 1.30")
 	// maxVersionConstraint defines the maximum Kubernetes version supported by KubeOne
-	maxVersionConstraint = semverutil.MustParseConstraint("<= 1.31")
+	maxVersionConstraint = semverutil.MustParseConstraint("<= 1.32")
 )
 
 // ValidateKubeOneCluster validates the KubeOneCluster object
