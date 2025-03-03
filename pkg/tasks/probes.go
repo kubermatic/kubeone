@@ -572,7 +572,7 @@ func investigateCluster(s *state.State) error {
 		s.LiveCluster.Lock.Unlock()
 		// no need to lock around FetchEncryptionProvidersFile because it handles locking internally.
 		if fErr := fetchEncryptionProvidersFile(s); fErr != nil {
-			return err
+			return fErr
 		}
 	}
 
