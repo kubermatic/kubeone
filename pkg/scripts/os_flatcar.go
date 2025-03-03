@@ -251,6 +251,8 @@ func criToolsVersion(cluster *kubeoneapi.KubeOneCluster) string {
 		return "1.30.1"
 	case 31:
 		return "1.31.1"
+	case 32:
+		return "1.32.0"
 	}
 
 	return ""

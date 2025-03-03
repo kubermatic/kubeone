@@ -61,7 +61,7 @@ const (
 	k1CloneURI            = "ssh://git@github.com/kubermatic/kubeone.git"
 )
 
-var SonobuoyRetry = wait.Backoff{
+var sonobuoyBackoff = wait.Backoff{
 	Steps:    10,
 	Duration: 10 * time.Second,
 	Factor:   1.0,
@@ -649,21 +649,21 @@ func sonobuoyRunWithRunCount(ctx context.Context, t *testing.T, k1 *kubeoneBin, 
 		rerunFailed = true
 	}
 
-	if err = retryFnWithBackoff(SonobuoyRetry, func() error { return sb.Run(ctx, mode, rerunFailed) }); err != nil {
+	if err = retryFnWithBackoff(sonobuoyBackoff, func() error { return sb.Run(ctx, mode, rerunFailed) }); err != nil {
 		t.Fatalf("sonobuoy run failed: %v", err)
 	}
 
-	if err = retryFnWithBackoff(SonobuoyRetry, func() error { return sb.Wait(ctx) }); err != nil {
+	if err = retryFnWithBackoff(sonobuoyBackoff, func() error { return sb.Wait(ctx) }); err != nil {
 		t.Fatalf("sonobuoy wait failed: %v", err)
 	}
 
-	err = retryFnWithBackoff(SonobuoyRetry, func() error { return sb.Retrieve(ctx) })
+	err = retryFnWithBackoff(sonobuoyBackoff, func() error { return sb.Retrieve(ctx) })
 	if err != nil {
 		t.Fatalf("sonobuoy retrieve failed: %v", err)
 	}
 
 	var report []sonobuoyReport
-	err = retryFnWithBackoff(SonobuoyRetry, func() error {
+	err = retryFnWithBackoff(sonobuoyBackoff, func() error {
 		report, err = sb.Results(ctx)
 
 		return err
@@ -685,7 +685,7 @@ func sonobuoyRunWithRunCount(ctx context.Context, t *testing.T, k1 *kubeoneBin, 
 			t.Logf("some e2e tests failed:\n%s", buf.String())
 
 			t.Logf("deleting previous sonobuoy run...")
-			if err = retryFnWithBackoff(SonobuoyRetry, func() error { return sb.Delete(ctx) }); err != nil {
+			if err = retryFnWithBackoff(sonobuoyBackoff, func() error { return sb.Delete(ctx) }); err != nil {
 				t.Fatalf("sonobuoy delete failed: %v", err)
 			}
 
