@@ -229,7 +229,6 @@ func baseResources() map[Resource]map[string]string {
 func optionalResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
 		AwsCCM: {
-			"1.29.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.29.8",
 			"1.30.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.30.7",
 			"1.31.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.31.5",
 			">= 1.32.0": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.32.1",
@@ -249,13 +248,11 @@ func optionalResources() map[Resource]map[string]string {
 
 		// Azure CCM
 		AzureCCM: {
-			"1.29.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.29.12",
 			"1.30.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.30.8",
 			"1.31.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.31.2",
 			">= 1.32.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.32.1",
 		},
 		AzureCNM: {
-			"1.29.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.29.12",
 			"1.30.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.30.8",
 			"1.31.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.31.2",
 			">= 1.32.0": "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.32.1",
@@ -303,7 +300,6 @@ func optionalResources() map[Resource]map[string]string {
 
 		// OpenStack CCM
 		OpenstackCCM: {
-			"1.29.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.29.2",
 			"1.30.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.30.2",
 			"1.31.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.31.2",
 			">= 1.32.0": "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.32.0",
@@ -311,9 +307,9 @@ func optionalResources() map[Resource]map[string]string {
 
 		// OpenStack CSI
 		OpenstackCSI: {
-			"1.29.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.29.1",
 			"1.30.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.30.2",
-			">= 1.31.0": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.31.2",
+			"1.31.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.31.2",
+			">= 1.32.0": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.32.0",
 		},
 		OpenstackCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.9.2"},
 		OpenstackCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.11.0"},
@@ -334,7 +330,6 @@ func optionalResources() map[Resource]map[string]string {
 
 		// vSphere CPI (A.K.A. CCM)
 		VsphereCCM: {
-			"1.29.x":    "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.29.0",
 			"1.30.x":    "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.30.1",
 			">= 1.31.0": "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.31.0",
 		},
@@ -362,7 +357,6 @@ func optionalResources() map[Resource]map[string]string {
 
 		// GCP CCM
 		GCPCCM: {
-			"1.29.x":    "registry.k8s.io/cloud-provider-gcp/cloud-controller-manager:v29.0.0",
 			"1.30.x":    "registry.k8s.io/cloud-provider-gcp/cloud-controller-manager:v30.0.0",
 			">= 1.31.0": "registry.k8s.io/cloud-provider-gcp/cloud-controller-manager:v30.0.0",
 		},
@@ -398,7 +392,6 @@ func optionalResources() map[Resource]map[string]string {
 
 		// Cluster-autoscaler addon
 		ClusterAutoscaler: {
-			"1.29.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.29.4",
 			"1.30.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.30.3",
 			"1.31.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.31.1",
 			">= 1.32.0": "registry.k8s.io/autoscaling/cluster-autoscaler:v1.32.0",
