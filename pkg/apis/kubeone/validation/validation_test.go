@@ -62,7 +62,7 @@ func TestValidateKubeOneCluster(t *testing.T) {
 					External: true,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "1.29.2",
+					Kubernetes: "1.32.0",
 				},
 				MachineController: &kubeoneapi.MachineControllerConfig{
 					Deploy: true,
@@ -115,7 +115,7 @@ func TestValidateKubeOneCluster(t *testing.T) {
 					AWS: &kubeoneapi.AWSSpec{},
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "1.29.2",
+					Kubernetes: "1.32.0",
 				},
 				MachineController: &kubeoneapi.MachineControllerConfig{
 					Deploy: false,
@@ -168,7 +168,7 @@ func TestValidateKubeOneCluster(t *testing.T) {
 					AWS: &kubeoneapi.AWSSpec{},
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "1.29.2",
+					Kubernetes: "1.32.0",
 				},
 				MachineController: &kubeoneapi.MachineControllerConfig{
 					Deploy: true,
@@ -221,7 +221,7 @@ func TestValidateKubeOneCluster(t *testing.T) {
 					Vsphere: &kubeoneapi.VsphereSpec{},
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "1.29.2",
+					Kubernetes: "1.32.0",
 				},
 				MachineController: &kubeoneapi.MachineControllerConfig{
 					Deploy: true,
@@ -844,11 +844,11 @@ func TestValidateVersionConfig(t *testing.T) {
 			expectedError: false,
 		},
 		{
-			name: "valid version config (1.29.0)",
+			name: "invalid version config (1.29.0)",
 			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.29.0",
 			},
-			expectedError: false,
+			expectedError: true,
 		},
 		{
 			name: "invalid version config (1.28.0)",
