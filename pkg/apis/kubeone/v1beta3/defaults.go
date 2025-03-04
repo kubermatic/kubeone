@@ -148,6 +148,17 @@ func SetDefaults_ContainerRuntime(obj *KubeOneCluster) {
 	if obj.ContainerRuntime.Containerd == nil {
 		obj.ContainerRuntime.Containerd = &ContainerRuntimeContainerd{}
 	}
+
+	if obj.ContainerRuntime.Containerd.Registries == nil {
+		obj.ContainerRuntime.Containerd.Registries = map[string]ContainerdRegistry{}
+	}
+
+	if _, found := obj.ContainerRuntime.Containerd.Registries["docker.io"]; !found {
+		obj.ContainerRuntime.Containerd.Registries["docker.io"] = ContainerdRegistry{
+			Mirrors: []string{"https://mirror.gcr.io"},
+		}
+	}
+
 	if obj.ContainerRuntime.Containerd.DeviceOwnershipFromSecurityContext == nil {
 		obj.ContainerRuntime.Containerd.DeviceOwnershipFromSecurityContext = ptr.To(true)
 	}
