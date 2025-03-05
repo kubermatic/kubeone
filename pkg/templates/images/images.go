@@ -380,15 +380,15 @@ func optionalResources() map[Resource]map[string]string {
 		CalicoVXLANNode:       {"*": "quay.io/calico/node:v3.29.2"},
 
 		// Cilium
-		Cilium:         {"*": "quay.io/cilium/cilium:v1.16.3@sha256:62d2a09bbef840a46099ac4c69421c90f84f28d018d479749049011329aa7f28"},
-		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.16.3@sha256:6e2925ef47a1c76e183c48f95d4ce0d34a1e5e848252f910476c3e11ce1ec94b"},
-		CiliumEnvoy:    {"*": "quay.io/cilium/cilium-envoy:v1.29.9-1728346947-0d05e48bfbb8c4737ec40d5781d970a550ed2bbd@sha256:42614a44e508f70d03a04470df5f61e3cffd22462471a0be0544cf116f2c50ba"},
+		Cilium:         {"*": "quay.io/cilium/cilium:v1.17.1@sha256:8969bfd9c87cbea91e40665f8ebe327268c99d844ca26d7d12165de07f702866"},
+		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.17.1@sha256:628becaeb3e4742a1c36c4897721092375891b58bae2bfcae48bbf4420aaee97"},
+		CiliumEnvoy:    {"*": "quay.io/cilium/cilium-envoy:v1.31.5-1739264036-958bef243c6c66fcfd73ca319f2eb49fff1eb2ae@sha256:fc708bd36973d306412b2e50c924cd8333de67e0167802c9b48506f9d772f521"},
 
 		// Hubble
-		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.16.3@sha256:feb60efd767e0e7863a94689f4a8db56a0acc7c1d2b307dee66422e3dc25a089"},
+		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.17.1@sha256:397e8fbb188157f744390a7b272a1dec31234e605bcbe22d8919a166d202a3dc"},
 		HubbleUI:        {"*": "quay.io/cilium/hubble-ui:v0.13.1@sha256:e2e9313eb7caf64b0061d9da0efbdad59c6c461f6ca1752768942bfeda0796c6"},
 		HubbleUIBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.13.1@sha256:0e0eed917653441fded4e7cdb096b7be6a3bddded5a2dd10812a27b1fc6ed95b"},
-		CiliumCertGen:   {"*": "quay.io/cilium/certgen:v0.2.0@sha256:169d93fd8f2f9009db3b9d5ccd37c2b753d0989e1e7cd8fe79f9160c459eef4f"},
+		CiliumCertGen:   {"*": "quay.io/cilium/certgen:v0.2.1@sha256:ab6b1928e9c5f424f6b0f51c68065b9fd85e2f8d3e5f21fbd1a3cb27e6fb9321"},
 
 		// Cluster-autoscaler addon
 		ClusterAutoscaler: {
