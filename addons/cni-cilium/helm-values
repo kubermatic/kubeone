@@ -20,3 +20,17 @@ operator:
 
 preflight:
   enabled: false
+
+serviceAccounts:
+  hubblecertgen:
+    create: false
+  relay:
+    create: false
+  ui:
+    create: false
+
+hubble:
+  tls:
+    enabled: false
+    auto:
+      enabled: false
