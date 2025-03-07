@@ -372,11 +372,6 @@ func optionalResources() map[Resource]map[string]string {
 		WeaveNetCNIKube: {"*": "docker.io/weaveworks/weave-kube:2.8.1"},
 		WeaveNetCNINPC:  {"*": "docker.io/weaveworks/weave-npc:2.8.1"},
 
-		// Calico VXLAN
-		CalicoVXLANCNI:        {"*": "quay.io/calico/cni:v3.29.2"},
-		CalicoVXLANController: {"*": "quay.io/calico/kube-controllers:v3.29.2"},
-		CalicoVXLANNode:       {"*": "quay.io/calico/node:v3.29.2"},
-
 		// Cilium
 		Cilium:         {"*": "quay.io/cilium/cilium:v1.17.1@sha256:8969bfd9c87cbea91e40665f8ebe327268c99d844ca26d7d12165de07f702866"},
 		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.17.1@sha256:628becaeb3e4742a1c36c4897721092375891b58bae2bfcae48bbf4420aaee97"},
