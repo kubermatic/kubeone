@@ -218,7 +218,7 @@ func baseResources() map[Resource]map[string]string {
 		CalicoController:       {"*": "quay.io/calico/kube-controllers:v3.29.2"},
 		CalicoNode:             {"*": "quay.io/calico/node:v3.29.2"},
 		DNSNodeCache:           {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.25.0"},
-		Flannel:                {"*": "ghcr.io/flannel-io/flannel:v0.26.4"},
+		Flannel:                {"*": "docker.io/flannel/flannel:v0.24.3"},
 		MachineController:      {"*": "quay.io/kubermatic/machine-controller:v1.61.0"},
 		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.7.2"},
 		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v1.6.0"},
