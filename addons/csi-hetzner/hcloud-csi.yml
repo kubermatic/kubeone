@@ -7,7 +7,7 @@ metadata:
   namespace: "kube-system"
   labels:
     app.kubernetes.io/name: hcloud-csi
-    helm.sh/chart: hcloud-csi-2.12.0
+    helm.sh/chart: hcloud-csi-2.13.0
     app.kubernetes.io/instance: hcloud-csi
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
@@ -20,7 +20,7 @@ metadata:
   name: hcloud-csi-controller
   labels:
     app.kubernetes.io/name: hcloud-csi
-    helm.sh/chart: hcloud-csi-2.12.0
+    helm.sh/chart: hcloud-csi-2.13.0
     app.kubernetes.io/instance: hcloud-csi
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
@@ -82,7 +82,7 @@ metadata:
   name: hcloud-csi-controller
   labels:
     app.kubernetes.io/name: hcloud-csi
-    helm.sh/chart: hcloud-csi-2.12.0
+    helm.sh/chart: hcloud-csi-2.13.0
     app.kubernetes.io/instance: hcloud-csi
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
@@ -103,7 +103,7 @@ metadata:
   namespace: "kube-system"
   labels:
     app.kubernetes.io/name: hcloud-csi
-    helm.sh/chart: hcloud-csi-2.12.0
+    helm.sh/chart: hcloud-csi-2.13.0
     app.kubernetes.io/instance: hcloud-csi
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: node
@@ -120,11 +120,12 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: hcloud-csi
-        helm.sh/chart: hcloud-csi-2.12.0
+        helm.sh/chart: hcloud-csi-2.13.0
         app.kubernetes.io/instance: hcloud-csi
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: node
     spec:
+
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -232,7 +233,7 @@ metadata:
   namespace: "kube-system"
   labels:
     app.kubernetes.io/name: hcloud-csi
-    helm.sh/chart: hcloud-csi-2.12.0
+    helm.sh/chart: hcloud-csi-2.13.0
     app.kubernetes.io/instance: hcloud-csi
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
@@ -250,7 +251,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: hcloud-csi
-        helm.sh/chart: hcloud-csi-2.12.0
+        helm.sh/chart: hcloud-csi-2.13.0
         app.kubernetes.io/instance: hcloud-csi
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: controller
@@ -290,6 +291,8 @@ spec:
           resources:
             limits: {}
             requests: {}
+          args:
+            - --feature-gates=RecoverVolumeExpansionFailure=false
           volumeMounts:
           - name: socket-dir
             mountPath: /run/csi
