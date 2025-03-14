@@ -1,0 +1,48 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+helmCharts:
+- name: azurefile-csi-driver
+  repo: https://raw.githubusercontent.com/kubernetes-sigs/azurefile-csi-driver/master/charts
+  version: v1.32.0
+  releaseName: azurefile-csi-driver
+  namespace: kube-system
+  valuesFile: helm-values
+
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: csi-azurefile-nodemanager
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: liveness-probe
+                image: '{{ .InternalImages.Get "AzureFileCSILivenessProbe" }}'
+              - name: node-driver-registrar
+                image: '{{ .InternalImages.Get "AzureFileCSINodeDriverRegistar" }}'
+              - name: azurefile
+                image: '{{ .InternalImages.Get "AzureFileCSI" }}'
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: csi-azurefile-controllermanager
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: csi-provisioner
+                image: '{{ .InternalImages.Get "AzureFileCSIProvisioner" }}'
+              - name: csi-snapshotter
+                image: '{{ .InternalImages.Get "AzureFileCSISnapshotter" }}'
+              - name: csi-resizer
+                image: '{{ .InternalImages.Get "AzureFileCSIResizer" }}'
+              - name: liveness-probe
+                image: '{{ .InternalImages.Get "AzureFileCSILivenessProbe" }}'
+              - name: azurefile
+                image: '{{ .InternalImages.Get "AzureFileCSI" }}'
