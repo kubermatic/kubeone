@@ -11,7 +11,7 @@ helm repo update hcloud
 helm template hcloud-csi hcloud/hcloud-csi \
     --namespace=kube-system \
     --values=generate-values-csi \
-    --version=2.12.0 \
+    --version=v2.13.0 \
     > hcloud-csi.yml
 ```
 
