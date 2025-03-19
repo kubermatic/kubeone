@@ -49,6 +49,11 @@ EOF
 if sudo grep -q "deb http://apt.kubernetes.io/ kubernetes-xenial main" /etc/apt/sources.list.d/kubernetes.list; then
   rm -f /etc/apt/sources.list.d/kubernetes.list
 fi
+
+sudo install -m 0755 -d /etc/apt/keyrings
+LATEST_STABLE=$(curl -sL https://dl.k8s.io/release/stable.txt | sed 's/\.[0-9]*$//')
+curl -fsSL https://pkgs.k8s.io/core:/stable:/${LATEST_STABLE}/deb/Release.key | sudo gpg --dearmor --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 {{- end }}
 
 sudo apt-get update
@@ -67,17 +72,6 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 
 {{- if .INSTALL_ISCSI_AND_NFS }}
 sudo systemctl enable --now iscsid
-{{- end }}
-
-{{- if .CONFIGURE_REPOSITORIES }}
-sudo install -m 0755 -d /etc/apt/keyrings
-
-LATEST_STABLE=$(curl -sL https://dl.k8s.io/release/stable.txt | sed 's/\.[0-9]*$//')
-
-curl -fsSL https://pkgs.k8s.io/core:/stable:/${LATEST_STABLE}/deb/Release.key | sudo gpg --dearmor --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-
-echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-sudo apt-get update
 {{- end }}
 
 kube_ver="{{ .KUBERNETES_VERSION }}-*"
@@ -132,17 +126,18 @@ sudo systemctl daemon-reload
 `
 )
 
-func KubeadmDebian(cluster *kubeoneapi.KubeOneCluster, force bool) (string, error) {
+func DebScript(cluster *kubeoneapi.KubeOneCluster, params Params) (string, error) {
 	data := Data{
-		"KUBELET":                true,
-		"KUBEADM":                true,
-		"KUBECTL":                true,
+		"UPGRADE":                params.Upgrade,
+		"KUBELET":                params.Kubelet,
+		"KUBECTL":                params.Kubectl,
+		"KUBEADM":                params.Kubeadm,
+		"FORCE":                  params.Force,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"HTTP_PROXY":             cluster.Proxy.HTTP,
 		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
-		"FORCE":                  force,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
@@ -161,51 +156,4 @@ func RemoveBinariesDebian() (string, error) {
 	result, err := Render(removeBinariesDebianScriptTemplate, Data{})
 
 	return result, fail.Runtime(err, "rendering removeBinariesDebianScriptTemplate script")
-}
-
-func UpgradeKubeadmAndCNIDebian(cluster *kubeoneapi.KubeOneCluster) (string, error) {
-	data := Data{
-		"UPGRADE":                true,
-		"KUBEADM":                true,
-		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
-		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
-		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
-		"HTTP_PROXY":             cluster.Proxy.HTTP,
-		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
-		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
-		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
-	}
-
-	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
-		return "", err
-	}
-
-	result, err := Render(kubeadmDebianTemplate, data)
-
-	return result, fail.Runtime(err, "rendering kubeadmDebianTemplate script")
-}
-
-func UpgradeKubeletAndKubectlDebian(cluster *kubeoneapi.KubeOneCluster) (string, error) {
-	data := Data{
-		"UPGRADE":                true,
-		"KUBELET":                true,
-		"KUBECTL":                true,
-		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
-		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
-		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
-		"HTTP_PROXY":             cluster.Proxy.HTTP,
-		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
-		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
-		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
-	}
-
-	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
-		return "", err
-	}
-
-	result, err := Render(kubeadmDebianTemplate, data)
-
-	return result, fail.Runtime(err, "rendering kubeadmDebianTemplate script")
 }

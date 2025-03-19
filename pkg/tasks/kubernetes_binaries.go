@@ -23,32 +23,39 @@ import (
 	"k8c.io/kubeone/pkg/state"
 )
 
-func upgradeKubeletAndKubectlBinaries(s *state.State, node kubeoneapi.HostConfig) error {
+func setupKubernetesBinaries(s *state.State, node kubeoneapi.HostConfig, params scripts.Params) error {
 	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
-		kubeoneapi.OperatingSystemNameAmazon:     upgradeKubeletAndKubectlBinariesAmazonLinux,
-		kubeoneapi.OperatingSystemNameCentOS:     upgradeKubeletAndKubectlBinariesCentOS,
-		kubeoneapi.OperatingSystemNameDebian:     upgradeKubeletAndKubectlBinariesDebian,
-		kubeoneapi.OperatingSystemNameFlatcar:    upgradeKubeletAndKubectlBinariesFlatcar,
-		kubeoneapi.OperatingSystemNameRHEL:       upgradeKubeletAndKubectlBinariesCentOS,
-		kubeoneapi.OperatingSystemNameRockyLinux: upgradeKubeletAndKubectlBinariesCentOS,
-		kubeoneapi.OperatingSystemNameUbuntu:     upgradeKubeletAndKubectlBinariesDebian,
+		kubeoneapi.OperatingSystemNameAmazon:     kubernetesBinariesAmazonLinux(params),
+		kubeoneapi.OperatingSystemNameCentOS:     kubernetesBinariesRHELLike(params),
+		kubeoneapi.OperatingSystemNameDebian:     kubernetesBinariesDeb(params),
+		kubeoneapi.OperatingSystemNameFlatcar:    upgradeKubernetesBinariesFlatcar,
+		kubeoneapi.OperatingSystemNameRHEL:       kubernetesBinariesRHELLike(params),
+		kubeoneapi.OperatingSystemNameRockyLinux: kubernetesBinariesRHELLike(params),
+		kubeoneapi.OperatingSystemNameUbuntu:     kubernetesBinariesDeb(params),
 	})
 }
 
-func upgradeKubeadmAndCNIBinaries(s *state.State, node kubeoneapi.HostConfig) error {
-	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
-		kubeoneapi.OperatingSystemNameAmazon:     upgradeKubeadmAndCNIBinariesAmazonLinux,
-		kubeoneapi.OperatingSystemNameCentOS:     upgradeKubeadmAndCNIBinariesCentOS,
-		kubeoneapi.OperatingSystemNameDebian:     upgradeKubeadmAndCNIBinariesDebian,
-		kubeoneapi.OperatingSystemNameFlatcar:    upgradeKubeadmAndCNIBinariesFlatcar,
-		kubeoneapi.OperatingSystemNameRHEL:       upgradeKubeadmAndCNIBinariesCentOS,
-		kubeoneapi.OperatingSystemNameRockyLinux: upgradeKubeadmAndCNIBinariesCentOS,
-		kubeoneapi.OperatingSystemNameUbuntu:     upgradeKubeadmAndCNIBinariesDebian,
-	})
+func upgradeKubernetesBinaries(s *state.State, node kubeoneapi.HostConfig, params scripts.Params) error {
+	params.Upgrade = true
+
+	return setupKubernetesBinaries(s, node, params)
 }
 
-func upgradeKubeletAndKubectlBinariesDebian(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeletAndKubectlDebian(s.Cluster)
+func kubernetesBinariesDeb(params scripts.Params) func(*state.State) error {
+	return func(s *state.State) error {
+		cmd, err := scripts.DebScript(s.Cluster, params)
+		if err != nil {
+			return err
+		}
+
+		_, _, err = s.Runner.RunRaw(cmd)
+
+		return fail.SSH(err, params.String())
+	}
+}
+
+func upgradeKubernetesBinariesFlatcar(s *state.State) error {
+	cmd, err := scripts.UpgradeKubernetesBinariesFlatcar(s.Cluster)
 	if err != nil {
 		return err
 	}
@@ -58,79 +65,28 @@ func upgradeKubeletAndKubectlBinariesDebian(s *state.State) error {
 	return fail.SSH(err, "upgrading kubelet and kubectl")
 }
 
-func upgradeKubeletAndKubectlBinariesFlatcar(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeletAndKubectlFlatcar(s.Cluster)
-	if err != nil {
-		return err
+func kubernetesBinariesRHELLike(params scripts.Params) func(*state.State) error {
+	return func(s *state.State) error {
+		cmd, err := scripts.RHELLikeScript(s.Cluster, params)
+		if err != nil {
+			return err
+		}
+
+		_, _, err = s.Runner.RunRaw(cmd)
+
+		return fail.SSH(err, params.String())
 	}
-
-	_, _, err = s.Runner.RunRaw(cmd)
-
-	return fail.SSH(err, "upgrading kubelet and kubectl")
 }
 
-func upgradeKubeletAndKubectlBinariesCentOS(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeletAndKubectlCentOS(s.Cluster)
-	if err != nil {
-		return err
+func kubernetesBinariesAmazonLinux(params scripts.Params) func(*state.State) error {
+	return func(s *state.State) error {
+		cmd, err := scripts.AmazonLinuxScript(s.Cluster, params)
+		if err != nil {
+			return err
+		}
+
+		_, _, err = s.Runner.RunRaw(cmd)
+
+		return fail.SSH(err, params.String())
 	}
-
-	_, _, err = s.Runner.RunRaw(cmd)
-
-	return fail.SSH(err, "upgrading kubelet and kubectl")
-}
-
-func upgradeKubeletAndKubectlBinariesAmazonLinux(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeletAndKubectlAmazonLinux(s.Cluster)
-	if err != nil {
-		return err
-	}
-
-	_, _, err = s.Runner.RunRaw(cmd)
-
-	return fail.SSH(err, "upgrading kubelet and kubectl")
-}
-
-func upgradeKubeadmAndCNIBinariesDebian(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeadmAndCNIDebian(s.Cluster)
-	if err != nil {
-		return err
-	}
-
-	_, _, err = s.Runner.RunRaw(cmd)
-
-	return fail.SSH(err, "upgrading kubeadm and CNI plugins")
-}
-
-func upgradeKubeadmAndCNIBinariesCentOS(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeadmAndCNICentOS(s.Cluster)
-	if err != nil {
-		return err
-	}
-
-	_, _, err = s.Runner.RunRaw(cmd)
-
-	return fail.SSH(err, "upgrading kubeadm and CNI plugins")
-}
-
-func upgradeKubeadmAndCNIBinariesAmazonLinux(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeadmAndCNIAmazonLinux(s.Cluster)
-	if err != nil {
-		return err
-	}
-
-	_, _, err = s.Runner.RunRaw(cmd)
-
-	return fail.SSH(err, "upgrading kubeadm and CNI plugins")
-}
-
-func upgradeKubeadmAndCNIBinariesFlatcar(s *state.State) error {
-	cmd, err := scripts.UpgradeKubeadmAndCNIFlatcar(s.Cluster)
-	if err != nil {
-		return err
-	}
-
-	_, _, err = s.Runner.RunRaw(cmd)
-
-	return fail.SSH(err, "upgrading kubeadm and CNI plugins")
 }

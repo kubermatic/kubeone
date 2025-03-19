@@ -202,59 +202,14 @@ func disableNMCloudSetup(s *state.State, node *kubeoneapi.HostConfig, _ executor
 }
 
 func installKubeadm(s *state.State, node kubeoneapi.HostConfig) error {
-	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
-		kubeoneapi.OperatingSystemNameAmazon:     installKubeadmAmazonLinux,
-		kubeoneapi.OperatingSystemNameCentOS:     installKubeadmRHELAndAlike,
-		kubeoneapi.OperatingSystemNameDebian:     installKubeadmDebian,
-		kubeoneapi.OperatingSystemNameFlatcar:    installKubeadmFlatcar,
-		kubeoneapi.OperatingSystemNameRHEL:       installKubeadmRHELAndAlike,
-		kubeoneapi.OperatingSystemNameRockyLinux: installKubeadmRHELAndAlike,
-		kubeoneapi.OperatingSystemNameUbuntu:     installKubeadmDebian,
-	})
-}
-
-func installKubeadmDebian(s *state.State) error {
-	cmd, err := scripts.KubeadmDebian(s.Cluster, s.ForceInstall)
-	if err != nil {
-		return err
+	params := scripts.Params{
+		Force:   s.ForceInstall,
+		Kubeadm: true,
+		Kubectl: true,
+		Kubelet: true,
 	}
 
-	_, _, err = s.Runner.RunRaw(cmd)
-
-	return fail.SSH(err, "installing kubeadm")
-}
-
-func installKubeadmRHELAndAlike(s *state.State) error {
-	cmd, err := scripts.KubeadmCentOS(s.Cluster, s.ForceInstall)
-	if err != nil {
-		return err
-	}
-
-	_, _, err = s.Runner.RunRaw(cmd)
-
-	return fail.SSH(err, "installing kubeadm")
-}
-
-func installKubeadmAmazonLinux(s *state.State) error {
-	cmd, err := scripts.KubeadmAmazonLinux(s.Cluster, s.ForceInstall)
-	if err != nil {
-		return err
-	}
-
-	_, _, err = s.Runner.RunRaw(cmd)
-
-	return fail.SSH(err, "installing kubeadm")
-}
-
-func installKubeadmFlatcar(s *state.State) error {
-	cmd, err := scripts.KubeadmFlatcar(s.Cluster)
-	if err != nil {
-		return err
-	}
-
-	_, _, err = s.Runner.RunRaw(cmd)
-
-	return fail.SSH(err, "installing kubeadm")
+	return setupKubernetesBinaries(s, node, params)
 }
 
 func uploadConfigurationFiles(s *state.State) error {

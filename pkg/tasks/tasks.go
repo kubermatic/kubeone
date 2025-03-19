@@ -25,10 +25,12 @@ import (
 	"k8c.io/kubeone/pkg/certificate"
 	"k8c.io/kubeone/pkg/clusterstatus"
 	"k8c.io/kubeone/pkg/credentials"
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/localhelm"
+	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/externalccm"
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
@@ -369,6 +371,7 @@ func WithUpgrade(t Tasks, followers ...kubeoneapi.HostConfig) Tasks {
 		append(
 			Task{Fn: restartKubeAPIServer, Operation: "restarting unhealthy kube-apiserver"},
 			Task{Fn: upgradeStaticWorkers, Operation: "upgrading static worker nodes"},
+			Task{Fn: updateAllKubelets, Operation: "upgrading kubelets"},
 			Task{
 				Fn:          migratePVCAllocatedResourceStatus,
 				Operation:   "migrating PVCs",
@@ -631,4 +634,17 @@ func WithCCMCSIMigration(t Tasks) Tasks {
 				Predicate: func(s *state.State) bool { return s.Cluster.MachineController.Deploy && !s.CCMMigrationComplete },
 			},
 		)
+}
+
+func updateAllKubelets(s *state.State) error {
+	return s.RunTaskOnAllNodes(func(ctx *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+		logger := s.Logger.WithField("node", node.PublicAddress)
+
+		logger.Infoln("Upgrading kubelet")
+		if err := upgradeKubernetesBinaries(s, *node, scripts.Params{Kubelet: true}); err != nil {
+			return err
+		}
+
+		return nil
+	}, state.RunParallel)
 }

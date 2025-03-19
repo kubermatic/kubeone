@@ -22,6 +22,7 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/nodeutils"
+	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/state"
 )
 
@@ -60,17 +61,12 @@ func upgradeStaticWorkersExecutor(s *state.State, node *kubeoneapi.HostConfig, c
 	}
 
 	logger.Infoln("Upgrading Kubernetes binaries on static worker node...")
-	if err := upgradeKubeadmAndCNIBinaries(s, *node); err != nil {
+	if err := upgradeKubernetesBinaries(s, *node, scripts.Params{Kubeadm: true, Kubectl: true}); err != nil {
 		return err
 	}
 
 	logger.Infoln("Running 'kubeadm upgrade' on the static worker node...")
 	if err := upgradeStaticWorker(s); err != nil {
-		return err
-	}
-
-	logger.Infoln("Upgrading kubernetes system binaries on the static worker node...")
-	if err := upgradeKubeletAndKubectlBinaries(s, *node); err != nil {
 		return err
 	}
 
