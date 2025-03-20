@@ -1,12 +1,5 @@
 {{ $kubernetesVersion := semver .Config.Versions.Kubernetes }}
 apiVersion: v1
-kind: Namespace
-metadata:
-  labels:
-    app.kubernetes.io/part-of: cilium
-  name: kube-system
----
-apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: cilium
