@@ -186,12 +186,6 @@ func runApply(st *state.State, opts *applyOpts) error {
 		return runApplyInstall(st, opts)
 	}
 
-	if val, _ := etcdstatus.HasEtcdMemberCountExceededControlPlane(st); val {
-		st.Logger.Warnf("The count for etcd members and control plane nodes are not the same, repairing the cluster...")
-
-		return runApplyInstall(st, opts)
-	}
-
 	if !st.LiveCluster.Healthy() {
 		if opts.RotateEncryptionKey {
 			return fail.RuntimeError{
@@ -352,6 +346,12 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 
 	var tasksToRun tasks.Tasks
 
+	if hasExtraEtcdMembers, _ := etcdstatus.HasEtcdMemberCountExceededControlPlane(s); hasExtraEtcdMembers {
+		s.Logger.Warnf("The count for etcd members is higher than the control plane nodes, repairing the cluster if needed...")
+		operations = append(operations, "repairing the cluster; removing extra etcd members if needed")
+		tasksToRun = tasks.WithRemoveExtraEtcdMembers(tasksToRun)
+	}
+
 	if upgradeNeeded || opts.ForceUpgrade {
 		// disable case, we do this as early as possible.
 		if s.ShouldDisableEncryption() {
@@ -410,7 +410,7 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 					s.Cluster.Versions.Kubernetes))
 		}
 	} else {
-		tasksToRun = tasks.WithResources(nil)
+		tasksToRun = tasks.WithResources(tasksToRun)
 	}
 
 	fmt.Println()
