@@ -26,6 +26,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"k8c.io/kubeone/pkg/clusterstatus/etcdstatus"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tasks"
@@ -337,6 +338,12 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 
 	var tasksToRun tasks.Tasks
 
+	if hasExtraEtcdMembers, _ := etcdstatus.HasEtcdMemberCountExceededControlPlane(s); hasExtraEtcdMembers {
+		s.Logger.Warnf("The count for etcd members is higher than the control plane nodes, repairing the cluster if needed...")
+		operations = append(operations, "repairing the cluster; removing extra etcd members if needed")
+		tasksToRun = tasks.WithRemoveExtraEtcdMembers(tasksToRun)
+	}
+
 	if upgradeNeeded || opts.ForceUpgrade {
 		// disable case, we do this as early as possible.
 		if s.ShouldDisableEncryption() {
@@ -395,7 +402,7 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 					s.Cluster.Versions.Kubernetes))
 		}
 	} else {
-		tasksToRun = tasks.WithResources(nil)
+		tasksToRun = tasks.WithResources(tasksToRun)
 	}
 
 	fmt.Println()

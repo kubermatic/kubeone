@@ -364,6 +364,12 @@ func WithReset(t Tasks) Tasks {
 	}...)
 }
 
+func WithRemoveExtraEtcdMembers(t Tasks) Tasks {
+	return t.append(Tasks{
+		{Fn: repairClusterIfNeeded, Operation: "repairing cluster"},
+	}...)
+}
+
 func WithContainerDMigration(t Tasks) Tasks {
 	return WithHostnameOS(t).
 		append(Tasks{
