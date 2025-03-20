@@ -7,7 +7,7 @@ metadata:
   namespace: "kube-system"
   labels:
     app.kubernetes.io/name: hcloud-csi
-    helm.sh/chart: hcloud-csi-2.9.0
+    helm.sh/chart: hcloud-csi-2.13.0
     app.kubernetes.io/instance: hcloud-csi
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
@@ -20,60 +20,60 @@ metadata:
   name: hcloud-csi-controller
   labels:
     app.kubernetes.io/name: hcloud-csi
-    helm.sh/chart: hcloud-csi-2.9.0
+    helm.sh/chart: hcloud-csi-2.13.0
     app.kubernetes.io/instance: hcloud-csi
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 rules:
-# attacher
-- apiGroups: [""]
-  resources: [persistentvolumes]
-  verbs: [get, list, watch, update, patch]
-- apiGroups: [""]
-  resources: [nodes]
-  verbs: [get, list, watch]
-- apiGroups: [csi.storage.k8s.io]
-  resources: [csinodeinfos]
-  verbs: [get, list, watch]
-- apiGroups: [storage.k8s.io]
-  resources: [csinodes]
-  verbs: [get, list, watch]
-- apiGroups: [storage.k8s.io]
-  resources: [volumeattachments]
-  verbs: [get, list, watch, update, patch]
-- apiGroups: [storage.k8s.io]
-  resources: [volumeattachments/status]
-  verbs: [patch]
-# provisioner
-- apiGroups: [""]
-  resources: [secrets]
-  verbs: [get, list]
-- apiGroups: [""]
-  resources: [persistentvolumes]
-  verbs: [get, list, watch, create, delete, patch]
-- apiGroups: [""]
-  resources: [persistentvolumeclaims, persistentvolumeclaims/status]
-  verbs: [get, list, watch, update, patch]
-- apiGroups: [storage.k8s.io]
-  resources: [storageclasses]
-  verbs: [get, list, watch]
-- apiGroups: [""]
-  resources: [events]
-  verbs: [list, watch, create, update, patch]
-- apiGroups: [snapshot.storage.k8s.io]
-  resources: [volumesnapshots]
-  verbs: [get, list]
-- apiGroups: [snapshot.storage.k8s.io]
-  resources: [volumesnapshotcontents]
-  verbs: [get, list]
-# resizer
-- apiGroups: [""]
-  resources: [pods]
-  verbs: [get, list, watch]
-# node
-- apiGroups: [""]
-  resources: [events]
-  verbs: [get, list, watch, create, update, patch]
+  # attacher
+  - apiGroups: [""]
+    resources: [persistentvolumes]
+    verbs: [get, list, watch, update, patch]
+  - apiGroups: [""]
+    resources: [nodes]
+    verbs: [get, list, watch]
+  - apiGroups: [csi.storage.k8s.io]
+    resources: [csinodeinfos]
+    verbs: [get, list, watch]
+  - apiGroups: [storage.k8s.io]
+    resources: [csinodes]
+    verbs: [get, list, watch]
+  - apiGroups: [storage.k8s.io]
+    resources: [volumeattachments]
+    verbs: [get, list, watch, update, patch]
+  - apiGroups: [storage.k8s.io]
+    resources: [volumeattachments/status]
+    verbs: [patch]
+  # provisioner
+  - apiGroups: [""]
+    resources: [secrets]
+    verbs: [get, list]
+  - apiGroups: [""]
+    resources: [persistentvolumes]
+    verbs: [get, list, watch, create, delete, patch]
+  - apiGroups: [""]
+    resources: [persistentvolumeclaims, persistentvolumeclaims/status]
+    verbs: [get, list, watch, update, patch]
+  - apiGroups: [storage.k8s.io]
+    resources: [storageclasses]
+    verbs: [get, list, watch]
+  - apiGroups: [""]
+    resources: [events]
+    verbs: [list, watch, create, update, patch]
+  - apiGroups: [snapshot.storage.k8s.io]
+    resources: [volumesnapshots]
+    verbs: [get, list]
+  - apiGroups: [snapshot.storage.k8s.io]
+    resources: [volumesnapshotcontents]
+    verbs: [get, list]
+  # resizer
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [get, list, watch]
+  # node
+  - apiGroups: [""]
+    resources: [events]
+    verbs: [get, list, watch, create, update, patch]
 ---
 # Source: hcloud-csi/templates/controller/clusterrolebinding.yaml
 kind: ClusterRoleBinding
@@ -82,7 +82,7 @@ metadata:
   name: hcloud-csi-controller
   labels:
     app.kubernetes.io/name: hcloud-csi
-    helm.sh/chart: hcloud-csi-2.9.0
+    helm.sh/chart: hcloud-csi-2.13.0
     app.kubernetes.io/instance: hcloud-csi
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
@@ -103,11 +103,11 @@ metadata:
   namespace: "kube-system"
   labels:
     app.kubernetes.io/name: hcloud-csi
-    helm.sh/chart: hcloud-csi-2.9.0
+    helm.sh/chart: hcloud-csi-2.13.0
     app.kubernetes.io/instance: hcloud-csi
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: node
-    app: hcloud-csi 
+    app: hcloud-csi
 spec:
   updateStrategy:
     type: RollingUpdate
@@ -120,12 +120,12 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: hcloud-csi
-        helm.sh/chart: hcloud-csi-2.9.0
+        helm.sh/chart: hcloud-csi-2.13.0
         app.kubernetes.io/instance: hcloud-csi
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: node
     spec:
-      
+
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -135,6 +135,10 @@ spec:
                 operator: NotIn
                 values:
                 - "true"
+              - key: instance.hetzner.cloud/provided-by
+                operator: NotIn
+                values:
+                - robot
       tolerations:
         - effect: NoExecute
           operator: Exists
@@ -229,11 +233,11 @@ metadata:
   namespace: "kube-system"
   labels:
     app.kubernetes.io/name: hcloud-csi
-    helm.sh/chart: hcloud-csi-2.9.0
+    helm.sh/chart: hcloud-csi-2.13.0
     app.kubernetes.io/instance: hcloud-csi
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
-    app: hcloud-csi-controller 
+    app: hcloud-csi-controller
 spec:
   replicas: 1
   strategy:
@@ -247,7 +251,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: hcloud-csi
-        helm.sh/chart: hcloud-csi-2.9.0
+        helm.sh/chart: hcloud-csi-2.13.0
         app.kubernetes.io/instance: hcloud-csi
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: controller
@@ -265,7 +269,6 @@ spec:
         - key: "node-role.kubernetes.io/control-plane"
           effect: NoSchedule
       serviceAccountName: hcloud-csi-controller
-      
       securityContext:
         fsGroup: 1001
       initContainers:
@@ -288,6 +291,8 @@ spec:
           resources:
             limits: {}
             requests: {}
+          args:
+            - --feature-gates=RecoverVolumeExpansionFailure=false
           volumeMounts:
           - name: socket-dir
             mountPath: /run/csi
@@ -367,5 +372,6 @@ spec:
   attachRequired: true
   fsGroupPolicy: File
   podInfoOnMount: true
+  seLinuxMount: true
   volumeLifecycleModes:
   - Persistent
