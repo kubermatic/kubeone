@@ -145,3 +145,16 @@ func memberHealth(ctx context.Context, t http.RoundTripper, nodeAddress string) 
 
 	return b, fail.Etcd(err, "parsing JSON reply")
 }
+
+func HasEtcdMemberCountExceededControlPlane(s *state.State) (bool, error) {
+	s.Logger.Info("Check if the count for etcd members is higher than the declared control plane nodes...")
+	etcdRing, err := MemberList(s)
+	if err != nil {
+		return false, err
+	}
+	if len(etcdRing.Members) > len(s.Cluster.ControlPlane.Hosts) {
+		return true, nil
+	}
+
+	return false, nil
+}
