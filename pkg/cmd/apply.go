@@ -26,6 +26,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"k8c.io/kubeone/pkg/clusterstatus/etcdstatus"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tasks"
@@ -182,6 +183,12 @@ func runApply(st *state.State, opts *applyOpts) error {
 
 	// Reconcile the cluster based on the probe status
 	if !st.LiveCluster.IsProvisioned() {
+		return runApplyInstall(st, opts)
+	}
+
+	if val, _ := etcdstatus.HasEtcdMemberCountExceededControlPlane(st); val {
+		st.Logger.Warnf("The count for etcd members and control plane nodes are not the same, repairing the cluster...")
+
 		return runApplyInstall(st, opts)
 	}
 
