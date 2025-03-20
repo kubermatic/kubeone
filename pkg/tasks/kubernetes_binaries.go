@@ -50,7 +50,7 @@ func kubernetesBinariesDeb(params scripts.Params) func(*state.State) error {
 
 		_, _, err = s.Runner.RunRaw(cmd)
 
-		return fail.SSH(err, params.String())
+		return fail.SSH(err, "%s", params.String())
 	}
 }
 
@@ -74,7 +74,7 @@ func kubernetesBinariesRHELLike(params scripts.Params) func(*state.State) error 
 
 		_, _, err = s.Runner.RunRaw(cmd)
 
-		return fail.SSH(err, params.String())
+		return fail.SSH(err, "%s", params.String())
 	}
 }
 
@@ -87,6 +87,6 @@ func kubernetesBinariesAmazonLinux(params scripts.Params) func(*state.State) err
 
 		_, _, err = s.Runner.RunRaw(cmd)
 
-		return fail.SSH(err, params.String())
+		return fail.SSH(err, "%s", params.String())
 	}
 }

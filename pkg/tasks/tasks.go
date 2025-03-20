@@ -637,7 +637,7 @@ func WithCCMCSIMigration(t Tasks) Tasks {
 }
 
 func updateAllKubelets(s *state.State) error {
-	return s.RunTaskOnAllNodes(func(ctx *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {
+	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 		logger := s.Logger.WithField("node", node.PublicAddress)
 
 		logger.Infoln("Upgrading kubelet")

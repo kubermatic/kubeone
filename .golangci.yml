@@ -17,7 +17,6 @@ linters:
   - errname
   - errorlint
   - exhaustive
-  - exportloopref
   - forcetypeassert
   - gocritic
   - gocyclo
@@ -40,11 +39,12 @@ linters:
   - revive
   - staticcheck
   - stylecheck
-  - tenv
   - tparallel
   - unconvert
   - unparam
   - unused
+  # TODO: enable this back once we update to golangci-lint v1.64
+  # - usetesting
   - wastedassign
   - whitespace
 
