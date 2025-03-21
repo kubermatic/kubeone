@@ -44,12 +44,12 @@ func withCiliumCNI(cls *kubeoneapi.KubeOneCluster) {
 	}
 }
 
-// func withProxy(proxy string) genClusterOpts {
-// 	return func(cls *kubeoneapi.KubeOneCluster) {
-// 		cls.Proxy.HTTPS = proxy
-// 		cls.Proxy.HTTP = proxy
-// 	}
-// }
+func withProxy(proxy string) genClusterOpts {
+	return func(cls *kubeoneapi.KubeOneCluster) {
+		cls.Proxy.HTTPS = proxy
+		cls.Proxy.HTTP = proxy
+	}
+}
 
 func withRegistry(registry string) genClusterOpts {
 	return func(cls *kubeoneapi.KubeOneCluster) {
