@@ -58,7 +58,7 @@ fi
 sudo install -m 0755 -d /etc/apt/keyrings
 LATEST_STABLE=$(curl -sL https://dl.k8s.io/release/stable.txt | sed 's/\.[0-9]*$//')
 curl -fsSL https://pkgs.k8s.io/core:/stable:/${LATEST_STABLE}/deb/Release.key | sudo gpg --dearmor --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
@@ -70,7 +70,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 	lsb-release \
 	rsync
 
-kube_ver="1.32.0-*"
+kube_ver="1.30.0-*"
 sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni cri-tools
 
 
@@ -107,7 +107,7 @@ address = "127.0.0.1:1338"
 
 [plugins]
 [plugins."io.containerd.grpc.v1.cri"]
-sandbox_image = "registry.k8s.io/pause:3.10"
+sandbox_image = "registry.k8s.io/pause:3.9"
 device_ownership_from_security_context = true
 [plugins."io.containerd.grpc.v1.cri".containerd]
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]

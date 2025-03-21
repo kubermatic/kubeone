@@ -57,7 +57,7 @@ LATEST_STABLE=$(curl -sL https://dl.k8s.io/release/stable.txt | sed 's/\.[0-9]*$
 cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
-baseurl=https://pkgs.k8s.io/core:/stable:/v1.32/rpm/
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.30/rpm/
 enabled=1
 gpgcheck=1
 gpgkey=https://pkgs.k8s.io/core:/stable:/${LATEST_STABLE}/rpm/repodata/repomd.xml.key
@@ -108,7 +108,7 @@ address = "127.0.0.1:1338"
 
 [plugins]
 [plugins."io.containerd.grpc.v1.cri"]
-sandbox_image = "registry.k8s.io/pause:3.10"
+sandbox_image = "registry.k8s.io/pause:3.9"
 device_ownership_from_security_context = true
 [plugins."io.containerd.grpc.v1.cri".containerd]
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
@@ -133,9 +133,9 @@ sudo systemctl restart containerd
 
 
 sudo yum install -y \
-	kubelet-1.32.0 \
-	kubeadm-1.32.0 \
-	kubectl-1.32.0 \
+	kubelet-1.30.0 \
+	kubeadm-1.30.0 \
+	kubectl-1.30.0 \
 	kubernetes-cni \
 	cri-tools
 sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni cri-tools

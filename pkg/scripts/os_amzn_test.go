@@ -24,28 +24,53 @@ import (
 )
 
 func TestAmazonLinuxScript(t *testing.T) {
-	type args struct {
-		cluster *kubeoneapi.KubeOneCluster
-		params  Params
-	}
 	tests := []struct {
 		name    string
-		args    args
-		want    string
+		cluster kubeoneapi.KubeOneCluster
+		params  Params
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name:    "install all",
+			cluster: genCluster(withDefaultAssetConfiguration),
+			params:  Params{Kubeadm: true, Kubectl: true, Kubelet: true},
+		},
+		{
+			name:    "install all with force",
+			cluster: genCluster(withDefaultAssetConfiguration),
+			params:  Params{Force: true, Kubeadm: true, Kubectl: true, Kubelet: true},
+		},
+		{
+			name:    "install all with proxy",
+			cluster: genCluster(withDefaultAssetConfiguration, withProxy("http://proxy.tld")),
+			params:  Params{Kubeadm: true, Kubectl: true, Kubelet: true},
+		},
+		{
+			name:    "upgrade kubeadm and kubectl",
+			cluster: genCluster(withDefaultAssetConfiguration),
+			params:  Params{Upgrade: true, Kubeadm: true, Kubectl: true},
+		},
+		{
+			name:    "upgrade kubeadm and kubectl with force",
+			cluster: genCluster(withDefaultAssetConfiguration),
+			params:  Params{Force: true, Upgrade: true, Kubeadm: true, Kubectl: true},
+		},
+		{
+			name:    "upgrade kubelet",
+			cluster: genCluster(withDefaultAssetConfiguration),
+			params:  Params{Upgrade: true, Kubelet: true},
+		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := AmazonLinuxScript(tt.args.cluster, tt.args.params)
+			got, err := AmazonLinuxScript(&tt.cluster, tt.params)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("AmazonLinuxScript() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != tt.want {
-				t.Errorf("AmazonLinuxScript() = %v, want %v", got, tt.want)
-			}
+
+			testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
 		})
 	}
 }

@@ -32,11 +32,11 @@ func withKubeVersion(ver string) genClusterOpts {
 	}
 }
 
-// func withNutanixCloudProvider(cls *kubeoneapi.KubeOneCluster) {
-// 	cls.CloudProvider = kubeoneapi.CloudProviderSpec{
-// 		Nutanix: &kubeoneapi.NutanixSpec{},
-// 	}
-// }
+func withNutanixCloudProvider(cls *kubeoneapi.KubeOneCluster) {
+	cls.CloudProvider = kubeoneapi.CloudProviderSpec{
+		Nutanix: &kubeoneapi.NutanixSpec{},
+	}
+}
 
 func withCiliumCNI(cls *kubeoneapi.KubeOneCluster) {
 	cls.ClusterNetwork.CNI = &kubeoneapi.CNI{
@@ -68,22 +68,22 @@ func withInsecureRegistry(registry string) genClusterOpts {
 	}
 }
 
-// func withDefaultAssetConfiguration(cls *kubeoneapi.KubeOneCluster) {
-// 	cls.AssetConfiguration = kubeoneapi.AssetConfiguration{
-// 		Kubernetes: kubeoneapi.ImageAsset{
-// 			ImageRepository: "registry.k8s.io",
-// 		},
-// 		CNI: kubeoneapi.BinaryAsset{
-// 			URL: "http://127.0.0.1/cni.tar.gz",
-// 		},
-// 		NodeBinaries: kubeoneapi.BinaryAsset{
-// 			URL: "http://127.0.0.1/node.tar.gz",
-// 		},
-// 		Kubectl: kubeoneapi.BinaryAsset{
-// 			URL: "http://127.0.0.1/kubectl.tar.gz",
-// 		},
-// 	}
-// }
+func withDefaultAssetConfiguration(cls *kubeoneapi.KubeOneCluster) {
+	cls.AssetConfiguration = kubeoneapi.AssetConfiguration{
+		Kubernetes: kubeoneapi.ImageAsset{
+			ImageRepository: "registry.k8s.io",
+		},
+		CNI: kubeoneapi.BinaryAsset{
+			URL: "http://127.0.0.1/cni.tar.gz",
+		},
+		NodeBinaries: kubeoneapi.BinaryAsset{
+			URL: "http://127.0.0.1/node.tar.gz",
+		},
+		Kubectl: kubeoneapi.BinaryAsset{
+			URL: "http://127.0.0.1/kubectl.tar.gz",
+		},
+	}
+}
 
 func genCluster(opts ...genClusterOpts) kubeoneapi.KubeOneCluster {
 	cls := &kubeoneapi.KubeOneCluster{

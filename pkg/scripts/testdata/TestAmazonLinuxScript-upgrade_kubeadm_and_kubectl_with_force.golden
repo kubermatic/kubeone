@@ -63,12 +63,6 @@ gpgcheck=1
 gpgkey=https://pkgs.k8s.io/core:/stable:/${LATEST_STABLE}/rpm/repodata/repomd.xml.key
 EOF
 
-source /etc/os-release
-if [ "$ID" == "centos" ] && [ "$VERSION_ID" == "8" ]; then
-	sudo sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-	sudo sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
-fi
-
 # We must clean 'yum' cache upon changing the package repository
 # because older 'yum' versions (e.g. CentOS and Amazon Linux 2)
 # don't detect the change otherwise.
@@ -87,14 +81,9 @@ sudo yum install -y \
 	rsync
 
 
-
-sudo yum install -y yum-utils
-sudo yum-config-manager --add-repo=https://download.docker.com/linux/rhel/docker-ce.repo
-
-
-sudo yum versionlock delete containerd.io || true
-sudo yum install -y containerd.io-'1.7.*'
-sudo yum versionlock add containerd.io
+sudo yum versionlock delete containerd || true
+sudo yum install -y containerd-'1.7.*'
+sudo yum versionlock add containerd
 
 
 sudo mkdir -p $(dirname /etc/containerd/config.toml)
@@ -131,16 +120,26 @@ sudo systemctl enable containerd
 sudo systemctl restart containerd
 
 
-sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools || true
 
-sudo yum install -y \
-	kubeadm-1.30.0 \
-	kubectl-1.30.0 \
-	kubernetes-cni \
-	cri-tools
-sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni cri-tools
+sudo mkdir -p /opt/bin /etc/kubernetes/pki /etc/kubernetes/manifests
+
+rm -rf /tmp/k8s-binaries
+mkdir -p /tmp/k8s-binaries
+cd /tmp/k8s-binaries
+sudo mkdir -p /opt/cni/bin
+curl -L "http://127.0.0.1/cni.tar.gz" | sudo tar -C /opt/cni/bin -xz
+curl -L --output /tmp/k8s-binaries/node.tar.gz http://127.0.0.1/node.tar.gz
+tar xvf node.tar.gz
+sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubeadm /opt/bin/kubeadm
+sudo ln -sf /opt/bin/kubeadm /usr/bin/
+rm /tmp/k8s-binaries/kubernetes/node/bin/kubeadm
+curl -L --output /tmp/k8s-binaries/kubectl http://127.0.0.1/kubectl.tar.gz
+sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubectl /opt/bin/kubectl
+sudo ln -sf /opt/bin/kubectl /usr/bin/
+rm /tmp/k8s-binaries/kubectl
+
+
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet
 sudo systemctl restart kubelet
-

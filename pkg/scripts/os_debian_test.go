@@ -32,32 +32,32 @@ func TestDebScript(t *testing.T) {
 	}{
 		{
 			name:    "install all",
-			cluster: genCluster(withKubeVersion("1.32.0")),
+			cluster: genCluster(),
 			params:  Params{Kubeadm: true, Kubectl: true, Kubelet: true},
 		},
 		{
 			name:    "install all with force",
-			cluster: genCluster(withKubeVersion("1.32.0")),
+			cluster: genCluster(),
 			params:  Params{Force: true, Kubeadm: true, Kubectl: true, Kubelet: true},
 		},
 		{
 			name:    "install all with proxy",
-			cluster: genCluster(withKubeVersion("1.32.0"), withProxy("http://proxy.tld")),
+			cluster: genCluster(withProxy("http://proxy.tld")),
 			params:  Params{Kubeadm: true, Kubectl: true, Kubelet: true},
 		},
 		{
 			name:    "upgrade kubeadm and kubectl",
-			cluster: genCluster(withKubeVersion("1.32.0")),
+			cluster: genCluster(),
 			params:  Params{Upgrade: true, Kubeadm: true, Kubectl: true},
 		},
 		{
 			name:    "upgrade kubeadm and kubectl with force",
-			cluster: genCluster(withKubeVersion("1.32.0")),
+			cluster: genCluster(),
 			params:  Params{Force: true, Upgrade: true, Kubeadm: true, Kubectl: true},
 		},
 		{
 			name:    "upgrade kubelet",
-			cluster: genCluster(withKubeVersion("1.32.0")),
+			cluster: genCluster(),
 			params:  Params{Upgrade: true, Kubelet: true},
 		},
 	}
