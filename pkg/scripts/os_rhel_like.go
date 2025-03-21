@@ -172,7 +172,7 @@ func DisableNMCloudSetup() (string, error) {
 	return result, fail.Runtime(err, "rendering disableNMCloudSetup script")
 }
 
-func RemoveBinariesCentOS() (string, error) {
+func RemoveBinariesRHELLike() (string, error) {
 	result, err := Render(removeBinariesRHELLikeScriptTemplate, Data{})
 
 	return result, fail.Runtime(err, "rendering removeBinariesCentOSScriptTemplate script")

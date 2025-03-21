@@ -75,12 +75,12 @@ func TestRHELLikeScript(t *testing.T) {
 	}
 }
 
-func TestRemoveBinariesCentOS(t *testing.T) {
+func TestRemoveBinariesRHELLike(t *testing.T) {
 	t.Parallel()
 
-	got, err := RemoveBinariesCentOS()
+	got, err := RemoveBinariesRHELLike()
 	if err != nil {
-		t.Errorf("RemoveBinariesCentOS() error = %v", err)
+		t.Errorf("RemoveBinariesRHELLike() error = %v", err)
 
 		return
 	}
