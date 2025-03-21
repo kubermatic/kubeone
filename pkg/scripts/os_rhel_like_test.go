@@ -67,6 +67,7 @@ func TestRHELLikeScript(t *testing.T) {
 			got, err := RHELLikeScript(&tt.cluster, tt.params)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("RHELLikeScript() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 

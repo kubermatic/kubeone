@@ -67,6 +67,7 @@ func TestAmazonLinuxScript(t *testing.T) {
 			got, err := AmazonLinuxScript(&tt.cluster, tt.params)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("AmazonLinuxScript() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 

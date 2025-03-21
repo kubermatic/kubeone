@@ -32,11 +32,11 @@ func withKubeVersion(ver string) genClusterOpts {
 	}
 }
 
-func withNutanixCloudProvider(cls *kubeoneapi.KubeOneCluster) {
-	cls.CloudProvider = kubeoneapi.CloudProviderSpec{
-		Nutanix: &kubeoneapi.NutanixSpec{},
-	}
-}
+// func withNutanixCloudProvider(cls *kubeoneapi.KubeOneCluster) {
+// 	cls.CloudProvider = kubeoneapi.CloudProviderSpec{
+// 		Nutanix: &kubeoneapi.NutanixSpec{},
+// 	}
+// }
 
 func withCiliumCNI(cls *kubeoneapi.KubeOneCluster) {
 	cls.ClusterNetwork.CNI = &kubeoneapi.CNI{

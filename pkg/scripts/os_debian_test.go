@@ -67,6 +67,7 @@ func TestDebScript(t *testing.T) {
 			got, err := DebScript(&tt.cluster, tt.params)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("DebScript() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 
