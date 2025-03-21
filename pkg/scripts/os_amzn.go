@@ -200,24 +200,25 @@ sudo systemctl daemon-reload
 `
 )
 
-func KubeadmAmazonLinux(cluster *kubeoneapi.KubeOneCluster, force bool) (string, error) {
+func AmazonLinuxScript(cluster *kubeoneapi.KubeOneCluster, params Params) (string, error) {
 	proxy := cluster.Proxy.HTTPS
 	if proxy == "" {
 		proxy = cluster.Proxy.HTTP
 	}
 
 	data := Data{
-		"KUBELET":                true,
-		"KUBEADM":                true,
-		"KUBECTL":                true,
-		"NODE_BINARIES_URL":      cluster.AssetConfiguration.NodeBinaries.URL,
+		"UPGRADE":                params.Upgrade,
+		"KUBELET":                params.Kubelet,
+		"KUBECTL":                params.Kubectl,
+		"KUBEADM":                params.Kubeadm,
+		"FORCE":                  params.Force,
 		"CNI_URL":                cluster.AssetConfiguration.CNI.URL,
+		"NODE_BINARIES_URL":      cluster.AssetConfiguration.NodeBinaries.URL,
 		"KUBECTL_URL":            cluster.AssetConfiguration.Kubectl.URL,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
 		"PROXY":                  proxy,
-		"FORCE":                  force,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"USE_KUBERNETES_REPO":    cluster.AssetConfiguration.NodeBinaries.URL == "",
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
@@ -236,63 +237,4 @@ func RemoveBinariesAmazonLinux() (string, error) {
 	result, err := Render(removeBinariesAmazonLinuxScriptTemplate, Data{})
 
 	return result, fail.Runtime(err, "rendering removeBinariesAmazonLinuxScriptTemplate script")
-}
-
-func UpgradeKubeadmAndCNIAmazonLinux(cluster *kubeoneapi.KubeOneCluster) (string, error) {
-	proxy := cluster.Proxy.HTTPS
-	if proxy == "" {
-		proxy = cluster.Proxy.HTTP
-	}
-
-	data := Data{
-		"UPGRADE":                true,
-		"KUBEADM":                true,
-		"NODE_BINARIES_URL":      cluster.AssetConfiguration.NodeBinaries.URL,
-		"CNI_URL":                cluster.AssetConfiguration.CNI.URL,
-		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
-		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
-		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
-		"PROXY":                  proxy,
-		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-		"USE_KUBERNETES_REPO":    cluster.AssetConfiguration.NodeBinaries.URL == "",
-		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
-	}
-
-	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
-		return "", err
-	}
-
-	result, err := Render(kubeadmAmazonLinuxTemplate, data)
-
-	return result, fail.Runtime(err, "rendering kubeadmAmazonLinuxTemplate script")
-}
-
-func UpgradeKubeletAndKubectlAmazonLinux(cluster *kubeoneapi.KubeOneCluster) (string, error) {
-	proxy := cluster.Proxy.HTTPS
-	if proxy == "" {
-		proxy = cluster.Proxy.HTTP
-	}
-
-	data := Data{
-		"UPGRADE":                true,
-		"KUBELET":                true,
-		"KUBECTL":                true,
-		"NODE_BINARIES_URL":      cluster.AssetConfiguration.NodeBinaries.URL,
-		"KUBECTL_URL":            cluster.AssetConfiguration.Kubectl.URL,
-		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
-		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
-		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
-		"PROXY":                  proxy,
-		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-		"USE_KUBERNETES_REPO":    cluster.AssetConfiguration.NodeBinaries.URL == "",
-		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
-	}
-
-	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
-		return "", err
-	}
-
-	result, err := Render(kubeadmAmazonLinuxTemplate, data)
-
-	return result, fail.Runtime(err, "rendering kubeadmAmazonLinuxTemplate script")
 }

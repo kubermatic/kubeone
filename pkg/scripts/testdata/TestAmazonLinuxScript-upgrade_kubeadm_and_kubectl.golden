@@ -126,42 +126,13 @@ sudo mkdir -p /opt/bin /etc/kubernetes/pki /etc/kubernetes/manifests
 rm -rf /tmp/k8s-binaries
 mkdir -p /tmp/k8s-binaries
 cd /tmp/k8s-binaries
+sudo mkdir -p /opt/cni/bin
+curl -L "http://127.0.0.1/cni.tar.gz" | sudo tar -C /opt/cni/bin -xz
 curl -L --output /tmp/k8s-binaries/node.tar.gz http://127.0.0.1/node.tar.gz
 tar xvf node.tar.gz
-sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubelet /opt/bin/kubelet
-sudo ln -sf /opt/bin/kubelet /usr/bin/
-rm /tmp/k8s-binaries/kubernetes/node/bin/kubelet
-
-cat <<EOF | sudo tee /etc/systemd/system/kubelet.service
-[Unit]
-Description=kubelet: The Kubernetes Node Agent
-Documentation=https://kubernetes.io/docs/home/
-Wants=network-online.target
-After=network-online.target
-
-[Service]
-ExecStart=/opt/bin/kubelet
-Restart=always
-StartLimitInterval=0
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-sudo mkdir -p /etc/systemd/system/kubelet.service.d
-cat <<EOF | sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-[Service]
-Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf"
-Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml"
-# This is a file that "kubeadm init" and "kubeadm join" generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically
-EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
-# This is a file that the user can use for overrides of the kubelet args as a last resort. Preferably, the user should use
-# the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.
-EnvironmentFile=-/etc/default/kubelet
-ExecStart=
-ExecStart=/opt/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS
-EOF
+sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubeadm /opt/bin/kubeadm
+sudo ln -sf /opt/bin/kubeadm /usr/bin/
+rm /tmp/k8s-binaries/kubernetes/node/bin/kubeadm
 curl -L --output /tmp/k8s-binaries/kubectl http://127.0.0.1/kubectl.tar.gz
 sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubectl /opt/bin/kubectl
 sudo ln -sf /opt/bin/kubectl /usr/bin/
@@ -171,4 +142,3 @@ rm /tmp/k8s-binaries/kubectl
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet
-sudo systemctl restart kubelet

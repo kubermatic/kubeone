@@ -22,6 +22,7 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/nodeutils"
+	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/state"
 )
 
@@ -58,17 +59,12 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn exe
 	}
 
 	logger.Infoln("Upgrading kubeadm binary on the leader control plane...")
-	if err := upgradeKubeadmAndCNIBinaries(s, *node); err != nil {
+	if err := upgradeKubernetesBinaries(s, *node, scripts.Params{Kubeadm: true, Kubectl: true}); err != nil {
 		return err
 	}
 
 	logger.Infoln("Running 'kubeadm upgrade' on leader control plane node...")
 	if err := upgradeLeaderControlPlane(s, node.ID); err != nil {
-		return err
-	}
-
-	logger.Infoln("Upgrading kubernetes system binaries on the leader control plane...")
-	if err := upgradeKubeletAndKubectlBinaries(s, *node); err != nil {
 		return err
 	}
 

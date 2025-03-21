@@ -161,3 +161,45 @@ func Render(cmd string, variables map[string]interface{}) (string, error) {
 
 	return buf.String(), nil
 }
+
+type Params struct {
+	Force   bool
+	Upgrade bool
+	Kubelet bool
+	Kubectl bool
+	Kubeadm bool
+}
+
+func (params Params) String() string {
+	var str strings.Builder
+	var components []string
+
+	if params.Upgrade {
+		str.WriteString("upgrading ")
+	} else {
+		str.WriteString("installing ")
+	}
+
+	if params.Kubeadm {
+		components = append(components, "kubeadm")
+	}
+	if params.Kubectl {
+		components = append(components, "kubectl")
+	}
+	if params.Kubelet {
+		components = append(components, "kubelet")
+	}
+
+	if len(components) == 0 {
+		str.WriteString("nothing ")
+	} else {
+		str.WriteString(strings.Join(components, " and "))
+		str.WriteString(" ")
+	}
+
+	if params.Force {
+		str.WriteString("using force")
+	}
+
+	return strings.TrimSpace(str.String())
+}
