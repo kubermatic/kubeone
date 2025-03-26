@@ -1,15 +1,6 @@
 cni:
   exclusive: false
 
-hubble:
-  relay:
-    enabled: true
-  tls:
-    auto:
-      method: cronJob
-  ui:
-    enabled: true
-
 kubeProxyReplacement: true
 
 operator:
@@ -20,3 +11,23 @@ operator:
 
 preflight:
   enabled: false
+
+serviceAccounts:
+  hubblecertgen:
+    create: false
+  relay:
+    create: false
+  ui:
+    create: false
+
+hubble:
+  enabled: false
+  relay:
+    enabled: false
+  tls:
+    enabled: false
+    auto:
+      enabled: false
+      method: cronJob
+  ui:
+    enabled: false

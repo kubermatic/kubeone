@@ -8,11 +8,10 @@ metadata:
 data:
   config.yaml: |
     cluster-name: default
-    peer-service: "hubble-peer.kube-system.svc.cluster.local:443"
+    peer-service: "hubble-peer.kube-system.svc.cluster.local.:443"
     listen-address: :4245
     gops: true
     gops-port: "9893"
-    dial-timeout:
     retry-timeout:
     sort-buffer-len-max:
     sort-buffer-drain-timeout:
@@ -82,6 +81,7 @@ metadata:
   namespace: kube-system
 ---
 apiVersion: v1
+automountServiceAccountToken: false
 kind: ServiceAccount
 metadata:
   name: hubble-relay
@@ -92,6 +92,42 @@ kind: ServiceAccount
 metadata:
   name: hubble-ui
   namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/part-of: cilium
+  name: hubble-generate-certs
+  namespace: kube-system
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - create
+  - apiGroups:
+      - ""
+    resourceNames:
+      - hubble-server-certs
+      - hubble-relay-client-certs
+      - hubble-relay-server-certs
+      - hubble-metrics-server-certs
+      - hubble-ui-client-certs
+    resources:
+      - secrets
+    verbs:
+      - update
+  - apiGroups:
+      - ""
+    resourceNames:
+      - cilium-ca
+    resources:
+      - secrets
+    verbs:
+      - get
+      - update
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -466,7 +502,7 @@ spec:
           automountServiceAccountToken: true
           containers:
             - args:
-                - --ca-generate
+                - --ca-generate=true
                 - --ca-reuse-secret
                 - --ca-secret-namespace=kube-system
                 - --ca-secret-name=cilium-ca
@@ -487,7 +523,7 @@ spec:
                       - key encipherment
                       - server auth
                       - client auth
-                      validity: 26280h
+                      validity: 8760h
                     - name: hubble-relay-client-certs
                       namespace: kube-system
                       commonName: "*.hubble-relay.cilium.io"
@@ -497,7 +533,7 @@ spec:
                       - signing
                       - key encipherment
                       - client auth
-                      validity: 26280h
+                      validity: 8760h
               image: '{{ .InternalImages.Get "CiliumCertGen" }}'
               imagePullPolicy: IfNotPresent
               name: certgen
@@ -537,7 +573,7 @@ spec:
       automountServiceAccountToken: true
       containers:
         - args:
-            - --ca-generate
+            - --ca-generate=true
             - --ca-reuse-secret
             - --ca-secret-namespace=kube-system
             - --ca-secret-name=cilium-ca
@@ -558,7 +594,7 @@ spec:
                   - key encipherment
                   - server auth
                   - client auth
-                  validity: 26280h
+                  validity: 8760h
                 - name: hubble-relay-client-certs
                   namespace: kube-system
                   commonName: "*.hubble-relay.cilium.io"
@@ -568,7 +604,7 @@ spec:
                   - signing
                   - key encipherment
                   - client auth
-                  validity: 26280h
+                  validity: 8760h
           image: '{{ .InternalImages.Get "CiliumCertGen" }}'
           imagePullPolicy: IfNotPresent
           name: certgen
