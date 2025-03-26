@@ -896,25 +896,6 @@ spec:
     k8s-app: cilium-envoy
   type: ClusterIP
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app.kubernetes.io/name: hubble-peer
-    app.kubernetes.io/part-of: cilium
-    k8s-app: cilium
-  name: hubble-peer
-  namespace: kube-system
-spec:
-  internalTrafficPolicy: Local
-  ports:
-    - name: peer-service
-      port: 80
-      protocol: TCP
-      targetPort: 4244
-  selector:
-    k8s-app: cilium
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1241,6 +1222,9 @@ spec:
               readOnly: true
             - mountPath: /run/xtables.lock
               name: xtables-lock
+            - mountPath: /var/lib/cilium/tls/hubble
+              name: hubble-tls
+              readOnly: true
             - mountPath: /tmp
               name: tmp
       hostNetwork: true
@@ -1523,6 +1507,20 @@ spec:
             path: /proc/sys/kernel
             type: Directory
           name: host-proc-sys-kernel
+        - name: hubble-tls
+          projected:
+            defaultMode: 256
+            sources:
+              - secret:
+                  items:
+                    - key: tls.crt
+                      path: server.crt
+                    - key: tls.key
+                      path: server.key
+                    - key: ca.crt
+                      path: client-ca.crt
+                  name: hubble-server-certs
+                  optional: true
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 2

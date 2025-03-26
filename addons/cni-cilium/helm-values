@@ -21,12 +21,13 @@ serviceAccounts:
     create: false
 
 hubble:
+  enabled: false
   relay:
-    enabled: true
+    enabled: false
   tls:
     enabled: false
     auto:
       enabled: false
       method: cronJob
   ui:
-    enabled: true
+    enabled: false
