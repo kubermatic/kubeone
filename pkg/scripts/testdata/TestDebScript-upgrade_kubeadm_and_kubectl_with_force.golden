@@ -55,6 +55,11 @@ if sudo grep -q "deb http://apt.kubernetes.io/ kubernetes-xenial main" /etc/apt/
   rm -f /etc/apt/sources.list.d/kubernetes.list
 fi
 
+sudo install -m 0755 -d /etc/apt/keyrings
+LATEST_STABLE=$(curl -sL https://dl.k8s.io/release/stable.txt | sed 's/\.[0-9]*$//')
+curl -fsSL https://pkgs.k8s.io/core:/stable:/${LATEST_STABLE}/deb/Release.key | sudo gpg --dearmor --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
 	apt-transport-https \
@@ -64,14 +69,6 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 	apparmor-utils \
 	lsb-release \
 	rsync
-sudo install -m 0755 -d /etc/apt/keyrings
-
-LATEST_STABLE=$(curl -sL https://dl.k8s.io/release/stable.txt | sed 's/\.[0-9]*$//')
-
-curl -fsSL https://pkgs.k8s.io/core:/stable:/${LATEST_STABLE}/deb/Release.key | sudo gpg --dearmor --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-
-echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-sudo apt-get update
 
 kube_ver="1.30.0-*"
 sudo apt-mark unhold kubelet kubeadm kubectl kubernetes-cni cri-tools
@@ -93,6 +90,7 @@ sudo apt-mark unhold containerd.io || true
 sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	--option "Dpkg::Options::=--force-confold" \
 	--no-install-recommends \
+	--allow-downgrades \
 	-y \
 	containerd.io='1.7.*'
 sudo apt-mark hold containerd.io
@@ -136,8 +134,10 @@ sudo systemctl restart containerd
 sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	--option "Dpkg::Options::=--force-confold" \
 	--no-install-recommends \
+	--allow-downgrades \
 	-y \
 	kubeadm=${kube_ver} \
+	kubectl=${kube_ver} \
 	kubernetes-cni \
 	cri-tools
 
@@ -145,3 +145,4 @@ sudo apt-mark hold kubelet kubeadm kubectl kubernetes-cni cri-tools
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet
+sudo systemctl restart kubelet

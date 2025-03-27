@@ -158,7 +158,7 @@ func removeBinariesDebian(s *state.State) error {
 }
 
 func removeBinariesCentOS(s *state.State) error {
-	cmd, err := scripts.RemoveBinariesCentOS()
+	cmd, err := scripts.RemoveBinariesRHELLike()
 	if err != nil {
 		return err
 	}

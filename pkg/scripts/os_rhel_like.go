@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	kubeadmCentOSTemplate = `
+	kubeadmRHELLikeTemplate = `
 sudo swapoff -a
 sudo sed -i '/.*swap.*/d' /etc/fstab
 sudo setenforce 0 || true
@@ -113,7 +113,8 @@ sudo systemctl enable --now kubelet
 sudo systemctl restart kubelet
 {{ end }}
 `
-	removeBinariesCentOSScriptTemplate = `
+
+	removeBinariesRHELLikeScriptTemplate = `
 sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools || true
 sudo yum remove -y \
 	kubelet \
@@ -124,6 +125,7 @@ sudo rm -rf /opt/cni
 sudo rm -f /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 sudo systemctl daemon-reload
 `
+
 	disableNMCloudSetup = `
 if systemctl status 'nm-cloud-setup.timer' 2> /dev/null | grep -Fq "Active: active"; then
 sudo systemctl stop nm-cloud-setup.timer
@@ -134,50 +136,18 @@ fi
 `
 )
 
-func KubeadmCentOS(cluster *kubeoneapi.KubeOneCluster, force bool) (string, error) {
+func RHELLikeScript(cluster *kubeoneapi.KubeOneCluster, params Params) (string, error) {
 	proxy := cluster.Proxy.HTTPS
 	if proxy == "" {
 		proxy = cluster.Proxy.HTTP
 	}
 
 	data := Data{
-		"KUBELET":                true,
-		"KUBEADM":                true,
-		"KUBECTL":                true,
-		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
-		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
-		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
-		"PROXY":                  proxy,
-		"FORCE":                  force,
-		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
-		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
-	}
-
-	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
-		return "", err
-	}
-
-	result, err := Render(kubeadmCentOSTemplate, data)
-
-	return result, fail.Runtime(err, "rendering kubeadmCentOSTemplate script")
-}
-
-func RemoveBinariesCentOS() (string, error) {
-	result, err := Render(removeBinariesCentOSScriptTemplate, Data{})
-
-	return result, fail.Runtime(err, "rendering removeBinariesCentOSScriptTemplate script")
-}
-
-func UpgradeKubeadmAndCNICentOS(cluster *kubeoneapi.KubeOneCluster) (string, error) {
-	proxy := cluster.Proxy.HTTPS
-	if proxy == "" {
-		proxy = cluster.Proxy.HTTP
-	}
-
-	data := Data{
-		"UPGRADE":                true,
-		"KUBEADM":                true,
+		"UPGRADE":                params.Upgrade,
+		"KUBELET":                params.Kubelet,
+		"KUBECTL":                params.Kubectl,
+		"KUBEADM":                params.Kubeadm,
+		"FORCE":                  params.Force,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
 		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
@@ -191,41 +161,19 @@ func UpgradeKubeadmAndCNICentOS(cluster *kubeoneapi.KubeOneCluster) (string, err
 		return "", err
 	}
 
-	result, err := Render(kubeadmCentOSTemplate, data)
+	result, err := Render(kubeadmRHELLikeTemplate, data)
 
-	return result, fail.Runtime(err, "rendering kubeadmCentOSTemplate script")
-}
-
-func UpgradeKubeletAndKubectlCentOS(cluster *kubeoneapi.KubeOneCluster) (string, error) {
-	proxy := cluster.Proxy.HTTPS
-	if proxy == "" {
-		proxy = cluster.Proxy.HTTP
-	}
-
-	data := Data{
-		"UPGRADE":                true,
-		"KUBELET":                true,
-		"KUBECTL":                true,
-		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
-		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
-		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
-		"PROXY":                  proxy,
-		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
-		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
-	}
-
-	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
-		return "", err
-	}
-
-	result, err := Render(kubeadmCentOSTemplate, data)
-
-	return result, fail.Runtime(err, "rendering kubeadmCentOSTemplate script")
+	return result, fail.Runtime(err, "rendering kubeadmRHELLikeTemplate script")
 }
 
 func DisableNMCloudSetup() (string, error) {
 	result, err := Render(disableNMCloudSetup, nil)
 
 	return result, fail.Runtime(err, "rendering disableNMCloudSetup script")
+}
+
+func RemoveBinariesRHELLike() (string, error) {
+	result, err := Render(removeBinariesRHELLikeScriptTemplate, Data{})
+
+	return result, fail.Runtime(err, "rendering removeBinariesCentOSScriptTemplate script")
 }
