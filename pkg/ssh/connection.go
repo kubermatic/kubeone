@@ -38,9 +38,7 @@ import (
 
 const socketEnvPrefix = "env:"
 
-var (
-	_ executor.Tunneler = &connection{}
-)
+var _ executor.Tunneler = &connection{}
 
 // Opts represents all the possible options for connecting to
 // a remote server via SSH.
@@ -155,8 +153,15 @@ func NewConnection(connector *Connector, opts Opts) (executor.Interface, error) 
 				}
 			}
 
+			sshCert, ok := cert.(*ssh.Certificate)
+			if !ok {
+				return nil, fail.SSHError{
+					Op:  "cert.(*ssh.Certificate) type asserting",
+					Err: errors.New("type asserting failed"),
+				}
+			}
 			// create a signer using both the certificate and the private key:
-			certSigner, signersErr := ssh.NewCertSigner(cert.(*ssh.Certificate), signer)
+			certSigner, signersErr := ssh.NewCertSigner(sshCert, signer)
 			if signersErr != nil {
 				return nil, fail.SSHError{
 					Op:  "creating new signer with private key and certificate",

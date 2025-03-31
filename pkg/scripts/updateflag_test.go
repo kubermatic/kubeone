@@ -18,6 +18,4 @@ package scripts
 
 import "flag"
 
-var (
-	updateFlag = flag.Bool("update", false, "update testdata files")
-)
+var updateFlag = flag.Bool("update", false, "update testdata files")

@@ -57,11 +57,17 @@ LATEST_STABLE=$(curl -sL https://dl.k8s.io/release/stable.txt | sed 's/\.[0-9]*$
 cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
-baseurl=https://pkgs.k8s.io/core:/stable:/v1.26/rpm/
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.30/rpm/
 enabled=1
 gpgcheck=1
 gpgkey=https://pkgs.k8s.io/core:/stable:/${LATEST_STABLE}/rpm/repodata/repomd.xml.key
 EOF
+
+source /etc/os-release
+if [ "$ID" == "centos" ] && [ "$VERSION_ID" == "8" ]; then
+	sudo sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+	sudo sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+fi
 
 # We must clean 'yum' cache upon changing the package repository
 # because older 'yum' versions (e.g. CentOS and Amazon Linux 2)
@@ -81,9 +87,14 @@ sudo yum install -y \
 	rsync
 
 
-sudo yum versionlock delete containerd || true
-sudo yum install -y containerd-'1.7.*'
-sudo yum versionlock add containerd
+
+sudo yum install -y yum-utils
+sudo yum-config-manager --add-repo=https://download.docker.com/linux/rhel/docker-ce.repo
+
+
+sudo yum versionlock delete containerd.io || true
+sudo yum install -y containerd.io-'1.7.*'
+sudo yum versionlock add containerd.io
 
 
 sudo mkdir -p $(dirname /etc/containerd/config.toml)
@@ -120,60 +131,15 @@ sudo systemctl enable containerd
 sudo systemctl restart containerd
 
 
+sudo yum versionlock delete kubelet kubeadm kubectl kubernetes-cni cri-tools || true
 
-sudo mkdir -p /opt/bin /etc/kubernetes/pki /etc/kubernetes/manifests
-
-rm -rf /tmp/k8s-binaries
-mkdir -p /tmp/k8s-binaries
-cd /tmp/k8s-binaries
-sudo mkdir -p /opt/cni/bin
-curl -L "http://127.0.0.1/cni.tar.gz" | sudo tar -C /opt/cni/bin -xz
-curl -L --output /tmp/k8s-binaries/node.tar.gz http://127.0.0.1/node.tar.gz
-tar xvf node.tar.gz
-sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubelet /opt/bin/kubelet
-sudo ln -sf /opt/bin/kubelet /usr/bin/
-rm /tmp/k8s-binaries/kubernetes/node/bin/kubelet
-
-cat <<EOF | sudo tee /etc/systemd/system/kubelet.service
-[Unit]
-Description=kubelet: The Kubernetes Node Agent
-Documentation=https://kubernetes.io/docs/home/
-Wants=network-online.target
-After=network-online.target
-
-[Service]
-ExecStart=/opt/bin/kubelet
-Restart=always
-StartLimitInterval=0
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-sudo mkdir -p /etc/systemd/system/kubelet.service.d
-cat <<EOF | sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-[Service]
-Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf"
-Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml"
-# This is a file that "kubeadm init" and "kubeadm join" generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically
-EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
-# This is a file that the user can use for overrides of the kubelet args as a last resort. Preferably, the user should use
-# the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.
-EnvironmentFile=-/etc/default/kubelet
-ExecStart=
-ExecStart=/opt/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS
-EOF
-sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubeadm /opt/bin/kubeadm
-sudo ln -sf /opt/bin/kubeadm /usr/bin/
-rm /tmp/k8s-binaries/kubernetes/node/bin/kubeadm
-curl -L --output /tmp/k8s-binaries/kubectl http://127.0.0.1/kubectl.tar.gz
-sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubectl /opt/bin/kubectl
-sudo ln -sf /opt/bin/kubectl /usr/bin/
-rm /tmp/k8s-binaries/kubectl
-
-
+sudo yum install -y \
+	kubelet-1.30.0 \
+	kubernetes-cni \
+	cri-tools
+sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni cri-tools
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet
 sudo systemctl restart kubelet
+

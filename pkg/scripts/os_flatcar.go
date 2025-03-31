@@ -223,7 +223,7 @@ func UpgradeKubeadmAndCNIFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, er
 	return result, fail.Runtime(err, "rendering upgradeKubeadmAndCNIFlatcarScriptTemplate script")
 }
 
-func UpgradeKubeletAndKubectlFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
+func UpgradeKubernetesBinariesFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	data := Data{
 		"KUBERNETES_VERSION": cluster.Versions.Kubernetes,
 		"INSTALL_CONTAINERD": cluster.ContainerRuntime.Containerd,

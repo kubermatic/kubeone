@@ -97,7 +97,7 @@ address = "127.0.0.1:1338"
 
 [plugins]
 [plugins."io.containerd.grpc.v1.cri"]
-sandbox_image = "127.0.0.1:5000/pause:3.9"
+sandbox_image = "registry.k8s.io/pause:3.9"
 device_ownership_from_security_context = true
 [plugins."io.containerd.grpc.v1.cri".containerd]
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
@@ -107,8 +107,6 @@ runtime_type = "io.containerd.runc.v2"
 SystemdCgroup = true
 [plugins."io.containerd.grpc.v1.cri".registry]
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
-[plugins."io.containerd.grpc.v1.cri".registry.mirrors."127.0.0.1:5000"]
-endpoint = ["http://127.0.0.1:5000"]
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
 endpoint = ["https://registry-1.docker.io"]
 
@@ -128,23 +126,46 @@ sudo mkdir -p /opt/bin /etc/kubernetes/pki /etc/kubernetes/manifests
 rm -rf /tmp/k8s-binaries
 mkdir -p /tmp/k8s-binaries
 cd /tmp/k8s-binaries
+sudo mkdir -p /opt/cni/bin
+curl -L "http://127.0.0.1/cni.tar.gz" | sudo tar -C /opt/cni/bin -xz
+curl -L --output /tmp/k8s-binaries/node.tar.gz http://127.0.0.1/node.tar.gz
+tar xvf node.tar.gz
+sudo install --owner=0 --group=0 --mode=0755 /tmp/k8s-binaries/kubernetes/node/bin/kubelet /opt/bin/kubelet
+sudo ln -sf /opt/bin/kubelet /usr/bin/
+rm /tmp/k8s-binaries/kubernetes/node/bin/kubelet
+
+cat <<EOF | sudo tee /etc/systemd/system/kubelet.service
+[Unit]
+Description=kubelet: The Kubernetes Node Agent
+Documentation=https://kubernetes.io/docs/home/
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/opt/bin/kubelet
+Restart=always
+StartLimitInterval=0
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo mkdir -p /etc/systemd/system/kubelet.service.d
+cat <<EOF | sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+[Service]
+Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf"
+Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml"
+# This is a file that "kubeadm init" and "kubeadm join" generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically
+EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
+# This is a file that the user can use for overrides of the kubelet args as a last resort. Preferably, the user should use
+# the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.
+EnvironmentFile=-/etc/default/kubelet
+ExecStart=
+ExecStart=/opt/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS
+EOF
 
 
-
-# Amazon Linux 2 repos include the cri-tools package. These AL2 repos have higher
-# priority over the Kubernetes repos, so it's not possible to install cri-tools
-# from the Kubenretes repos at all, even if the cri-tools version in the
-# Kubernetes repos is newer. This is a problem because recent Kubernetes
-# versions require cri-tools versions that are newer than the latest available
-# cri-tools in the AL2 repos. We disable the priorities plugin  to allow yum
-# to install cri-tools from the Kubernetes repos.
-sudo yum install -y --disableplugin=priorities \
-	kubelet-1.30.0 \
-	kubeadm-1.30.0 \
-	kubectl-1.30.0 \
-	kubernetes-cni \
-	cri-tools
-sudo yum versionlock add kubelet kubeadm kubectl kubernetes-cni cri-tools
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet
