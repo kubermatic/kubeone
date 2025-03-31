@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/Masterminds/semver/v3"
+	"go.uber.org/multierr"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/fail"
@@ -32,13 +33,13 @@ import (
 )
 
 type Cluster struct {
-	ControlPlane            []Host
-	StaticWorkers           []Host
-	ExpectedVersion         *semver.Version
-	EncryptionConfiguration *EncryptionConfiguration
-	CCMClusterName          string
-	CCMStatus               *CCMStatus
-	Lock                    sync.Mutex
+	ExpectedKubernetesVersion *semver.Version
+	ControlPlane              []Host
+	StaticWorkers             []Host
+	EncryptionConfiguration   *EncryptionConfiguration
+	CCMClusterName            string
+	CCMStatus                 *CCMStatus
+	Lock                      sync.Mutex
 }
 
 type EncryptionConfiguration struct {
@@ -57,6 +58,7 @@ type CCMStatus struct {
 type Host struct {
 	Config *kubeoneapi.HostConfig
 
+	KernelRelease              ComponentStatus
 	ContainerRuntimeContainerd ComponentStatus
 	Kubelet                    ComponentStatus
 
@@ -81,14 +83,15 @@ type ContainerStatus struct {
 }
 
 const (
-	SystemDStatusUnknown    = 1 << iota // systemd unit unknown
-	SystemdDStatusDead                  // systemd unit dead
-	SystemDStatusRestarting             // systemd unit restarting
-	ComponentInstalled                  // installed (package, or direct download)
-	SystemDStatusActive                 // systemd unit is activated
-	SystemDStatusRunning                // systemd unit is running
-	KubeletInitialized                  // kubelet config found (means node is initialized)
-	PodRunning                          // pod is running
+	SystemDStatusUnknown    uint64 = 1 << iota // systemd unit unknown
+	SystemdDStatusDead                         // systemd unit dead
+	SystemDStatusRestarting                    // systemd unit restarting
+	ComponentInstalled                         // installed (package, or direct download)
+	SystemDStatusActive                        // systemd unit is activated
+	SystemDStatusRunning                       // systemd unit is running
+	KubeletInitialized                         // kubelet config found (means node is initialized)
+	PodRunning                                 // pod is running
+	KernelRelease4Dot19Plus                    // Kernel is 4.19+
 )
 
 /*
@@ -96,8 +99,20 @@ const (
 */
 
 const (
-	x90Days = time.Hour * 24 * 90
+	MoreThen4Dot19 = ">= 4.19"
+	x90Days        = time.Hour * 24 * 90
 )
+
+var MoreThen4Dot19Constraint = mustParseSemverConstraint(MoreThen4Dot19)
+
+func mustParseSemverConstraint(c string) *semver.Constraints {
+	constaint, err := semver.NewConstraint(c)
+	if err != nil {
+		panic(err)
+	}
+
+	return constaint
+}
 
 // CertsToExpireInLessThen90Days will return true if any of the control plane certificates are to be expired soon (90
 // days).
@@ -114,6 +129,36 @@ func (c *Cluster) CertsToExpireInLessThen90Days() bool {
 	}
 
 	return needRenew
+}
+
+func (c *Cluster) InspectKernelVersions() error {
+	const lessThem1Dot32 = "<1.32"
+
+	lessThen1Dot32Check, err := semver.NewConstraint(lessThem1Dot32)
+	if err != nil {
+		return err
+	}
+
+	if lessThen1Dot32Check.Check(c.ExpectedKubernetesVersion) {
+		// kubernetes releases older then 1.32 works OK with older kernels
+		return nil
+	}
+
+	var hostErrors []error
+
+	for _, host := range append(c.ControlPlane, c.StaticWorkers...) {
+		if host.KernelRelease.Status&KernelRelease4Dot19Plus == 0 {
+			hostErrors = append(hostErrors,
+				fail.NewConfigError("checking kernel release version",
+					"host %q has kernel version %q, which is not supported by kubernetes version %q",
+					host.Config.Hostname,
+					host.KernelRelease.Version,
+					c.ExpectedKubernetesVersion,
+				))
+		}
+	}
+
+	return multierr.Combine(hostErrors...)
 }
 
 // IsProvisioned returns is the target cluster provisioned.
@@ -214,7 +259,7 @@ func (c *Cluster) EtcdToleranceRemain() int {
 // UpgradeNeeded compares actual and expected Kubernetes versions for control plane and static worker nodes
 func (c *Cluster) UpgradeNeeded() (bool, error) {
 	for i := range c.ControlPlane {
-		verDiff := c.ExpectedVersion.Compare(c.ControlPlane[i].Kubelet.Version)
+		verDiff := c.ExpectedKubernetesVersion.Compare(c.ControlPlane[i].Kubelet.Version)
 		if verDiff > 0 {
 			return true, nil
 		} else if verDiff < 0 {
@@ -223,7 +268,7 @@ func (c *Cluster) UpgradeNeeded() (bool, error) {
 	}
 
 	for i := range c.StaticWorkers {
-		verDiff := c.ExpectedVersion.Compare(c.StaticWorkers[i].Kubelet.Version)
+		verDiff := c.ExpectedKubernetesVersion.Compare(c.StaticWorkers[i].Kubelet.Version)
 		if verDiff > 0 {
 			return true, nil
 		} else if verDiff < 0 {

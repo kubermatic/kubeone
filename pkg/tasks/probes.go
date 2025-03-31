@@ -74,6 +74,10 @@ var KubeProxyObjectKey = dynclient.ObjectKey{
 }
 
 func safeguard(s *state.State) error {
+	if err := s.LiveCluster.InspectKernelVersions(); err != nil {
+		return err
+	}
+
 	if !s.LiveCluster.IsProvisioned() {
 		return nil
 	}
@@ -339,7 +343,7 @@ func runProbes(s *state.State) error {
 	}
 
 	s.LiveCluster = &state.Cluster{
-		ExpectedVersion: expectedVersion,
+		ExpectedKubernetesVersion: expectedVersion,
 		EncryptionConfiguration: &state.EncryptionConfiguration{
 			Enable: false,
 		},
@@ -424,6 +428,11 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn executor.
 
 	var err error
 
+	foundHost.KernelRelease, err = kernelReleaseStatus(conn)
+	if err != nil {
+		return err
+	}
+
 	containerRuntimeOpts := []systemdUnitInfoOpt{withComponentVersion(versionCmdGenerator)}
 
 	if foundHost.Config.OperatingSystem == kubeoneapi.OperatingSystemNameFlatcar {
@@ -461,6 +470,36 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn executor.
 	s.LiveCluster.Lock.Unlock()
 
 	return nil
+}
+
+func kernelSemver(krelease string) (*semver.Version, error) {
+	kver := strings.SplitN(krelease, "-", 2)[0]
+
+	return semver.NewVersion(kver)
+}
+
+func kernelReleaseStatus(conn executor.Interface) (state.ComponentStatus, error) {
+	kver, _, _, err := conn.Exec("uname -r")
+	if err != nil {
+		return state.ComponentStatus{}, fail.SSH(err, "checking kernel release")
+	}
+
+	kver = strings.TrimSpace(kver)
+	semverKernel, err := kernelSemver(kver)
+	if err != nil {
+		return state.ComponentStatus{}, fail.Runtime(err, "parsing kernel release version: %q", kver)
+	}
+
+	kernelStatus := state.ComponentStatus{
+		Name:    "kernel release",
+		Version: semverKernel,
+	}
+
+	if state.MoreThen4Dot19Constraint.Check(semverKernel) {
+		kernelStatus.Status |= state.KernelRelease4Dot19Plus
+	}
+
+	return kernelStatus, nil
 }
 
 func investigateCluster(s *state.State) error {
