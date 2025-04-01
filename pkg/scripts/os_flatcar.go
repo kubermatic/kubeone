@@ -183,13 +183,28 @@ sudo systemctl start kubelet
 `
 )
 
-func KubeadmFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
+func FlatcarScript(cluster *kubeoneapi.KubeOneCluster, params Params) (string, error) {
+	var (
+		cmd string
+		err error
+	)
+
+	if params.Upgrade {
+		cmd, err = upgradeKubernetesBinariesFlatcar(cluster)
+	} else {
+		cmd, err = kubeadmFlatcar(cluster)
+	}
+
+	return cmd, err
+}
+
+func kubeadmFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	data := Data{
-		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
-		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
+		"CRITOOLS_VERSION":       criToolsVersion(cluster),
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
@@ -207,11 +222,11 @@ func RemoveBinariesFlatcar() (string, error) {
 	return result, fail.Runtime(err, "rendering removeBinariesFlatcarScriptTemplate script")
 }
 
-func UpgradeKubeadmAndCNIFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
+func upgradeKubeadmAndCNIFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	data := Data{
-		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
-		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
+		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
+		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
@@ -223,7 +238,7 @@ func UpgradeKubeadmAndCNIFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, er
 	return result, fail.Runtime(err, "rendering upgradeKubeadmAndCNIFlatcarScriptTemplate script")
 }
 
-func UpgradeKubernetesBinariesFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
+func upgradeKubernetesBinariesFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	data := Data{
 		"KUBERNETES_VERSION": cluster.Versions.Kubernetes,
 		"INSTALL_CONTAINERD": cluster.ContainerRuntime.Containerd,
