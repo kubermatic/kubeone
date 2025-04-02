@@ -139,11 +139,11 @@ func (scenario *scenarioMigrateCSIAndCCM) forceRolloutMachinedeployments(t *test
 		mdOld := md.DeepCopy()
 		mdNew := md
 
-		if mdNew.Spec.Template.Spec.ObjectMeta.Annotations == nil {
-			mdNew.Spec.Template.Spec.ObjectMeta.Annotations = map[string]string{}
+		if mdNew.Spec.Template.Spec.Annotations == nil {
+			mdNew.Spec.Template.Spec.Annotations = map[string]string{}
 		}
 
-		mdNew.Spec.Template.Spec.ObjectMeta.Annotations["forceRestart"] = time.Now().String()
+		mdNew.Spec.Template.Spec.Annotations["forceRestart"] = time.Now().String()
 
 		err := retryFn(func() error {
 			return client.Patch(context.Background(), &mdNew, ctrlruntimeclient.MergeFrom(mdOld))

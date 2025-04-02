@@ -243,9 +243,10 @@ func safeguardNodeSelectorsAndTolerations(s *state.State) error {
 			}
 			var foundMaster, foundControlPlane bool
 			for _, t := range pod.Spec.Tolerations {
-				if t.Key == nodeRoleMaster {
+				switch t.Key {
+				case nodeRoleMaster:
 					foundMaster = true
-				} else if t.Key == labelControlPlaneNode {
+				case labelControlPlaneNode:
 					foundControlPlane = true
 				}
 			}
