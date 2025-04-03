@@ -437,6 +437,9 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 	if !unknownProvider {
 		addonsToDeploy = append(addonsToDeploy, addonAction{
 			name: resources.AddonCSIExternalSnapshotter,
+			// supportFn: func() error {
+			// 	return migrateExternalSnapshotterController(s)
+			// },
 		})
 	}
 

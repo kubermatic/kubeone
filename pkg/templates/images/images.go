@@ -84,6 +84,7 @@ const (
 
 	// CSI external snapshotter
 	CSISnapshotController
+	CSISnapshotWebhook
 
 	// AWS EBS CSI
 	AwsEbsCSI
@@ -233,7 +234,8 @@ func optionalResources() map[Resource]map[string]string {
 			">= 1.32.0": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.32.1",
 		},
 
-		CSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v8.2.1"},
+		CSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v8.1.0"},
+		CSISnapshotWebhook:    {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v8.1.0"},
 
 		// AWS EBS CSI driver
 		AwsEbsCSI:                    {"*": "public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.40.0"},
