@@ -348,7 +348,7 @@ func (c *cloudProviderTests) cleanUp(t *testing.T) {
 			return false, nil
 		}
 
-		if currentSvc.ObjectMeta.DeletionTimestamp == nil {
+		if currentSvc.DeletionTimestamp == nil {
 			if err := c.client.Delete(ctx, currentSvc); err != nil {
 				// Make error transient so that we try to remove it again and
 				// not leak any resources
@@ -382,7 +382,7 @@ func (c *cloudProviderTests) cleanUp(t *testing.T) {
 			return false, nil
 		}
 
-		if currentSts.ObjectMeta.DeletionTimestamp == nil {
+		if currentSts.DeletionTimestamp == nil {
 			if err := c.client.Delete(ctx, currentSts); err != nil {
 				// Make error transient so that we try to remove it again and
 				// not leak any resources
@@ -412,7 +412,7 @@ func (c *cloudProviderTests) cleanUp(t *testing.T) {
 
 		for _, pvc := range pvcs.Items {
 			p := pvc
-			if p.ObjectMeta.DeletionTimestamp != nil {
+			if p.DeletionTimestamp != nil {
 				continue
 			}
 

@@ -241,7 +241,7 @@ func (output *Config) Apply(cluster *kubeonev1beta3.KubeOneCluster) error {
 	untainer := untainerHostConfigsOpts(cp.Untaint)
 
 	// build up a list of master nodes
-	cpHosts := cp.hostsSpec.toHostConfigs(idIncrementer, isLeader, untainer)
+	cpHosts := cp.toHostConfigs(idIncrementer, isLeader, untainer)
 
 	if len(cpHosts) > 0 {
 		cluster.ControlPlane.Hosts = cpHosts

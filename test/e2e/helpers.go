@@ -17,7 +17,6 @@ limitations under the License.
 package e2e
 
 import (
-	"archive/zip"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -50,14 +49,13 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/util/retry"
-	k8spath "k8s.io/utils/path"
 	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 	ctrlruntimelog "sigs.k8s.io/controller-runtime/pkg/log"
 )
 
 const (
 	labelControlPlaneNode = "node-role.kubernetes.io/control-plane"
-	prowjobImage          = "quay.io/kubermatic/build:go-1.24-node-20-0"
+	prowjobImage          = "quay.io/kubermatic/build:go-1.24-node-20-3"
 	k1CloneURI            = "ssh://git@github.com/kubermatic/kubeone.git"
 )
 
@@ -155,77 +153,6 @@ func kubeoneStableProwExtraRefs(baseRef string) []ProwRef {
 			PathAlias: "k8c.io/kubeone-stable",
 		},
 	}
-}
-
-func downloadKubeone(t *testing.T, version string) string { //nolint:deadcode,unused
-	binPath := filepath.Join(t.TempDir(), fmt.Sprintf("kubeone-%s", version))
-	zipPath := fmt.Sprintf("%s.zip", binPath)
-
-	exists, err := k8spath.Exists(k8spath.CheckSymlinkOnly, binPath)
-	if err != nil {
-		t.Fatalf("checking if kubeone already downloaded: %v", err)
-	}
-
-	if exists {
-		return binPath
-	}
-
-	const urlTemplate = "https://github.com/kubermatic/kubeone/releases/download/v%s/kubeone_%s_linux_amd64.zip"
-	downloadURL := fmt.Sprintf(urlTemplate, version, version)
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-	defer cancel()
-
-	req, err := http.NewRequestWithContext(ctx, "GET", downloadURL, nil)
-	if err != nil {
-		t.Fatalf("building http request to download kubeone: %v", err)
-	}
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		t.Fatalf("http request to download kubeone: %v", err)
-	}
-	defer resp.Body.Close()
-
-	zipBin, err := os.OpenFile(zipPath, os.O_CREATE|os.O_RDWR, 0o600)
-	if err != nil {
-		t.Fatalf("open kubeone destination file: %v", err)
-	}
-	defer zipBin.Close()
-
-	_, err = io.Copy(zipBin, resp.Body)
-	if err != nil {
-		t.Fatalf("downloading kubeone: %v", err)
-	}
-
-	fi, err := zipBin.Stat()
-	if err != nil {
-		t.Fatalf("file stat: %v", err)
-	}
-
-	unzip, err := zip.NewReader(zipBin, fi.Size())
-	if err != nil {
-		t.Fatalf("opening zip file for reading: %v", err)
-	}
-
-	unzipK1Bin, err := unzip.Open("kubeone")
-	if err != nil {
-		t.Fatalf("opening kubeone file from zip archive: %v", err)
-	}
-	defer unzipK1Bin.Close()
-
-	k1Bin, err := os.OpenFile(binPath, os.O_CREATE|os.O_WRONLY, 0o750)
-	if err != nil {
-		t.Fatalf("open kubeone destination file: %v", err)
-	}
-	defer k1Bin.Close()
-
-	_, err = io.Copy(k1Bin, unzipK1Bin)
-	if err != nil {
-		t.Fatalf("extracting kubeone from zip: %v", err)
-	}
-
-	return binPath
 }
 
 type kubeoneBinOpts func(*kubeoneBin)
@@ -587,7 +514,7 @@ func waitMachinesHasNodes(t *testing.T, k1 *kubeoneBin, client ctrlruntimeclient
 
 		t.Logf("checking %d machines for node reference", len(machineList.Items))
 		for _, machine := range machineList.Items {
-			if machine.ObjectMeta.DeletionTimestamp != nil {
+			if machine.DeletionTimestamp != nil {
 				t.Logf("machine %q is being deleted", machine.Name)
 				someMachinesLacksTheNode = true
 			}
@@ -644,10 +571,7 @@ func sonobuoyRunWithRunCount(ctx context.Context, t *testing.T, k1 *kubeoneBin, 
 		proxyURL:   proxyURL,
 	}
 
-	rerunFailed := false
-	if runCount > 0 {
-		rerunFailed = true
-	}
+	rerunFailed := runCount > 0
 
 	if err = retryFnWithBackoff(sonobuoyBackoff, func() error { return sb.Run(ctx, mode, rerunFailed) }); err != nil {
 		t.Fatalf("sonobuoy run failed: %v", err)
