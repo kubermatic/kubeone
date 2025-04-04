@@ -74,7 +74,7 @@ func TestKubeadmFlatcar(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			got, err := KubeadmFlatcar(&tt.args.cluster)
+			got, err := kubeadmFlatcar(&tt.args.cluster)
 			if !errors.Is(err, tt.err) {
 				t.Errorf("KubeadmFlatcar() error = %v, wantErr %v", err, tt.err)
 
@@ -106,7 +106,7 @@ func TestUpgradeKubeadmAndCNIFlatcar(t *testing.T) {
 		withKubeVersion("1.26.0"),
 		withInsecureRegistry("127.0.0.1:5000"),
 	)
-	got, err := UpgradeKubeadmAndCNIFlatcar(&c)
+	got, err := upgradeKubeadmAndCNIFlatcar(&c)
 	if err != nil {
 		t.Errorf("UpgradeKubeadmAndCNIFlatcar() error = %v", err)
 
@@ -123,7 +123,7 @@ func TestUpgradeKubeletAndKubectlFlatcar(t *testing.T) {
 		withKubeVersion("1.26.0"),
 		withInsecureRegistry("127.0.0.1:5000"),
 	)
-	got, err := UpgradeKubernetesBinariesFlatcar(&c)
+	got, err := upgradeKubernetesBinariesFlatcar(&c)
 	if err != nil {
 		t.Errorf("UpgradeKubeletAndKubectlFlatcar() error = %v", err)
 
