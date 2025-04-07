@@ -46,7 +46,7 @@ sudo systemctl force-reload systemd-journald
 
 
 yum_proxy=""
-yum_proxy="proxy=http://proxy.tld #kubeone"
+yum_proxy="proxy=http://proxy.aws #kubeone"
 
 grep -v '#kubeone' /etc/yum.conf > /tmp/yum.conf || true
 echo -n "${yum_proxy}" >> /tmp/yum.conf

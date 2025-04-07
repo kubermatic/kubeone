@@ -26,36 +26,10 @@ import (
 
 type genClusterOpts func(*kubeoneapi.KubeOneCluster)
 
-func withKubeVersion(ver string) genClusterOpts {
-	return func(cls *kubeoneapi.KubeOneCluster) {
-		cls.Versions.Kubernetes = ver
-	}
-}
-
-// func withNutanixCloudProvider(cls *kubeoneapi.KubeOneCluster) {
-// 	cls.CloudProvider = kubeoneapi.CloudProviderSpec{
-// 		Nutanix: &kubeoneapi.NutanixSpec{},
-// 	}
-// }
-
-func withCiliumCNI(cls *kubeoneapi.KubeOneCluster) {
-	cls.ClusterNetwork.CNI = &kubeoneapi.CNI{
-		Cilium: &kubeoneapi.CiliumSpec{},
-	}
-}
-
 func withProxy(proxy string) genClusterOpts {
 	return func(cls *kubeoneapi.KubeOneCluster) {
 		cls.Proxy.HTTPS = proxy
 		cls.Proxy.HTTP = proxy
-	}
-}
-
-func withRegistry(registry string) genClusterOpts {
-	return func(cls *kubeoneapi.KubeOneCluster) {
-		cls.RegistryConfiguration = &kubeoneapi.RegistryConfiguration{
-			OverwriteRegistry: registry,
-		}
 	}
 }
 

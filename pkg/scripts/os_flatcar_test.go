@@ -17,66 +17,56 @@ limitations under the License.
 package scripts
 
 import (
-	"errors"
 	"testing"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/testhelper"
 )
 
-func TestKubeadmFlatcar(t *testing.T) {
-	t.Parallel()
-
-	type args struct {
-		cluster kubeoneapi.KubeOneCluster
-	}
+func TestFlatcarScript(t *testing.T) {
 	tests := []struct {
-		name string
-		args args
-		err  error
+		name    string
+		cluster kubeoneapi.KubeOneCluster
+		params  Params
+		wantErr bool
 	}{
 		{
-			name: "force",
-			args: args{
-				cluster: genCluster(),
-			},
+			name:    "install all",
+			cluster: genCluster(),
+			params:  Params{Kubeadm: true, Kubectl: true, Kubelet: true},
 		},
 		{
-			name: "overwrite registry",
-			args: args{
-				cluster: genCluster(
-					withRegistry("127.0.0.1:5000"),
-				),
-			},
+			name:    "install all with force",
+			cluster: genCluster(),
+			params:  Params{Force: true, Kubeadm: true, Kubectl: true, Kubelet: true},
 		},
 		{
-			name: "with containerd",
-			args: args{
-				cluster: genCluster(),
-			},
+			name:    "install all with proxy",
+			cluster: genCluster(withProxy("http://proxy.tld")),
+			params:  Params{Kubeadm: true, Kubectl: true, Kubelet: true},
 		},
 		{
-			name: "with containerd with insecure registry",
-			args: args{
-				cluster: genCluster(
-					withInsecureRegistry("127.0.0.1:5000"),
-				),
-			},
+			name:    "upgrade kubeadm and kubectl",
+			cluster: genCluster(),
+			params:  Params{Upgrade: true, Kubeadm: true, Kubectl: true},
 		},
 		{
-			name: "with cilium",
-			args: args{
-				cluster: genCluster(withCiliumCNI),
-			},
+			name:    "upgrade kubeadm and kubectl with force",
+			cluster: genCluster(),
+			params:  Params{Force: true, Upgrade: true, Kubeadm: true, Kubectl: true},
+		},
+		{
+			name:    "upgrade kubelet",
+			cluster: genCluster(),
+			params:  Params{Upgrade: true, Kubelet: true},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			got, err := KubeadmFlatcar(&tt.args.cluster)
-			if !errors.Is(err, tt.err) {
-				t.Errorf("KubeadmFlatcar() error = %v, wantErr %v", err, tt.err)
+			got, err := FlatcarScript(&tt.cluster, tt.params)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FlatcarScript() error = %v, wantErr %v", err, tt.wantErr)
 
 				return
 			}
@@ -87,45 +77,9 @@ func TestKubeadmFlatcar(t *testing.T) {
 }
 
 func TestRemoveBinariesFlatcar(t *testing.T) {
-	t.Parallel()
-
 	got, err := RemoveBinariesFlatcar()
 	if err != nil {
 		t.Errorf("RemoveBinariesFlatcar() error = %v", err)
-
-		return
-	}
-
-	testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
-}
-
-func TestUpgradeKubeadmAndCNIFlatcar(t *testing.T) {
-	t.Parallel()
-
-	c := genCluster(
-		withKubeVersion("1.26.0"),
-		withInsecureRegistry("127.0.0.1:5000"),
-	)
-	got, err := UpgradeKubeadmAndCNIFlatcar(&c)
-	if err != nil {
-		t.Errorf("UpgradeKubeadmAndCNIFlatcar() error = %v", err)
-
-		return
-	}
-
-	testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
-}
-
-func TestUpgradeKubeletAndKubectlFlatcar(t *testing.T) {
-	t.Parallel()
-
-	c := genCluster(
-		withKubeVersion("1.26.0"),
-		withInsecureRegistry("127.0.0.1:5000"),
-	)
-	got, err := UpgradeKubernetesBinariesFlatcar(&c)
-	if err != nil {
-		t.Errorf("UpgradeKubeletAndKubectlFlatcar() error = %v", err)
 
 		return
 	}

@@ -42,7 +42,7 @@ func TestAmazonLinuxScript(t *testing.T) {
 		},
 		{
 			name:    "install all with proxy",
-			cluster: genCluster(withDefaultAssetConfiguration, withProxy("http://proxy.tld")),
+			cluster: genCluster(withDefaultAssetConfiguration, withProxy("http://proxy.aws")),
 			params:  Params{Kubeadm: true, Kubectl: true, Kubelet: true},
 		},
 		{
