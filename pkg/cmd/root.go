@@ -135,6 +135,7 @@ func newRoot() *cobra.Command {
 		statusCmd(fs),
 		versionCmd(),
 		uiCmd(fs),
+		mirrorImagesCmd(fs),
 	)
 
 	return rootCmd

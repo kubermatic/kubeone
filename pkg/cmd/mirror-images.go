@@ -1,0 +1,321 @@
+/*
+Copyright 2025 The KubeOne Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+package cmd
+
+import (
+	"context"
+	"fmt"
+	"io"
+	"net/http"
+	"strings"
+	"time"
+
+	"github.com/MakeNowJust/heredoc/v2"
+	"github.com/Masterminds/semver/v3"
+	"github.com/google/go-containerregistry/pkg/crane"
+	"github.com/google/go-containerregistry/pkg/name"
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+	"k8s.io/apimachinery/pkg/util/sets"
+	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/client-go/util/retry"
+
+	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/templates/images"
+)
+
+// BaseURL is the template URL for fetching Kubernetes component version constants
+const BaseURL = "https://raw.githubusercontent.com/kubernetes/kubernetes/%s/cmd/kubeadm/app/constants/constants.go"
+
+// Component names used to identify Kubernetes system components
+const (
+	Etcd              = "etcd"                    // etcd key-value store
+	KubeAPIServer     = "kube-apiserver"          // Kubernetes API server
+	KubeControllerMgr = "kube-controller-manager" // Controller manager component
+	KubeScheduler     = "kube-scheduler"          // Scheduler component
+	KubeProxy         = "kube-proxy"              // Network proxy component
+	CoreDNS           = "coredns"                 // CoreDNS DNS server
+	Pause             = "pause"                   // Pause container
+)
+
+// VersionConstants contains constant names from Kubernetes source that store version information
+const (
+	PauseVersion   = "PauseVersion"       // Constant name for pause container version
+	EtcdVersion    = "DefaultEtcdVersion" // Constant name for etcd version
+	CoreDNSVersion = "CoreDNSVersion"     // Constant name for CoreDNS version
+)
+
+// KubernetesRegistry is the default container registry for Kubernetes components
+const KubernetesRegistry = "registry.k8s.io"
+
+type mirrorImagesOpts struct {
+	globalOptions
+	Filter            string `longflag:"filter"`
+	KubernetesVersion string `longflag:"kubernetes-version" shortflag:"k"`
+	DryRun            bool   `longflag:"dry-run"`
+	Registry          string
+}
+
+func mirrorImagesCmd(*pflag.FlagSet) *cobra.Command {
+	opts := &mirrorImagesOpts{}
+
+	cmd := &cobra.Command{
+		Use:   "mirror-images [registry]",
+		Short: "Mirror images to another registry",
+		Long: heredoc.Doc(`
+            Mirror images used by KubeOne to another registry.
+            This command lists the images (including control-plane images) and copies them to the specified target registry.
+        `),
+		Example: heredoc.Doc(`
+            # Mirror all images to a target registry
+            kubeone mirror-images myregistry.com
+
+            # Mirror images for a specific Kubernetes version
+            kubeone mirror-images --kubernetes-version=v1.26.0 --filter=controle-plane myregistry.com
+        `),
+		SilenceErrors: true,
+		RunE: func(_ *cobra.Command, args []string) error {
+			if len(args) != 1 {
+				return fmt.Errorf("error: registry is required. Usage: kubeone mirror-images [registry]")
+			}
+			opts.Registry = args[0]
+
+			if opts.KubernetesVersion == "" {
+				return fmt.Errorf("--kubernetes-version flag is required")
+			}
+
+			ver, err := semver.NewVersion(opts.KubernetesVersion)
+			if err != nil {
+				return fmt.Errorf("invalid Kubernetes version: %w", err)
+			}
+
+			opts.KubernetesVersion = fmt.Sprintf("v%s", ver)
+			logger := newLogger(opts.Verbose, opts.LogFormat)
+
+			return mirrorImages(logger, opts)
+		},
+	}
+
+	cmd.Flags().StringVar(
+		&opts.Filter,
+		longFlagName(opts, "Filter"),
+		"none",
+		"images list filter, one of the [none|base|optional]")
+
+	cmd.Flags().StringVar(
+		&opts.KubernetesVersion,
+		longFlagName(opts, "KubernetesVersion"),
+		"",
+		"Kubernetes version (required, format: vX.Y[.Z])")
+
+	return cmd
+}
+
+func mirrorImages(logger *logrus.Logger, opts *mirrorImagesOpts) error {
+	ctx := context.Background()
+	controlPlaneOnly := false
+	listFilter := images.ListFilterNone
+	switch opts.Filter {
+	case "none":
+	case "control-plane":
+		controlPlaneOnly = true
+	case "base":
+		listFilter = images.ListFilterBase
+	case "optional":
+		listFilter = images.ListFilterOpional
+	default:
+		return fail.RuntimeError{
+			Op:  "checking filter flag",
+			Err: errors.New("--filter can be only one of [none|base|optional|control-plane]"),
+		}
+	}
+
+	logger.Info("🚀 Collecting images used by kubeone ...")
+	logger.Info(fmt.Sprintf("🚢 Kubernetes Version: %s", opts.KubernetesVersion))
+
+	imageSet := sets.New[string]()
+	cpImages, err := getControlPlaneImages(ctx, opts.KubernetesVersion)
+	if err != nil {
+		return err
+	}
+
+	imageSet.Insert(cpImages...)
+	if !controlPlaneOnly {
+		resolver, resolveErr := newImageResolver(opts.KubernetesVersion, "")
+		if resolveErr != nil {
+			return resolveErr
+		}
+		images := resolver.List(listFilter)
+		imageSet.Insert(images...)
+	}
+
+	var verb string
+	var count, fullCount int
+	logger.WithField("registry", opts.Registry).Info("📦 Mirroring images…")
+	count, fullCount, err = CopyImages(ctx, logger, opts.DryRun, sets.List(imageSet), opts.Registry, "kubeone")
+	if err != nil {
+		return fmt.Errorf("failed to mirror all images (successfully copied %d/%d): %w", count, fullCount, err)
+	}
+
+	verb = "mirroring"
+	if opts.DryRun {
+		verb = "mirroring (dry-run)"
+	}
+
+	logger.WithFields(logrus.Fields{"copied-image-count": count, "all-image-count": fullCount}).Info(fmt.Sprintf("✅ Finished %s images.", verb))
+
+	return nil
+}
+
+// getControlPlaneImages returns a list of container images used on control plane node.
+func getControlPlaneImages(ctx context.Context, version string) ([]string, error) {
+	images := make([]string, 0)
+
+	// start with core kubernetes images
+	for _, component := range []string{KubeAPIServer, KubeControllerMgr, KubeScheduler, KubeProxy} {
+		images = append(images, getGenericImage(KubernetesRegistry, component, version))
+	}
+
+	for _, component := range []string{Etcd, CoreDNS, Pause} {
+		img, err := getComponentImage(ctx, component, version)
+		if err != nil {
+			return nil, err
+		}
+		images = append(images, img)
+	}
+
+	return images, nil
+}
+
+func getGenericImage(prefix, image, tag string) string {
+	return fmt.Sprintf("%s/%s:%s", prefix, image, tag)
+}
+
+func getComponentImage(ctx context.Context, component, version string) (string, error) {
+	var target string
+	registry := KubernetesRegistry
+	switch component {
+	case Etcd:
+		target = EtcdVersion
+	case CoreDNS:
+		registry += "/coredns"
+		target = CoreDNSVersion
+	case Pause:
+		target = PauseVersion
+	}
+
+	tag, err := getConstantValue(ctx, version, target)
+	if err != nil {
+		return "", err
+	}
+
+	return getGenericImage(registry, component, tag), nil
+}
+
+func getConstantValue(ctx context.Context, version, constant string) (string, error) {
+	req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf(BaseURL, version), nil)
+	if err != nil {
+		return "", err
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	body, _ := io.ReadAll(resp.Body)
+	for _, line := range strings.Split(string(body), "\n") {
+		line = strings.TrimSpace(line)
+		if strings.HasPrefix(line, constant+" =") {
+			return strings.Trim(strings.SplitN(line, "=", 2)[1], `" `), nil
+		}
+	}
+
+	return "", fmt.Errorf("cannot find the value for %s", constant)
+}
+
+func CopyImages(ctx context.Context, log logrus.FieldLogger, dryRun bool, images []string, registry, userAgent string) (int, int, error) {
+	var failedImages []string
+	for i, source := range images {
+		dest, err := retagImage(log, source, registry)
+		if err != nil {
+			return 0, len(images), fmt.Errorf("failed to prepare image: %w", err)
+		}
+
+		log := log.WithFields(logrus.Fields{
+			"count": fmt.Sprintf("%d/%d", i+1, len(images)),
+			"image": source,
+		})
+
+		if dryRun {
+			log.Debugf("Dry run: Image %s is prepared", source)
+
+			continue
+		}
+
+		if err := copyWithRetry(ctx, log, source, dest, userAgent); err != nil {
+			log.Errorf("Failed to copy image: %v", err)
+			failedImages = append(failedImages, fmt.Sprintf("  - %s", source))
+		}
+	}
+
+	copied := len(images) - len(failedImages)
+	if len(failedImages) > 0 {
+		return copied, len(images), fmt.Errorf("failed images:\n%s", strings.Join(failedImages, "\n"))
+	}
+
+	return copied, len(images), nil
+}
+
+func retagImage(log logrus.FieldLogger, source, registry string) (string, error) {
+	ref, err := name.ParseReference(source)
+	if err != nil {
+		return "", fmt.Errorf("invalid image reference: %w", err)
+	}
+
+	dest := fmt.Sprintf("%s/%s:%s", registry, ref.Context().RepositoryStr(), ref.Identifier())
+	log.WithField("target", dest).Debug("Image retagged")
+
+	return dest, nil
+}
+
+func copyWithRetry(ctx context.Context, log logrus.FieldLogger, src, dst, userAgent string) error {
+	opts := []crane.Option{
+		crane.WithContext(ctx),
+		crane.WithUserAgent(userAgent),
+	}
+
+	retryPolicy := wait.Backoff{
+		Steps:    5,
+		Duration: 1 * time.Second,
+		Factor:   1.5,
+		Jitter:   0.1,
+	}
+
+	return retry.OnError(retryPolicy, func(error) bool { return true }, func() error {
+		log.Info("Copying image...")
+		err := crane.Copy(src, dst, opts...)
+		if err != nil {
+			log.Error("Copying image:", err)
+		}
+
+		return err
+	})
+}
