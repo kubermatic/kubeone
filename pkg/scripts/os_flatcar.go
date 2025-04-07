@@ -133,8 +133,8 @@ func FlatcarScript(cluster *kubeoneapi.KubeOneCluster, params Params) (string, e
 		"KUBEADM":                params.Kubeadm,
 		"FORCE":                  params.Force,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
-		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       criToolsVersion(cluster),
+		"KUBERNETES_CNI_VERSION": flatcarCNIVersion(cluster.Versions.Kubernetes),
+		"CRITOOLS_VERSION":       criToolsVersion(cluster.Versions.Kubernetes),
 		"PROXY":                  proxy,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
@@ -155,22 +155,33 @@ func RemoveBinariesFlatcar() (string, error) {
 	return result, fail.Runtime(err, "rendering removeBinariesFlatcarScriptTemplate script")
 }
 
-const defaultKubernetesCNIVersion = "1.3.0"
-
-func criToolsVersion(cluster *kubeoneapi.KubeOneCluster) string {
-	// Validation passed at this point so we know that version is valid
-	kubeSemVer := semver.MustParse(cluster.Versions.Kubernetes)
+func flatcarCNIVersion(kubeVersion string) string {
+	kubeSemVer := semver.MustParse(kubeVersion)
 
 	switch kubeSemVer.Minor() {
-	case 29:
-		return "1.29.0"
+	case 30:
+		return "1.4.0"
+	case 31:
+		return "1.5.1"
+	case 32:
+		return "1.6.0"
+	default:
+		return "1.6.0"
+	}
+}
+
+func criToolsVersion(kubeVersion string) string {
+	// Validation passed at this point so we know that version is valid
+	kubeSemVer := semver.MustParse(kubeVersion)
+
+	switch kubeSemVer.Minor() {
 	case 30:
 		return "1.30.1"
 	case 31:
 		return "1.31.1"
 	case 32:
 		return "1.32.0"
+	default:
+		return "1.32.0"
 	}
-
-	return ""
 }
