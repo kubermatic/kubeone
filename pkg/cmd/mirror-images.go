@@ -36,12 +36,17 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/util/retry"
 
+	kubeonevalidation "k8c.io/kubeone/pkg/apis/kubeone/validation"
 	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/semverutil"
 	"k8c.io/kubeone/pkg/templates/images"
 )
 
 // BaseURL is the template URL for fetching Kubernetes component version constants
 const BaseURL = "https://raw.githubusercontent.com/kubernetes/kubernetes/%s/cmd/kubeadm/app/constants/constants.go"
+
+// VerBaseURL is the template URL for fetching the latest patch for a specific Kubernetes version.
+const VerBaseURL = "https://dl.k8s.io/release/stable-%s.txt"
 
 // Component names used to identify Kubernetes system components
 const (
@@ -66,10 +71,10 @@ const KubernetesRegistry = "registry.k8s.io"
 
 type mirrorImagesOpts struct {
 	globalOptions
-	Filter            string `longflag:"filter"`
-	KubernetesVersion string `longflag:"kubernetes-version" shortflag:"k"`
-	DryRun            bool   `longflag:"dry-run"`
-	Registry          string
+	Filter             string `longflag:"filter"`
+	KubernetesVersions string `longflag:"kubernetes-versions" shortflag:"k"`
+	DryRun             bool   `longflag:"dry-run"`
+	Registry           string
 }
 
 func mirrorImagesCmd(*pflag.FlagSet) *cobra.Command {
@@ -86,29 +91,34 @@ func mirrorImagesCmd(*pflag.FlagSet) *cobra.Command {
             # Mirror all images to a target registry
             kubeone mirror-images myregistry.com
 
-            # Mirror images for a specific Kubernetes version
-            kubeone mirror-images --kubernetes-version=v1.26.0 --filter=controle-plane myregistry.com
+            # Mirror images for a specific Kubernetes versions
+            kubeone mirror-images --kubernetes-versions=v1.26.0,v1.29.0 --filter=control-plane myregistry.com
         `),
 		SilenceErrors: true,
 		RunE: func(_ *cobra.Command, args []string) error {
+			var err error
+			logger := newLogger(opts.Verbose, opts.LogFormat)
 			if len(args) != 1 {
 				return fmt.Errorf("error: registry is required. Usage: kubeone mirror-images [registry]")
 			}
 			opts.Registry = args[0]
 
-			if opts.KubernetesVersion == "" {
-				return fmt.Errorf("--kubernetes-version flag is required")
+			// Determine the list of Kubernetes versions to process
+			var versions []string
+			if opts.KubernetesVersions == "" {
+				// Call the default-versions() function if no version is provided
+				versions, err = defaultVersions(logger)
+				if err != nil {
+					return fmt.Errorf("failed to get default Kubernetes versions: %w", err)
+				}
+			} else {
+				// Split the provided versions by commas
+				if versions, err = validatedVersions(logger, opts.KubernetesVersions); err != nil {
+					return err
+				}
 			}
 
-			ver, err := semver.NewVersion(opts.KubernetesVersion)
-			if err != nil {
-				return fmt.Errorf("invalid Kubernetes version: %w", err)
-			}
-
-			opts.KubernetesVersion = fmt.Sprintf("v%s", ver)
-			logger := newLogger(opts.Verbose, opts.LogFormat)
-
-			return mirrorImages(logger, opts)
+			return mirrorImages(logger, opts, versions)
 		},
 	}
 
@@ -116,18 +126,96 @@ func mirrorImagesCmd(*pflag.FlagSet) *cobra.Command {
 		&opts.Filter,
 		longFlagName(opts, "Filter"),
 		"none",
-		"images list filter, one of the [none|base|optional]")
+		"images list filter, one of the [none|base|optional|control-plane]")
 
 	cmd.Flags().StringVar(
-		&opts.KubernetesVersion,
-		longFlagName(opts, "KubernetesVersion"),
+		&opts.KubernetesVersions,
+		longFlagName(opts, "KubernetesVersions"),
 		"",
-		"Kubernetes version (required, format: vX.Y[.Z])")
+		"Kubernetes versions (comma-separated, format: vX.Y[.Z])")
+
+	cmd.Flags().BoolVar(
+		&opts.DryRun,
+		longFlagName(opts, "DryRun"),
+		false,
+		"Only print the names of source and destination images",
+	)
 
 	return cmd
 }
 
-func mirrorImages(logger *logrus.Logger, opts *mirrorImagesOpts) error {
+func validatedVersions(logger *logrus.Logger, kubeversions string) ([]string, error) {
+	versions := strings.Split(kubeversions, ",")
+	for i, version := range versions {
+		ver, err := semver.NewVersion(version)
+		if err != nil {
+			return nil, fmt.Errorf("invalid Kubernetes version: %w", err)
+		}
+
+		versions[i] = ver.String()
+		logger.Info(fmt.Sprintf("🚢 Extracted the desired Kubernetes Version: %s", version))
+	}
+
+	return versions, nil
+}
+
+func defaultVersions(logger *logrus.Logger) ([]string, error) {
+	var allVersions []string
+
+	// Get the range of minor versions between the provided min and max.
+	minorVersions, err := semverutil.GetMinorRange(kubeonevalidation.MinimumSupportedVersion, kubeonevalidation.MaximumSupportedVersion)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve minor version range: %w", err)
+	}
+	for _, minor := range minorVersions {
+		// Get the latest patch for the given minor version.
+		latestPatch, err := fetchLatestPatchForKubernetesVersion(minor)
+		if err != nil {
+			return nil, fmt.Errorf("failed to fetch latest patch for version %s: %w", minor, err)
+		}
+
+		patchRange, err := semverutil.GetPatchRange(fmt.Sprintf("%s.0", minor), latestPatch)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get patch range from for %s: %w", minor, err)
+		}
+
+		logger.Infof("🚢 Extracted patches for Kubernetes version %s", minor)
+		allVersions = append(allVersions, patchRange...)
+	}
+
+	return allVersions, nil
+}
+
+// fetchLatestPatchForKubernetesVersion fetches the latest patch for a specific Kubernetes version.
+func fetchLatestPatchForKubernetesVersion(version string) (string, error) {
+	req, err := http.NewRequest("GET", fmt.Sprintf(VerBaseURL, version), nil)
+	if err != nil {
+		return "", err
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	// Check if the response status code is OK (200)
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("unexpected HTTP status code: %d", resp.StatusCode)
+	}
+
+	// Read the response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	return string(body), nil
+}
+
+func mirrorImages(logger *logrus.Logger, opts *mirrorImagesOpts, versions []string) error {
+	var err error
+	var cpImages []string
 	ctx := context.Background()
 	controlPlaneOnly := false
 	listFilter := images.ListFilterNone
@@ -147,22 +235,24 @@ func mirrorImages(logger *logrus.Logger, opts *mirrorImagesOpts) error {
 	}
 
 	logger.Info("🚀 Collecting images used by kubeone ...")
-	logger.Info(fmt.Sprintf("🚢 Kubernetes Version: %s", opts.KubernetesVersion))
 
 	imageSet := sets.New[string]()
-	cpImages, err := getControlPlaneImages(ctx, opts.KubernetesVersion)
-	if err != nil {
-		return err
-	}
-
-	imageSet.Insert(cpImages...)
-	if !controlPlaneOnly {
-		resolver, resolveErr := newImageResolver(opts.KubernetesVersion, "")
-		if resolveErr != nil {
-			return resolveErr
+	for _, ver := range versions {
+		version := fmt.Sprintf("v%s", ver)
+		cpImages, err = getControlPlaneImages(ctx, version)
+		if err != nil {
+			return err
 		}
-		images := resolver.List(listFilter)
-		imageSet.Insert(images...)
+
+		imageSet.Insert(cpImages...)
+		if !controlPlaneOnly {
+			resolver, resolveErr := newImageResolver(version, "")
+			if resolveErr != nil {
+				return resolveErr
+			}
+			images := resolver.List(listFilter)
+			imageSet.Insert(images...)
+		}
 	}
 
 	var verb string
@@ -265,7 +355,7 @@ func CopyImages(ctx context.Context, log logrus.FieldLogger, dryRun bool, images
 		})
 
 		if dryRun {
-			log.Debugf("Dry run: Image %s is prepared", source)
+			log.Info("Dry run:")
 
 			continue
 		}
