@@ -1,4 +1,5 @@
 # Kubermatic KubeOne
+chore(test): Pre release testing for digitalocean
 
 <p align="center">
   <img src="docs/img/kubeone-logo-text.png#gh-light-mode-only" width="700px" />
