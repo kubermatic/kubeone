@@ -32,29 +32,42 @@ source /etc/kubeone/proxy-env
 {{ template "sysctl-k8s" . }}
 {{ template "journald-config" }}
 
+{{- with .KUBERNETES_CNI_VERSION }}
 sudo mkdir -p /opt/bin /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
-curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .KUBERNETES_CNI_VERSION }}/cni-plugins-linux-${HOST_ARCH}-v{{ .KUBERNETES_CNI_VERSION }}.tgz" |
+curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ . }}/cni-plugins-linux-${HOST_ARCH}-v{{ . }}.tgz" |
 	sudo tar -C /opt/cni/bin -xz
-
-RELEASE="v{{ .KUBERNETES_VERSION }}"
-CRI_TOOLS_RELEASE="v{{ .CRITOOLS_VERSION }}"
-
+{{- end }}
+{{- with .CRITOOLS_VERSION }}
+CRI_TOOLS_RELEASE="v{{ . }}"
 curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_TOOLS_RELEASE}/crictl-${CRI_TOOLS_RELEASE}-linux-${HOST_ARCH}.tar.gz |
 	sudo tar -C /opt/bin -xz
+{{- end }}
 
-{{ if .INSTALL_CONTAINERD }}
+{{- if .INSTALL_CONTAINERD }}
 {{ template "flatcar-containerd" . }}
-{{ end }}
+{{- end }}
+binaries=()
+{{- with .KUBELET }}
+binaries+=('kubelet')
+{{- end }}
+{{- with .KUBECTL }}
+binaries+=('kubectl')
+{{- end }}
+{{- with .KUBEADM }}
+binaries+=('kubeadm')
+{{- end }}
 
-cd /opt/bin
-k8s_rel_baseurl=https://dl.k8s.io
-for binary in kubeadm kubelet kubectl; do
-	curl -L --output /tmp/$binary \
-		$k8s_rel_baseurl/${RELEASE}/bin/linux/${HOST_ARCH}/$binary
-	sudo install --owner=0 --group=0 --mode=0755 /tmp/$binary /opt/bin/$binary
-	rm /tmp/$binary
+RELEASE="v{{ .KUBERNETES_VERSION }}"
+for binary in "${binaries[@]}" ; do
+	curl \
+		--location \
+		--output "/tmp/${binary}" \
+		"https://dl.k8s.io/release/${RELEASE}/bin/linux/${HOST_ARCH}/${binary}"
+	sudo install --owner=0 --group=0 --mode=0755 "/tmp/${binary}" "/opt/bin/${binary}"
+	rm "/tmp/${binary}"
 done
 
+{{- with .KUBELET }}
 cat <<EOF | sudo tee /etc/systemd/system/kubelet.service
 [Unit]
 Description=kubelet: The Kubernetes Node Agent
@@ -88,6 +101,11 @@ EOF
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now kubelet
+{{- end }}
+
+{{- if or .FORCE .KUBELET }}
+sudo systemctl restart kubelet
+{{- end }}
 `
 
 	removeBinariesFlatcarScriptTemplate = `
@@ -100,94 +118,24 @@ sudo rm -f /etc/systemd/system/kubelet.service /etc/systemd/system/kubelet.servi
 # Reload systemd
 sudo systemctl daemon-reload
 `
-
-	upgradeKubeadmAndCNIFlatcarScriptTemplate = `
-{{ template "detect-host-cpu-architecture" }}
-
-{{- if .INSTALL_CONTAINERD -}}
-{{ template "flatcar-containerd" . }}
-{{ end }}
-
-source /etc/kubeone/proxy-env
-
-sudo mkdir -p /opt/cni/bin
-curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ .KUBERNETES_CNI_VERSION }}/cni-plugins-linux-${HOST_ARCH}-v{{ .KUBERNETES_CNI_VERSION }}.tgz" |
-	sudo tar -C /opt/cni/bin -xz
-
-RELEASE="v{{ .KUBERNETES_VERSION }}"
-
-sudo mkdir -p /var/tmp/kube-binaries
-cd /var/tmp/kube-binaries
-sudo curl -L --remote-name-all \
-	https://dl.k8s.io/${RELEASE}/bin/linux/${HOST_ARCH}/kubeadm
-
-sudo mkdir -p /opt/bin
-cd /opt/bin
-sudo mv /var/tmp/kube-binaries/kubeadm .
-sudo chmod +x kubeadm
-`
-
-	upgradeKubeletAndKubectlFlatcarScriptTemplate = `
-source /etc/kubeone/proxy-env
-
-{{ template "detect-host-cpu-architecture" }}
-
-{{- if .INSTALL_CONTAINERD -}}
-{{ template "flatcar-containerd" . }}
-{{ end }}
-
-RELEASE="v{{ .KUBERNETES_VERSION }}"
-sudo mkdir -p /var/tmp/kube-binaries
-cd /var/tmp/kube-binaries
-sudo curl -L --remote-name-all \
-	https://dl.k8s.io/${RELEASE}/bin/linux/${HOST_ARCH}/{kubelet,kubectl}
-sudo mkdir -p /opt/bin
-cd /opt/bin
-sudo systemctl stop kubelet
-sudo mv /var/tmp/kube-binaries/{kubelet,kubectl} .
-sudo chmod +x {kubelet,kubectl}
-
-cat <<EOF | sudo tee /etc/systemd/system/kubelet.service
-[Unit]
-Description=kubelet: The Kubernetes Node Agent
-Documentation=https://kubernetes.io/docs/home/
-Wants=network-online.target
-After=network-online.target
-
-[Service]
-ExecStart=/opt/bin/kubelet
-Restart=always
-StartLimitInterval=0
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-sudo mkdir -p /etc/systemd/system/kubelet.service.d
-cat <<EOF | sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-[Service]
-Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf"
-Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml"
-# This is a file that "kubeadm init" and "kubeadm join" generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically
-EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
-# This is a file that the user can use for overrides of the kubelet args as a last resort. Preferably, the user should use
-# the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.
-EnvironmentFile=-/etc/default/kubelet
-ExecStart=
-ExecStart=/opt/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS
-EOF
-
-sudo systemctl daemon-reload
-sudo systemctl start kubelet
-`
 )
 
-func KubeadmFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
+func FlatcarScript(cluster *kubeoneapi.KubeOneCluster, params Params) (string, error) {
+	proxy := cluster.Proxy.HTTPS
+	if proxy == "" {
+		proxy = cluster.Proxy.HTTP
+	}
+
 	data := Data{
+		"UPGRADE":                params.Upgrade,
+		"KUBELET":                params.Kubelet,
+		"KUBECTL":                params.Kubectl,
+		"KUBEADM":                params.Kubeadm,
+		"FORCE":                  params.Force,
 		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
-		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"CRITOOLS_VERSION":       criToolsVersion(cluster),
+		"KUBERNETES_CNI_VERSION": flatcarCNIVersion(cluster.Versions.Kubernetes),
+		"CRITOOLS_VERSION":       criToolsVersion(cluster.Versions.Kubernetes),
+		"PROXY":                  proxy,
 		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
 		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
 	}
@@ -207,53 +155,33 @@ func RemoveBinariesFlatcar() (string, error) {
 	return result, fail.Runtime(err, "rendering removeBinariesFlatcarScriptTemplate script")
 }
 
-func UpgradeKubeadmAndCNIFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
-	data := Data{
-		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
-		"KUBERNETES_CNI_VERSION": defaultKubernetesCNIVersion,
-		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-	}
-
-	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
-		return "", err
-	}
-
-	result, err := Render(upgradeKubeadmAndCNIFlatcarScriptTemplate, data)
-
-	return result, fail.Runtime(err, "rendering upgradeKubeadmAndCNIFlatcarScriptTemplate script")
-}
-
-func UpgradeKubernetesBinariesFlatcar(cluster *kubeoneapi.KubeOneCluster) (string, error) {
-	data := Data{
-		"KUBERNETES_VERSION": cluster.Versions.Kubernetes,
-		"INSTALL_CONTAINERD": cluster.ContainerRuntime.Containerd,
-	}
-
-	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {
-		return "", err
-	}
-
-	result, err := Render(upgradeKubeletAndKubectlFlatcarScriptTemplate, data)
-
-	return result, fail.Runtime(err, "rendering upgradeKubeletAndKubectlFlatcarScriptTemplate script")
-}
-
-const defaultKubernetesCNIVersion = "1.3.0"
-
-func criToolsVersion(cluster *kubeoneapi.KubeOneCluster) string {
-	// Validation passed at this point so we know that version is valid
-	kubeSemVer := semver.MustParse(cluster.Versions.Kubernetes)
+func flatcarCNIVersion(kubeVersion string) string {
+	kubeSemVer := semver.MustParse(kubeVersion)
 
 	switch kubeSemVer.Minor() {
-	case 29:
-		return "1.29.0"
+	case 30:
+		return "1.4.0"
+	case 31:
+		return "1.5.1"
+	case 32:
+		return "1.6.0"
+	default:
+		return "1.6.0"
+	}
+}
+
+func criToolsVersion(kubeVersion string) string {
+	// Validation passed at this point so we know that version is valid
+	kubeSemVer := semver.MustParse(kubeVersion)
+
+	switch kubeSemVer.Minor() {
 	case 30:
 		return "1.30.1"
 	case 31:
 		return "1.31.1"
 	case 32:
 		return "1.32.0"
+	default:
+		return "1.32.0"
 	}
-
-	return ""
 }
