@@ -97,7 +97,7 @@ type migrateCCMOptions struct {
 }
 
 func (opts *migrateCCMOptions) buildCCMMigrationState() (*state.State, error) {
-	s, err := opts.globalOptions.BuildState()
+	s, err := opts.BuildState()
 	if err != nil {
 		return nil, err
 	}

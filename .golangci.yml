@@ -1,106 +1,113 @@
+version: "2"
 run:
-  issues-exit-code: 1
   build-tags:
-  - e2e
-
+    - e2e
+  issues-exit-code: 1
 linters:
-  disable-all: true
+  default: none
   enable:
-  - asciicheck
-  - bidichk
-  - bodyclose
-  - copyloopvar
-  - dogsled
-  - durationcheck
-  - errcheck
-  - errchkjson
-  - errname
-  - errorlint
-  - exhaustive
-  - forcetypeassert
-  - gocritic
-  - gocyclo
-  - gofmt
-  - goimports
-  - gosec
-  - gosimple
-  - govet
-  - importas
-  - ineffassign
-  - intrange
-  - makezero
-  - misspell
-  - nakedret
-  - nilnil
-  - nlreturn
-  - noctx
-  - nolintlint
-  - predeclared
-  - revive
-  - staticcheck
-  - stylecheck
-  - tparallel
-  - unconvert
-  - unparam
-  - unused
-  # TODO: enable this back once we update to golangci-lint v1.64
-  # - usetesting
-  - wastedassign
-  - whitespace
-
-linters-settings:
-  govet:
-    enable:
-      - shadow
-  goimports:
-    local-prefixes: k8c.io
-  importas:
-    no-unaliased: true
-    alias:
-    - pkg: k8c.io/kubeone/pkg/apis/kubeone
-      alias: kubeoneapi
-    - pkg: k8c.io/kubeone/pkg/apis/(\w+)/(v[\w\d]+)
-      alias: $1$2
-    - pkg: k8c.io/machine-controller/pkg/apis/cluster/v1alpha1
-      alias: clusterv1alpha1
-    - pkg: k8s.io/apimachinery/pkg/apis/meta/v1
-      alias: metav1
-    - pkg: k8s.io/api/(\w+)/(v[\w\d]+)
-      alias: $1$2
-
-issues:
-  exclude:
-  - "G115: integer overflow conversion (.+)"
-
-  exclude-dirs:
-  - hack
-  - vendor
-  - pkg/apis/kubeadm
-
-  exclude-files:
-  - zz_generated.*.go
-
-  exclude-rules:
-  - path: pkg/apis/kubeone
-    text: "func SetDefaults_"
-
-  - path: pkg/apis/kubeone
-    text: "func Convert_"
-
-  - path: pkg/apis/kubeone
-    text: "type name will be used as kubeone.KubeOneCluster by other packages"
-
-  - path: test/e2e
-    text: "cyclomatic complexity 35 of func `TestClusterConformance` is high"
-
-  - path: pkg/scripts
-    text: "`registry` always receives `\"127.0.0.1:5000\"`"
-
-  - path: pkg/credentials
-    text: "cyclomatic complexity 36 of func `openstackValidationFunc` is high"
-
-  - path: pkg/apis/kubeone
-    text: "cyclomatic complexity 35 of func `ValidateCloudProviderSpec` is high"
-
-  - path: pkg/templates/kubeadm/v1beta3
-    text: "cyclomatic complexity 33 of func `NewConfig` is high"
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - copyloopvar
+    - dogsled
+    - durationcheck
+    - errcheck
+    - errchkjson
+    - errname
+    - errorlint
+    - exhaustive
+    - forcetypeassert
+    - gocritic
+    - gocyclo
+    - gosec
+    - govet
+    - importas
+    - ineffassign
+    - intrange
+    - makezero
+    - misspell
+    - nakedret
+    - nilnil
+    - nlreturn
+    - noctx
+    - nolintlint
+    - predeclared
+    - revive
+    - staticcheck
+    - tparallel
+    - unconvert
+    - unparam
+    - unused
+    - usetesting
+    - wastedassign
+    - whitespace
+  settings:
+    govet:
+      enable:
+        - shadow
+    importas:
+      alias:
+        - pkg: k8c.io/kubeone/pkg/apis/kubeone
+          alias: kubeoneapi
+        - pkg: k8c.io/kubeone/pkg/apis/(\w+)/(v[\w\d]+)
+          alias: $1$2
+        - pkg: k8c.io/machine-controller/pkg/apis/cluster/v1alpha1
+          alias: clusterv1alpha1
+        - pkg: k8s.io/apimachinery/pkg/apis/meta/v1
+          alias: metav1
+        - pkg: k8s.io/api/(\w+)/(v[\w\d]+)
+          alias: $1$2
+      no-unaliased: true
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - path: pkg/apis/kubeone
+        text: func SetDefaults_
+      - path: pkg/apis/kubeone
+        text: func Convert_
+      - path: pkg/apis/kubeone
+        text: type name will be used as kubeone.KubeOneCluster by other packages
+      - path: test/e2e
+        text: cyclomatic complexity 35 of func `TestClusterConformance` is high
+      - path: pkg/scripts
+        text: '`registry` always receives `"127.0.0.1:5000"`'
+      - path: pkg/credentials
+        text: cyclomatic complexity 36 of func `openstackValidationFunc` is high
+      - path: pkg/apis/kubeone
+        text: cyclomatic complexity 35 of func `ValidateCloudProviderSpec` is high
+      - path: pkg/templates/kubeadm/v1beta3
+        text: cyclomatic complexity 33 of func `NewConfig` is high
+      - path: (.+)\.go$
+        text: 'G115: integer overflow conversion (.+)'
+    paths:
+      - zz_generated.*.go
+      - hack
+      - vendor
+      - pkg/apis/kubeadm
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - k8c.io
+  exclusions:
+    generated: lax
+    paths:
+      - zz_generated.*.go
+      - hack
+      - vendor
+      - pkg/apis/kubeadm
+      - third_party$
+      - builtin$
+      - examples$
