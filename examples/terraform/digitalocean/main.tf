@@ -60,6 +60,11 @@ resource "digitalocean_droplet" "control_plane" {
 }
 
 resource "digitalocean_loadbalancer" "control_plane" {
+  depends_on = [
+    digitalocean_droplet.control_plane,
+    time_sleep.wait_60_seconds,
+  ]
+
   count = local.loadbalancer_count
 
   name   = "${var.cluster_name}-lb"
@@ -81,3 +86,8 @@ resource "digitalocean_loadbalancer" "control_plane" {
   droplet_tag = local.kube_cluster_tag
 }
 
+# Hack to ensure apt update has released the lock file
+resource "time_sleep" "wait_60_seconds" {
+  depends_on      = [digitalocean_droplet.control_plane]
+  create_duration = "60s"
+}
