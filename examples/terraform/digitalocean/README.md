@@ -19,6 +19,7 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 | Name | Version |
 |------|---------|
 | <a name="provider_digitalocean"></a> [digitalocean](#provider\_digitalocean) | ~> 2.9.0 |
+| <a name="provider_time"></a> [time](#provider\_time) | n/a |
 
 ## Modules
 
@@ -32,6 +33,7 @@ No modules.
 | [digitalocean_loadbalancer.control_plane](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/loadbalancer) | resource |
 | [digitalocean_ssh_key.deployer](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/ssh_key) | resource |
 | [digitalocean_tag.kube_cluster_tag](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/tag) | resource |
+| [time_sleep.wait_60_seconds](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 
 ## Inputs
 
