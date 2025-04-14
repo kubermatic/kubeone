@@ -36,6 +36,7 @@ source /etc/kubeone/proxy-env
 sudo mkdir -p /opt/bin /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
 curl -L "https://github.com/containernetworking/plugins/releases/download/v{{ . }}/cni-plugins-linux-${HOST_ARCH}-v{{ . }}.tgz" |
 	sudo tar -C /opt/cni/bin -xz
+sudo chown -R root:root /opt/cni/bin
 {{- end }}
 {{- with .CRITOOLS_VERSION }}
 CRI_TOOLS_RELEASE="v{{ . }}"
