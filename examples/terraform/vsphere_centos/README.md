@@ -20,7 +20,7 @@ these configs, check out our [CentOS 7 Template VM] guide.
 We also provide Terraform configs for [Debian-based operating systems](../vsphere)
 and [Flatcar Linux](../vsphere_flatcar).
 
-[CentOS 7 Template VM]: https://docs.kubermatic.com/kubeone/v1.9/guides/vsphere-template-vm/centos/
+[CentOS 7 Template VM]: https://docs.kubermatic.com/machine-controller/main/cloud-providers/vsphere/template-vm/rockylinux/
 [guestinfo]: https://github.com/vmware-archive/cloud-init-vmware-guestinfo
 
 ## Required environment variables
@@ -38,8 +38,8 @@ See <https://github.com/kubermatic/machine-controller/blob/main/docs/vsphere.md>
 
 See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 
-[docs-infrastructure]: https://docs.kubermatic.com/kubeone/v1.9/guides/using-terraform-configs/
-[docs-tf-loadbalancer]: https://docs.kubermatic.com/kubeone/v1.9/examples/ha-load-balancing/
+[docs-infrastructure]: https://docs.kubermatic.com/kubeone/v1.10/guides/using-terraform-configs/
+[docs-tf-loadbalancer]: https://docs.kubermatic.com/kubeone/v1.10/examples/ha-load-balancing/
 
 ## Requirements
 
