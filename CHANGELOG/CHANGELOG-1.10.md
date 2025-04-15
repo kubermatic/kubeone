@@ -34,6 +34,7 @@ upgrading:
 ### Feature
 
 - Add support for Kubernetes 1.32 ([#3565](https://github.com/kubermatic/kubeone/pull/3565), [@kron4eg](https://github.com/kron4eg))
+- Update Helm client to v3.17.2. This update allows users to pull Helm charts directly from OCI-compliant repositories ([#3587](https://github.com/kubermatic/kubeone/pull/3587), [@kron4eg](https://github.com/kron4eg))
 - Add support for the KubeVirt CSI driver. The CSI driver is deployed automatically for all KubeVirt clusters (unless `.cloudProvider.disableBundledCSIDrivers` is set to `true`) ([#3499](https://github.com/kubermatic/kubeone/pull/3499), [@moadqassem](https://github.com/moadqassem))
 - Label the control plane nodes before applying addons and Helm charts to allow addons and Helm charts to utilize the control plane label selectors ([#3544](https://github.com/kubermatic/kubeone/pull/3544), [@mohamed-rafraf](https://github.com/mohamed-rafraf))
 - Add `insecure` parameter to the `backups-restic` addon used to disable/skip the TLS verification ([#3522](https://github.com/kubermatic/kubeone/pull/3522), [@steled](https://github.com/steled))
@@ -90,6 +91,5 @@ upgrading:
 
 - KubeOne is now built with Go 1.23.4 ([#3509](https://github.com/kubermatic/kubeone/pull/3509), [@xmudrii](https://github.com/xmudrii))
 - Update Helm client to v3.17.3 ([#3633](https://github.com/kubermatic/kubeone/pull/3633))
-- Update Helm client to v3.17.2 ([#3587](https://github.com/kubermatic/kubeone/pull/3587), [@kron4eg](https://github.com/kron4eg))
 - Update cluster-autoscaler to v1.32.0, v1.31.1, and v1.30.3 ([#3568](https://github.com/kubermatic/kubeone/pull/3568), [@kron4eg](https://github.com/kron4eg))
 - Update Restic to v0.17.3 in the `backups-restic` addon ([#3568](https://github.com/kubermatic/kubeone/pull/3568), [@kron4eg](https://github.com/kron4eg))
