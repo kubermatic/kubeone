@@ -145,7 +145,7 @@ func verifyVersionSkew(s *state.State, nodes *corev1.NodeList, verbose bool) (bo
 			return false, fail.Runtime(apiserverErr, "parsing kube-apiserver container image")
 		}
 		if verbose {
-			fmt.Printf("Pod %s is running apiserver version %s\n", p.ObjectMeta.Name, ver.String())
+			fmt.Printf("Pod %s is running apiserver version %s\n", p.Name, ver.String())
 		}
 		if apiserverVersion == nil {
 			apiserverVersion = ver
@@ -170,7 +170,7 @@ func verifyVersionSkew(s *state.State, nodes *corev1.NodeList, verbose bool) (bo
 			return false, fail.Runtime(kubeletErr, "parsing %q node kubelet version", n.Name)
 		}
 		if verbose {
-			fmt.Printf("Node %s is running kubelet version %s\n", n.ObjectMeta.Name, kubeletVer.String())
+			fmt.Printf("Node %s is running kubelet version %s\n", n.Name, kubeletVer.String())
 		}
 		// Check is requested version different than current and ensure version skew policy
 		err = checkVersionSkew(reqVer, kubeletVer, 2)

@@ -138,10 +138,7 @@ func Fetch(s *state.State, preflightChecks bool) ([]NodeStatus, error) {
 				if err != nil {
 					errs = append(errs, err)
 				}
-				eStatus := false
-				if etcdStatus != nil && etcdStatus.Health && etcdStatus.Member {
-					eStatus = true
-				}
+				eStatus := etcdStatus != nil && etcdStatus.Health && etcdStatus.Member
 				etcdCh <- eStatus
 			}()
 
@@ -150,16 +147,13 @@ func Fetch(s *state.State, preflightChecks bool) ([]NodeStatus, error) {
 				if err != nil {
 					errs = append(errs, err)
 				}
-				aStatus := false
-				if apiserverStatus != nil && apiserverStatus.Health {
-					aStatus = true
-				}
+				aStatus := apiserverStatus != nil && apiserverStatus.Health
 				apiserverCh <- aStatus
 			}()
 
 			var kubeletVersion string
 			for _, node := range nodes.Items {
-				if node.ObjectMeta.Name == host.Hostname {
+				if node.Name == host.Hostname {
 					kubeletVersion = node.Status.NodeInfo.KubeletVersion
 				}
 			}

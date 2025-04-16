@@ -681,7 +681,7 @@ func vmwareCloudDirectorValidationFunc(creds map[string]string) error {
 	}
 
 	// Username and password are required when using default credentials i.e. username and password.
-	if !apiToken && !(username && password) {
+	if !apiToken && (!username || !password) {
 		return fail.CredentialsError{
 			Op:       "validating",
 			Provider: "VMware Cloud Director",

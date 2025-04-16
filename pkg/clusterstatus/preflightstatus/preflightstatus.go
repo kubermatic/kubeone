@@ -88,7 +88,7 @@ func verifyMatchNodes(hosts []kubeoneapi.HostConfig, nodes corev1.NodeList, logg
 					case host.PrivateAddress, host.PublicAddress:
 						nodesFound[node.Name] = true
 						if verbose {
-							logger.Infof("Found endpoint %q (type %s) for the node %q.", addr.Address, addr.Type, node.ObjectMeta.Name)
+							logger.Infof("Found endpoint %q (type %s) for the node %q.", addr.Address, addr.Type, node.Name)
 						}
 					}
 				case corev1.NodeExternalDNS, corev1.NodeHostName, corev1.NodeInternalDNS:
@@ -121,7 +121,7 @@ func verifyNodesReady(nodes corev1.NodeList, logger logrus.FieldLogger, verbose 
 		for _, c := range n.Status.Conditions {
 			if c.Type == corev1.NodeReady {
 				if verbose {
-					logger.Infof("Node %q reporting %s=%s.", n.ObjectMeta.Name, c.Type, c.Status)
+					logger.Infof("Node %q reporting %s=%s.", n.Name, c.Type, c.Status)
 				}
 				if c.Status == corev1.ConditionTrue {
 					found = true
@@ -131,7 +131,7 @@ func verifyNodesReady(nodes corev1.NodeList, logger logrus.FieldLogger, verbose 
 
 		if !found {
 			errs = append(errs, fail.RuntimeError{
-				Op:  fmt.Sprintf("checking %q node readiness", n.ObjectMeta.Name),
+				Op:  fmt.Sprintf("checking %q node readiness", n.Name),
 				Err: errors.New("not ready"),
 			})
 		}
@@ -145,17 +145,17 @@ func verifyNoUpgradeLabels(nodes corev1.NodeList, logger logrus.FieldLogger, ver
 	var errs []error
 
 	for _, n := range nodes.Items {
-		_, ok := n.ObjectMeta.Labels[LabelUpgradeLock]
+		_, ok := n.Labels[LabelUpgradeLock]
 		if ok {
-			logger.Errorf("Upgrade is in progress on the node %q (label %q is present).", n.ObjectMeta.Name, LabelUpgradeLock)
+			logger.Errorf("Upgrade is in progress on the node %q (label %q is present).", n.Name, LabelUpgradeLock)
 			errs = append(errs, fail.RuntimeError{
-				Op:  fmt.Sprintf("checking presence of %q label on node %q", LabelUpgradeLock, n.ObjectMeta.Name),
+				Op:  fmt.Sprintf("checking presence of %q label on node %q", LabelUpgradeLock, n.Name),
 				Err: errors.New("label is present"),
 			})
 		}
 
 		if verbose && !ok {
-			logger.Infof("Label %q isn't present on the node %q.", LabelUpgradeLock, n.ObjectMeta.Name)
+			logger.Infof("Label %q isn't present on the node %q.", LabelUpgradeLock, n.Name)
 		}
 	}
 
