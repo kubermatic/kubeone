@@ -35,12 +35,15 @@ import (
 	"k8c.io/kubeone/pkg/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/apis/kubeone/config"
+	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/templates/images"
 
 	"k8s.io/apimachinery/pkg/util/sets"
 	ctrlruntimelog "sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/yaml"
 )
 
 var defaultKubeVersion = ""
@@ -261,6 +264,47 @@ func defaultBackupPath(backupPath, manifestPath, clusterName string) string {
 	}
 
 	return backupPath
+}
+
+func newImageResolver(kubernetesVersion, manifestFile string) (*images.Resolver, error) {
+	var resolveropts []images.Opt
+
+	configBuf, configErr := os.ReadFile(manifestFile)
+	if configErr == nil {
+		var conf kubeonev1beta2.KubeOneCluster
+		if err := yaml.Unmarshal(configBuf, &conf); err != nil {
+			return nil, err
+		}
+
+		resolveropts = append(resolveropts,
+			images.WithOverwriteRegistryGetter(func() string {
+				if rc := conf.RegistryConfiguration; rc != nil {
+					return rc.OverwriteRegistry
+				}
+
+				return ""
+			}),
+			images.WithKubernetesVersionGetter(func() string {
+				return conf.Versions.Kubernetes
+			}),
+		)
+	}
+
+	if kubernetesVersion != "" {
+		if configErr == nil {
+			return nil, fail.RuntimeError{
+				Op:  "checking --manifest or --kubernetes-version flags",
+				Err: fmt.Errorf("only one of either --manifest or --kubernetes-version can be provided"),
+			}
+		}
+		resolveropts = append(resolveropts,
+			images.WithKubernetesVersionGetter(func() string {
+				return kubernetesVersion
+			}),
+		)
+	}
+
+	return images.NewResolver(resolveropts...), nil
 }
 
 type oneOfFlag struct {

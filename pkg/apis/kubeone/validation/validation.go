@@ -38,11 +38,18 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
+const (
+	// MinimumSupportedVersion defines the minimum Kubernetes version supported by KubeOne.
+	MinimumSupportedVersion = "1.30"
+	// MaximumSupportedVersion defines the maximum Kubernetes version supported by KubeOne.
+	MaximumSupportedVersion = "1.32"
+)
+
 var (
 	// minVersionConstraint defines the minimum Kubernetes version supported by KubeOne
-	minVersionConstraint = semverutil.MustParseConstraint(">= 1.30")
+	minVersionConstraint = semverutil.MustParseConstraint(fmt.Sprintf(">= %s", MinimumSupportedVersion))
 	// maxVersionConstraint defines the maximum Kubernetes version supported by KubeOne
-	maxVersionConstraint = semverutil.MustParseConstraint("<= 1.32")
+	maxVersionConstraint = semverutil.MustParseConstraint(fmt.Sprintf("<= %s", MaximumSupportedVersion))
 )
 
 // ValidateKubeOneCluster validates the KubeOneCluster object
