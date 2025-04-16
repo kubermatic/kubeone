@@ -42,32 +42,32 @@ import (
 	"k8c.io/kubeone/pkg/templates/images"
 )
 
-// BaseURL is the template URL for fetching Kubernetes component version constants
-const BaseURL = "https://raw.githubusercontent.com/kubernetes/kubernetes/%s/cmd/kubeadm/app/constants/constants.go"
+// kubeadmConstantsTemplate is the template URL for fetching Kubernetes component version constants
+const kubeadmConstantsTemplate = "https://raw.githubusercontent.com/kubernetes/kubernetes/%s/cmd/kubeadm/app/constants/constants.go"
 
-// VerBaseURL is the template URL for fetching the latest patch for a specific Kubernetes version.
-const VerBaseURL = "https://dl.k8s.io/release/stable-%s.txt"
+// stableVersionURL is the template URL for fetching the latest patch for a specific Kubernetes version.
+const stableVersionURL = "https://dl.k8s.io/release/stable-%s.txt"
 
-// Component names used to identify Kubernetes system components
+// component names used to identify Kubernetes system components.
 const (
-	Etcd              = "etcd"                    // etcd key-value store
-	KubeAPIServer     = "kube-apiserver"          // Kubernetes API server
-	KubeControllerMgr = "kube-controller-manager" // Controller manager component
-	KubeScheduler     = "kube-scheduler"          // Scheduler component
-	KubeProxy         = "kube-proxy"              // Network proxy component
-	CoreDNS           = "coredns"                 // CoreDNS DNS server
-	Pause             = "pause"                   // Pause container
+	componentEtcd              = "etcd"                    // etcd key-value store
+	componentAPIServer         = "kube-apiserver"          // Kubernetes API server
+	componentControllerManager = "kube-controller-manager" // Controller manager component
+	componentScheduler         = "kube-scheduler"          // Scheduler component
+	componentKubeProxy         = "kube-proxy"              // Network proxy component
+	componentCoreDNS           = "coredns"                 // CoreDNS DNS server
+	componentPause             = "pause"                   // Pause container
 )
 
-// VersionConstants contains constant names from Kubernetes source that store version information
+// versionConstant names from Kubernetes source that store version information.
 const (
-	PauseVersion   = "PauseVersion"       // Constant name for pause container version
-	EtcdVersion    = "DefaultEtcdVersion" // Constant name for etcd version
-	CoreDNSVersion = "CoreDNSVersion"     // Constant name for CoreDNS version
+	versionConstPause   = "PauseVersion"       // Constant name for pause container version
+	versionConstEtcd    = "DefaultEtcdVersion" // Constant name for etcd version
+	versionConstCoreDNS = "CoreDNSVersion"     // Constant name for CoreDNS version
 )
 
-// KubernetesRegistry is the default container registry for Kubernetes components
-const KubernetesRegistry = "registry.k8s.io"
+// kubernetesRegistry is the default container registry for Kubernetes components.
+const kubernetesRegistry = "registry.k8s.io"
 
 type mirrorImagesOpts struct {
 	globalOptions
@@ -188,7 +188,7 @@ func defaultVersions(logger *logrus.Logger) ([]string, error) {
 
 // fetchLatestPatchForKubernetesVersion fetches the latest patch for a specific Kubernetes version.
 func fetchLatestPatchForKubernetesVersion(version string) (string, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf(VerBaseURL, version), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf(stableVersionURL, version), nil)
 	if err != nil {
 		return "", err
 	}
@@ -278,11 +278,11 @@ func getControlPlaneImages(ctx context.Context, version string) ([]string, error
 	images := make([]string, 0)
 
 	// start with core kubernetes images
-	for _, component := range []string{KubeAPIServer, KubeControllerMgr, KubeScheduler, KubeProxy} {
-		images = append(images, getGenericImage(KubernetesRegistry, component, version))
+	for _, component := range []string{componentAPIServer, componentControllerManager, componentScheduler, componentKubeProxy} {
+		images = append(images, getGenericImage(kubernetesRegistry, component, version))
 	}
 
-	for _, component := range []string{Etcd, CoreDNS, Pause} {
+	for _, component := range []string{componentEtcd, componentCoreDNS, componentPause} {
 		img, err := getComponentImage(ctx, component, version)
 		if err != nil {
 			return nil, err
@@ -299,15 +299,15 @@ func getGenericImage(prefix, image, tag string) string {
 
 func getComponentImage(ctx context.Context, component, version string) (string, error) {
 	var target string
-	registry := KubernetesRegistry
+	registry := kubernetesRegistry
 	switch component {
-	case Etcd:
-		target = EtcdVersion
-	case CoreDNS:
+	case componentEtcd:
+		target = versionConstEtcd
+	case componentCoreDNS:
 		registry += "/coredns"
-		target = CoreDNSVersion
-	case Pause:
-		target = PauseVersion
+		target = versionConstCoreDNS
+	case componentPause:
+		target = versionConstPause
 	}
 
 	tag, err := getConstantValue(ctx, version, target)
@@ -319,7 +319,7 @@ func getComponentImage(ctx context.Context, component, version string) (string, 
 }
 
 func getConstantValue(ctx context.Context, version, constant string) (string, error) {
-	req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf(BaseURL, version), nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf(kubeadmConstantsTemplate, version), nil)
 	if err != nil {
 		return "", err
 	}
