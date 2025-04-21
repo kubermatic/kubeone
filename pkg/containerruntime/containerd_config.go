@@ -84,9 +84,16 @@ type containerdRegistryTLSConfig struct {
 }
 
 func marshalContainerdConfig(cluster *kubeoneapi.KubeOneCluster) (string, error) {
-	sandboxImage, serr := cluster.Versions.SandboxImage(cluster.RegistryConfiguration.ImageRegistry)
-	if serr != nil {
-		return "", serr
+	var sandboxImage string
+	var err error
+
+	if cluster.ContainerRuntime.Containerd != nil && cluster.ContainerRuntime.Containerd.SandboxImage != "" {
+		sandboxImage = cluster.ContainerRuntime.Containerd.SandboxImage
+	} else {
+		sandboxImage, err = cluster.Versions.SandboxImage(cluster.RegistryConfiguration.ImageRegistry)
+		if err != nil {
+			return "", fmt.Errorf("failed to determine sandbox image: %w", err)
+		}
 	}
 
 	criPlugin := containerdCRIPlugin{
@@ -167,7 +174,7 @@ func marshalContainerdConfig(cluster *kubeoneapi.KubeOneCluster) (string, error)
 	var buf strings.Builder
 	enc := toml.NewEncoder(&buf)
 	enc.Indent = ""
-	err := enc.Encode(cfg)
+	err = enc.Encode(cfg)
 
 	return buf.String(), fail.Runtime(err, "encoding containerd config")
 }
