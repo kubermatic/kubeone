@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2025-04-22T14:19:41+01:00
+date = 2025-04-22T18:57:47+03:00
 weight = 11
 +++
 ## v1beta3
@@ -11,6 +11,7 @@ weight = 11
 * [AddonRef](#addonref)
 * [Addons](#addons)
 * [AzureSpec](#azurespec)
+* [CAConfig](#caconfig)
 * [CNI](#cni)
 * [CanalSpec](#canalspec)
 * [CiliumSpec](#ciliumspec)
@@ -137,6 +138,17 @@ AzureSpec defines the Azure cloud provider
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+
+[Back to Group](#v1beta3)
+
+### CAConfig
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| caBundle | CABundle inline PEM encoded global CA | string | false |
+| caFile | CAFile is a path to the CA bundle file, used as a replacement for Bundle | string | false |
 
 [Back to Group](#v1beta3)
 
@@ -530,7 +542,8 @@ KubeOneCluster is KubeOne Cluster API Schema
 | dynamicWorkers | DynamicWorkers describes the worker nodes that are managed by Kubermatic machine-controller/Cluster-API. | [][DynamicWorkerConfig](#dynamicworkerconfig) | false |
 | machineController | MachineController configures the Kubermatic machine-controller component. | *[MachineControllerConfig](#machinecontrollerconfig) | false |
 | operatingSystemManager | OperatingSystemManager configures the Kubermatic operating-system-manager component. | *[OperatingSystemManagerConfig](#operatingsystemmanagerconfig) | false |
-| caBundle | CABundle PEM encoded global CA | string | false |
+| caBundle | CABundle PEM encoded global CA. Deprecated: Use CAConfig instead. | string | false |
+| ca | CA configures Central Authority certificate. | [CAConfig](#caconfig) | true |
 | features | Features enables and configures additional cluster features. | [Features](#features) | false |
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |
