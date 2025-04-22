@@ -101,3 +101,7 @@ func Convert_kubeone_CiliumSpec_To_v1beta2_CiliumSpec(in *kubeoneapi.CiliumSpec,
 
 	return nil
 }
+
+func Convert_kubeone_ContainerRuntimeContainerd_To_v1beta2_ContainerRuntimeContainerd(in *kubeoneapi.ContainerRuntimeContainerd, out *ContainerRuntimeContainerd, s conversion.Scope) error {
+	return autoConvert_kubeone_ContainerRuntimeContainerd_To_v1beta2_ContainerRuntimeContainerd(in, out, s)
+}

@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2025-01-20T18:43:41+01:00
+date = 2025-04-22T14:19:41+01:00
 weight = 11
 +++
 ## v1beta2
@@ -227,6 +227,7 @@ ContainerRuntimeContainerd defines docker container runtime
 | ----- | ----------- | ------ | -------- |
 | registries | A map of registries to use to render configs and mirrors for containerd registries | map[string][ContainerdRegistry](#containerdregistry) | false |
 | deviceOwnershipFromSecurityContext | Enable or disable device_ownership_from_security_context containerd CRI config. Default to false. | *bool | false |
+| sandboxImage | SandboxImage defines the pause image used by containerd's CRI plugin (e.g., \"registry.k8s.io/pause:3.10\") | string | false |
 
 [Back to Group](#v1beta2)
 
