@@ -65,8 +65,12 @@ type KubeOneCluster struct {
 	// OperatingSystemManager configures the Kubermatic operating-system-manager component.
 	OperatingSystemManager *OperatingSystemManagerConfig `json:"operatingSystemManager,omitempty"`
 
-	// CABundle PEM encoded global CA
+	// CABundle PEM encoded global CA.
+	// Deprecated: Use CAConfig instead.
 	CABundle string `json:"caBundle,omitempty"`
+
+	// CA configures Central Authority certificate.
+	CA CAConfig `json:"ca"`
 
 	// Features enables and configures additional cluster features.
 	Features Features `json:"features,omitempty"`
@@ -93,6 +97,14 @@ type KubeOneCluster struct {
 
 	// ControlPlaneComponents configures the Kubernetes control plane components
 	ControlPlaneComponents *ControlPlaneComponents `json:"controlPlaneComponents,omitempty"`
+}
+
+type CAConfig struct {
+	// CABundle inline PEM encoded global CA
+	CABundle string `json:"caBundle,omitempty"`
+
+	// CAFile is a path to the CA bundle file, used as a replacement for Bundle
+	CAFile string `json:"caFile,omitempty"`
 }
 
 type ControlPlaneComponents struct {
