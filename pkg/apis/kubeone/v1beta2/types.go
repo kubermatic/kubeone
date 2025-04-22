@@ -206,6 +206,8 @@ type ContainerRuntimeContainerd struct {
 	Registries map[string]ContainerdRegistry `json:"registries,omitempty"`
 	// Enable or disable device_ownership_from_security_context containerd CRI config. Default to false.
 	DeviceOwnershipFromSecurityContext *bool `json:"deviceOwnershipFromSecurityContext,omitempty"`
+	// SandboxImage defines the pause image used by containerd's CRI plugin (e.g., "registry.k8s.io/pause:3.10")
+	SandboxImage string `json:"sandboxImage,omitempty"`
 }
 
 // ContainerdRegistry defines endpoints and security for given container registry

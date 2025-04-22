@@ -1023,6 +1023,7 @@ func Convert_kubeone_ContainerRuntimeConfig_To_v1beta2_ContainerRuntimeConfig(in
 func autoConvert_v1beta2_ContainerRuntimeContainerd_To_kubeone_ContainerRuntimeContainerd(in *ContainerRuntimeContainerd, out *kubeone.ContainerRuntimeContainerd, s conversion.Scope) error {
 	out.Registries = *(*map[string]kubeone.ContainerdRegistry)(unsafe.Pointer(&in.Registries))
 	out.DeviceOwnershipFromSecurityContext = (*bool)(unsafe.Pointer(in.DeviceOwnershipFromSecurityContext))
+	out.SandboxImage = in.SandboxImage
 	return nil
 }
 
@@ -1034,7 +1035,7 @@ func Convert_v1beta2_ContainerRuntimeContainerd_To_kubeone_ContainerRuntimeConta
 func autoConvert_kubeone_ContainerRuntimeContainerd_To_v1beta2_ContainerRuntimeContainerd(in *kubeone.ContainerRuntimeContainerd, out *ContainerRuntimeContainerd, s conversion.Scope) error {
 	out.Registries = *(*map[string]ContainerdRegistry)(unsafe.Pointer(&in.Registries))
 	out.DeviceOwnershipFromSecurityContext = (*bool)(unsafe.Pointer(in.DeviceOwnershipFromSecurityContext))
-	// WARNING: in.SandboxImage requires manual conversion: does not exist in peer-type
+	out.SandboxImage = in.SandboxImage
 	return nil
 }
 
