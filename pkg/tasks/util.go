@@ -108,7 +108,7 @@ func labelNode(client dynclient.Client, host *kubeoneapi.HostConfig) error {
 		}
 
 		_, err := controllerutil.CreateOrUpdate(context.Background(), client, &node, func() error {
-			if node.ObjectMeta.CreationTimestamp.IsZero() {
+			if node.CreationTimestamp.IsZero() {
 				return errors.New("node not found")
 			}
 			node.Labels[labelUpgradeLock] = ""
@@ -129,10 +129,10 @@ func unlabelNode(client dynclient.Client, host *kubeoneapi.HostConfig) error {
 		}
 
 		_, err := controllerutil.CreateOrUpdate(context.Background(), client, &node, func() error {
-			if node.ObjectMeta.CreationTimestamp.IsZero() {
+			if node.CreationTimestamp.IsZero() {
 				return errors.New("node not found")
 			}
-			delete(node.ObjectMeta.Labels, labelUpgradeLock)
+			delete(node.Labels, labelUpgradeLock)
 
 			return nil
 		})

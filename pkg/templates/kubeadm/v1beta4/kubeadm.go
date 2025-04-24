@@ -499,10 +499,11 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 	//   - when IPv6 Dualstack is disabled
 	if s.Cluster.ClusterNetwork.IPFamily.IsDualstack() {
 		if !s.Cluster.CloudProvider.External {
-			switch {
-			case s.Cluster.ClusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv4IPv6:
+			//nolint:exhaustive
+			switch s.Cluster.ClusterNetwork.IPFamily {
+			case kubeoneapi.IPFamilyIPv4IPv6:
 				kubeletCLIFlags = setAllArgsValue(kubeletCLIFlags, "node-ip", newNodeIP(host)+","+host.IPv6Addresses[0])
-			case s.Cluster.ClusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv6IPv4:
+			case kubeoneapi.IPFamilyIPv6IPv4:
 				kubeletCLIFlags = setAllArgsValue(kubeletCLIFlags, "node-ip", host.IPv6Addresses[0]+","+newNodeIP(host))
 			}
 		}
@@ -614,9 +615,10 @@ func splitFeatureGates(featureGates string) map[string]bool {
 		if len(kv) == 2 {
 			key := strings.TrimSpace(kv[0])
 			value := strings.TrimSpace(kv[1])
-			if value == "true" {
+			switch value {
+			case "true":
 				featureGatesMap[key] = true
-			} else if value == "false" {
+			case "false":
 				featureGatesMap[key] = false
 			}
 		}
