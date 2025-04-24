@@ -130,7 +130,7 @@ spec:
         release: vsphere-cpi
         vsphere-cpi-infra: daemonset
       annotations:
-        "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
+        "kubeone.k8c.io/cabundle-hash": "{{ .Config.CA.CABundle | sha256sum }}"
         "kubeone.k8c.io/cloudconfig-hash": "{{ .Config.CloudProvider.CloudConfig | sha256sum }}"
     spec:
       tolerations:
@@ -170,21 +170,21 @@ spec:
           env:
             - name: ENABLE_ALPHA_DUAL_STACK
               value: "{{ .Config.ClusterNetwork.IPFamily.IsDualstack }}"
-{{ if .Config.CABundle }}
+{{ if .Config.CA.CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
           volumeMounts:
             - mountPath: /etc/cloud
               name: vsphere-config-volume
               readOnly: true
-{{ if .Config.CABundle }}
+{{ if .Config.CA.CABundle }}
 {{ caBundleVolumeMount | indent 12 }}
 {{ end }}
       volumes:
         - name: vsphere-config-volume
           secret:
             secretName: cloud-config
-{{ if .Config.CABundle }}
+{{ if .Config.CA.CABundle }}
 {{ caBundleVolume | indent 8 }}
 {{ end }}
       affinity:

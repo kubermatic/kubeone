@@ -50,7 +50,7 @@ spec:
           - name: host-pki
             hostPath:
               path: /etc/kubernetes/pki
-{{ if .Config.CABundle }}
+{{ if .Config.CA.CABundle }}
 {{ caBundleVolume | indent 10 }}
 {{ end }}
           initContainers:
@@ -107,7 +107,7 @@ spec:
               restic backup {{- with .Params.commonFlags }} {{.}}{{ end }} --tag=etcd --host=${ETCD_HOSTNAME} /backup
               restic forget {{- with .Params.commonFlags }} {{.}}{{ end }} --prune --keep-last 48
             env:
-{{ if .Config.CABundle }}
+{{ if .Config.CA.CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
             - name: ETCD_HOSTNAME
@@ -139,6 +139,6 @@ spec:
             - mountPath: /etc/kubernetes/pki
               name: host-pki
               readOnly: true
-{{ if .Config.CABundle }}
+{{ if .Config.CA.CABundle }}
 {{ caBundleVolumeMount | indent 12 }}
 {{ end }}

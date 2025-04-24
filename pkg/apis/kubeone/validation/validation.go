@@ -79,7 +79,6 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 
 	allErrs = append(allErrs, ValidateCABundle(c.CABundle, field.NewPath("caBundle"))...)
 	allErrs = append(allErrs, ValidateCABundle(c.CA.CABundle, field.NewPath("ca", "caBundle"))...)
-	allErrs = append(allErrs, ValidateCAFile(c.CA.CAFile, field.NewPath("ca", "caFile"))...)
 	allErrs = append(allErrs, ValidateFeatures(c.Features, field.NewPath("features"))...)
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
 	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
@@ -625,24 +624,6 @@ func ValidateDynamicWorkerConfig(workerset []kubeoneapi.DynamicWorkerConfig, pro
 	}
 
 	return allErrs
-}
-
-func ValidateCAFile(caBundleFile string, fldPath *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-
-	if strings.TrimSpace(caBundleFile) == "" {
-		return allErrs
-	}
-
-	// TODO: handle file path as relative to kubeone manifest
-	buf, err := os.ReadFile(caBundleFile)
-	if err != nil {
-		allErrs = append(allErrs, field.Invalid(fldPath, err, ""))
-
-		return allErrs
-	}
-
-	return ValidateCABundle(string(buf), fldPath)
 }
 
 func ValidateCABundle(caBundle string, fldPath *field.Path) field.ErrorList {
