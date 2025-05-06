@@ -69,8 +69,8 @@ type KubeOneCluster struct {
 	// Deprecated: Use CAConfig instead.
 	CABundle string `json:"caBundle,omitempty"`
 
-	// CA configures Central Authority certificate.
-	CA CAConfig `json:"ca"`
+	// CertificateAuthority configures Central Authority certificate.
+	CertificateAuthority CAConfig `json:"certificateAuthority,omitempty"`
 
 	// Features enables and configures additional cluster features.
 	Features Features `json:"features,omitempty"`

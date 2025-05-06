@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2025-04-22T18:57:47+03:00
+date = 2025-05-07T00:48:32+03:00
 weight = 11
 +++
 ## v1beta2
@@ -541,7 +541,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | machineController | MachineController configures the Kubermatic machine-controller component. | *[MachineControllerConfig](#machinecontrollerconfig) | false |
 | operatingSystemManager | OperatingSystemManager configures the Kubermatic operating-system-manager component. | *[OperatingSystemManagerConfig](#operatingsystemmanagerconfig) | false |
 | caBundle | CABundle PEM encoded global CA. Deprecated: Use CAConfig instead. | string | false |
-| ca | CA configures Central Authority certificate. | [CAConfig](#caconfig) | true |
+| certificateAuthority | CertificateAuthority configures Central Authority certificate. | [CAConfig](#caconfig) | false |
 | features | Features enables and configures additional cluster features. | [Features](#features) | false |
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |
 | helmReleases | HelmReleases configure helm charts to reconcile. For each HelmRelease it will run analog of: `helm upgrade --namespace <NAMESPACE> --install --create-namespace <RELEASE> <CHART> [--values=values-override.yaml]` | [][HelmRelease](#helmrelease) | false |

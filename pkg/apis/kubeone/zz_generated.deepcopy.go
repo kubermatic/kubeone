@@ -1003,7 +1003,7 @@ func (in *KubeOneCluster) DeepCopyInto(out *KubeOneCluster) {
 		*out = new(OperatingSystemManagerConfig)
 		**out = **in
 	}
-	out.CA = in.CA
+	out.CertificateAuthority = in.CertificateAuthority
 	in.Features.DeepCopyInto(&out.Features)
 	if in.Addons != nil {
 		in, out := &in.Addons, &out.Addons

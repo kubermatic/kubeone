@@ -78,8 +78,8 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 }
 
 func SetDefaults_CABundle(obj *KubeOneCluster) {
-	if obj.CABundle != "" && obj.CA.CABundle == "" {
-		obj.CA.CABundle = obj.CABundle
+	if obj.CABundle != "" && obj.CertificateAuthority.CABundle == "" {
+		obj.CertificateAuthority.CABundle = obj.CABundle
 	}
 }
 

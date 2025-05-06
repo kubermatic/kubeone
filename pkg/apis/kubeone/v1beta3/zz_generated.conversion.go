@@ -1690,7 +1690,7 @@ func autoConvert_v1beta3_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneClu
 	out.MachineController = (*kubeone.MachineControllerConfig)(unsafe.Pointer(in.MachineController))
 	out.OperatingSystemManager = (*kubeone.OperatingSystemManagerConfig)(unsafe.Pointer(in.OperatingSystemManager))
 	out.CABundle = in.CABundle
-	if err := Convert_v1beta3_CAConfig_To_kubeone_CAConfig(&in.CA, &out.CA, s); err != nil {
+	if err := Convert_v1beta3_CAConfig_To_kubeone_CAConfig(&in.CertificateAuthority, &out.CertificateAuthority, s); err != nil {
 		return err
 	}
 	if err := Convert_v1beta3_Features_To_kubeone_Features(&in.Features, &out.Features, s); err != nil {
@@ -1744,7 +1744,7 @@ func autoConvert_kubeone_KubeOneCluster_To_v1beta3_KubeOneCluster(in *kubeone.Ku
 	out.MachineController = (*MachineControllerConfig)(unsafe.Pointer(in.MachineController))
 	out.OperatingSystemManager = (*OperatingSystemManagerConfig)(unsafe.Pointer(in.OperatingSystemManager))
 	out.CABundle = in.CABundle
-	if err := Convert_kubeone_CAConfig_To_v1beta3_CAConfig(&in.CA, &out.CA, s); err != nil {
+	if err := Convert_kubeone_CAConfig_To_v1beta3_CAConfig(&in.CertificateAuthority, &out.CertificateAuthority, s); err != nil {
 		return err
 	}
 	if err := Convert_kubeone_Features_To_v1beta3_Features(&in.Features, &out.Features, s); err != nil {

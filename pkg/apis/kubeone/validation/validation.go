@@ -77,8 +77,19 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 		allErrs = append(allErrs, ValidateOperatingSystemManager(c.MachineController, field.NewPath("operatingSystemManager"))...)
 	}
 
-	allErrs = append(allErrs, ValidateCABundle(c.CABundle, field.NewPath("caBundle"))...)
-	allErrs = append(allErrs, ValidateCABundle(c.CA.CABundle, field.NewPath("ca", "caBundle"))...)
+	var (
+		caBundleField                     = field.NewPath("caBundle")
+		certificateAuthoritycaBundleField = field.NewPath("certificateAuthority", "caBundle")
+	)
+
+	allErrs = append(allErrs, ValidateCABundle(c.CABundle, caBundleField)...)
+	allErrs = append(allErrs, ValidateCABundle(c.CertificateAuthority.CABundle, certificateAuthoritycaBundleField)...)
+	if c.CABundle != "" && c.CertificateAuthority.CABundle != "" {
+		allErrs = append(allErrs,
+			field.Duplicate(caBundleField, "both .caBundle and .certificateAuthority.caBundle can not be set"),
+			field.Duplicate(certificateAuthoritycaBundleField, "both .caBundle and .certificateAuthority.caBundle can not be set"),
+		)
+	}
 	allErrs = append(allErrs, ValidateFeatures(c.Features, field.NewPath("features"))...)
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
 	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
