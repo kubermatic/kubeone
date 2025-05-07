@@ -162,7 +162,7 @@ func (a *applier) loadAddonsManifests(
 				Funcs(txtFuncMap(overwriteRegistry)).
 				Funcs(template.FuncMap{
 					"CABundle": func() string {
-						return k1cluster.CertificateAuthority.CABundle
+						return k1cluster.CertificateAuthority.Bundle
 					},
 				}).
 				Parse(string(manifestBytes))

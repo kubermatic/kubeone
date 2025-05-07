@@ -83,8 +83,8 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	)
 
 	allErrs = append(allErrs, ValidateCABundle(c.CABundle, caBundleField)...)
-	allErrs = append(allErrs, ValidateCABundle(c.CertificateAuthority.CABundle, certificateAuthoritycaBundleField)...)
-	if c.CABundle != "" && c.CertificateAuthority.CABundle != "" {
+	allErrs = append(allErrs, ValidateCABundle(c.CertificateAuthority.Bundle, certificateAuthoritycaBundleField)...)
+	if c.CABundle != "" && c.CertificateAuthority.Bundle != "" {
 		allErrs = append(allErrs,
 			field.Duplicate(caBundleField, "both .caBundle and .certificateAuthority.caBundle can not be set"),
 			field.Duplicate(certificateAuthoritycaBundleField, "both .caBundle and .certificateAuthority.caBundle can not be set"),

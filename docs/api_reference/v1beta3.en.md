@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2025-05-07T00:48:32+03:00
+date = 2025-05-07T15:51:46+03:00
 weight = 11
 +++
 ## v1beta3
@@ -11,9 +11,9 @@ weight = 11
 * [AddonRef](#addonref)
 * [Addons](#addons)
 * [AzureSpec](#azurespec)
-* [CAConfig](#caconfig)
 * [CNI](#cni)
 * [CanalSpec](#canalspec)
+* [CertificateAuthorithyConfig](#certificateauthorithyconfig)
 * [CiliumSpec](#ciliumspec)
 * [CloudProviderSpec](#cloudproviderspec)
 * [ClusterNetworkConfig](#clusternetworkconfig)
@@ -141,17 +141,6 @@ AzureSpec defines the Azure cloud provider
 
 [Back to Group](#v1beta3)
 
-### CAConfig
-
-
-
-| Field | Description | Scheme | Required |
-| ----- | ----------- | ------ | -------- |
-| caBundle | CABundle inline PEM encoded global CA | string | false |
-| caFile | CAFile is a path to the CA bundle file, used as a replacement for Bundle | string | false |
-
-[Back to Group](#v1beta3)
-
 ### CNI
 
 CNI config. Only one CNI provider must be used at the single time.
@@ -172,6 +161,17 @@ CanalSpec defines the Canal CNI plugin
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | mtu | MTU automatically detected based on the cloudProvider default value is 1450 | int | false |
+
+[Back to Group](#v1beta3)
+
+### CertificateAuthorithyConfig
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| caBundle | Bundle inline PEM encoded global CA | string | false |
+| caFile | File is a path to the CA bundle file, used as a replacement for Bundle | string | false |
 
 [Back to Group](#v1beta3)
 
@@ -543,7 +543,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | machineController | MachineController configures the Kubermatic machine-controller component. | *[MachineControllerConfig](#machinecontrollerconfig) | false |
 | operatingSystemManager | OperatingSystemManager configures the Kubermatic operating-system-manager component. | *[OperatingSystemManagerConfig](#operatingsystemmanagerconfig) | false |
 | caBundle | CABundle PEM encoded global CA. Deprecated: Use CAConfig instead. | string | false |
-| certificateAuthority | CertificateAuthority configures Central Authority certificate. | [CAConfig](#caconfig) | false |
+| certificateAuthority | CertificateAuthority configures Central Authority certificate. | [CertificateAuthorithyConfig](#certificateauthorithyconfig) | false |
 | features | Features enables and configures additional cluster features. | [Features](#features) | false |
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |

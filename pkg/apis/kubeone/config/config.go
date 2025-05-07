@@ -242,21 +242,21 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 	// Set the default cloud config
 	SetDefaultsCloudConfig(cluster)
 
-	if cluster.CertificateAuthority.CAFile != "" && !filepath.IsAbs(cluster.CertificateAuthority.CAFile) {
-		cluster.CertificateAuthority.CAFile = filepath.Join(baseDir, cluster.CertificateAuthority.CAFile)
+	if cluster.CertificateAuthority.File != "" && !filepath.IsAbs(cluster.CertificateAuthority.File) {
+		cluster.CertificateAuthority.File = filepath.Join(baseDir, cluster.CertificateAuthority.File)
 	}
 
-	if cluster.CertificateAuthority.CAFile != "" {
-		buf, err := os.ReadFile(cluster.CertificateAuthority.CAFile)
+	if cluster.CertificateAuthority.File != "" {
+		buf, err := os.ReadFile(cluster.CertificateAuthority.File)
 		if err != nil {
 			return fail.ConfigValidation(err)
 		}
 
-		cluster.CertificateAuthority.CABundle = string(buf)
+		cluster.CertificateAuthority.Bundle = string(buf)
 	}
 
-	// Set this for backward compatiblity with older addons
-	cluster.CABundle = cluster.CertificateAuthority.CABundle
+	// Set this for backward compatibility with older addons
+	cluster.CABundle = cluster.CertificateAuthority.Bundle
 
 	// Parse the credentials file
 	credentials := make(map[string]string)

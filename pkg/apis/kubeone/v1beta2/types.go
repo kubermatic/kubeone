@@ -70,7 +70,7 @@ type KubeOneCluster struct {
 	CABundle string `json:"caBundle,omitempty"`
 
 	// CertificateAuthority configures Central Authority certificate.
-	CertificateAuthority CAConfig `json:"certificateAuthority,omitempty"`
+	CertificateAuthority CertificateAuthorithyConfig `json:"certificateAuthority,omitempty"`
 
 	// Features enables and configures additional cluster features.
 	Features Features `json:"features,omitempty"`
@@ -99,12 +99,12 @@ type KubeOneCluster struct {
 	ControlPlaneComponents *ControlPlaneComponents `json:"controlPlaneComponents,omitempty"`
 }
 
-type CAConfig struct {
-	// CABundle inline PEM encoded global CA
-	CABundle string `json:"caBundle,omitempty"`
+type CertificateAuthorithyConfig struct {
+	// Bundle inline PEM encoded global CA
+	Bundle string `json:"caBundle,omitempty"`
 
-	// CAFile is a path to the CA bundle file, used as a replacement for Bundle
-	CAFile string `json:"caFile,omitempty"`
+	// File is a path to the CA bundle file, used as a replacement for Bundle
+	File string `json:"caFile,omitempty"`
 }
 
 type ControlPlaneComponents struct {
