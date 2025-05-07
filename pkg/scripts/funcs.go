@@ -54,7 +54,7 @@ var libraryTemplate = heredoc.Doc(`
 		sudo mkdir -p /etc/sysctl.d
 		cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
 		fs.inotify.max_user_watches         = 1048576
-        fs.inotify.max_user_instances       = 8192
+		fs.inotify.max_user_instances       = 8192
 		kernel.panic                        = 10
 		kernel.panic_on_oops                = 1
 		net.bridge.bridge-nf-call-ip6tables = 1
