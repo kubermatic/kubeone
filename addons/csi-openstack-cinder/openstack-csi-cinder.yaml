@@ -301,7 +301,7 @@ spec:
               value: unix://csi/csi.sock
             - name: CLOUD_CONFIG
               value: /etc/kubernetes/cloud-config
-{{ if .Config.CA.CABundle }}
+{{ if CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
           ports:
@@ -332,7 +332,7 @@ spec:
             - mountPath: /etc/kubernetes
               name: cloud-config
               readOnly: true
-{{ if .Config.CA.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolumeMount | indent 12 }}
 {{ end }}
           resources:
@@ -364,7 +364,7 @@ spec:
         - hostPath:
             path: /etc/cacert
           name: cacert
-{{ if .Config.CA.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolume | indent 8 }}
 {{ end }}
       affinity:
@@ -525,7 +525,7 @@ spec:
               value: /etc/kubernetes/cloud-config
             - name: CLUSTER_NAME
               value: {{ default "kubernetes" .CCMClusterName }}
-{{ if .Config.CA.CABundle }}
+{{ if CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
           ports:
@@ -550,7 +550,7 @@ spec:
             - mountPath: /etc/kubernetes
               name: cloud-config
               readOnly: true
-{{ if .Config.CA.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolumeMount | indent 12 }}
 {{ end }}
           resources:
@@ -564,7 +564,7 @@ spec:
         - hostPath:
             path: /etc/cacert
           name: cacert
-{{ if .Config.CA.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolume | indent 8 }}
 {{ end }}
       affinity:
