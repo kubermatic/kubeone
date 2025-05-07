@@ -255,6 +255,9 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 		cluster.CertificateAuthority.CABundle = string(buf)
 	}
 
+	// Set this for backward compatiblity with older addons
+	cluster.CABundle = cluster.CertificateAuthority.CABundle
+
 	// Parse the credentials file
 	credentials := make(map[string]string)
 
