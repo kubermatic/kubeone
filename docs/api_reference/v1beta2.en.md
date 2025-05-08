@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2025-05-07T15:51:46+03:00
+date = 2025-05-08T18:36:46+03:00
 weight = 11
 +++
 ## v1beta2
@@ -157,8 +157,8 @@ CanalSpec defines the Canal CNI plugin
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| caBundle | Bundle inline PEM encoded global CA | string | false |
-| caFile | File is a path to the CA bundle file, used as a replacement for Bundle | string | false |
+| bundle | Bundle inline PEM encoded global CA | string | false |
+| file | File is a path to the CA bundle file, used as a replacement for Bundle | string | false |
 
 [Back to Group](#v1beta2)
 
@@ -540,7 +540,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | dynamicWorkers | DynamicWorkers describes the worker nodes that are managed by Kubermatic machine-controller/Cluster-API. | [][DynamicWorkerConfig](#dynamicworkerconfig) | false |
 | machineController | MachineController configures the Kubermatic machine-controller component. | *[MachineControllerConfig](#machinecontrollerconfig) | false |
 | operatingSystemManager | OperatingSystemManager configures the Kubermatic operating-system-manager component. | *[OperatingSystemManagerConfig](#operatingsystemmanagerconfig) | false |
-| caBundle | CABundle PEM encoded global CA. Deprecated: Use CAConfig instead. | string | false |
+| caBundle | CABundle PEM encoded global CA. Deprecated: Use CertificateAuthorithyConfig instead. Will be overriten by certificateAuthority.bundle if set. | string | false |
 | certificateAuthority | CertificateAuthority configures Central Authority certificate. | [CertificateAuthorithyConfig](#certificateauthorithyconfig) | false |
 | features | Features enables and configures additional cluster features. | [Features](#features) | false |
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |

@@ -66,7 +66,7 @@ type KubeOneCluster struct {
 	OperatingSystemManager *OperatingSystemManagerConfig `json:"operatingSystemManager,omitempty"`
 
 	// CABundle PEM encoded global CA.
-	// Deprecated: Use CAConfig instead.
+	// Deprecated: Use CertificateAuthorithyConfig instead. Will be overriten by certificateAuthority.Bundle if set.
 	CABundle string `json:"caBundle,omitempty"`
 
 	// CertificateAuthority configures Central Authority certificate.
@@ -100,10 +100,10 @@ type KubeOneCluster struct {
 
 type CertificateAuthorithyConfig struct {
 	// Bundle inline PEM encoded global CA
-	Bundle string `json:"caBundle,omitempty"`
+	Bundle string `json:"bundle,omitempty"`
 
 	// File is a path to the CA bundle file, used as a replacement for Bundle
-	File string `json:"caFile,omitempty"`
+	File string `json:"file,omitempty"`
 }
 
 type ControlPlaneComponents struct {
