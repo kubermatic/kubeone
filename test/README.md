@@ -89,7 +89,7 @@ plus prow.yaml config with corresponding calls to generated test functions.
 
 ## Running generated tests
 
-There is a shell [go-test-e2e.sh](go-test-e2e.sh) scrint to run small setup
+There is a shell [go-test-e2e.sh](go-test-e2e.sh) script to run small setup
 procedures (like generating SSH keys and extracting auth variables from
 environment). It's being used in generated prow cases. It's possible to launch
 it manually.
