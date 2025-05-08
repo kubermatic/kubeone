@@ -74,6 +74,13 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_SystemPackages(obj)
 	SetDefaults_Features(obj)
 	SetDefaults_TLSCipherSuites(obj)
+	SetDefaults_CABundle(obj)
+}
+
+func SetDefaults_CABundle(obj *KubeOneCluster) {
+	if obj.CABundle != "" && obj.CertificateAuthority.Bundle == "" {
+		obj.CertificateAuthority.Bundle = obj.CABundle
+	}
 }
 
 func SetDefaults_CloudProvider(obj *KubeOneCluster) {

@@ -268,7 +268,7 @@ spec:
               mountPath: /csi
             - name: registration-dir
               mountPath: /registration
-          resources: 
+          resources:
             {}
         - name: liveness-probe
           securityContext:
@@ -281,7 +281,7 @@ spec:
           volumeMounts:
             - name: socket-dir
               mountPath: /csi
-          resources: 
+          resources:
             {}
         - name: cinder-csi-plugin
           securityContext:
@@ -301,7 +301,7 @@ spec:
               value: unix://csi/csi.sock
             - name: CLOUD_CONFIG
               value: /etc/kubernetes/cloud-config
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
           ports:
@@ -332,10 +332,10 @@ spec:
             - mountPath: /etc/kubernetes
               name: cloud-config
               readOnly: true
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolumeMount | indent 12 }}
 {{ end }}
-          resources: 
+          resources:
             {}
       volumes:
         - name: socket-dir
@@ -364,14 +364,14 @@ spec:
         - hostPath:
             path: /etc/cacert
           name: cacert
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolume | indent 8 }}
 {{ end }}
-      affinity: 
+      affinity:
         {}
-      nodeSelector: 
+      nodeSelector:
         {}
-      tolerations: 
+      tolerations:
         - operator: Exists
       priorityClassName: system-cluster-critical
 ---
@@ -431,7 +431,7 @@ spec:
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
-          resources: 
+          resources:
             {}
         - name: csi-provisioner
           securityContext:
@@ -452,7 +452,7 @@ spec:
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
-          resources: 
+          resources:
             {}
         - name: csi-snapshotter
           securityContext:
@@ -470,7 +470,7 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
-          resources: 
+          resources:
             {}
         - name: csi-resizer
           securityContext:
@@ -489,7 +489,7 @@ spec:
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
-          resources: 
+          resources:
             {}
         - name: liveness-probe
           securityContext:
@@ -505,7 +505,7 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
-          resources: 
+          resources:
             {}
         - name: cinder-csi-plugin
           securityContext:
@@ -525,7 +525,7 @@ spec:
               value: /etc/kubernetes/cloud-config
             - name: CLUSTER_NAME
               value: {{ default "kubernetes" .CCMClusterName }}
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
           ports:
@@ -550,10 +550,10 @@ spec:
             - mountPath: /etc/kubernetes
               name: cloud-config
               readOnly: true
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolumeMount | indent 12 }}
 {{ end }}
-          resources: 
+          resources:
             {}
       volumes:
         - name: socket-dir
@@ -564,14 +564,14 @@ spec:
         - hostPath:
             path: /etc/cacert
           name: cacert
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolume | indent 8 }}
 {{ end }}
-      affinity: 
+      affinity:
         {}
-      nodeSelector: 
+      nodeSelector:
         {}
-      tolerations: 
+      tolerations:
         - effect: NoSchedule
           key: node-role.kubernetes.io/master
         - effect: NoSchedule

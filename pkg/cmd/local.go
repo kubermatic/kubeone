@@ -21,7 +21,6 @@ import (
 	"os"
 
 	"github.com/MakeNowJust/heredoc/v2"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
@@ -69,9 +68,9 @@ func (opts *localOpts) BuildState() (*state.State, error) {
 		if err != nil {
 			return nil, err
 		}
-		convertToLocalCluster(cluster, logger)
+		convertToLocalCluster(cluster)
 	} else {
-		cluster = generateLocalCluster(logger, opts.KubernetesVersion, opts.APIEndpoint)
+		cluster = generateLocalCluster(opts.KubernetesVersion, opts.APIEndpoint)
 	}
 	rootContext := context.Background()
 
@@ -203,7 +202,7 @@ func runLocal(opts *localOpts) error {
 	return runApply(st, aopts)
 }
 
-func generateLocalCluster(logger logrus.FieldLogger, kubeVersion, apiEndpoint string) *kubeoneapi.KubeOneCluster {
+func generateLocalCluster(kubeVersion, apiEndpoint string) *kubeoneapi.KubeOneCluster {
 	ownIP, err := k8net.ChooseHostInterface()
 	if err != nil {
 		panic(err)
@@ -243,7 +242,7 @@ func generateLocalCluster(logger logrus.FieldLogger, kubeVersion, apiEndpoint st
 
 	kubeonev1beta2.SetObjectDefaults_KubeOneCluster(cls)
 
-	internalCluster, err := config.DefaultedV1Beta2KubeOneCluster(cls, nil, nil, logger)
+	internalCluster, err := config.DefaultedV1Beta2KubeOneCluster(cls, nil)
 	if err != nil {
 		// this should never happen
 		panic(err)
@@ -257,8 +256,8 @@ func generateLocalCluster(logger logrus.FieldLogger, kubeVersion, apiEndpoint st
 	return internalCluster
 }
 
-func convertToLocalCluster(in *kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) {
-	genCluster := generateLocalCluster(logger, in.Versions.Kubernetes, in.APIVersion)
+func convertToLocalCluster(in *kubeoneapi.KubeOneCluster) {
+	genCluster := generateLocalCluster(in.Versions.Kubernetes, in.APIVersion)
 
 	in.Name = genCluster.Name
 	in.ControlPlane = genCluster.ControlPlane

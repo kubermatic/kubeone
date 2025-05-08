@@ -33,6 +33,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate/cabundle"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
@@ -53,17 +54,13 @@ const (
 	ParamsEnvPrefix = "env:"
 )
 
-func (a *applier) getManifestsFromDirectory(s *state.State, fsys fs.FS, addonName string) (string, error) {
-	var addonParams map[string]string
-	disableTemplating := false
-
-	overwriteRegistry := ""
-	if s.Cluster.RegistryConfiguration != nil && s.Cluster.RegistryConfiguration.OverwriteRegistry != "" {
-		overwriteRegistry = s.Cluster.RegistryConfiguration.OverwriteRegistry
-	}
-
-	if s.Cluster.Addons.Enabled() {
-		for _, addon := range s.Cluster.Addons.OnlyAddons() {
+func (a *applier) getManifestsFromDirectory(st *state.State, fsys fs.FS, addonName string) (string, error) {
+	var (
+		addonParams       map[string]string
+		disableTemplating = false
+	)
+	if st.Cluster.Addons.Enabled() {
+		for _, addon := range st.Cluster.Addons.OnlyAddons() {
 			if addon.Name == addonName {
 				addonParams = addon.Params
 				disableTemplating = addon.DisableTemplating
@@ -73,12 +70,12 @@ func (a *applier) getManifestsFromDirectory(s *state.State, fsys fs.FS, addonNam
 		}
 	}
 
-	manifests, err := a.loadAddonsManifests(fsys, addonName, addonParams, s.Logger, s.Verbose, overwriteRegistry, disableTemplating)
+	manifests, err := a.loadAddonsManifests(fsys, addonName, addonParams, st.Logger, st.Verbose, st.Cluster, disableTemplating)
 	if err != nil {
 		return "", err
 	}
 
-	if s.Cluster.CloudProvider.SecretProviderClassName != "" && !disableTemplating {
+	if st.Cluster.CloudProvider.SecretProviderClassName != "" && !disableTemplating {
 		addonsToMutate := sets.NewString(
 			append(
 				resources.CloudAddons(),
@@ -88,7 +85,7 @@ func (a *applier) getManifestsFromDirectory(s *state.State, fsys fs.FS, addonNam
 		)
 
 		if addonsToMutate.Has(addonName) {
-			if err = addSecretCSIVolume(manifests, s.Cluster.CloudProvider.SecretProviderClassName); err != nil {
+			if err = addSecretCSIVolume(manifests, st.Cluster.CloudProvider.SecretProviderClassName); err != nil {
 				return "", err
 			}
 		}
@@ -111,7 +108,7 @@ func (a *applier) loadAddonsManifests(
 	addonParams map[string]string,
 	logger logrus.FieldLogger,
 	verbose bool,
-	overwriteRegistry string,
+	k1cluster *kubeoneapi.KubeOneCluster,
 	disableTemplating bool,
 ) ([]runtime.RawExtension, error) {
 	var manifests []runtime.RawExtension
@@ -159,7 +156,16 @@ func (a *applier) loadAddonsManifests(
 		manifest = bytes.NewBuffer(manifestBytes)
 
 		if !disableTemplating {
-			tpl, err := template.New("addons-base").Funcs(txtFuncMap(overwriteRegistry)).Parse(string(manifestBytes))
+			overwriteRegistry := k1cluster.RegistryConfiguration.ImageRegistry("")
+
+			tpl, err := template.New("addons-base").
+				Funcs(txtFuncMap(overwriteRegistry)).
+				Funcs(template.FuncMap{
+					"CABundle": func() string {
+						return k1cluster.CertificateAuthority.Bundle
+					},
+				}).
+				Parse(string(manifestBytes))
 			if err != nil {
 				return nil, fail.Runtime(err, "parsing addons manifest template %q", file.Name())
 			}

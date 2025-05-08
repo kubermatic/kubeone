@@ -149,7 +149,7 @@ spec:
   template:
     metadata:
       annotations:
-        kubeone.k8c.io/cabundle-hash: '{{.Config.CABundle | sha256sum}}'
+        kubeone.k8c.io/cabundle-hash: '{{CABundle | sha256sum}}'
         kubeone.k8c.io/cloudconfig-hash: '{{.Config.CloudProvider.CloudConfig | sha256sum}}'
       labels:
         app: openstack-cloud-controller-manager
@@ -195,7 +195,7 @@ spec:
         - mountPath: /usr/share/ca-certificates
           name: usr-ca-certs
           readOnly: true
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolumeMount | indent 8 }}
 {{ end }}
       dnsPolicy: ClusterFirstWithHostNet
@@ -234,7 +234,7 @@ spec:
           path: /usr/share/ca-certificates
           type: DirectoryOrCreate
         name: usr-ca-certs
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolume | indent 6 }}
 {{ end }}
   updateStrategy:

@@ -97,7 +97,7 @@ spec:
         app: vsphere-csi-webhook
         role: vsphere-csi-webhook
       annotations:
-        "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
+        "kubeone.k8c.io/cabundle-hash": "{{ CABundle | sha256sum }}"
         "csiConfig-hash": "{{ .Config.CloudProvider.CSIConfig | sha256sum }}"
     spec:
       serviceAccountName: vsphere-csi-webhook
@@ -135,14 +135,14 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
           volumeMounts:
             - mountPath: /run/secrets/tls
               name: webhook-certs
               readOnly: true
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolumeMount | indent 12 }}
 {{ end }}
       volumes:
@@ -151,7 +151,7 @@ spec:
         - name: webhook-certs
           secret:
             secretName: vsphere-webhook-certs
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolume | indent 8 }}
 {{ end }}
 {{ end }}

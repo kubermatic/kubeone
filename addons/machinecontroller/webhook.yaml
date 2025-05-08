@@ -59,7 +59,7 @@ spec:
         app: machine-controller-webhook
       annotations:
         "kubeone.k8c.io/credentials-hash": "{{ .MachineControllerCredentialsHash }}"
-        "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
+        "kubeone.k8c.io/cabundle-hash": "{{ CABundle | sha256sum }}"
     spec:
       nodeSelector:
         node-role.kubernetes.io/control-plane: ""
@@ -91,7 +91,7 @@ spec:
             {{ if .CSIMigrationFeatureGates -}}
             - -node-kubelet-feature-gates={{ .CSIMigrationFeatureGates }}
             {{ end -}}
-            {{ if .Config.CABundle -}}
+            {{ if CABundle -}}
             - -ca-bundle={{ .Resources.CABundleSSLCertFilePath }}
             {{ end -}}
             - -tls-cert-path=/tmp/cert/cert.pem
@@ -108,14 +108,14 @@ spec:
 {{ end }}
 {{ end }}
 {{ .MachineControllerCredentialsEnvVars | indent 12 }}
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
           volumeMounts:
             - name: machinecontroller-webhook-serving-cert
               mountPath: /tmp/cert
               readOnly: true
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolumeMount | indent 12 }}
 {{ end }}
           livenessProbe:
@@ -136,7 +136,7 @@ spec:
           secret:
             secretName: machinecontroller-webhook-serving-cert
             defaultMode: 0444
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolume | indent 8 }}
 {{ end }}
 ---

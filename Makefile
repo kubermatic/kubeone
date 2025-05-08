@@ -60,6 +60,10 @@ install: buildenv
 .PHONY: build
 build: dist/kubeone
 
+.PHONY: clean
+clean:
+	rm -f dist/kubeone
+
 .PHONY: vendor
 vendor: buildenv
 	go mod vendor

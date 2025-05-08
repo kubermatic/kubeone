@@ -218,7 +218,7 @@ spec:
         app: vsphere-csi-controller
         role: vsphere-csi
       annotations:
-        "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
+        "kubeone.k8c.io/cabundle-hash": "{{ CABundle | sha256sum }}"
         "csiConfig-hash": "{{ .Config.CloudProvider.CSIConfig | sha256sum }}"
     spec:
       priorityClassName: system-cluster-critical # Guarantees scheduling for critical system pods
@@ -330,7 +330,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
           securityContext:
@@ -343,7 +343,7 @@ spec:
               readOnly: true
             - mountPath: /csi
               name: socket-dir
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolumeMount | indent 12 }}
 {{ end }}
           ports:
@@ -398,7 +398,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
           securityContext:
@@ -409,7 +409,7 @@ spec:
             - mountPath: /etc/cloud
               name: vsphere-config-volume
               readOnly: true
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolumeMount | indent 12 }}
 {{ end }}
         - name: csi-provisioner
@@ -458,7 +458,7 @@ spec:
             secretName: vsphere-csi-config-secret
         - name: socket-dir
           emptyDir: {}
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolume | indent 8 }}
 {{ end }}
 ---
@@ -481,7 +481,7 @@ spec:
         app: vsphere-csi-node
         role: vsphere-csi
       annotations:
-        "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
+        "kubeone.k8c.io/cabundle-hash": "{{ CABundle | sha256sum }}"
         "csiConfig-hash": "{{ .Config.CloudProvider.CSIConfig | sha256sum }}"
     spec:
       priorityClassName: system-node-critical
@@ -543,7 +543,7 @@ spec:
                   fieldPath: metadata.namespace
             - name: NODEGETINFO_WATCH_TIMEOUT_MINUTES
               value: "1"
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
           securityContext:
@@ -565,7 +565,7 @@ spec:
               mountPath: /sys/block
             - name: sys-devices-dir
               mountPath: /sys/devices
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolumeMount | indent 12 }}
 {{ end }}
           ports:
@@ -612,7 +612,7 @@ spec:
           hostPath:
             path: /sys/devices
             type: Directory
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleVolume | indent 8 }}
 {{ end }}
       tolerations:

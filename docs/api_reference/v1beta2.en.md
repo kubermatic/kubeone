@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2025-04-22T14:19:41+01:00
+date = 2025-05-08T18:36:46+03:00
 weight = 11
 +++
 ## v1beta2
@@ -12,6 +12,7 @@ weight = 11
 * [AzureSpec](#azurespec)
 * [CNI](#cni)
 * [CanalSpec](#canalspec)
+* [CertificateAuthorithyConfig](#certificateauthorithyconfig)
 * [CiliumSpec](#ciliumspec)
 * [CloudProviderSpec](#cloudproviderspec)
 * [ClusterNetworkConfig](#clusternetworkconfig)
@@ -147,6 +148,17 @@ CanalSpec defines the Canal CNI plugin
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | mtu | MTU automatically detected based on the cloudProvider default value is 1450 | int | false |
+
+[Back to Group](#v1beta2)
+
+### CertificateAuthorithyConfig
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| bundle | Bundle inline PEM encoded global CA | string | false |
+| file | File is a path to the CA bundle file, used as a replacement for Bundle | string | false |
 
 [Back to Group](#v1beta2)
 
@@ -528,7 +540,8 @@ KubeOneCluster is KubeOne Cluster API Schema
 | dynamicWorkers | DynamicWorkers describes the worker nodes that are managed by Kubermatic machine-controller/Cluster-API. | [][DynamicWorkerConfig](#dynamicworkerconfig) | false |
 | machineController | MachineController configures the Kubermatic machine-controller component. | *[MachineControllerConfig](#machinecontrollerconfig) | false |
 | operatingSystemManager | OperatingSystemManager configures the Kubermatic operating-system-manager component. | *[OperatingSystemManagerConfig](#operatingsystemmanagerconfig) | false |
-| caBundle | CABundle PEM encoded global CA | string | false |
+| caBundle | CABundle PEM encoded global CA. Deprecated: Use CertificateAuthorithyConfig instead. Will be overriten by certificateAuthority.bundle if set. | string | false |
+| certificateAuthority | CertificateAuthority configures Central Authority certificate. | [CertificateAuthorithyConfig](#certificateauthorithyconfig) | false |
 | features | Features enables and configures additional cluster features. | [Features](#features) | false |
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |
 | helmReleases | HelmReleases configure helm charts to reconcile. For each HelmRelease it will run analog of: `helm upgrade --namespace <NAMESPACE> --install --create-namespace <RELEASE> <CHART> [--values=values-override.yaml]` | [][HelmRelease](#helmrelease) | false |

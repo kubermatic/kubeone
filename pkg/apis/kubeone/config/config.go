@@ -21,6 +21,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"reflect"
 	"strings"
 
@@ -68,6 +69,12 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath, credentialsFilePath string
 		return nil, fail.Runtime(fmt.Errorf("is not provided"), "cluster configuration path")
 	}
 
+	cfgAbsPath, err := filepath.Abs(clusterCfgPath)
+	if err != nil {
+		return nil, err
+	}
+	cfgBaseDir := filepath.Dir(cfgAbsPath)
+
 	cluster, err := os.ReadFile(clusterCfgPath)
 	if err != nil {
 		return nil, fail.Runtime(err, "reading cluster configuration")
@@ -86,7 +93,7 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath, credentialsFilePath string
 		}
 	}
 
-	return BytesToKubeOneCluster(cluster, tfOutput, credentialsFile, logger)
+	return BytesToKubeOneCluster(cluster, tfOutput, credentialsFile, logger, cfgBaseDir)
 }
 
 func TFOutput(tfOutputPath string) ([]byte, error) {
@@ -116,7 +123,7 @@ func TFOutput(tfOutputPath string) ([]byte, error) {
 }
 
 // BytesToKubeOneCluster parses the bytes of the versioned KubeOneCluster manifests
-func BytesToKubeOneCluster(cluster, tfOutput, credentialsFile []byte, logger logrus.FieldLogger) (*kubeoneapi.KubeOneCluster, error) {
+func BytesToKubeOneCluster(cluster, tfOutput, credentialsFile []byte, logger logrus.FieldLogger, baseDir string) (*kubeoneapi.KubeOneCluster, error) {
 	// Get the GVK from the given KubeOneCluster manifest
 	typeMeta := runtime.TypeMeta{}
 	if err := yaml.Unmarshal(cluster, &typeMeta); err != nil {
@@ -135,31 +142,57 @@ func BytesToKubeOneCluster(cluster, tfOutput, credentialsFile []byte, logger log
 		logger.Warningf(`The provided APIVersion %q is deprecated. Please use "kubeone config migrate" command to migrate to the latest version.`, typeMeta.APIVersion)
 	}
 
+	var (
+		internalCluster *kubeoneapi.KubeOneCluster
+		err             error
+	)
+
 	// Parse the cluster bytes depending on the GVK
 	switch typeMeta.APIVersion {
 	case kubeonev1beta2.SchemeGroupVersion.String():
 		v1beta2Cluster := kubeonev1beta2.NewKubeOneCluster()
-		if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, v1beta2Cluster); err != nil {
+		if err = runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, v1beta2Cluster); err != nil {
 			return nil, fail.Config(err, fmt.Sprintf("decoding %s", v1beta2Cluster.GroupVersionKind()))
 		}
 
-		return DefaultedV1Beta2KubeOneCluster(v1beta2Cluster, tfOutput, credentialsFile, logger)
+		internalCluster, err = DefaultedV1Beta2KubeOneCluster(v1beta2Cluster, tfOutput)
+		if err != nil {
+			return nil, err
+		}
 	// case kubeonev1beta3.SchemeGroupVersion.String():
 	// 	v1beta3Cluster := kubeonev1beta3.NewKubeOneCluster()
 	// 	if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, v1beta3Cluster); err != nil {
 	// 		return nil, fail.Config(err, fmt.Sprintf("decoding %s", v1beta3Cluster.GroupVersionKind()))
 	// 	}
 
-	// 	return DefaultedV1Beta3KubeOneCluster(v1beta3Cluster, tfOutput, credentialsFile, logger)
+	// 	internalCluster, err = DefaultedV1Beta3KubeOneCluster(v1beta3Cluster, tfOutput, credentialsFile, logger)
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
 	default:
 		return nil, fail.Config(fmt.Errorf("invalid api version %q", typeMeta.APIVersion), "api version")
 	}
+
+	// Apply the dynamic defaults
+	if err := SetKubeOneClusterDynamicDefaults(internalCluster, credentialsFile, baseDir); err != nil {
+		return nil, err
+	}
+
+	// Validate the configuration
+	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
+		return nil, fail.ConfigValidation(err)
+	}
+
+	// Check for deprecated fields/features for a cluster
+	checkClusterConfiguration(*internalCluster, logger)
+
+	return internalCluster, nil
 }
 
 // DefaultedV1Beta2KubeOneCluster converts a v1beta2 KubeOneCluster object to an internal representation of KubeOneCluster
 // object while sourcing information from Terraform output, applying default values and validating the KubeOneCluster
 // object
-func DefaultedV1Beta2KubeOneCluster(versionedCluster *kubeonev1beta2.KubeOneCluster, tfOutput, credentialsFile []byte, logger logrus.FieldLogger) (*kubeoneapi.KubeOneCluster, error) {
+func DefaultedV1Beta2KubeOneCluster(versionedCluster *kubeonev1beta2.KubeOneCluster, tfOutput []byte) (*kubeoneapi.KubeOneCluster, error) {
 	if tfOutput != nil {
 		tfConfig, err := terraformv1beta2.NewConfigFromJSON(tfOutput)
 		if err != nil {
@@ -177,26 +210,13 @@ func DefaultedV1Beta2KubeOneCluster(versionedCluster *kubeonev1beta2.KubeOneClus
 		return nil, fail.Config(err, fmt.Sprintf("converting %s to internal object", versionedCluster.GroupVersionKind()))
 	}
 
-	// Apply the dynamic defaults
-	if err := SetKubeOneClusterDynamicDefaults(internalCluster, credentialsFile); err != nil {
-		return nil, err
-	}
-
-	// Validate the configuration
-	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
-		return nil, fail.ConfigValidation(err)
-	}
-
-	// Check for deprecated fields/features for a cluster
-	checkClusterConfiguration(*internalCluster, logger)
-
 	return internalCluster, nil
 }
 
 // DefaultedV1Beta3KubeOneCluster converts a v1beta3 KubeOneCluster object to an internal representation of KubeOneCluster
 // object while sourcing information from Terraform output, applying default values and validating the KubeOneCluster
 // object
-func DefaultedV1Beta3KubeOneCluster(versionedCluster *kubeonev1beta3.KubeOneCluster, tfOutput, credentialsFile []byte, logger logrus.FieldLogger) (*kubeoneapi.KubeOneCluster, error) {
+func DefaultedV1Beta3KubeOneCluster(versionedCluster *kubeonev1beta3.KubeOneCluster, tfOutput []byte) (*kubeoneapi.KubeOneCluster, error) {
 	if tfOutput != nil {
 		tfConfig, err := terraformv1beta3.NewConfigFromJSON(tfOutput)
 		if err != nil {
@@ -214,26 +234,32 @@ func DefaultedV1Beta3KubeOneCluster(versionedCluster *kubeonev1beta3.KubeOneClus
 		return nil, fail.Config(err, fmt.Sprintf("converting %s to internal object", versionedCluster.GroupVersionKind()))
 	}
 
-	// Apply the dynamic defaults
-	if err := SetKubeOneClusterDynamicDefaults(internalCluster, credentialsFile); err != nil {
-		return nil, err
-	}
-
-	// Validate the configuration
-	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
-		return nil, fail.ConfigValidation(err)
-	}
-
-	// Check for deprecated fields/features for a cluster
-	checkClusterConfiguration(*internalCluster, logger)
-
 	return internalCluster, nil
 }
 
 // SetKubeOneClusterDynamicDefaults sets the dynamic defaults for a given KubeOneCluster object
-func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, credentialsFile []byte) error {
+func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, credentialsFile []byte, baseDir string) error {
 	// Set the default cloud config
 	SetDefaultsCloudConfig(cluster)
+
+	if cluster.CertificateAuthority.File != "" && !filepath.IsAbs(cluster.CertificateAuthority.File) {
+		cluster.CertificateAuthority.File = filepath.Join(baseDir, cluster.CertificateAuthority.File)
+	}
+
+	if cluster.CertificateAuthority.File != "" {
+		buf, err := os.ReadFile(cluster.CertificateAuthority.File)
+		if err != nil {
+			return fail.ConfigValidation(err)
+		}
+
+		cluster.CertificateAuthority.Bundle = string(buf)
+	}
+
+	if cluster.CertificateAuthority.Bundle != "" {
+		// Set this for backward compatibility with older addons
+		cluster.CABundle = cluster.CertificateAuthority.Bundle
+	}
+
 	// Parse the credentials file
 	credentials := make(map[string]string)
 

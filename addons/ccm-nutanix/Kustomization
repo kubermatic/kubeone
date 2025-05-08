@@ -26,7 +26,7 @@ patches:
       - op: add
         path: /spec/template/metadata/annotations
         value:
-          "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
+          "kubeone.k8c.io/cabundle-hash": "{{ CABundle | sha256sum }}"
           "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
       - op: replace
         path: /spec/template/spec/containers/0/image

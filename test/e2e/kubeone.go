@@ -150,7 +150,7 @@ func (k1 *kubeoneBin) ClusterManifest() (*kubeoneapi.KubeOneCluster, error) {
 	}
 
 	logger := logrus.New()
-	k1Manifest, err := config.BytesToKubeOneCluster(buf.Bytes(), nil, nil, logger)
+	k1Manifest, err := config.BytesToKubeOneCluster(buf.Bytes(), nil, nil, logger, "")
 
 	return k1Manifest, err
 }

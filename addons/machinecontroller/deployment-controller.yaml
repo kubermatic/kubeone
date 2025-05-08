@@ -16,7 +16,7 @@ spec:
         "prometheus.io/scrape": "true"
         "prometheus.io/port": "8080"
         "prometheus.io/path": "/metrics"
-        "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
+        "kubeone.k8c.io/cabundle-hash": "{{ CABundle | sha256sum }}"
         "kubeone.k8c.io/credentials-hash": "{{ .MachineControllerCredentialsHash }}"
       labels:
         app: machine-controller
@@ -49,7 +49,7 @@ spec:
             {{ if .Config.CloudProvider.External -}}
             - -node-external-cloud-provider
             {{ end -}}
-            {{ if .Config.CABundle -}}
+            {{ if CABundle -}}
             - -ca-bundle={{ .Resources.CABundleSSLCertFilePath }}
             {{ end -}}
             - -join-cluster-timeout=15m
@@ -65,7 +65,7 @@ spec:
             - name: NO_PROXY
               value: "{{ .Config.Proxy.NoProxy }}"
 {{ .MachineControllerCredentialsEnvVars | indent 12 }}
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
           ports:
@@ -84,7 +84,7 @@ spec:
               path: /healthz
               port: 8085
             periodSeconds: 5
-{{ if .Config.CABundle }}
+{{ if CABundle }}
           volumeMounts:
 {{ caBundleVolumeMount | indent 12 }}
       volumes:

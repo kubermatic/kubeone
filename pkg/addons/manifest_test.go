@@ -214,7 +214,7 @@ func TestEnsureAddonsLabelsOnResources(t *testing.T) {
 				LocalFS:      os.DirFS(addonsDir),
 			}
 
-			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, nil, false, "", false)
+			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, nil, false, &kubeoneapi.KubeOneCluster{}, false)
 			if err != nil {
 				t.Fatalf("unable to load manifests: %v", err)
 			}
@@ -290,13 +290,18 @@ func TestImageRegistryParsing(t *testing.T) {
 			if tc.registryConfiguration != nil && tc.registryConfiguration.OverwriteRegistry != "" {
 				overwriteRegistry = tc.registryConfiguration.OverwriteRegistry
 			}
+			cluster := &kubeoneapi.KubeOneCluster{
+				RegistryConfiguration: &kubeoneapi.RegistryConfiguration{
+					OverwriteRegistry: overwriteRegistry,
+				},
+			}
 
 			applier := &applier{
 				TemplateData: td,
 				LocalFS:      os.DirFS(addonsDir),
 			}
 
-			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, nil, false, overwriteRegistry, false)
+			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, nil, false, cluster, false)
 			if err != nil {
 				t.Fatalf("unable to load manifests: %v", err)
 			}
@@ -666,7 +671,7 @@ func TestDisableTemplateForLoadManifests(t *testing.T) {
 				LocalFS:      os.DirFS(addonsDir),
 			}
 
-			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, nil, false, "", tc.disableTemplating)
+			manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, nil, false, &kubeoneapi.KubeOneCluster{}, tc.disableTemplating)
 			if err != nil {
 				t.Fatalf("unable to load manifests: %v", err)
 			}

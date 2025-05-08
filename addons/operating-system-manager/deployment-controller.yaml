@@ -16,7 +16,7 @@ spec:
         "prometheus.io/scrape": "true"
         "prometheus.io/port": "8080"
         "prometheus.io/path": "/metrics"
-        "kubeone.k8c.io/cabundle-hash": "{{ .Config.CABundle | sha256sum }}"
+        "kubeone.k8c.io/cabundle-hash": "{{ CABundle | sha256sum }}"
         "kubeone.k8c.io/credentials-hash": "{{ .OperatingSystemManagerCredentialsHash }}"
       labels:
         app: operating-system-manager
@@ -55,7 +55,7 @@ spec:
             {{ if .Config.CloudProvider.External }}
             - -external-cloud-provider
             {{ end }}
-            {{ if .Config.CABundle -}}
+            {{ if CABundle -}}
             - -host-ca-bundle={{ .Resources.CABundleSSLCertFilePath }}
             {{ end -}}
             {{ if .CSIMigrationFeatureGates }}
@@ -79,7 +79,7 @@ spec:
             - name: NO_PROXY
               value: "{{ .Config.Proxy.NoProxy }}"
 {{ .OperatingSystemManagerCredentialsEnvVars | indent 12 }}
-{{ if .Config.CABundle }}
+{{ if CABundle }}
 {{ caBundleEnvVar | indent 12 }}
 {{ end }}
           ports:
@@ -102,7 +102,7 @@ spec:
             requests:
               cpu: 50m
               memory: 128Mi
-{{ if .Config.CABundle }}
+{{ if CABundle }}
           volumeMounts:
 {{ caBundleVolumeMount | indent 12 }}
       volumes:

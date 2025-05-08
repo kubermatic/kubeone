@@ -259,7 +259,7 @@ spec:
   template:
     metadata:
       annotations:
-        kubeone.k8c.io/cabundle-hash: '{{ .Config.CABundle | sha256sum }}'
+        kubeone.k8c.io/cabundle-hash: '{{ CABundle | sha256sum }}'
         kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
       labels:
         app: nutanix-csi-controller
@@ -426,7 +426,7 @@ spec:
   template:
     metadata:
       annotations:
-        kubeone.k8c.io/cabundle-hash: '{{ .Config.CABundle | sha256sum }}'
+        kubeone.k8c.io/cabundle-hash: '{{ CABundle | sha256sum }}'
         kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
       labels:
         app: nutanix-csi-node
