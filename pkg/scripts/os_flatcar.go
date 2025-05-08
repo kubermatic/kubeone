@@ -166,6 +166,8 @@ func flatcarCNIVersion(kubeVersion string) string {
 		return "1.5.1"
 	case 32:
 		return "1.6.0"
+	case 33:
+		return "1.6.0"
 	default:
 		return "1.6.0"
 	}
@@ -181,6 +183,8 @@ func criToolsVersion(kubeVersion string) string {
 	case 31:
 		return "1.31.1"
 	case 32:
+		return "1.32.0"
+	case 33:
 		return "1.32.0"
 	default:
 		return "1.32.0"
