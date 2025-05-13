@@ -185,8 +185,8 @@ func criToolsVersion(kubeVersion string) string {
 	case 32:
 		return "1.32.0"
 	case 33:
-		return "1.32.0"
+		return "1.33.0"
 	default:
-		return "1.32.0"
+		return "1.33.0"
 	}
 }
