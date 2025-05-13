@@ -33,6 +33,7 @@ import (
 
 const (
 	credentialSecretName = "kube-system/kubeone-registry-credentials" //nolint:gosec
+	lessThem1Dot33       = "<1.33"
 )
 
 var preV131Constraint = semverutil.MustParseConstraint("< 1.31")
@@ -327,7 +328,12 @@ func (c KubeOneCluster) csiMigrationFeatureGates(complete bool) (map[string]bool
 	}
 
 	featureGates := map[string]bool{}
-	if complete {
+	shouldHaveCloudProviderFeatureGates, err := c.shouldHaveCloudProviderFeatureGates()
+	if err != nil {
+		return nil, fail.ConfigValidation(fmt.Errorf("failed to validate kubernetes version to decide if cloud provider feature gate should be added: %w", err))
+	}
+
+	if complete && shouldHaveCloudProviderFeatureGates {
 		featureGates["DisableCloudProviders"] = true
 	}
 
@@ -348,6 +354,28 @@ func (c KubeOneCluster) CSIMigrationFeatureGates(complete bool) (map[string]bool
 	}
 
 	return featureGates, marshalFeatureGates(featureGates), nil
+}
+
+// shouldHaveCloudProviderFeatureGates returns boolean value to decide whether cloud provider feature gate
+// should be added to kubelet configs
+// for kubernetes 1.33+ we need to skip setting this feature gate because it was removed
+func (c KubeOneCluster) shouldHaveCloudProviderFeatureGates() (bool, error) {
+	lessThen1Dot33Check, err := semver.NewConstraint(lessThem1Dot33)
+	if err != nil {
+		return false, err
+	}
+
+	currentVersion, err := semver.NewVersion(c.Versions.Kubernetes)
+	if err != nil {
+		return false, err
+	}
+
+	if !lessThen1Dot33Check.Check(currentVersion) {
+		// kubernetes releases newer then 1.32 don't support cloud provider feature gates anymore
+		return false, nil
+	}
+
+	return true, nil
 }
 
 func marshalFeatureGates(fgm map[string]bool) string {
