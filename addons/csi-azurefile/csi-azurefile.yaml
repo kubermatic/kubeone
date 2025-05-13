@@ -7,8 +7,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azurefile-csi-driver
     app.kubernetes.io/part-of: azurefile-csi-driver
-    app.kubernetes.io/version: 1.32.0
-    helm.sh/chart: azurefile-csi-driver-1.32.0
+    app.kubernetes.io/version: 1.33.0
+    helm.sh/chart: azurefile-csi-driver-1.33.0
   name: csi-azurefile-controller-sa
   namespace: kube-system
 ---
@@ -21,8 +21,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azurefile-csi-driver
     app.kubernetes.io/part-of: azurefile-csi-driver
-    app.kubernetes.io/version: 1.32.0
-    helm.sh/chart: azurefile-csi-driver-1.32.0
+    app.kubernetes.io/version: 1.33.0
+    helm.sh/chart: azurefile-csi-driver-1.33.0
   name: csi-azurefile-node-sa
   namespace: kube-system
 ---
@@ -35,8 +35,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azurefile-csi-driver
     app.kubernetes.io/part-of: azurefile-csi-driver
-    app.kubernetes.io/version: 1.32.0
-    helm.sh/chart: azurefile-csi-driver-1.32.0
+    app.kubernetes.io/version: 1.33.0
+    helm.sh/chart: azurefile-csi-driver-1.33.0
   name: azurefile-external-attacher-role
 rules:
   - apiGroups:
@@ -106,8 +106,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azurefile-csi-driver
     app.kubernetes.io/part-of: azurefile-csi-driver
-    app.kubernetes.io/version: 1.32.0
-    helm.sh/chart: azurefile-csi-driver-1.32.0
+    app.kubernetes.io/version: 1.33.0
+    helm.sh/chart: azurefile-csi-driver-1.33.0
   name: azurefile-external-provisioner-role
 rules:
   - apiGroups:
@@ -201,8 +201,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azurefile-csi-driver
     app.kubernetes.io/part-of: azurefile-csi-driver
-    app.kubernetes.io/version: 1.32.0
-    helm.sh/chart: azurefile-csi-driver-1.32.0
+    app.kubernetes.io/version: 1.33.0
+    helm.sh/chart: azurefile-csi-driver-1.33.0
   name: azurefile-external-resizer-role
 rules:
   - apiGroups:
@@ -262,8 +262,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azurefile-csi-driver
     app.kubernetes.io/part-of: azurefile-csi-driver
-    app.kubernetes.io/version: 1.32.0
-    helm.sh/chart: azurefile-csi-driver-1.32.0
+    app.kubernetes.io/version: 1.33.0
+    helm.sh/chart: azurefile-csi-driver-1.33.0
   name: azurefile-external-snapshotter-role
 rules:
   - apiGroups:
@@ -331,8 +331,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azurefile-csi-driver
     app.kubernetes.io/part-of: azurefile-csi-driver
-    app.kubernetes.io/version: 1.32.0
-    helm.sh/chart: azurefile-csi-driver-1.32.0
+    app.kubernetes.io/version: 1.33.0
+    helm.sh/chart: azurefile-csi-driver-1.33.0
   name: csi-azurefile-controller-secret-role
 rules:
   - apiGroups:
@@ -352,8 +352,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azurefile-csi-driver
     app.kubernetes.io/part-of: azurefile-csi-driver
-    app.kubernetes.io/version: 1.32.0
-    helm.sh/chart: azurefile-csi-driver-1.32.0
+    app.kubernetes.io/version: 1.33.0
+    helm.sh/chart: azurefile-csi-driver-1.33.0
   name: csi-azurefile-node-secret-role
 rules:
   - apiGroups:
@@ -372,8 +372,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azurefile-csi-driver
     app.kubernetes.io/part-of: azurefile-csi-driver
-    app.kubernetes.io/version: 1.32.0
-    helm.sh/chart: azurefile-csi-driver-1.32.0
+    app.kubernetes.io/version: 1.33.0
+    helm.sh/chart: azurefile-csi-driver-1.33.0
   name: azurefile-csi-attacher-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -393,8 +393,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azurefile-csi-driver
     app.kubernetes.io/part-of: azurefile-csi-driver
-    app.kubernetes.io/version: 1.32.0
-    helm.sh/chart: azurefile-csi-driver-1.32.0
+    app.kubernetes.io/version: 1.33.0
+    helm.sh/chart: azurefile-csi-driver-1.33.0
   name: azurefile-csi-provisioner-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -414,8 +414,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azurefile-csi-driver
     app.kubernetes.io/part-of: azurefile-csi-driver
-    app.kubernetes.io/version: 1.32.0
-    helm.sh/chart: azurefile-csi-driver-1.32.0
+    app.kubernetes.io/version: 1.33.0
+    helm.sh/chart: azurefile-csi-driver-1.33.0
   name: azurefile-csi-resizer-role
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -435,8 +435,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azurefile-csi-driver
     app.kubernetes.io/part-of: azurefile-csi-driver
-    app.kubernetes.io/version: 1.32.0
-    helm.sh/chart: azurefile-csi-driver-1.32.0
+    app.kubernetes.io/version: 1.33.0
+    helm.sh/chart: azurefile-csi-driver-1.33.0
   name: azurefile-csi-snapshotter-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -456,8 +456,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azurefile-csi-driver
     app.kubernetes.io/part-of: azurefile-csi-driver
-    app.kubernetes.io/version: 1.32.0
-    helm.sh/chart: azurefile-csi-driver-1.32.0
+    app.kubernetes.io/version: 1.33.0
+    helm.sh/chart: azurefile-csi-driver-1.33.0
   name: csi-azurefile-controller-secret-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -477,8 +477,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azurefile-csi-driver
     app.kubernetes.io/part-of: azurefile-csi-driver
-    app.kubernetes.io/version: 1.32.0
-    helm.sh/chart: azurefile-csi-driver-1.32.0
+    app.kubernetes.io/version: 1.33.0
+    helm.sh/chart: azurefile-csi-driver-1.33.0
   name: csi-azurefile-node-secret-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -499,8 +499,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azurefile-csi-driver
     app.kubernetes.io/part-of: azurefile-csi-driver
-    app.kubernetes.io/version: 1.32.0
-    helm.sh/chart: azurefile-csi-driver-1.32.0
+    app.kubernetes.io/version: 1.33.0
+    helm.sh/chart: azurefile-csi-driver-1.33.0
   name: csi-azurefile-controllermanager
   namespace: kube-system
 spec:
@@ -521,8 +521,8 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: azurefile-csi-driver
         app.kubernetes.io/part-of: azurefile-csi-driver
-        app.kubernetes.io/version: 1.32.0
-        helm.sh/chart: azurefile-csi-driver-1.32.0
+        app.kubernetes.io/version: 1.33.0
+        helm.sh/chart: azurefile-csi-driver-1.33.0
     spec:
       affinity:
         nodeAffinity:
@@ -741,8 +741,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azurefile-csi-driver
     app.kubernetes.io/part-of: azurefile-csi-driver
-    app.kubernetes.io/version: 1.32.0
-    helm.sh/chart: azurefile-csi-driver-1.32.0
+    app.kubernetes.io/version: 1.33.0
+    helm.sh/chart: azurefile-csi-driver-1.33.0
   name: csi-azurefile-nodemanager
   namespace: kube-system
 spec:
@@ -760,8 +760,8 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: azurefile-csi-driver
         app.kubernetes.io/part-of: azurefile-csi-driver
-        app.kubernetes.io/version: 1.32.0
-        helm.sh/chart: azurefile-csi-driver-1.32.0
+        app.kubernetes.io/version: 1.33.0
+        helm.sh/chart: azurefile-csi-driver-1.33.0
     spec:
       affinity:
         nodeAffinity:
@@ -775,7 +775,7 @@ spec:
       containers:
         - args:
             - --csi-address=/csi/csi.sock
-            - --probe-timeout=3s
+            - --probe-timeout=10s
             - --http-endpoint=localhost:29613
             - --v=2
           image: '{{ .InternalImages.Get "AzureFileCSILivenessProbe" }}'
@@ -816,6 +816,8 @@ spec:
         - args:
             - --v=5
             - --endpoint=$(CSI_ENDPOINT)
+            - --azurefile-proxy-endpoint=$(AZUREFILE_PROXY_ENDPOINT)
+            - --enable-azurefile-proxy=true
             - --nodeid=$(KUBE_NODE_NAME)
             - --kubeconfig=
             - --drivername=file.csi.azure.com
@@ -845,6 +847,8 @@ spec:
                   apiVersion: v1
                   fieldPath: spec.nodeName
             - name: AZURE_GO_SDK_LOG_LEVEL
+            - name: AZUREFILE_PROXY_ENDPOINT
+              value: unix:///csi/azurefile-proxy.sock
           image: '{{ .InternalImages.Get "AzureFileCSI" }}'
           imagePullPolicy: IfNotPresent
           livenessProbe:
@@ -855,7 +859,7 @@ spec:
               port: 29613
             initialDelaySeconds: 30
             periodSeconds: 30
-            timeoutSeconds: 10
+            timeoutSeconds: 30
           name: azurefile
           resources:
             limits:
@@ -880,6 +884,36 @@ spec:
               name: device-dir
       dnsPolicy: Default
       hostNetwork: true
+      hostPID: true
+      initContainers:
+        - command:
+            - /azurefile-proxy/init.sh
+          env:
+            - name: DEBIAN_FRONTEND
+              value: noninteractive
+            - name: AZNFS_NONINTERACTIVE_INSTALL
+              value: "1"
+            - name: INSTALL_AZUREFILE_PROXY
+              value: "true"
+            - name: INSTALL_AZNFS_MOUNT
+              value: "true"
+            - name: KUBELET_PATH
+              value: /var/lib/kubelet
+            - name: MIGRATE_K8S_REPO
+              value: "false"
+          image: mcr.microsoft.com/oss/kubernetes-csi/azurefile-csi:v1.33.0
+          imagePullPolicy: IfNotPresent
+          name: install-azurefile-proxy
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+            privileged: true
+          volumeMounts:
+            - mountPath: /host/usr
+              name: host-usr
+            - mountPath: /host/etc
+              name: host-etc
       nodeSelector:
         kubernetes.io/os: linux
       priorityClassName: system-node-critical
@@ -890,6 +924,12 @@ spec:
       tolerations:
         - operator: Exists
       volumes:
+        - hostPath:
+            path: /usr
+          name: host-usr
+        - hostPath:
+            path: /etc
+          name: host-etc
         - hostPath:
             path: /var/lib/kubelet/plugins/file.csi.azure.com
             type: DirectoryOrCreate
@@ -919,16 +959,16 @@ apiVersion: storage.k8s.io/v1
 kind: CSIDriver
 metadata:
   annotations:
-    csiDriver: v1.32.0
-    snapshot: v8.2.0
+    csiDriver: v1.33.0
+    snapshot: v8.2.1
   labels:
     app.kubernetes.io/component: csi-driver
     app.kubernetes.io/instance: azurefile-csi-driver
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azurefile-csi-driver
     app.kubernetes.io/part-of: azurefile-csi-driver
-    app.kubernetes.io/version: 1.32.0
-    helm.sh/chart: azurefile-csi-driver-1.32.0
+    app.kubernetes.io/version: 1.33.0
+    helm.sh/chart: azurefile-csi-driver-1.33.0
   name: file.csi.azure.com
 spec:
   attachRequired: false

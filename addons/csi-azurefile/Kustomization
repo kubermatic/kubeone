@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
 - name: azurefile-csi-driver
   repo: https://raw.githubusercontent.com/kubernetes-sigs/azurefile-csi-driver/master/charts
-  version: v1.32.0
+  version: v1.33.0
   releaseName: azurefile-csi-driver
   namespace: kube-system
   valuesFile: helm-values

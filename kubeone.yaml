@@ -1,0 +1,41 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+name: k1-hetzner
+versions:
+  kubernetes: 1.33.0
+
+# apiEndpoint:
+#   host: '209.38.189.17'
+#   port: 6443
+#   alternativeNames:
+#   - "209.38.189.17"
+
+containerRuntime:
+  containerd: {}
+
+machineController:
+  deploy: true
+
+operatingSystemManager:
+  deploy: true
+
+features:
+  nodeLocalDNS:
+    deploy: false
+
+addons:
+  enable: true
+  path: ./addons/
+
+clusterNetwork:
+  podSubnet: 10.244.0.0/16
+  serviceSubnet: 10.224.0.0/12
+  kubeProxy:
+    skipInstallation: false
+    iptables: {}
+  cni:
+    # external: {}
+    cilium: {}
+
+# cloudProvider:
+#   hetzner: {}
