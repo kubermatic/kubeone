@@ -111,6 +111,13 @@ rules:
   - podsecuritypolicies
   verbs:
   - use
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -572,6 +579,7 @@ spec:
         - --leader-election
         - --leader-election-namespace=$(PDCSI_NAMESPACE)
         - --timeout=300s
+        - --retry-interval-max=60s
         env:
         - name: PDCSI_NAMESPACE
           valueFrom:
@@ -585,6 +593,11 @@ spec:
       - args:
         - --v=5
         - --endpoint=unix:/csi/csi.sock
+        - --supports-dynamic-iops-provisioning=hyperdisk-balanced,hyperdisk-extreme
+        - --supports-dynamic-throughput-provisioning=hyperdisk-balanced,hyperdisk-throughput,hyperdisk-ml
+        - --enable-data-cache
+        command:
+        - /gce-pd-csi-driver
         env:
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /etc/cloud-sa/cloud-sa.json
@@ -659,6 +672,13 @@ spec:
         - --v=5
         - --endpoint=unix:/csi/csi.sock
         - --run-controller-service=false
+        - --enable-data-cache
+        - --node-name=$(KUBE_NODE_NAME)
+        env:
+        - name: KUBE_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
         image: '{{ .InternalImages.Get "GCPComputeCSIDriver" }}'
         name: gce-pd-driver
         securityContext:
@@ -679,6 +699,9 @@ spec:
           name: udev-socket
         - mountPath: /sys
           name: sys
+        - mountPath: /lib/modules
+          name: lib-modules
+          readOnly: true
       hostNetwork: true
       nodeSelector:
         kubernetes.io/os: linux
@@ -719,6 +742,10 @@ spec:
           path: /sys
           type: Directory
         name: sys
+      - hostPath:
+          path: /lib/modules
+          type: Directory
+        name: lib-modules
 ---
 apiVersion: storage.k8s.io/v1
 kind: CSIDriver

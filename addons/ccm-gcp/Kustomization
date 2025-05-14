@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: kube-system
 
 resources:
-  - https://raw.githubusercontent.com/kubernetes/cloud-provider-gcp/ccm/v30.0.0/deploy/packages/default/manifest.yaml
+  - https://raw.githubusercontent.com/kubernetes/cloud-provider-gcp/ccm/v33.0.0/deploy/packages/default/manifest.yaml
 
 patches:
   - target:

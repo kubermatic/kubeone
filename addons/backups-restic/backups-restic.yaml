@@ -86,7 +86,7 @@ spec:
               readOnly: true
           containers:
           - name: uploader
-            image: {{ Registry "ghcr.io" }}/restic/restic:0.17.3
+            image: {{ Registry "ghcr.io" }}/restic/restic:0.18.0
             imagePullPolicy: IfNotPresent
             command:
             - /bin/sh
