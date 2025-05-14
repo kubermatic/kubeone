@@ -135,33 +135,33 @@ spec:
         "kubeone.k8c.io/cloudconfig-hash": "{{ .Config.CloudProvider.CloudConfig | sha256sum }}"
     spec:
       tolerations:
-      - key: node.cloudprovider.kubernetes.io/uninitialized
-        value: "true"
-        effect: NoSchedule
-      - key: node-role.kubernetes.io/master
-        effect: NoSchedule
-        operator: Exists
-      - key: node-role.kubernetes.io/control-plane
-        effect: NoSchedule
-        operator: Exists
-      - key: node.kubernetes.io/not-ready
-        effect: NoSchedule
-        operator: Exists
-      - key: CriticalAddonsOnly
-        effect: NoExecute
-        operator: Exists
-      - effect: NoSchedule
-        key: node.cloudprovider.kubernetes.io/uninitialized
-        value: "true"
-      - effect: NoSchedule
-        key: node-role.kubernetes.io/control-plane
-        operator: Exists
-      - effect: NoSchedule
-        key: node.kubernetes.io/not-ready
-        operator: Exists
-      - effect: NoExecute
-        key: CriticalAddonsOnly
-        operator: Exists
+        - key: node.cloudprovider.kubernetes.io/uninitialized
+          value: "true"
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+          operator: Exists
+        - key: node-role.kubernetes.io/control-plane
+          effect: NoSchedule
+          operator: Exists
+        - key: node.kubernetes.io/not-ready
+          effect: NoSchedule
+          operator: Exists
+        - key: CriticalAddonsOnly
+          effect: NoExecute
+          operator: Exists
+        - effect: NoSchedule
+          key: node.cloudprovider.kubernetes.io/uninitialized
+          value: "true"
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists
+        - effect: NoSchedule
+          key: node.kubernetes.io/not-ready
+          operator: Exists
+        - effect: NoExecute
+          key: CriticalAddonsOnly
+          operator: Exists
       securityContext:
         fsGroup: 1001
         runAsUser: 1001
@@ -204,32 +204,27 @@ spec:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchExpressions:
-              - key: node-role.kubernetes.io/control-plane
-                operator: Exists
-            - matchExpressions:
-              - key: node-role.kubernetes.io/master
-                operator: Exists
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: Exists
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/master
+                    operator: Exists
 ---
-# Source: vsphere-cpi/templates/role-binding.yaml
-apiVersion: v1
-kind: List
-metadata: {}
-items:
-- apiVersion: rbac.authorization.k8s.io/v1
-  kind: RoleBinding
-  metadata:
-    name: servicecatalog.k8s.io:apiserver-authentication-reader
-    labels:
-      app: vsphere-cpi
-      vsphere-cpi-infra: role-binding
-      component: cloud-controller-manager
-    namespace: kube-system
-  roleRef:
-    apiGroup: rbac.authorization.k8s.io
-    kind: Role
-    name: extension-apiserver-authentication-reader
-  subjects:
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: servicecatalog.k8s.io:apiserver-authentication-reader
+  labels:
+    app: vsphere-cpi
+    vsphere-cpi-infra: role-binding
+    component: cloud-controller-manager
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: extension-apiserver-authentication-reader
+subjects:
   - apiGroup: ""
     kind: ServiceAccount
     name: cloud-controller-manager
@@ -237,19 +232,20 @@ items:
   - apiGroup: ""
     kind: User
     name: cloud-controller-manager
-- apiVersion: rbac.authorization.k8s.io/v1
-  kind: ClusterRoleBinding
-  metadata:
-    name: cloud-controller-manager
-    labels:
-      app: vsphere-cpi
-      vsphere-cpi-infra: cluster-role-binding
-      component: cloud-controller-manager
-  roleRef:
-    apiGroup: rbac.authorization.k8s.io
-    kind: ClusterRole
-    name: cloud-controller-manager
-  subjects:
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cloud-controller-manager
+  labels:
+    app: vsphere-cpi
+    vsphere-cpi-infra: cluster-role-binding
+    component: cloud-controller-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cloud-controller-manager
+subjects:
   - kind: ServiceAccount
     name: cloud-controller-manager
     namespace: kube-system
