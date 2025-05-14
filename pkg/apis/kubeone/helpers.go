@@ -33,10 +33,12 @@ import (
 
 const (
 	credentialSecretName = "kube-system/kubeone-registry-credentials" //nolint:gosec
-	lessThem1Dot33       = "<1.33"
 )
 
-var preV131Constraint = semverutil.MustParseConstraint("< 1.31")
+var (
+	preV131Constraint  = semverutil.MustParseConstraint("< 1.31")
+	postV133Constraint = semverutil.MustParseConstraint(">= 1.33")
+)
 
 // Leader returns the first configured host. Only call this after
 // validating the cluster config to ensure a leader exists.
@@ -328,12 +330,8 @@ func (c KubeOneCluster) csiMigrationFeatureGates(complete bool) (map[string]bool
 	}
 
 	featureGates := map[string]bool{}
-	shouldHaveCloudProviderFeatureGates, err := c.shouldHaveCloudProviderFeatureGates()
-	if err != nil {
-		return nil, fail.ConfigValidation(fmt.Errorf("failed to validate kubernetes version to decide if cloud provider feature gate should be added: %w", err))
-	}
 
-	if complete && shouldHaveCloudProviderFeatureGates {
+	if complete && c.canHaveCloudProviderFeatureGates() {
 		featureGates["DisableCloudProviders"] = true
 	}
 
@@ -356,26 +354,13 @@ func (c KubeOneCluster) CSIMigrationFeatureGates(complete bool) (map[string]bool
 	return featureGates, marshalFeatureGates(featureGates), nil
 }
 
-// shouldHaveCloudProviderFeatureGates returns boolean value to decide whether cloud provider feature gate
+// canHaveCloudProviderFeatureGates returns boolean value to decide whether cloud provider feature gate
 // should be added to kubelet configs
 // for kubernetes 1.33+ we need to skip setting this feature gate because it was removed
-func (c KubeOneCluster) shouldHaveCloudProviderFeatureGates() (bool, error) {
-	lessThen1Dot33Check, err := semver.NewConstraint(lessThem1Dot33)
-	if err != nil {
-		return false, err
-	}
+func (c KubeOneCluster) canHaveCloudProviderFeatureGates() bool {
+	currentVersion := semver.MustParse(c.Versions.Kubernetes)
 
-	currentVersion, err := semver.NewVersion(c.Versions.Kubernetes)
-	if err != nil {
-		return false, err
-	}
-
-	if !lessThen1Dot33Check.Check(currentVersion) {
-		// kubernetes releases newer then 1.32 don't support cloud provider feature gates anymore
-		return false, nil
-	}
-
-	return true, nil
+	return !postV133Constraint.Check(currentVersion)
 }
 
 func marshalFeatureGates(fgm map[string]bool) string {
