@@ -35,7 +35,10 @@ const (
 	credentialSecretName = "kube-system/kubeone-registry-credentials" //nolint:gosec
 )
 
-var preV131Constraint = semverutil.MustParseConstraint("< 1.31")
+var (
+	preV131Constraint  = semverutil.MustParseConstraint("< 1.31")
+	postV133Constraint = semverutil.MustParseConstraint(">= 1.33")
+)
 
 // Leader returns the first configured host. Only call this after
 // validating the cluster config to ensure a leader exists.
@@ -327,7 +330,8 @@ func (c KubeOneCluster) csiMigrationFeatureGates(complete bool) (map[string]bool
 	}
 
 	featureGates := map[string]bool{}
-	if complete {
+
+	if complete && c.canHaveCloudProviderFeatureGates() {
 		featureGates["DisableCloudProviders"] = true
 	}
 
@@ -348,6 +352,15 @@ func (c KubeOneCluster) CSIMigrationFeatureGates(complete bool) (map[string]bool
 	}
 
 	return featureGates, marshalFeatureGates(featureGates), nil
+}
+
+// canHaveCloudProviderFeatureGates returns boolean value to decide whether cloud provider feature gate
+// should be added to kubelet configs
+// for kubernetes 1.33+ we need to skip setting this feature gate because it was removed
+func (c KubeOneCluster) canHaveCloudProviderFeatureGates() bool {
+	currentVersion := semver.MustParse(c.Versions.Kubernetes)
+
+	return !postV133Constraint.Check(currentVersion)
 }
 
 func marshalFeatureGates(fgm map[string]bool) string {
