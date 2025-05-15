@@ -1,4 +1,5 @@
 # Generated E2E tests usage
+test-vsphere
 
 The matrix of possible combinations of generated tests is located at [tests.yml](tests.yml).
 The API of this matrix is:
