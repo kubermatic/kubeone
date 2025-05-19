@@ -150,18 +150,6 @@ spec:
         - key: CriticalAddonsOnly
           effect: NoExecute
           operator: Exists
-        - effect: NoSchedule
-          key: node.cloudprovider.kubernetes.io/uninitialized
-          value: "true"
-        - effect: NoSchedule
-          key: node-role.kubernetes.io/control-plane
-          operator: Exists
-        - effect: NoSchedule
-          key: node.kubernetes.io/not-ready
-          operator: Exists
-        - effect: NoExecute
-          key: CriticalAddonsOnly
-          operator: Exists
       securityContext:
         fsGroup: 1001
         runAsUser: 1001
