@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
 - name: cloud-provider-azure
   repo: https://raw.githubusercontent.com/kubernetes-sigs/cloud-provider-azure/master/helm/repo
-  version: v1.32.0
+  version: v1.33.0
   releaseName: cloud-provider-azure
   namespace: kube-system
   valuesFile: helm-values
