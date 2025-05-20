@@ -115,9 +115,37 @@ func pruneImages(s *state.State, _ *kubeoneapi.HostConfig, _ executor.Interface)
 	return fail.SSH(err, "deleting unused container images")
 }
 
+type syncHostToNodeFn func(host *kubeoneapi.HostConfig, node *corev1.Node)
+
+func addRemoveKeyValues(src map[string]string, dst map[string]string) {
+	for key, value := range src {
+		if strings.HasSuffix(key, "-") {
+			// drop minus from the suffix
+			keyToDelete := key[:len(key)-1]
+			delete(dst, keyToDelete)
+		} else {
+			dst[key] = value
+		}
+	}
+}
+
 func labelNodes(s *state.State) error {
 	s.Logger.Infof("Labeling nodes...")
 
+	return syncHostsToNodes(s, func(host *kubeoneapi.HostConfig, node *corev1.Node) {
+		addRemoveKeyValues(host.Labels, node.Labels)
+	})
+}
+
+func annotateNodes(s *state.State) error {
+	s.Logger.Infof("Annotating nodes...")
+
+	return syncHostsToNodes(s, func(host *kubeoneapi.HostConfig, node *corev1.Node) {
+		addRemoveKeyValues(host.Annotations, node.Annotations)
+	})
+}
+
+func syncHostsToNodes(s *state.State, hostUpdater syncHostToNodeFn) error {
 	candidateNodes := sets.NewString()
 	nodeList := corev1.NodeList{}
 
@@ -151,10 +179,10 @@ func labelNodes(s *state.State) error {
 		}
 	}
 
-	return applyHostLabels(s.Context, hostsSet, s.DynamicClient)
+	return annotateAndLabel(s.Context, hostsSet, s.DynamicClient, hostUpdater)
 }
 
-func applyHostLabels(ctx context.Context, hosts map[string]kubeoneapi.HostConfig, dynClient client.Client) error {
+func annotateAndLabel(ctx context.Context, hosts map[string]kubeoneapi.HostConfig, dynClient client.Client, mutator syncHostToNodeFn) error {
 	for nodeName, host := range hosts {
 		updateErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 			var node corev1.Node
@@ -163,17 +191,15 @@ func applyHostLabels(ctx context.Context, hosts map[string]kubeoneapi.HostConfig
 				return err
 			}
 
-			node.Labels["v1.kubeone.io/operating-system"] = string(host.OperatingSystem)
-
-			for labKey, labVal := range host.Labels {
-				if strings.HasSuffix(labKey, "-") {
-					// drop minus from the suffix
-					labelToDelete := labKey[:len(labKey)-1]
-					delete(node.Labels, labelToDelete)
-				} else {
-					node.Labels[labKey] = labVal
-				}
+			if node.Annotations == nil {
+				node.Annotations = map[string]string{}
 			}
+			if node.Labels == nil {
+				node.Labels = map[string]string{}
+			}
+
+			node.Labels["v1.kubeone.io/operating-system"] = string(host.OperatingSystem)
+			mutator(&host, &node)
 
 			return dynClient.Update(ctx, &node)
 		})
