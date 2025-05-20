@@ -824,16 +824,24 @@ func ValidateHostConfig(hosts []kubeoneapi.HostConfig, clusterNetwork kubeoneapi
 		if host.Kubelet.MaxPods != nil && *host.Kubelet.MaxPods <= 0 {
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("kubelet").Child("maxPods"), host.Kubelet.MaxPods, "maxPods must be a positive number"))
 		}
-		for labelKey, labelValue := range host.Labels {
-			if strings.HasSuffix(labelKey, "-") && labelValue != "" {
-				allErrs = append(allErrs, field.Invalid(fldPath.Child("labels"), labelValue, "label to remove cannot have value"))
-			}
-		}
-
+		allErrs = append(allErrs, validateLabels(host.Annotations, fldPath.Child("annotations"))...)
+		allErrs = append(allErrs, validateLabels(host.Labels, fldPath.Child("labels"))...)
 		for _, taint := range host.Taints {
 			if taint.Key == "node-role.kubernetes.io/master" {
 				allErrs = append(allErrs, field.Forbidden(fldPath.Child("taints"), fmt.Sprintf("%q taint is forbidden for clusters running Kubernetes 1.25+", "node-role.kubernetes.io/master")))
 			}
+		}
+	}
+
+	return allErrs
+}
+
+func validateLabels(kv map[string]string, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	for labelKey, labelValue := range kv {
+		if strings.HasSuffix(labelKey, "-") && labelValue != "" {
+			allErrs = append(allErrs, field.Invalid(fldPath, labelValue, "key to remove cannot have value"))
 		}
 	}
 

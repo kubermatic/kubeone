@@ -1536,6 +1536,7 @@ func autoConvert_v1beta2_HostConfig_To_kubeone_HostConfig(in *HostConfig, out *k
 	out.IsLeader = in.IsLeader
 	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
+	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
 	if err := Convert_v1beta2_KubeletConfig_To_kubeone_KubeletConfig(&in.Kubelet, &out.Kubelet, s); err != nil {
 		return err
 	}
@@ -1567,6 +1568,7 @@ func autoConvert_kubeone_HostConfig_To_v1beta2_HostConfig(in *kubeone.HostConfig
 	out.IsLeader = in.IsLeader
 	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
+	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
 	if err := Convert_kubeone_KubeletConfig_To_v1beta2_KubeletConfig(&in.Kubelet, &out.Kubelet, s); err != nil {
 		return err
 	}

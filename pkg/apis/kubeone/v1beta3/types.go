@@ -319,6 +319,9 @@ type HostConfig struct {
 	// Labels to be used to apply (or remove, with minus symbol suffix, see more kubectl help label) labels to/from node
 	Labels map[string]string `json:"labels,omitempty"`
 
+	// Annotations to be used to apply (or remove, with minus symbol suffix, see more kubectl help annotate) annotations to/from node
+	Annotations map[string]string `json:"annotations,omitempty"`
+
 	// Kubelet
 	Kubelet KubeletConfig `json:"kubelet,omitempty"`
 
