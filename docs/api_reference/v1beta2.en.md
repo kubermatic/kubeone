@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2025-06-10T13:35:23+02:00
+date = 2025-06-10T14:30:50+02:00
 weight = 11
 +++
 ## v1beta2
@@ -480,6 +480,7 @@ HostConfig describes a single control plane or worker node.
 | isLeader | IsLeader indicates this host as a session leader. Default value is populated at the runtime. | bool | false |
 | taints | Taints are taints applied to nodes. Those taints are only applied when the node is being provisioned. If not provided (i.e. nil) for control plane nodes, it defaults to TaintEffectNoSchedule with key\n    node-role.kubernetes.io/control-plane\nExplicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes). | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#taint-v1-core) | false |
 | labels | Labels to be used to apply (or remove, with minus symbol suffix, see more kubectl help label) labels to/from node | map[string]string | false |
+| annotations | Annotations to be used to apply (or remove, with minus symbol suffix, see more kubectl help annotate) annotations to/from node | map[string]string | false |
 | kubelet | Kubelet | [KubeletConfig](#kubeletconfig) | false |
 | operatingSystem | OperatingSystem information, can be populated at the runtime. | OperatingSystemName | false |
 

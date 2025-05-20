@@ -103,6 +103,7 @@ type hostsSpec struct {
 	BastionHostKey    []byte            `json:"bastion_host_key"`
 	Kubelet           kubeletSpec       `json:"kubelet,omitempty"`
 	Labels            map[string]string `json:"labels"`
+	Annotations       map[string]string `json:"annotations"`
 }
 
 type kubeletSpec struct {
@@ -369,6 +370,7 @@ func newHostConfig(publicIP, privateIP string, ipv6addr []string, idx int, spec 
 		SSHPort:              spec.SSHPort,
 		Kubelet:              kubeonev1beta3.KubeletConfig{},
 		Labels:               spec.Labels,
+		Annotations:          spec.Annotations,
 	}
 
 	if idx < len(spec.SSHHostKeys) {

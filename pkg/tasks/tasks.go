@@ -284,6 +284,11 @@ func WithResources(t Tasks) Tasks {
 				Description: "labeling control-plane nodes",
 			},
 			{
+				Fn:          annotateNodes,
+				Operation:   "annotating control-plane nodes",
+				Description: "annotating control-plane nodes",
+			},
+			{
 				Fn:          cleanupStaleObjects,
 				Operation:   "cleaning up any leftovers from addons",
 				Description: "clean up any leftovers from addons",
@@ -325,6 +330,11 @@ func WithResources(t Tasks) Tasks {
 				Fn:          labelNodes,
 				Operation:   "labeling nodes",
 				Description: "labeling nodes",
+			},
+			{
+				Fn:          annotateNodes,
+				Operation:   "annotating nodes",
+				Description: "annotating nodes",
 			},
 			{
 				Fn:        fixFilePermissions,
