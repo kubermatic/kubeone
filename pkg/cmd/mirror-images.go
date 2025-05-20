@@ -73,6 +73,7 @@ type mirrorImagesOpts struct {
 	globalOptions
 	Filter             string `longflag:"filter"`
 	KubernetesVersions string `longflag:"kubernetes-versions" shortflag:"k"`
+	Insecure           bool   `longflag:"insecure"`
 	DryRun             bool   `longflag:"dry-run"`
 	Registry           string
 }
@@ -139,6 +140,13 @@ func mirrorImagesCmd(*pflag.FlagSet) *cobra.Command {
 		longFlagName(opts, "DryRun"),
 		false,
 		"Only print the names of source and destination images",
+	)
+
+	cmd.Flags().BoolVar(
+		&opts.Insecure,
+		longFlagName(opts, "Insecure"),
+		false,
+		"insecure option to bypass TLS certificate verification",
 	)
 
 	return cmd
@@ -258,7 +266,7 @@ func mirrorImages(logger *logrus.Logger, opts *mirrorImagesOpts, versions []stri
 	var verb string
 	var count, fullCount int
 	logger.WithField("registry", opts.Registry).Info("📦 Mirroring images…")
-	count, fullCount, err = CopyImages(ctx, logger, opts.DryRun, sets.List(imageSet), opts.Registry, "kubeone")
+	count, fullCount, err = CopyImages(ctx, logger, opts.DryRun, opts.Insecure, sets.List(imageSet), opts.Registry, "kubeone")
 	if err != nil {
 		return fmt.Errorf("failed to mirror all images (successfully copied %d/%d): %w", count, fullCount, err)
 	}
@@ -341,7 +349,7 @@ func getConstantValue(ctx context.Context, version, constant string) (string, er
 	return "", fmt.Errorf("cannot find the value for %s", constant)
 }
 
-func CopyImages(ctx context.Context, log logrus.FieldLogger, dryRun bool, images []string, registry, userAgent string) (int, int, error) {
+func CopyImages(ctx context.Context, log logrus.FieldLogger, dryRun, insecure bool, images []string, registry, userAgent string) (int, int, error) {
 	var failedImages []string
 	for i, source := range images {
 		dest, err := retagImage(log, source, registry)
@@ -360,7 +368,7 @@ func CopyImages(ctx context.Context, log logrus.FieldLogger, dryRun bool, images
 			continue
 		}
 
-		if err := copyWithRetry(ctx, log, source, dest, userAgent); err != nil {
+		if err := copyWithRetry(ctx, log, source, dest, userAgent, insecure); err != nil {
 			log.Errorf("Failed to copy image: %v", err)
 			failedImages = append(failedImages, fmt.Sprintf("  - %s", source))
 		}
@@ -386,10 +394,14 @@ func retagImage(log logrus.FieldLogger, source, registry string) (string, error)
 	return dest, nil
 }
 
-func copyWithRetry(ctx context.Context, log logrus.FieldLogger, src, dst, userAgent string) error {
+func copyWithRetry(ctx context.Context, log logrus.FieldLogger, src, dst, userAgent string, insecure bool) error {
 	opts := []crane.Option{
 		crane.WithContext(ctx),
 		crane.WithUserAgent(userAgent),
+	}
+
+	if insecure {
+		opts = append(opts, crane.Insecure)
 	}
 
 	retryPolicy := wait.Backoff{
