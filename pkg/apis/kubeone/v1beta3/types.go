@@ -460,6 +460,10 @@ type KubevirtSpec struct {
 	// InfraClusterKubeconfig is a base64-encoded kubeconfig file that points to a KubeVirt infra cluster (a cluster where KubeVirt is installed).
 	// This Kubeconfig will be used to create and manage KubeVirt specific resources such as DataVolumes.
 	InfraClusterKubeconfig string `json:"infraClusterKubeconfig,omitempty"`
+	// ZoneAndRegionEnabled indicates if need to get Region and zone labels from the cloud provider
+	ZoneAndRegionEnabled bool `yaml:"zoneAndRegionEnabled,omitempty"`
+	// CCMLoadBalancerEnabled indicates if the ccm should create and manage the clusters load balancers.
+	CCMLoadBalancerEnabled bool `json:"ccmLoadBalancerEnabled,omitempty"`
 }
 
 // NutanixSpec defines the Nutanix provider
