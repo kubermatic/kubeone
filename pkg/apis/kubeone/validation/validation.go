@@ -134,10 +134,24 @@ func ValidateControlPlaneConfig(c kubeoneapi.ControlPlaneConfig, clusterNetwork 
 
 	if len(c.Hosts) > 0 {
 		allErrs = append(allErrs, ValidateHostConfig(c.Hosts, clusterNetwork, fldPath.Child("hosts"))...)
+	} else if len(c.NodeSets) > 0 {
+		allErrs = append(allErrs, ValidateControlPlaneMachines(c.NodeSets, fldPath.Child("nodeSets"))...)
 	} else {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("hosts"), "",
 			".controlPlane.Hosts is a required field. There must be at least one control plane instance in the cluster."))
 	}
+
+	return allErrs
+}
+
+func ValidateControlPlaneMachines(nodeSets []kubeoneapi.NodeSet, fld *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if len(nodeSets)%2 == 0 {
+		allErrs = append(allErrs, field.Invalid(fld, "", "number of control plane machines must be odd"))
+	}
+
+	// TBD
 
 	return allErrs
 }
@@ -183,6 +197,7 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), "cloudConfig is required for dualstack clusters for aws provider"))
 		}
 		providerFound = true
+		// TODO: validate providerSpec.AWS.ControlPlane too
 	}
 	if providerSpec.Azure != nil {
 		if providerFound {

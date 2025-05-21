@@ -63,6 +63,7 @@ func addDefaultingFuncs(scheme *runtime.Scheme) error {
 
 func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_Hosts(obj)
+	SetDefaults_NodeSet(obj)
 	SetDefaults_CloudProvider(obj)
 	SetDefaults_APIEndpoints(obj)
 	SetDefaults_Versions(obj)
@@ -142,6 +143,30 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 			obj.StaticWorkers.Hosts[idx].Taints = []corev1.Taint{}
 		}
 	}
+}
+
+func SetDefaults_NodeSet(obj *KubeOneCluster) {
+	for idx := range obj.ControlPlane.NodeSets {
+		setDefaults_NodeSets(&obj.ControlPlane.NodeSets[idx])
+	}
+}
+
+func setDefaults_NodeSets(ns *NodeSet) {
+	if ns.Replicas == 0 {
+		ns.Replicas = 1
+	}
+
+	if ns.NodeSettings.Taints == nil {
+		ns.NodeSettings.Taints = append(ns.NodeSettings.Taints, corev1.Taint{
+			Effect: corev1.TaintEffectNoSchedule,
+			Key:    "node-role.kubernetes.io/control-plane",
+		})
+	}
+
+	ns.SSH.Port = defaults(ns.SSH.Port, 22)
+	ns.SSH.BastionPort = defaults(ns.SSH.BastionPort, 22)
+	ns.SSH.Username = defaults(ns.SSH.Username, "root")
+	ns.SSH.BastionUser = defaults(ns.SSH.BastionUser, "root")
 }
 
 func SetDefaults_APIEndpoints(obj *KubeOneCluster) {
