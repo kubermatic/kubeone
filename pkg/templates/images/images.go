@@ -222,7 +222,7 @@ func baseResources() map[Resource]map[string]string {
 		Flannel:                {"*": "docker.io/flannel/flannel:v0.24.3"},
 		MachineController:      {"*": "quay.io/kubermatic/machine-controller:v1.61.1"},
 		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.7.2"},
-		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v1.6.4"},
+		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:v1.6.5"},
 	}
 }
 
@@ -282,7 +282,7 @@ func optionalResources() map[Resource]map[string]string {
 		DigitaloceanCCM: {"*": "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.56"},
 
 		// DigitalOcean CSI
-		DigitalOceanCSI:                   {"*": "digitalocean/do-csi-plugin:v4.13.0"},
+		DigitalOceanCSI:                   {"*": "digitalocean/do-csi-plugin:v4.14.0"},
 		DigitalOceanCSIAlpine:             {"*": "docker.io/alpine:3"},
 		DigitalOceanCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.8.1"},
 		DigitalOceanCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.13.0"},
@@ -353,7 +353,7 @@ func optionalResources() map[Resource]map[string]string {
 		NutanixCCM: {"*": "ghcr.io/nutanix-cloud-native/cloud-provider-nutanix/controller:v0.5.0"},
 
 		// Nutanix CSI
-		NutanixCSI:              {"*": "quay.io/karbon/ntnx-csi:v2.6.10"},
+		NutanixCSI:              {"*": "quay.io/karbon/ntnx-csi:v2.6.12"},
 		NutanixCSILivenessProbe: {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.11.0"},
 		NutanixCSIProvisioner:   {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.6.2"},
 		NutanixCSIRegistrar:     {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.9.1"},
