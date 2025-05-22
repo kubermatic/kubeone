@@ -380,7 +380,33 @@ func retagImage(log logrus.FieldLogger, source, registry string) (string, error)
 		return "", fmt.Errorf("invalid image reference: %w", err)
 	}
 
-	dest := fmt.Sprintf("%s/%s:%s", registry, ref.Context().RepositoryStr(), ref.Identifier())
+	// Special Case for CoreDNS Image Retagging
+	//
+	// Kubeadm's CoreDNS image resolution works as follows:
+	// 1. Default behavior (no custom registry):
+	//    - Uses registry.k8s.io/coredns/coredns:tag
+	//    - Note the nested "coredns/coredns" path
+	//
+	// 2. With custom registry (kubeadm config):
+	//    - Expects <custom-registry>/coredns:tag
+	//    - (NOT <custom-registry>/coredns/coredns:tag)
+	//
+	// This is because kubeadm's GetDNSImage() explicitly appends "/coredns"
+	// to the default registry (registry.k8s.io), but doesn't do this for
+	// custom registries. Our retagging must account for this difference.
+	//
+	// You can check this here: https://github.com/kubernetes/kubernetes/blob/v1.33.1/cmd/kubeadm/app/images/images.go#L51-L54
+	//
+	// When mirroring images:
+	// - Original path: registry.k8s.io/coredns/coredns:tag
+	// - Must become: myregistry/coredns:tag
+	// - NOT myregistry/coredns/coredns:tag
+	repo := ref.Context().RepositoryStr()
+	if repo == "coredns/coredns" {
+		repo = "coredns"
+	}
+
+	dest := fmt.Sprintf("%s/%s:%s", registry, repo, ref.Identifier())
 	log.WithField("target", dest).Debug("Image retagged")
 
 	return dest, nil
