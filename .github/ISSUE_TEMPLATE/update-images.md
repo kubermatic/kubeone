@@ -39,7 +39,6 @@ The following components/images should be updated:
 ### CNIs
 
 - [ ] [Canal CNI](https://github.com/projectcalico/calico) <!-- (PR reference|already the latest) -->
-- [ ] [Calico VXLAN CNI](https://github.com/projectcalico/calico) <!-- (PR reference|already the latest) -->
 - [ ] [Cilium CNI](https://github.com/cilium/cilium) <!-- (PR reference|already the latest) -->
 
 ### Cloud provider components
