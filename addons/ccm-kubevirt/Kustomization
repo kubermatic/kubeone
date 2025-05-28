@@ -1,0 +1,50 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kube-system
+
+resources:
+  - 'https://github.com/kubevirt/cloud-provider-kubevirt/config/default?=ref=v0.5.1'
+
+patches:
+  - patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: cloud-config
+      $patch: delete
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: kubevirt-cloud-controller-manager
+    patch: |-
+      - op: remove
+        path:  /spec/template/spec/containers/0/args
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: kubevirt-cloud-controller-manager
+      spec:
+        template:
+          metadata:
+            annotations:
+              "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
+          spec:
+            containers:
+              - name: kubevirt-cloud-controller-manager
+                image: '{{ .InternalImages.Get "KubeVirtCCM" }}'
+                args:
+                  - --cloud-config=/etc/cloud/cloud-config
+                  - --cloud-provider=kubevirt
+                  - --cluster-name='{{ .Config.Name }}'
+                volumeMounts:
+                  - mountPath: /etc/kubernetes/kubeconfig
+                    name: kubeconfig
+                    $patch: delete
+            volumes:
+              - name: infracluster
+                secret:
+                  secretName: kubeone-ccm-credentials
+              - name: kubeconfig
+                $patch: delete

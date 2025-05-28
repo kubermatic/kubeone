@@ -1,134 +1,157 @@
----
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: kubevirt-cloud-controller-manager
+  name: cloud-controller-manager
   namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: kubevirt-cloud-controller-manager
+  name: kccm
   namespace: kube-system
+rules:
+  - apiGroups:
+      - kubevirt.io
+    resources:
+      - virtualmachines
+    verbs:
+      - get
+      - watch
+      - list
+  - apiGroups:
+      - kubevirt.io
+    resources:
+      - virtualmachineinstances
+    verbs:
+      - get
+      - watch
+      - list
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - '*'
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kccm
 rules:
   - apiGroups:
       - ""
     resources:
-      - "configmaps"
+      - nodes
     verbs:
-      - create
       - get
-      - list
-      - watch
-  - apiGroups:
-      - "coordination.k8s.io"
-    resources:
-      - "leases"
-    verbs:
-      - create
-      - get
-      - list
-      - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: kubevirt-cloud-controller-manager
+  name: kccm
   namespace: kube-system
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: kubevirt-cloud-controller-manager
+  name: extension-apiserver-authentication-reader
 subjects:
   - kind: ServiceAccount
-    name: kubevirt-cloud-controller-manager
+    name: cloud-controller-manager
     namespace: kube-system
 ---
-apiVersion: v1
-data:
-  infra-kubeconfig: {{ .Config.CloudProvider.KubeVirt.InfraClusterKubeconfig }}
-kind: Secret
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
 metadata:
-  name: infra-kubeconfig
+  name: kccm-sa
   namespace: kube-system
-type: Opaque
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kccm
+subjects:
+  - kind: ServiceAccount
+    name: cloud-controller-manager
+    namespace: kube-system
 ---
-apiVersion: v1
-kind: ConfigMap
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
 metadata:
-  name: cloud-config
-  namespace: kube-system
-data:
-  config: |
-    kubeconfig: /etc/kubernetes/kubeconfig/infra-kubeconfig
-    namespace: {{ .Config.CloudProvider.KubeVirt.InfraNamespace }}
-    instancesV2:
-        zoneAndRegionEnabled: {{ .Config.CloudProvider.KubeVirt.ZoneAndRegionEnabled }}
-    loadBalancer:
-        enabled: {{ .Config.CloudProvider.KubeVirt.CCMLoadBalancerEnabled }}
+  name: kccm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kccm
+subjects:
+  - kind: ServiceAccount
+    name: cloud-controller-manager
+    namespace: kube-system
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: kubevirt-cloud-controller-manager
+    k8s-app: kubevirt-cloud-controller-manager
   name: kubevirt-cloud-controller-manager
   namespace: kube-system
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kubevirt-cloud-controller-manager
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
-    type: RollingUpdate
+      k8s-app: kubevirt-cloud-controller-manager
   template:
     metadata:
+      annotations:
+        kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
       labels:
-        app: kubevirt-cloud-controller-manager
+        k8s-app: kubevirt-cloud-controller-manager
     spec:
-      automountServiceAccountToken: true
       containers:
         - args:
-            - --cloud-config=/etc/cloud/config
+            - --cloud-config=/etc/cloud/cloud-config
             - --cloud-provider=kubevirt
-            - --cluster-name
-            - {{ .Config.Name }}
+            - --cluster-name='{{ .Config.Name }}'
           command:
             - /bin/kubevirt-cloud-controller-manager
-          image: quay.io/kubevirt/kubevirt-cloud-controller-manager:v0.5.1
-          imagePullPolicy: IfNotPresent
-          securityContext:
-            privileged: true
-          name: cloud-controller-manager
+          image: '{{ .InternalImages.Get "KubeVirtCCM" }}'
+          imagePullPolicy: Always
+          name: kubevirt-cloud-controller-manager
           resources:
-            limits:
-              cpu: 500m
-              memory: 512Mi
             requests:
               cpu: 100m
-              memory: 100Mi
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
+          securityContext:
+            privileged: true
           volumeMounts:
-            - mountPath: /etc/kubernetes/kubeconfig
-              name: infra-kubeconfig
-              readOnly: true
             - mountPath: /etc/cloud
               name: cloud-config
               readOnly: true
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
-      schedulerName: default-scheduler
-      terminationGracePeriodSeconds: 30
-      serviceAccountName: kubevirt-cloud-controller-manager
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      serviceAccountName: cloud-controller-manager
+      tolerations:
+        - effect: NoSchedule
+          key: node.cloudprovider.kubernetes.io/uninitialized
+          value: "true"
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
       volumes:
-        - name: infra-kubeconfig
+        - name: infracluster
           secret:
-            defaultMode: 420
-            secretName: infra-kubeconfig
-        - name: cloud-config
-          configMap:
+            secretName: kubeone-ccm-credentials
+        - configMap:
             name: cloud-config
+          name: cloud-config
