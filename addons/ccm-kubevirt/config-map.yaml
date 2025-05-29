@@ -6,8 +6,10 @@ metadata:
 data:
   cloud-config: |
     kubeconfig: /var/run/secrets/infracluster/KUBEVIRT_KUBECONFIG
-    namespace: {{ .Config.CloudProvider.KubeVirt.InfraNamespace }}
+    {{ with .Config.CloudProvider.KubeVirt }}
+    namespace: {{ .InfraNamespace }}
     instancesV2:
-      zoneAndRegionEnabled: {{ .Config.CloudProvider.KubeVirt.ZoneAndRegionEnabled }}
+      zoneAndRegionEnabled: {{ .ZoneAndRegionEnabled }}
     loadBalancer:
-      enabled: {{ .Config.CloudProvider.KubeVirt.CCMLoadBalancerEnabled }}
+      enabled: {{ .CCMLoadBalancerEnabled }}
+    {{ end }}
