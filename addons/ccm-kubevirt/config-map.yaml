@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloud-config
+  namespace: kube-system
+data:
+  cloud-config: |
+    kubeconfig: /var/run/secrets/infracluster/KUBEVIRT_KUBECONFIG
+    {{ with .Config.CloudProvider.KubeVirt }}
+    namespace: {{ .InfraNamespace }}
+    instancesV2:
+      zoneAndRegionEnabled: {{ .ZoneAndRegionEnabled }}
+    loadBalancer:
+      enabled: {{ .LoadBalancerEnabled }}
+    {{ end }}

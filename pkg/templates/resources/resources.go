@@ -29,6 +29,7 @@ const (
 	AddonCCMDigitalOcean        = "ccm-digitalocean"
 	AddonCCMEquinixMetal        = "ccm-equinixmetal"
 	AddonCCMHetzner             = "ccm-hetzner"
+	AddonCCMKubeVirt            = "ccm-kubevirt"
 	AddonCCMGCP                 = "ccm-gcp"
 	AddonCCMNutanix             = "ccm-nutanix"
 	AddonCCMOpenStack           = "ccm-openstack"
