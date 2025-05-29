@@ -465,8 +465,8 @@ type KubevirtSpec struct {
 	InfraClusterKubeconfig string `json:"infraClusterKubeconfig"`
 	// ZoneAndRegionEnabled indicates if need to get Region and zone labels from the cloud provider
 	ZoneAndRegionEnabled bool `yaml:"zoneAndRegionEnabled,omitempty"`
-	// CCMLoadBalancerEnabled indicates if the ccm should create and manage the clusters load balancers.
-	CCMLoadBalancerEnabled bool `json:"ccmLoadBalancerEnabled,omitempty"`
+	// LoadBalancerEnabled indicates if the ccm should create and manage the clusters load balancers.
+	LoadBalancerEnabled bool `json:"loadBalancerEnabled,omitempty"`
 }
 
 // NutanixSpec defines the Nutanix provider

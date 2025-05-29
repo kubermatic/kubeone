@@ -1795,7 +1795,7 @@ func autoConvert_v1beta2_KubevirtSpec_To_kubeone_KubevirtSpec(in *KubevirtSpec, 
 	out.InfraNamespace = in.InfraNamespace
 	out.InfraClusterKubeconfig = in.InfraClusterKubeconfig
 	out.ZoneAndRegionEnabled = in.ZoneAndRegionEnabled
-	out.CCMLoadBalancerEnabled = in.CCMLoadBalancerEnabled
+	out.LoadBalancerEnabled = in.LoadBalancerEnabled
 	return nil
 }
 
@@ -1808,7 +1808,7 @@ func autoConvert_kubeone_KubevirtSpec_To_v1beta2_KubevirtSpec(in *kubeone.Kubevi
 	out.InfraNamespace = in.InfraNamespace
 	out.InfraClusterKubeconfig = in.InfraClusterKubeconfig
 	out.ZoneAndRegionEnabled = in.ZoneAndRegionEnabled
-	out.CCMLoadBalancerEnabled = in.CCMLoadBalancerEnabled
+	out.LoadBalancerEnabled = in.LoadBalancerEnabled
 	return nil
 }
 

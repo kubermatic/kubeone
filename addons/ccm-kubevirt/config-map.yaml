@@ -11,5 +11,5 @@ data:
     instancesV2:
       zoneAndRegionEnabled: {{ .ZoneAndRegionEnabled }}
     loadBalancer:
-      enabled: {{ .CCMLoadBalancerEnabled }}
+      enabled: {{ .LoadBalancerEnabled }}
     {{ end }}

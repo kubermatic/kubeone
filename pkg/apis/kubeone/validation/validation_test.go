@@ -528,7 +528,7 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 					InfraNamespace: "tenant-xyz",
 				},
 			},
-			expectedError: false,
+			expectedError: true,
 		},
 		{
 			name: "Kubevirt provider config missing InfraNamespace",
