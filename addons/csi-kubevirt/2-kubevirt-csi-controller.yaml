@@ -72,21 +72,6 @@ roleRef:
   name: kubevirt-csi-controller-cr
   apiGroup: rbac.authorization.k8s.io
 ---
-{{ with .Config.CloudProvider.Kubevirt -}}
-{{ with .InfraClusterKubeconfig }}
-apiVersion: v1
-data:
-    value: "{{ . }}"
-kind: Secret
-metadata:
-  labels:
-    app: kubevirt-csi-driver
-  name: infra-kubeconfig
-  namespace: kube-system
-type: Opaque
----
-{{ end }}
-{{ end }}
 kind: Deployment
 apiVersion: apps/v1
 metadata:
@@ -125,7 +110,7 @@ spec:
             - "--endpoint=$(CSI_ENDPOINT)"
             - "--infra-cluster-namespace=$(INFRACLUSTER_NAMESPACE)"
             - "--infra-cluster-labels=$(INFRACLUSTER_LABELS)"
-            - "--infra-cluster-kubeconfig=/var/run/secrets/infracluster/value"
+            - "--infra-cluster-kubeconfig=/var/run/secrets/infracluster/KUBEVIRT_KUBECONFIG"
             - "--run-node-service=false"
             - "--run-controller-service=true"
             - "--v=5"
@@ -214,4 +199,4 @@ spec:
           emptyDir: {}
         - name: infracluster
           secret:
-            secretName: infra-kubeconfig
+            secretName: kubeone-ccm-credentials

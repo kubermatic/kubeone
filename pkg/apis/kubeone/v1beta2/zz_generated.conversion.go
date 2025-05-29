@@ -1741,6 +1741,8 @@ func autoConvert_kubeone_KubeletConfig_To_v1beta2_KubeletConfig(in *kubeone.Kube
 func autoConvert_v1beta2_KubevirtSpec_To_kubeone_KubevirtSpec(in *KubevirtSpec, out *kubeone.KubevirtSpec, s conversion.Scope) error {
 	out.InfraNamespace = in.InfraNamespace
 	out.InfraClusterKubeconfig = in.InfraClusterKubeconfig
+	out.ZoneAndRegionEnabled = in.ZoneAndRegionEnabled
+	out.LoadBalancerEnabled = in.LoadBalancerEnabled
 	return nil
 }
 
@@ -1752,6 +1754,8 @@ func Convert_v1beta2_KubevirtSpec_To_kubeone_KubevirtSpec(in *KubevirtSpec, out 
 func autoConvert_kubeone_KubevirtSpec_To_v1beta2_KubevirtSpec(in *kubeone.KubevirtSpec, out *KubevirtSpec, s conversion.Scope) error {
 	out.InfraNamespace = in.InfraNamespace
 	out.InfraClusterKubeconfig = in.InfraClusterKubeconfig
+	out.ZoneAndRegionEnabled = in.ZoneAndRegionEnabled
+	out.LoadBalancerEnabled = in.LoadBalancerEnabled
 	return nil
 }
 
