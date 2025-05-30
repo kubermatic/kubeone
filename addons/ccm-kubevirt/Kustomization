@@ -21,6 +21,24 @@ patches:
       - op: remove
         path:  /spec/template/spec/containers/0/args
   - patch: |-
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRole
+      metadata:
+        name: kccm
+      rules:
+        - apiGroups:
+            - ""
+          resources:
+            - nodes
+          verbs:
+            - "*"
+        - apiGroups:
+            - "coordination.k8s.io"
+          resources:
+            - leases
+          verbs:
+            - "*"
+  - patch: |-
       apiVersion: apps/v1
       kind: Deployment
       metadata:
@@ -42,6 +60,9 @@ patches:
                   - mountPath: /etc/kubernetes/kubeconfig
                     name: kubeconfig
                     $patch: delete
+                  - mountPath: /var/run/secrets/infracluster
+                    name: infracluster
+                    readOnly: true
             volumes:
               - name: infracluster
                 secret:
