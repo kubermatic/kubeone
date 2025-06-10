@@ -195,6 +195,9 @@ const (
 	CalicoVXLANController
 	CalicoVXLANNode
 
+	// KubeVirt's CCM
+	KubeVirtCCM
+
 	// KubeVirt CSI
 	KubeVirtCSI
 	KubeVirtCSINodeDriverRegistrar
@@ -400,6 +403,9 @@ func optionalResources() map[Resource]map[string]string {
 		SecretStoreCSIDriver:              {"*": "registry.k8s.io/csi-secrets-store/driver:v1.2.1"},
 		SecretStoreCSIDriverLivenessProbe: {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.7.0"},
 		SecretStoreCSIDriverCRDs:          {"*": "registry.k8s.io/csi-secrets-store/driver-crds:v1.2.1"},
+
+		// KubeVirt's CCM
+		KubeVirtCCM: {"*": "quay.io/kubevirt/kubevirt-cloud-controller-manager:v0.5.1"},
 
 		// KubeVirt CSI
 		KubeVirtCSI:                    {"*": "quay.io/kubevirt/csi-driver:20240920145955"},
