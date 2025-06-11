@@ -450,7 +450,7 @@ type KubevirtSpec struct {
 	// This Kubeconfig will be used to create and manage KubeVirt specific resources such as DataVolumes.
 	InfraClusterKubeconfig string `json:"infraClusterKubeconfig"`
 	// ZoneAndRegionEnabled indicates if need to get Region and zone labels from the cloud provider
-	ZoneAndRegionEnabled bool `yaml:"zoneAndRegionEnabled,omitempty"`
+	ZoneAndRegionEnabled bool `json:"zoneAndRegionEnabled,omitempty"`
 	// LoadBalancerEnabled indicates if the ccm should create and manage the clusters load balancers.
 	LoadBalancerEnabled bool `json:"loadBalancerEnabled,omitempty"`
 }
