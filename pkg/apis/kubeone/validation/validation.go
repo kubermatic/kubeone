@@ -19,7 +19,6 @@ package validation
 import (
 	"bytes"
 	"crypto/x509"
-	"encoding/base64"
 	"fmt"
 	"net"
 	"os"
@@ -217,15 +216,6 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 			allErrs = append(allErrs, field.Forbidden(kubevirtFld, "only one provider can be used at the same time"))
 		}
 		providerFound = true
-		switch providerSpec.Kubevirt.InfraClusterKubeconfig {
-		case "":
-			allErrs = append(allErrs, field.Required(kubevirtFld.Child("infraClusterKubeconfig"), "is required for kubevirt provider"))
-		default:
-			_, err := base64.StdEncoding.DecodeString(providerSpec.Kubevirt.InfraClusterKubeconfig)
-			if err != nil {
-				allErrs = append(allErrs, field.Forbidden(kubevirtFld.Child("infraClusterKubeconfig"), "must be base64-encoded"))
-			}
-		}
 		if providerSpec.Kubevirt.InfraNamespace == "" {
 			allErrs = append(allErrs, field.Required(kubevirtFld.Child("infraNamespace"), "is required for kubevirt provider"))
 		}

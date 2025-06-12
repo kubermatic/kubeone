@@ -465,9 +465,6 @@ type KubevirtSpec struct {
 	// InfraNamespace is the namespace that KubeVirt provider will use to create and manage resources in the infra cluster,
 	// such as VirtualMachines, VirtualMachineInstances, etc...
 	InfraNamespace string `json:"infraNamespace"`
-	// InfraClusterKubeconfig is a base64-encoded kubeconfig file that points to a KubeVirt infra cluster (a cluster where KubeVirt is installed).
-	// This Kubeconfig will be used to create and manage KubeVirt specific resources such as DataVolumes.
-	InfraClusterKubeconfig string `json:"infraClusterKubeconfig"`
 	// ZoneAndRegionEnabled indicates if need to get Region and zone labels from the cloud provider
 	ZoneAndRegionEnabled bool `json:"zoneAndRegionEnabled,omitempty"`
 	// LoadBalancerEnabled indicates if the ccm should create and manage the clusters load balancers.
