@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2025-06-11T12:48:35+02:00
+date = 2025-06-12T15:55:08+03:00
 weight = 11
 +++
 ## v1beta3
@@ -588,7 +588,6 @@ KubevirtSpec defines the Kubevirt provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | infraNamespace | InfraNamespace is the namespace that KubeVirt provider will use to create and manage resources in the infra cluster, such as VirtualMachines, VirtualMachineInstances, etc... | string | true |
-| infraClusterKubeconfig | InfraClusterKubeconfig is a base64-encoded kubeconfig file that points to a KubeVirt infra cluster (a cluster where KubeVirt is installed). This Kubeconfig will be used to create and manage KubeVirt specific resources such as DataVolumes. | string | true |
 | zoneAndRegionEnabled | ZoneAndRegionEnabled indicates if need to get Region and zone labels from the cloud provider | bool | false |
 | loadBalancerEnabled | LoadBalancerEnabled indicates if the ccm should create and manage the clusters load balancers. | bool | false |
 
