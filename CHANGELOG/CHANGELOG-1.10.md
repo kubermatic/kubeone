@@ -1,3 +1,31 @@
+# [v1.10.1](https://github.com/kubermatic/kubeone/releases/tag/v1.10.1) - 2025-06-13
+
+## Changelog since v1.10.0
+
+## Urgent Upgrade Notes 
+
+### (No, really, you MUST read this before you upgrade)
+
+- KubeVirt Cloud Controller Manager (CCM) is now deployed by default for all KubeVirt clusters. Two new fields are added to the API used to configure the CCM (`.cloudProvider.kubevirt.zoneAndRegionEnabled` and `.cloudProvider.kubevirt.loadBalancerEnabled`). `.cloudProvider.kubevirt.infraNamespace` is now a required field and KubeOne will fail validation if not set ([#3661](https://github.com/kubermatic/kubeone/pull/3661), [@moadqassem](https://github.com/moadqassem))
+- [ACTION REQUIRED] The KubeVirt CCM requires some permissions to be added to the ServiceAccount that is bound to the infrastructure cluster kubeconfig in order to perform some tasks on the infrastructure side. For more information about the required roles please check [this file](https://github.com/kubevirt/cloud-provider-kubevirt/blob/v0.5.1/config/rbac/kccm_role.yaml)
+- [ACTION REQUIRED] The `.cloudProvider.kubevirt.infraClusterKubeconfig` field has been removed from the KubeOneCluster type. Users must remove this field from their KubeOneCluster manifests otherwise the runtime validation will fail. The kubeconfig file provided via the `KUBEVIRT_KUBECONFIG` environment variable is used as a kubeconfig file for the infrastructure cluster ([#3675](https://github.com/kubermatic/kubeone/pull/3675), [@kron4eg](https://github.com/kron4eg))
+
+## Changes by Kind
+
+### API Changes
+
+- Add a new `annotations` field to `HostConfig` used to annotate control plane and static worker nodes ([#3658](https://github.com/kubermatic/kubeone/pull/3658), [@kron4eg](https://github.com/kron4eg))
+
+### Bug or Regression
+
+- Fix incorrect CABundle flag in the operating-system-manager (OSM) Deployment ([#3644](https://github.com/kubermatic/kubeone/pull/3644), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
+### Updates
+
+#### machine-controller
+
+- Update machine-controller to v1.61.3 ([#3673](https://github.com/kubermatic/kubeone/pull/3673), [@xmudrii](https://github.com/xmudrii))
+
 # [v1.10.0](https://github.com/kubermatic/kubeone/releases/tag/v1.10.0) - 2025-04-15
 
 We're happy to announce a new KubeOne minor release — KubeOne 1.10! Please
