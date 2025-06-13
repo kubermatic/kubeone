@@ -20,12 +20,6 @@
 
 - Fix incorrect CABundle flag in the operating-system-manager (OSM) Deployment ([#3644](https://github.com/kubermatic/kubeone/pull/3644), [@kubermatic-bot](https://github.com/kubermatic-bot))
 
-### Updates
-
-#### machine-controller
-
-- Update machine-controller to v1.61.3 ([#3673](https://github.com/kubermatic/kubeone/pull/3673), [@xmudrii](https://github.com/xmudrii))
-
 # [v1.10.0](https://github.com/kubermatic/kubeone/releases/tag/v1.10.0) - 2025-04-15
 
 We're happy to announce a new KubeOne minor release — KubeOne 1.10! Please
