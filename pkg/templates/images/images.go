@@ -232,9 +232,9 @@ func baseResources() map[Resource]map[string]string {
 func optionalResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
 		AwsCCM: {
-			"1.30.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.30.7",
-			"1.31.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.31.5",
-			"1.32.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.32.1",
+			"1.30.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.30.8",
+			"1.31.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.31.6",
+			"1.32.x":    "registry.k8s.io/provider-aws/cloud-controller-manager:v1.32.3",
 			">= 1.33.0": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.33.0",
 		},
 
