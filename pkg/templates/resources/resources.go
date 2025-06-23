@@ -57,6 +57,7 @@ const (
 	AddonMetricsServer          = "metrics-server"
 	AddonNodeLocalDNS           = "nodelocaldns"
 	AddonOperatingSystemManager = "operating-system-manager"
+	AddonDefaultStorageClass    = "default-storage-class"
 )
 
 func CloudAddons() []string {
