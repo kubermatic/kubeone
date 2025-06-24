@@ -1,0 +1,73 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: vmware-system-csi
+
+resources:
+  - https://raw.githubusercontent.com/kubernetes-sigs/vsphere-csi-driver/refs/tags/v3.5.0/manifests/vanilla/namespace.yaml
+  - https://raw.githubusercontent.com/kubernetes-sigs/vsphere-csi-driver/refs/tags/v3.5.0/manifests/vanilla/vsphere-csi-driver.yaml
+
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: vsphere-csi-node-windows
+        namespace: vmware-system-csi
+      $patch: delete
+  - patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: internal-feature-states.csi.vsphere.vmware.com
+        namespace: vmware-system-csi
+      $patch: delete
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: vsphere-csi-controller
+        namespace: vmware-system-csi
+        labels:
+          app: vsphere-csi-controller
+      spec:
+        template:
+          metadata:
+            annotations:
+              "kubeone.k8c.io/cabundle-hash": "{{ CABundle | sha256sum }}"
+              "csiConfig-hash": "{{ .Config.CloudProvider.CSIConfig | sha256sum }}"
+          spec:
+            containers:
+              - name: csi-attacher
+                image: '{{ .InternalImages.Get "VsphereCSIAttacher" }}'
+              - name: csi-resizer
+                image: '{{ .InternalImages.Get "VsphereCSIResizer" }}'
+              - name: vsphere-csi-controller
+                image: '{{ .InternalImages.Get "VsphereCSIDriver" }}'
+              - name: liveness-probe
+                image: '{{ .InternalImages.Get "VsphereCSILivenessProbe" }}'
+              - name: vsphere-syncer
+                image: '{{ .InternalImages.Get "VsphereCSISyncer" }}'
+              - name: csi-provisioner
+                image: '{{ .InternalImages.Get "VsphereCSIProvisioner" }}'
+              - name: csi-snapshotter
+                image: '{{ .InternalImages.Get "VsphereCSISnapshotter" }}'
+  - patch: |-
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: vsphere-csi-node
+        namespace: vmware-system-csi
+      spec:
+        template:
+          metadata:
+            annotations:
+              "kubeone.k8c.io/cabundle-hash": "{{ CABundle | sha256sum }}"
+              "csiConfig-hash": "{{ .Config.CloudProvider.CSIConfig | sha256sum }}"
+          spec:
+            containers:
+              - name: node-driver-registrar
+                image: '{{ .InternalImages.Get "VsphereCSINodeDriverRegistar" }}'
+              - name: vsphere-csi-node
+                image: '{{ .InternalImages.Get "VsphereCSIDriver" }}'
+              - name: liveness-probe
+                image: '{{ .InternalImages.Get "VsphereCSILivenessProbe" }}'
