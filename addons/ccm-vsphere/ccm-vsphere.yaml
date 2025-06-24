@@ -171,23 +171,14 @@ spec:
           env:
             - name: ENABLE_ALPHA_DUAL_STACK
               value: "{{ .Config.ClusterNetwork.IPFamily.IsDualstack }}"
-{{ if CABundle }}
-{{ caBundleEnvVar | indent 12 }}
-{{ end }}
           volumeMounts:
             - mountPath: /etc/cloud
               name: vsphere-config-volume
               readOnly: true
-{{ if CABundle }}
-{{ caBundleVolumeMount | indent 12 }}
-{{ end }}
       volumes:
         - name: vsphere-config-volume
           secret:
             secretName: cloud-config
-{{ if CABundle }}
-{{ caBundleVolume | indent 8 }}
-{{ end }}
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:

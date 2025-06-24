@@ -184,9 +184,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-{{ if CABundle }}
-{{ caBundleEnvVar | indent 12 }}
-{{ end }}
           securityContext:
             runAsNonRoot: true
             runAsUser: 65532
@@ -195,16 +192,10 @@ spec:
             - mountPath: /run/secrets/tls
               name: webhook-certs
               readOnly: true
-{{ if CABundle }}
-{{ caBundleVolumeMount | indent 12 }}
-{{ end }}
       volumes:
         - name: socket-dir
           emptyDir: {}
         - name: webhook-certs
           secret:
             secretName: vsphere-webhook-certs
-{{ if CABundle }}
-{{ caBundleVolume | indent 8 }}
-{{ end }}
 {{ end }}

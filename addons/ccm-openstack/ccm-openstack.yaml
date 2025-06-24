@@ -195,9 +195,6 @@ spec:
         - mountPath: /usr/share/ca-certificates
           name: usr-ca-certs
           readOnly: true
-{{ if CABundle }}
-{{ caBundleVolumeMount | indent 8 }}
-{{ end }}
       dnsPolicy: ClusterFirstWithHostNet
       hostNetwork: true
       nodeSelector:
@@ -234,8 +231,5 @@ spec:
           path: /usr/share/ca-certificates
           type: DirectoryOrCreate
         name: usr-ca-certs
-{{ if CABundle }}
-{{ caBundleVolume | indent 6 }}
-{{ end }}
   updateStrategy:
     type: RollingUpdate

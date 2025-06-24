@@ -280,18 +280,12 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-{{ if CABundle }}
-{{ caBundleEnvVar | indent 12 }}
-{{ end }}
           volumeMounts:
             - mountPath: /etc/cloud
               name: vsphere-config-volume
               readOnly: true
             - mountPath: /csi
               name: socket-dir
-{{ if CABundle }}
-{{ caBundleVolumeMount | indent 12 }}
-{{ end }}
           ports:
             - name: healthz
               containerPort: 9808
@@ -341,16 +335,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-{{ if CABundle }}
-{{ caBundleEnvVar | indent 12 }}
-{{ end }}
           volumeMounts:
             - mountPath: /etc/cloud
               name: vsphere-config-volume
               readOnly: true
-{{ if CABundle }}
-{{ caBundleVolumeMount | indent 12 }}
-{{ end }}
         - name: csi-provisioner
           image: {{ .InternalImages.Get "VsphereCSIProvisioner" }}
           args:
@@ -376,9 +364,6 @@ spec:
             secretName: vsphere-csi-config-secret
         - name: socket-dir
           emptyDir: {}
-{{ if CABundle }}
-{{ caBundleVolume | indent 8 }}
-{{ end }}
 ---
 kind: DaemonSet
 apiVersion: apps/v1
@@ -459,9 +444,6 @@ spec:
                   fieldPath: metadata.namespace
             - name: NODEGETINFO_WATCH_TIMEOUT_MINUTES
               value: "1"
-{{ if CABundle }}
-{{ caBundleEnvVar | indent 12 }}
-{{ end }}
           securityContext:
             privileged: true
             capabilities:
@@ -481,9 +463,6 @@ spec:
               mountPath: /sys/block
             - name: sys-devices-dir
               mountPath: /sys/devices
-{{ if CABundle }}
-{{ caBundleVolumeMount | indent 12 }}
-{{ end }}
           ports:
             - name: healthz
               containerPort: 9808
@@ -528,9 +507,6 @@ spec:
           hostPath:
             path: /sys/devices
             type: Directory
-{{ if CABundle }}
-{{ caBundleVolume | indent 8 }}
-{{ end }}
       tolerations:
         - effect: NoExecute
           operator: Exists
