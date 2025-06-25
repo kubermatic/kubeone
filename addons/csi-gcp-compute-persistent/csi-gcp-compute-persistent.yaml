@@ -596,6 +596,7 @@ spec:
         - --supports-dynamic-iops-provisioning=hyperdisk-balanced,hyperdisk-extreme
         - --supports-dynamic-throughput-provisioning=hyperdisk-balanced,hyperdisk-throughput,hyperdisk-ml
         - --enable-data-cache
+        - --enable-multitenancy
         command:
         - /gce-pd-csi-driver
         env:
@@ -673,6 +674,7 @@ spec:
         - --endpoint=unix:/csi/csi.sock
         - --run-controller-service=false
         - --enable-data-cache
+        - --enable-multitenancy
         - --node-name=$(KUBE_NODE_NAME)
         env:
         - name: KUBE_NODE_NAME
