@@ -316,13 +316,14 @@ func optionalResources() map[Resource]map[string]string {
 		OpenstackCSI: {
 			"1.30.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.30.3",
 			"1.31.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.31.3",
-			">= 1.32.0": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.32.0",
+			"1.32.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.32.0",
+			">= 1.33.0": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.33.0",
 		},
-		OpenstackCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.9.2"},
-		OpenstackCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.11.0"},
-		OpenstackCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.4.2"},
-		OpenstackCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.6.2"},
-		OpenstackCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.9.2"},
+		OpenstackCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.12.0"},
+		OpenstackCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.14.0"},
+		OpenstackCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.7.0"},
+		OpenstackCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v5.1.0"},
+		OpenstackCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.12.0"},
 		OpenstackCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.1.0"},
 
 		// Equinix Metal CCM
