@@ -1,16 +1,13 @@
----
-# Source: hcloud-cloud-controller-manager/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: hcloud-cloud-controller-manager
   namespace: kube-system
 ---
-# Source: hcloud-cloud-controller-manager/templates/clusterrolebinding.yaml
-kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
 metadata:
-  name: "system:hcloud-cloud-controller-manager"
+  name: system:hcloud-cloud-controller-manager
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -20,7 +17,6 @@ subjects:
     name: hcloud-cloud-controller-manager
     namespace: kube-system
 ---
-# Source: hcloud-cloud-controller-manager/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,46 +27,25 @@ spec:
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      app.kubernetes.io/instance: 'hccm'
-      app.kubernetes.io/name: 'hcloud-cloud-controller-manager'
+      app.kubernetes.io/instance: hccm
+      app.kubernetes.io/name: hcloud-cloud-controller-manager
   template:
     metadata:
-      labels:
-        app.kubernetes.io/instance: 'hccm'
-        app.kubernetes.io/name: 'hcloud-cloud-controller-manager'
       annotations:
-        "kubeone.k8c.io/credentials-hash": "{{ .CredentialsCCMHash }}"
+        kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
+      labels:
+        app.kubernetes.io/instance: hccm
+        app.kubernetes.io/name: hcloud-cloud-controller-manager
     spec:
-      serviceAccountName: hcloud-cloud-controller-manager
-      dnsPolicy: Default
-      tolerations:
-        # Allow HCCM itself to schedule on nodes that have not yet been initialized by HCCM.
-        - key: "node.cloudprovider.kubernetes.io/uninitialized"
-          value: "true"
-          effect: "NoSchedule"
-        - key: "CriticalAddonsOnly"
-          operator: "Exists"
-
-        # Allow HCCM to schedule on control plane nodes.
-        - key: "node-role.kubernetes.io/master"
-          effect: NoSchedule
-          operator: Exists
-        - key: "node-role.kubernetes.io/control-plane"
-          effect: NoSchedule
-          operator: Exists
-
-        - key: "node.kubernetes.io/not-ready"
-          effect: "NoExecute"
       containers:
-        - name: hcloud-cloud-controller-manager
-          args:
-            - "--allocate-node-cidrs=false"
-            - "--allow-untagged-cloud"
-            - "--cloud-provider=hcloud"
-            - "--configure-cloud-routes=false"
-            - "--route-reconciliation-period=30s"
-            - "--webhook-secure-port=0"
-            - "--leader-elect=false"
+        - args:
+            - --allocate-node-cidrs=false
+            - --allow-untagged-cloud
+            - --cloud-provider=hcloud
+            - --configure-cloud-routes=false
+            - --route-reconciliation-period=30s
+            - --webhook-secure-port=0
+            - --leader-elect=false
             {{- with .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
             - --concurrent-service-syncs={{ . }}
             {{- end }}
@@ -98,12 +73,29 @@ spec:
             - name: HCLOUD_NETWORK
               value: "{{ . }}"
             {{- end }}
-          image: {{ .InternalImages.Get "HetznerCCM" }}
+          image: '{{ .InternalImages.Get "HetznerCCM" }}'
+          name: hcloud-cloud-controller-manager
           ports:
-            - name: metrics
-              containerPort: 8233
+            - containerPort: 8233
+              name: metrics
           resources:
             requests:
               cpu: 100m
               memory: 50Mi
+      dnsPolicy: Default
       priorityClassName: system-cluster-critical
+      serviceAccountName: hcloud-cloud-controller-manager
+      tolerations:
+        - effect: NoSchedule
+          key: node.cloudprovider.kubernetes.io/uninitialized
+          value: "true"
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists
+        - effect: NoExecute
+          key: node.kubernetes.io/not-ready
