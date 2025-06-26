@@ -1,0 +1,52 @@
+namespace: kube-system
+
+helmCharts:
+- name: openstack-cinder-csi
+  repo: https://kubernetes.github.io/cloud-provider-openstack
+  version: 2.33.0
+  releaseName: cinder-csi
+  namespace: kube-system
+  valuesFile: generate-values-csi
+
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: openstack-cinder-csi-controllerplugin
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: csi-attacher
+                image: '{{ .InternalImages.Get "OpenstackCSIAttacher" }}'
+              - name: csi-provisioner
+                image: '{{ .InternalImages.Get "OpenstackCSIProvisioner" }}'
+              - name: csi-snapshotter
+                image: '{{ .InternalImages.Get "OpenstackCSISnapshotter" }}'
+              - name: csi-resizer
+                image: '{{ .InternalImages.Get "OpenstackCSIResizer" }}'
+              - name: liveness-probe
+                image: '{{ .InternalImages.Get "OpenstackCSILivenessProbe" }}'
+              - name: cinder-csi-plugin
+                image: '{{ .InternalImages.Get "OpenstackCSI" }}'
+            volumes:
+              - name: socket-dir
+                emptyDir: {}
+  - patch: |-
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: openstack-cinder-csi-nodeplugin
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: node-driver-registrar
+                image: '{{ .InternalImages.Get "OpenstackCSINodeDriverRegistar" }}'
+              - name: liveness-probe
+                image: '{{ .InternalImages.Get "OpenstackCSILivenessProbe" }}'
+              - name: cinder-csi-plugin
+                image: '{{ .InternalImages.Get "OpenstackCSI" }}'

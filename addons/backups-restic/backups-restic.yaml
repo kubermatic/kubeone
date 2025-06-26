@@ -50,9 +50,6 @@ spec:
           - name: host-pki
             hostPath:
               path: /etc/kubernetes/pki
-{{ if CABundle }}
-{{ caBundleVolume | indent 10 }}
-{{ end }}
           initContainers:
           - name: snapshotter
             image: {{ Registry "registry.k8s.io" }}/etcd:3.5.16-0
@@ -107,9 +104,6 @@ spec:
               restic backup {{- with .Params.commonFlags }} {{.}}{{ end }} --tag=etcd --host=${ETCD_HOSTNAME} /backup
               restic forget {{- with .Params.commonFlags }} {{.}}{{ end }} --prune --keep-last 48
             env:
-{{ if CABundle }}
-{{ caBundleEnvVar | indent 12 }}
-{{ end }}
             - name: ETCD_HOSTNAME
               valueFrom:
                 fieldRef:
@@ -139,6 +133,3 @@ spec:
             - mountPath: /etc/kubernetes/pki
               name: host-pki
               readOnly: true
-{{ if CABundle }}
-{{ caBundleVolumeMount | indent 12 }}
-{{ end }}

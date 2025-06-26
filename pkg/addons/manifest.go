@@ -75,17 +75,50 @@ func (a *applier) getManifestsFromDirectory(st *state.State, fsys fs.FS, addonNa
 		return "", err
 	}
 
-	if st.Cluster.CloudProvider.SecretProviderClassName != "" && !disableTemplating {
-		addonsToMutate := sets.NewString(
-			append(
-				resources.CloudAddons(),
-				resources.AddonOperatingSystemManager,
-				resources.AddonMachineController,
-			)...,
-		)
+	addonsToMutate := sets.NewString(
+		append(
+			resources.CloudAddons(),
+			resources.AddonBackupsRestic,
+			resources.AddonOperatingSystemManager,
+			resources.AddonMachineController,
+		)...,
+	)
 
-		if addonsToMutate.Has(addonName) {
-			if err = addSecretCSIVolume(manifests, st.Cluster.CloudProvider.SecretProviderClassName); err != nil {
+	if !disableTemplating && addonsToMutate.Has(addonName) {
+		if st.Cluster.CABundle != "" {
+			if err = mutatePodTemplateSpec(manifests, func(podTpl *corev1.PodTemplateSpec) {
+				cabundle.Inject(st.Cluster.CABundle, podTpl)
+			}); err != nil {
+				return "", err
+			}
+		}
+
+		if st.Cluster.CloudProvider.SecretProviderClassName != "" {
+			if err = mutatePodTemplateSpec(manifests, func(podSpec *corev1.PodTemplateSpec) {
+				volume := corev1.Volume{
+					Name: "secrets-store",
+					VolumeSource: corev1.VolumeSource{
+						CSI: &corev1.CSIVolumeSource{
+							Driver:   "secrets-store.csi.k8s.io",
+							ReadOnly: ptr.To(true),
+							VolumeAttributes: map[string]string{
+								"secretProviderClass": st.Cluster.CloudProvider.SecretProviderClassName,
+							},
+						},
+					},
+				}
+
+				volumeMount := corev1.VolumeMount{
+					Name:      "secrets-store",
+					MountPath: "/mnt/secrets-store",
+					ReadOnly:  true,
+				}
+
+				podSpec.Spec.Volumes = append(podSpec.Spec.Volumes, volume)
+				for i := range podSpec.Spec.Containers {
+					podSpec.Spec.Containers[i].VolumeMounts = append(podSpec.Spec.Containers[i].VolumeMounts, volumeMount)
+				}
+			}); err != nil {
 				return "", err
 			}
 		}
@@ -390,26 +423,7 @@ func vSphereCSIWebhookConfigTemplateFunc() (string, error) {
 	return buf.String(), err
 }
 
-func addSecretCSIVolume(docs []runtime.RawExtension, secretProviderClassName string) error {
-	volume := corev1.Volume{
-		Name: "secrets-store",
-		VolumeSource: corev1.VolumeSource{
-			CSI: &corev1.CSIVolumeSource{
-				Driver:   "secrets-store.csi.k8s.io",
-				ReadOnly: ptr.To(true),
-				VolumeAttributes: map[string]string{
-					"secretProviderClass": secretProviderClassName,
-				},
-			},
-		},
-	}
-
-	volumeMount := corev1.VolumeMount{
-		Name:      "secrets-store",
-		MountPath: "/mnt/secrets-store",
-		ReadOnly:  true,
-	}
-
+func mutatePodTemplateSpec(docs []runtime.RawExtension, mutatorFn func(podTpl *corev1.PodTemplateSpec)) error {
 	for i := range docs {
 		ubject := metav1unstructured.Unstructured{}
 		_, _, err := metav1unstructured.UnstructuredJSONScheme.Decode(docs[i].Raw, nil, &ubject)
@@ -421,37 +435,32 @@ func addSecretCSIVolume(docs []runtime.RawExtension, secretProviderClassName str
 		case appsv1.SchemeGroupVersion.WithKind("Deployment").GroupKind():
 			var obj appsv1.Deployment
 			err = repackObject(&obj, &docs[i], func() {
-				obj.Spec.Template.Spec = addVolumeToPodSpec(obj.Spec.Template.Spec, volume, volumeMount)
+				mutatorFn(&obj.Spec.Template)
 			})
 		case appsv1.SchemeGroupVersion.WithKind("StatefulSet").GroupKind():
 			var obj appsv1.StatefulSet
 			err = repackObject(&obj, &docs[i], func() {
-				obj.Spec.Template.Spec = addVolumeToPodSpec(obj.Spec.Template.Spec, volume, volumeMount)
+				mutatorFn(&obj.Spec.Template)
 			})
 		case appsv1.SchemeGroupVersion.WithKind("DaemonSet").GroupKind():
 			var obj appsv1.DaemonSet
 			err = repackObject(&obj, &docs[i], func() {
-				obj.Spec.Template.Spec = addVolumeToPodSpec(obj.Spec.Template.Spec, volume, volumeMount)
+				mutatorFn(&obj.Spec.Template)
 			})
 		case appsv1.SchemeGroupVersion.WithKind("ReplicaSet").GroupKind():
 			var obj appsv1.ReplicaSet
 			err = repackObject(&obj, &docs[i], func() {
-				obj.Spec.Template.Spec = addVolumeToPodSpec(obj.Spec.Template.Spec, volume, volumeMount)
-			})
-		case corev1.SchemeGroupVersion.WithKind("Pod").GroupKind():
-			var obj corev1.Pod
-			err = repackObject(&obj, &docs[i], func() {
-				obj.Spec = addVolumeToPodSpec(obj.Spec, volume, volumeMount)
+				mutatorFn(&obj.Spec.Template)
 			})
 		case batchv1.SchemeGroupVersion.WithKind("Job").GroupKind():
 			var obj batchv1.Job
 			err = repackObject(&obj, &docs[i], func() {
-				obj.Spec.Template.Spec = addVolumeToPodSpec(obj.Spec.Template.Spec, volume, volumeMount)
+				mutatorFn(&obj.Spec.Template)
 			})
 		case batchv1.SchemeGroupVersion.WithKind("CronJob").GroupKind():
 			var obj batchv1.CronJob
 			err = repackObject(&obj, &docs[i], func() {
-				obj.Spec.JobTemplate.Spec.Template.Spec = addVolumeToPodSpec(obj.Spec.JobTemplate.Spec.Template.Spec, volume, volumeMount)
+				mutatorFn(&obj.Spec.JobTemplate.Spec.Template)
 			})
 		}
 
@@ -483,13 +492,4 @@ func repackObject(kubeobject runtime.Object, obj *runtime.RawExtension, mutator 
 	obj.Raw = js
 
 	return nil
-}
-
-func addVolumeToPodSpec(podSpec corev1.PodSpec, volume corev1.Volume, volumeMount corev1.VolumeMount) corev1.PodSpec {
-	podSpec.Volumes = append(podSpec.Volumes, volume)
-	for i := range podSpec.Containers {
-		podSpec.Containers[i].VolumeMounts = append(podSpec.Containers[i].VolumeMounts, volumeMount)
-	}
-
-	return podSpec
 }

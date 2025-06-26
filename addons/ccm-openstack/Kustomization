@@ -1,7 +1,12 @@
 namespace: kube-system
 
-resources:
-  - ccm-openstack.yaml
+helmCharts:
+- name: openstack-cloud-controller-manager
+  repo: https://kubernetes.github.io/cloud-provider-openstack
+  version: 2.33.0
+  releaseName: openstack-ccm
+  namespace: kube-system
+  valuesFile: generate-values-ccm
 
 patches:
   - target:

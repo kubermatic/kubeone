@@ -33,7 +33,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/utils/ptr"
 	"sigs.k8s.io/yaml"
 )
 
@@ -362,46 +361,11 @@ func mustMarshal(obj runtime.Object) []byte {
 
 func Test_addSecretCSIVolume(t *testing.T) {
 	testPodSpec := corev1.PodSpec{
-		Containers: []corev1.Container{
-			{
-				Name: "container1",
-			},
-		},
+		NodeName: "invalid",
 	}
 
 	testPodTemplateSpec := corev1.PodTemplateSpec{
 		Spec: testPodSpec,
-	}
-
-	secretProviderClassName := "something"
-
-	testdataPodSpec := corev1.PodSpec{
-		Containers: []corev1.Container{
-			{
-				Name: "container1",
-				VolumeMounts: []corev1.VolumeMount{
-					{
-						Name:      "secrets-store",
-						MountPath: "/mnt/secrets-store",
-						ReadOnly:  true,
-					},
-				},
-			},
-		},
-		Volumes: []corev1.Volume{
-			{
-				Name: "secrets-store",
-				VolumeSource: corev1.VolumeSource{
-					CSI: &corev1.CSIVolumeSource{
-						Driver:   "secrets-store.csi.k8s.io",
-						ReadOnly: ptr.To(true),
-						VolumeAttributes: map[string]string{
-							"secretProviderClass": secretProviderClassName,
-						},
-					},
-				},
-			},
-		},
 	}
 
 	testdata := map[string]runtime.Object{
@@ -473,8 +437,7 @@ func Test_addSecretCSIVolume(t *testing.T) {
 	}
 
 	type args struct {
-		docs                    []runtime.RawExtension
-		secretProviderClassName string
+		docs []runtime.RawExtension
 	}
 
 	tests := []struct {
@@ -485,87 +448,54 @@ func Test_addSecretCSIVolume(t *testing.T) {
 		{
 			name: "deployment",
 			args: args{
-				docs: []runtime.RawExtension{
-					{
-						Raw: mustMarshal(testdata["deployment"]),
-					},
-				},
-				secretProviderClassName: secretProviderClassName,
+				docs: []runtime.RawExtension{{Raw: mustMarshal(testdata["deployment"])}},
 			},
 		},
 		{
 			name: "statefulset",
 			args: args{
-				docs: []runtime.RawExtension{
-					{
-						Raw: mustMarshal(testdata["statefulset"]),
-					},
-				},
-				secretProviderClassName: secretProviderClassName,
+				docs: []runtime.RawExtension{{Raw: mustMarshal(testdata["statefulset"])}},
 			},
 		},
 		{
 			name: "daemonset",
 			args: args{
-				docs: []runtime.RawExtension{
-					{
-						Raw: mustMarshal(testdata["daemonset"]),
-					},
-				},
-				secretProviderClassName: secretProviderClassName,
+				docs: []runtime.RawExtension{{Raw: mustMarshal(testdata["daemonset"])}},
 			},
 		},
 		{
 			name: "replicaset",
 			args: args{
-				docs: []runtime.RawExtension{
-					{
-						Raw: mustMarshal(testdata["replicaset"]),
-					},
-				},
-				secretProviderClassName: secretProviderClassName,
-			},
-		},
-		{
-			name: "pod",
-			args: args{
-				docs: []runtime.RawExtension{
-					{
-						Raw: mustMarshal(testdata["pod"]),
-					},
-				},
-				secretProviderClassName: secretProviderClassName,
+				docs: []runtime.RawExtension{{Raw: mustMarshal(testdata["replicaset"])}},
 			},
 		},
 		{
 			name: "job",
 			args: args{
-				docs: []runtime.RawExtension{
-					{
-						Raw: mustMarshal(testdata["job"]),
-					},
-				},
-				secretProviderClassName: secretProviderClassName,
+				docs: []runtime.RawExtension{{Raw: mustMarshal(testdata["job"])}},
 			},
 		},
 		{
 			name: "cronjob",
 			args: args{
-				docs: []runtime.RawExtension{
-					{
-						Raw: mustMarshal(testdata["cronjob"]),
-					},
-				},
-				secretProviderClassName: secretProviderClassName,
+				docs: []runtime.RawExtension{{Raw: mustMarshal(testdata["cronjob"])}},
 			},
 		},
 	}
 
+	mutatorFn := func(podTpl *corev1.PodTemplateSpec) {
+		podTpl.Spec.NodeName = "valid"
+	}
+
+	testdataPodSpec := corev1.PodSpec{
+		NodeName: "valid",
+	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := addSecretCSIVolume(tt.args.docs, tt.args.secretProviderClassName)
+			err := mutatePodTemplateSpec(tt.args.docs, mutatorFn)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("addSecretCSIVolume() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("mutatePodTemplateSpec() error = %v, wantErr %v", err, tt.wantErr)
 
 				return
 			}

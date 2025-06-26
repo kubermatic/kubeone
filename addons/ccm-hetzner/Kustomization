@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kube-system
+
+helmCharts:
+- name: hcloud-cloud-controller-manager
+  repo: https://charts.hetzner.cloud
+  version: 1.25.1
+  releaseName: hccm
+  namespace: kube-system
+  valuesFile: generate-values-ccm
+
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: hcloud-cloud-controller-manager
+        namespace: kube-system
+      spec:
+        template:
+          metadata:
+            annotations:
+              kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
+          spec:
+            containers:
+              - name: hcloud-cloud-controller-manager
+                image: '{{ .InternalImages.Get "HetznerCCM" }}'

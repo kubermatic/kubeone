@@ -1,0 +1,55 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kube-system
+
+helmCharts:
+- name: hcloud-csi
+  repo: https://charts.hetzner.cloud
+  version: 2.16.0
+  releaseName: hcloud-csi
+  namespace: kube-system
+  valuesFile: generate-values-csi
+
+patches:
+  - patch: |-
+      apiVersion: storage.k8s.io/v1
+      kind: StorageClass
+      metadata:
+        name: hcloud-volumes
+      $patch: delete
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: hcloud-csi-controller
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: csi-attacher
+                image: '{{ .InternalImages.Get "HetznerCSIAttacher" }}'
+              - name: csi-resizer
+                image: '{{ .InternalImages.Get "HetznerCSIResizer" }}'
+              - name: csi-provisioner
+                image: '{{ .InternalImages.Get "HetznerCSIProvisioner" }}'
+              - name: liveness-probe
+                image: '{{ .InternalImages.Get "HetznerCSILivenessProbe" }}'
+              - name: hcloud-csi-driver
+                image: '{{ .InternalImages.Get "HetznerCSI" }}'
+  - patch: |-
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: hcloud-csi-node
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: csi-node-driver-registrar
+                image: '{{ .InternalImages.Get "HetznerCSINodeDriverRegistar" }}'
+              - name: liveness-probe
+                image: '{{ .InternalImages.Get "HetznerCSILivenessProbe" }}'
+              - name: hcloud-csi-driver
+                image: '{{ .InternalImages.Get "HetznerCSI" }}'

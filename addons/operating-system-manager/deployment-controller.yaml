@@ -79,9 +79,6 @@ spec:
             - name: NO_PROXY
               value: "{{ .Config.Proxy.NoProxy }}"
 {{ .OperatingSystemManagerCredentialsEnvVars | indent 12 }}
-{{ if CABundle }}
-{{ caBundleEnvVar | indent 12 }}
-{{ end }}
           ports:
             - containerPort: 8085
           livenessProbe:
@@ -102,9 +99,3 @@ spec:
             requests:
               cpu: 50m
               memory: 128Mi
-{{ if CABundle }}
-          volumeMounts:
-{{ caBundleVolumeMount | indent 12 }}
-      volumes:
-{{ caBundleVolume | indent 8 }}
-{{ end }}

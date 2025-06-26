@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
 - name: azurefile-csi-driver
   repo: https://raw.githubusercontent.com/kubernetes-sigs/azurefile-csi-driver/master/charts
-  version: v1.33.0
+  version: v1.33.2
   releaseName: azurefile-csi-driver
   namespace: kube-system
   valuesFile: helm-values
@@ -19,6 +19,9 @@ patches:
       spec:
         template:
           spec:
+            initContainers:
+              - name: install-azurefile-proxy
+                image: '{{ .InternalImages.Get "AzureFileCSI" }}'
             containers:
               - name: liveness-probe
                 image: '{{ .InternalImages.Get "AzureFileCSILivenessProbe" }}'

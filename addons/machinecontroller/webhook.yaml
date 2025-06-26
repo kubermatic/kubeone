@@ -108,16 +108,10 @@ spec:
 {{ end }}
 {{ end }}
 {{ .MachineControllerCredentialsEnvVars | indent 12 }}
-{{ if CABundle }}
-{{ caBundleEnvVar | indent 12 }}
-{{ end }}
           volumeMounts:
             - name: machinecontroller-webhook-serving-cert
               mountPath: /tmp/cert
               readOnly: true
-{{ if CABundle }}
-{{ caBundleVolumeMount | indent 12 }}
-{{ end }}
           livenessProbe:
             httpGet:
               path: /healthz
@@ -136,9 +130,6 @@ spec:
           secret:
             secretName: machinecontroller-webhook-serving-cert
             defaultMode: 0444
-{{ if CABundle }}
-{{ caBundleVolume | indent 8 }}
-{{ end }}
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
