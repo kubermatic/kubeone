@@ -588,135 +588,6 @@ var (
 				outputDir:  "/logs/artifacts/logs",
 			},
 		},
-		"equinixmetal_default": {
-			name:   "equinixmetal_default",
-			osName: "Ubuntu",
-			labels: map[string]string{
-				"preset-goproxy":       "true",
-				"preset-equinix-metal": "true",
-			},
-			environ: map[string]string{
-				"PROVIDER": "equinixmetal",
-			},
-			terraform: terraformBin{
-				path: "../../examples/terraform/equinixmetal",
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
-		"equinixmetal_default_stable": {
-			name:   "equinixmetal_default_stable",
-			osName: "Ubuntu",
-			labels: map[string]string{
-				"preset-goproxy":       "true",
-				"preset-equinix-metal": "true",
-			},
-			environ: map[string]string{
-				"PROVIDER": "equinixmetal",
-			},
-			terraform: terraformBin{
-				path: "../../../kubeone-stable/examples/terraform/equinixmetal",
-				vars: []string{
-					"control_plane_operating_system=ubuntu_20_04",
-					"lb_operating_system=ubuntu_20_04",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
-		"equinixmetal_rockylinux": {
-			name:   "equinixmetal_rockylinux",
-			osName: "Rocky Linux",
-			labels: map[string]string{
-				"preset-goproxy":       "true",
-				"preset-equinix-metal": "true",
-			},
-			environ: map[string]string{
-				"PROVIDER": "equinixmetal",
-			},
-			terraform: terraformBin{
-				path: "../../examples/terraform/equinixmetal",
-				vars: []string{
-					"os=rockylinux",
-					"lb_operating_system=rocky_8",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
-		"equinixmetal_rockylinux_stable": {
-			name:   "equinixmetal_rockylinux_stable",
-			osName: "Rocky Linux",
-			labels: map[string]string{
-				"preset-goproxy":       "true",
-				"preset-equinix-metal": "true",
-			},
-			environ: map[string]string{
-				"PROVIDER": "equinixmetal",
-			},
-			terraform: terraformBin{
-				path: "../../../kubeone-stable/examples/terraform/equinixmetal",
-				vars: []string{
-					"control_plane_operating_system=rocky_8",
-					"lb_operating_system=rocky_8",
-					"worker_os=rockylinux",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
-		"equinixmetal_flatcar": {
-			name:   "equinixmetal_flatcar",
-			osName: "Flatcar",
-			labels: map[string]string{
-				"preset-goproxy":       "true",
-				"preset-equinix-metal": "true",
-			},
-			environ: map[string]string{
-				"PROVIDER": "equinixmetal",
-			},
-			terraform: terraformBin{
-				path: "../../examples/terraform/equinixmetal",
-				vars: []string{
-					"disable_auto_update=true",
-					"os=flatcar",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
-		"equinixmetal_flatcar_stable": {
-			name:   "equinixmetal_flatcar_stable",
-			osName: "Flatcar",
-			labels: map[string]string{
-				"preset-goproxy":       "true",
-				"preset-equinix-metal": "true",
-			},
-			environ: map[string]string{
-				"PROVIDER": "equinixmetal",
-			},
-			terraform: terraformBin{
-				path: "../../../kubeone-stable/examples/terraform/equinixmetal",
-				vars: []string{
-					"disable_auto_update=true",
-					"os=flatcar",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
 		"gce_default": {
 			name:   "gce_default",
 			osName: "Ubuntu",
@@ -1169,11 +1040,6 @@ var (
 		},
 
 		// Various features
-		"calico_containerd_external": &scenarioInstall{
-			Name:                 "calico_containerd_external",
-			HumanReadableName:    "Cluster Provisioning (External, Calico)",
-			ManifestTemplatePath: "testdata/containerd_calico_external.yaml",
-		},
 		"cilium_containerd_external": &scenarioInstall{
 			Name:                 "cilium_containerd_external",
 			HumanReadableName:    "Cluster Provisioning (External, Cilium)",
@@ -1189,15 +1055,9 @@ var (
 			HumanReadableName:    "Cluster Provisioning (External, kube-proxy IPVS)",
 			ManifestTemplatePath: "testdata/kube_proxy_ipvs_external.yaml",
 		},
-		"csi_ccm_migration": &scenarioMigrateCSIAndCCM{
-			Name:                    "csi_ccm_migration",
-			OldManifestTemplatePath: "testdata/containerd_simple.yaml",
-			HumanReadableName:       "CCM/CSI Migration",
-			NewManifestTemplatePath: "testdata/containerd_simple_external.yaml",
-		},
 		"external_cni_flannel_helm_chart": &scenarioInstall{
 			Name:                 "external_cni_flannel_helm_chart",
-			HumanReadableName:    "CCM/CSI Migration",
+			HumanReadableName:    "Cluster Provisioning (External, Flannel via Helm)",
 			ManifestTemplatePath: "testdata/containerd_flannel_helm_external.yaml",
 		},
 	}
