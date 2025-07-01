@@ -321,9 +321,6 @@ spec:
                     operator: Exists
       containers:
         - args:
-            - /go-runner
-            - --redirect-stderr=true
-            - /cloud-controller-manager
             - --allocate-node-cidrs=false
             - --cloud-config=/etc/kubernetes/cloud/config
             - --cloud-provider=gce
