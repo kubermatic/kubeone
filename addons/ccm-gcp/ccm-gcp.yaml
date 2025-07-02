@@ -328,6 +328,8 @@ spec:
             - --configure-cloud-routes=false
             - --controllers=*,-node-ipam-controller,-node-route-controller
             - --v=2
+          command:
+            - /cloud-controller-manager
           env:
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: /etc/cloud-sa/cloud-sa.json
