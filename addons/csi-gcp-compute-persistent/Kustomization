@@ -7,56 +7,59 @@ resources:
   - https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver/deploy/kubernetes/base/node_linux?ref=v1.20.0
 
 patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: csi-gce-pd-controller
+      spec:
+        template:
+          metadata:
+            annotations:
+              kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
+          spec:
+            nodeSelector:
+              node-role.kubernetes.io/control-plane: ""
+            tolerations:
+              - key: CriticalAddonsOnly
+                operator: Exists
+              - key: node-role.kubernetes.io/control-plane
+                operator: Exists
+                effect: NoSchedule
+              - operator: Exists
+                effect: NoExecute
+                tolerationSeconds: 300
+            containers:
+              - name: csi-provisioner
+                image: '{{ .InternalImages.Get "GCPComputeCSIProvisioner" }}'
+              - name: csi-attacher
+                image: '{{ .InternalImages.Get "GCPComputeCSIAttacher" }}'
+                args:
+                  - --v=5
+                  - --csi-address=/csi/csi.sock
+                  - --http-endpoint=:22012
+                  - --leader-election
+                  - --leader-election-namespace=$(PDCSI_NAMESPACE)
+                  - --timeout=250s
+                  - --default-fstype=ext4
+              - name: csi-resizer
+                image: '{{ .InternalImages.Get "GCPComputeCSIResizer" }}'
+              - name: csi-snapshotter
+                image: '{{ .InternalImages.Get "GCPComputeCSISnapshotter" }}'
+              - name: gce-pd-driver
+                image: '{{ .InternalImages.Get "GCPComputeCSIDriver" }}'
+                args:
+                  - --v=5
+                  - --endpoint=unix:/csi/csi.sock
+                  - --supports-dynamic-iops-provisioning=hyperdisk-balanced,hyperdisk-extreme
+                  - --supports-dynamic-throughput-provisioning=hyperdisk-balanced,hyperdisk-throughput,hyperdisk-ml
+
   - target:
       group: apps
       version: v1
       kind: Deployment
       name: csi-gce-pd-controller
     patch: |-
-      - op: replace
-        path: /spec/template/spec/containers/0/image
-        value: |-
-          {{ .InternalImages.Get "GCPComputeCSIProvisioner" }}
-      - op: replace
-        path: /spec/template/spec/containers/1/image
-        value: |-
-          {{ .InternalImages.Get "GCPComputeCSIAttacher" }}
-      - op: replace
-        path: /spec/template/spec/containers/2/image
-        value: |-
-          {{ .InternalImages.Get "GCPComputeCSIResizer" }}
-      - op: replace
-        path: /spec/template/spec/containers/3/image
-        value: |-
-          {{ .InternalImages.Get "GCPComputeCSISnapshotter" }}
-      - op: replace
-        path: /spec/template/spec/containers/4/image
-        value: |-
-          {{ .InternalImages.Get "GCPComputeCSIDriver" }}
-      - op: add
-        path: /spec/template/spec/containers/1/args/-
-        value: "--default-fstype=ext4"
-      - op: add
-        path: /spec/template/metadata/annotations
-        value:
-          kubeone.k8c.io/credentials-hash: "{{ .CredentialsCCMHash }}"
-      - op: add
-        path: /spec/template/spec/nodeSelector/node-role.kubernetes.io~1control-plane
-        value: ""
-      - op: add
-        path: /spec/template/spec/tolerations
-        value:
-          - key: CriticalAddonsOnly
-            operator: Exists
-          - key: node-role.kubernetes.io/master
-            operator: Exists
-            effect: NoSchedule
-          - key: node-role.kubernetes.io/control-plane
-            operator: Exists
-            effect: NoSchedule
-          - operator: Exists
-            effect: NoExecute
-            tolerationSeconds: 300
       - op: replace
         path: /spec/template/spec/volumes/1
         value:
@@ -67,17 +70,20 @@ patches:
               - key: GOOGLE_SERVICE_ACCOUNT
                 path: cloud-sa.json
 
-  - target:
-      group: apps
-      version: v1
+  - patch: |-
+      apiVersion: apps/v1
       kind: DaemonSet
-      name: csi-gce-pd-node
-    patch: |-
-      - op: replace
-        path: /spec/template/spec/containers/0/image
-        value: |-
-          {{ .InternalImages.Get "GCPComputeCSINodeDriverRegistrar" }}
-      - op: replace
-        path: /spec/template/spec/containers/1/image
-        value: |-
-          {{ .InternalImages.Get "GCPComputeCSIDriver" }}
+      metadata:
+        name: csi-gce-pd-node
+      spec:
+        template:
+          spec:
+            containers:
+              - name: csi-driver-registrar
+                image: '{{ .InternalImages.Get "GCPComputeCSINodeDriverRegistrar" }}'
+              - name: gce-pd-driver
+                image: '{{ .InternalImages.Get "GCPComputeCSIDriver" }}'
+                args:
+                  - --v=5
+                  - --endpoint=unix:/csi/csi.sock
+                  - --run-controller-service=false

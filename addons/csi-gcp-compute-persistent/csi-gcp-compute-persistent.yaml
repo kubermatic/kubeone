@@ -595,8 +595,6 @@ spec:
         - --endpoint=unix:/csi/csi.sock
         - --supports-dynamic-iops-provisioning=hyperdisk-balanced,hyperdisk-extreme
         - --supports-dynamic-throughput-provisioning=hyperdisk-balanced,hyperdisk-throughput,hyperdisk-ml
-        - --enable-data-cache
-        - --enable-multitenancy
         command:
         - /gce-pd-csi-driver
         env:
@@ -618,9 +616,6 @@ spec:
       serviceAccountName: csi-gce-pd-controller-sa
       tolerations:
       - key: CriticalAddonsOnly
-        operator: Exists
-      - effect: NoSchedule
-        key: node-role.kubernetes.io/master
         operator: Exists
       - effect: NoSchedule
         key: node-role.kubernetes.io/control-plane
@@ -673,9 +668,6 @@ spec:
         - --v=5
         - --endpoint=unix:/csi/csi.sock
         - --run-controller-service=false
-        - --enable-data-cache
-        - --enable-multitenancy
-        - --node-name=$(KUBE_NODE_NAME)
         env:
         - name: KUBE_NODE_NAME
           valueFrom:
