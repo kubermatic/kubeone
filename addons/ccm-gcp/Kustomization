@@ -58,8 +58,6 @@ patches:
             containers:
               - name: cloud-controller-manager
                 image: '{{ .InternalImages.Get "GCPCCM" }}'
-                command:
-                  - /cloud-controller-manager
                 args:
                   - --allocate-node-cidrs=false
                   - --cloud-config=/etc/kubernetes/cloud/config
