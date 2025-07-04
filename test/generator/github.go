@@ -158,11 +158,9 @@ This is a testing ticket for the upcoming KubeOne release.
 _This issue has been automatically generated._
 
 {{ range $os, $cmds := .TestCommands }}
-` + "```[tasklist]" + `
 ### {{ $os }}
 {{- range $cmds }}
 - [ ] ` + "`" + `{{ . }}` + "`" + `{{ "" -}}
 {{ end }}
-` + "```" + `
 {{ end }}
 `)
