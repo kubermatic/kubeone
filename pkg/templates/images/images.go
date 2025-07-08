@@ -384,6 +384,7 @@ func optionalResources() map[Resource]map[string]string {
 		// Cilium
 		Cilium:         {"*": "quay.io/cilium/cilium:v1.17.3@sha256:1782794aeac951af139315c10eff34050aa7579c12827ee9ec376bb719b82873"},
 		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.17.3@sha256:8bd38d0e97a955b2d725929d60df09d712fb62b60b930551a29abac2dd92e597"},
+		CiliumEnvoy:    {"*": "quay.io/cilium/cilium-envoy:v1.32.5-1744305768-f9ddca7dcd91f7ca25a505560e655c47d3dec2cf@sha256:a01cadf7974409b5c5c92ace3d6afa298408468ca24cab1cb413c04f89d3d1f9"},
 
 		// Hubble
 		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.17.3@sha256:f8674b5139111ac828a8818da7f2d344b4a5bfbaeb122c5dc9abed3e74000c55"},
