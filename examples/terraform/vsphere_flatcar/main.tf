@@ -144,6 +144,12 @@ resource "vsphere_virtual_machine" "control_plane" {
       }
     }))
   }
+
+  vapp {
+    properties = {
+      public-keys = file(var.ssh_public_key_file)
+    }
+  }
 }
 
 /*
