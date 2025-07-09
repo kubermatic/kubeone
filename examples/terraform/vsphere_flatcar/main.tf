@@ -94,60 +94,55 @@ resource "vsphere_virtual_machine" "control_plane" {
 
   extra_config = {
     "disk.enableUUID" = "TRUE"
-  }
-
-  vapp {
-    properties = {
-      "guestinfo.ignition.config.data.encoding" = "base64"
-      "guestinfo.ignition.config.data" = base64encode(jsonencode({
-        ignition = {
-          version = "2.2.0"
-        }
-        systemd = {
-          units = [
+    "guestinfo.ignition.config.data.encoding" = "base64"
+    "guestinfo.ignition.config.data" = base64encode(jsonencode({
+      ignition = {
+        version = "2.2.0"
+      }
+      systemd = {
+        units = [
+          {
+            name    = "docker.socket"
+            enabled = false
+          },
+          {
+            name    = "docker.service"
+            enabled = true
+          }
+        ]
+      },
+      storage = {
+        files = concat(
+          [
             {
-              name    = "docker.socket"
-              enabled = false
-            },
-            {
-              name    = "docker.service"
-              enabled = true
+              filesystem = "root"
+              path       = "/etc/hostname"
+              mode       = 420
+              contents = {
+                source = "data:,${local.hostnames[count.index]}"
+              }
             }
-          ]
-        },
-        storage = {
-          files = concat(
-            [
-              {
-                filesystem = "root"
-                path       = "/etc/hostname"
-                mode       = 420
-                contents = {
-                  source = "data:,${local.hostnames[count.index]}"
-                }
+          ], var.disable_auto_update ?
+          [
+            {
+              filesystem = "root"
+              path       = "/etc/flatcar/update.conf"
+              mode       = 420
+              contents = {
+                source = "data:,SERVER%3Ddisabled%0A"
               }
-            ], var.disable_auto_update ?
-            [
-              {
-                filesystem = "root"
-                path       = "/etc/flatcar/update.conf"
-                mode       = 420
-                contents = {
-                  source = "data:,SERVER%3Ddisabled%0A"
-                }
-              }
+            }
           ] : [])
-        },
-        passwd = {
-          users = [
-            {
-              name              = "core"
-              sshAuthorizedKeys = [file(var.ssh_public_key_file)]
-            }
-          ]
-        }
-      }))
-    }
+      },
+      passwd = {
+        users = [
+          {
+            name              = "core"
+            sshAuthorizedKeys = [file(var.ssh_public_key_file)]
+          }
+        ]
+      }
+    }))
   }
 }
 
