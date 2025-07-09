@@ -65,8 +65,10 @@ func (scenario *scenarioUpgrade) SetVersions(versions ...string) {
 }
 
 func (scenario *scenarioUpgrade) FetchVersions() error {
+	ctx := context.Background()
+
 	for i := range scenario.versions {
-		latestVer, err := latestUpstreamVersion(scenario.versions[i])
+		latestVer, err := latestUpstreamVersion(ctx, scenario.versions[i])
 		if err != nil {
 			return err
 		}
@@ -285,7 +287,7 @@ func (scenario *scenarioUpgrade) GenerateTests(wr io.Writer, generatorType Gener
 
 func (scenario *scenarioUpgrade) upgradeMachineDeployments(t *testing.T, client ctrlruntimeclient.Client, kubeletVersion string) {
 	var machinedeployments clusterv1alpha1.MachineDeploymentList
-	if err := client.List(context.Background(), &machinedeployments, ctrlruntimeclient.InNamespace(metav1.NamespaceSystem)); err != nil {
+	if err := client.List(t.Context(), &machinedeployments, ctrlruntimeclient.InNamespace(metav1.NamespaceSystem)); err != nil {
 		t.Error(err)
 	}
 
@@ -327,7 +329,7 @@ func (scenario *scenarioUpgrade) upgradeMachineDeployments(t *testing.T, client 
 		}
 
 		err := retryFn(func() error {
-			return client.Patch(context.Background(), &mdNew, ctrlruntimeclient.MergeFrom(mdOld))
+			return client.Patch(t.Context(), &mdNew, ctrlruntimeclient.MergeFrom(mdOld))
 		})
 		if err != nil {
 			t.Fatalf("upgrading machineDeployment %q: %v", ctrlruntimeclient.ObjectKeyFromObject(&mdNew), err)
@@ -342,7 +344,7 @@ func (scenario *scenarioUpgrade) upgradeMachineDeployments(t *testing.T, client 
 const upgradeScenarioTemplate = `
 {{- range . }}
 func {{ .TestTitle }}(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["{{ .Infra }}"]
 	scenario := Scenarios["{{ .Scenario }}"]
 	scenario.SetInfra(infra)

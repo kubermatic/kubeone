@@ -61,8 +61,10 @@ func (scenario *scenarioInstall) SetVersions(versions ...string) {
 }
 
 func (scenario *scenarioInstall) FetchVersions() error {
+	ctx := context.Background()
+
 	for i := range scenario.versions {
-		latestVer, err := latestUpstreamVersion(scenario.versions[i])
+		latestVer, err := latestUpstreamVersion(ctx, scenario.versions[i])
 		if err != nil {
 			return err
 		}
@@ -261,7 +263,7 @@ func (scenario *scenarioInstall) GenerateTests(wr io.Writer, generatorType Gener
 const installScenarioTemplate = `
 {{- range . }}
 func {{.TestTitle}}(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["{{.Infra}}"]
 	scenario := Scenarios["{{.Scenario}}"]
 	scenario.SetInfra(infra)

@@ -46,8 +46,10 @@ func (scenario *scenarioConformance) SetVersions(versions ...string) {
 }
 
 func (scenario *scenarioConformance) FetchVersions() error {
+	ctx := context.Background()
+
 	for i := range scenario.versions {
-		latestVer, err := latestUpstreamVersion(scenario.versions[i])
+		latestVer, err := latestUpstreamVersion(ctx, scenario.versions[i])
 		if err != nil {
 			return err
 		}

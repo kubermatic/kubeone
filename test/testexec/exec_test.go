@@ -17,7 +17,6 @@ limitations under the License.
 package testexec
 
 import (
-	"context"
 	"reflect"
 	"testing"
 )
@@ -45,7 +44,7 @@ func TestWithMapEnv(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			e := Exec{}
 			WithMapEnv(tt.args)(&e)
-			cmd := e.BuildCmd(context.Background())
+			cmd := e.BuildCmd(t.Context())
 
 			if got := cmd.Env; !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("got = %v, want %v", got, tt.want)
