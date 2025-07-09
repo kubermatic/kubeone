@@ -196,7 +196,8 @@ func defaultVersions(logger *logrus.Logger) ([]string, error) {
 
 // fetchLatestPatchForKubernetesVersion fetches the latest patch for a specific Kubernetes version.
 func fetchLatestPatchForKubernetesVersion(version string) (string, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf(stableVersionURL, version), nil)
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf(stableVersionURL, version), nil)
 	if err != nil {
 		return "", err
 	}
