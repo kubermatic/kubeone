@@ -66,11 +66,19 @@ func (k1 *kubeoneBin) Apply(ctx context.Context) error {
 func (k1 *kubeoneBin) Kubeconfig() ([]byte, error) {
 	var buf bytes.Buffer
 
-	exe := k1.build("kubeconfig")
-	testexec.StdoutTo(&buf)(exe)
+	err := retryFn(func() error {
+		buf.Reset()
+		exe := k1.build("kubeconfig")
+		testexec.StdoutTo(&buf)(exe)
 
-	if err := exe.Run(); err != nil {
-		return nil, fmt.Errorf("fetching kubeconfig failed: %w", err)
+		if err := exe.Run(); err != nil {
+			return fmt.Errorf("fetching kubeconfig failed: %w", err)
+		}
+
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	return buf.Bytes(), nil
