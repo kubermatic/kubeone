@@ -9233,10 +9233,6 @@ spec:
             - --ip-masq
             - --kube-subnet-mgr
           env:
-            - name: FLANNELD_IFACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
             - name: FLANNELD_IFACE_REGEX
               valueFrom:
                 configMapKeyRef:
