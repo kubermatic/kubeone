@@ -11,7 +11,7 @@ func TestStub(t *testing.T) {
 	t.Skip("stub is skipped")
 }
 func TestAwsAmznInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -23,7 +23,7 @@ func TestAwsAmznInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAwsDefaultInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -35,7 +35,7 @@ func TestAwsDefaultInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAwsUbuntuPreviousLtsInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_ubuntu_previous_lts"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -47,7 +47,7 @@ func TestAwsUbuntuPreviousLtsInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAwsFlatcarInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -59,7 +59,7 @@ func TestAwsFlatcarInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAwsRhelInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -71,7 +71,7 @@ func TestAwsRhelInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAwsRockylinuxInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -83,7 +83,7 @@ func TestAwsRockylinuxInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAzureDefaultInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -95,7 +95,7 @@ func TestAzureDefaultInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAzureFlatcarInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -107,7 +107,7 @@ func TestAzureFlatcarInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAzureRhelInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -119,7 +119,7 @@ func TestAzureRhelInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAzureRockylinuxInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -131,7 +131,7 @@ func TestAzureRockylinuxInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestDigitaloceanDefaultInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -143,7 +143,7 @@ func TestDigitaloceanDefaultInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestDigitaloceanRockylinuxInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -155,7 +155,7 @@ func TestDigitaloceanRockylinuxInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestGceDefaultInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -167,7 +167,7 @@ func TestGceDefaultInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestHetznerDefaultInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -179,7 +179,7 @@ func TestHetznerDefaultInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestHetznerRockylinuxInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -191,7 +191,7 @@ func TestHetznerRockylinuxInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestOpenstackDefaultInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -203,7 +203,7 @@ func TestOpenstackDefaultInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestOpenstackFlatcarInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -215,7 +215,7 @@ func TestOpenstackFlatcarInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestOpenstackRhelInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -227,7 +227,7 @@ func TestOpenstackRhelInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestOpenstackRockylinuxInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -239,7 +239,7 @@ func TestOpenstackRockylinuxInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestVsphereDefaultInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -251,7 +251,7 @@ func TestVsphereDefaultInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestVsphereFlatcarInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -263,7 +263,7 @@ func TestVsphereFlatcarInstallContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAwsAmznInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -275,7 +275,7 @@ func TestAwsAmznInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAwsDefaultInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -287,7 +287,7 @@ func TestAwsDefaultInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAwsUbuntuPreviousLtsInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_ubuntu_previous_lts"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -299,7 +299,7 @@ func TestAwsUbuntuPreviousLtsInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAwsFlatcarInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -311,7 +311,7 @@ func TestAwsFlatcarInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAwsRhelInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -323,7 +323,7 @@ func TestAwsRhelInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAwsRockylinuxInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -335,7 +335,7 @@ func TestAwsRockylinuxInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAzureDefaultInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -347,7 +347,7 @@ func TestAzureDefaultInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAzureFlatcarInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -359,7 +359,7 @@ func TestAzureFlatcarInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAzureRhelInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -371,7 +371,7 @@ func TestAzureRhelInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAzureRockylinuxInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -383,7 +383,7 @@ func TestAzureRockylinuxInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestDigitaloceanDefaultInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -395,7 +395,7 @@ func TestDigitaloceanDefaultInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestDigitaloceanRockylinuxInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -407,7 +407,7 @@ func TestDigitaloceanRockylinuxInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestGceDefaultInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -419,7 +419,7 @@ func TestGceDefaultInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestHetznerDefaultInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -431,7 +431,7 @@ func TestHetznerDefaultInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestHetznerRockylinuxInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -443,7 +443,7 @@ func TestHetznerRockylinuxInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestOpenstackDefaultInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -455,7 +455,7 @@ func TestOpenstackDefaultInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestOpenstackFlatcarInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -467,7 +467,7 @@ func TestOpenstackFlatcarInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestOpenstackRhelInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -479,7 +479,7 @@ func TestOpenstackRhelInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestOpenstackRockylinuxInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -491,7 +491,7 @@ func TestOpenstackRockylinuxInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestVsphereDefaultInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -503,7 +503,7 @@ func TestVsphereDefaultInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestVsphereFlatcarInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -515,7 +515,7 @@ func TestVsphereFlatcarInstallContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAwsDefaultInstallContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -527,7 +527,7 @@ func TestAwsDefaultInstallContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestAwsUbuntuPreviousLtsInstallContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_ubuntu_previous_lts"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -539,7 +539,7 @@ func TestAwsUbuntuPreviousLtsInstallContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestAwsFlatcarInstallContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -551,7 +551,7 @@ func TestAwsFlatcarInstallContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestAzureDefaultInstallContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -563,7 +563,7 @@ func TestAzureDefaultInstallContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestAzureFlatcarInstallContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -575,7 +575,7 @@ func TestAzureFlatcarInstallContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestDigitaloceanDefaultInstallContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -587,7 +587,7 @@ func TestDigitaloceanDefaultInstallContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestGceDefaultInstallContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -599,7 +599,7 @@ func TestGceDefaultInstallContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestHetznerDefaultInstallContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -611,7 +611,7 @@ func TestHetznerDefaultInstallContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestOpenstackDefaultInstallContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -623,7 +623,7 @@ func TestOpenstackDefaultInstallContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestOpenstackFlatcarInstallContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -635,7 +635,7 @@ func TestOpenstackFlatcarInstallContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestVsphereDefaultInstallContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -647,7 +647,7 @@ func TestVsphereDefaultInstallContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestVsphereFlatcarInstallContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
@@ -659,7 +659,7 @@ func TestVsphereFlatcarInstallContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestAwsAmznStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_amzn_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -671,7 +671,7 @@ func TestAwsAmznStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
 }
 
 func TestAwsDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -683,7 +683,7 @@ func TestAwsDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T
 }
 
 func TestAwsUbuntuPreviousLtsUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_ubuntu_previous_lts"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -695,7 +695,7 @@ func TestAwsUbuntuPreviousLtsUpgradeContainerdExternalFromV1_31_ToV1_32(t *testi
 }
 
 func TestAwsFlatcarStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -707,7 +707,7 @@ func TestAwsFlatcarStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T
 }
 
 func TestAwsRhelStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_rhel_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -719,7 +719,7 @@ func TestAwsRhelStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
 }
 
 func TestAwsRockylinuxStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -731,7 +731,7 @@ func TestAwsRockylinuxStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testin
 }
 
 func TestAzureDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -743,7 +743,7 @@ func TestAzureDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing
 }
 
 func TestAzureFlatcarStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -755,7 +755,7 @@ func TestAzureFlatcarStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing
 }
 
 func TestAzureRhelStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_rhel_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -767,7 +767,7 @@ func TestAzureRhelStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T)
 }
 
 func TestAzureRockylinuxStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -779,7 +779,7 @@ func TestAzureRockylinuxStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *test
 }
 
 func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -791,7 +791,7 @@ func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *
 }
 
 func TestDigitaloceanRockylinuxStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -803,7 +803,7 @@ func TestDigitaloceanRockylinuxStableUpgradeContainerdExternalFromV1_31_ToV1_32(
 }
 
 func TestGceDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["gce_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -815,7 +815,7 @@ func TestGceDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T
 }
 
 func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -827,7 +827,7 @@ func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testi
 }
 
 func TestHetznerRockylinuxStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -839,7 +839,7 @@ func TestHetznerRockylinuxStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *te
 }
 
 func TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -851,7 +851,7 @@ func TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *tes
 }
 
 func TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -863,7 +863,7 @@ func TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *tes
 }
 
 func TestOpenstackRhelStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_rhel_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -875,7 +875,7 @@ func TestOpenstackRhelStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testin
 }
 
 func TestOpenstackRockylinuxStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -887,7 +887,7 @@ func TestOpenstackRockylinuxStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *
 }
 
 func TestVsphereDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -899,7 +899,7 @@ func TestVsphereDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testi
 }
 
 func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -911,7 +911,7 @@ func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testi
 }
 
 func TestAwsAmznStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_amzn_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -923,7 +923,7 @@ func TestAwsAmznStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
 }
 
 func TestAwsDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -935,7 +935,7 @@ func TestAwsDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T
 }
 
 func TestAwsUbuntuPreviousLtsUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_ubuntu_previous_lts"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -947,7 +947,7 @@ func TestAwsUbuntuPreviousLtsUpgradeContainerdExternalFromV1_32_ToV1_33(t *testi
 }
 
 func TestAwsFlatcarStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -959,7 +959,7 @@ func TestAwsFlatcarStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T
 }
 
 func TestAzureDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -971,7 +971,7 @@ func TestAzureDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing
 }
 
 func TestAzureFlatcarStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -983,7 +983,7 @@ func TestAzureFlatcarStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing
 }
 
 func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -995,7 +995,7 @@ func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *
 }
 
 func TestGceDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["gce_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1007,7 +1007,7 @@ func TestGceDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T
 }
 
 func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1019,7 +1019,7 @@ func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testi
 }
 
 func TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1031,7 +1031,7 @@ func TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *tes
 }
 
 func TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1043,7 +1043,7 @@ func TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *tes
 }
 
 func TestVsphereDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_default_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1055,7 +1055,7 @@ func TestVsphereDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testi
 }
 
 func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_flatcar_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1067,7 +1067,7 @@ func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testi
 }
 
 func TestAwsAmznCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1079,7 +1079,7 @@ func TestAwsAmznCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAwsDefaultCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1091,7 +1091,7 @@ func TestAwsDefaultCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAwsFlatcarCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1103,7 +1103,7 @@ func TestAwsFlatcarCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAwsRhelCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1115,7 +1115,7 @@ func TestAwsRhelCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAwsRockylinuxCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1127,7 +1127,7 @@ func TestAwsRockylinuxCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAzureDefaultCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1139,7 +1139,7 @@ func TestAzureDefaultCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAzureFlatcarCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1151,7 +1151,7 @@ func TestAzureFlatcarCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAzureRhelCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1163,7 +1163,7 @@ func TestAzureRhelCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAzureRockylinuxCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1175,7 +1175,7 @@ func TestAzureRockylinuxCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestDigitaloceanDefaultCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1187,7 +1187,7 @@ func TestDigitaloceanDefaultCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestDigitaloceanRockylinuxCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1199,7 +1199,7 @@ func TestDigitaloceanRockylinuxCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestGceDefaultCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1211,7 +1211,7 @@ func TestGceDefaultCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestHetznerDefaultCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1223,7 +1223,7 @@ func TestHetznerDefaultCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestHetznerRockylinuxCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1235,7 +1235,7 @@ func TestHetznerRockylinuxCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestOpenstackDefaultCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1247,7 +1247,7 @@ func TestOpenstackDefaultCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestOpenstackFlatcarCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1259,7 +1259,7 @@ func TestOpenstackFlatcarCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestOpenstackRhelCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1271,7 +1271,7 @@ func TestOpenstackRhelCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestOpenstackRockylinuxCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1283,7 +1283,7 @@ func TestOpenstackRockylinuxCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestVsphereDefaultCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1295,7 +1295,7 @@ func TestVsphereDefaultCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestVsphereFlatcarCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1307,7 +1307,7 @@ func TestVsphereFlatcarCiliumContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAwsAmznCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1319,7 +1319,7 @@ func TestAwsAmznCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAwsDefaultCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1331,7 +1331,7 @@ func TestAwsDefaultCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAwsFlatcarCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1343,7 +1343,7 @@ func TestAwsFlatcarCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAwsRhelCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1355,7 +1355,7 @@ func TestAwsRhelCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAwsRockylinuxCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1367,7 +1367,7 @@ func TestAwsRockylinuxCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAzureDefaultCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1379,7 +1379,7 @@ func TestAzureDefaultCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAzureFlatcarCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1391,7 +1391,7 @@ func TestAzureFlatcarCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAzureRhelCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1403,7 +1403,7 @@ func TestAzureRhelCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAzureRockylinuxCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1415,7 +1415,7 @@ func TestAzureRockylinuxCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestDigitaloceanDefaultCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1427,7 +1427,7 @@ func TestDigitaloceanDefaultCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestDigitaloceanRockylinuxCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1439,7 +1439,7 @@ func TestDigitaloceanRockylinuxCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestGceDefaultCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1451,7 +1451,7 @@ func TestGceDefaultCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestHetznerDefaultCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1463,7 +1463,7 @@ func TestHetznerDefaultCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestHetznerRockylinuxCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1475,7 +1475,7 @@ func TestHetznerRockylinuxCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestOpenstackDefaultCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1487,7 +1487,7 @@ func TestOpenstackDefaultCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestOpenstackFlatcarCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1499,7 +1499,7 @@ func TestOpenstackFlatcarCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestOpenstackRhelCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1511,7 +1511,7 @@ func TestOpenstackRhelCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestOpenstackRockylinuxCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1523,7 +1523,7 @@ func TestOpenstackRockylinuxCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestVsphereDefaultCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1535,7 +1535,7 @@ func TestVsphereDefaultCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestVsphereFlatcarCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1547,7 +1547,7 @@ func TestVsphereFlatcarCiliumContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAwsDefaultCiliumContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1559,7 +1559,7 @@ func TestAwsDefaultCiliumContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestAwsFlatcarCiliumContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1571,7 +1571,7 @@ func TestAwsFlatcarCiliumContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestAzureDefaultCiliumContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1583,7 +1583,7 @@ func TestAzureDefaultCiliumContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestAzureFlatcarCiliumContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1595,7 +1595,7 @@ func TestAzureFlatcarCiliumContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestDigitaloceanDefaultCiliumContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1607,7 +1607,7 @@ func TestDigitaloceanDefaultCiliumContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestGceDefaultCiliumContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1619,7 +1619,7 @@ func TestGceDefaultCiliumContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestHetznerDefaultCiliumContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1631,7 +1631,7 @@ func TestHetznerDefaultCiliumContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestOpenstackDefaultCiliumContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1643,7 +1643,7 @@ func TestOpenstackDefaultCiliumContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestOpenstackFlatcarCiliumContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1655,7 +1655,7 @@ func TestOpenstackFlatcarCiliumContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestVsphereDefaultCiliumContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1667,7 +1667,7 @@ func TestVsphereDefaultCiliumContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestVsphereFlatcarCiliumContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -1679,7 +1679,7 @@ func TestVsphereFlatcarCiliumContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestAwsAmznExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1691,7 +1691,7 @@ func TestAwsAmznExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestAwsDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1703,7 +1703,7 @@ func TestAwsDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestAwsFlatcarExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1715,7 +1715,7 @@ func TestAwsFlatcarExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestAwsRhelExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1727,7 +1727,7 @@ func TestAwsRhelExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestAwsRockylinuxExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1739,7 +1739,7 @@ func TestAwsRockylinuxExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestAzureDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1751,7 +1751,7 @@ func TestAzureDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestAzureFlatcarExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1763,7 +1763,7 @@ func TestAzureFlatcarExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestAzureRhelExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1775,7 +1775,7 @@ func TestAzureRhelExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestAzureRockylinuxExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1787,7 +1787,7 @@ func TestAzureRockylinuxExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1799,7 +1799,7 @@ func TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestDigitaloceanRockylinuxExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1811,7 +1811,7 @@ func TestDigitaloceanRockylinuxExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestGceDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1823,7 +1823,7 @@ func TestGceDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestHetznerDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1835,7 +1835,7 @@ func TestHetznerDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestHetznerRockylinuxExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1847,7 +1847,7 @@ func TestHetznerRockylinuxExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestOpenstackDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1859,7 +1859,7 @@ func TestOpenstackDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestOpenstackFlatcarExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1871,7 +1871,7 @@ func TestOpenstackFlatcarExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestOpenstackRhelExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1883,7 +1883,7 @@ func TestOpenstackRhelExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestOpenstackRockylinuxExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1895,7 +1895,7 @@ func TestOpenstackRockylinuxExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestVsphereDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1907,7 +1907,7 @@ func TestVsphereDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestVsphereFlatcarExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1919,7 +1919,7 @@ func TestVsphereFlatcarExternalCniFlannelHelmChartV1_31(t *testing.T) {
 }
 
 func TestAwsAmznExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_amzn"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1931,7 +1931,7 @@ func TestAwsAmznExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestAwsDefaultExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1943,7 +1943,7 @@ func TestAwsDefaultExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestAwsFlatcarExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1955,7 +1955,7 @@ func TestAwsFlatcarExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestAwsRhelExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_rhel"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1967,7 +1967,7 @@ func TestAwsRhelExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestAwsRockylinuxExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1979,7 +1979,7 @@ func TestAwsRockylinuxExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestAzureDefaultExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -1991,7 +1991,7 @@ func TestAzureDefaultExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestAzureFlatcarExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2003,7 +2003,7 @@ func TestAzureFlatcarExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestAzureRhelExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_rhel"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2015,7 +2015,7 @@ func TestAzureRhelExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestAzureRockylinuxExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_rockylinux"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2027,7 +2027,7 @@ func TestAzureRockylinuxExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2039,7 +2039,7 @@ func TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestDigitaloceanRockylinuxExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2051,7 +2051,7 @@ func TestDigitaloceanRockylinuxExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestGceDefaultExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2063,7 +2063,7 @@ func TestGceDefaultExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestHetznerDefaultExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2075,7 +2075,7 @@ func TestHetznerDefaultExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestHetznerRockylinuxExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_rockylinux"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2087,7 +2087,7 @@ func TestHetznerRockylinuxExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestOpenstackDefaultExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2099,7 +2099,7 @@ func TestOpenstackDefaultExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestOpenstackFlatcarExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2111,7 +2111,7 @@ func TestOpenstackFlatcarExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestOpenstackRhelExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_rhel"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2123,7 +2123,7 @@ func TestOpenstackRhelExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestOpenstackRockylinuxExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2135,7 +2135,7 @@ func TestOpenstackRockylinuxExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestVsphereDefaultExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2147,7 +2147,7 @@ func TestVsphereDefaultExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestVsphereFlatcarExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2159,7 +2159,7 @@ func TestVsphereFlatcarExternalCniFlannelHelmChartV1_32(t *testing.T) {
 }
 
 func TestAwsDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2171,7 +2171,7 @@ func TestAwsDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
 }
 
 func TestAwsFlatcarExternalCniFlannelHelmChartV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_flatcar"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2183,7 +2183,7 @@ func TestAwsFlatcarExternalCniFlannelHelmChartV1_33(t *testing.T) {
 }
 
 func TestAzureDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2195,7 +2195,7 @@ func TestAzureDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
 }
 
 func TestAzureFlatcarExternalCniFlannelHelmChartV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_flatcar"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2207,7 +2207,7 @@ func TestAzureFlatcarExternalCniFlannelHelmChartV1_33(t *testing.T) {
 }
 
 func TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2219,7 +2219,7 @@ func TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
 }
 
 func TestGceDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["gce_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2231,7 +2231,7 @@ func TestGceDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
 }
 
 func TestHetznerDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2243,7 +2243,7 @@ func TestHetznerDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
 }
 
 func TestOpenstackDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2255,7 +2255,7 @@ func TestOpenstackDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
 }
 
 func TestOpenstackFlatcarExternalCniFlannelHelmChartV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2267,7 +2267,7 @@ func TestOpenstackFlatcarExternalCniFlannelHelmChartV1_33(t *testing.T) {
 }
 
 func TestVsphereDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_default"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2279,7 +2279,7 @@ func TestVsphereDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
 }
 
 func TestVsphereFlatcarExternalCniFlannelHelmChartV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
@@ -2291,7 +2291,7 @@ func TestVsphereFlatcarExternalCniFlannelHelmChartV1_33(t *testing.T) {
 }
 
 func TestAwsAmznStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_amzn_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2303,7 +2303,7 @@ func TestAwsAmznStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testin
 }
 
 func TestAwsDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2315,7 +2315,7 @@ func TestAwsDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *tes
 }
 
 func TestAwsFlatcarStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_flatcar_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2327,7 +2327,7 @@ func TestAwsFlatcarStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *tes
 }
 
 func TestAwsRhelStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_rhel_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2339,7 +2339,7 @@ func TestAwsRhelStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testin
 }
 
 func TestAwsRockylinuxStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_rockylinux_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2351,7 +2351,7 @@ func TestAwsRockylinuxStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *
 }
 
 func TestAzureDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_default_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2363,7 +2363,7 @@ func TestAzureDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *t
 }
 
 func TestAzureFlatcarStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_flatcar_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2375,7 +2375,7 @@ func TestAzureFlatcarStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *t
 }
 
 func TestAzureRhelStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_rhel_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2387,7 +2387,7 @@ func TestAzureRhelStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *test
 }
 
 func TestAzureRockylinuxStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_rockylinux_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2399,7 +2399,7 @@ func TestAzureRockylinuxStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t
 }
 
 func TestDigitaloceanDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2411,7 +2411,7 @@ func TestDigitaloceanDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_
 }
 
 func TestDigitaloceanRockylinuxStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_rockylinux_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2423,7 +2423,7 @@ func TestDigitaloceanRockylinuxStableUpgradeCiliumContainerdExternalFromV1_31_To
 }
 
 func TestGceDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["gce_default_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2435,7 +2435,7 @@ func TestGceDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *tes
 }
 
 func TestHetznerDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_default_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2447,7 +2447,7 @@ func TestHetznerDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t 
 }
 
 func TestHetznerRockylinuxStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_rockylinux_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2459,7 +2459,7 @@ func TestHetznerRockylinuxStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32
 }
 
 func TestOpenstackDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2471,7 +2471,7 @@ func TestOpenstackDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(
 }
 
 func TestOpenstackFlatcarStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2483,7 +2483,7 @@ func TestOpenstackFlatcarStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(
 }
 
 func TestOpenstackRhelStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_rhel_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2495,7 +2495,7 @@ func TestOpenstackRhelStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *
 }
 
 func TestOpenstackRockylinuxStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_rockylinux_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2507,7 +2507,7 @@ func TestOpenstackRockylinuxStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_
 }
 
 func TestVsphereDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_default_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2519,7 +2519,7 @@ func TestVsphereDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t 
 }
 
 func TestVsphereFlatcarStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_flatcar_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2531,7 +2531,7 @@ func TestVsphereFlatcarStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t 
 }
 
 func TestAwsDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2543,7 +2543,7 @@ func TestAwsDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *tes
 }
 
 func TestAwsFlatcarStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_flatcar_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2555,7 +2555,7 @@ func TestAwsFlatcarStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *tes
 }
 
 func TestAzureDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_default_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2567,7 +2567,7 @@ func TestAzureDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *t
 }
 
 func TestAzureFlatcarStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_flatcar_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2579,7 +2579,7 @@ func TestAzureFlatcarStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *t
 }
 
 func TestDigitaloceanDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2591,7 +2591,7 @@ func TestDigitaloceanDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_
 }
 
 func TestGceDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["gce_default_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2603,7 +2603,7 @@ func TestGceDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *tes
 }
 
 func TestHetznerDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_default_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2615,7 +2615,7 @@ func TestHetznerDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t 
 }
 
 func TestOpenstackDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2627,7 +2627,7 @@ func TestOpenstackDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(
 }
 
 func TestOpenstackFlatcarStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2639,7 +2639,7 @@ func TestOpenstackFlatcarStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(
 }
 
 func TestVsphereDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_default_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2651,7 +2651,7 @@ func TestVsphereDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t 
 }
 
 func TestVsphereFlatcarStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_flatcar_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2663,7 +2663,7 @@ func TestVsphereFlatcarStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t 
 }
 
 func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2675,7 +2675,7 @@ func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_31(t *testing.T) {
 }
 
 func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2687,7 +2687,7 @@ func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_32(t *testing.T) {
 }
 
 func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_long_timeout_default"]
 	scenario := Scenarios["conformance_containerd_external"]
 	scenario.SetInfra(infra)
@@ -2699,7 +2699,7 @@ func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_33(t *testing.T) {
 }
 
 func TestAwsDefaultKubeProxyIpvsExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Logf)
+	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["kube_proxy_ipvs_external"]
 	scenario.SetInfra(infra)

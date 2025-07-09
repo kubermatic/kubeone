@@ -265,7 +265,7 @@ func waitForNodesReady(ctx context.Context, t *testing.T, client ctrlruntimeclie
 	})
 }
 
-func verifyVersion(client ctrlruntimeclient.Client, namespace string, targetVersion string) error {
+func verifyVersion(ctx context.Context, client ctrlruntimeclient.Client, namespace string, targetVersion string) error {
 	reqVer, err := semver.NewVersion(targetVersion)
 	if err != nil {
 		return fmt.Errorf("desired version is invalid: %w", err)
@@ -278,7 +278,7 @@ func verifyVersion(client ctrlruntimeclient.Client, namespace string, targetVers
 		}),
 	}
 
-	if err = client.List(context.Background(), &nodes, &nodeListOpts); err != nil {
+	if err = client.List(ctx, &nodes, &nodeListOpts); err != nil {
 		return fmt.Errorf("failed to list nodes: %w", err)
 	}
 
@@ -301,7 +301,7 @@ func verifyVersion(client ctrlruntimeclient.Client, namespace string, targetVers
 		}),
 	}
 
-	if err = client.List(context.Background(), &apiserverPods, &podsListOpts); err != nil {
+	if err = client.List(ctx, &apiserverPods, &podsListOpts); err != nil {
 		return fmt.Errorf("unable to list apiserver pods: %w", err)
 	}
 
@@ -423,13 +423,13 @@ func dynamicClientRetriable(t *testing.T, k1 *kubeoneBin) ctrlruntimeclient.Clie
 	return client
 }
 
-func latestUpstreamVersion(majorMinorVersion string) (string, error) {
+func latestUpstreamVersion(ctx context.Context, majorMinorVersion string) (string, error) {
 	majorMinorSemver := semver.MustParse(majorMinorVersion)
 
 	const urlTemplate = "https://dl.k8s.io/release/stable-%d.%d.txt"
 	downloadURL := fmt.Sprintf(urlTemplate, majorMinorSemver.Major(), majorMinorSemver.Minor())
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	ctx, cancel := context.WithTimeout(ctx, time.Minute)
 	defer cancel()
 
 	req, err := http.NewRequestWithContext(ctx, "GET", downloadURL, nil)
@@ -452,7 +452,7 @@ func latestUpstreamVersion(majorMinorVersion string) (string, error) {
 }
 
 func labelNodesSkipEviction(t *testing.T, client ctrlruntimeclient.Client) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	var nodeList corev1.NodeList
 
@@ -473,7 +473,7 @@ func labelNodesSkipEviction(t *testing.T, client ctrlruntimeclient.Client) {
 		nodeNew.Annotations["kubermatic.io/skip-eviction"] = "true"
 
 		err = retryFn(func() error {
-			return client.Patch(context.Background(), &nodeNew, ctrlruntimeclient.MergeFrom(nodeOld))
+			return client.Patch(t.Context(), &nodeNew, ctrlruntimeclient.MergeFrom(nodeOld))
 		})
 		if err != nil {
 			t.Fatalf("patching node %q to skip eviction: %v", node.Name, err)
@@ -482,7 +482,7 @@ func labelNodesSkipEviction(t *testing.T, client ctrlruntimeclient.Client) {
 }
 
 func waitMachinesHasNodes(t *testing.T, k1 *kubeoneBin, client ctrlruntimeclient.Client) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	kubeoneManifest, err := k1.ClusterManifest()
 	if err != nil {
@@ -550,7 +550,7 @@ func waitKubeOneNodesReady(ctx context.Context, t *testing.T, k1 *kubeoneBin) {
 		t.Fatalf("waiting %d nodes to be Ready: %v", numberOfNodesToWait, err)
 	}
 
-	if err = verifyVersion(client, metav1.NamespaceSystem, kubeoneManifest.Versions.Kubernetes); err != nil {
+	if err = verifyVersion(ctx, client, metav1.NamespaceSystem, kubeoneManifest.Versions.Kubernetes); err != nil {
 		t.Fatalf("version mismatch: %v", err)
 	}
 }
@@ -621,7 +621,7 @@ func sonobuoyRunWithRunCount(ctx context.Context, t *testing.T, k1 *kubeoneBin, 
 	}
 }
 
-func NewSignalContext(logger func(format string, args ...any)) context.Context {
+func NewSignalContext(ctx context.Context, logger func(format string, args ...any)) context.Context {
 	// We use context.WithTimeout because we want to cancel the context
 	// before test timeouts. If we allow the test to timeout, the main test
 	// process will terminate, but other subprocesses that we call will
@@ -642,7 +642,7 @@ func NewSignalContext(logger func(format string, args ...any)) context.Context {
 
 	// We allow 5 minutes for tests to clean up after themselves.
 	testTimeout -= 5 * time.Minute
-	ctx, _ := context.WithTimeout(context.Background(), testTimeout) //nolint:govet
+	ctx, _ = context.WithTimeout(ctx, testTimeout) //nolint:govet
 	sCtx, _ := signal.NotifyContext(ctx, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)
 
 	return sCtx
