@@ -24,6 +24,7 @@ labels: sig/cluster-management, kind/documentation, priority/high
 * [ ] Update the Prow config
   * [ ] Update the `branchprotector` rules
   * [ ] Update the `milestone_applier` rules
+  * [ ] Update post-kubeone-release-go for new tags
   * [ ] Enable the Code Freeze
 * [ ] Create docs for the release based on docs for the main branch (copy
   `content/kubeone/main` to `content/kubeone/v1.x` in the
