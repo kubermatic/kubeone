@@ -1,8 +1,29 @@
+# [v1.10.2](https://github.com/kubermatic/kubeone/releases/tag/v1.10.2) - 2025-07-21
+
+## Changelog since v1.10.1
+
+## Changes by Kind
+
+### Updates
+
+#### machine-controller
+
+- Update machine-controller to v1.61.3 ([#3673](https://github.com/kubermatic/kubeone/pull/3673), [@xmudrii](https://github.com/xmudrii))
+
+#### operating-system-manager
+
+- Update operating-system-manager to v1.6.7 ([#3739](https://github.com/kubermatic/kubeone/pull/3739), [@archups](https://github.com/archups))
+- Update operating-system-manager to v1.6.6 ([#3737](https://github.com/kubermatic/kubeone/pull/3737), [@kron4eg](https://github.com/kron4eg))
+
+#### Others
+
+- Update Helm client to v3.17.4 ([#3752](https://github.com/kubermatic/kubeone/pull/3752), [@kron4eg](https://github.com/kron4eg))
+
 # [v1.10.1](https://github.com/kubermatic/kubeone/releases/tag/v1.10.1) - 2025-06-13
 
 ## Changelog since v1.10.0
 
-## Urgent Upgrade Notes 
+## Urgent Upgrade Notes
 
 ### (No, really, you MUST read this before you upgrade)
 
@@ -31,7 +52,7 @@ upgrading:
 
 ## Changelog since v1.9.0
 
-## Urgent Upgrade Notes 
+## Urgent Upgrade Notes
 
 ### (No, really, you MUST read this before you upgrade)
 
