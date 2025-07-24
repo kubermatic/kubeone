@@ -1,3 +1,13 @@
+# [v1.11.1](https://github.com/kubermatic/kubeone/releases/tag/v1.11.1) - 2025-07-24
+
+## Changelog since v1.11.0
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Fix CSI snapshot webhook name for Nutanix [#3761](https://github.com/kubermatic/kubeone/pull/3761), [@kron4eg](https://github.com/kron4eg))
+
 # v1.11.0
 
 ## Changelog since v1.10.0
