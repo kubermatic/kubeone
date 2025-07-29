@@ -29,8 +29,8 @@ import (
 	"k8c.io/kubeone/pkg/nodeutils"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/state"
-	"k8c.io/machine-controller/pkg/apis/cluster/common"
-	clusterv1alpha1 "k8c.io/machine-controller/pkg/apis/cluster/v1alpha1"
+	"k8c.io/machine-controller/sdk/apis/cluster/common"
+	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

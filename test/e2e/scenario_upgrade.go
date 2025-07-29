@@ -27,9 +27,9 @@ import (
 	"text/template"
 	"time"
 
-	clusterv1alpha1 "k8c.io/machine-controller/pkg/apis/cluster/v1alpha1"
-	"k8c.io/machine-controller/pkg/jsonutil"
-	providerconfigtypes "k8c.io/machine-controller/pkg/providerconfig/types"
+	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
+	"k8c.io/machine-controller/sdk/jsonutil"
+	providerconfigtypes "k8c.io/machine-controller/sdk/providerconfig"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"

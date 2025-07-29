@@ -30,8 +30,8 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates"
-	clustercommon "k8c.io/machine-controller/pkg/apis/cluster/common"
-	clusterv1alpha1 "k8c.io/machine-controller/pkg/apis/cluster/v1alpha1"
+	clustercommon "k8c.io/machine-controller/sdk/apis/cluster/common"
+	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
@@ -185,7 +185,7 @@ func getKubeletConfigurationAnnotations(cluster *kubeoneapi.KubeOneCluster) map[
 	annotations := make(map[string]string)
 
 	// Logging configuration can be passed on to machine's provisioning configuration(user-data) by annotating machines
-	// For more details and confiugrations: https://k8c.io/machine-controller/pkg/apis/cluster/common/consts.go#L149
+	// For more details and confiugrations: https://k8c.io/machine-controller/sdk/apis/cluster/common/consts.go#L149
 	// There is not need to propagate logging configuration via annotations if default or empty values are set
 	if cluster.LoggingConfig.ContainerLogMaxSize != "" && cluster.LoggingConfig.ContainerLogMaxSize != containerruntime.DefaultContainerLogMaxSize {
 		annotations[clustercommon.KubeletConfigAnnotationPrefixV1+"/"+clustercommon.ContainerLogMaxSizeKubeletConfig] = cluster.LoggingConfig.ContainerLogMaxSize
