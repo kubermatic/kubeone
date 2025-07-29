@@ -35,7 +35,7 @@ require (
 	google.golang.org/grpc v1.68.1
 	gopkg.in/yaml.v2 v2.4.0
 	helm.sh/helm/v3 v3.18.4
-	k8c.io/machine-controller v1.61.1
+	k8c.io/machine-controller/sdk v1.62.0
 	k8s.io/api v0.33.2
 	k8s.io/apiextensions-apiserver v0.33.2
 	k8s.io/apimachinery v0.33.2
@@ -163,7 +163,6 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gotest.tools/v3 v3.4.0 // indirect
 	k8s.io/gengo/v2 v2.0.0-20250207200755-1244d31929d7 // indirect
-	k8s.io/klog v1.0.0 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20250318190949-c8a335a9a2ff // indirect
 	oras.land/oras-go/v2 v2.6.0 // indirect
