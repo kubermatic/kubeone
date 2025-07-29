@@ -198,17 +198,8 @@ func saveCABundleOnControlPlane(s *state.State, _ *kubeoneapi.HostConfig, conn e
 func restartKubelet(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 	s.Logger.WithField("node", node.PublicAddress).Debug("Restarting Kubelet to force regenerating CSRs...")
 
-	_, _, err := s.Runner.RunRaw(scripts.RestartKubelet())
-
-	return fail.SSH(err, "restart Kubelet")
-}
-
-func restartKubeletOnControlPlane(s *state.State) error {
-	s.Logger.Infof("Restarting Kubelet on control plane nodes to force Kubelet to generate correct CSRs...")
-
-	// Restart Kubelet on all control plane nodes to force CSRs to be regenerated
-	if err := s.RunTaskOnControlPlane(restartKubelet, state.RunParallel); err != nil {
-		return err
+	if _, _, err := s.Runner.RunRaw(scripts.RestartKubelet()); err != nil {
+		return fail.SSH(err, "restart Kubelet")
 	}
 
 	// Wait 40 seconds to give Kubelet time to come up and generate correct CSRs.
@@ -219,6 +210,15 @@ func restartKubeletOnControlPlane(s *state.State) error {
 	time.Sleep(sleepTime)
 
 	return nil
+}
+
+func restartKubeletOnControlPlane(s *state.State) error {
+	s.Logger.Infof("Restarting Kubelet on control plane nodes to force Kubelet to generate correct CSRs...")
+
+	// Restart Kubelet on all control plane nodes to force CSRs to be regenerated
+	err := s.RunTaskOnControlPlane(restartKubelet, state.RunSequentially)
+
+	return fail.SSH(err, "restart Kubelet on all control-plane nodes")
 }
 
 func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {

@@ -17,6 +17,8 @@ limitations under the License.
 package tasks
 
 import (
+	"time"
+
 	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 
@@ -655,6 +657,10 @@ func updateAllKubelets(s *state.State) error {
 			return err
 		}
 
+		sleep := 30 * time.Second
+		s.Logger.Infof("Sleeping %s seconds, giving time for kubeapi server to restart", sleep)
+		time.Sleep(sleep)
+
 		return nil
-	}, state.RunParallel)
+	}, state.RunSequentially)
 }
