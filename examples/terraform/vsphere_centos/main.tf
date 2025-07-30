@@ -93,7 +93,7 @@ resource "vsphere_virtual_machine" "control_plane" {
   }
 
   extra_config = {
-    "disk.enableUUID" = "TRUE"
+    "disk.EnableUUID" = "TRUE"
     "guestinfo.metadata" = base64gzip(templatefile("./cloud-config-metadata.tftpl", {
       machine_name = "${var.cluster_name}-cp-${count.index + 1}"
       ssh_key      = file(var.ssh_public_key_file)

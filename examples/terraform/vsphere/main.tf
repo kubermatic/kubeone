@@ -93,7 +93,7 @@ resource "vsphere_virtual_machine" "control_plane" {
   }
 
   extra_config = {
-    "disk.enableUUID" = "TRUE"
+    "disk.EnableUUID" = "TRUE"
   }
 
   vapp {
