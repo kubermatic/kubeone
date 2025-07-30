@@ -33,13 +33,13 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
-| <a name="requirement_vsphere"></a> [vsphere](#requirement\_vsphere) | ~> 2.1.1 |
+| <a name="requirement_vsphere"></a> [vsphere](#requirement\_vsphere) | ~> 2.14.2 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_vsphere"></a> [vsphere](#provider\_vsphere) | ~> 2.1.1 |
+| <a name="provider_vsphere"></a> [vsphere](#provider\_vsphere) | ~> 2.14.2 |
 
 ## Modules
 
@@ -49,14 +49,14 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [vsphere_compute_cluster_vm_anti_affinity_rule.vm_anti_affinity_rule](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/resources/compute_cluster_vm_anti_affinity_rule) | resource |
-| [vsphere_virtual_machine.control_plane](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/resources/virtual_machine) | resource |
-| [vsphere_compute_cluster.cluster](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/data-sources/compute_cluster) | data source |
-| [vsphere_datacenter.dc](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/data-sources/datacenter) | data source |
-| [vsphere_datastore.datastore](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/data-sources/datastore) | data source |
-| [vsphere_network.network](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/data-sources/network) | data source |
-| [vsphere_resource_pool.pool](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/data-sources/resource_pool) | data source |
-| [vsphere_virtual_machine.template](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/data-sources/virtual_machine) | data source |
+| [vsphere_compute_cluster_vm_anti_affinity_rule.vm_anti_affinity_rule](https://registry.terraform.io/providers/vmware/vsphere/latest/docs/resources/compute_cluster_vm_anti_affinity_rule) | resource |
+| [vsphere_virtual_machine.control_plane](https://registry.terraform.io/providers/vmware/vsphere/latest/docs/resources/virtual_machine) | resource |
+| [vsphere_compute_cluster.cluster](https://registry.terraform.io/providers/vmware/vsphere/latest/docs/data-sources/compute_cluster) | data source |
+| [vsphere_datacenter.dc](https://registry.terraform.io/providers/vmware/vsphere/latest/docs/data-sources/datacenter) | data source |
+| [vsphere_datastore.datastore](https://registry.terraform.io/providers/vmware/vsphere/latest/docs/data-sources/datastore) | data source |
+| [vsphere_network.network](https://registry.terraform.io/providers/vmware/vsphere/latest/docs/data-sources/network) | data source |
+| [vsphere_resource_pool.pool](https://registry.terraform.io/providers/vmware/vsphere/latest/docs/data-sources/resource_pool) | data source |
+| [vsphere_virtual_machine.template](https://registry.terraform.io/providers/vmware/vsphere/latest/docs/data-sources/virtual_machine) | data source |
 
 ## Inputs
 
@@ -81,6 +81,7 @@ No modules.
 | <a name="input_dc_name"></a> [dc\_name](#input\_dc\_name) | datacenter name | `string` | `"dc-1"` | no |
 | <a name="input_disable_auto_update"></a> [disable\_auto\_update](#input\_disable\_auto\_update) | Disable automatic flatcar updates (and reboot) | `bool` | `false` | no |
 | <a name="input_disk_size"></a> [disk\_size](#input\_disk\_size) | disk size | `number` | `50` | no |
+| <a name="input_enable_disk_uuid"></a> [enable\_disk\_uuid](#input\_enable\_disk\_uuid) | Expose the UUIDs of attached virtual disks to the virtual machine, allowing access to them in the guest | `bool` | `true` | no |
 | <a name="input_folder_name"></a> [folder\_name](#input\_folder\_name) | folder name | `string` | `"kubeone"` | no |
 | <a name="input_initial_machinedeployment_operating_system_profile"></a> [initial\_machinedeployment\_operating\_system\_profile](#input\_initial\_machinedeployment\_operating\_system\_profile) | Name of operating system profile for MachineDeployments, only applicable if operating-system-manager addon is enabled.<br>If not specified, the default value will be added by machine-controller addon. | `string` | `""` | no |
 | <a name="input_initial_machinedeployment_replicas"></a> [initial\_machinedeployment\_replicas](#input\_initial\_machinedeployment\_replicas) | Number of replicas per MachineDeployment | `number` | `2` | no |
