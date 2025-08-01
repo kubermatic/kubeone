@@ -83,5 +83,5 @@ func upgradeStaticWorkersExecutor(s *state.State, node *kubeoneapi.HostConfig, c
 		return err
 	}
 
-	return approvePendingCSR(s, node, conn)
+	return ApprovePendingCSR(s, node, conn)
 }

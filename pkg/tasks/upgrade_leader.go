@@ -81,5 +81,5 @@ func upgradeLeaderExecutor(s *state.State, node *kubeoneapi.HostConfig, conn exe
 		return err
 	}
 
-	return approvePendingCSR(s, node, conn)
+	return ApprovePendingCSR(s, node, conn)
 }

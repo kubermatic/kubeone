@@ -29,6 +29,22 @@ var (
 		echo -n "$fqdn"
 	`)
 
+	RestartPodCrictlTemplate = heredoc.Doc(`
+		# Disable exit immediately if a command in a pipeline fails.
+		# crictl logs can fail if kubelet fails to set up symlink for the API
+		# server container logs. This usually happens on subsequent script run,
+		# for example when upgrading the cluster.
+		# This is a known issue and it's described here:
+		# https://github.com/kubernetes/kubernetes/issues/52172
+		set +e
+		pod_id=$(sudo crictl ps --name={{ .NAME }} -q)
+		[ -z "$pod_id" ] && exit 1
+		sudo crictl stop "$pod_id"
+		sudo crictl rm "$pod_id"
+		# let it restart
+		sleep 30
+	`)
+
 	restartKubeAPIServerCrictlTemplate = heredoc.Doc(`
 		# Disable exit immediately if a command in a pipeline fails.
 		# crictl logs can fail if kubelet fails to set up symlink for the API
