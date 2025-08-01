@@ -155,7 +155,7 @@ func RenewAll(st *state.State) error {
 				"NAME": pod,
 			})
 			if err != nil {
-				return fail.SSH(err, "renewing certificates")
+				return fail.SSH(err, "restarting pod %q after renewing certificates", pod)
 			}
 		}
 
