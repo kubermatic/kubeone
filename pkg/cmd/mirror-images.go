@@ -32,14 +32,15 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"k8s.io/apimachinery/pkg/util/sets"
-	"k8s.io/apimachinery/pkg/util/wait"
-	"k8s.io/client-go/util/retry"
 
 	kubeonevalidation "k8c.io/kubeone/pkg/apis/kubeone/validation"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/semverutil"
 	"k8c.io/kubeone/pkg/templates/images"
+
+	"k8s.io/apimachinery/pkg/util/sets"
+	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/client-go/util/retry"
 )
 
 // kubeadmConstantsTemplate is the template URL for fetching Kubernetes component version constants

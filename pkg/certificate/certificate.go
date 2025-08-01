@@ -27,8 +27,13 @@ import (
 
 	"github.com/pkg/errors"
 
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/configupload"
+	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/runner"
+	"k8c.io/kubeone/pkg/scripts"
+	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
 
 	certutil "k8s.io/client-go/util/cert"
@@ -125,4 +130,35 @@ func GetCertificateSANs(host string, alternativeNames []string) []string {
 	}
 
 	return certSANS
+}
+
+func RenewAll(st *state.State) error {
+	return st.RunTaskOnControlPlane(func(ctx *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
+		logger := ctx.Logger.WithField("node", node.PublicAddress)
+		logger.Infoln("Renew certificates...")
+
+		_, _, err := ctx.Runner.RunRaw("sudo kubeadm certs renew all")
+		if err != nil {
+			return fail.SSH(err, "renewing certificates")
+		}
+
+		pods := []string{
+			"etcd",
+			"kube-apiserver",
+			"kube-controller-manager",
+			"kube-scheduler",
+		}
+
+		for _, pod := range pods {
+			logger.Infof("Restarting %s pod...", pod)
+			_, _, err := ctx.Runner.Run(scripts.RestartPodCrictlTemplate, runner.TemplateVariables{
+				"NAME": pod,
+			})
+			if err != nil {
+				return fail.SSH(err, "renewing certificates")
+			}
+		}
+
+		return nil
+	}, state.RunParallel)
 }
