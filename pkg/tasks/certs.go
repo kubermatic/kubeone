@@ -21,6 +21,7 @@ import (
 	"encoding/pem"
 	"fmt"
 	"io/fs"
+	"slices"
 	"time"
 
 	"github.com/pkg/errors"
@@ -221,7 +222,7 @@ func restartKubeletOnControlPlane(s *state.State) error {
 	return fail.SSH(err, "restart Kubelet on all control-plane nodes")
 }
 
-func approvePendingCSR(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
+func ApprovePendingCSR(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 	var csrFound bool
 	sleepTime := 20 * time.Second
 	s.Logger.Infof("Waiting %s for CSRs to approve...", sleepTime)
@@ -337,11 +338,5 @@ func validateCSR(spec certificatesv1.CertificateSigningRequestSpec) error {
 }
 
 func isUsageInUsageList(usage certificatesv1.KeyUsage, usageList []certificatesv1.KeyUsage) bool {
-	for _, usageListItem := range usageList {
-		if usage == usageListItem {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(usageList, usage)
 }

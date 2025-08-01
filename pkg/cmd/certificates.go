@@ -22,6 +22,9 @@ import (
 	"github.com/spf13/pflag"
 
 	"k8c.io/kubeone/pkg/certificate"
+	"k8c.io/kubeone/pkg/kubeconfig"
+	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/tasks"
 )
 
 func certificatesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
@@ -37,10 +40,12 @@ func certificatesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 func certificatesRenewCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	return &cobra.Command{
 		Use:   "renew",
-		Short: "renew all the certificates of the Kubernetes control plane",
+		Short: "renew all the certificates of the Kubernetes control plane and kubelets",
 		Long: heredoc.Doc(`
-			This command will run "kubeadm certs renew all" across control-plane VMs and restart control-plane pods after that.
+			This command will run "kubeadm certs renew all" across control plane VMs and restart control plane pods after that.
 			see more: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-certs/#manual-certificate-renewal
+
+			Additionally it will approve pending kubelet CSRs.
 		`),
 		Example: heredoc.Doc(`
 			kubeone certificates renew --tfjson tf.json --manifest kubeone.yaml
@@ -56,7 +61,17 @@ func certificatesRenewCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 				return err
 			}
 
-			return certificate.RenewAll(st)
+			renew := tasks.Tasks{
+				{Fn: certificate.RenewAll, Operation: "renew all the certificates of the Kubernetes control plane and kubelets"},
+				{Fn: kubeconfig.BuildKubernetesClientset, Operation: "building kubernetes clientset"},
+				{
+					Fn: func(s *state.State) error {
+						return s.RunTaskOnLeader(tasks.ApprovePendingCSR)
+					},
+				},
+			}
+
+			return renew.Run(st)
 		},
 	}
 }

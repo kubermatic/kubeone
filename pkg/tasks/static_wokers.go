@@ -42,5 +42,5 @@ func joinStaticWorkerInternal(s *state.State, node *kubeoneapi.HostConfig, conn 
 		return fail.Runtime(err, "joining static worker %s", node.PublicAddress)
 	}
 
-	return approvePendingCSR(s, node, conn)
+	return ApprovePendingCSR(s, node, conn)
 }

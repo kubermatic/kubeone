@@ -57,7 +57,7 @@ func joinControlPlaneNodeInternal(s *state.State, node *kubeoneapi.HostConfig, c
 		return fail.SSH(err, "joining control plane node %q", node.PublicAddress)
 	}
 
-	return approvePendingCSR(s, node, conn)
+	return ApprovePendingCSR(s, node, conn)
 }
 
 func kubeadmCertsExecutor(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
