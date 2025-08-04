@@ -412,6 +412,11 @@ func WithUpgrade(t Tasks, followers ...kubeoneapi.HostConfig) Tasks {
 				Description: "delete unused container images",
 				Predicate:   func(s *state.State) bool { return s.PruneImages },
 			},
+			Task{
+				Fn:          cleanupKubernetesTmp,
+				Operation:   "cleanup /etc/kubernetes/tmp",
+				Description: "delete temporary files from /etc/kubernetes/tmp",
+			},
 		)
 }
 

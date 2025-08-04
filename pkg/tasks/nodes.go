@@ -98,6 +98,14 @@ func ensureRestartKubeAPIServerCrictl(s *state.State) error {
 	return fail.SSH(err, "restarting kubeapi-server pod")
 }
 
+func cleanupKubernetesTmp(st *state.State) error {
+	return st.RunTaskOnAllNodes(func(ctx *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
+		_, _, err := ctx.Runner.RunRaw("sudo rm -rf /etc/kubernetes/tmp")
+
+		return fail.SSH(err, "cleanup temp files in /etc/kubernetes/tmp")
+	}, state.RunParallel)
+}
+
 func pruneImagesOnAllNodes(s *state.State) error {
 	s.Logger.Infof("Deleting unused container images...")
 
