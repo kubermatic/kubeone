@@ -214,7 +214,7 @@ subjects:
 ---
 apiVersion: v1
 data:
-  key: '{{ printf "%s:%s:%s:%s" .Credentials.NUTANIX_PE_ENDPOINT .Credentials.NUTANIX_PORT .Credentials.NUTANIX_PE_USERNAME .Credentials.NUTANIX_PE_PASSWORD | b64enc }}'
+  key: '{{ printf "%s:%s:%s:%s" .Credentials.NUTANIX_ENDPOINT .Credentials.NUTANIX_PORT .Credentials.NUTANIX_USERNAME .Credentials.NUTANIX_PASSWORD | b64enc }}'
 kind: Secret
 metadata:
   name: ntnx-secret
