@@ -99,7 +99,7 @@ func ensureRestartKubeAPIServerCrictl(s *state.State) error {
 }
 
 func cleanupKubernetesTmp(st *state.State) error {
-	return st.RunTaskOnAllNodes(func(ctx *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
+	return st.RunTaskOnAllNodes(func(ctx *state.State, _ *kubeoneapi.HostConfig, _ executor.Interface) error {
 		_, _, err := ctx.Runner.RunRaw("sudo rm -rf /etc/kubernetes/tmp")
 
 		return fail.SSH(err, "cleanup temp files in /etc/kubernetes/tmp")
