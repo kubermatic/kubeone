@@ -18,7 +18,7 @@ patches:
       - op: replace
         path: /data/key
         value: |
-          {{ printf "%s:%s:%s:%s" .Credentials.NUTANIX_PE_ENDPOINT .Credentials.NUTANIX_PORT .Credentials.NUTANIX_PE_USERNAME .Credentials.NUTANIX_PE_PASSWORD | b64enc }}
+          {{ printf "%s:%s:%s:%s" .Credentials.NUTANIX_ENDPOINT .Credentials.NUTANIX_PORT .Credentials.NUTANIX_USERNAME .Credentials.NUTANIX_PASSWORD | b64enc }}
 
   - patch: |-
       apiVersion: apps/v1
