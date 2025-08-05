@@ -125,6 +125,7 @@ func newRoot() *cobra.Command {
 		applyCmd(fs),
 		completionCmd(rootCmd),
 		configCmd(fs),
+		certificatesCmd(fs),
 		documentCmd(rootCmd),
 		initCmd(),
 		kubeconfigCmd(fs),

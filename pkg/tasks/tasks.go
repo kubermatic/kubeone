@@ -176,7 +176,7 @@ func WithFullInstall(t Tasks) Tasks {
 			{Fn: kubeconfig.BuildKubernetesClientset, Operation: "building kubernetes clientset"},
 			{
 				Fn: func(s *state.State) error {
-					return s.RunTaskOnLeader(approvePendingCSR)
+					return s.RunTaskOnLeader(ApprovePendingCSR)
 				},
 				Operation: "approving leader's kubelet CSR",
 			},
@@ -204,7 +204,7 @@ func WithFullInstall(t Tasks) Tasks {
 						return err
 					}
 
-					return s.RunTaskOnAllNodes(approvePendingCSR, true)
+					return s.RunTaskOnAllNodes(ApprovePendingCSR, true)
 				},
 				Operation: "removing old and approving new kubelet CSRs",
 				Predicate: func(s *state.State) bool { return s.Cluster.CloudProvider.External },

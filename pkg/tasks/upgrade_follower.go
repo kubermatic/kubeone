@@ -94,5 +94,5 @@ func upgradeFollowerExecutor(s *state.State, node *kubeoneapi.HostConfig, conn e
 		return err
 	}
 
-	return approvePendingCSR(s, node, conn)
+	return ApprovePendingCSR(s, node, conn)
 }
