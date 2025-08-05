@@ -7,9 +7,9 @@ tolerations:
     effect: "NoSchedule"
 
 # Prism Element endpoint and credentials
-prismEndPoint: ".Credentials.NUTANIX_PE_ENDPOINT"
-username: ".Credentials.NUTANIX_PE_USERNAME"
-password: ".Credentials.NUTANIX_PE_PASSWORD"
+prismEndPoint: ".Credentials.NUTANIX_ENDPOINT"
+username: ".Credentials.NUTANIX_USERNAME"
+password: ".Credentials.NUTANIX_PASSWORD"
 
 controller:
   nodeSelector:
