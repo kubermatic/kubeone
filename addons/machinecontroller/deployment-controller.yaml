@@ -52,7 +52,7 @@ spec:
             {{ if CABundle -}}
             - -ca-bundle={{ .Resources.CABundleSSLCertFilePath }}
             {{ end -}}
-            - -join-cluster-timeout=15m
+            - -join-cluster-timeout={{ default "15m" .Params.JOIN_TIMEOUT }}
           env:
   {{ with .Config.CloudProvider.Kubevirt -}}
   {{ with .InfraNamespace }}
