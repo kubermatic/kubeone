@@ -10,7 +10,7 @@ data:
       "prismCentral": {
         "address": "{{ .Credentials.NUTANIX_ENDPOINT }}",
         "port": {{ .Credentials.NUTANIX_PORT }},
-        "insecure": false,
+        "insecure": {{ if .Credentials.NUTANIX_INSECURE }}true{{ else }}false{{ end }},
         "credentialRef": {
           "kind": "secret",
           "name": "nutanix-creds",
