@@ -111,6 +111,13 @@ kubectl annotate machinedeployment -n kube-system <machinedeployment-name> capac
 kubectl annotate machinedeployment -n kube-system <machinedeployment-name> capacity.cluster-autoscaler.kubernetes.io/cpu=2
 ```
 
+
+## Development
+
+```shell
+kubectl kustomize --enable-helm . | yq > cluster-autoscaler.yaml
+```
+
 ## Using The Addon
 
 You need to replace the following values with the actual ones:
@@ -131,6 +138,10 @@ You need to replace the following values with the actual ones:
   * Possible values are `"true"` or `"false"`.
   * Default is `"false"`, as described in the [FAQ][autoscaler-faq].
   * Set the value to `"true"`, if you are facing issue similar to the one described over [here][balance-similar-node-groups] in the [FAQ][autoscaler-faq].
+* `CLUSTER_AUTOSCALER_SCALE_DOWN_UTIL_THRESHOLD` can be used to define the value of `--scale-down-utilization-threshold=`.
+  * Possible values range from 0 to 1.
+  * Default is `0.5`, as described in the [FAQ][autoscaler-faq]. This means, any node with utilization (CPU/RAM) below 50% will be scaled down.
+  * Set the value to higher than `0.5`, if you want more aggressive scale downs.
 
 You can find more information about deploying addons in the
 [Addons document][using-addons].

@@ -1,0 +1,78 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+helmCharts:
+- name: cluster-autoscaler
+  repo: https://kubernetes.github.io/autoscaler
+  version: 9.49.0
+  releaseName: cluster-autoscaler
+  namespace: kube-system
+  valuesFile: cluster-autoscaler-values.yaml
+
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: cluster-autoscaler
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: clusterapi-cluster-autoscaler
+                image: '{{ default (.InternalImages.Get "ClusterAutoscaler") .Params.CLUSTER_AUTOSCALER_IMAGE }}'
+  - target:
+      group: apps
+      kind: Deployment
+      name: cluster-autoscaler
+      namespace: kube-system
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/command/-
+        value:
+          --skip-nodes-with-local-storage={{ default "true" .Params.CLUSTER_AUTOSCALER_SKIP_LOCAL_STORAGE }}
+      - op: add
+        path: /spec/template/spec/containers/0/command/-
+        value:
+          --enforce-node-group-min-size={{ default "false" .Params.CLUSTER_AUTOSCALER_ENFORCE_NODE_GROUP_MIN_SIZE }}
+      - op: add
+        path: /spec/template/spec/containers/0/command/-
+        value:
+          --balance-similar-node-groups={{ default "false" .Params.CLUSTER_AUTOSCALER_BALANCE_SIMILAR_NODE_GROUP }}
+      - op: add
+        path: /spec/template/spec/containers/0/command/-
+        value:
+          --scale-down-utilization-threshold={{ default "0.5" .Params.CLUSTER_AUTOSCALER_SCALE_DOWN_UTIL_THRESHOLD }}
+  - target:
+      group: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: cluster-autoscaler
+    patch: |-
+      - op: add
+        path: /rules/-
+        value:
+          apiGroups:
+            - cluster.k8s.io
+          resources:
+            - machinedeployments
+            - machinepools
+            - machines
+            - machinesets
+          verbs:
+            - get
+            - list
+            - update
+            - watch
+      - op: add
+        path: /rules/-
+        value:
+          apiGroups:
+            - cluster.k8s.io
+          resources:
+            - machinedeployments/scale
+            - machinepools/scale
+          verbs:
+            - get
+            - patch
+            - update

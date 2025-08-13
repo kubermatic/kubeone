@@ -1,0 +1,23 @@
+cloudProvider: clusterapi
+fullnameOverride: cluster-autoscaler
+additionalLabels:
+  k8s-app: cluster-autoscaler
+  k8s-addon: cluster-autoscaler.addons.k8s.io
+autoDiscovery:
+  namespace: kube-system
+extraEnv:
+  CAPI_GROUP: cluster.k8s.io
+tolerations:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/control-plane
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: node-role.kubernetes.io/control-plane
+          operator: "Exists"
+service:
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8085"
