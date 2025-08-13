@@ -1,57 +1,55 @@
-# generated using below command:
-# helm template autoscaler/cluster-autoscaler --version 9.49.0 -n kube-system --name-template cluster-autoscaler \
-# --set cloudProvider=clusterapi,fullnameOverride=cluster-autoscaler,additionalLabels.k8s-app=cluster-autoscaler,additionalLabels.k8s-addon=cluster-autoscaler.addons.k8s.io,autoDiscovery.namespace=kube-system,extraEnv.CAPI_GROUP=cluster.k8s.io,"tolerations[0].effect=NoSchedule,tolerations[0].key=node-role.kubernetes.io/control-plane,affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key=node-role.kubernetes.io/control-plane,affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].operator=Exists" \
-# --set-string service.annotations."prometheus\.io/scrape"=true,service.annotations."prometheus\.io/port"=8085 | sed "s/x-k8s/k8s/g" | sed "/managed-by/d"
-
-# Must add/replace these in Deployment in the generated output for upgrades.
-        # - image: '{{ default (.InternalImages.Get "ClusterAutoscaler") .Params.CLUSTER_AUTOSCALER_IMAGE }}'
-        #   args:
-        #     - --skip-nodes-with-local-storage={{ default "true" .Params.CLUSTER_AUTOSCALER_SKIP_LOCAL_STORAGE }}
-        #     - --enforce-node-group-min-size={{ default "false" .Params.CLUSTER_AUTOSCALER_ENFORCE_NODE_GROUP_MIN_SIZE }}
-        #     - --balance-similar-node-groups={{ default "false" .Params.CLUSTER_AUTOSCALER_BALANCE_SIMILAR_NODE_GROUP }}
-        #     - --scale-down-utilization-threshold={{ default "0.5" .Params.CLUSTER_AUTOSCALER_SCALE_DOWN_UTIL_THRESHOLD }}
----
-# Source: cluster-autoscaler/templates/pdb.yaml
-apiVersion: policy/v1
-kind: PodDisruptionBudget
-metadata:
-  labels:
-    app.kubernetes.io/instance: "cluster-autoscaler"
-    app.kubernetes.io/name: "clusterapi-cluster-autoscaler"
-    helm.sh/chart: "cluster-autoscaler-9.49.0"
-    k8s-addon: cluster-autoscaler.addons.k8s.io
-    k8s-app: cluster-autoscaler
-  name: cluster-autoscaler
-  namespace: kube-system
-spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/instance: "cluster-autoscaler"
-      app.kubernetes.io/name: "clusterapi-cluster-autoscaler"
-  maxUnavailable: 1
----
-# Source: cluster-autoscaler/templates/serviceaccount.yaml
 apiVersion: v1
+automountServiceAccountToken: true
 kind: ServiceAccount
 metadata:
   labels:
-    app.kubernetes.io/instance: "cluster-autoscaler"
-    app.kubernetes.io/name: "clusterapi-cluster-autoscaler"
-    helm.sh/chart: "cluster-autoscaler-9.49.0"
+    app.kubernetes.io/instance: cluster-autoscaler
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: clusterapi-cluster-autoscaler
+    helm.sh/chart: cluster-autoscaler-9.49.0
     k8s-addon: cluster-autoscaler.addons.k8s.io
     k8s-app: cluster-autoscaler
   name: cluster-autoscaler
   namespace: kube-system
-automountServiceAccountToken: true
 ---
-# Source: cluster-autoscaler/templates/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/instance: cluster-autoscaler
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: clusterapi-cluster-autoscaler
+    helm.sh/chart: cluster-autoscaler-9.49.0
+    k8s-addon: cluster-autoscaler.addons.k8s.io
+    k8s-app: cluster-autoscaler
+  name: cluster-autoscaler
+  namespace: kube-system
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - create
+  - apiGroups:
+      - ""
+    resourceNames:
+      - cluster-autoscaler-status
+    resources:
+      - configmaps
+    verbs:
+      - delete
+      - get
+      - update
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    app.kubernetes.io/instance: "cluster-autoscaler"
-    app.kubernetes.io/name: "clusterapi-cluster-autoscaler"
-    helm.sh/chart: "cluster-autoscaler-9.49.0"
+    app.kubernetes.io/instance: cluster-autoscaler
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: clusterapi-cluster-autoscaler
+    helm.sh/chart: cluster-autoscaler-9.49.0
     k8s-addon: cluster-autoscaler.addons.k8s.io
     k8s-app: cluster-autoscaler
   name: cluster-autoscaler
@@ -65,11 +63,11 @@ rules:
       - create
       - patch
   - apiGroups:
-    - ""
+      - ""
     resources:
-    - pods/eviction
+      - pods/eviction
     verbs:
-    - create
+      - create
   - apiGroups:
       - ""
     resources:
@@ -78,10 +76,10 @@ rules:
       - update
   - apiGroups:
       - ""
-    resources:
-      - endpoints
     resourceNames:
       - cluster-autoscaler
+    resources:
+      - endpoints
     verbs:
       - get
       - update
@@ -90,14 +88,14 @@ rules:
     resources:
       - nodes
     verbs:
-    - watch
-    - list
-    - create
-    - delete
-    - get
-    - update
+      - watch
+      - list
+      - create
+      - delete
+      - get
+      - update
   - apiGroups:
-    - ""
+      - ""
     resources:
       - namespaces
       - pods
@@ -110,7 +108,7 @@ rules:
       - list
       - get
   - apiGroups:
-    - batch
+      - batch
     resources:
       - jobs
       - cronjobs
@@ -119,15 +117,15 @@ rules:
       - list
       - get
   - apiGroups:
-    - batch
-    - extensions
+      - batch
+      - extensions
     resources:
-    - jobs
+      - jobs
     verbs:
-    - get
-    - list
-    - patch
-    - watch
+      - get
+      - list
+      - patch
+      - watch
   - apiGroups:
       - extensions
     resources:
@@ -145,27 +143,27 @@ rules:
       - watch
       - list
   - apiGroups:
-    - apps
+      - apps
     resources:
-    - daemonsets
-    - replicasets
-    - statefulsets
+      - daemonsets
+      - replicasets
+      - statefulsets
     verbs:
-    - watch
-    - list
-    - get
+      - watch
+      - list
+      - get
   - apiGroups:
-    - storage.k8s.io
+      - storage.k8s.io
     resources:
-    - storageclasses
-    - csinodes
-    - csidrivers
-    - csistoragecapacities
-    - volumeattachments
+      - storageclasses
+      - csinodes
+      - csidrivers
+      - csistoragecapacities
+      - volumeattachments
     verbs:
-    - watch
-    - list
-    - get
+      - watch
+      - list
+      - get
   - apiGroups:
       - ""
     resources:
@@ -175,100 +173,50 @@ rules:
       - watch
       - get
   - apiGroups:
-    - coordination.k8s.io
+      - coordination.k8s.io
     resources:
-    - leases
-    verbs:
-    - create
-  - apiGroups:
-    - coordination.k8s.io
-    resourceNames:
-    - cluster-autoscaler
-    resources:
-    - leases
-    verbs:
-    - get
-    - update
-  - apiGroups:
-    - cluster.k8s.io
-    resources:
-    - machinedeployments
-    - machinepools
-    - machines
-    - machinesets
-    verbs:
-    - get
-    - list
-    - update
-    - watch
-  - apiGroups:
-    - cluster.k8s.io
-    resources:
-    - machinedeployments/scale
-    - machinepools/scale
-    verbs:
-    - get
-    - patch
-    - update
----
-# Source: cluster-autoscaler/templates/clusterrolebinding.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  labels:
-    app.kubernetes.io/instance: "cluster-autoscaler"
-    app.kubernetes.io/name: "clusterapi-cluster-autoscaler"
-    helm.sh/chart: "cluster-autoscaler-9.49.0"
-    k8s-addon: cluster-autoscaler.addons.k8s.io
-    k8s-app: cluster-autoscaler
-  name: cluster-autoscaler
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cluster-autoscaler
-subjects:
-  - kind: ServiceAccount
-    name: cluster-autoscaler
-    namespace: kube-system
----
-# Source: cluster-autoscaler/templates/role.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  labels:
-    app.kubernetes.io/instance: "cluster-autoscaler"
-    app.kubernetes.io/name: "clusterapi-cluster-autoscaler"
-    helm.sh/chart: "cluster-autoscaler-9.49.0"
-    k8s-addon: cluster-autoscaler.addons.k8s.io
-    k8s-app: cluster-autoscaler
-  name: cluster-autoscaler
-  namespace: kube-system
-rules:
-  - apiGroups:
-      - ""
-    resources:
-      - configmaps
+      - leases
     verbs:
       - create
   - apiGroups:
-      - ""
-    resources:
-      - configmaps
+      - coordination.k8s.io
     resourceNames:
-      - cluster-autoscaler-status
+      - cluster-autoscaler
+    resources:
+      - leases
     verbs:
-      - delete
       - get
       - update
+  - apiGroups:
+      - cluster.x-k8s.io
+    resources:
+      - machinedeployments
+      - machinepools
+      - machines
+      - machinesets
+    verbs:
+      - get
+      - list
+      - update
+      - watch
+  - apiGroups:
+      - cluster.x-k8s.io
+    resources:
+      - machinedeployments/scale
+      - machinepools/scale
+    verbs:
+      - get
+      - patch
+      - update
 ---
-# Source: cluster-autoscaler/templates/rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    app.kubernetes.io/instance: "cluster-autoscaler"
-    app.kubernetes.io/name: "clusterapi-cluster-autoscaler"
-    helm.sh/chart: "cluster-autoscaler-9.49.0"
+    app.kubernetes.io/instance: cluster-autoscaler
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: clusterapi-cluster-autoscaler
+    helm.sh/chart: cluster-autoscaler-9.49.0
     k8s-addon: cluster-autoscaler.addons.k8s.io
     k8s-app: cluster-autoscaler
   name: cluster-autoscaler
@@ -282,7 +230,26 @@ subjects:
     name: cluster-autoscaler
     namespace: kube-system
 ---
-# Source: cluster-autoscaler/templates/service.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: cluster-autoscaler
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: clusterapi-cluster-autoscaler
+    helm.sh/chart: cluster-autoscaler-9.49.0
+    k8s-addon: cluster-autoscaler.addons.k8s.io
+    k8s-app: cluster-autoscaler
+  name: cluster-autoscaler
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-autoscaler
+subjects:
+  - kind: ServiceAccount
+    name: cluster-autoscaler
+    namespace: kube-system
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -290,34 +257,33 @@ metadata:
     prometheus.io/port: "8085"
     prometheus.io/scrape: "true"
   labels:
-    app.kubernetes.io/instance: "cluster-autoscaler"
-    app.kubernetes.io/name: "clusterapi-cluster-autoscaler"
-    helm.sh/chart: "cluster-autoscaler-9.49.0"
+    app.kubernetes.io/instance: cluster-autoscaler
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: clusterapi-cluster-autoscaler
+    helm.sh/chart: cluster-autoscaler-9.49.0
     k8s-addon: cluster-autoscaler.addons.k8s.io
     k8s-app: cluster-autoscaler
   name: cluster-autoscaler
   namespace: kube-system
 spec:
   ports:
-    - port: 8085
+    - name: http
+      port: 8085
       protocol: TCP
       targetPort: 8085
-      name: http
   selector:
-    app.kubernetes.io/instance: "cluster-autoscaler"
-    app.kubernetes.io/name: "clusterapi-cluster-autoscaler"
-  type: "ClusterIP"
+    app.kubernetes.io/instance: cluster-autoscaler
+    app.kubernetes.io/name: clusterapi-cluster-autoscaler
+  type: ClusterIP
 ---
-# Source: cluster-autoscaler/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    {}
   labels:
-    app.kubernetes.io/instance: "cluster-autoscaler"
-    app.kubernetes.io/name: "clusterapi-cluster-autoscaler"
-    helm.sh/chart: "cluster-autoscaler-9.49.0"
+    app.kubernetes.io/instance: cluster-autoscaler
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: clusterapi-cluster-autoscaler
+    helm.sh/chart: cluster-autoscaler-9.49.0
     k8s-addon: cluster-autoscaler.addons.k8s.io
     k8s-app: cluster-autoscaler
   name: cluster-autoscaler
@@ -327,23 +293,25 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app.kubernetes.io/instance: "cluster-autoscaler"
-      app.kubernetes.io/name: "clusterapi-cluster-autoscaler"
+      app.kubernetes.io/instance: cluster-autoscaler
+      app.kubernetes.io/name: clusterapi-cluster-autoscaler
   template:
     metadata:
       labels:
-        app.kubernetes.io/instance: "cluster-autoscaler"
-        app.kubernetes.io/name: "clusterapi-cluster-autoscaler"
+        app.kubernetes.io/instance: cluster-autoscaler
+        app.kubernetes.io/name: clusterapi-cluster-autoscaler
         k8s-addon: cluster-autoscaler.addons.k8s.io
         k8s-app: cluster-autoscaler
     spec:
-      priorityClassName: "system-cluster-critical"
-      dnsPolicy: "ClusterFirst"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: Exists
       containers:
-        - name: clusterapi-cluster-autoscaler
-        - image: '{{ default (.InternalImages.Get "ClusterAutoscaler") .Params.CLUSTER_AUTOSCALER_IMAGE }}'
-          imagePullPolicy: "IfNotPresent"
-          command:
+        - command:
             - ./cluster-autoscaler
             - --cloud-provider=clusterapi
             - --namespace=kube-system
@@ -351,10 +319,10 @@ spec:
             - --logtostderr=true
             - --stderrthreshold=info
             - --v=4
-            - --skip-nodes-with-local-storage={{ default "true" .Params.CLUSTER_AUTOSCALER_SKIP_LOCAL_STORAGE }}
-            - --enforce-node-group-min-size={{ default "false" .Params.CLUSTER_AUTOSCALER_ENFORCE_NODE_GROUP_MIN_SIZE }}
-            - --balance-similar-node-groups={{ default "false" .Params.CLUSTER_AUTOSCALER_BALANCE_SIMILAR_NODE_GROUP }}
-            - --scale-down-utilization-threshold={{ default "0.5" .Params.CLUSTER_AUTOSCALER_SCALE_DOWN_UTIL_THRESHOLD }}
+            - - --skip-nodes-with-local-storage={{ default "true" .Params.CLUSTER_AUTOSCALER_SKIP_LOCAL_STORAGE }}
+              - --enforce-node-group-min-size={{ default "false" .Params.CLUSTER_AUTOSCALER_ENFORCE_NODE_GROUP_MIN_SIZE }}
+              - --balance-similar-node-groups={{ default "false" .Params.CLUSTER_AUTOSCALER_BALANCE_SIMILAR_NODE_GROUP }}
+              - --scale-down-utilization-threshold={{ default "0.5" .Params.CLUSTER_AUTOSCALER_SCALE_DOWN_UTIL_THRESHOLD }}
           env:
             - name: POD_NAMESPACE
               valueFrom:
@@ -365,23 +333,39 @@ spec:
                 fieldRef:
                   fieldPath: spec.serviceAccountName
             - name: CAPI_GROUP
-              value: "cluster.k8s.io"
+              value: cluster.k8s.io
+          image: '{{ default (.InternalImages.Get "ClusterAutoscaler") .Params.CLUSTER_AUTOSCALER_IMAGE }}'
+          imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
               path: /health-check
               port: 8085
+          name: clusterapi-cluster-autoscaler
           ports:
             - containerPort: 8085
-          resources:
-            {}
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: node-role.kubernetes.io/control-plane
-                operator: Exists
+          resources: {}
+      dnsPolicy: ClusterFirst
+      priorityClassName: system-cluster-critical
       serviceAccountName: cluster-autoscaler
       tolerations:
         - effect: NoSchedule
           key: node-role.kubernetes.io/control-plane
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app.kubernetes.io/instance: cluster-autoscaler
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: clusterapi-cluster-autoscaler
+    helm.sh/chart: cluster-autoscaler-9.49.0
+    k8s-addon: cluster-autoscaler.addons.k8s.io
+    k8s-app: cluster-autoscaler
+  name: cluster-autoscaler
+  namespace: kube-system
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: cluster-autoscaler
+      app.kubernetes.io/name: clusterapi-cluster-autoscaler

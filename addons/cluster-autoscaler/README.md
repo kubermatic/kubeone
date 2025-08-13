@@ -111,6 +111,13 @@ kubectl annotate machinedeployment -n kube-system <machinedeployment-name> capac
 kubectl annotate machinedeployment -n kube-system <machinedeployment-name> capacity.cluster-autoscaler.kubernetes.io/cpu=2
 ```
 
+
+## Development
+
+```shell
+kubectl kustomize --enable-helm . | yq > cluster-autoscaler.yaml
+```
+
 ## Using The Addon
 
 You need to replace the following values with the actual ones:
