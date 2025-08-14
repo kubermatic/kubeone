@@ -32,6 +32,7 @@ type listImagesOpts struct {
 	ManifestFile      string `longflag:"manifest" shortflag:"m"`
 	Filter            string `longflag:"filter"`
 	KubernetesVersion string `longflag:"kubernetes-version" shortflag:"k"`
+	AllImages         bool   `longflag:"all" shortflag:"a"`
 }
 
 func configImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
@@ -51,8 +52,11 @@ func listImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		Use:   "list",
 		Short: "List images that will be used",
 		Example: heredoc.Doc(`
-			# To see all images list
+			# To see default images list
 			kubeone config images list
+
+			# To see all images list for all Kubernetes versions
+			kubeone config images list --all
 
 			# To see base images list
 			kubeone config images list --filter base
@@ -90,6 +94,13 @@ func listImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		"",
 		"filter images for a provided kubernetes version")
 
+	cmd.Flags().BoolVar(
+		&opts.AllImages,
+		longFlagName(opts, "AllImages"),
+		false,
+		"list all images, including optional ones",
+	)
+
 	return cmd
 }
 
@@ -115,7 +126,14 @@ func listImages(opts *listImagesOpts) error {
 		return err
 	}
 
-	for _, img := range imgResolver.List(listFilter) {
+	var images []string
+	if opts.AllImages {
+		images = imgResolver.ListAll()
+	} else {
+		images = imgResolver.List(listFilter)
+	}
+
+	for _, img := range images {
 		fmt.Println(img)
 	}
 
