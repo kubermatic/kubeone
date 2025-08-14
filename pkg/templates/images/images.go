@@ -20,6 +20,8 @@ package images
 
 import (
 	"fmt"
+	"maps"
+	"slices"
 	"sort"
 
 	"github.com/Masterminds/semver/v3"
@@ -494,6 +496,24 @@ func (r *Resolver) List(lf ListFilter) []string {
 			list = append(list, img)
 		}
 	}
+
+	sort.Strings(list)
+
+	return list
+}
+
+func (r *Resolver) ListAll() []string {
+	resources := allResources()
+
+	// create a bool map, to deduplicate the images
+	listMap := make(map[string]bool)
+	for res := range resources {
+		for _, img := range resources[res] {
+			listMap[img] = true
+		}
+	}
+
+	list := slices.Collect(maps.Keys(listMap))
 
 	sort.Strings(list)
 
