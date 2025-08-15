@@ -59,9 +59,6 @@ const (
 	NutanixInsecure                      = "NUTANIX_INSECURE"
 	NutanixProxyURL                      = "NUTANIX_PROXY_URL"
 	NutanixClusterName                   = "NUTANIX_CLUSTER_NAME"
-	NutanixPEEndpoint                    = "NUTANIX_PE_ENDPOINT"
-	NutanixPEUsername                    = "NUTANIX_PE_USERNAME"
-	NutanixPEPassword                    = "NUTANIX_PE_PASSWORD" //nolint:gosec
 	OpenStackAuthURL                     = "OS_AUTH_URL"
 	OpenStackDomainName                  = "OS_DOMAIN_NAME"
 	OpenStackPassword                    = "OS_PASSWORD"
@@ -118,9 +115,6 @@ var allKeys = []string{
 	NutanixInsecure,
 	NutanixProxyURL,
 	NutanixClusterName,
-	NutanixPEEndpoint,
-	NutanixPEUsername,
-	NutanixPEPassword,
 	OpenStackAuthURL,
 	OpenStackDomainName,
 	OpenStackPassword,
@@ -231,9 +225,6 @@ func ProviderCredentials(cloudProvider kubeoneapi.CloudProviderSpec, credentials
 			{Name: NutanixInsecure},
 			{Name: NutanixProxyURL},
 			{Name: NutanixClusterName},
-			{Name: NutanixPEEndpoint},
-			{Name: NutanixPEUsername},
-			{Name: NutanixPEPassword},
 		}, nutanixValidationFunc)
 	case cloudProvider.Openstack != nil:
 		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
@@ -496,9 +487,6 @@ func nutanixValidationFunc(creds map[string]string) error {
 		NutanixPort,
 		NutanixUsername,
 		NutanixPassword,
-		NutanixPEEndpoint,
-		NutanixPEUsername,
-		NutanixPEPassword,
 	}
 
 	for _, key := range alwaysRequired {

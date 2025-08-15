@@ -8,9 +8,9 @@ data:
   nutanix_config.json: |-
     {
       "prismCentral": {
-        "address": "{{ .Credentials.NUTANIX_PE_ENDPOINT }}",
+        "address": "{{ .Credentials.NUTANIX_ENDPOINT }}",
         "port": {{ .Credentials.NUTANIX_PORT }},
-        "insecure": false,
+        "insecure": {{ if .Credentials.NUTANIX_INSECURE }}true{{ else }}false{{ end }},
         "credentialRef": {
           "kind": "secret",
           "name": "nutanix-creds",
@@ -51,8 +51,8 @@ stringData:
         "type": "basic_auth",
         "data": {
           "prismCentral": {
-            "username": "{{ .Credentials.NUTANIX_PE_USERNAME }}",
-            "password": "{{ .Credentials.NUTANIX_PE_PASSWORD }}"
+            "username": "{{ .Credentials.NUTANIX_USERNAME }}",
+            "password": "{{ .Credentials.NUTANIX_PASSWORD }}"
           },
           "prismElements": null
         }
