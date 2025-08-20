@@ -34,13 +34,12 @@ func CleanupLBs(ctx context.Context, logger logrus.FieldLogger, c client.Client)
 	if err := c.List(ctx, serviceList); err != nil {
 		return fail.KubeClient(err, "listing services")
 	}
-
+	logger.Infof("Cleaning up LoadBalancer Services...")
 	for _, service := range serviceList.Items {
 		// This service is already in deletion, nothing further needs to happen.
 		if service.DeletionTimestamp != nil {
 			continue
 		}
-		logger.Infof("Cleaning up LoadBalancer Services...")
 		// Only LoadBalancer services incur charges on cloud providers
 		if service.Spec.Type == corev1.ServiceTypeLoadBalancer {
 			logger.Debugf("Deleting LoadBalancer Service \"%s/%s\"", service.Namespace, service.Name)

@@ -19,6 +19,7 @@ package clientutil
 import (
 	"context"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -28,6 +29,9 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
+	"k8s.io/kubectl/pkg/drain"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -42,11 +46,11 @@ const (
 
 var VolumeResources = []string{"persistentvolumes", "persistentvolumeclaims"}
 
-func CleanupUnretainedVolumes(ctx context.Context, logger logrus.FieldLogger, c client.Client) error {
+func CleanupUnretainedVolumes(ctx context.Context, logger logrus.FieldLogger, c client.Client, restConfig *rest.Config) error {
 	// We disable the PV & PVC creation so nothing creates new PV's while we delete them
 	logger.Infoln("Creating ValidatingWebhookConfiguration to disable future PV & PVC creation...")
 	if err := disablePVCreation(ctx, c); err != nil {
-		return fail.KubeClient(err, "failed to disable future PV & PVC creation.")
+		return fail.KubeClient(err, "disabling future PV & PVC creation.")
 	}
 
 	pvcList, pvList, err := getDynamicallyProvisionedUnretainedPvs(ctx, c)
@@ -61,8 +65,13 @@ func CleanupUnretainedVolumes(ctx context.Context, logger logrus.FieldLogger, c 
 
 	// Delete all Pods that use PVs. We must keep the remaining pods, otherwise
 	// we end up in a deadlock when CSI is used
-	if err := cleanupPVCUsingPods(ctx, c); err != nil {
-		return fail.KubeClient(err, "failed to clean up PV using pod from user cluster.")
+	kubeClient, err := kubernetes.NewForConfig(restConfig)
+	if err != nil {
+		return fail.KubeClient(err, "initializing new kubernetes clientset")
+	}
+
+	if err := cleanupPVCUsingPods(ctx, c, logger, kubeClient); err != nil {
+		return fail.KubeClient(err, "cleaning up PV using pod from user cluster.")
 	}
 
 	// Delete PVC's
@@ -73,7 +82,7 @@ func CleanupUnretainedVolumes(ctx context.Context, logger logrus.FieldLogger, c 
 			logger.Infoln("Deleting PVC...", identifier)
 
 			if err := DeleteIfExists(ctx, c, &pvc); err != nil {
-				return fail.KubeClient(err, "failed to delete PVC from user cluster.")
+				return fail.KubeClient(err, "deleting PVC from user cluster.")
 			}
 		}
 	}
@@ -93,10 +102,10 @@ func disablePVCreation(ctx context.Context, c client.Client) error {
 	return nil
 }
 
-func cleanupPVCUsingPods(ctx context.Context, c client.Client) error {
+func cleanupPVCUsingPods(ctx context.Context, c client.Client, log logrus.FieldLogger, kubeClient *kubernetes.Clientset) error {
 	podList := &corev1.PodList{}
 	if err := c.List(ctx, podList); err != nil {
-		return fail.KubeClient(err, "failed to list Pods from user cluster.")
+		return fail.KubeClient(err, "listing Pods from user cluster.")
 	}
 
 	var pvUsingPods []*corev1.Pod
@@ -107,11 +116,42 @@ func cleanupPVCUsingPods(ctx context.Context, c client.Client) error {
 		}
 	}
 
-	for _, pod := range pvUsingPods {
-		if pod.DeletionTimestamp == nil {
-			if err := DeleteIfExists(ctx, c, pod); err != nil {
-				return fail.KubeClient(err, "failed to delete Pod.")
+	if len(pvUsingPods) == 0 {
+		return nil
+	}
+
+	helper := drain.Helper{
+		Ctx:    ctx,
+		Client: kubeClient,
+		// Force is used to force deleting standalone pods (i.e. not managed by
+		// ReplicaSet)
+		Force:              true,
+		DeleteEmptyDirData: true,
+		GracePeriodSeconds: -1,
+		Out:                os.Stdout,
+		ErrOut:             os.Stdout,
+		OnPodDeletionOrEvictionFinished: func(pod *corev1.Pod, usingEviction bool, err error) {
+			evicted := "evicted"
+			if !usingEviction {
+				evicted = "deleted"
 			}
+			if err != nil {
+				log.Infof("failed to %s pod %s/%s, error: %v", pod.GetNamespace(), pod.GetName(), evicted, err.Error())
+
+				return
+			}
+			log.Infof("pod %s/%s is %s", pod.GetNamespace(), pod.GetName(), evicted)
+		},
+	}
+	evictionGroupVersion, err := drain.CheckEvictionSupport(kubeClient)
+	if err != nil {
+		return err
+	}
+
+	for _, pod := range pvUsingPods {
+		err := helper.EvictPod(*pod, evictionGroupVersion)
+		if err != nil {
+			return fail.KubeClient(err, "deleting the pod.")
 		}
 	}
 
@@ -120,7 +160,7 @@ func cleanupPVCUsingPods(ctx context.Context, c client.Client) error {
 
 func podUsesPV(p *corev1.Pod) bool {
 	for _, volume := range p.Spec.Volumes {
-		if volume.VolumeSource.PersistentVolumeClaim != nil {
+		if volume.PersistentVolumeClaim != nil {
 			return true
 		}
 	}

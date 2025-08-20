@@ -48,8 +48,6 @@ func RemoveLBServices(s *state.State) error {
 	lastErr = clientutil.WaitCleanupLbs(s.Context, s.Logger, s.DynamicClient)
 	if lastErr != nil {
 		s.Logger.Warn("Waiting for all load balancer services to be deleted...")
-
-		return lastErr
 	}
 
 	return lastErr
@@ -62,7 +60,7 @@ func RemoveVolumes(s *state.State) error {
 	}
 	var lastErr error
 	s.Logger.Infoln("Deleting dynamically provisioned and unretained volumes...")
-	lastErr = clientutil.CleanupUnretainedVolumes(s.Context, s.Logger, s.DynamicClient)
+	lastErr = clientutil.CleanupUnretainedVolumes(s.Context, s.Logger, s.DynamicClient, s.RESTConfig)
 	if lastErr != nil {
 		s.Logger.Warn("Unable to delete volumes.")
 		s.Logger.Infoln("Deleting ValidatingWebhookConfiguration to enable future PV & PVC creation...")
@@ -77,8 +75,6 @@ func RemoveVolumes(s *state.State) error {
 	lastErr = clientutil.WaitCleanUpVolumes(s.Context, s.Logger, s.DynamicClient)
 	if lastErr != nil {
 		s.Logger.Warn("Waiting for all dynamically provisioned and unretained volumes to be deleted...")
-
-		return lastErr
 	}
 
 	return lastErr
