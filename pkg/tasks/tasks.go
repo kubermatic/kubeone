@@ -422,6 +422,19 @@ func WithUpgrade(t Tasks, followers ...kubeoneapi.HostConfig) Tasks {
 
 func WithReset(t Tasks) Tasks {
 	return t.append(Tasks{
+		{
+			Fn:        RemoveLBServices,
+			Operation: "remove load balancer services",
+			Predicate: func(s *state.State) bool {
+				return s.RemoveLBServices
+			}},
+		{
+			Fn:        RemoveVolumes,
+			Operation: "remove dynamically provisioned and unretained volumes",
+			Predicate: func(s *state.State) bool {
+				return s.RemoveVolumes
+			},
+		},
 		{Fn: destroyWorkers, Operation: "destroying workers"},
 		{Fn: resetAllNodes, Operation: "resetting all nodes"},
 		{Fn: removeBinariesAllNodes, Operation: "removing kubernetes binaries from nodes"},

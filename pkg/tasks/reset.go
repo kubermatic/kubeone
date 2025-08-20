@@ -17,6 +17,8 @@ limitations under the License.
 package tasks
 
 import (
+	"strings"
+
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/executor"
@@ -28,6 +30,55 @@ import (
 
 	"k8s.io/apimachinery/pkg/util/wait"
 )
+
+// RemoveLBServices Deletes all the load balancers services from the cluster.
+func RemoveLBServices(s *state.State) error {
+	if !s.RemoveLBServices {
+		return nil
+	}
+	var lastErr error
+	s.Logger.Infoln("Deleting LoadBalancer Services...")
+	lastErr = clientutil.CleanupLBs(s.Context, s.Logger, s.DynamicClient)
+	if lastErr != nil {
+		s.Logger.Warn("Unable to delete services of type load balancer.")
+
+		return lastErr
+	}
+
+	lastErr = clientutil.WaitCleanupLbs(s.Context, s.Logger, s.DynamicClient)
+	if lastErr != nil {
+		s.Logger.Warn("Waiting for all load balancer services to be deleted...")
+	}
+
+	return lastErr
+}
+
+// RemoveVolumes Deletes all the dynamically provisioned and unretained volumes from the cluster.
+func RemoveVolumes(s *state.State) error {
+	if !s.RemoveVolumes {
+		return nil
+	}
+	var lastErr error
+	s.Logger.Infoln("Deleting dynamically provisioned and unretained volumes...")
+	lastErr = clientutil.CleanupUnretainedVolumes(s.Context, s.Logger, s.DynamicClient, s.RESTConfig)
+	if lastErr != nil {
+		s.Logger.Warn("Unable to delete volumes.")
+		s.Logger.Infoln("Deleting ValidatingWebhookConfiguration to enable future PV & PVC creation...")
+		if err := clientutil.DeletePreventingWebhook(s.Context, s.DynamicClient,
+			"kubernetes-cluster-cleanup-"+strings.Join(clientutil.VolumeResources, "-")); err != nil {
+			s.Logger.Warn("Unable to delete ValidatingWebhookConfiguration.")
+		}
+
+		return lastErr
+	}
+
+	lastErr = clientutil.WaitCleanUpVolumes(s.Context, s.Logger, s.DynamicClient)
+	if lastErr != nil {
+		s.Logger.Warn("Waiting for all dynamically provisioned and unretained volumes to be deleted...")
+	}
+
+	return lastErr
+}
 
 func destroyWorkers(s *state.State) error {
 	if !s.DestroyWorkers {
