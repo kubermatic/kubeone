@@ -12,13 +12,13 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
-| <a name="requirement_hcloud"></a> [hcloud](#requirement\_hcloud) | ~> 1.31.0 |
+| <a name="requirement_hcloud"></a> [hcloud](#requirement\_hcloud) | ~> 1.52 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_hcloud"></a> [hcloud](#provider\_hcloud) | ~> 1.31.0 |
+| <a name="provider_hcloud"></a> [hcloud](#provider\_hcloud) | ~> 1.52 |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
 ## Modules
