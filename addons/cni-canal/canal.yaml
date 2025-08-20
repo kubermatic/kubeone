@@ -9238,6 +9238,11 @@ spec:
                 configMapKeyRef:
                   key: canal_iface_regex
                   name: canal-config
+            - name: FLANNELD_IFACE
+              valueFrom:
+                configMapKeyRef:
+                  key: canal_iface
+                  name: canal-config
             - name: POD_NAME
               valueFrom:
                 fieldRef:
