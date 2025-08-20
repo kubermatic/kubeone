@@ -18,6 +18,7 @@ package clientutil
 
 import (
 	"context"
+	"strings"
 
 	"k8c.io/kubeone/pkg/fail"
 
@@ -33,6 +34,7 @@ func creationPreventingWebhook(ctx context.Context, c client.Client, apiGroup st
 	failurePolicy := admissionregistrationv1.Fail
 	sideEffects := admissionregistrationv1.SideEffectClassNone
 	vwc := admissionregistrationv1.ValidatingWebhookConfiguration{}
+	vwc.Name = "kubernetes-cluster-cleanup-" + strings.Join(resources, "-")
 	if vwc.Annotations == nil {
 		vwc.Annotations = map[string]string{}
 	}
