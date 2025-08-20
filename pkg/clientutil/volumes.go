@@ -25,7 +25,6 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/reconciler/pkg/reconciling"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -92,14 +91,7 @@ func CleanupUnretainedVolumes(ctx context.Context, logger logrus.FieldLogger, c 
 
 func disablePVCreation(ctx context.Context, c client.Client) error {
 	// Prevent re-creation of PVs and PVCs by using an intentionally defunct admissionWebhook
-	creatorGetters := []reconciling.NamedValidatingWebhookConfigurationReconcilerFactory{
-		creationPreventingWebhook("", VolumeResources),
-	}
-	if err := reconciling.ReconcileValidatingWebhookConfigurations(ctx, creatorGetters, "", c); err != nil {
-		return fail.KubeClient(err, "failed to create ValidatingWebhookConfiguration to prevent creation of PVs/PVCs.")
-	}
-
-	return nil
+	return creationPreventingWebhook(ctx, c, "", VolumeResources)
 }
 
 func cleanupPVCUsingPods(ctx context.Context, c client.Client, log logrus.FieldLogger, kubeClient *kubernetes.Clientset) error {
