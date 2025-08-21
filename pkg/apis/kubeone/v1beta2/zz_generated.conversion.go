@@ -2015,6 +2015,7 @@ func Convert_kubeone_OpenstackSpec_To_v1beta2_OpenstackSpec(in *kubeone.Openstac
 
 func autoConvert_v1beta2_OperatingSystemManagerConfig_To_kubeone_OperatingSystemManagerConfig(in *OperatingSystemManagerConfig, out *kubeone.OperatingSystemManagerConfig, s conversion.Scope) error {
 	out.Deploy = in.Deploy
+	out.EnableNonRootDeviceOwnership = in.EnableNonRootDeviceOwnership
 	return nil
 }
 
@@ -2025,6 +2026,7 @@ func Convert_v1beta2_OperatingSystemManagerConfig_To_kubeone_OperatingSystemMana
 
 func autoConvert_kubeone_OperatingSystemManagerConfig_To_v1beta2_OperatingSystemManagerConfig(in *kubeone.OperatingSystemManagerConfig, out *OperatingSystemManagerConfig, s conversion.Scope) error {
 	out.Deploy = in.Deploy
+	out.EnableNonRootDeviceOwnership = in.EnableNonRootDeviceOwnership
 	return nil
 }
 

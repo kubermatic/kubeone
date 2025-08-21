@@ -761,6 +761,8 @@ type MachineControllerConfig struct {
 type OperatingSystemManagerConfig struct {
 	// Deploy
 	Deploy bool `json:"deploy,omitempty"`
+	//  # Optional: EnableNonRootDeviceOwnership enables the non-root device ownership feature in the container runtime.
+	EnableNonRootDeviceOwnership bool `json:"enableNonRootDeviceOwnership,omitempty"`
 }
 
 // SystemPackages controls configurations of APT/YUM
