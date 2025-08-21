@@ -91,7 +91,10 @@ patches:
                         key: canal_iface_regex
                         name: canal-config
                   - name: FLANNELD_IFACE
-                    $patch: delete
+                    valueFrom:
+                      configMapKeyRef:
+                        key: canal_iface
+                        name: canal-config
             initContainers:
               - name: install-cni
                 image: '{{ .InternalImages.Get "CalicoCNI" }}'
