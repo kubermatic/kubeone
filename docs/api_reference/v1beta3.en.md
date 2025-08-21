@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2025-06-12T15:55:08+03:00
+date = 2025-08-21T16:58:51+02:00
 weight = 11
 +++
 ## v1beta3
@@ -697,6 +697,7 @@ OperatingSystemManagerConfig configures kubermatic operating-system-manager depl
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | deploy | Deploy | bool | false |
+| enableNonRootDeviceOwnership | EnableNonRootDeviceOwnership enables the non-root device ownership feature in the container runtime. | bool | false |
 
 [Back to Group](#v1beta3)
 

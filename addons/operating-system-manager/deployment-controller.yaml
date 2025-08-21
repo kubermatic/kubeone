@@ -73,6 +73,9 @@ spec:
             {{ with .Config.Proxy.NoProxy }}
             - -node-no-proxy={{ . }}
             {{ end }}
+            {{ if .Config.OperatingSystemManager.EnableNonRootDeviceOwnership }}
+            - -device-ownership-from-security-context
+            {{ end }}
           env:
             - name: HTTPS_PROXY
               value: "{{ .Config.Proxy.HTTPS }}"
