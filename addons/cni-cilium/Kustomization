@@ -3,12 +3,12 @@ kind: Kustomization
 namespace: kube-system
 
 helmCharts:
-- name: cilium
-  repo: https://helm.cilium.io/
-  version: 1.17.3
-  releaseName: cilium
-  namespace: kube-system
-  valuesFile: helm-values
+  - name: cilium
+    repo: https://helm.cilium.io/
+    version: 1.17.3
+    releaseName: cilium
+    namespace: kube-system
+    valuesFile: helm-values
 
 patches:
   - patch: |-
@@ -55,6 +55,10 @@ patches:
                         name: cilium-config
                         key: KUBERNETES_SERVICE_PORT
                         optional: true
+                volumeMounts:
+                  - name: hubble-tls
+                    mountPath: /var/lib/cilium/tls/hubble
+                    readOnly: true
             initContainers:
               - name: config
                 image: '{{ .InternalImages.Get "Cilium" }}'
@@ -94,6 +98,21 @@ patches:
                         optional: true
               - name: install-cni-binaries
                 image: '{{ .InternalImages.Get "Cilium" }}'
+            volumes:
+              - name: hubble-tls
+                projected:
+                  defaultMode: 256
+                  sources:
+                  - secret:
+                      name: hubble-server-certs
+                      optional: true
+                      items:
+                      - key: tls.crt
+                        path: server.crt
+                      - key: tls.key
+                        path: server.key
+                      - key: ca.crt
+                        path: client-ca.crt
   - patch: |-
       apiVersion: apps/v1
       kind: Deployment
