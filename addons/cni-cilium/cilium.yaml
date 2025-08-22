@@ -1198,6 +1198,11 @@ spec:
             successThreshold: 1
           terminationMessagePolicy: FallbackToLogsOnError
           volumeMounts:
+            {{ if .Config.ClusterNetwork.CNI.Cilium.EnableHubble }}
+            - mountPath: /var/lib/cilium/tls/hubble
+              name: hubble-tls
+              readOnly: true
+            {{ end }}
             - mountPath: /var/run/cilium/envoy/sockets
               name: envoy-sockets
               readOnly: false
@@ -1428,7 +1433,23 @@ spec:
       terminationGracePeriodSeconds: 1
       tolerations:
         - operator: Exists
+
       volumes:
+        {{ if .Config.ClusterNetwork.CNI.Cilium.EnableHubble }}
+        - name: hubble-tls
+          projected:
+            defaultMode: 256
+            sources:
+              - secret:
+                  items:
+                    - key: tls.crt
+                      path: server.crt
+                    - key: tls.key
+                      path: server.key
+                    - key: ca.crt
+                      path: client-ca.crt
+                  name: hubble-server-certs
+        {{ end }}
         - emptyDir: {}
           name: tmp
         - hostPath:
