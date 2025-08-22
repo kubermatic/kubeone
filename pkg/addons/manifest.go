@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"maps"
 	"os"
 	"path/filepath"
 	"strings"
@@ -184,9 +185,7 @@ func (a *applier) loadAddonsManifests(
 			res = strings.ReplaceAll(res, "}}", "}}^")
 			manifestBytes = []byte(res)
 		}
-
-		var manifest *bytes.Buffer
-		manifest = bytes.NewBuffer(manifestBytes)
+		manifest := bytes.NewBuffer(manifestBytes)
 
 		if !disableTemplating {
 			overwriteRegistry := k1cluster.RegistryConfiguration.ImageRegistry("")
@@ -205,17 +204,14 @@ func (a *applier) loadAddonsManifests(
 
 			// Make a copy and merge Params
 			tplDataParams := map[string]string{}
-			for k, v := range a.TemplateData.Params {
-				tplDataParams[k] = v
-			}
-			for k, v := range addonParams {
-				tplDataParams[k] = v
-			}
+			maps.Copy(tplDataParams, a.TemplateData.Params)
+			maps.Copy(tplDataParams, addonParams)
+
+			defaultAddonParams(k1cluster, addonName, tplDataParams)
 
 			// Resolve environment variables in Params
 			for k, v := range tplDataParams {
-				if strings.HasPrefix(v, ParamsEnvPrefix) {
-					envName := strings.TrimPrefix(v, ParamsEnvPrefix)
+				if envName, ok := strings.CutPrefix(v, ParamsEnvPrefix); ok {
 					if env, ok := os.LookupEnv(envName); ok {
 						tplDataParams[k] = env
 					} else {
@@ -272,6 +268,23 @@ func (a *applier) loadAddonsManifests(
 	}
 
 	return manifests, nil
+}
+
+func defaultAddonParams(k1cluster *kubeoneapi.KubeOneCluster, addonName string, tplDataParams map[string]string) {
+	if addonName == resources.AddonCNICanal {
+		if k1cluster.CloudProvider.Hetzner != nil {
+			// Customize cni-canal addon on hetzner
+			defaultIfaceParam(tplDataParams, "^en")
+		}
+	}
+}
+
+func defaultIfaceParam(tplDataParams map[string]string, reg string) {
+	_, iface := tplDataParams["IFACE"]
+	_, ifaceregex := tplDataParams["IFACE_REGEX"]
+	if !iface && !ifaceregex {
+		tplDataParams["IFACE_REGEX"] = reg
+	}
 }
 
 // ensureAddonsLabelsOnResources applies the addons label on all resources in the manifest
