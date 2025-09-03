@@ -1,6 +1,13 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  labels:
+    app.kubernetes.io/instance: nutanix-csi-storage
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/management-plane: PrismCentral
+    app.kubernetes.io/name: nutanix-csi-storage
+    app.kubernetes.io/version: 3.3.4
+    helm.sh/chart: nutanix-csi-storage-3.3.4
   name: nutanix-csi-controller
   namespace: kube-system
 ---
@@ -10,9 +17,28 @@ metadata:
   name: nutanix-csi-node
   namespace: kube-system
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    helm.sh/hook: pre-upgrade,pre-install
+    helm.sh/hook-delete-policy: hook-succeeded,before-hook-creation,hook-failed
+    helm.sh/hook-weight: "0"
+  labels:
+    app: nutanix-csi-storage-precheck
+  name: nutanix-csi-storage-precheck-serviceaccount
+  namespace: kube-system
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
+  labels:
+    app.kubernetes.io/instance: nutanix-csi-storage
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/management-plane: PrismCentral
+    app.kubernetes.io/name: nutanix-csi-storage
+    app.kubernetes.io/version: 3.3.4
+    helm.sh/chart: nutanix-csi-storage-3.3.4
   name: nutanix-csi-controller-role
   namespace: kube-system
 rules:
@@ -30,6 +56,40 @@ rules:
       - nodes
     verbs:
       - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
   - apiGroups:
       - ""
     resources:
@@ -67,10 +127,27 @@ rules:
       - list
       - watch
   - apiGroups:
+      - storage.k8s.io
+    resources:
+      - volumeattachments
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - patch
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - volumeattachments/status
+    verbs:
+      - patch
+  - apiGroups:
       - ""
     resources:
       - events
     verbs:
+      - get
       - list
       - watch
       - create
@@ -183,6 +260,45 @@ rules:
       - list
       - watch
       - update
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    helm.sh/hook: pre-upgrade,pre-install
+    helm.sh/hook-delete-policy: hook-succeeded,before-hook-creation,hook-failed
+    helm.sh/hook-weight: "0"
+  labels:
+    app: nutanix-csi-storage-precheck
+  name: nutanix-csi-storage-precheck-role
+  namespace: kube-system
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - create
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -212,12 +328,41 @@ subjects:
     name: nutanix-csi-node
     namespace: kube-system
 ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    helm.sh/hook: pre-upgrade,pre-install
+    helm.sh/hook-delete-policy: hook-succeeded,before-hook-creation,hook-failed
+    helm.sh/hook-weight: "0"
+  labels:
+    app: nutanix-csi-storage-precheck
+  name: nutanix-csi-storage-precheck-binding
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nutanix-csi-storage-precheck-role
+subjects:
+  - kind: ServiceAccount
+    name: nutanix-csi-storage-precheck-serviceaccount
+    namespace: kube-system
+---
 apiVersion: v1
 data:
-  key: '{{ printf "%s:%s:%s:%s" .Credentials.NUTANIX_ENDPOINT .Credentials.NUTANIX_PORT .Credentials.NUTANIX_USERNAME .Credentials.NUTANIX_PASSWORD | b64enc }}'
-kind: Secret
+  associateCategoriesToVolume: "true"
+  kubernetesClusterDeploymentType: non-bare-metal
+  usePC: "true"
+kind: ConfigMap
 metadata:
-  name: ntnx-secret
+  labels:
+    app.kubernetes.io/instance: nutanix-csi-storage
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/management-plane: PrismCentral
+    app.kubernetes.io/name: nutanix-csi-storage
+    app.kubernetes.io/version: 3.3.4
+    helm.sh/chart: nutanix-csi-storage-3.3.4
+  name: ntnx-init-configmap
   namespace: kube-system
 ---
 apiVersion: v1
@@ -225,6 +370,12 @@ kind: Service
 metadata:
   labels:
     app: nutanix-csi-metrics
+    app.kubernetes.io/instance: nutanix-csi-storage
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/management-plane: PrismCentral
+    app.kubernetes.io/name: nutanix-csi-storage
+    app.kubernetes.io/version: 3.3.4
+    helm.sh/chart: nutanix-csi-storage-3.3.4
   name: nutanix-csi-metrics
   namespace: kube-system
 spec:
@@ -233,10 +384,18 @@ spec:
       port: 9809
       protocol: TCP
       targetPort: 9809
-    - name: resizer
+    - name: attacher
       port: 9810
       protocol: TCP
       targetPort: 9810
+    - name: resizer
+      port: 9811
+      protocol: TCP
+      targetPort: 9811
+    - name: snapshotter
+      port: 9812
+      protocol: TCP
+      targetPort: 9812
   selector:
     app: nutanix-csi-controller
   type: ClusterIP
@@ -244,6 +403,13 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  labels:
+    app.kubernetes.io/instance: nutanix-csi-storage
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/management-plane: PrismCentral
+    app.kubernetes.io/name: nutanix-csi-storage
+    app.kubernetes.io/version: 3.3.4
+    helm.sh/chart: nutanix-csi-storage-3.3.4
   name: nutanix-csi-controller
   namespace: kube-system
 spec:
@@ -259,6 +425,7 @@ spec:
   template:
     metadata:
       annotations:
+        kubectl.kubernetes.io/default-container: nutanix-csi-plugin
         kubeone.k8c.io/cabundle-hash: '{{ CABundle | sha256sum }}'
         kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
       labels:
@@ -266,23 +433,26 @@ spec:
     spec:
       affinity:
         podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app: nutanix-csi-controller
-                topologyKey: kubernetes.io/hostname
-              weight: 100
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - nutanix-csi-controller
+              topologyKey: kubernetes.io/hostname
       containers:
         - args:
             - --csi-address=$(ADDRESS)
-            - --timeout=60s
+            - --timeout=300s
             - --worker-threads=16
             - --extra-create-metadata=true
             - --default-fstype=ext4
             - --http-endpoint=:9809
-            - --v=2
+            - --feature-gates=Topology=true
             - --leader-election=true
+            - --v=2
+            - --prevent-volume-mode-conversion=true
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
@@ -290,6 +460,32 @@ spec:
           imagePullPolicy: IfNotPresent
           name: csi-provisioner
           resources:
+            limits:
+              cpu: 100m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 200Mi
+          volumeMounts:
+            - mountPath: /var/lib/csi/sockets/pluginproxy/
+              name: socket-dir
+        - args:
+            - --csi-address=$(ADDRESS)
+            - --timeout=300s
+            - --worker-threads=16
+            - --http-endpoint=:9810
+            - --v=2
+            - --leader-election=true
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          image: '{{ .InternalImages.Get "NutanixCSIAttacher" }}'
+          imagePullPolicy: IfNotPresent
+          name: csi-attacher
+          resources:
+            limits:
+              cpu: 100m
+              memory: 200Mi
             requests:
               cpu: 100m
               memory: 200Mi
@@ -299,10 +495,10 @@ spec:
         - args:
             - --v=2
             - --csi-address=$(ADDRESS)
-            - --timeout=60s
+            - --timeout=300s
             - --leader-election=true
             - --handle-volume-inuse-error=false
-            - --http-endpoint=:9810
+            - --http-endpoint=:9811
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
@@ -310,9 +506,12 @@ spec:
           imagePullPolicy: IfNotPresent
           name: csi-resizer
           resources:
+            limits:
+              cpu: 100m
+              memory: 200Mi
             requests:
-              cpu: 5m
-              memory: 30Mi
+              cpu: 100m
+              memory: 200Mi
           volumeMounts:
             - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
@@ -321,6 +520,7 @@ spec:
             - --leader-election=true
             - --logtostderr=true
             - --timeout=300s
+            - --http-endpoint=:9812
           env:
             - name: ADDRESS
               value: /csi/csi.sock
@@ -338,15 +538,35 @@ spec:
             - --endpoint=$(CSI_ENDPOINT)
             - --nodeid=$(NODE_ID)
             - --drivername=csi.nutanix.com
+            - --files-ro-volumes-clone-enabled=false
+            - --force-detach-existing-client-for-sync-rep-vol=false
           env:
-            - name: SSL_CERT_FILE
-              value: /etc/kubeone/certs/ca-certificates.crt
             - name: CSI_ENDPOINT
               value: unix:///var/lib/csi/sockets/pluginproxy/csi.sock
             - name: NODE_ID
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+            - name: CSI_CONTROLLER_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: CSI_SECRET_DIR
+              value: /var/run/ntnx-secret-dir
+            - name: CSI_CATEGORY_CONFIGMAP_NAME
+              value: ntnx-cluster-configmap
+            - name: CSI_CATEGORY_CONFIGMAP_NAMESPACE
+              value: kube-system
+            - name: CSI_INIT_CONFIGMAP_NAME
+              value: ntnx-init-configmap
+            - name: CSI_INIT_CONFIGMAP_NAMESPACE
+              value: kube-system
+            - name: CSI_CATEGORYID_CONFIGMAP_NAME
+              value: nutanix-csi-storage-category-id
+            - name: CSI_CATEGORYID_CONFIGMAP_NAMESPACE
+              value: kube-system
+            - name: CSI_PLUGIN_TYPE
+              value: CONTROLLER_PLUGIN
           image: '{{ .InternalImages.Get "NutanixCSI" }}'
           imagePullPolicy: IfNotPresent
           livenessProbe:
@@ -354,7 +574,7 @@ spec:
             httpGet:
               path: /healthz
               port: http-endpoint
-            initialDelaySeconds: 10
+            initialDelaySeconds: 60
             periodSeconds: 2
             timeoutSeconds: 3
           name: nutanix-csi-plugin
@@ -363,20 +583,23 @@ spec:
               name: http-endpoint
               protocol: TCP
           resources:
+            limits:
+              cpu: 200m
+              memory: 200Mi
             requests:
-              cpu: 100m
+              cpu: 200m
               memory: 200Mi
           securityContext:
             allowPrivilegeEscalation: true
             privileged: true
           volumeMounts:
-            - mountPath: /etc/kubeone/certs
-              name: ca-bundle
-              readOnly: true
             - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
             - mountPath: /host
               name: root-dir
+            - mountPath: /var/run/ntnx-secret-dir
+              name: pc-secret
+              readOnly: true
         - args:
             - --csi-address=/csi/csi.sock
             - --http-endpoint=:9807
@@ -389,6 +612,21 @@ spec:
               memory: 20Mi
           volumeMounts:
             - mountPath: /csi
+              name: socket-dir
+        - args:
+            - --v=5
+            - --csi-address=$(ADDRESS)
+            - --leader-election=false
+            - --http-endpoint=:9813
+            - --monitor-interval=1m0s
+          env:
+            - name: ADDRESS
+              value: unix:///var/lib/csi/sockets/pluginproxy/csi.sock
+          image: '{{ .InternalImages.Get "NutanixCSIExternalHealthMonitor" }}'
+          imagePullPolicy: IfNotPresent
+          name: csi-external-health-monitor-controller
+          volumeMounts:
+            - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
       hostNetwork: true
       nodeSelector:
@@ -403,20 +641,26 @@ spec:
           key: node-role.kubernetes.io/control-plane
           operator: Exists
       volumes:
-        - configMap:
-            name: ca-bundle
-            optional: true
-          name: ca-bundle
         - emptyDir: {}
           name: socket-dir
         - hostPath:
             path: /
             type: Directory
           name: root-dir
+        - name: pc-secret
+          secret:
+            secretName: ntnx-pc-secret
 ---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
+  labels:
+    app.kubernetes.io/instance: nutanix-csi-storage
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/management-plane: PrismCentral
+    app.kubernetes.io/name: nutanix-csi-storage
+    app.kubernetes.io/version: 3.3.4
+    helm.sh/chart: nutanix-csi-storage-3.3.4
   name: nutanix-csi-node
   namespace: kube-system
 spec:
@@ -426,6 +670,7 @@ spec:
   template:
     metadata:
       annotations:
+        kubectl.kubernetes.io/default-container: nutanix-csi-node
         kubeone.k8c.io/cabundle-hash: '{{ CABundle | sha256sum }}'
         kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
       labels:
@@ -449,9 +694,12 @@ spec:
           imagePullPolicy: IfNotPresent
           name: driver-registrar
           resources:
+            limits:
+              cpu: 100m
+              memory: 200Mi
             requests:
               cpu: 100m
-              memory: 20Mi
+              memory: 200Mi
           volumeMounts:
             - mountPath: /csi/
               name: plugin-dir
@@ -461,9 +709,8 @@ spec:
             - --endpoint=$(CSI_ENDPOINT)
             - --nodeid=$(NODE_ID)
             - --drivername=csi.nutanix.com
+            - --max-volumes-per-node=64
           env:
-            - name: SSL_CERT_FILE
-              value: /etc/kubeone/certs/ca-certificates.crt
             - name: CSI_ENDPOINT
               value: unix:///csi/csi.sock
             - name: NODE_ID
@@ -474,6 +721,14 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+            - name: CSI_SECRET_DIR
+              value: /var/run/ntnx-secret-dir
+            - name: CSI_INIT_CONFIGMAP_NAME
+              value: ntnx-init-configmap
+            - name: CSI_INIT_CONFIGMAP_NAMESPACE
+              value: kube-system
+            - name: CSI_PLUGIN_TYPE
+              value: NODE_PLUGIN
           image: '{{ .InternalImages.Get "NutanixCSI" }}'
           imagePullPolicy: IfNotPresent
           livenessProbe:
@@ -481,7 +736,7 @@ spec:
             httpGet:
               path: /healthz
               port: http-endpoint
-            initialDelaySeconds: 10
+            initialDelaySeconds: 60
             periodSeconds: 2
             timeoutSeconds: 3
           name: nutanix-csi-node
@@ -490,15 +745,18 @@ spec:
               name: http-endpoint
               protocol: TCP
           resources:
+            limits:
+              cpu: 200m
+              memory: 200Mi
             requests:
-              cpu: 100m
+              cpu: 200m
               memory: 200Mi
           securityContext:
             allowPrivilegeEscalation: true
             privileged: true
           volumeMounts:
-            - mountPath: /etc/kubeone/certs
-              name: ca-bundle
+            - mountPath: /var/run/ntnx-secret-dir
+              name: pc-secret
               readOnly: true
             - mountPath: /csi
               name: plugin-dir
@@ -526,6 +784,8 @@ spec:
             - mountPath: /csi
               name: plugin-dir
       hostNetwork: true
+      nodeSelector:
+        kubernetes.io/os: linux
       priorityClassName: system-cluster-critical
       serviceAccount: nutanix-csi-node
       tolerations:
@@ -536,10 +796,6 @@ spec:
           key: node-role.kubernetes.io/control-plane
           operator: Exists
       volumes:
-        - configMap:
-            name: ca-bundle
-            optional: true
-          name: ca-bundle
         - hostPath:
             path: /var/lib/kubelet/plugins_registry/
             type: Directory
@@ -563,15 +819,58 @@ spec:
             path: /
             type: Directory
           name: root-dir
+        - name: pc-secret
+          secret:
+            secretName: ntnx-pc-secret
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%
     type: RollingUpdate
 ---
-apiVersion: storage.k8s.io/v1
-kind: CSIDriver
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: csi.nutanix.com
+  annotations:
+    helm.sh/hook: pre-upgrade,pre-install
+    helm.sh/hook-delete-policy: hook-succeeded,before-hook-creation
+    helm.sh/hook-weight: "1"
+  labels:
+    app: nutanix-csi-storage-precheck
+  name: nutanix-csi-storage-precheck-job
 spec:
-  attachRequired: false
-  podInfoOnMount: true
+  backoffLimit: 0
+  template:
+    metadata:
+      name: nutanix-csi-storage-precheck-job
+    spec:
+      containers:
+        - env:
+            - name: CSI_PC_SECRET_DIR
+              value: /var/run/prechek-pc-secret-dir
+            - name: CSI_CATEGORY_CONFIGMAP_NAME
+              value: ntnx-cluster-configmap
+            - name: CSI_CATEGORY_CONFIGMAP_NAMESPACE
+              value: kube-system
+            - name: CSI_CATEGORYID_CONFIGMAP_NAME
+              value: nutanix-csi-storage-category-id
+            - name: PRECHECK_CONFIGMAP_NAME
+              value: nutanix-csi-storage-precheck-configmap
+            - name: RELEASE_NAMESPACE
+              value: kube-system
+            - name: MIN_SUPPORTED_PC_VERSION
+              value: pc.2024.2
+            - name: USE_PC
+              value: "true"
+          image: '{{ .InternalImages.Get "NutanixCSIPrecheck" }}'
+          imagePullPolicy: IfNotPresent
+          name: ntnx-csi-precheck
+          volumeMounts:
+            - mountPath: /var/run/prechek-pc-secret-dir
+              name: precheck-pc-secret
+              readOnly: true
+      restartPolicy: Never
+      serviceAccountName: nutanix-csi-storage-precheck-serviceaccount
+      volumes:
+        - name: precheck-pc-secret
+          secret:
+            secretName: ntnx-pc-secret
