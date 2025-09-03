@@ -49,7 +49,7 @@ func Execute() {
 		panic(err)
 	}
 
-	rootCmd := newRoot()
+	rootCmd := NewRoot()
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
@@ -69,7 +69,7 @@ func Execute() {
 	}
 }
 
-func newRoot() *cobra.Command {
+func NewRoot() *cobra.Command {
 	opts := &globalOptions{}
 
 	rootCmd := &cobra.Command{
