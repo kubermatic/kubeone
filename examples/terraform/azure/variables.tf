@@ -158,15 +158,11 @@ variable "image_references" {
     flatcar = {
       image = {
         publisher = "kinvolk"
-        offer     = "flatcar-container-linux"
+        offer     = "flatcar-container-linux-corevm-amd64"
         sku       = "stable"
-        version   = "3815.2.0"
+        version   = "4230.2.2"
       }
-      plan = [{
-        name      = "stable"
-        publisher = "kinvolk"
-        product   = "flatcar-container-linux"
-      }]
+      plan         = []
       ssh_username = "core"
       worker_os    = "flatcar"
     }

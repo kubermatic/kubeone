@@ -16,7 +16,6 @@ limitations under the License.
 
 provider "azurerm" {
   features {}
-  skip_provider_registration = true
 }
 
 locals {
@@ -61,7 +60,6 @@ resource "azurerm_route_table" "rt" {
   name                          = "${var.cluster_name}-rt"
   location                      = azurerm_resource_group.rg.location
   resource_group_name           = azurerm_resource_group.rg.name
-  disable_bgp_route_propagation = false
 
   tags = {
     environment = "kubeone"
@@ -208,7 +206,7 @@ resource "azurerm_lb_rule" "lb_rule" {
   frontend_port                  = 6443
   backend_port                   = 6443
   frontend_ip_configuration_name = "KubeApi"
-  enable_floating_ip             = false
+  floating_ip_enabled            = false
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.backend_pool.0.id]
   idle_timeout_in_minutes        = 5
   probe_id                       = azurerm_lb_probe.lb_probe.0.id
