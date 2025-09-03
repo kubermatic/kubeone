@@ -6,10 +6,9 @@ tolerations:
     operator: "Exists"
     effect: "NoSchedule"
 
-# Prism Element endpoint and credentials
-prismEndPoint: ".Credentials.NUTANIX_ENDPOINT"
-username: ".Credentials.NUTANIX_USERNAME"
-password: ".Credentials.NUTANIX_PASSWORD"
+createVolumeSnapshotClass: false
+createSecret: false
+createPrismCentralSecret: false
 
 controller:
   nodeSelector:
