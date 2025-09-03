@@ -162,6 +162,7 @@ variable "image_references" {
         sku       = "stable"
         version   = "4230.2.2"
       }
+      plan         = []
       ssh_username = "core"
       worker_os    = "flatcar"
     }
