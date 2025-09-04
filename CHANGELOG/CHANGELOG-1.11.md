@@ -1,3 +1,16 @@
+# [v1.11.2](https://github.com/kubermatic/kubeone/releases/tag/v1.11.2) - 2025-09-04
+
+## Changelog since v1.11.1
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Default canal_iface_regex only for hetzner ([#3798](https://github.com/kubermatic/kubeone/pull/3798), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix Nutanix credentials ([#3788](https://github.com/kubermatic/kubeone/pull/3788), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fixes the Hubbele Relay Connection Issues with the Cilium Agent, SSL Connection is fixed by mounting the Server Certificates in the Cilium Agent Container ([#3803](https://github.com/kubermatic/kubeone/pull/3803), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Make it possible to configure FLANNELD_IFACE ([#3792](https://github.com/kubermatic/kubeone/pull/3792), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.11.1](https://github.com/kubermatic/kubeone/releases/tag/v1.11.1) - 2025-07-24
 
 ## Changelog since v1.11.0
