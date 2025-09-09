@@ -43,22 +43,24 @@ var _ executor.Tunneler = &connection{}
 // Opts represents all the possible options for connecting to
 // a remote server via SSH.
 type Opts struct {
-	Context              context.Context
-	Username             string
-	Password             string
-	Hostname             string
-	Port                 int
-	PrivateKey           string
-	KeyFile              string
-	SSHCert              string
-	SSHCertFile          string
-	HostPublicKey        []byte
-	AgentSocket          string
-	Timeout              time.Duration
-	Bastion              string
-	BastionPort          int
-	BastionUser          string
-	BastionHostPublicKey []byte
+	Context               context.Context
+	Username              string
+	Password              string
+	Hostname              string
+	Port                  int
+	PrivateKey            []byte
+	KeyFile               string
+	SSHCert               string
+	SSHCertFile           string
+	HostPublicKey         []byte
+	AgentSocket           string
+	Timeout               time.Duration
+	Bastion               string
+	BastionPort           int
+	BastionUser           string
+	BastionHostPublicKey  []byte
+	BastionPrivateKeyFile string
+	BastionPrivateKey     []byte
 }
 
 func validateOptions(o Opts) (Opts, error) {
@@ -80,8 +82,18 @@ func validateOptions(o Opts) (Opts, error) {
 			return o, fail.Config(err, "reading SSH private key")
 		}
 
-		o.PrivateKey = string(content)
+		o.PrivateKey = content
 		o.KeyFile = ""
+	}
+
+	if len(o.BastionPrivateKeyFile) > 0 {
+		content, err := os.ReadFile(o.BastionPrivateKeyFile)
+		if err != nil {
+			return o, fail.Config(err, "reading bastion SSH private key")
+		}
+
+		o.BastionPrivateKey = content
+		o.BastionPrivateKeyFile = ""
 	}
 
 	if len(o.SSHCertFile) > 0 {
@@ -136,7 +148,7 @@ func NewConnection(connector *Connector, opts Opts) (executor.Interface, error) 
 	}
 
 	if len(opts.PrivateKey) > 0 {
-		signer, parseErr := ssh.ParsePrivateKey([]byte(opts.PrivateKey))
+		signer, parseErr := ssh.ParsePrivateKey(opts.PrivateKey)
 		if parseErr != nil {
 			return nil, fail.SSHError{
 				Op:  "parsing private key",
@@ -173,6 +185,17 @@ func NewConnection(connector *Connector, opts Opts) (executor.Interface, error) 
 		} else {
 			authMethods = append(authMethods, ssh.PublicKeys(signer))
 		}
+	}
+
+	if len(opts.BastionPrivateKey) > 0 {
+		signer, parseErr := ssh.ParsePrivateKey(opts.BastionPrivateKey)
+		if parseErr != nil {
+			return nil, fail.SSHError{
+				Op:  "parsing private key",
+				Err: errors.Wrap(parseErr, "bastion SSH key could not be parsed (note that password-protected keys are not supported)"),
+			}
+		}
+		authMethods = append(authMethods, ssh.PublicKeys(signer))
 	}
 
 	if len(opts.AgentSocket) > 0 {

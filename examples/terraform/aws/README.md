@@ -61,6 +61,7 @@ No modules.
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS region to speak to | `string` | `"eu-west-3"` | no |
 | <a name="input_bastion_host_key"></a> [bastion\_host\_key](#input\_bastion\_host\_key) | Bastion SSH host public key | `string` | `null` | no |
 | <a name="input_bastion_port"></a> [bastion\_port](#input\_bastion\_port) | Bastion SSH port | `number` | `22` | no |
+| <a name="input_bastion_private_key_file"></a> [bastion\_private\_key\_file](#input\_bastion\_private\_key\_file) | SSH private key file used to access bastion | `string` | `""` | no |
 | <a name="input_bastion_type"></a> [bastion\_type](#input\_bastion\_type) | instance type for bastion | `string` | `"t3.nano"` | no |
 | <a name="input_bastion_user"></a> [bastion\_user](#input\_bastion\_user) | Bastion SSH username | `string` | `""` | no |
 | <a name="input_cluster_autoscaler_max_replicas"></a> [cluster\_autoscaler\_max\_replicas](#input\_cluster\_autoscaler\_max\_replicas) | maximum number of replicas per MachineDeployment (requires cluster-autoscaler) | `number` | `0` | no |
