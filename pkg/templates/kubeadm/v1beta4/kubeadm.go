@@ -92,9 +92,11 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 			APIVersion: "kubeadm.k8s.io/v1beta4",
 			Kind:       "ClusterConfiguration",
 		},
-		ClusterName:          cluster.Name,
-		KubernetesVersion:    cluster.Versions.Kubernetes,
-		ControlPlaneEndpoint: controlPlaneEndpoint,
+		ClusterName:                 cluster.Name,
+		CertificateValidityPeriod:   cluster.CertificateAuthority.CertificateValidityPeriod,
+		CACertificateValidityPeriod: cluster.CertificateAuthority.CACertificateValidityPeriod,
+		KubernetesVersion:           cluster.Versions.Kubernetes,
+		ControlPlaneEndpoint:        controlPlaneEndpoint,
 		APIServer: kubeadmv1beta4.APIServer{
 			ControlPlaneComponent: kubeadmv1beta4.ControlPlaneComponent{
 				ExtraArgs: []kubeadmv1beta4.Arg{

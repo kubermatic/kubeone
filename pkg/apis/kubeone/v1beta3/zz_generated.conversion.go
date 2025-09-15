@@ -26,7 +26,8 @@ import (
 	unsafe "unsafe"
 
 	kubeone "k8c.io/kubeone/pkg/apis/kubeone"
-	v1 "k8s.io/api/core/v1"
+	corev1 "k8s.io/api/core/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	conversion "k8s.io/apimachinery/pkg/conversion"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )
@@ -936,6 +937,8 @@ func Convert_kubeone_CanalSpec_To_v1beta3_CanalSpec(in *kubeone.CanalSpec, out *
 func autoConvert_v1beta3_CertificateAuthorithyConfig_To_kubeone_CertificateAuthorithyConfig(in *CertificateAuthorithyConfig, out *kubeone.CertificateAuthorithyConfig, s conversion.Scope) error {
 	out.Bundle = in.Bundle
 	out.File = in.File
+	out.CertificateValidityPeriod = (*v1.Duration)(unsafe.Pointer(in.CertificateValidityPeriod))
+	out.CACertificateValidityPeriod = (*v1.Duration)(unsafe.Pointer(in.CACertificateValidityPeriod))
 	return nil
 }
 
@@ -947,6 +950,8 @@ func Convert_v1beta3_CertificateAuthorithyConfig_To_kubeone_CertificateAuthorith
 func autoConvert_kubeone_CertificateAuthorithyConfig_To_v1beta3_CertificateAuthorithyConfig(in *kubeone.CertificateAuthorithyConfig, out *CertificateAuthorithyConfig, s conversion.Scope) error {
 	out.Bundle = in.Bundle
 	out.File = in.File
+	out.CertificateValidityPeriod = (*v1.Duration)(unsafe.Pointer(in.CertificateValidityPeriod))
+	out.CACertificateValidityPeriod = (*v1.Duration)(unsafe.Pointer(in.CACertificateValidityPeriod))
 	return nil
 }
 
@@ -1568,7 +1573,7 @@ func autoConvert_v1beta3_HostConfig_To_kubeone_HostConfig(in *HostConfig, out *k
 	out.BastionPrivateKeyFile = in.BastionPrivateKeyFile
 	out.Hostname = in.Hostname
 	out.IsLeader = in.IsLeader
-	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))
+	out.Taints = *(*[]corev1.Taint)(unsafe.Pointer(&in.Taints))
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
 	if err := Convert_v1beta3_KubeletConfig_To_kubeone_KubeletConfig(&in.Kubelet, &out.Kubelet, s); err != nil {
@@ -1601,7 +1606,7 @@ func autoConvert_kubeone_HostConfig_To_v1beta3_HostConfig(in *kubeone.HostConfig
 	out.BastionPrivateKeyFile = in.BastionPrivateKeyFile
 	out.Hostname = in.Hostname
 	out.IsLeader = in.IsLeader
-	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))
+	out.Taints = *(*[]corev1.Taint)(unsafe.Pointer(&in.Taints))
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
 	if err := Convert_kubeone_KubeletConfig_To_v1beta3_KubeletConfig(&in.Kubelet, &out.Kubelet, s); err != nil {
@@ -2117,7 +2122,7 @@ func autoConvert_v1beta3_ProviderSpec_To_kubeone_ProviderSpec(in *ProviderSpec, 
 	out.NodeAnnotations = *(*map[string]string)(unsafe.Pointer(&in.NodeAnnotations))
 	out.MachineObjectAnnotations = *(*map[string]string)(unsafe.Pointer(&in.MachineObjectAnnotations))
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
-	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))
+	out.Taints = *(*[]corev1.Taint)(unsafe.Pointer(&in.Taints))
 	out.SSHPublicKeys = *(*[]string)(unsafe.Pointer(&in.SSHPublicKeys))
 	out.OperatingSystem = in.OperatingSystem
 	out.OperatingSystemSpec = *(*json.RawMessage)(unsafe.Pointer(&in.OperatingSystemSpec))
@@ -2138,7 +2143,7 @@ func autoConvert_kubeone_ProviderSpec_To_v1beta3_ProviderSpec(in *kubeone.Provid
 	out.NodeAnnotations = *(*map[string]string)(unsafe.Pointer(&in.NodeAnnotations))
 	out.MachineObjectAnnotations = *(*map[string]string)(unsafe.Pointer(&in.MachineObjectAnnotations))
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
-	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))
+	out.Taints = *(*[]corev1.Taint)(unsafe.Pointer(&in.Taints))
 	out.SSHPublicKeys = *(*[]string)(unsafe.Pointer(&in.SSHPublicKeys))
 	out.OperatingSystem = in.OperatingSystem
 	out.OperatingSystemSpec = *(*json.RawMessage)(unsafe.Pointer(&in.OperatingSystemSpec))
