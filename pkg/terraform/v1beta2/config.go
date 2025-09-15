@@ -86,24 +86,25 @@ type controlPlane struct {
 }
 
 type hostsSpec struct {
-	PublicAddress     []string          `json:"public_address"`
-	IPv6Addresses     [][]string        `json:"ipv6_addresses"`
-	PrivateAddress    []string          `json:"private_address"`
-	Hostnames         []string          `json:"hostnames"`
-	OperatingSystem   string            `json:"operating_system"`
-	SSHUser           string            `json:"ssh_user"`
-	SSHPort           int               `json:"ssh_port"`
-	SSHPrivateKeyFile string            `json:"ssh_private_key_file"`
-	SSHCertFile       string            `json:"ssh_cert_file"`
-	SSHAgentSocket    string            `json:"ssh_agent_socket"`
-	SSHHostKeys       [][]byte          `json:"ssh_hosts_keys"`
-	Bastion           string            `json:"bastion"`
-	BastionPort       int               `json:"bastion_port"`
-	BastionUser       string            `json:"bastion_user"`
-	BastionHostKey    []byte            `json:"bastion_host_key"`
-	Kubelet           kubeletSpec       `json:"kubelet,omitempty"`
-	Labels            map[string]string `json:"labels"`
-	Annotations       map[string]string `json:"annotations"`
+	PublicAddress         []string          `json:"public_address"`
+	IPv6Addresses         [][]string        `json:"ipv6_addresses"`
+	PrivateAddress        []string          `json:"private_address"`
+	Hostnames             []string          `json:"hostnames"`
+	OperatingSystem       string            `json:"operating_system"`
+	SSHUser               string            `json:"ssh_user"`
+	SSHPort               int               `json:"ssh_port"`
+	SSHPrivateKeyFile     string            `json:"ssh_private_key_file"`
+	SSHCertFile           string            `json:"ssh_cert_file"`
+	SSHAgentSocket        string            `json:"ssh_agent_socket"`
+	SSHHostKeys           [][]byte          `json:"ssh_hosts_keys"`
+	Bastion               string            `json:"bastion"`
+	BastionPort           int               `json:"bastion_port"`
+	BastionUser           string            `json:"bastion_user"`
+	BastionHostKey        []byte            `json:"bastion_host_key"`
+	BastionPrivateKeyFile string            `json:"bastion_private_key_file"`
+	Kubelet               kubeletSpec       `json:"kubelet,omitempty"`
+	Labels                map[string]string `json:"labels"`
+	Annotations           map[string]string `json:"annotations"`
 }
 
 type kubeletSpec struct {
@@ -356,23 +357,24 @@ func newHostConfig(publicIP, privateIP string, ipv6addr []string, idx int, spec 
 	}
 
 	hostConfig := kubeonev1beta2.HostConfig{
-		Bastion:              spec.Bastion,
-		BastionPort:          spec.BastionPort,
-		BastionUser:          spec.BastionUser,
-		BastionHostPublicKey: spec.BastionHostKey,
-		Hostname:             hostname,
-		OperatingSystem:      kubeonev1beta2.OperatingSystemName(spec.OperatingSystem),
-		PrivateAddress:       privateIP,
-		PublicAddress:        publicIP,
-		IPv6Addresses:        ipv6addr,
-		SSHAgentSocket:       spec.SSHAgentSocket,
-		SSHPrivateKeyFile:    spec.SSHPrivateKeyFile,
-		SSHCertFile:          spec.SSHCertFile,
-		SSHUsername:          spec.SSHUser,
-		SSHPort:              spec.SSHPort,
-		Kubelet:              kubeonev1beta2.KubeletConfig{},
-		Labels:               spec.Labels,
-		Annotations:          spec.Annotations,
+		Bastion:               spec.Bastion,
+		BastionPort:           spec.BastionPort,
+		BastionUser:           spec.BastionUser,
+		BastionHostPublicKey:  spec.BastionHostKey,
+		BastionPrivateKeyFile: spec.BastionPrivateKeyFile,
+		Hostname:              hostname,
+		OperatingSystem:       kubeonev1beta2.OperatingSystemName(spec.OperatingSystem),
+		PrivateAddress:        privateIP,
+		PublicAddress:         publicIP,
+		IPv6Addresses:         ipv6addr,
+		SSHAgentSocket:        spec.SSHAgentSocket,
+		SSHPrivateKeyFile:     spec.SSHPrivateKeyFile,
+		SSHCertFile:           spec.SSHCertFile,
+		SSHUsername:           spec.SSHUser,
+		SSHPort:               spec.SSHPort,
+		Kubelet:               kubeonev1beta2.KubeletConfig{},
+		Labels:                spec.Labels,
+		Annotations:           spec.Annotations,
 	}
 
 	if idx < len(spec.SSHHostKeys) {

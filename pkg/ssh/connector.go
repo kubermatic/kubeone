@@ -99,22 +99,20 @@ func (c *Connector) forgetConnection(conn *connection) {
 }
 
 func sshOpts(host kubeoneapi.HostConfig) Opts {
-	privateKeyFile := resolveHomeDir(host.SSHPrivateKeyFile)
-	certFile := resolveHomeDir(host.SSHCertFile)
-
 	return Opts{
-		Username:             host.SSHUsername,
-		Port:                 host.SSHPort,
-		Hostname:             host.PublicAddress,
-		KeyFile:              privateKeyFile,
-		SSHCertFile:          certFile,
-		HostPublicKey:        host.SSHHostPublicKey,
-		AgentSocket:          host.SSHAgentSocket,
-		Timeout:              10 * time.Second,
-		Bastion:              host.Bastion,
-		BastionPort:          host.BastionPort,
-		BastionUser:          host.BastionUser,
-		BastionHostPublicKey: host.BastionHostPublicKey,
+		Username:              host.SSHUsername,
+		Port:                  host.SSHPort,
+		Hostname:              host.PublicAddress,
+		KeyFile:               resolveHomeDir(host.SSHPrivateKeyFile),
+		SSHCertFile:           resolveHomeDir(host.SSHCertFile),
+		HostPublicKey:         host.SSHHostPublicKey,
+		AgentSocket:           host.SSHAgentSocket,
+		Timeout:               10 * time.Second,
+		Bastion:               host.Bastion,
+		BastionPort:           host.BastionPort,
+		BastionUser:           host.BastionUser,
+		BastionHostPublicKey:  host.BastionHostPublicKey,
+		BastionPrivateKeyFile: resolveHomeDir(host.BastionPrivateKeyFile),
 	}
 }
 
