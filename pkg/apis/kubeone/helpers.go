@@ -37,7 +37,7 @@ const (
 
 var (
 	preV131Constraint  = semverutil.MustParseConstraint("< 1.31")
-	postV133Constraint = semverutil.MustParseConstraint(">= 1.33")
+	postV134Constraint = semverutil.MustParseConstraint(">= 1.34")
 )
 
 // Leader returns the first configured host. Only call this after
@@ -227,7 +227,7 @@ func (v VersionConfig) SandboxImage(imageRegistry func(string) string) (string, 
 	case preV131Constraint.Check(kubeSemVer):
 		return fmt.Sprintf("%s/pause:3.9", registry), nil
 	default:
-		return fmt.Sprintf("%s/pause:3.10", registry), nil
+		return fmt.Sprintf("%s/pause:3.10.1", registry), nil
 	}
 }
 
@@ -360,7 +360,7 @@ func (c KubeOneCluster) CSIMigrationFeatureGates(complete bool) (map[string]bool
 func (c KubeOneCluster) canHaveCloudProviderFeatureGates() bool {
 	currentVersion := semver.MustParse(c.Versions.Kubernetes)
 
-	return !postV133Constraint.Check(currentVersion)
+	return !postV134Constraint.Check(currentVersion)
 }
 
 func marshalFeatureGates(fgm map[string]bool) string {
