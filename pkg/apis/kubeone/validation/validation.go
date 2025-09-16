@@ -733,8 +733,9 @@ func ValidateAddons(o *kubeoneapi.Addons, fldPath *field.Path) field.ErrorList {
 func validateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	for _, hr := range helmReleases {
-		if hr.Chart == "" {
+	for i, hr := range helmReleases {
+		fldPath := fldPath.Index(i)
+		if hr.Chart == "" && hr.ChartURL == "" {
 			allErrs = append(allErrs, field.Required(fldPath.Child("chart"), hr.Chart))
 		}
 
@@ -742,11 +743,15 @@ func validateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.
 			allErrs = append(allErrs, field.Required(fldPath.Child("namespace"), hr.Namespace))
 		}
 
-		if hr.RepoURL == "" {
+		if hr.RepoURL == "" && hr.ChartURL == "" {
 			_, err := helm.GetChartNameFromChartYAML(hr.Chart)
 			if err != nil {
 				allErrs = append(allErrs, field.Invalid(fldPath.Child("chart"), hr.Chart, fmt.Sprintf("invalid local chart: %v", err)))
 			}
+		}
+
+		if hr.ChartURL != "" && hr.ReleaseName == "" {
+			allErrs = append(allErrs, field.Required(fldPath.Child("releaseName"), "since chartURL is given directly, releaseName is required"))
 		}
 
 		for idx, helmValues := range hr.Values {
