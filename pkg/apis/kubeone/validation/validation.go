@@ -734,7 +734,7 @@ func validateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.
 	allErrs := field.ErrorList{}
 
 	for i, hr := range helmReleases {
-		fldPath := fldPath.Index(i)
+		fldPath := fldPath.Index(i) //nolint:govet
 		if hr.Chart == "" && hr.ChartURL == "" {
 			allErrs = append(allErrs, field.Required(fldPath.Child("chart"), hr.Chart))
 		}
