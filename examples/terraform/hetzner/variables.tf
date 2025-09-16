@@ -123,7 +123,7 @@ variable "image_references" {
     }
 
     rockylinux = {
-      image_name   = "rocky-8"
+      image_name   = "rocky-9"
       ssh_username = "root"
       worker_os    = "rockylinux"
     }

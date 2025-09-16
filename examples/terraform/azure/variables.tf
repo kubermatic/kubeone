@@ -171,11 +171,11 @@ variable "image_references" {
       image = {
         publisher = "RedHat"
         offer     = "rhel-byos"
-        sku       = "rhel-lvm85"
-        version   = "8.5.20220316"
+        sku       = "rhel-lvm95"
+        version   = "9.5.2024112215"
       }
       plan = [{
-        name      = "rhel-lvm85"
+        name      = "rhel-lvm95"
         publisher = "redhat"
         product   = "rhel-byos"
       }]

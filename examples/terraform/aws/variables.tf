@@ -216,14 +216,14 @@ variable "ami_filters" {
 
     rhel = {
       owners       = ["309956199498"] # Red Hat
-      image_name   = ["RHEL-8*_HVM-*-x86_64-*"]
+      image_name   = ["RHEL-9*_HVM-*-x86_64-*"]
       ssh_username = "ec2-user"
       worker_os    = "rhel"
     }
 
     rockylinux = {
       owners       = ["792107900819"] # RockyLinux
-      image_name   = ["Rocky-8-EC2-*.x86_64"]
+      image_name   = ["Rocky-9-EC2-*.x86_64"]
       ssh_username = "rocky"
       worker_os    = "rockylinux"
     }
