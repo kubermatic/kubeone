@@ -2086,12 +2086,56 @@ func TestValidateAddons(t *testing.T) {
 			addons:        nil,
 			expectedError: false,
 		},
+		{
+			name: "oci helm release",
+			addons: &kubeoneapi.Addons{
+				Addons: []kubeoneapi.AddonRef{
+					{
+						HelmRelease: &kubeoneapi.HelmRelease{
+							Namespace:   "ns1",
+							ChartURL:    "oci://something.tld/chart:version",
+							ReleaseName: "chart1",
+						},
+					},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "oci helm release without releaseName",
+			addons: &kubeoneapi.Addons{
+				Addons: []kubeoneapi.AddonRef{
+					{
+						HelmRelease: &kubeoneapi.HelmRelease{
+							Namespace: "ns1",
+							ChartURL:  "oci://something.tld/chart:version",
+						},
+					},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "helm release",
+			addons: &kubeoneapi.Addons{
+				Addons: []kubeoneapi.AddonRef{
+					{
+						HelmRelease: &kubeoneapi.HelmRelease{
+							Namespace: "ns1",
+							Chart:     "chart",
+							RepoURL:   "https://repo.localhost/chart-repo",
+						},
+					},
+				},
+			},
+			expectedError: false,
+		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateAddons(tc.addons, nil)
 			if (len(errs) == 0) == tc.expectedError {
-				t.Log(errs[0])
+				t.Log(errs)
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}
 		})
