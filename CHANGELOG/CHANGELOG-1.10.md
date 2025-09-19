@@ -1,3 +1,18 @@
+# [v1.10.4](https://github.com/kubermatic/kubeone/releases/tag/v1.10.4) - 2025-09-19
+
+## Changelog since v1.10.3
+
+## Changes by Kind
+
+### Chore
+
+- Upgrade machine-controller version to [v1.61.4](https://github.com/kubermatic/machine-controller/releases/tag/v1.61.4) and operating-system-manager version to [v1.6.9](https://github.com/kubermatic/operating-system-manager/releases/tag/v1.6.9) ([#3819](https://github.com/kubermatic/kubeone/pull/3819), [@archups](https://github.com/archups))
+
+### Bug or Regression
+
+- Fix Nutanix credentials ([#3789](https://github.com/kubermatic/kubeone/pull/3789), [@kubermatic-bot](https://github.com/kubermatic-bot))
+- Fix validation to pass when ChartURL is given ([#3825](https://github.com/kubermatic/kubeone/pull/3825), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.10.3](https://github.com/kubermatic/kubeone/releases/tag/v1.10.3) - 2025-07-24
 
 ## Changelog since v1.10.2
