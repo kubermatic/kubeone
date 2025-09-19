@@ -1,3 +1,17 @@
+# [v1.11.3](https://github.com/kubermatic/kubeone/releases/tag/v1.11.3) - 2025-09-19
+
+## Changelog since v1.11.2
+
+## Changes by Kind
+
+### Chore
+
+- Upgrade machine-controller version to [v1.62.1](https://github.com/kubermatic/machine-controller/releases/tag/v1.62.1) and operating-system-manager version to [v1.7.6](https://github.com/kubermatic/operating-system-manager/releases/tag/v1.7.6) ([#3818](https://github.com/kubermatic/kubeone/pull/3818), [@archups](https://github.com/archups))
+
+### Bug or Regression
+
+- Fix validation to pass when ChartURL is given ([#3824](https://github.com/kubermatic/kubeone/pull/3824), [@kubermatic-bot](https://github.com/kubermatic-bot))
+
 # [v1.11.2](https://github.com/kubermatic/kubeone/releases/tag/v1.11.2) - 2025-09-04
 
 ## Changelog since v1.11.1
