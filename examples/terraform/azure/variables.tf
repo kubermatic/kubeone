@@ -171,11 +171,11 @@ variable "image_references" {
       image = {
         publisher = "RedHat"
         offer     = "rhel-byos"
-        sku       = "rhel-lvm85"
-        version   = "8.5.20220316"
+        sku       = "rhel-lvm95"
+        version   = "9.5.2024112215"
       }
       plan = [{
-        name      = "rhel-lvm85"
+        name      = "rhel-lvm95"
         publisher = "redhat"
         product   = "rhel-byos"
       }]
@@ -185,15 +185,15 @@ variable "image_references" {
 
     rockylinux = {
       image = {
-        publisher = "procomputers"
-        offer     = "rocky-linux-8-5"
-        sku       = "rocky-linux-8-5"
-        version   = "8.5.20211118"
+        publisher = "resf"
+        offer     = "rockylinux-x86_64"
+        sku       = "9-base"
+        version   = "9.6.20250531"
       }
       plan = [{
-        name      = "rocky-linux-8-5"
-        publisher = "procomputers"
-        product   = "rocky-linux-8-5"
+        name      = "9-base"
+        publisher = "resf"
+        product   = "rockylinux-x86_64"
       }]
       ssh_username = "rocky"
       worker_os    = "rockylinux"
