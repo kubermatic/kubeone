@@ -10,258 +10,6 @@ import (
 func TestStub(t *testing.T) {
 	t.Skip("stub is skipped")
 }
-func TestAwsAmznInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAwsDefaultInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_default"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAwsUbuntuPreviousLtsInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_ubuntu_previous_lts"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAwsFlatcarInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_flatcar"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAwsRhelInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_rhel"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAwsRockylinuxInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_rockylinux"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAzureDefaultInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["azure_default"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAzureFlatcarInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["azure_flatcar"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAzureRhelInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["azure_rhel"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAzureRockylinuxInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["azure_rockylinux"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestDigitaloceanDefaultInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["digitalocean_default"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestDigitaloceanRockylinuxInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestGceDefaultInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["gce_default"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestHetznerDefaultInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["hetzner_default"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestHetznerRockylinuxInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackDefaultInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["openstack_default"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackFlatcarInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["openstack_flatcar"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackRhelInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["openstack_rhel"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackRockylinuxInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["openstack_rockylinux"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestVsphereDefaultInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["vsphere_default"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestVsphereFlatcarInstallContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["vsphere_flatcar"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
 func TestAwsAmznInstallContainerdExternalV1_32(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_amzn"]
@@ -514,6 +262,18 @@ func TestVsphereFlatcarInstallContainerdExternalV1_32(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestAwsAmznInstallContainerdExternalV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
 func TestAwsDefaultInstallContainerdExternalV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default"]
@@ -550,6 +310,30 @@ func TestAwsFlatcarInstallContainerdExternalV1_33(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestAwsRhelInstallContainerdExternalV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRockylinuxInstallContainerdExternalV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["aws_rockylinux"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
 func TestAzureDefaultInstallContainerdExternalV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_default"]
@@ -574,9 +358,45 @@ func TestAzureFlatcarInstallContainerdExternalV1_33(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestAzureRhelInstallContainerdExternalV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAzureRockylinuxInstallContainerdExternalV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
 func TestDigitaloceanDefaultInstallContainerdExternalV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestDigitaloceanRockylinuxInstallContainerdExternalV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.33")
@@ -610,6 +430,18 @@ func TestHetznerDefaultInstallContainerdExternalV1_33(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestHetznerRockylinuxInstallContainerdExternalV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["hetzner_rockylinux"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
 func TestOpenstackDefaultInstallContainerdExternalV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default"]
@@ -625,6 +457,30 @@ func TestOpenstackDefaultInstallContainerdExternalV1_33(t *testing.T) {
 func TestOpenstackFlatcarInstallContainerdExternalV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackRhelInstallContainerdExternalV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["install_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackRockylinuxInstallContainerdExternalV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.33")
@@ -658,252 +514,144 @@ func TestVsphereFlatcarInstallContainerdExternalV1_33(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAwsAmznStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
+func TestAwsDefaultInstallContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_amzn_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
+	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAwsDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_default_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAwsUbuntuPreviousLtsUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
+func TestAwsUbuntuPreviousLtsInstallContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_ubuntu_previous_lts"]
-	scenario := Scenarios["upgrade_containerd_external"]
+	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAwsFlatcarStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
+func TestAwsFlatcarInstallContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_flatcar_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAwsRhelStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
+func TestAzureDefaultInstallContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_rhel_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAwsRockylinuxStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
+func TestAzureFlatcarInstallContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_rockylinux_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAzureDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
+func TestDigitaloceanDefaultInstallContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["azure_default_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
+	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAzureFlatcarStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
+func TestGceDefaultInstallContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["azure_flatcar_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAzureRhelStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
+func TestHetznerDefaultInstallContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["azure_rhel_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
+	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAzureRockylinuxStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
+func TestOpenstackDefaultInstallContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["azure_rockylinux_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
+func TestOpenstackFlatcarInstallContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["digitalocean_default_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanRockylinuxStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
+func TestVsphereDefaultInstallContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["digitalocean_rockylinux_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestGceDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
+func TestVsphereFlatcarInstallContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["gce_default_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["hetzner_default_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestHetznerRockylinuxStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["hetzner_rockylinux_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["openstack_default_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["openstack_flatcar_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackRhelStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["openstack_rhel_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackRockylinuxStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["openstack_rockylinux_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestVsphereDefaultStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["vsphere_default_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["vsphere_flatcar_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
@@ -958,6 +706,30 @@ func TestAwsFlatcarStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T
 	scenario.Run(ctx, t)
 }
 
+func TestAwsRhelStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["aws_rhel_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.32", "v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRockylinuxStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["aws_rockylinux_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.32", "v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
 func TestAzureDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_default_stable"]
@@ -982,9 +754,45 @@ func TestAzureFlatcarStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing
 	scenario.Run(ctx, t)
 }
 
+func TestAzureRhelStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["azure_rhel_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.32", "v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAzureRockylinuxStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["azure_rockylinux_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.32", "v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
 func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.32", "v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestDigitaloceanRockylinuxStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["digitalocean_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.32", "v1.33")
@@ -1018,6 +826,18 @@ func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testi
 	scenario.Run(ctx, t)
 }
 
+func TestHetznerRockylinuxStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["hetzner_rockylinux_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.32", "v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
 func TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default_stable"]
@@ -1033,6 +853,30 @@ func TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *tes
 func TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.32", "v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackRhelStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["openstack_rhel_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.32", "v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackRockylinuxStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["openstack_rockylinux_stable"]
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.32", "v1.33")
@@ -1066,240 +910,156 @@ func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testi
 	scenario.Run(ctx, t)
 }
 
-func TestAwsAmznCiliumContainerdExternalV1_31(t *testing.T) {
+func TestAwsAmznStableUpgradeContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["cilium_containerd_external"]
+	infra := Infrastructures["aws_amzn_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.33", "v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAwsDefaultCiliumContainerdExternalV1_31(t *testing.T) {
+func TestAwsDefaultStableUpgradeContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_default"]
-	scenario := Scenarios["cilium_containerd_external"]
+	infra := Infrastructures["aws_default_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.33", "v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAwsFlatcarCiliumContainerdExternalV1_31(t *testing.T) {
+func TestAwsUbuntuPreviousLtsUpgradeContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_flatcar"]
-	scenario := Scenarios["cilium_containerd_external"]
+	infra := Infrastructures["aws_ubuntu_previous_lts"]
+	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.33", "v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAwsRhelCiliumContainerdExternalV1_31(t *testing.T) {
+func TestAwsFlatcarStableUpgradeContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_rhel"]
-	scenario := Scenarios["cilium_containerd_external"]
+	infra := Infrastructures["aws_flatcar_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.33", "v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAwsRockylinuxCiliumContainerdExternalV1_31(t *testing.T) {
+func TestAzureDefaultStableUpgradeContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_rockylinux"]
-	scenario := Scenarios["cilium_containerd_external"]
+	infra := Infrastructures["azure_default_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.33", "v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAzureDefaultCiliumContainerdExternalV1_31(t *testing.T) {
+func TestAzureFlatcarStableUpgradeContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["azure_default"]
-	scenario := Scenarios["cilium_containerd_external"]
+	infra := Infrastructures["azure_flatcar_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.33", "v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAzureFlatcarCiliumContainerdExternalV1_31(t *testing.T) {
+func TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["azure_flatcar"]
-	scenario := Scenarios["cilium_containerd_external"]
+	infra := Infrastructures["digitalocean_default_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.33", "v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAzureRhelCiliumContainerdExternalV1_31(t *testing.T) {
+func TestGceDefaultStableUpgradeContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["azure_rhel"]
-	scenario := Scenarios["cilium_containerd_external"]
+	infra := Infrastructures["gce_default_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.33", "v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAzureRockylinuxCiliumContainerdExternalV1_31(t *testing.T) {
+func TestHetznerDefaultStableUpgradeContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["azure_rockylinux"]
-	scenario := Scenarios["cilium_containerd_external"]
+	infra := Infrastructures["hetzner_default_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.33", "v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanDefaultCiliumContainerdExternalV1_31(t *testing.T) {
+func TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["digitalocean_default"]
-	scenario := Scenarios["cilium_containerd_external"]
+	infra := Infrastructures["openstack_default_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.33", "v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanRockylinuxCiliumContainerdExternalV1_31(t *testing.T) {
+func TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["cilium_containerd_external"]
+	infra := Infrastructures["openstack_flatcar_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.33", "v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestGceDefaultCiliumContainerdExternalV1_31(t *testing.T) {
+func TestVsphereDefaultStableUpgradeContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["gce_default"]
-	scenario := Scenarios["cilium_containerd_external"]
+	infra := Infrastructures["vsphere_default_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.33", "v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerDefaultCiliumContainerdExternalV1_31(t *testing.T) {
+func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["hetzner_default"]
-	scenario := Scenarios["cilium_containerd_external"]
+	infra := Infrastructures["vsphere_flatcar_stable"]
+	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestHetznerRockylinuxCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackDefaultCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["openstack_default"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackFlatcarCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["openstack_flatcar"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackRhelCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["openstack_rhel"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackRockylinuxCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["openstack_rockylinux"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestVsphereDefaultCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["vsphere_default"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestVsphereFlatcarCiliumContainerdExternalV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["vsphere_flatcar"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.33", "v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
@@ -1546,6 +1306,18 @@ func TestVsphereFlatcarCiliumContainerdExternalV1_32(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestAwsAmznCiliumContainerdExternalV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
 func TestAwsDefaultCiliumContainerdExternalV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default"]
@@ -1561,6 +1333,30 @@ func TestAwsDefaultCiliumContainerdExternalV1_33(t *testing.T) {
 func TestAwsFlatcarCiliumContainerdExternalV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRhelCiliumContainerdExternalV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRockylinuxCiliumContainerdExternalV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.33")
@@ -1594,9 +1390,45 @@ func TestAzureFlatcarCiliumContainerdExternalV1_33(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestAzureRhelCiliumContainerdExternalV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAzureRockylinuxCiliumContainerdExternalV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
 func TestDigitaloceanDefaultCiliumContainerdExternalV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestDigitaloceanRockylinuxCiliumContainerdExternalV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.33")
@@ -1630,6 +1462,18 @@ func TestHetznerDefaultCiliumContainerdExternalV1_33(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestHetznerRockylinuxCiliumContainerdExternalV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["hetzner_rockylinux"]
+	scenario := Scenarios["cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
 func TestOpenstackDefaultCiliumContainerdExternalV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default"]
@@ -1645,6 +1489,30 @@ func TestOpenstackDefaultCiliumContainerdExternalV1_33(t *testing.T) {
 func TestOpenstackFlatcarCiliumContainerdExternalV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackRhelCiliumContainerdExternalV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackRockylinuxCiliumContainerdExternalV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.33")
@@ -1678,240 +1546,132 @@ func TestVsphereFlatcarCiliumContainerdExternalV1_33(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAwsAmznExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAwsDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
+func TestAwsDefaultCiliumContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAwsFlatcarExternalCniFlannelHelmChartV1_31(t *testing.T) {
+func TestAwsFlatcarCiliumContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_flatcar"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAwsRhelExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_rhel"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAwsRockylinuxExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_rockylinux"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAzureDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
+func TestAzureDefaultCiliumContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_default"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAzureFlatcarExternalCniFlannelHelmChartV1_31(t *testing.T) {
+func TestAzureFlatcarCiliumContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["azure_flatcar"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestAzureRhelExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["azure_rhel"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAzureRockylinuxExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["azure_rockylinux"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
+func TestDigitaloceanDefaultCiliumContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestDigitaloceanRockylinuxExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["digitalocean_rockylinux"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestGceDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
+func TestGceDefaultCiliumContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["gce_default"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
+func TestHetznerDefaultCiliumContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner_default"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestHetznerRockylinuxExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["hetzner_rockylinux"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
+func TestOpenstackDefaultCiliumContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestOpenstackFlatcarExternalCniFlannelHelmChartV1_31(t *testing.T) {
+func TestOpenstackFlatcarCiliumContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestOpenstackRhelExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["openstack_rhel"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackRockylinuxExternalCniFlannelHelmChartV1_31(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["openstack_rockylinux"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestVsphereDefaultExternalCniFlannelHelmChartV1_31(t *testing.T) {
+func TestVsphereDefaultCiliumContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_default"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
 	scenario.Run(ctx, t)
 }
 
-func TestVsphereFlatcarExternalCniFlannelHelmChartV1_31(t *testing.T) {
+func TestVsphereFlatcarCiliumContainerdExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["vsphere_flatcar"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
@@ -2158,6 +1918,18 @@ func TestVsphereFlatcarExternalCniFlannelHelmChartV1_32(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestAwsAmznExternalCniFlannelHelmChartV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["aws_amzn"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
 func TestAwsDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default"]
@@ -2173,6 +1945,30 @@ func TestAwsDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
 func TestAwsFlatcarExternalCniFlannelHelmChartV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRhelExternalCniFlannelHelmChartV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["aws_rhel"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRockylinuxExternalCniFlannelHelmChartV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["aws_rockylinux"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.33")
@@ -2206,9 +2002,45 @@ func TestAzureFlatcarExternalCniFlannelHelmChartV1_33(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestAzureRhelExternalCniFlannelHelmChartV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["azure_rhel"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAzureRockylinuxExternalCniFlannelHelmChartV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["azure_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
 func TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestDigitaloceanRockylinuxExternalCniFlannelHelmChartV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["digitalocean_rockylinux"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.33")
@@ -2242,6 +2074,18 @@ func TestHetznerDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestHetznerRockylinuxExternalCniFlannelHelmChartV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["hetzner_rockylinux"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
 func TestOpenstackDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default"]
@@ -2257,6 +2101,30 @@ func TestOpenstackDefaultExternalCniFlannelHelmChartV1_33(t *testing.T) {
 func TestOpenstackFlatcarExternalCniFlannelHelmChartV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackRhelExternalCniFlannelHelmChartV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["openstack_rhel"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackRockylinuxExternalCniFlannelHelmChartV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["openstack_rockylinux"]
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.33")
@@ -2290,240 +2158,144 @@ func TestVsphereFlatcarExternalCniFlannelHelmChartV1_33(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAwsAmznStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
+func TestAwsDefaultExternalCniFlannelHelmChartV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["aws_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAwsFlatcarExternalCniFlannelHelmChartV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["aws_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAzureDefaultExternalCniFlannelHelmChartV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["azure_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAzureFlatcarExternalCniFlannelHelmChartV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["azure_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["digitalocean_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestGceDefaultExternalCniFlannelHelmChartV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["gce_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestHetznerDefaultExternalCniFlannelHelmChartV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["hetzner_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackDefaultExternalCniFlannelHelmChartV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["openstack_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackFlatcarExternalCniFlannelHelmChartV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["openstack_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereDefaultExternalCniFlannelHelmChartV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["vsphere_default"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereFlatcarExternalCniFlannelHelmChartV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["vsphere_flatcar"]
+	scenario := Scenarios["external_cni_flannel_helm_chart"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAwsAmznStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_amzn_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAwsDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_default_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAwsFlatcarStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_flatcar_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAwsRhelStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_rhel_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAwsRockylinuxStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_rockylinux_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAzureDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["azure_default_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAzureFlatcarStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["azure_flatcar_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAzureRhelStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["azure_rhel_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAzureRockylinuxStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["azure_rockylinux_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestDigitaloceanDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["digitalocean_default_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestDigitaloceanRockylinuxStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["digitalocean_rockylinux_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestGceDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["gce_default_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestHetznerDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["hetzner_default_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestHetznerRockylinuxStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["hetzner_rockylinux_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["openstack_default_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackFlatcarStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["openstack_flatcar_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackRhelStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["openstack_rhel_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestOpenstackRockylinuxStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["openstack_rockylinux_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestVsphereDefaultStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["vsphere_default_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestVsphereFlatcarStableUpgradeCiliumContainerdExternalFromV1_31_ToV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["vsphere_flatcar_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31", "v1.32")
+	scenario.SetVersions("v1.32", "v1.33")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
@@ -2545,6 +2317,30 @@ func TestAwsDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *tes
 func TestAwsFlatcarStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_flatcar_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.32", "v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRhelStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["aws_rhel_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.32", "v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAwsRockylinuxStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["aws_rockylinux_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.32", "v1.33")
@@ -2578,9 +2374,45 @@ func TestAzureFlatcarStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *t
 	scenario.Run(ctx, t)
 }
 
+func TestAzureRhelStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["azure_rhel_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.32", "v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAzureRockylinuxStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["azure_rockylinux_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.32", "v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
 func TestDigitaloceanDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["digitalocean_default_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.32", "v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestDigitaloceanRockylinuxStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["digitalocean_rockylinux_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.32", "v1.33")
@@ -2614,6 +2446,18 @@ func TestHetznerDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t 
 	scenario.Run(ctx, t)
 }
 
+func TestHetznerRockylinuxStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["hetzner_rockylinux_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.32", "v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
 func TestOpenstackDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_default_stable"]
@@ -2629,6 +2473,30 @@ func TestOpenstackDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(
 func TestOpenstackFlatcarStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["openstack_flatcar_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.32", "v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackRhelStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["openstack_rhel_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.32", "v1.33")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackRockylinuxStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["openstack_rockylinux_stable"]
 	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.32", "v1.33")
@@ -2662,12 +2530,132 @@ func TestVsphereFlatcarStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t 
 	scenario.Run(ctx, t)
 }
 
-func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_31(t *testing.T) {
+func TestAwsDefaultStableUpgradeCiliumContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_long_timeout_default"]
-	scenario := Scenarios["conformance_containerd_external"]
+	infra := Infrastructures["aws_default_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.31")
+	scenario.SetVersions("v1.33", "v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAwsFlatcarStableUpgradeCiliumContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["aws_flatcar_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33", "v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAzureDefaultStableUpgradeCiliumContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["azure_default_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33", "v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAzureFlatcarStableUpgradeCiliumContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["azure_flatcar_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33", "v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestDigitaloceanDefaultStableUpgradeCiliumContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["digitalocean_default_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33", "v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestGceDefaultStableUpgradeCiliumContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["gce_default_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33", "v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestHetznerDefaultStableUpgradeCiliumContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["hetzner_default_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33", "v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackDefaultStableUpgradeCiliumContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["openstack_default_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33", "v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackFlatcarStableUpgradeCiliumContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["openstack_flatcar_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33", "v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereDefaultStableUpgradeCiliumContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["vsphere_default_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33", "v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestVsphereFlatcarStableUpgradeCiliumContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["vsphere_flatcar_stable"]
+	scenario := Scenarios["upgrade_cilium_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.33", "v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
@@ -2698,12 +2686,24 @@ func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_33(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAwsDefaultKubeProxyIpvsExternalV1_33(t *testing.T) {
+func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_34(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["aws_long_timeout_default"]
+	scenario := Scenarios["conformance_containerd_external"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.34")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestAwsDefaultKubeProxyIpvsExternalV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default"]
 	scenario := Scenarios["kube_proxy_ipvs_external"]
 	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.33")
+	scenario.SetVersions("v1.34")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
