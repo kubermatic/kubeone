@@ -185,15 +185,15 @@ variable "image_references" {
 
     rockylinux = {
       image = {
-        publisher = "procomputers"
-        offer     = "rocky-linux-8-5"
-        sku       = "rocky-linux-8-5"
-        version   = "8.5.20211118"
+        publisher = "resf"
+        offer     = "rockylinux-x86_64"
+        sku       = "9-base"
+        version   = "9.6.20250531"
       }
       plan = [{
-        name      = "rocky-linux-8-5"
-        publisher = "procomputers"
-        product   = "rocky-linux-8-5"
+        name      = "9-base"
+        publisher = "resf"
+        product   = "rockylinux-x86_64"
       }]
       ssh_username = "rocky"
       worker_os    = "rockylinux"
