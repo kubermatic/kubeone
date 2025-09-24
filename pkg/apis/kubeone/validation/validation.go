@@ -39,7 +39,7 @@ import (
 
 const (
 	// MinimumSupportedVersion defines the minimum Kubernetes version supported by KubeOne.
-	MinimumSupportedVersion = "1.31"
+	MinimumSupportedVersion = "1.32"
 	// MaximumSupportedVersion defines the maximum Kubernetes version supported by KubeOne.
 	MaximumSupportedVersion = "1.34"
 )

@@ -857,7 +857,7 @@ func TestValidateVersionConfig(t *testing.T) {
 			expectedError: false,
 		},
 		{
-			name: "valid version config (1.31.0)",
+			name: "invalid version config (1.31.0)",
 			versionConfig: kubeoneapi.VersionConfig{
 				Kubernetes: "1.31.0",
 			},
