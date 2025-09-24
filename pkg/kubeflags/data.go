@@ -33,7 +33,6 @@ var defaultAdmissionControllers = []string{
 	"ClusterTrustBundleAttest",
 	"CertificateSubjectRestriction",
 	"DefaultIngressClass",
-	"PodTopologyLabels",
 	"MutatingAdmissionPolicy",
 	"MutatingAdmissionWebhook",
 	"ValidatingAdmissionPolicy",
