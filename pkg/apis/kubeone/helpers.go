@@ -36,7 +36,6 @@ const (
 )
 
 var (
-	preV131Constraint  = semverutil.MustParseConstraint("< 1.31")
 	postV133Constraint = semverutil.MustParseConstraint(">= 1.33")
 )
 
@@ -224,8 +223,8 @@ func (v VersionConfig) SandboxImage(imageRegistry func(string) string) (string, 
 	registry := imageRegistry("registry.k8s.io")
 
 	switch {
-	case preV131Constraint.Check(kubeSemVer):
-		return fmt.Sprintf("%s/pause:3.9", registry), nil
+	case postV133Constraint.Check(kubeSemVer):
+		return fmt.Sprintf("%s/pause:3.10.1", registry), nil
 	default:
 		return fmt.Sprintf("%s/pause:3.10", registry), nil
 	}

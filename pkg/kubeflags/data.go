@@ -33,6 +33,9 @@ var defaultAdmissionControllers = []string{
 	"ClusterTrustBundleAttest",
 	"CertificateSubjectRestriction",
 	"DefaultIngressClass",
+	// TODO: Support for `PodTopologyLabels` is added since 1.33. Uncomment once the k8s 1.32 support is drop
+	// "PodTopologyLabels",
+	"MutatingAdmissionPolicy",
 	"MutatingAdmissionWebhook",
 	"ValidatingAdmissionPolicy",
 	"ValidatingAdmissionWebhook",
