@@ -29,10 +29,6 @@ import (
 	"k8c.io/kubeone/pkg/state"
 )
 
-const kubeadmPhaseKubeProxy = "addon/kube-proxy"
-
-var preV131Constraint = semverutil.MustParseConstraint("< 1.31")
-
 func joinControlplaneNode(s *state.State) error {
 	s.Logger.Infoln("Joining controlplane node...")
 
@@ -76,20 +72,9 @@ func initKubernetesLeader(s *state.State) error {
 	s.Logger.Infoln("Initializing Kubernetes on leader...")
 
 	return s.RunTaskOnLeader(func(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
-		// TODO: after v1.30 is EOL, remove this check and skipPhase
-		var skipPhase string
-		sver, err := semver.NewVersion(s.Cluster.Versions.Kubernetes)
-		if err != nil {
-			return err
-		}
-
-		if preV131Constraint.Check(sver) && s.Cluster.ClusterNetwork.KubeProxy != nil && s.Cluster.ClusterNetwork.KubeProxy.SkipInstallation {
-			skipPhase = kubeadmPhaseKubeProxy
-		}
-
 		s.Logger.Infoln("Running kubeadm...")
 
-		cmd, err := scripts.KubeadmInit(s.WorkDir, node.ID, s.KubeadmVerboseFlag(), s.JoinToken, time.Hour.String(), skipPhase)
+		cmd, err := scripts.KubeadmInit(s.WorkDir, node.ID, s.KubeadmVerboseFlag(), s.JoinToken, time.Hour.String(), "")
 		if err != nil {
 			return err
 		}
