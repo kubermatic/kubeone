@@ -246,10 +246,6 @@ func etcdVersionCorruptCheckExtraArgs(cipherSuites []string) []kubeadmv1beta4.Ar
 			Value: "true",
 		},
 		{
-			Name:  "experimental-initial-corrupt-check",
-			Value: "true",
-		},
-		{
 			Name:  "experimental-corrupt-check-time",
 			Value: "240m",
 		},
