@@ -3,7 +3,7 @@ namespace: kube-system
 helmCharts:
 - name: openstack-cinder-csi
   repo: https://kubernetes.github.io/cloud-provider-openstack
-  version: 2.33.0
+  version: 2.33.1
   releaseName: cinder-csi
   namespace: kube-system
   valuesFile: generate-values-csi

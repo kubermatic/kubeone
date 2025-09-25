@@ -135,21 +135,25 @@ spec:
         "kubeone.k8c.io/cloudconfig-hash": "{{ .Config.CloudProvider.CloudConfig | sha256sum }}"
     spec:
       tolerations:
-        - key: node.cloudprovider.kubernetes.io/uninitialized
+        - effect: NoSchedule
+          key: node.cloudprovider.kubernetes.io/uninitialized
           value: "true"
-          effect: NoSchedule
-        - key: node-role.kubernetes.io/master
-          effect: NoSchedule
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
           operator: Exists
-        - key: node-role.kubernetes.io/control-plane
-          effect: NoSchedule
+        - effect: NoSchedule
+          key: node.kubernetes.io/not-ready
           operator: Exists
-        - key: node.kubernetes.io/not-ready
-          effect: NoSchedule
+        - effect: NoExecute
+          key: CriticalAddonsOnly
           operator: Exists
-        - key: CriticalAddonsOnly
-          effect: NoExecute
-          operator: Exists
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: Exists
       securityContext:
         fsGroup: 1001
         runAsUser: 1001
@@ -164,7 +168,7 @@ spec:
           args:
             - --cloud-provider=vsphere
             - --v=2
-            - --cloud-config=/etc/cloud/cloud-config
+            - --cloud-config=/etc/cloud/vsphere.conf
             {{- with .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
             - --concurrent-service-syncs={{ . }}
             {{- end }}
@@ -177,18 +181,8 @@ spec:
               readOnly: true
       volumes:
         - name: vsphere-config-volume
-          secret:
-            secretName: cloud-config
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: node-role.kubernetes.io/control-plane
-                    operator: Exists
-              - matchExpressions:
-                  - key: node-role.kubernetes.io/master
-                    operator: Exists
+          configMap:
+            name: cloud-config
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

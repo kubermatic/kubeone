@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
 - name: cluster-autoscaler
   repo: https://kubernetes.github.io/autoscaler
-  version: 9.49.0
+  version: 9.50.1
   releaseName: cluster-autoscaler
   namespace: kube-system
   valuesFile: cluster-autoscaler-values.yaml
