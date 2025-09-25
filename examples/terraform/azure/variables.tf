@@ -143,18 +143,6 @@ variable "image_references" {
       worker_os    = "ubuntu"
     }
 
-    centos = {
-      image = {
-        publisher = "OpenLogic"
-        offer     = "CentOS"
-        sku       = "7_9"
-        version   = "latest"
-      }
-      plan         = []
-      ssh_username = "centos"
-      worker_os    = "centos"
-    }
-
     flatcar = {
       image = {
         publisher = "kinvolk"
