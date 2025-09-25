@@ -5,8 +5,8 @@ metadata:
     app.kubernetes.io/instance: azuredisk-csi-driver
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azuredisk-csi-driver
-    app.kubernetes.io/version: 1.33.1
-    helm.sh/chart: azuredisk-csi-driver-1.33.1
+    app.kubernetes.io/version: 1.33.5
+    helm.sh/chart: azuredisk-csi-driver-1.33.5
   name: csi-azuredisk-controller-sa
   namespace: kube-system
 ---
@@ -17,8 +17,8 @@ metadata:
     app.kubernetes.io/instance: azuredisk-csi-driver
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azuredisk-csi-driver
-    app.kubernetes.io/version: 1.33.1
-    helm.sh/chart: azuredisk-csi-driver-1.33.1
+    app.kubernetes.io/version: 1.33.5
+    helm.sh/chart: azuredisk-csi-driver-1.33.5
   name: csi-azuredisk-node-sa
   namespace: kube-system
 ---
@@ -29,8 +29,8 @@ metadata:
     app.kubernetes.io/instance: azuredisk-csi-driver
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azuredisk-csi-driver
-    app.kubernetes.io/version: 1.33.1
-    helm.sh/chart: azuredisk-csi-driver-1.33.1
+    app.kubernetes.io/version: 1.33.5
+    helm.sh/chart: azuredisk-csi-driver-1.33.5
   name: azuredisk-external-attacher-role
 rules:
   - apiGroups:
@@ -104,8 +104,8 @@ metadata:
     app.kubernetes.io/instance: azuredisk-csi-driver
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azuredisk-csi-driver
-    app.kubernetes.io/version: 1.33.1
-    helm.sh/chart: azuredisk-csi-driver-1.33.1
+    app.kubernetes.io/version: 1.33.5
+    helm.sh/chart: azuredisk-csi-driver-1.33.5
   name: azuredisk-external-provisioner-role
 rules:
   - apiGroups:
@@ -197,8 +197,8 @@ metadata:
     app.kubernetes.io/instance: azuredisk-csi-driver
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azuredisk-csi-driver
-    app.kubernetes.io/version: 1.33.1
-    helm.sh/chart: azuredisk-csi-driver-1.33.1
+    app.kubernetes.io/version: 1.33.5
+    helm.sh/chart: azuredisk-csi-driver-1.33.5
   name: azuredisk-external-resizer-role
 rules:
   - apiGroups:
@@ -272,8 +272,8 @@ metadata:
     app.kubernetes.io/instance: azuredisk-csi-driver
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azuredisk-csi-driver
-    app.kubernetes.io/version: 1.33.1
-    helm.sh/chart: azuredisk-csi-driver-1.33.1
+    app.kubernetes.io/version: 1.33.5
+    helm.sh/chart: azuredisk-csi-driver-1.33.5
   name: azuredisk-external-snapshotter-role
 rules:
   - apiGroups:
@@ -385,8 +385,8 @@ metadata:
     app.kubernetes.io/instance: azuredisk-csi-driver
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azuredisk-csi-driver
-    app.kubernetes.io/version: 1.33.1
-    helm.sh/chart: azuredisk-csi-driver-1.33.1
+    app.kubernetes.io/version: 1.33.5
+    helm.sh/chart: azuredisk-csi-driver-1.33.5
   name: azuredisk-csi-attacher-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -404,8 +404,8 @@ metadata:
     app.kubernetes.io/instance: azuredisk-csi-driver
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azuredisk-csi-driver
-    app.kubernetes.io/version: 1.33.1
-    helm.sh/chart: azuredisk-csi-driver-1.33.1
+    app.kubernetes.io/version: 1.33.5
+    helm.sh/chart: azuredisk-csi-driver-1.33.5
   name: azuredisk-csi-provisioner-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -423,8 +423,8 @@ metadata:
     app.kubernetes.io/instance: azuredisk-csi-driver
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azuredisk-csi-driver
-    app.kubernetes.io/version: 1.33.1
-    helm.sh/chart: azuredisk-csi-driver-1.33.1
+    app.kubernetes.io/version: 1.33.5
+    helm.sh/chart: azuredisk-csi-driver-1.33.5
   name: azuredisk-csi-resizer-role
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -442,8 +442,8 @@ metadata:
     app.kubernetes.io/instance: azuredisk-csi-driver
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azuredisk-csi-driver
-    app.kubernetes.io/version: 1.33.1
-    helm.sh/chart: azuredisk-csi-driver-1.33.1
+    app.kubernetes.io/version: 1.33.5
+    helm.sh/chart: azuredisk-csi-driver-1.33.5
   name: azuredisk-csi-snapshotter-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -487,8 +487,8 @@ metadata:
     app.kubernetes.io/instance: azuredisk-csi-driver
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azuredisk-csi-driver
-    app.kubernetes.io/version: 1.33.1
-    helm.sh/chart: azuredisk-csi-driver-1.33.1
+    app.kubernetes.io/version: 1.33.5
+    helm.sh/chart: azuredisk-csi-driver-1.33.5
   name: csi-azuredisk-controller
   namespace: kube-system
 spec:
@@ -503,8 +503,8 @@ spec:
         app.kubernetes.io/instance: azuredisk-csi-driver
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: azuredisk-csi-driver
-        app.kubernetes.io/version: 1.33.1
-        helm.sh/chart: azuredisk-csi-driver-1.33.1
+        app.kubernetes.io/version: 1.33.5
+        helm.sh/chart: azuredisk-csi-driver-1.33.5
     spec:
       affinity:
         nodeAffinity:
@@ -515,7 +515,7 @@ spec:
                     operator: Exists
       containers:
         - args:
-            - --feature-gates=Topology=true,HonorPVReclaimPolicy=true
+            - --feature-gates=Topology=true,HonorPVReclaimPolicy=true,VolumeAttributesClass=true
             - --csi-address=$(ADDRESS)
             - --v=2
             - --timeout=30s
@@ -605,7 +605,7 @@ spec:
             - -leader-election
             - --leader-election-namespace=kube-system
             - -handle-volume-inuse-error=false
-            - -feature-gates=RecoverVolumeExpansionFailure=true
+            - -feature-gates=RecoverVolumeExpansionFailure=true,VolumeAttributesClass=true
             - -timeout=240s
             - --retry-interval-max=30m
           env:
@@ -740,8 +740,8 @@ metadata:
     app.kubernetes.io/instance: azuredisk-csi-driver
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: azuredisk-csi-driver
-    app.kubernetes.io/version: 1.33.1
-    helm.sh/chart: azuredisk-csi-driver-1.33.1
+    app.kubernetes.io/version: 1.33.5
+    helm.sh/chart: azuredisk-csi-driver-1.33.5
   name: csi-azuredisk-node
   namespace: kube-system
 spec:
@@ -755,8 +755,8 @@ spec:
         app.kubernetes.io/instance: azuredisk-csi-driver
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: azuredisk-csi-driver
-        app.kubernetes.io/version: 1.33.1
-        helm.sh/chart: azuredisk-csi-driver-1.33.1
+        app.kubernetes.io/version: 1.33.5
+        helm.sh/chart: azuredisk-csi-driver-1.33.5
     spec:
       affinity:
         nodeAffinity:
@@ -946,8 +946,8 @@ apiVersion: storage.k8s.io/v1
 kind: CSIDriver
 metadata:
   annotations:
-    csiDriver: v1.33.1
-    snapshot: v8.2.1
+    csiDriver: v1.33.5
+    snapshot: v8.3.0
   name: disk.csi.azure.com
 spec:
   attachRequired: true
