@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
-    helm.sh/chart: aws-cloud-controller-manager-0.0.8
+    helm.sh/chart: aws-cloud-controller-manager-0.0.9
   name: cloud-controller-manager
   namespace: kube-system
 ---
@@ -10,7 +10,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    helm.sh/chart: aws-cloud-controller-manager-0.0.8
+    helm.sh/chart: aws-cloud-controller-manager-0.0.9
   name: system:cloud-controller-manager
 rules:
   - apiGroups:
@@ -92,12 +92,24 @@ rules:
       - serviceaccounts/token
     verbs:
       - create
+  - apiGroups:
+      - authentication.k8s.io
+    resources:
+      - tokenreviews
+    verbs:
+      - create
+  - apiGroups:
+      - authorization.k8s.io
+    resources:
+      - subjectaccessreviews
+    verbs:
+      - create
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    helm.sh/chart: aws-cloud-controller-manager-0.0.8
+    helm.sh/chart: aws-cloud-controller-manager-0.0.9
   name: cloud-controller-manager:apiserver-authentication-reader
   namespace: kube-system
 roleRef:
@@ -114,7 +126,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    helm.sh/chart: aws-cloud-controller-manager-0.0.8
+    helm.sh/chart: aws-cloud-controller-manager-0.0.9
   name: system:cloud-controller-manager
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -130,7 +142,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
-    helm.sh/chart: aws-cloud-controller-manager-0.0.8
+    helm.sh/chart: aws-cloud-controller-manager-0.0.9
     k8s-app: aws-cloud-controller-manager
   name: aws-cloud-controller-manager
   namespace: kube-system

@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
 - name: aws-cloud-controller-manager
   repo: https://kubernetes.github.io/cloud-provider-aws
-  version: 0.0.8
+  version: 0.0.9
   releaseName: aws-cloud-controller-manager
   namespace: kube-system
   valuesFile: generated-values-ccm

@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: kube-system
 
 resources:
-  - https://raw.githubusercontent.com/projectcalico/calico/v3.30.2/manifests/canal.yaml
+  - https://raw.githubusercontent.com/projectcalico/calico/v3.30.3/manifests/canal.yaml
 
 patches:
   - patch: |-
