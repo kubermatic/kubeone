@@ -5,7 +5,7 @@ address = "127.0.0.1:1338"
 
 [plugins]
 [plugins."io.containerd.grpc.v1.cri"]
-sandbox_image = "some.registry/pause:3.9"
+sandbox_image = "some.registry/pause:3.10"
 device_ownership_from_security_context = true
 [plugins."io.containerd.grpc.v1.cri".containerd]
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
