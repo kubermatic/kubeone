@@ -87,5 +87,5 @@ It's recommended to try to download to the release from GitHub after it's
 available and compare the checksums, as well as, confirm that `kubeone version`
 shows the correct version.
 
-[docs-compatibility]: https://docs.kubermatic.com/kubeone/v1.10/architecture/compatibility/
+[docs-compatibility]: https://docs.kubermatic.com/kubeone/main/architecture/compatibility/
 [changelog]: https://github.com/kubermatic/kubeone/blob/main/CHANGELOG.md
