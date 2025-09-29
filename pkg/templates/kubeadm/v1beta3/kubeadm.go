@@ -192,7 +192,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 		APIServer: kubeadmv1beta3.APIServer{
 			ControlPlaneComponent: kubeadmv1beta3.ControlPlaneComponent{
 				ExtraArgs: map[string]string{
-					"enable-admission-plugins":      kubeflags.DefaultAdmissionControllers(),
+					"enable-admission-plugins":      kubeflags.DefaultAdmissionControllers(kubeSemVer),
 					"endpoint-reconciler-type":      "lease",
 					"kubelet-certificate-authority": "/etc/kubernetes/pki/ca.crt",
 					"profiling":                     "false",
