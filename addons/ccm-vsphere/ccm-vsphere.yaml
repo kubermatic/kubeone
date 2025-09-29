@@ -168,7 +168,7 @@ spec:
           args:
             - --cloud-provider=vsphere
             - --v=2
-            - --cloud-config=/etc/cloud/vsphere.conf
+            - --cloud-config=/etc/cloud/cloud-config
             {{- with .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
             - --concurrent-service-syncs={{ . }}
             {{- end }}
@@ -181,8 +181,8 @@ spec:
               readOnly: true
       volumes:
         - name: vsphere-config-volume
-          configMap:
-            name: cloud-config
+          secret:
+            secretName: cloud-config
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

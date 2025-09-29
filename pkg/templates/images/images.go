@@ -280,7 +280,7 @@ func optionalResources() map[Resource]map[string]string {
 		AzureDiskCSISnapshotter:        {"*": "mcr.microsoft.com/oss/v2/kubernetes-csi/csi-snapshotter:v8.3.0"},
 
 		// DigitalOcean CCM
-		DigitaloceanCCM: {"*": "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.59"},
+		DigitaloceanCCM: {"*": "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.63"},
 
 		// DigitalOcean CSI
 		DigitalOceanCSI:                   {"*": "digitalocean/do-csi-plugin:v4.14.0"},
