@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: kube-system
 
 resources:
-  - https://raw.githubusercontent.com/kubernetes/kubernetes/v1.30.0-alpha.2/cluster/addons/dns/nodelocaldns/nodelocaldns.yaml
+  - https://raw.githubusercontent.com/kubernetes/kubernetes/v1.34.1/cluster/addons/dns/nodelocaldns/nodelocaldns.yaml
 
 patches:
   - patch: |-
