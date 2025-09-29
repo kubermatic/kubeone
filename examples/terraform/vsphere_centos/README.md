@@ -38,8 +38,8 @@ See <https://github.com/kubermatic/machine-controller/blob/main/docs/vsphere.md>
 
 See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 
-[docs-infrastructure]: https://docs.kubermatic.com/kubeone/v1.10/guides/using-terraform-configs/
-[docs-tf-loadbalancer]: https://docs.kubermatic.com/kubeone/v1.10/examples/ha-load-balancing/
+[docs-infrastructure]: https://docs.kubermatic.com/kubeone/v1.11/guides/using-terraform-configs/
+[docs-tf-loadbalancer]: https://docs.kubermatic.com/kubeone/v1.11/examples/ha-load-balancing/
 
 ## Requirements
 
