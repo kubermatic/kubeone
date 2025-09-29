@@ -36,21 +36,21 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 	helm.sh/helm/v3 v3.18.5
 	k8c.io/machine-controller/sdk v1.63.1
-	k8s.io/api v0.33.3
-	k8s.io/apiextensions-apiserver v0.33.3
-	k8s.io/apimachinery v0.33.3
-	k8s.io/apiserver v0.33.3
-	k8s.io/cli-runtime v0.33.3
-	k8s.io/client-go v0.33.3
-	k8s.io/cluster-bootstrap v0.31.1
-	k8s.io/code-generator v0.33.3
-	k8s.io/component-base v0.33.3
-	k8s.io/kube-aggregator v0.31.1
-	k8s.io/kube-proxy v0.31.1
-	k8s.io/kubectl v0.33.3
-	k8s.io/kubelet v0.31.1
+	k8s.io/api v0.33.4
+	k8s.io/apiextensions-apiserver v0.33.4
+	k8s.io/apimachinery v0.33.4
+	k8s.io/apiserver v0.33.4
+	k8s.io/cli-runtime v0.33.4
+	k8s.io/client-go v0.33.4
+	k8s.io/cluster-bootstrap v0.33.4
+	k8s.io/code-generator v0.33.4
+	k8s.io/component-base v0.33.4
+	k8s.io/kube-aggregator v0.33.4
+	k8s.io/kube-proxy v0.33.4
+	k8s.io/kubectl v0.33.4
+	k8s.io/kubelet v0.33.4
 	k8s.io/utils v0.0.0-20241104100929-3ea5e8cea738
-	sigs.k8s.io/controller-runtime v0.19.4
+	sigs.k8s.io/controller-runtime v0.21.0
 	sigs.k8s.io/yaml v1.5.0
 )
 
@@ -79,7 +79,7 @@ require (
 	github.com/docker/docker-credential-helpers v0.8.2 // indirect
 	github.com/emicklei/go-restful/v3 v3.12.1 // indirect
 	github.com/evanphx/json-patch v5.9.11+incompatible // indirect
-	github.com/evanphx/json-patch/v5 v5.9.0 // indirect
+	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect

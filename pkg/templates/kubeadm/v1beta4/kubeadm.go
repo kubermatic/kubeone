@@ -24,6 +24,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Masterminds/semver/v3"
+
 	bootstraptokenv1 "k8c.io/kubeone/pkg/apis/kubeadm/bootstraptoken/v1"
 	kubeadmv1beta4 "k8c.io/kubeone/pkg/apis/kubeadm/v1beta4"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -57,6 +59,10 @@ type Config struct {
 // NewConfig returns all required configs to init a cluster via a set of v1beta4 configs
 func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 	cluster := s.Cluster
+	kubeSemVer, err := semver.NewVersion(cluster.Versions.Kubernetes)
+	if err != nil {
+		return nil, fail.Config(err, "parsing kubernetes semver")
+	}
 
 	overwriteRegistry := ""
 	if cluster.RegistryConfiguration != nil {
@@ -102,7 +108,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 				ExtraArgs: []kubeadmv1beta4.Arg{
 					{
 						Name:  "enable-admission-plugins",
-						Value: kubeflags.DefaultAdmissionControllers(),
+						Value: kubeflags.DefaultAdmissionControllers(kubeSemVer),
 					},
 					{
 						Name:  "endpoint-reconciler-type",
@@ -243,10 +249,6 @@ func etcdVersionCorruptCheckExtraArgs(cipherSuites []string) []kubeadmv1beta4.Ar
 	etcdExtraArgs := []kubeadmv1beta4.Arg{
 		{
 			Name:  "experimental-compact-hash-check-enabled",
-			Value: "true",
-		},
-		{
-			Name:  "experimental-initial-corrupt-check",
 			Value: "true",
 		},
 		{

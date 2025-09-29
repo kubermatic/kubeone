@@ -31,10 +31,6 @@ func TestEtcdVersionCorruptCheckExtraArgs(t *testing.T) {
 			Value: "true",
 		},
 		{
-			Name:  "experimental-initial-corrupt-check",
-			Value: "true",
-		},
-		{
 			Name:  "experimental-corrupt-check-time",
 			Value: "240m",
 		},
