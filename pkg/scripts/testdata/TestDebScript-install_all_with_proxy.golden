@@ -50,6 +50,16 @@ Acquire::https::Proxy "http://proxy.tld";
 Acquire::http::Proxy "http://proxy.tld";
 EOF
 
+sudo apt-get update
+sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
+	apt-transport-https \
+	ca-certificates \
+	curl \
+	gnupg \
+	apparmor-utils \
+	lsb-release \
+	rsync
+
 # Removing deprecated Kubernetes repositories from apt sources is needed when upgrading from older KubeOne versions,
 # otherwise, apt-get update will fail to upgrade the packages.
 if sudo grep -q "deb http://apt.kubernetes.io/ kubernetes-xenial main" /etc/apt/sources.list.d/kubernetes.list; then
@@ -62,14 +72,6 @@ curl -fsSL https://pkgs.k8s.io/core:/stable:/${LATEST_STABLE}/deb/Release.key | 
 echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 sudo apt-get update
-sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
-	apt-transport-https \
-	ca-certificates \
-	curl \
-	gnupg \
-	apparmor-utils \
-	lsb-release \
-	rsync
 
 kube_ver="1.30.0-*"
 
