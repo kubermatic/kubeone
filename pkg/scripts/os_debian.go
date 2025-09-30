@@ -43,19 +43,6 @@ Acquire::http::Proxy "{{ .HTTP_PROXY }}";
 {{- end }}
 EOF
 
-# Removing deprecated Kubernetes repositories from apt sources is needed when upgrading from older KubeOne versions,
-# otherwise, apt-get update will fail to upgrade the packages.
-{{- if .CONFIGURE_REPOSITORIES }}
-if sudo grep -q "deb http://apt.kubernetes.io/ kubernetes-xenial main" /etc/apt/sources.list.d/kubernetes.list; then
-  rm -f /etc/apt/sources.list.d/kubernetes.list
-fi
-
-sudo install -m 0755 -d /etc/apt/keyrings
-LATEST_STABLE=$(curl -sL https://dl.k8s.io/release/stable.txt | sed 's/\.[0-9]*$//')
-curl -fsSL https://pkgs.k8s.io/core:/stable:/${LATEST_STABLE}/deb/Release.key | sudo gpg --dearmor --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-{{- end }}
-
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
 	apt-transport-https \
@@ -72,6 +59,21 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--
 
 {{- if .INSTALL_ISCSI_AND_NFS }}
 sudo systemctl enable --now iscsid
+{{- end }}
+
+# Removing deprecated Kubernetes repositories from apt sources is needed when upgrading from older KubeOne versions,
+# otherwise, apt-get update will fail to upgrade the packages.
+{{- if .CONFIGURE_REPOSITORIES }}
+if sudo grep -q "deb http://apt.kubernetes.io/ kubernetes-xenial main" /etc/apt/sources.list.d/kubernetes.list; then
+  rm -f /etc/apt/sources.list.d/kubernetes.list
+fi
+
+sudo install -m 0755 -d /etc/apt/keyrings
+LATEST_STABLE=$(curl -sL https://dl.k8s.io/release/stable.txt | sed 's/\.[0-9]*$//')
+curl -fsSL https://pkgs.k8s.io/core:/stable:/${LATEST_STABLE}/deb/Release.key | sudo gpg --dearmor --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/{{ .KUBERNETES_MAJOR_MINOR }}/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update
 {{- end }}
 
 kube_ver="{{ .KUBERNETES_VERSION }}-*"
