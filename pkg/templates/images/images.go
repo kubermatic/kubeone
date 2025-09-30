@@ -117,6 +117,9 @@ const (
 
 	// Nutanix CSI
 	NutanixCSILivenessProbe
+	NutanixCSIExternalHealthMonitor
+	NutanixCSIAttacher
+	NutanixCSIPrecheck
 	NutanixCSI
 	NutanixCSIProvisioner
 	NutanixCSIRegistrar
@@ -351,12 +354,15 @@ func optionalResources() map[Resource]map[string]string {
 		NutanixCCM: {"*": "ghcr.io/nutanix-cloud-native/cloud-provider-nutanix/controller:v0.5.2"},
 
 		// Nutanix CSI
-		NutanixCSI:              {"*": "quay.io/karbon/ntnx-csi:v2.6.10"},
-		NutanixCSILivenessProbe: {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.11.0"},
-		NutanixCSIProvisioner:   {"*": "registry.k8s.io/sig-storage/csi-provisioner:v3.6.2"},
-		NutanixCSIRegistrar:     {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.9.1"},
-		NutanixCSIResizer:       {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.9.2"},
-		NutanixCSISnapshotter:   {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v6.3.2"},
+		NutanixCSI:                      {"*": "docker.io/nutanix/ntnx-csi:3.3.4"},
+		NutanixCSILivenessProbe:         {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.15.0"},
+		NutanixCSIExternalHealthMonitor: {"*": "registry.k8s.io/sig-storage/csi-external-health-monitor-controller:v0.14.0"},
+		NutanixCSIAttacher:              {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.8.1"},
+		NutanixCSIProvisioner:           {"*": "registry.k8s.io/sig-storage/csi-provisioner:v5.2.0"},
+		NutanixCSIRegistrar:             {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.13.0"},
+		NutanixCSIPrecheck:              {"*": "docker.io/nutanix/ntnx-csi-precheck:3.3.4"},
+		NutanixCSIResizer:               {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.13.2"},
+		NutanixCSISnapshotter:           {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v3.0.3"},
 
 		// GCP CCM
 		GCPCCM: {"*": "registry.k8s.io/cloud-provider-gcp/cloud-controller-manager:v33.1.1"},
