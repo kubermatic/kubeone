@@ -65,33 +65,28 @@ var (
 		Name:  "Flatcar",
 		Value: "flatcar",
 	}
-	osAmazonLinux2 = terraformVariableChoice{
-		Name:  "Amazon Linux 2",
-		Value: "amzn2",
-	}
 )
 
-var (
-	ValidProviders = map[string]initProvider{
-		"aws": {
-			title:         "AWS",
-			terraformPath: "terraform/aws",
-			external:      true,
-			optionalTFVars: []terraformVariable{
-				{
-					Name:         "os",
-					Description:  "Operating system to use for this cluster",
-					DefaultValue: osUbuntu.Name,
-					Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osRHEL, osFlatcar, osAmazonLinux2},
-				},
+var ValidProviders = map[string]initProvider{
+	"aws": {
+		title:         "AWS",
+		terraformPath: "terraform/aws",
+		external:      true,
+		optionalTFVars: []terraformVariable{
+			{
+				Name:         "os",
+				Description:  "Operating system to use for this cluster",
+				DefaultValue: osUbuntu.Name,
+				Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osRHEL, osFlatcar},
 			},
-			workerPerAZ: true,
 		},
-		"azure": {
-			title:         "Azure",
-			terraformPath: "terraform/azure",
-			external:      true,
-			cloudConfig: heredoc.Doc(`
+		workerPerAZ: true,
+	},
+	"azure": {
+		title:         "Azure",
+		terraformPath: "terraform/azure",
+		external:      true,
+		cloudConfig: heredoc.Doc(`
 				{
 				    "tenantId": "{{ .Credentials.AZURE_TENANT_ID }}",
 				    "subscriptionId": "{{ .Credentials.AZURE_SUBSCRIPTION_ID }}",
@@ -109,131 +104,131 @@ var (
 				    "userAssignedIdentityID": ""
 				}
 			`),
-			optionalTFVars: []terraformVariable{
-				{
-					Name:         "os",
-					Description:  "Operating system to use for this cluster",
-					DefaultValue: osUbuntu.Name,
-					Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osRHEL, osFlatcar},
-				},
+		optionalTFVars: []terraformVariable{
+			{
+				Name:         "os",
+				Description:  "Operating system to use for this cluster",
+				DefaultValue: osUbuntu.Name,
+				Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osRHEL, osFlatcar},
 			},
 		},
-		"digitalocean": {
-			title:         "DigitalOcean",
-			terraformPath: "terraform/digitalocean",
-			external:      true,
-			optionalTFVars: []terraformVariable{
-				{
-					Name:         "os",
-					Description:  "Operating system to use for this cluster",
-					DefaultValue: osUbuntu.Name,
-					Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux},
-				},
+	},
+	"digitalocean": {
+		title:         "DigitalOcean",
+		terraformPath: "terraform/digitalocean",
+		external:      true,
+		optionalTFVars: []terraformVariable{
+			{
+				Name:         "os",
+				Description:  "Operating system to use for this cluster",
+				DefaultValue: osUbuntu.Name,
+				Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux},
 			},
 		},
-		"equinixmetal": {
-			title:         "Equinix Metal",
-			terraformPath: "terraform/equinixmetal",
-			external:      true,
-			requiredTFVars: []terraformVariable{
-				{
-					Name:        "project_id",
-					Description: "ID of your Equinix Metal project",
-				},
-			},
-			optionalTFVars: []terraformVariable{
-				{
-					Name:         "os",
-					Description:  "Operating system to use for this cluster",
-					DefaultValue: osUbuntu.Name,
-					Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osFlatcar},
-				},
+	},
+	"equinixmetal": {
+		title:         "Equinix Metal",
+		terraformPath: "terraform/equinixmetal",
+		external:      true,
+		requiredTFVars: []terraformVariable{
+			{
+				Name:        "project_id",
+				Description: "ID of your Equinix Metal project",
 			},
 		},
-		"gce": {
-			title:         "GCE",
-			terraformPath: "terraform/gce",
-			requiredTFVars: []terraformVariable{
-				{
-					Name:        "project",
-					Description: "Name of your GCE project",
-				},
+		optionalTFVars: []terraformVariable{
+			{
+				Name:         "os",
+				Description:  "Operating system to use for this cluster",
+				DefaultValue: osUbuntu.Name,
+				Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osFlatcar},
 			},
 		},
-		"hetzner": {
-			title:         "Hetzner",
-			terraformPath: "terraform/hetzner",
-			external:      true,
-			optionalTFVars: []terraformVariable{
-				{
-					Name:         "os",
-					Description:  "Operating system to use for this cluster",
-					DefaultValue: osUbuntu.Name,
-					Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux},
-				},
+	},
+	"gce": {
+		title:         "GCE",
+		terraformPath: "terraform/gce",
+		requiredTFVars: []terraformVariable{
+			{
+				Name:        "project",
+				Description: "Name of your GCE project",
 			},
 		},
-		"none": {
-			title:         "None (e.g. baremetal)",
-			terraformPath: "",
-		},
-		"nutanix": {
-			title:         "Nutanix",
-			terraformPath: "terraform/nutanix",
-			requiredTFVars: []terraformVariable{
-				{
-					Name:        "nutanix_cluster_name",
-					Description: "Name of Nutanix Cluster object",
-				},
-				{
-					Name:        "project_name",
-					Description: "Name of your Nutanix project",
-				},
-				{
-					Name:        "subnet_name",
-					Description: "Name of subnet to be used",
-				},
-				{
-					Name:        "image_name",
-					Description: "Name of image to be used for nodes",
-				},
-			},
-			optionalTFVars: []terraformVariable{
-				{
-					Name:         "worker_os",
-					Description:  "Operating system of the provided image",
-					DefaultValue: osUbuntu.Name,
-					Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osRHEL, osFlatcar, osAmazonLinux2},
-				},
+	},
+	"hetzner": {
+		title:         "Hetzner",
+		terraformPath: "terraform/hetzner",
+		external:      true,
+		optionalTFVars: []terraformVariable{
+			{
+				Name:         "os",
+				Description:  "Operating system to use for this cluster",
+				DefaultValue: osUbuntu.Name,
+				Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux},
 			},
 		},
-		"openstack": {
-			title:         "OpenStack",
-			terraformPath: "terraform/openstack",
-			external:      true,
-			requiredTFVars: []terraformVariable{
-				{
-					Name:        "external_network_name",
-					Description: "Name of the external network object to be used",
-				},
-				{
-					Name:        "image",
-					Description: "Name of image to be used for nodes",
-				},
-				{
-					Name:        "subnet_cidr",
-					Description: "Subnet CIDR to be used for this cluster",
-				},
+	},
+	"none": {
+		title:         "None (e.g. baremetal)",
+		terraformPath: "",
+	},
+	"nutanix": {
+		title:         "Nutanix",
+		terraformPath: "terraform/nutanix",
+		requiredTFVars: []terraformVariable{
+			{
+				Name:        "nutanix_cluster_name",
+				Description: "Name of Nutanix Cluster object",
 			},
-			optionalTFVars: []terraformVariable{
-				{
-					Name:         "worker_os",
-					Description:  "Operating system of the provided image",
-					DefaultValue: osUbuntu.Name,
-					Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osRHEL, osFlatcar, osAmazonLinux2},
-				},
+			{
+				Name:        "project_name",
+				Description: "Name of your Nutanix project",
 			},
-			cloudConfig: heredoc.Doc(`
+			{
+				Name:        "subnet_name",
+				Description: "Name of subnet to be used",
+			},
+			{
+				Name:        "image_name",
+				Description: "Name of image to be used for nodes",
+			},
+		},
+		optionalTFVars: []terraformVariable{
+			{
+				Name:         "worker_os",
+				Description:  "Operating system of the provided image",
+				DefaultValue: osUbuntu.Name,
+				Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osRHEL, osFlatcar},
+			},
+		},
+	},
+	"openstack": {
+		title:         "OpenStack",
+		terraformPath: "terraform/openstack",
+		external:      true,
+		requiredTFVars: []terraformVariable{
+			{
+				Name:        "external_network_name",
+				Description: "Name of the external network object to be used",
+			},
+			{
+				Name:        "image",
+				Description: "Name of image to be used for nodes",
+			},
+			{
+				Name:        "subnet_cidr",
+				Description: "Subnet CIDR to be used for this cluster",
+			},
+		},
+		optionalTFVars: []terraformVariable{
+			{
+				Name:         "worker_os",
+				Description:  "Operating system of the provided image",
+				DefaultValue: osUbuntu.Name,
+				Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osRHEL, osFlatcar},
+			},
+		},
+		cloudConfig: heredoc.Doc(`
 				[Global]
 				auth-url=<KEYSTONE-URL>
 				username=<USER>
@@ -245,69 +240,69 @@ var (
 				[LoadBalancer]
 				[BlockStorage]
 			`),
-		},
-		"vmware-cloud-director": {
-			title:           "VMware Cloud Director",
-			alternativeName: "vmwareCloudDirector",
-			terraformPath:   "terraform/vmware-cloud-director",
-			requiredTFVars: []terraformVariable{
-				{
-					Name:        "vcd_vdc_name",
-					Description: "TODO",
-				},
-				{
-					Name:        "vcd_edge_gateway_name",
-					Description: "Name of the edge gateway to be used",
-				},
-				{
-					Name:        "catalog_name",
-					Description: "Name of the catalog to be used",
-				},
-				{
-					Name:        "template_name",
-					Description: "Name of the template to be used",
-				},
+	},
+	"vmware-cloud-director": {
+		title:           "VMware Cloud Director",
+		alternativeName: "vmwareCloudDirector",
+		terraformPath:   "terraform/vmware-cloud-director",
+		requiredTFVars: []terraformVariable{
+			{
+				Name:        "vcd_vdc_name",
+				Description: "TODO",
 			},
-			optionalTFVars: []terraformVariable{
-				{
-					Name:         "worker_os",
-					Description:  "Operating system of the provided image",
-					DefaultValue: "Ubuntu",
-					Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osRHEL, osFlatcar, osAmazonLinux2},
-				},
+			{
+				Name:        "vcd_edge_gateway_name",
+				Description: "Name of the edge gateway to be used",
+			},
+			{
+				Name:        "catalog_name",
+				Description: "Name of the catalog to be used",
+			},
+			{
+				Name:        "template_name",
+				Description: "Name of the template to be used",
 			},
 		},
-		"vsphere": {
-			title:         "vSphere (Ubuntu)",
-			terraformPath: "terraform/vsphere",
-			external:      true,
-			requiredTFVars: []terraformVariable{
-				{
-					Name:        "datastore_name",
-					Description: "Datastore name",
-				},
-				{
-					Name:        "network_name",
-					Description: "Network name",
-				},
-				{
-					Name:        "template_name",
-					Description: "Template name",
-				},
-				{
-					Name:        "resource_pool_name",
-					Description: "Resource pool name",
-				},
+		optionalTFVars: []terraformVariable{
+			{
+				Name:         "worker_os",
+				Description:  "Operating system of the provided image",
+				DefaultValue: "Ubuntu",
+				Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osRHEL, osFlatcar},
 			},
-			optionalTFVars: []terraformVariable{
-				{
-					Name:         "worker_os",
-					Description:  "Operating system of the provided image",
-					DefaultValue: "Ubuntu",
-					Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osRHEL, osFlatcar, osAmazonLinux2},
-				},
+		},
+	},
+	"vsphere": {
+		title:         "vSphere (Ubuntu)",
+		terraformPath: "terraform/vsphere",
+		external:      true,
+		requiredTFVars: []terraformVariable{
+			{
+				Name:        "datastore_name",
+				Description: "Datastore name",
 			},
-			cloudConfig: heredoc.Doc(`
+			{
+				Name:        "network_name",
+				Description: "Network name",
+			},
+			{
+				Name:        "template_name",
+				Description: "Template name",
+			},
+			{
+				Name:        "resource_pool_name",
+				Description: "Resource pool name",
+			},
+		},
+		optionalTFVars: []terraformVariable{
+			{
+				Name:         "worker_os",
+				Description:  "Operating system of the provided image",
+				DefaultValue: "Ubuntu",
+				Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osRHEL, osFlatcar},
+			},
+		},
+		cloudConfig: heredoc.Doc(`
 				[Global]
 				secret-name = "vsphere-ccm-credentials"
 				secret-namespace = "kube-system"
@@ -329,7 +324,7 @@ var (
 				[Network]
 				public-network = "<VM-NETWORK>"
 			`),
-			csiConfig: heredoc.Doc(`
+		csiConfig: heredoc.Doc(`
 				[Global]
 				cluster-id = "<CLUSTER-ID>"
 				cluster-distribution = "<CLUSTER-DISTRIBUTION>"
@@ -341,39 +336,39 @@ var (
 				port = "<PORT>"
 				datacenters = "<DATACENTER>"
 			`),
+	},
+	"vsphere/flatcar": {
+		title:           "vSphere (Flatcar)",
+		alternativeName: "vsphere",
+		terraformPath:   "terraform/vsphere_flatcar",
+		external:        true,
+		requiredTFVars: []terraformVariable{
+			{
+				Name:        "datastore_name",
+				Description: "Datastore name",
+			},
+			{
+				Name:        "network_name",
+				Description: "Network name",
+			},
+			{
+				Name:        "template_name",
+				Description: "Template name",
+			},
+			{
+				Name:        "resource_pool_name",
+				Description: "Resource pool name",
+			},
 		},
-		"vsphere/flatcar": {
-			title:           "vSphere (Flatcar)",
-			alternativeName: "vsphere",
-			terraformPath:   "terraform/vsphere_flatcar",
-			external:        true,
-			requiredTFVars: []terraformVariable{
-				{
-					Name:        "datastore_name",
-					Description: "Datastore name",
-				},
-				{
-					Name:        "network_name",
-					Description: "Network name",
-				},
-				{
-					Name:        "template_name",
-					Description: "Template name",
-				},
-				{
-					Name:        "resource_pool_name",
-					Description: "Resource pool name",
-				},
+		optionalTFVars: []terraformVariable{
+			{
+				Name:         "worker_os",
+				Description:  "Operating system of the provided image",
+				DefaultValue: "Ubuntu",
+				Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osRHEL, osFlatcar},
 			},
-			optionalTFVars: []terraformVariable{
-				{
-					Name:         "worker_os",
-					Description:  "Operating system of the provided image",
-					DefaultValue: "Ubuntu",
-					Choices:      []terraformVariableChoice{osUbuntu, osCentos, osRockyLinux, osRHEL, osFlatcar, osAmazonLinux2},
-				},
-			},
-			cloudConfig: heredoc.Doc(`
+		},
+		cloudConfig: heredoc.Doc(`
 				[Global]
 				secret-name = "vsphere-ccm-credentials"
 				secret-namespace = "kube-system"
@@ -395,7 +390,7 @@ var (
 				[Network]
 				public-network = "<VM-NETWORK>"
 			`),
-			csiConfig: heredoc.Doc(`
+		csiConfig: heredoc.Doc(`
 				[Global]
 				cluster-id = "<CLUSTER-ID>"
 				cluster-distribution = "<CLUSTER-DISTRIBUTION>"
@@ -407,6 +402,5 @@ var (
 				port = "<PORT>"
 				datacenters = "<DATACENTER>"
 			`),
-		},
-	}
-)
+	},
+}

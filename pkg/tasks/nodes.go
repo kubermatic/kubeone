@@ -56,7 +56,6 @@ func ensureRestartKubeAPIServer(s *state.State) error {
 
 func restartKubeAPIServerOnOS(s *state.State, node kubeoneapi.HostConfig) error {
 	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
-		kubeoneapi.OperatingSystemNameAmazon:     restartKubeAPIServerCrictl,
 		kubeoneapi.OperatingSystemNameCentOS:     restartKubeAPIServerCrictl,
 		kubeoneapi.OperatingSystemNameDebian:     restartKubeAPIServerCrictl,
 		kubeoneapi.OperatingSystemNameFlatcar:    restartKubeAPIServerCrictl,
@@ -68,7 +67,6 @@ func restartKubeAPIServerOnOS(s *state.State, node kubeoneapi.HostConfig) error 
 
 func ensureRestartKubeAPIServerOnOS(s *state.State, node kubeoneapi.HostConfig) error {
 	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
-		kubeoneapi.OperatingSystemNameAmazon:     ensureRestartKubeAPIServerCrictl,
 		kubeoneapi.OperatingSystemNameCentOS:     ensureRestartKubeAPIServerCrictl,
 		kubeoneapi.OperatingSystemNameDebian:     ensureRestartKubeAPIServerCrictl,
 		kubeoneapi.OperatingSystemNameFlatcar:    ensureRestartKubeAPIServerCrictl,

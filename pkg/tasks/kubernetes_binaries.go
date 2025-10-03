@@ -25,7 +25,6 @@ import (
 
 func setupKubernetesBinaries(s *state.State, node kubeoneapi.HostConfig, params scripts.Params) error {
 	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
-		kubeoneapi.OperatingSystemNameAmazon:     kubernetesBinariesAmazonLinux(params),
 		kubeoneapi.OperatingSystemNameCentOS:     kubernetesBinariesRHELLike(params),
 		kubeoneapi.OperatingSystemNameDebian:     kubernetesBinariesDeb(params),
 		kubeoneapi.OperatingSystemNameFlatcar:    kubernetesBinariesFlatcar(params),
@@ -70,19 +69,6 @@ func kubernetesBinariesFlatcar(params scripts.Params) func(*state.State) error {
 func kubernetesBinariesRHELLike(params scripts.Params) func(*state.State) error {
 	return func(s *state.State) error {
 		cmd, err := scripts.RHELLikeScript(s.Cluster, params)
-		if err != nil {
-			return err
-		}
-
-		_, _, err = s.Runner.RunRaw(cmd)
-
-		return fail.SSH(err, "%s", params.String())
-	}
-}
-
-func kubernetesBinariesAmazonLinux(params scripts.Params) func(*state.State) error {
-	return func(s *state.State) error {
-		cmd, err := scripts.AmazonLinuxScript(s.Cluster, params)
 		if err != nil {
 			return err
 		}
