@@ -263,50 +263,6 @@ var (
 				outputDir:  "/logs/artifacts/logs",
 			},
 		},
-		"aws_amzn": {
-			name:   "aws_amzn",
-			osName: "Amazon Linux 2",
-			environ: map[string]string{
-				"PROVIDER": "aws",
-			},
-			labels: map[string]string{
-				"preset-goproxy":         "true",
-				"preset-aws-e2e-kubeone": "true",
-			},
-			terraform: terraformBin{
-				path:    "../../examples/terraform/aws",
-				varFile: "testdata/aws_medium.tfvars",
-				vars: []string{
-					"os=amzn",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
-		"aws_amzn_stable": {
-			name:   "aws_amzn_stable",
-			osName: "Amazon Linux 2",
-			environ: map[string]string{
-				"PROVIDER": "aws",
-			},
-			labels: map[string]string{
-				"preset-goproxy":         "true",
-				"preset-aws-e2e-kubeone": "true",
-			},
-			terraform: terraformBin{
-				path:    "../../../kubeone-stable/examples/terraform/aws",
-				varFile: "testdata/aws_stable_medium.tfvars",
-				vars: []string{
-					"os=amzn",
-				},
-			},
-			protokol: protokolBin{
-				namespaces: []string{"kube-system"},
-				outputDir:  "/logs/artifacts/logs",
-			},
-		},
 		"aws_long_timeout_default": {
 			name:              "aws_long_timeout_default",
 			osName:            "Ubuntu",

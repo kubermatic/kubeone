@@ -38,7 +38,6 @@ variable "worker_os" {
   # * centos
   # * flatcar
   # * rhel
-  # * amzn2
   # * rockylinux
   default = ""
   type    = string
@@ -166,7 +165,6 @@ variable "os" {
   # * centos
   # * rhel
   # * flatcar
-  # * amzn
   # * rockylinux
   default = "ubuntu"
   type    = string
@@ -220,13 +218,6 @@ variable "ami_filters" {
       image_name   = ["Rocky-8-ec2-*.x86_64"]
       ssh_username = "rocky"
       worker_os    = "rockylinux"
-    }
-
-    amzn = {
-      owners       = ["137112412989"] # Amazon
-      image_name   = ["amzn2-ami-hvm-2.0.*-x86_64-gp2"]
-      ssh_username = "ec2-user"
-      worker_os    = "amzn2"
     }
   }
 }

@@ -96,17 +96,6 @@ var containerRuntimeTemplates = map[string]string{
 		defaultContainerdVersion,
 	),
 
-	"yum-containerd-amzn": heredoc.Docf(`
-			sudo yum versionlock delete containerd || true
-			sudo yum install -y containerd-%s
-			sudo yum versionlock add containerd
-
-			{{ template "container-runtime-daemon-config" . }}
-			{{ template "containerd-systemd-setup" . -}}
-			`,
-		defaultContainerdVersion,
-	),
-
 	"flatcar-containerd": heredoc.Doc(`
 			{{ template "container-runtime-daemon-config" . }}
 			{{ template "flatcar-systemd-drop-in" . }}

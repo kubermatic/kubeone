@@ -5,7 +5,6 @@
 - scenario: install_containerd_external
   initVersion: v1.32
   infrastructures:
-    - name: aws_amzn
     - name: aws_default
       runIfChanged: "(.prow/|addons/|examples/|hack/|pkg/|test/)"
     - name: aws_ubuntu_previous_lts
@@ -31,7 +30,6 @@
 - scenario: install_containerd_external
   initVersion: v1.33
   infrastructures:
-    - name: aws_amzn
     - name: aws_default
       runIfChanged: "(.prow/|addons/|examples/|hack/|pkg/|test/)"
     - name: aws_ubuntu_previous_lts
@@ -79,7 +77,6 @@
   initVersion: v1.32
   upgradedVersion: v1.33
   infrastructures:
-    - name: aws_amzn_stable
     - name: aws_default_stable
     - name: aws_ubuntu_previous_lts
     - name: aws_flatcar_stable
@@ -105,7 +102,6 @@
   initVersion: v1.33
   upgradedVersion: v1.34
   infrastructures:
-    - name: aws_amzn_stable
     - name: aws_default_stable
     - name: aws_ubuntu_previous_lts
     - name: aws_flatcar_stable
@@ -126,7 +122,6 @@
 - scenario: cilium_containerd_external
   initVersion: v1.32
   infrastructures:
-    - name: aws_amzn
     - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
@@ -150,7 +145,6 @@
 - scenario: cilium_containerd_external
   initVersion: v1.33
   infrastructures:
-    - name: aws_amzn
     - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
@@ -189,7 +183,6 @@
 - scenario: external_cni_flannel_helm_chart
   initVersion: v1.32
   infrastructures:
-    - name: aws_amzn
     - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
@@ -213,7 +206,6 @@
 - scenario: external_cni_flannel_helm_chart
   initVersion: v1.33
   infrastructures:
-    - name: aws_amzn
     - name: aws_default
     - name: aws_flatcar
     - name: aws_rhel
@@ -253,7 +245,6 @@
   initVersion: v1.32
   upgradedVersion: v1.33
   infrastructures:
-    - name: aws_amzn_stable
     - name: aws_default_stable
     - name: aws_flatcar_stable
     - name: aws_rhel_stable

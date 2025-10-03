@@ -8,31 +8,6 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsAmznInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.25-node-22-4
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-install-containerd-external-v1.32
   optional: false
   path_alias: k8c.io/kubeone
@@ -539,31 +514,6 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-4
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-install-containerd-external-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsAmznInstallContainerdExternalV1_33
-      env:
-      - name: PROVIDER
-        value: aws
       image: quay.io/kubermatic/build:go-1.25-node-22-4
       imagePullPolicy: Always
       name: ""
@@ -1414,36 +1364,6 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-stable-upgrade-containerd-external-from-v1.32-to-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsAmznStableUpgradeContainerdExternalFromV1_32_ToV1_33
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.25-node-22-4
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.10
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-external-from-v1.32-to-v1.33
   optional: false
   path_alias: k8c.io/kubeone
@@ -2065,36 +1985,6 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-stable-upgrade-containerd-external-from-v1.33-to-v1.34
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsAmznStableUpgradeContainerdExternalFromV1_33_ToV1_34
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.25-node-22-4
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.10
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-external-from-v1.33-to-v1.34
   optional: false
   path_alias: k8c.io/kubeone
@@ -2448,31 +2338,6 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-4
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-cilium-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsAmznCiliumContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: aws
       image: quay.io/kubermatic/build:go-1.25-node-22-4
       imagePullPolicy: Always
       name: ""
@@ -2967,31 +2832,6 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-4
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-cilium-containerd-external-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsAmznCiliumContainerdExternalV1_33
-      env:
-      - name: PROVIDER
-        value: aws
       image: quay.io/kubermatic/build:go-1.25-node-22-4
       imagePullPolicy: Always
       name: ""
@@ -3785,31 +3625,6 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-external-cni-flannel-helm-chart-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsAmznExternalCniFlannelHelmChartV1_32
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.25-node-22-4
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-external-cni-flannel-helm-chart-v1.32
   optional: false
   path_alias: k8c.io/kubeone
@@ -4290,31 +4105,6 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-4
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-external-cni-flannel-helm-chart-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsAmznExternalCniFlannelHelmChartV1_33
-      env:
-      - name: PROVIDER
-        value: aws
       image: quay.io/kubermatic/build:go-1.25-node-22-4
       imagePullPolicy: Always
       name: ""
@@ -5094,36 +4884,6 @@ presubmits:
         value: vsphere
       - name: TEST_TIMEOUT
         value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-4
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.10
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-amzn-stable-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsAmznStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
-      env:
-      - name: PROVIDER
-        value: aws
       image: quay.io/kubermatic/build:go-1.25-node-22-4
       imagePullPolicy: Always
       name: ""

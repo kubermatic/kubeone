@@ -10,18 +10,6 @@ import (
 func TestStub(t *testing.T) {
 	t.Skip("stub is skipped")
 }
-func TestAwsAmznInstallContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
 func TestAwsDefaultInstallContainerdExternalV1_32(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default"]
@@ -256,18 +244,6 @@ func TestVsphereFlatcarInstallContainerdExternalV1_32(t *testing.T) {
 	scenario := Scenarios["install_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAwsAmznInstallContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["install_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.33")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
@@ -658,18 +634,6 @@ func TestVsphereFlatcarInstallContainerdExternalV1_34(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAwsAmznStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_amzn_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.32", "v1.33")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
 func TestAwsDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default_stable"]
@@ -910,18 +874,6 @@ func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_32_ToV1_33(t *testi
 	scenario.Run(ctx, t)
 }
 
-func TestAwsAmznStableUpgradeContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_amzn_stable"]
-	scenario := Scenarios["upgrade_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.33", "v1.34")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
 func TestAwsDefaultStableUpgradeContainerdExternalFromV1_33_ToV1_34(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default_stable"]
@@ -1060,18 +1012,6 @@ func TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_33_ToV1_34(t *testi
 	scenario := Scenarios["upgrade_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.33", "v1.34")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAwsAmznCiliumContainerdExternalV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.32")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
@@ -1300,18 +1240,6 @@ func TestVsphereFlatcarCiliumContainerdExternalV1_32(t *testing.T) {
 	scenario := Scenarios["cilium_containerd_external"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAwsAmznCiliumContainerdExternalV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.33")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
@@ -1678,18 +1606,6 @@ func TestVsphereFlatcarCiliumContainerdExternalV1_34(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
-func TestAwsAmznExternalCniFlannelHelmChartV1_32(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
 func TestAwsDefaultExternalCniFlannelHelmChartV1_32(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_default"]
@@ -1912,18 +1828,6 @@ func TestVsphereFlatcarExternalCniFlannelHelmChartV1_32(t *testing.T) {
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.32")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAwsAmznExternalCniFlannelHelmChartV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_amzn"]
-	scenario := Scenarios["external_cni_flannel_helm_chart"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.33")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}
@@ -2284,18 +2188,6 @@ func TestVsphereFlatcarExternalCniFlannelHelmChartV1_34(t *testing.T) {
 	scenario := Scenarios["external_cni_flannel_helm_chart"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.34")
-	if err := scenario.FetchVersions(); err != nil {
-		t.Fatal(err)
-	}
-	scenario.Run(ctx, t)
-}
-
-func TestAwsAmznStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33(t *testing.T) {
-	ctx := NewSignalContext(t.Context(), t.Logf)
-	infra := Infrastructures["aws_amzn_stable"]
-	scenario := Scenarios["upgrade_cilium_containerd_external"]
-	scenario.SetInfra(infra)
-	scenario.SetVersions("v1.32", "v1.33")
 	if err := scenario.FetchVersions(); err != nil {
 		t.Fatal(err)
 	}

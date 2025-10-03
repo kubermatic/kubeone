@@ -187,12 +187,11 @@ func removeBinaries(s *state.State, node *kubeoneapi.HostConfig, _ executor.Inte
 	}
 
 	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
-		kubeoneapi.OperatingSystemNameAmazon:     removeBinariesAmazonLinux,
-		kubeoneapi.OperatingSystemNameCentOS:     removeBinariesCentOS,
+		kubeoneapi.OperatingSystemNameCentOS:     removeBinariesRHELLike,
 		kubeoneapi.OperatingSystemNameDebian:     removeBinariesDebian,
 		kubeoneapi.OperatingSystemNameFlatcar:    removeBinariesFlatcar,
-		kubeoneapi.OperatingSystemNameRHEL:       removeBinariesCentOS,
-		kubeoneapi.OperatingSystemNameRockyLinux: removeBinariesCentOS,
+		kubeoneapi.OperatingSystemNameRHEL:       removeBinariesRHELLike,
+		kubeoneapi.OperatingSystemNameRockyLinux: removeBinariesRHELLike,
 		kubeoneapi.OperatingSystemNameUbuntu:     removeBinariesDebian,
 	})
 }
@@ -208,19 +207,8 @@ func removeBinariesDebian(s *state.State) error {
 	return fail.Runtime(err, "removing kubernetes binaries")
 }
 
-func removeBinariesCentOS(s *state.State) error {
+func removeBinariesRHELLike(s *state.State) error {
 	cmd, err := scripts.RemoveBinariesRHELLike()
-	if err != nil {
-		return err
-	}
-
-	_, _, err = s.Runner.RunRaw(cmd)
-
-	return fail.Runtime(err, "removing kubernetes binaries")
-}
-
-func removeBinariesAmazonLinux(s *state.State) error {
-	cmd, err := scripts.RemoveBinariesAmazonLinux()
 	if err != nil {
 		return err
 	}
