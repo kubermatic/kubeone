@@ -35,9 +35,7 @@ const (
 	credentialSecretName = "kube-system/kubeone-registry-credentials" //nolint:gosec
 )
 
-var (
-	postV133Constraint = semverutil.MustParseConstraint(">= 1.33")
-)
+var postV133Constraint = semverutil.MustParseConstraint(">= 1.33")
 
 // Leader returns the first configured host. Only call this after
 // validating the cluster config to ensure a leader exists.
@@ -110,7 +108,6 @@ func (osName OperatingSystemName) IsValid() bool {
 	case OperatingSystemNameCentOS:
 	case OperatingSystemNameRHEL:
 	case OperatingSystemNameRockyLinux:
-	case OperatingSystemNameAmazon:
 	case OperatingSystemNameFlatcar:
 	case OperatingSystemNameUnknown:
 	default:
