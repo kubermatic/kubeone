@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"fmt"
 	"math/rand"
+	"net/url"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -150,6 +151,16 @@ func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 		}
 
 		for _, mirror := range containerdRegistry.Mirrors {
+			if containerdRegistry.OverridePath {
+				mirrorURL, _ := url.Parse(mirror)
+				mirrorQS := mirrorURL.Query()
+				kubermaticValues := url.Values{}
+				kubermaticValues.Add("override_path", "true")
+				mirrorQS.Add("kubermatic", kubermaticValues.Encode())
+				mirrorURL.RawPath = mirrorQS.Encode()
+				mirror = mirrorURL.String()
+			}
+
 			mcFlags = append(mcFlags,
 				fmt.Sprintf("-node-containerd-registry-mirrors=%s=%s", registryName, mirror),
 			)

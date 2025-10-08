@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2025-09-15T12:35:55+03:00
+date = 2025-10-08T17:27:45+03:00
 weight = 11
 +++
 ## v1beta2
@@ -262,6 +262,7 @@ ContainerdRegistry defines endpoints and security for given container registry
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | mirrors | List of registry mirrors to use | []string | false |
+| overridePath | Configure override_path | bool | false |
 | tlsConfig | TLSConfig for the registry | *[ContainerdTLSConfig](#containerdtlsconfig) | false |
 | auth | Registry authentication | *[ContainerdRegistryAuthConfig](#containerdregistryauthconfig) | false |
 

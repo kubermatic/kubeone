@@ -225,6 +225,9 @@ type ContainerdRegistry struct {
 	// List of registry mirrors to use
 	Mirrors []string `json:"mirrors,omitempty"`
 
+	// Configure override_path
+	OverridePath bool `json:"overridePath,omitempty"`
+
 	// TLSConfig for the registry
 	TLSConfig *ContainerdTLSConfig `json:"tlsConfig,omitempty"`
 
