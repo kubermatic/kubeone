@@ -24,9 +24,7 @@ import (
 	"k8c.io/kubeone/pkg/testhelper"
 )
 
-var (
-	updateFlag = flag.Bool("update", false, "update testdata files")
-)
+var updateFlag = flag.Bool("update", false, "update testdata files")
 
 func Test_marshalContainerdConfig(t *testing.T) {
 	tests := []struct {
@@ -49,6 +47,15 @@ func Test_marshalContainerdConfig(t *testing.T) {
 			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
 				"docker.io": {
 					Mirrors: []string{"https://custom.secure.registry"},
+				},
+			})),
+		},
+		{
+			name: "mirror registry with override_path",
+			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
+				"docker.io": {
+					Mirrors:      []string{"https://custom.secure.registry/v2/someproject"},
+					OverridePath: true,
 				},
 			})),
 		},
