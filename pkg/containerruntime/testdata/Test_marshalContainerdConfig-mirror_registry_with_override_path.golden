@@ -1,0 +1,21 @@
+version = 2
+
+[metrics]
+address = "127.0.0.1:1338"
+
+[plugins]
+[plugins."io.containerd.grpc.v1.cri"]
+sandbox_image = "registry.k8s.io/pause:3.10"
+device_ownership_from_security_context = true
+[plugins."io.containerd.grpc.v1.cri".containerd]
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+runtime_type = "io.containerd.runc.v2"
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+SystemdCgroup = true
+[plugins."io.containerd.grpc.v1.cri".registry]
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+endpoint = ["https://custom.secure.registry/v2/someproject"]
+override_path = true
+[plugins."io.containerd.grpc.v1.cri".registry.configs]
