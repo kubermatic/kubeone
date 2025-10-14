@@ -23,10 +23,15 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	kubeletconfigv1beta1 "k8s.io/kubelet/config/v1beta1"
+	"k8s.io/utils/ptr"
 )
 
 func NewKubeletConfiguration(cluster *kubeoneapi.KubeOneCluster, featureGates map[string]bool) (runtime.Object, error) {
-	bfalse := false
+	var maxPods int32
+	if cluster.KubeletConfig.MaxPods != nil {
+		maxPods = *cluster.KubeletConfig.MaxPods
+	}
+
 	kubeletConfig := &kubeletconfigv1beta1.KubeletConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "kubelet.config.k8s.io/v1beta1",
@@ -34,17 +39,25 @@ func NewKubeletConfiguration(cluster *kubeoneapi.KubeOneCluster, featureGates ma
 		},
 		Authentication: kubeletconfigv1beta1.KubeletAuthentication{
 			Anonymous: kubeletconfigv1beta1.KubeletAnonymousAuthentication{
-				Enabled: &bfalse,
+				Enabled: ptr.To(false),
 			},
 		},
-		CgroupDriver:         "systemd",
-		ContainerLogMaxFiles: &cluster.LoggingConfig.ContainerLogMaxFiles,
-		ContainerLogMaxSize:  cluster.LoggingConfig.ContainerLogMaxSize,
-		FeatureGates:         featureGates,
-		ReadOnlyPort:         0,
-		RotateCertificates:   true,
-		ServerTLSBootstrap:   true,
-		TLSCipherSuites:      cluster.TLSCipherSuites.Kubelet,
+		CgroupDriver:                "systemd",
+		ContainerLogMaxFiles:        &cluster.LoggingConfig.ContainerLogMaxFiles,
+		ContainerLogMaxSize:         cluster.LoggingConfig.ContainerLogMaxSize,
+		FeatureGates:                featureGates,
+		ReadOnlyPort:                0,
+		RotateCertificates:          true,
+		ServerTLSBootstrap:          true,
+		TLSCipherSuites:             cluster.TLSCipherSuites.Kubelet,
+		SystemReserved:              cluster.KubeletConfig.SystemReserved,
+		KubeReserved:                cluster.KubeletConfig.KubeReserved,
+		EvictionHard:                cluster.KubeletConfig.EvictionHard,
+		MaxPods:                     maxPods,
+		ImageGCHighThresholdPercent: cluster.KubeletConfig.ImageGCHighThresholdPercent,
+		ImageGCLowThresholdPercent:  cluster.KubeletConfig.ImageGCLowThresholdPercent,
+		ImageMinimumGCAge:           cluster.KubeletConfig.ImageMinimumGCAge,
+		ImageMaximumGCAge:           cluster.KubeletConfig.ImageMaximumGCAge,
 	}
 
 	if cluster.Features.NodeLocalDNS.Deploy {

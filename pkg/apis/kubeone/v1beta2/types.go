@@ -35,6 +35,9 @@ type KubeOneCluster struct {
 	// ControlPlane describes the control plane nodes and how to access them.
 	ControlPlane ControlPlaneConfig `json:"controlPlane"`
 
+	// KubeletConfig used to generate cluster's KubeletConfiguration that will be used along with kubeadm
+	KubeletConfig KubeletConfig `json:"kubeletConfig,omitempty"`
+
 	// APIEndpoint are pairs of address and port used to communicate with the Kubernetes API.
 	APIEndpoint APIEndpoint `json:"apiEndpoint"`
 
@@ -386,6 +389,25 @@ type KubeletConfig struct {
 	// If not provided, default value provided by kubelet will be used
 	// (max. 110 pods per node)
 	MaxPods *int32 `json:"maxPods,omitempty"`
+
+	// ImageGCHighThresholdPercent is the percent of disk usage after which image garbage collection is always run. The
+	// percent is calculated by dividing this field value by 100, so this field must be between 0 and 100, inclusive.
+	// When specified, the value must be greater than imageGCLowThresholdPercent. Default: 85
+	ImageGCHighThresholdPercent *int32 `json:"imageGCHighThresholdPercent,omitempty"`
+
+	// ImageGCLowThresholdPercent is the percent of disk usage before which image garbage collection is never run.
+	// Lowest disk usage to garbage collect to. The percent is calculated by dividing this field value by 100, so the
+	// field value must be between 0 and 100, inclusive. When specified, the value must be less than
+	// imageGCHighThresholdPercent. Default: 80
+	ImageGCLowThresholdPercent *int32 `json:"imageGCLowThresholdPercent,omitempty"`
+
+	// ImageMinimumGCAge is the minimum age for an unused image before it is garbage collected. Default: "2m"
+	ImageMinimumGCAge metav1.Duration `json:"imageMinimumGCAge,omitempty"`
+
+	// ImageMaximumGCAge is the maximum age an image can be unused before it is garbage collected. The default of this
+	// field is "0s", which disables this field--meaning images won't be garbage collected based on being unused for too
+	// long. Default: "0s" (disabled)
+	ImageMaximumGCAge metav1.Duration `json:"imageMaximumGCAge,omitempty"`
 }
 
 // APIEndpoint is the endpoint used to communicate with the Kubernetes API

@@ -943,6 +943,7 @@ func (in *KubeOneCluster) DeepCopyInto(out *KubeOneCluster) {
 	in.ControlPlane.DeepCopyInto(&out.ControlPlane)
 	in.APIEndpoint.DeepCopyInto(&out.APIEndpoint)
 	in.CloudProvider.DeepCopyInto(&out.CloudProvider)
+	in.KubeletConfig.DeepCopyInto(&out.KubeletConfig)
 	out.Versions = in.Versions
 	in.ContainerRuntime.DeepCopyInto(&out.ContainerRuntime)
 	in.ClusterNetwork.DeepCopyInto(&out.ClusterNetwork)
@@ -1070,6 +1071,18 @@ func (in *KubeletConfig) DeepCopyInto(out *KubeletConfig) {
 		*out = new(int64)
 		**out = **in
 	}
+	if in.ImageGCHighThresholdPercent != nil {
+		in, out := &in.ImageGCHighThresholdPercent, &out.ImageGCHighThresholdPercent
+		*out = new(int32)
+		**out = **in
+	}
+	if in.ImageGCLowThresholdPercent != nil {
+		in, out := &in.ImageGCLowThresholdPercent, &out.ImageGCLowThresholdPercent
+		*out = new(int32)
+		**out = **in
+	}
+	out.ImageMinimumGCAge = in.ImageMinimumGCAge
+	out.ImageMaximumGCAge = in.ImageMaximumGCAge
 	return
 }
 

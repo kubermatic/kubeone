@@ -50,6 +50,16 @@ output "kubeone_hosts" {
       bastion_user         = var.bastion_user
       ssh_hosts_keys       = var.ssh_hosts_keys
       bastion_host_key     = var.bastion_host_key
+      # kubelet            = {
+      #   system_reserved                 = "cpu=200m,memory=200Mi"
+      #   kube_reserved                   = "cpu=200m,memory=300Mi"
+      #   eviction_hard                   = ""
+      #   max_pods                        = 110
+      #   image_gc_high_threshold_percent = 85
+      #   image_gc_low_threshold_percent  = 80
+      #   image_minimum_gc_age            = "2m"
+      #   image_maximum_gc_age            = "0"
+      # }
     }
   }
 }
@@ -83,10 +93,14 @@ output "kubeone_workers" {
         # uncomment to following to set those kubelet parameters. More into at:
         # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
         # machineObjectAnnotations = {
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/SystemReserved" = "cpu=200m,memory=200Mi"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/KubeReserved"   = "cpu=200m,memory=300Mi"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/EvictionHard"   = ""
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/MaxPods"        = "110"
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/SystemReserved"              = "cpu=200m,memory=200Mi"
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/KubeReserved"                = "cpu=200m,memory=300Mi"
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/EvictionHard"                = ""
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/MaxPods"                     = "110"
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageGCHighThresholdPercent" = "85"
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageGCLowThresholdPercent"  = "80"
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageMinimumGCAge"           = "2m"
+        #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageMaximumGCAge"           = "0"
         # }
         cloudProviderSpec = {
           # provider specific fields:

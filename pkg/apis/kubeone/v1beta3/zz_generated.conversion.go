@@ -1682,6 +1682,9 @@ func autoConvert_v1beta3_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneClu
 	if err := Convert_v1beta3_CloudProviderSpec_To_kubeone_CloudProviderSpec(&in.CloudProvider, &out.CloudProvider, s); err != nil {
 		return err
 	}
+	if err := Convert_v1beta3_KubeletConfig_To_kubeone_KubeletConfig(&in.KubeletConfig, &out.KubeletConfig, s); err != nil {
+		return err
+	}
 	if err := Convert_v1beta3_VersionConfig_To_kubeone_VersionConfig(&in.Versions, &out.Versions, s); err != nil {
 		return err
 	}
@@ -1728,6 +1731,9 @@ func Convert_v1beta3_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneCluster
 func autoConvert_kubeone_KubeOneCluster_To_v1beta3_KubeOneCluster(in *kubeone.KubeOneCluster, out *KubeOneCluster, s conversion.Scope) error {
 	out.Name = in.Name
 	if err := Convert_kubeone_ControlPlaneConfig_To_v1beta3_ControlPlaneConfig(&in.ControlPlane, &out.ControlPlane, s); err != nil {
+		return err
+	}
+	if err := Convert_kubeone_KubeletConfig_To_v1beta3_KubeletConfig(&in.KubeletConfig, &out.KubeletConfig, s); err != nil {
 		return err
 	}
 	if err := Convert_kubeone_APIEndpoint_To_v1beta3_APIEndpoint(&in.APIEndpoint, &out.APIEndpoint, s); err != nil {
@@ -1805,6 +1811,10 @@ func autoConvert_v1beta3_KubeletConfig_To_kubeone_KubeletConfig(in *KubeletConfi
 	out.EvictionHard = *(*map[string]string)(unsafe.Pointer(&in.EvictionHard))
 	out.MaxPods = (*int32)(unsafe.Pointer(in.MaxPods))
 	out.PodPidsLimit = (*int64)(unsafe.Pointer(in.PodPidsLimit))
+	out.ImageGCHighThresholdPercent = (*int32)(unsafe.Pointer(in.ImageGCHighThresholdPercent))
+	out.ImageGCLowThresholdPercent = (*int32)(unsafe.Pointer(in.ImageGCLowThresholdPercent))
+	out.ImageMinimumGCAge = in.ImageMinimumGCAge
+	out.ImageMaximumGCAge = in.ImageMaximumGCAge
 	return nil
 }
 
@@ -1819,6 +1829,10 @@ func autoConvert_kubeone_KubeletConfig_To_v1beta3_KubeletConfig(in *kubeone.Kube
 	out.EvictionHard = *(*map[string]string)(unsafe.Pointer(&in.EvictionHard))
 	out.MaxPods = (*int32)(unsafe.Pointer(in.MaxPods))
 	out.PodPidsLimit = (*int64)(unsafe.Pointer(in.PodPidsLimit))
+	out.ImageGCHighThresholdPercent = (*int32)(unsafe.Pointer(in.ImageGCHighThresholdPercent))
+	out.ImageGCLowThresholdPercent = (*int32)(unsafe.Pointer(in.ImageGCLowThresholdPercent))
+	out.ImageMinimumGCAge = in.ImageMinimumGCAge
+	out.ImageMaximumGCAge = in.ImageMaximumGCAge
 	return nil
 }
 
