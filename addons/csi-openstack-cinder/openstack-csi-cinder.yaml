@@ -343,7 +343,7 @@ kind: Deployment
 metadata:
   labels:
     app: openstack-cinder-csi
-    chart: openstack-cinder-csi-2.33.1
+    chart: openstack-cinder-csi-2.34.0
     component: controllerplugin
     heritage: Helm
     release: cinder-csi
@@ -365,7 +365,7 @@ spec:
     metadata:
       labels:
         app: openstack-cinder-csi
-        chart: openstack-cinder-csi-2.33.1
+        chart: openstack-cinder-csi-2.34.0
         component: controllerplugin
         heritage: Helm
         release: cinder-csi
@@ -519,7 +519,7 @@ kind: DaemonSet
 metadata:
   labels:
     app: openstack-cinder-csi
-    chart: openstack-cinder-csi-2.33.1
+    chart: openstack-cinder-csi-2.34.0
     component: nodeplugin
     heritage: Helm
     release: cinder-csi
@@ -535,7 +535,7 @@ spec:
     metadata:
       labels:
         app: openstack-cinder-csi
-        chart: openstack-cinder-csi-2.33.1
+        chart: openstack-cinder-csi-2.34.0
         component: nodeplugin
         heritage: Helm
         release: cinder-csi
