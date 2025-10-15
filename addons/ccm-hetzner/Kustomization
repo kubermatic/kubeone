@@ -5,7 +5,7 @@ namespace: kube-system
 helmCharts:
 - name: hcloud-cloud-controller-manager
   repo: https://charts.hetzner.cloud
-  version: 1.26.0
+  version: 1.27.0
   releaseName: hccm
   namespace: kube-system
   valuesFile: generate-values-ccm
