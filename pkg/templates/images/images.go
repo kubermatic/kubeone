@@ -308,20 +308,22 @@ func optionalResources() map[Resource]map[string]string {
 		// OpenStack CCM
 		OpenstackCCM: {
 			"1.32.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.32.1",
-			">= 1.33.0": "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.33.1",
+			"1.33.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.33.1",
+			">= 1.34.0": "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.34.0",
 		},
 
 		// OpenStack CSI
 		OpenstackCSI: {
 			"1.32.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.32.1",
-			">= 1.33.0": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.33.1",
+			"1.33.0":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.33.1",
+			">= 1.34.0": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.34.0",
 		},
-		OpenstackCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.12.0"},
-		OpenstackCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.14.0"},
-		OpenstackCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.7.0"},
-		OpenstackCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v5.1.0"},
-		OpenstackCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.12.0"},
-		OpenstackCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.1.0"},
+		OpenstackCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.15.0"},
+		OpenstackCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.17.0"},
+		OpenstackCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.10.0"},
+		OpenstackCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v5.3.0"},
+		OpenstackCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.14.0"},
+		OpenstackCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.3.0"},
 
 		// Equinix Metal CCM
 		EquinixMetalCCM: {"*": "quay.io/equinix-oss/cloud-provider-equinix-metal:v3.8.1"},
