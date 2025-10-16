@@ -382,7 +382,6 @@ type NodeSettingsSpec struct {
 	Labels      map[string]string `json:"labels,omitempty"`
 	Annotations []string          `json:"annotations,omitempty"`
 	Taints      []corev1.Taint    `json:"taints,omitempty"`
-	Kubelet     KubeletConfig     `json:"kubelet,omitempty"`
 }
 
 type OperatingSystemSpec struct {

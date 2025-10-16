@@ -1276,7 +1276,6 @@ func (in *NodeSettingsSpec) DeepCopyInto(out *NodeSettingsSpec) {
 			(*in)[i].DeepCopyInto(&(*out)[i])
 		}
 	}
-	in.Kubelet.DeepCopyInto(&out.Kubelet)
 	return
 }
 

@@ -1266,17 +1266,7 @@ func autoConvert_v1beta2_ControlPlaneConfig_To_kubeone_ControlPlaneConfig(in *Co
 	} else {
 		out.Hosts = nil
 	}
-	if in.NodeSets != nil {
-		in, out := &in.NodeSets, &out.NodeSets
-		*out = make([]kubeone.NodeSet, len(*in))
-		for i := range *in {
-			if err := Convert_v1beta2_NodeSet_To_kubeone_NodeSet(&(*in)[i], &(*out)[i], s); err != nil {
-				return err
-			}
-		}
-	} else {
-		out.NodeSets = nil
-	}
+	out.NodeSets = *(*[]kubeone.NodeSet)(unsafe.Pointer(&in.NodeSets))
 	return nil
 }
 
@@ -1297,17 +1287,7 @@ func autoConvert_kubeone_ControlPlaneConfig_To_v1beta2_ControlPlaneConfig(in *ku
 	} else {
 		out.Hosts = nil
 	}
-	if in.NodeSets != nil {
-		in, out := &in.NodeSets, &out.NodeSets
-		*out = make([]NodeSet, len(*in))
-		for i := range *in {
-			if err := Convert_kubeone_NodeSet_To_v1beta2_NodeSet(&(*in)[i], &(*out)[i], s); err != nil {
-				return err
-			}
-		}
-	} else {
-		out.NodeSets = nil
-	}
+	out.NodeSets = *(*[]NodeSet)(unsafe.Pointer(&in.NodeSets))
 	return nil
 }
 
@@ -2100,9 +2080,6 @@ func autoConvert_v1beta2_NodeSettingsSpec_To_kubeone_NodeSettingsSpec(in *NodeSe
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	out.Annotations = *(*[]string)(unsafe.Pointer(&in.Annotations))
 	out.Taints = *(*[]corev1.Taint)(unsafe.Pointer(&in.Taints))
-	if err := Convert_v1beta2_KubeletConfig_To_kubeone_KubeletConfig(&in.Kubelet, &out.Kubelet, s); err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -2115,9 +2092,6 @@ func autoConvert_kubeone_NodeSettingsSpec_To_v1beta2_NodeSettingsSpec(in *kubeon
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	out.Annotations = *(*[]string)(unsafe.Pointer(&in.Annotations))
 	out.Taints = *(*[]corev1.Taint)(unsafe.Pointer(&in.Taints))
-	if err := Convert_kubeone_KubeletConfig_To_v1beta2_KubeletConfig(&in.Kubelet, &out.Kubelet, s); err != nil {
-		return err
-	}
 	return nil
 }
 

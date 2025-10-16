@@ -2107,9 +2107,6 @@ func autoConvert_v1beta3_NodeSettingsSpec_To_kubeone_NodeSettingsSpec(in *NodeSe
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	out.Annotations = *(*[]string)(unsafe.Pointer(&in.Annotations))
 	out.Taints = *(*[]corev1.Taint)(unsafe.Pointer(&in.Taints))
-	if err := Convert_v1beta3_KubeletConfig_To_kubeone_KubeletConfig(&in.Kubelet, &out.Kubelet, s); err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -2122,9 +2119,6 @@ func autoConvert_kubeone_NodeSettingsSpec_To_v1beta3_NodeSettingsSpec(in *kubeon
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	out.Annotations = *(*[]string)(unsafe.Pointer(&in.Annotations))
 	out.Taints = *(*[]corev1.Taint)(unsafe.Pointer(&in.Taints))
-	if err := Convert_kubeone_KubeletConfig_To_v1beta3_KubeletConfig(&in.Kubelet, &out.Kubelet, s); err != nil {
-		return err
-	}
 	return nil
 }
 
