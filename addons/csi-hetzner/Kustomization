@@ -5,7 +5,7 @@ namespace: kube-system
 helmCharts:
 - name: hcloud-csi
   repo: https://charts.hetzner.cloud
-  version: 2.17.0
+  version: 2.18.0
   releaseName: hcloud-csi
   namespace: kube-system
   valuesFile: generate-values-csi

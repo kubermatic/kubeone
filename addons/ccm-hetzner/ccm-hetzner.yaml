@@ -43,6 +43,7 @@ spec:
             - --allow-untagged-cloud
             - --cloud-provider=hcloud
             - --configure-cloud-routes=false
+            - --feature-gates=CloudControllerManagerWatchBasedRoutesReconciliation=false
             - --route-reconciliation-period=30s
             - --webhook-secure-port=0
             - --leader-elect=false
