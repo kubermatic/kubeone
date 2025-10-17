@@ -41,6 +41,9 @@ type KubeOneCluster struct {
 	// CloudProvider configures the cloud provider specific features.
 	CloudProvider CloudProviderSpec `json:"cloudProvider"`
 
+	// KubeletConfig used to generate cluster's KubeletConfiguration that will be used along with kubeadm
+	KubeletConfig KubeletConfig `json:"kubeletConfig,omitempty"`
+
 	// Versions defines which Kubernetes version will be installed.
 	Versions VersionConfig `json:"versions"`
 
@@ -378,6 +381,25 @@ type KubeletConfig struct {
 	// If not provided, default value provided by kubelet will be used -1
 	// See more about pid-limiting at: https://kubernetes.io/docs/concepts/policy/pid-limiting/
 	PodPidsLimit *int64 `json:"podPidsLimit,omitempty"`
+
+	// ImageGCHighThresholdPercent is the percent of disk usage after which image garbage collection is always run. The
+	// percent is calculated by dividing this field value by 100, so this field must be between 0 and 100, inclusive.
+	// When specified, the value must be greater than imageGCLowThresholdPercent. Default: 85
+	ImageGCHighThresholdPercent *int32 `json:"imageGCHighThresholdPercent,omitempty"`
+
+	// ImageGCLowThresholdPercent is the percent of disk usage before which image garbage collection is never run.
+	// Lowest disk usage to garbage collect to. The percent is calculated by dividing this field value by 100, so the
+	// field value must be between 0 and 100, inclusive. When specified, the value must be less than
+	// imageGCHighThresholdPercent. Default: 80
+	ImageGCLowThresholdPercent *int32 `json:"imageGCLowThresholdPercent,omitempty"`
+
+	// ImageMinimumGCAge is the minimum age for an unused image before it is garbage collected. Default: "2m"
+	ImageMinimumGCAge metav1.Duration `json:"imageMinimumGCAge,omitempty"`
+
+	// ImageMaximumGCAge is the maximum age an image can be unused before it is garbage collected. The default of this
+	// field is "0s", which disables this field--meaning images won't be garbage collected based on being unused for too
+	// long. Default: "0s" (disabled)
+	ImageMaximumGCAge metav1.Duration `json:"imageMaximumGCAge,omitempty"`
 }
 
 // APIEndpoint is the endpoint used to communicate with the Kubernetes API

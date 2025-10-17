@@ -538,6 +538,20 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 		kubeletCLIFlags = setAllArgsValue(kubeletCLIFlags, "pod-max-pids", strconv.Itoa(-1))
 	}
 
+	if m := host.Kubelet.ImageGCHighThresholdPercent; m != nil {
+		kubeletCLIFlags = setAllArgsValue(kubeletCLIFlags, "image-gc-high-threshold", strconv.Itoa(int(*m)))
+	}
+
+	if m := host.Kubelet.ImageGCLowThresholdPercent; m != nil {
+		kubeletCLIFlags = setAllArgsValue(kubeletCLIFlags, "image-gc-low-threshold", strconv.Itoa(int(*m)))
+	}
+
+	if m := host.Kubelet.ImageMinimumGCAge.Duration; m != 0 {
+		kubeletCLIFlags = setAllArgsValue(kubeletCLIFlags, "minimum-image-ttl-duration", m.String())
+	}
+
+	// unfortunately there is no CLI flag for ImageMaximumGCAge
+
 	return kubeadmv1beta4.NodeRegistrationOptions{
 		Name:             host.Hostname,
 		Taints:           host.Taints,

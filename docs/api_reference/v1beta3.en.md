@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2025-10-08T17:27:45+03:00
+date = 2025-10-14T16:55:58+03:00
 weight = 11
 +++
 ## v1beta3
@@ -539,6 +539,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | controlPlane | ControlPlane describes the control plane nodes and how to access them. | [ControlPlaneConfig](#controlplaneconfig) | true |
 | apiEndpoint | APIEndpoint are pairs of address and port used to communicate with the Kubernetes API. | [APIEndpoint](#apiendpoint) | true |
 | cloudProvider | CloudProvider configures the cloud provider specific features. | [CloudProviderSpec](#cloudproviderspec) | true |
+| kubeletConfig | KubeletConfig used to generate cluster's KubeletConfiguration that will be used along with kubeadm | [KubeletConfig](#kubeletconfig) | false |
 | versions | Versions defines which Kubernetes version will be installed. | [VersionConfig](#versionconfig) | true |
 | containerRuntime | ContainerRuntime defines which container runtime will be installed | [ContainerRuntimeConfig](#containerruntimeconfig) | false |
 | clusterNetwork | ClusterNetwork configures the in-cluster networking. | [ClusterNetworkConfig](#clusternetworkconfig) | false |
@@ -582,6 +583,10 @@ KubeletConfig provides some kubelet configuration options
 | evictionHard | EvictionHard configure --eviction-hard command-line flag of the kubelet. See more at: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ | map[string]string | false |
 | maxPods | MaxPods configures maximum number of pods per node. If not provided, default value provided by kubelet will be used (max. 110 pods per node) | *int32 | false |
 | podPidsLimit | PodPidsLimit configures the maximum number of processes running in a Pod If not provided, default value provided by kubelet will be used -1 See more about pid-limiting at: https://kubernetes.io/docs/concepts/policy/pid-limiting/ | *int64 | false |
+| imageGCHighThresholdPercent | ImageGCHighThresholdPercent is the percent of disk usage after which image garbage collection is always run. The percent is calculated by dividing this field value by 100, so this field must be between 0 and 100, inclusive. When specified, the value must be greater than imageGCLowThresholdPercent. Default: 85 | *int32 | false |
+| imageGCLowThresholdPercent | ImageGCLowThresholdPercent is the percent of disk usage before which image garbage collection is never run. Lowest disk usage to garbage collect to. The percent is calculated by dividing this field value by 100, so the field value must be between 0 and 100, inclusive. When specified, the value must be less than imageGCHighThresholdPercent. Default: 80 | *int32 | false |
+| imageMinimumGCAge | ImageMinimumGCAge is the minimum age for an unused image before it is garbage collected. Default: \"2m\" | metav1.Duration | false |
+| imageMaximumGCAge | ImageMaximumGCAge is the maximum age an image can be unused before it is garbage collected. The default of this field is \"0s\", which disables this field--meaning images won't be garbage collected based on being unused for too long. Default: \"0s\" (disabled) | metav1.Duration | false |
 
 [Back to Group](#v1beta3)
 

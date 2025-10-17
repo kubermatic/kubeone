@@ -57,6 +57,7 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 
 	allErrs = append(allErrs, ValidateName(c.Name, field.NewPath("name"))...)
 	allErrs = append(allErrs, ValidateControlPlaneConfig(c.ControlPlane, c.ClusterNetwork, field.NewPath("controlPlane"))...)
+	allErrs = append(allErrs, ValidateKubeletConfig(c.KubeletConfig, field.NewPath("kubeletConfig"))...)
 	allErrs = append(allErrs, ValidateAPIEndpoint(c.APIEndpoint, field.NewPath("apiEndpoint"))...)
 	allErrs = append(allErrs, ValidateCloudProviderSpec(c, field.NewPath("provider"))...)
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
@@ -793,41 +794,40 @@ func ValidateHostConfig(hosts []kubeoneapi.HostConfig, clusterNetwork kubeoneapi
 	allErrs := field.ErrorList{}
 
 	leaderFound := false
-	for _, host := range hosts {
+	for idx, host := range hosts {
+		hostFldPath := fldPath.Index(idx)
+
 		if leaderFound && host.IsLeader {
-			allErrs = append(allErrs, field.Invalid(fldPath, host.IsLeader, "only one leader is allowed"))
+			allErrs = append(allErrs, field.Invalid(hostFldPath.Child("isLeader"), host.IsLeader, "only one leader is allowed"))
 		}
 		if host.IsLeader {
 			leaderFound = true
 		}
 		if len(host.PublicAddress) == 0 {
-			allErrs = append(allErrs, field.Required(fldPath, "no public IP/address given"))
+			allErrs = append(allErrs, field.Required(hostFldPath.Child("publicAddress"), "no public IP/address given"))
 		}
-
 		if (clusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv6 || clusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv4IPv6 || clusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv6IPv4) && len(host.IPv6Addresses) == 0 {
-			allErrs = append(allErrs, field.Required(fldPath, "no IPv6 address given"))
+			allErrs = append(allErrs, field.Required(hostFldPath.Child("ipFamily"), "no IPv6 address given"))
 		}
 		if len(host.PrivateAddress) == 0 {
-			allErrs = append(allErrs, field.Required(fldPath, "no private IP/address givevn"))
+			allErrs = append(allErrs, field.Required(hostFldPath.Child("privateAddress"), "no private IP/address givevn"))
 		}
 		if len(host.SSHPrivateKeyFile) == 0 && len(host.SSHAgentSocket) == 0 {
-			allErrs = append(allErrs, field.Invalid(fldPath, host.SSHPrivateKeyFile, "neither SSH private key nor agent socket given, don't know how to authenticate"))
-			allErrs = append(allErrs, field.Invalid(fldPath, host.SSHAgentSocket, "neither SSH private key nor agent socket given, don't know how to authenticate"))
+			allErrs = append(allErrs, field.Invalid(hostFldPath.Child("sshPrivateKeyFile"), host.SSHPrivateKeyFile, "neither SSH private key nor agent socket given, don't know how to authenticate"))
+			allErrs = append(allErrs, field.Invalid(hostFldPath.Child("sshAgentSocket"), host.SSHAgentSocket, "neither SSH private key nor agent socket given, don't know how to authenticate"))
 		}
 		if len(host.SSHUsername) == 0 {
-			allErrs = append(allErrs, field.Required(fldPath, "no SSH username given"))
+			allErrs = append(allErrs, field.Required(hostFldPath.Child("sshUsername"), "no SSH username given"))
 		}
 		if !host.OperatingSystem.IsValid() {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("operatingSystem"), host.OperatingSystem, "invalid operatingSystem provided"))
+			allErrs = append(allErrs, field.Invalid(hostFldPath.Child("operatingSystem"), host.OperatingSystem, "invalid operatingSystem provided"))
 		}
-		if host.Kubelet.MaxPods != nil && *host.Kubelet.MaxPods <= 0 {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("kubelet").Child("maxPods"), host.Kubelet.MaxPods, "maxPods must be a positive number"))
-		}
-		allErrs = append(allErrs, validateLabels(host.Annotations, fldPath.Child("annotations"))...)
-		allErrs = append(allErrs, validateLabels(host.Labels, fldPath.Child("labels"))...)
+		allErrs = append(allErrs, ValidateKubeletConfig(host.Kubelet, hostFldPath.Child("kubelet"))...)
+		allErrs = append(allErrs, validateLabels(host.Annotations, hostFldPath.Child("annotations"))...)
+		allErrs = append(allErrs, validateLabels(host.Labels, hostFldPath.Child("labels"))...)
 		for _, taint := range host.Taints {
 			if taint.Key == "node-role.kubernetes.io/master" {
-				allErrs = append(allErrs, field.Forbidden(fldPath.Child("taints"), fmt.Sprintf("%q taint is forbidden for clusters running Kubernetes 1.25+", "node-role.kubernetes.io/master")))
+				allErrs = append(allErrs, field.Forbidden(hostFldPath.Child("taints"), fmt.Sprintf("%q taint is forbidden for clusters running Kubernetes 1.25+", "node-role.kubernetes.io/master")))
 			}
 		}
 	}
@@ -926,6 +926,22 @@ func ValidateOperatingSystemManager(mc *kubeoneapi.MachineControllerConfig, fldP
 
 	if mc == nil || !mc.Deploy {
 		allErrs = append(allErrs, field.Invalid(fldPath, "", "machineController needs to be enabled to use operatingSystemManager"))
+	}
+
+	return allErrs
+}
+
+func ValidateKubeletConfig(klcfg kubeoneapi.KubeletConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if klcfg.MaxPods != nil && *klcfg.MaxPods <= 0 {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("maxPods"), klcfg.MaxPods, "maxPods must be a positive number"))
+	}
+	if v := klcfg.ImageGCHighThresholdPercent; v != nil && (*v < 0 || *v > 100) {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("imageGCHighThresholdPercent"), *v, "must be between 0 and 100, inclusive"))
+	}
+	if v := klcfg.ImageGCLowThresholdPercent; v != nil && (*v < 0 || *v > 100) {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("imageGCLowThresholdPercent"), *v, "must be between 0 and 100, inclusive"))
 	}
 
 	return allErrs

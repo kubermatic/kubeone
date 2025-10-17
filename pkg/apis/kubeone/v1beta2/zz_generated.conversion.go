@@ -1643,6 +1643,9 @@ func autoConvert_v1beta2_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneClu
 	if err := Convert_v1beta2_ControlPlaneConfig_To_kubeone_ControlPlaneConfig(&in.ControlPlane, &out.ControlPlane, s); err != nil {
 		return err
 	}
+	if err := Convert_v1beta2_KubeletConfig_To_kubeone_KubeletConfig(&in.KubeletConfig, &out.KubeletConfig, s); err != nil {
+		return err
+	}
 	if err := Convert_v1beta2_APIEndpoint_To_kubeone_APIEndpoint(&in.APIEndpoint, &out.APIEndpoint, s); err != nil {
 		return err
 	}
@@ -1699,6 +1702,9 @@ func autoConvert_v1beta2_KubeOneCluster_To_kubeone_KubeOneCluster(in *KubeOneClu
 func autoConvert_kubeone_KubeOneCluster_To_v1beta2_KubeOneCluster(in *kubeone.KubeOneCluster, out *KubeOneCluster, s conversion.Scope) error {
 	out.Name = in.Name
 	if err := Convert_kubeone_ControlPlaneConfig_To_v1beta2_ControlPlaneConfig(&in.ControlPlane, &out.ControlPlane, s); err != nil {
+		return err
+	}
+	if err := Convert_kubeone_KubeletConfig_To_v1beta2_KubeletConfig(&in.KubeletConfig, &out.KubeletConfig, s); err != nil {
 		return err
 	}
 	if err := Convert_kubeone_APIEndpoint_To_v1beta2_APIEndpoint(&in.APIEndpoint, &out.APIEndpoint, s); err != nil {
@@ -1783,6 +1789,10 @@ func autoConvert_v1beta2_KubeletConfig_To_kubeone_KubeletConfig(in *KubeletConfi
 	out.KubeReserved = *(*map[string]string)(unsafe.Pointer(&in.KubeReserved))
 	out.EvictionHard = *(*map[string]string)(unsafe.Pointer(&in.EvictionHard))
 	out.MaxPods = (*int32)(unsafe.Pointer(in.MaxPods))
+	out.ImageGCHighThresholdPercent = (*int32)(unsafe.Pointer(in.ImageGCHighThresholdPercent))
+	out.ImageGCLowThresholdPercent = (*int32)(unsafe.Pointer(in.ImageGCLowThresholdPercent))
+	out.ImageMinimumGCAge = in.ImageMinimumGCAge
+	out.ImageMaximumGCAge = in.ImageMaximumGCAge
 	return nil
 }
 
@@ -1797,6 +1807,10 @@ func autoConvert_kubeone_KubeletConfig_To_v1beta2_KubeletConfig(in *kubeone.Kube
 	out.EvictionHard = *(*map[string]string)(unsafe.Pointer(&in.EvictionHard))
 	out.MaxPods = (*int32)(unsafe.Pointer(in.MaxPods))
 	// WARNING: in.PodPidsLimit requires manual conversion: does not exist in peer-type
+	out.ImageGCHighThresholdPercent = (*int32)(unsafe.Pointer(in.ImageGCHighThresholdPercent))
+	out.ImageGCLowThresholdPercent = (*int32)(unsafe.Pointer(in.ImageGCLowThresholdPercent))
+	out.ImageMinimumGCAge = in.ImageMinimumGCAge
+	out.ImageMaximumGCAge = in.ImageMaximumGCAge
 	return nil
 }
 
