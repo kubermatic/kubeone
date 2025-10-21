@@ -21,11 +21,10 @@ apiEndpoint:
   host: my-custom.dns.com
 
 cloudProvider:
-  aws:
+  hetzner:
     controlPlane:
       loadBalancer:
         region: eu-center1
-        # a EC2 loadBalancer, should exist before the first run
         name: "${cluster-name}-api-lb"
 
 controlPlane:
@@ -42,32 +41,18 @@ controlPlane:
         distUpgradeOnBoot: false
       ssh:
         publicKeys:
-          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE1gO0bUOvixm2IOcqIlk4/zR0pCHBHDk4HKfCLtqOis artioms
+          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE1gO0bUOvixm2IOcqIlk4/zR0pCHBHDk4HKfCLtqOis sysop
         username: ubuntu
-        bastion: 1.1.1.1
-        bastionUser: ubuntu
       cloudProviderSpec:
-        region: eu-center1
-        availabilityZones:
-          a: subnet-123
-          b: subnet-456
-          c: subnet-789
-        ami: ami-123
-        instanceProfile: my-control-plane-profile
-        securityGroupIDs:
-          - sg-111-common
-          - sg-222-control-plane
-        vpcId: vpc-123
-        instanceType: t3a.medium
-        assignPublicIP: true
-        diskSize: 50
-        ebsVolumeEncrypted: false
-        # service discovery tags will be automatically added to the instances
-        tags:
+        location:
+        image:
+        serverType:
+        networks: []
+        labels:
           # following tags will be automatically added to the instance, for later service discovery
-          kubeone-created-on: "<TIMESTAMP>"
-          kubeone-role: control-plane
-          kubeone-cluster: "${cluster-name}"
+          # kubeone-created-on: "<TIMESTAMP>"
+          # kubeone-role: control-plane
+          # kubeone-cluster: "${cluster-name}"
 ```
 
 ## Operations

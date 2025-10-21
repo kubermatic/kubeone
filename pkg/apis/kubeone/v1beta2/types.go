@@ -368,14 +368,14 @@ type ControlPlaneConfig struct {
 }
 
 type NodeSet struct {
-	Name                string              `json:"name,omitempty"`
-	Replicas            int                 `json:"replicas,omitempty"`
+	Name                string              `json:"name"`
+	Replicas            int                 `json:"replicas"`
 	Generation          int                 `json:"generation,omitempty"`
 	NodeSettings        NodeSettingsSpec    `json:"nodeSettings,omitempty"`
-	OperatingSystem     OperatingSystemName `json:"operatingSystem,omitempty"`
+	OperatingSystem     OperatingSystemName `json:"operatingSystem"`
 	OperatingSystemSpec OperatingSystemSpec `json:"operatingSystemSpec,omitempty"`
-	SSH                 SSHSpec             `json:"ssh,omitempty"`
-	CloudProviderSpec   json.RawMessage     `json:"cloudProviderSpec,omitempty"`
+	SSH                 SSHSpec             `json:"ssh"`
+	CloudProviderSpec   json.RawMessage     `json:"cloudProviderSpec"`
 }
 
 type NodeSettingsSpec struct {

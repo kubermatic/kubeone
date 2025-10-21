@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2025-10-21T14:22:09+03:00
+date = 2025-10-21T15:04:07+03:00
 weight = 11
 +++
 ## v1beta3
@@ -678,14 +678,14 @@ MetricsServer feature flag
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
-| name |  | string | false |
-| replicas |  | int | false |
+| name |  | string | true |
+| replicas |  | int | true |
 | generation |  | int | false |
 | nodeSettings |  | [NodeSettingsSpec](#nodesettingsspec) | false |
-| operatingSystem |  | OperatingSystemName | false |
+| operatingSystem |  | OperatingSystemName | true |
 | operatingSystemSpec |  | [OperatingSystemSpec](#operatingsystemspec) | false |
-| ssh |  | [SSHSpec](#sshspec) | false |
-| cloudProviderSpec |  | [json.RawMessage](https://golang.org/pkg/encoding/json/#RawMessage) | false |
+| ssh |  | [SSHSpec](#sshspec) | true |
+| cloudProviderSpec |  | [json.RawMessage](https://golang.org/pkg/encoding/json/#RawMessage) | true |
 
 [Back to Group](#v1beta3)
 
