@@ -17,15 +17,20 @@ name: test1
 versions:
   kubernetes: 1.32.2
 
-apiEndpoint:
-  host: my-custom.dns.com
-
 cloudProvider:
   hetzner:
     controlPlane:
       loadBalancer:
-        region: eu-center1
-        name: "${cluster-name}-api-lb"
+        name: "${cluster-name}-kubeapi"
+        type: lb11
+        location: nbg1
+        network: "name"
+        publicIP: true
+        labels:
+          # following tags will be automatically added to the instance, for later service discovery
+          kubeone_cluster_name: "${cluster-name}",
+          kubeone_role: "api",
+          kubeone_own_since_timestamp: "<timestamp>",
 
 controlPlane:
   nodeSets:

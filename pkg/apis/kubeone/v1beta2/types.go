@@ -544,11 +544,23 @@ type HetznerControlPlane struct {
 
 // HetznerLoadBalancer loadbalancer definition to create for kubeapi-server endpoint
 type HetznerLoadBalancer struct {
-	// Name of the loadbalancer to create
-	Name string `json:"name"`
+	// Name of the loadbalancer to create. Default: "<CLUSTER_NAME>-kubeapi"
+	Name string `json:"name,omitempty"`
 
-	// Type of the loadbalancer to create
-	Type string `json:"type"`
+	// Type of the loadbalancer to create. Default: "lb11"
+	Type string `json:"type,omitempty"`
+
+	// Location of the loadbalancer to create. Default: "nbg1"
+	Location string `json:"location,omitempty"`
+
+	// NetworkName is the name of the network to attach the loadbalancer to.
+	NetworkName string `json:"networkName,omitempty"`
+
+	// PublicIP indicates whether the loadbalancer should have a public IP assigned. Default: true
+	PublicIP *bool `json:"publicIP,omitempty"`
+
+	// Labels to be applied to the loadbalancer
+	Labels map[string]string `json:"labels,omitempty"`
 }
 
 // KubevirtSpec defines the Kubevirt provider
