@@ -249,24 +249,17 @@ func cleanManifest(manifest string) string {
 		return ""
 	}
 
-	var buf bytes.Buffer
-	lines := bytes.Split([]byte(manifest), []byte("\n"))
+	var buf strings.Builder
 
-	for _, line := range lines {
-		if bytes.HasPrefix(line, []byte("#")) {
+	for line := range strings.Lines(manifest) {
+		if strings.HasPrefix(line, "#") {
 			continue
 		}
-		buf.Write(line)
+		buf.WriteString(line)
 		buf.WriteByte('\n')
 	}
 
-	// Remove the trailing newline added after the last line
-	result := buf.Bytes()
-	if len(result) > 0 && result[len(result)-1] == '\n' {
-		result = result[:len(result)-1]
-	}
-
-	return string(result)
+	return strings.TrimSpace(buf.String())
 }
 
 func helmReleasesEqual(rel *helmrelease.Release, oldRels []*helmrelease.Release) bool {
