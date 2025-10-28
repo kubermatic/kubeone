@@ -25,6 +25,7 @@ import (
 	"os"
 	"path"
 	"sort"
+	"strings"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/sirupsen/logrus"
@@ -173,7 +174,7 @@ func releasesFilterFn(helmReleases []kubeoneapi.HelmRelease, logger logrus.Field
 		for _, hr := range helmReleases {
 			if rel.Name == hr.ReleaseName && rel.Namespace == hr.Namespace {
 				chartName := hr.Chart
-				if hr.RepoURL == "" {
+				if hr.RepoURL == "" && !strings.HasPrefix(hr.ChartURL, "oci://") {
 					chartName, _ = GetChartNameFromChartYAML(chartName)
 				}
 				if chartName == rel.Chart.Name() {
@@ -190,7 +191,7 @@ func releasesFilterFn(helmReleases []kubeoneapi.HelmRelease, logger logrus.Field
 	}
 }
 
-// Function to extract chart name from Chart.yaml in case of local charts
+// GetChartNameFromChartYAML is used to extract chart name from Chart.yaml in case of local charts
 func GetChartNameFromChartYAML(chartPath string) (string, error) {
 	chartYAMLPath := path.Join(chartPath, "Chart.yaml")
 	yamlFile, err := os.ReadFile(chartYAMLPath)
@@ -231,6 +232,33 @@ func newRestClientGetter(kubeConfigFileName, namespace string, st *state.State) 
 	}
 }
 
+// cleanManifest removes Helm-generated comment lines (any line where '#' is the first
+// non-whitespace character) from the rendered manifest before comparison.
+//
+// Helm injects comments like "# Source: ..." into manifests for debugging, which
+// causes byte-for-byte manifest equality checks to fail even when the actual
+// Kubernetes resources are identical. Since these comments carry no semantic
+// meaning for resource reconciliation, we safely ignore them during equality
+// comparisons to avoid unnecessary Helm upgrades or false drift detection.
+//
+// Note: Only lines starting with '#' (after leading whitespace) are removed.
+// Inline comments (e.g., "replicas: 2  # desired count") are preserved because
+// the '#' is not at the start of the line.
+func cleanManifest(manifest string) string {
+	lines := strings.Split(manifest, "\n")
+	var filtered []string
+
+	for _, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		if len(trimmed) > 0 && trimmed[0] == '#' {
+			continue
+		}
+		filtered = append(filtered, line)
+	}
+
+	return strings.TrimSpace(strings.Join(filtered, "\n"))
+}
+
 func helmReleasesEqual(rel *helmrelease.Release, oldRels []*helmrelease.Release) bool {
 	if len(oldRels) == 0 {
 		return false
@@ -249,7 +277,7 @@ func helmReleasesEqual(rel *helmrelease.Release, oldRels []*helmrelease.Release)
 		return false
 	}
 
-	return rel.Manifest == latestHelmRelease.Manifest
+	return cleanManifest(rel.Manifest) == cleanManifest(latestHelmRelease.Manifest)
 }
 
 func neverNilMap(m1 map[string]any) map[string]any {
