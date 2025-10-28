@@ -245,18 +245,28 @@ func newRestClientGetter(kubeConfigFileName, namespace string, st *state.State) 
 // Inline comments (e.g., "replicas: 2  # desired count") are preserved because
 // the '#' is not at the start of the line.
 func cleanManifest(manifest string) string {
-	lines := strings.Split(manifest, "\n")
-	var filtered []string
-
-	for _, line := range lines {
-		trimmed := strings.TrimSpace(line)
-		if len(trimmed) > 0 && trimmed[0] == '#' {
-			continue
-		}
-		filtered = append(filtered, line)
+	if manifest == "" {
+		return ""
 	}
 
-	return strings.TrimSpace(strings.Join(filtered, "\n"))
+	var buf bytes.Buffer
+	lines := bytes.Split([]byte(manifest), []byte("\n"))
+
+	for _, line := range lines {
+		if bytes.HasPrefix(line, []byte("#")) {
+			continue
+		}
+		buf.Write(line)
+		buf.WriteByte('\n')
+	}
+
+	// Remove the trailing newline added after the last line
+	result := buf.Bytes()
+	if len(result) > 0 && result[len(result)-1] == '\n' {
+		result = result[:len(result)-1]
+	}
+
+	return string(result)
 }
 
 func helmReleasesEqual(rel *helmrelease.Release, oldRels []*helmrelease.Release) bool {
