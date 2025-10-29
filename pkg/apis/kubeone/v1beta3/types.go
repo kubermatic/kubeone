@@ -545,9 +545,6 @@ type HetznerLoadBalancer struct {
 	// Location of the loadbalancer to create. Default: "nbg1"
 	Location string `json:"location,omitempty"`
 
-	// NetworkName is the name of the network to attach the loadbalancer to.
-	NetworkName string `json:"networkName,omitempty"`
-
 	// PublicIP indicates whether the loadbalancer should have a public IP assigned. Default: true
 	PublicIP *bool `json:"publicIP,omitempty"`
 

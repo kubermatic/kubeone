@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2025-10-24T18:00:45+03:00
+date = 2025-10-29T14:56:46+02:00
 weight = 11
 +++
 ## v1beta2
@@ -489,7 +489,6 @@ HetznerLoadBalancer loadbalancer definition to create for kubeapi-server endpoin
 | name | Name of the loadbalancer to create. Default: \"<CLUSTER_NAME>-kubeapi\" | string | false |
 | type | Type of the loadbalancer to create. Default: \"lb11\" | string | false |
 | location | Location of the loadbalancer to create. Default: \"nbg1\" | string | false |
-| networkName | NetworkName is the name of the network to attach the loadbalancer to. | string | false |
 | publicIP | PublicIP indicates whether the loadbalancer should have a public IP assigned. Default: true | *bool | false |
 | labels | Labels to be applied to the loadbalancer | map[string]string | false |
 

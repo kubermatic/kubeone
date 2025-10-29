@@ -1594,7 +1594,6 @@ func autoConvert_v1beta2_HetznerLoadBalancer_To_kubeone_HetznerLoadBalancer(in *
 	out.Name = in.Name
 	out.Type = in.Type
 	out.Location = in.Location
-	out.NetworkName = in.NetworkName
 	out.PublicIP = (*bool)(unsafe.Pointer(in.PublicIP))
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	return nil
@@ -1609,7 +1608,6 @@ func autoConvert_kubeone_HetznerLoadBalancer_To_v1beta2_HetznerLoadBalancer(in *
 	out.Name = in.Name
 	out.Type = in.Type
 	out.Location = in.Location
-	out.NetworkName = in.NetworkName
 	out.PublicIP = (*bool)(unsafe.Pointer(in.PublicIP))
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	return nil
