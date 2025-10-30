@@ -16,4 +16,4 @@ helmReleases:
   - chart: flannel
     repoURL: https://flannel-io.github.io/flannel/
     namespace: kube-system
-    version: v0.27.0
+    version: v0.27.4
