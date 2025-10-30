@@ -59,13 +59,21 @@
       runIfChanged: "(.prow/|addons/|examples/|hack/|pkg/|test/)"
     - name: aws_ubuntu_previous_lts
     - name: aws_flatcar
+    - name: aws_rhel
+    - name: aws_rockylinux
     - name: azure_default
     - name: azure_flatcar
+    - name: azure_rhel
+    - name: azure_rockylinux
     - name: digitalocean_default
+    - name: digitalocean_rockylinux
     - name: gce_default
     - name: hetzner_default
+    - name: hetzner_rockylinux
     - name: openstack_default
     - name: openstack_flatcar
+    - name: openstack_rhel
+    - name: openstack_rockylinux
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -105,13 +113,21 @@
     - name: aws_default_stable
     - name: aws_ubuntu_previous_lts
     - name: aws_flatcar_stable
+    - name: aws_rhel_stable
+    - name: aws_rockylinux_stable
     - name: azure_default_stable
     - name: azure_flatcar_stable
+    - name: azure_rhel_stable
+    - name: azure_rockylinux_stable
     - name: digitalocean_default_stable
+    - name: digitalocean_rockylinux_stable
     - name: gce_default_stable
     - name: hetzner_default_stable
+    - name: hetzner_rockylinux_stable
     - name: openstack_default_stable
     - name: openstack_flatcar_stable
+    - name: openstack_rhel_stable
+    - name: openstack_rockylinux_stable
     - name: vsphere_default_stable
     - name: vsphere_flatcar_stable
 
@@ -170,13 +186,21 @@
   infrastructures:
     - name: aws_default
     - name: aws_flatcar
+    - name: aws_rhel
+    - name: aws_rockylinux
     - name: azure_default
     - name: azure_flatcar
+    - name: azure_rhel
+    - name: azure_rockylinux
     - name: digitalocean_default
+    - name: digitalocean_rockylinux
     - name: gce_default
     - name: hetzner_default
+    - name: hetzner_rockylinux
     - name: openstack_default
     - name: openstack_flatcar
+    - name: openstack_rhel
+    - name: openstack_rockylinux
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -231,13 +255,21 @@
   infrastructures:
     - name: aws_default
     - name: aws_flatcar
+    - name: aws_rhel
+    - name: aws_rockylinux
     - name: azure_default
     - name: azure_flatcar
+    - name: azure_rhel
+    - name: azure_rockylinux
     - name: digitalocean_default
+    - name: digitalocean_rockylinux
     - name: gce_default
     - name: hetzner_default
+    - name: hetzner_rockylinux
     - name: openstack_default
     - name: openstack_flatcar
+    - name: openstack_rhel
+    - name: openstack_rockylinux
     - name: vsphere_default
     - name: vsphere_flatcar
 
@@ -271,13 +303,21 @@
   infrastructures:
     - name: aws_default_stable
     - name: aws_flatcar_stable
+    - name: aws_rhel_stable
+    - name: aws_rockylinux_stable
     - name: azure_default_stable
     - name: azure_flatcar_stable
+    - name: azure_rhel_stable
+    - name: azure_rockylinux_stable
     - name: digitalocean_default_stable
+    - name: digitalocean_rockylinux_stable
     - name: gce_default_stable
     - name: hetzner_default_stable
+    - name: hetzner_rockylinux_stable
     - name: openstack_default_stable
     - name: openstack_flatcar_stable
+    - name: openstack_rhel_stable
+    - name: openstack_rockylinux_stable
     - name: vsphere_default_stable
     - name: vsphere_flatcar_stable
 
