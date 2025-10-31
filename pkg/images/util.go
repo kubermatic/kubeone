@@ -28,8 +28,10 @@ import (
 	"github.com/google/go-containerregistry/pkg/crane"
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/sirupsen/logrus"
+
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates/images"
+
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/util/retry"
@@ -287,18 +289,16 @@ func GetKubeoneImages(ctx context.Context, filter string, versions []string) ([]
 
 		imageSet.Insert(cpImages...)
 		if !controlPlaneOnly {
-			resolver, resolveErr := newImageResolver(version)
-			if resolveErr != nil {
-				return nil, resolveErr
-			}
+			resolver := newImageResolver(version)
 			images := resolver.List(listFilter)
 			imageSet.Insert(images...)
 		}
 	}
+
 	return sets.List(imageSet), nil
 }
 
-func newImageResolver(kubernetesVersion string) (*images.Resolver, error) {
+func newImageResolver(kubernetesVersion string) *images.Resolver {
 	var resolveropts []images.Opt
 	if kubernetesVersion != "" {
 		resolveropts = append(resolveropts,
@@ -308,5 +308,5 @@ func newImageResolver(kubernetesVersion string) (*images.Resolver, error) {
 		)
 	}
 
-	return images.NewResolver(resolveropts...), nil
+	return images.NewResolver(resolveropts...)
 }
