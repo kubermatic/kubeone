@@ -36,6 +36,7 @@ spec:
         - key: "CriticalAddonsOnly"
           operator: Exists
       serviceAccountName: machine-controller
+      hostNetwork: true
       containers:
         - name: machine-controller
           image: "{{ .InternalImages.Get "MachineController" }}"

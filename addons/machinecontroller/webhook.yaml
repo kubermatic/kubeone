@@ -76,6 +76,7 @@ spec:
         - key: "CriticalAddonsOnly"
           operator: Exists
       serviceAccountName: machine-controller-webhook
+      hostNetwork: true
       containers:
         - image: "{{ .InternalImages.Get "MachineController" }}"
           imagePullPolicy: IfNotPresent
