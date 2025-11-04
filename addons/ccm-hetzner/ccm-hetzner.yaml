@@ -84,6 +84,7 @@ spec:
               cpu: 100m
               memory: 50Mi
       dnsPolicy: Default
+      hostNetwork: true
       priorityClassName: system-cluster-critical
       serviceAccountName: hcloud-cloud-controller-manager
       tolerations:

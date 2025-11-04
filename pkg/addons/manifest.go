@@ -274,7 +274,8 @@ func defaultAddonParams(k1cluster *kubeoneapi.KubeOneCluster, addonName string, 
 	if addonName == resources.AddonCNICanal {
 		if k1cluster.CloudProvider.Hetzner != nil {
 			// Customize cni-canal addon on hetzner
-			defaultIfaceParam(tplDataParams, "^eth")
+			// Match both Ubuntu (en*) and Rocky Linux (eth*) interface naming
+			defaultIfaceParam(tplDataParams, "^(en|eth)")
 		}
 	}
 }
