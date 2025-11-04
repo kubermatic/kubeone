@@ -1,4 +1,5 @@
 # Kubermatic KubeOne
+test
 
 <p align="center">
   <img src="docs/img/kubeone-logo-text.png#gh-light-mode-only" width="700px" />
