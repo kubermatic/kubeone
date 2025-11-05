@@ -14,7 +14,7 @@ spec:
     metadata:
       annotations:
         "prometheus.io/scrape": "true"
-        "prometheus.io/port": "8083"
+        "prometheus.io/port": "8080"
         "prometheus.io/path": "/metrics"
         "kubeone.k8c.io/cabundle-hash": "{{ CABundle | sha256sum }}"
         "kubeone.k8c.io/credentials-hash": "{{ .OperatingSystemManagerCredentialsHash }}"
@@ -35,7 +35,6 @@ spec:
         - key: "node-role.kubernetes.io/control-plane"
           effect: NoSchedule
       serviceAccountName: operating-system-manager
-      hostNetwork: true
       containers:
         - name: operating-system-manager
           image: "{{ .InternalImages.Get "OperatingSystemManager" }}"
@@ -46,7 +45,7 @@ spec:
             - -log-debug=false
             - -log-format=json # json or console
             - -health-probe-address=0.0.0.0:8085
-            - -metrics-address=0.0.0.0:8083
+            - -metrics-address=0.0.0.0:8080
             {{ if .Config.Features.NodeLocalDNS.Deploy -}}
             - -cluster-dns={{ .Resources.NodeLocalDNSVirtualIP }}
             {{ end -}}

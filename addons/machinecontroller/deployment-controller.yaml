@@ -14,7 +14,7 @@ spec:
     metadata:
       annotations:
         "prometheus.io/scrape": "true"
-        "prometheus.io/port": "8082"
+        "prometheus.io/port": "8080"
         "prometheus.io/path": "/metrics"
         "kubeone.k8c.io/cabundle-hash": "{{ CABundle | sha256sum }}"
         "kubeone.k8c.io/credentials-hash": "{{ .MachineControllerCredentialsHash }}"
@@ -36,7 +36,6 @@ spec:
         - key: "CriticalAddonsOnly"
           operator: Exists
       serviceAccountName: machine-controller
-      hostNetwork: true
       containers:
         - name: machine-controller
           image: "{{ .InternalImages.Get "MachineController" }}"
@@ -45,7 +44,7 @@ spec:
             - /usr/local/bin/machine-controller
           args:
             - -health-probe-address=0.0.0.0:8085
-            - -metrics-address=0.0.0.0:8082
+            - -metrics-address=0.0.0.0:8080
             - -node-csr-approver
             {{ if .Config.CloudProvider.External -}}
             - -node-external-cloud-provider
@@ -68,7 +67,7 @@ spec:
 {{ .MachineControllerCredentialsEnvVars | indent 12 }}
           ports:
             - containerPort: 8085
-            - containerPort: 8082
+            - containerPort: 8080
               name: metrics
               protocol: TCP
           livenessProbe:
