@@ -1269,8 +1269,10 @@ func (in *NodeSettingsSpec) DeepCopyInto(out *NodeSettingsSpec) {
 	}
 	if in.Annotations != nil {
 		in, out := &in.Annotations, &out.Annotations
-		*out = make([]string, len(*in))
-		copy(*out, *in)
+		*out = make(map[string]string, len(*in))
+		for key, val := range *in {
+			(*out)[key] = val
+		}
 	}
 	if in.Taints != nil {
 		in, out := &in.Taints, &out.Taints

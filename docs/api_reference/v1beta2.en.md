@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2025-10-29T14:56:46+02:00
+date = 2025-11-05T15:22:21+02:00
 weight = 11
 +++
 ## v1beta2
@@ -697,7 +697,7 @@ MetricsServer feature flag
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | labels |  | map[string]string | false |
-| annotations |  | []string | false |
+| annotations |  | map[string]string | false |
 | taints |  | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#taint-v1-core) | false |
 
 [Back to Group](#v1beta2)

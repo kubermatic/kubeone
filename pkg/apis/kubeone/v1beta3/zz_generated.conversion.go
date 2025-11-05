@@ -2111,7 +2111,7 @@ func Convert_kubeone_NodeSet_To_v1beta3_NodeSet(in *kubeone.NodeSet, out *NodeSe
 
 func autoConvert_v1beta3_NodeSettingsSpec_To_kubeone_NodeSettingsSpec(in *NodeSettingsSpec, out *kubeone.NodeSettingsSpec, s conversion.Scope) error {
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
-	out.Annotations = *(*[]string)(unsafe.Pointer(&in.Annotations))
+	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
 	out.Taints = *(*[]corev1.Taint)(unsafe.Pointer(&in.Taints))
 	return nil
 }
@@ -2123,7 +2123,7 @@ func Convert_v1beta3_NodeSettingsSpec_To_kubeone_NodeSettingsSpec(in *NodeSettin
 
 func autoConvert_kubeone_NodeSettingsSpec_To_v1beta3_NodeSettingsSpec(in *kubeone.NodeSettingsSpec, out *NodeSettingsSpec, s conversion.Scope) error {
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
-	out.Annotations = *(*[]string)(unsafe.Pointer(&in.Annotations))
+	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
 	out.Taints = *(*[]corev1.Taint)(unsafe.Pointer(&in.Taints))
 	return nil
 }

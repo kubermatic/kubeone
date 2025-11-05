@@ -380,7 +380,7 @@ type NodeSet struct {
 
 type NodeSettingsSpec struct {
 	Labels      map[string]string `json:"labels,omitempty"`
-	Annotations []string          `json:"annotations,omitempty"`
+	Annotations map[string]string `json:"annotations,omitempty"`
 	Taints      []corev1.Taint    `json:"taints,omitempty"`
 }
 
