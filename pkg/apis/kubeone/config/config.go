@@ -33,7 +33,6 @@ import (
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
 	kubeonevalidation "k8c.io/kubeone/pkg/apis/kubeone/validation"
-	"k8c.io/kubeone/pkg/containerruntime"
 	"k8c.io/kubeone/pkg/fail"
 	terraformv1beta2 "k8c.io/kubeone/pkg/terraform/v1beta2"
 	terraformv1beta3 "k8c.io/kubeone/pkg/terraform/v1beta3"
@@ -284,19 +283,6 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 		if err := setRegistriesAuth(cluster, ra); err != nil {
 			return err
 		}
-	}
-
-	// Defaulting for LoggingConfig.
-	// NB: We intentionally default here because LoggingConfig is not available in
-	// the v1beta1 API. If we would default in the v1beta2 API instead, this value would
-	// be empty when converting from v1beta1 to internal. This means that v1beta1 API
-	// users would depend on default values provided by Docker/upstream, which are
-	// different than our default values, so we want to avoid this.
-	if cluster.LoggingConfig.ContainerLogMaxSize == "" {
-		cluster.LoggingConfig.ContainerLogMaxSize = containerruntime.DefaultContainerLogMaxSize
-	}
-	if cluster.LoggingConfig.ContainerLogMaxFiles == 0 {
-		cluster.LoggingConfig.ContainerLogMaxFiles = containerruntime.DefaultContainerLogMaxFiles
 	}
 
 	// Default the AssetsConfiguration internal API
