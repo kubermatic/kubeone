@@ -23,6 +23,7 @@ import (
 
 	"github.com/Masterminds/semver/v3"
 
+	"k8c.io/kubeone/pkg/containerruntime"
 	"k8c.io/kubeone/pkg/templates/kubernetesconfigs"
 
 	corev1 "k8s.io/api/core/v1"
@@ -68,6 +69,7 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_ContainerRuntime(obj)
 	SetDefaults_ClusterNetwork(obj)
 	SetDefaults_Proxy(obj)
+	SetDefaults_LoggingConfig(obj)
 	SetDefaults_MachineController(obj)
 	SetDefaults_OperatingSystemManager(obj)
 	SetDefaults_Addons(obj)
@@ -221,6 +223,15 @@ func SetDefaults_Proxy(obj *KubeOneCluster) {
 		noproxy = append(noproxy, obj.Proxy.NoProxy)
 	}
 	obj.Proxy.NoProxy = strings.Join(noproxy, ",")
+}
+
+func SetDefaults_LoggingConfig(obj *KubeOneCluster) {
+	if obj.LoggingConfig.ContainerLogMaxSize == "" {
+		obj.LoggingConfig.ContainerLogMaxSize = containerruntime.DefaultContainerLogMaxSize
+	}
+	if obj.LoggingConfig.ContainerLogMaxFiles == 0 {
+		obj.LoggingConfig.ContainerLogMaxFiles = containerruntime.DefaultContainerLogMaxFiles
+	}
 }
 
 func SetDefaults_MachineController(obj *KubeOneCluster) {
