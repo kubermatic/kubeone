@@ -39,7 +39,7 @@ import (
 )
 
 var (
-	kubeoneVerboseFlag = flag.Bool("kubeone-verbose", false, "run kubeone actions with --verbose flag")
+	kubeoneVerboseFlag = flag.Bool("kubeone-verbose", true, "run kubeone actions with --verbose flag")
 	credentialsFlag    = flag.String("credentials", "", "run kubeone with --credentials flag")
 )
 
