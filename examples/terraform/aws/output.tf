@@ -46,7 +46,7 @@ output "kubeone_hosts" {
       bastion_port             = var.bastion_port
       bastion_user             = local.bastion_user
       bastion_host_key         = var.bastion_host_key
-      bastion_private_key_file = var.bastion_private_key_file
+      # bastion_private_key_file = var.bastion_private_key_file
       labels                   = var.control_plane_labels
       # uncomment to following to set those kubelet parameters. More into at:
       # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
