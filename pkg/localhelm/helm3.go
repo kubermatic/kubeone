@@ -516,10 +516,14 @@ func dependencyUpdate(chartPath string, helmSettings *helmcli.EnvSettings, provi
 }
 
 func newActionConfiguration(debug bool) (*helmaction.Configuration, error) {
+	registryWriter := io.Discard
+	if debug {
+		registryWriter = os.Stdout
+	}
 	registryClient, err := registry.NewClient(
 		registry.ClientOptDebug(debug),
 		registry.ClientOptEnableCache(true),
-		registry.ClientOptWriter(io.Discard),
+		registry.ClientOptWriter(registryWriter),
 	)
 
 	return &helmaction.Configuration{
