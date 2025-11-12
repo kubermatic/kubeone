@@ -519,7 +519,7 @@ func newActionConfiguration(debug bool) (*helmaction.Configuration, error) {
 	registryClient, err := registry.NewClient(
 		registry.ClientOptDebug(debug),
 		registry.ClientOptEnableCache(true),
-		registry.ClientOptWriter(os.Stdout),
+		registry.ClientOptWriter(io.Discard),
 	)
 
 	return &helmaction.Configuration{
