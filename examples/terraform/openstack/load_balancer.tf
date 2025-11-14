@@ -42,8 +42,8 @@ resource "openstack_lb_monitor_v2" "lb_monitor_tcp" {
   name        = "${var.cluster_name}-kube-apiserver"
   pool_id     = openstack_lb_pool_v2.kube_apiservers.id
   type        = "TCP"
-  delay       = 30
-  timeout     = 10
+  delay       = 10
+  timeout     = 5
   max_retries = 5
 }
 

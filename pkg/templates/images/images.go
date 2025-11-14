@@ -315,7 +315,7 @@ func optionalResources() map[Resource]map[string]string {
 		// OpenStack CSI
 		OpenstackCSI: {
 			"1.32.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.32.1",
-			"1.33.0":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.33.1",
+			"1.33.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.33.1",
 			">= 1.34.0": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.34.0",
 		},
 		OpenstackCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.15.0"},
@@ -423,12 +423,8 @@ func optionalResources() map[Resource]map[string]string {
 
 func allResources() map[Resource]map[string]string {
 	ret := map[Resource]map[string]string{}
-	for k, v := range baseResources() {
-		ret[k] = v
-	}
-	for k, v := range optionalResources() {
-		ret[k] = v
-	}
+	maps.Copy(ret, baseResources())
+	maps.Copy(ret, optionalResources())
 
 	return ret
 }
