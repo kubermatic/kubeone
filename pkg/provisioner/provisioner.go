@@ -142,7 +142,6 @@ func CreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine) ([]
 					break
 				}
 
-				log.Info("Waiting 5 seconds for machine address assignment.")
 				time.Sleep(5 * time.Second)
 			}
 		}
@@ -153,17 +152,9 @@ func CreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine) ([]
 			return nil, fmt.Errorf("machine %s has not been assigned an IP yet", providerInstance.Name())
 		}
 
-		if machineCreated {
-			log.Infof("Machine %q was successfully created.", providerInstance.Name())
-		} else {
-			log.Infof("Machine %q already exists.", providerInstance.Name())
-		}
-
 		sshUser := "root"
-		if machine.Annotations != nil {
-			if user := machine.Annotations[hostnameAnnotation]; sshUser != "" {
-				sshUser = user
-			}
+		if user := machine.Annotations[hostnameAnnotation]; sshUser != "" {
+			sshUser = user
 		}
 
 		machineInstance := MachineInstance{

@@ -21,8 +21,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Masterminds/semver/v3"
-
 	"k8c.io/kubeone/pkg/containerruntime"
 	"k8c.io/kubeone/pkg/templates/kubernetesconfigs"
 
@@ -87,15 +85,8 @@ func SetDefaults_CABundle(obj *KubeOneCluster) {
 }
 
 func SetDefaults_CloudProvider(obj *KubeOneCluster) {
-	gteKube129Condition, _ := semver.NewConstraint(">= 1.29")
-	actualVer, err := semver.NewVersion(obj.Versions.Kubernetes)
-	if err != nil {
-		return
-	}
-
-	// if kubernetes version is 1.29+
-	// and cloud provider is configured
-	if gteKube129Condition.Check(actualVer) && obj.CloudProvider.None == nil {
+	// if cloud provider is configured
+	if obj.CloudProvider.None == nil {
 		// and cloud provider is NOT Kubevirt and NOT VMwareCloudDirector,
 		// to prevent kubelet --cloud-provider=external situation where
 		// there will be no CCM to initialize the Node

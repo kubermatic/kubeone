@@ -197,7 +197,6 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), "cloudConfig is required for dualstack clusters for aws provider"))
 		}
 		providerFound = true
-		// TODO: validate providerSpec.AWS.ControlPlane too
 	}
 	if providerSpec.Azure != nil {
 		if providerFound {
