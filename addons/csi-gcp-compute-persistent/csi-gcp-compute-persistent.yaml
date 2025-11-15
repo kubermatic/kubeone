@@ -487,7 +487,6 @@ spec:
             - --leader-election
             - --default-fstype=ext4
             - --controller-publish-readonly=true
-            - --feature-gates=VolumeAttributesClass=true
           env:
             - name: PDCSI_NAMESPACE
               valueFrom:
@@ -547,7 +546,6 @@ spec:
             - --leader-election
             - --leader-election-namespace=$(PDCSI_NAMESPACE)
             - --handle-volume-inuse-error=false
-            - --feature-gates=VolumeAttributesClass=true
           env:
             - name: PDCSI_NAMESPACE
               valueFrom:

@@ -315,7 +315,7 @@ func optionalResources() map[Resource]map[string]string {
 		// OpenStack CSI
 		OpenstackCSI: {
 			"1.32.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.32.1",
-			"1.33.0":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.33.1",
+			"1.33.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.33.1",
 			">= 1.34.0": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.34.0",
 		},
 		OpenstackCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.15.0"},
@@ -371,10 +371,10 @@ func optionalResources() map[Resource]map[string]string {
 
 		// GCP Compute Persistent Disk CSI
 		// see: https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver/blob/master/deploy/kubernetes/images/stable-master/image.yaml
-		GCPComputeCSIDriver:              {"*": "registry.k8s.io/cloud-provider-gcp/gcp-compute-persistent-disk-csi-driver:v1.17.3"},
-		GCPComputeCSIProvisioner:         {"*": "registry.k8s.io/sig-storage/csi-provisioner:v5.2.0"},
+		GCPComputeCSIDriver:              {"*": "registry.k8s.io/cloud-provider-gcp/gcp-compute-persistent-disk-csi-driver:v1.17.4"},
+		GCPComputeCSIProvisioner:         {"*": "registry.k8s.io/sig-storage/csi-provisioner:v6.0.0"},
 		GCPComputeCSIAttacher:            {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.8.1"},
-		GCPComputeCSIResizer:             {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.13.2"},
+		GCPComputeCSIResizer:             {"*": "registry.k8s.io/sig-storage/csi-resizer:v2.0.0"},
 		GCPComputeCSISnapshotter:         {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.2.1"},
 		GCPComputeCSINodeDriverRegistrar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.13.0"},
 
@@ -423,12 +423,8 @@ func optionalResources() map[Resource]map[string]string {
 
 func allResources() map[Resource]map[string]string {
 	ret := map[Resource]map[string]string{}
-	for k, v := range baseResources() {
-		ret[k] = v
-	}
-	for k, v := range optionalResources() {
-		ret[k] = v
-	}
+	maps.Copy(ret, baseResources())
+	maps.Copy(ret, optionalResources())
 
 	return ret
 }
