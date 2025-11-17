@@ -65,6 +65,7 @@ sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install --option "Dpkg::Options::=--force-confold" -y --no-install-recommends \
 	apt-transport-https \
 	ca-certificates \
+	conntrack \
 	curl \
 	gnupg \
 	apparmor-utils \
