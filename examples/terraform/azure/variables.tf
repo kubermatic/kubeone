@@ -209,7 +209,7 @@ variable "control_plane_vm_count" {
 
 variable "initial_machinedeployment_replicas" {
   description = "Number of replicas per MachineDeployment"
-  default     = 2
+  default     = 1
   type        = number
 }
 
