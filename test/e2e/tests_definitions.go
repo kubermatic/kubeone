@@ -864,7 +864,7 @@ var (
 				path:    "../../examples/terraform/vsphere",
 				varFile: "testdata/vsphere.tfvars",
 				vars: []string{
-					"template_name=kubeone-ubuntu-24.04",
+					"template_name=kubeone-e2e-ubuntu-24.04",
 					"worker_os=ubuntu",
 					"ssh_username=ubuntu",
 				},
@@ -889,7 +889,7 @@ var (
 				path:    "../../../kubeone-stable/examples/terraform/vsphere",
 				varFile: "testdata/vsphere.tfvars",
 				vars: []string{
-					"template_name=kubeone-ubuntu-24.04",
+					"template_name=kubeone-e2e-ubuntu-24.04",
 					"worker_os=ubuntu",
 					"ssh_username=ubuntu",
 				},
