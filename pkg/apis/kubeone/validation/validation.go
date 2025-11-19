@@ -134,10 +134,24 @@ func ValidateControlPlaneConfig(c kubeoneapi.ControlPlaneConfig, clusterNetwork 
 
 	if len(c.Hosts) > 0 {
 		allErrs = append(allErrs, ValidateHostConfig(c.Hosts, clusterNetwork, fldPath.Child("hosts"))...)
+	} else if len(c.NodeSets) > 0 {
+		allErrs = append(allErrs, ValidateControlPlaneMachines(c.NodeSets, fldPath.Child("nodeSets"))...)
 	} else {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("hosts"), "",
 			".controlPlane.Hosts is a required field. There must be at least one control plane instance in the cluster."))
 	}
+
+	return allErrs
+}
+
+func ValidateControlPlaneMachines(nodeSets []kubeoneapi.NodeSet, fld *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if len(nodeSets)%2 == 0 {
+		allErrs = append(allErrs, field.Invalid(fld, "", "number of control plane machines must be odd"))
+	}
+
+	// TBD
 
 	return allErrs
 }
@@ -206,10 +220,12 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 		providerFound = true
 	}
 	if providerSpec.Hetzner != nil {
+		hetznerFld := fldPath.Child("hetzner")
 		if providerFound {
-			allErrs = append(allErrs, field.Forbidden(fldPath.Child("hetzner"), "only one provider can be used at the same time"))
+			allErrs = append(allErrs, field.Forbidden(hetznerFld, "only one provider can be used at the same time"))
 		}
 		providerFound = true
+		allErrs = append(allErrs, validateHetznerSpec(providerSpec.Hetzner, hetznerFld)...)
 	}
 	if providerSpec.Kubevirt != nil {
 		kubevirtFld := fldPath.Child("kubevirt")
@@ -286,6 +302,18 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 
 	if providerSpec.Vsphere == nil && len(providerSpec.CSIConfig) > 0 {
 		allErrs = append(allErrs, field.Forbidden(fldPath.Child("csiConfig"), ".cloudProvider.csiConfig is currently supported only for vsphere clusters"))
+	}
+
+	return allErrs
+}
+
+func validateHetznerSpec(hetznerSpec *kubeoneapi.HetznerSpec, fldPath *field.Path) field.ErrorList {
+	var allErrs field.ErrorList
+
+	if hetznerSpec.ControlPlane != nil {
+		if hetznerSpec.NetworkID == "" {
+			allErrs = append(allErrs, field.Required(fldPath.Child("networkID"), "networkID is required controlPlane is specified"))
+		}
 	}
 
 	return allErrs
