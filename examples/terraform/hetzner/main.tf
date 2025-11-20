@@ -14,7 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-provider "hcloud" {}
+provider "hcloud" {
+  # to avoid rate limiting issues
+  poll_interval = "10s"
+}
 
 locals {
   kubeapi_endpoint   = var.disable_kubeapi_loadbalancer ? hcloud_server_network.control_plane.0.ip : hcloud_load_balancer.load_balancer.0.ipv4
