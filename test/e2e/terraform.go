@@ -25,12 +25,10 @@ import (
 	"k8c.io/kubeone/test/testexec"
 )
 
-var (
-	defaultTFEnvironment = []string{
-		"TF_IN_AUTOMATION=true",
-		"TF_CLI_ARGS=-no-color",
-	}
-)
+var defaultTFEnvironment = []string{
+	"TF_IN_AUTOMATION=true",
+	"TF_CLI_ARGS=-no-color",
+}
 
 type terraformBin struct {
 	path    string
@@ -79,12 +77,12 @@ func (tf *terraformBin) Destroy() error {
 func (tf *terraformBin) varFlags() []string {
 	var args []string
 
-	for _, arg := range tf.vars {
-		args = append(args, "-var", arg)
-	}
-
 	if tf.varFile != "" {
 		args = append(args, "-var-file", mustAbsolutePath(tf.varFile))
+	}
+
+	for _, arg := range tf.vars {
+		args = append(args, "-var", arg)
 	}
 
 	return args

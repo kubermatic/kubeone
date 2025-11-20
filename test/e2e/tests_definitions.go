@@ -915,7 +915,7 @@ var (
 				varFile: "testdata/vsphere.tfvars",
 				vars: []string{
 					"disable_auto_update=true",
-					"template_name=kkp-flatcar-stable",
+					"template_name=kkp-flatcar-3033.3",
 				},
 			},
 			protokol: protokolBin{
@@ -939,7 +939,7 @@ var (
 				varFile: "testdata/vsphere.tfvars",
 				vars: []string{
 					"disable_auto_update=true",
-					"template_name=kkp-flatcar-stable",
+					"template_name=kkp-flatcar-3033.3",
 				},
 			},
 			protokol: protokolBin{
