@@ -158,9 +158,9 @@ cloudConfig: |
   [Workspace]
   server = "${VSPHERE_SERVER}"
   datacenter = "Hamburg"
-  default-datastore="vsan"
+  default-datastore="Datastore0-truenas"
   resourcepool-path=""
-  folder = "Kubermatic-ci"
+  folder = "KubeOne-E2E"
 
   [Disk]
   scsicontrollertype = pvscsi
@@ -180,9 +180,9 @@ csiConfig: |
   [Workspace]
   server = "${VSPHERE_SERVER}"
   datacenter = "Hamburg"
-  default-datastore="vsan"
+  default-datastore="Datastore0-truenas"
   resourcepool-path=""
-  folder = "Kubermatic-ci"
+  folder = "KubeOne-E2E"
 EOL
     ;;
   *)
