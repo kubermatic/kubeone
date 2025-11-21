@@ -26,9 +26,25 @@ For a quick start, you should check the following documents:
 * [Getting KubeOne][docs-getting-kubeone] to download and install KubeOne locally.
 * [Provisioning][docs-provisioning] to provision the Kubernetes cluster.
 
+
+## Quick Start
+The fastest way to deploy a KubeOne kubernetes cluster is to use the installation script:
+
+```bash
+curl -sfL get.kubeone.io | sh
+kubeone local
+# Wait 
+export KUBECONFIG=local-kubeconfig
+kubectl get pod -A
+```
+
+Check out, 
+[All-in-one Cluster][docs-kubeone-local].
+
+
 ## Installing KubeOne
 
-The fastest way to install KubeOne is to use the installation script:
+You can also customize the installation:
 
 ```bash
 curl -sfL get.kubeone.io | sh
@@ -120,6 +136,7 @@ See [the list of releases][changelog] to find out about feature changes.
 [docs-concepts]: https://docs.kubermatic.com/kubeone/main/architecture/concepts/
 [docs-compatibility]: https://docs.kubermatic.com/kubeone/main/architecture/compatibility/
 [docs-getting-kubeone]: https://docs.kubermatic.com/kubeone/main/getting-kubeone/
+[docs-kubeone-local]: https://docs.kubermatic.com/kubeone/main/guides/local/
 [docs-provisioning]: https://docs.kubermatic.com/kubeone/main/tutorials/creating-clusters/
 [contributing-guide]: https://github.com/kubermatic/kubeone/blob/main/CONTRIBUTING.md
 [k8s-slack-kubeone]: https://kubernetes.slack.com/messages/CNEV2UMT7
