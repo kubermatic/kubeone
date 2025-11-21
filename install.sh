@@ -16,7 +16,7 @@
 
 # This is a simple installer script for KubeOne.
 
-set -eu
+set -e
 
 KUBEONE_DIR="kubeone-tmp"
 INSTALL_DIR="/usr/local/bin"
