@@ -1,3 +1,13 @@
+# [v1.12.1](https://github.com/kubermatic/kubeone/releases/tag/v1.12.1) - 2025-11-21
+
+## Changelog since v1.12.0
+
+## Changes by Kind
+
+### Fixes of Bugs or Regressions
+
+- Fix cilium-envoy image reference [#3910](https://github.com/kubermatic/kubeone/pull/3910) [@peschmae](https://github.com/peschmae)
+
 # [v1.12.0](https://github.com/kubermatic/kubeone/releases/tag/v1.12.0) - 2025-11-21
 
 ## Changelog since v1.11.0
