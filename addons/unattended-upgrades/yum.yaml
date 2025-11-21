@@ -43,7 +43,7 @@ spec:
       hostPID: true
       containers:
         - name: "yum-cron-install"
-          image: "alpine:3"
+          image: '{{ .InternalImages.Get "UUApline" }}'
           imagePullPolicy: Always
           securityContext:
             privileged: true

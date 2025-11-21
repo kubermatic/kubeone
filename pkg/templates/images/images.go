@@ -209,6 +209,14 @@ const (
 	KubeVirtCSILivenessProbe
 	KubeVirtCSIProvisioner
 	KubeVirtCSIAttacher
+
+	// Backup Restic
+	BackupResticSnapshotter
+	BackupResticUploader
+
+	// Unatttended Upgrades
+	UUApline
+	UUFluo
 )
 
 func FindResource(name string) (Resource, error) {
@@ -418,6 +426,14 @@ func optionalResources() map[Resource]map[string]string {
 		KubeVirtCSILivenessProbe:       {"*": "quay.io/openshift/origin-csi-livenessprobe:4.20.0"},
 		KubeVirtCSIProvisioner:         {"*": "quay.io/openshift/origin-csi-external-provisioner:4.20.0"},
 		KubeVirtCSIAttacher:            {"*": "quay.io/openshift/origin-csi-external-attacher:4.20.0"},
+
+		// Backup Restic
+		BackupResticSnapshotter: {"*": "registry.k8s.io/etcd:3.5.16-0"},
+		BackupResticUploader:    {"*": "ghcr.io/restic/restic:0.18.0"},
+
+		// Unattended upgrades
+		UUApline: {"*": "docker.io/library/alpine:3.22.2"},
+		UUFluo:   {"*": "ghcr.io/flatcar/flatcar-linux-update-operator:v0.10.0-rc1"},
 	}
 }
 

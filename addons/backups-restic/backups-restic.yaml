@@ -52,7 +52,7 @@ spec:
               path: /etc/kubernetes/pki
           initContainers:
           - name: snapshotter
-            image: {{ Registry "registry.k8s.io" }}/etcd:3.5.16-0
+            image: '{{ .InternalImages.Get "BackupResticSnapshotter" }}'
             imagePullPolicy: IfNotPresent
             command:
               - etcdctl
@@ -83,7 +83,7 @@ spec:
               readOnly: true
           containers:
           - name: uploader
-            image: {{ Registry "ghcr.io" }}/restic/restic:0.18.0
+            image: '{{ .InternalImages.Get "BackupResticUploader" }}'
             imagePullPolicy: IfNotPresent
             command:
             - /bin/sh
