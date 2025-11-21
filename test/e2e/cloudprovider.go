@@ -146,7 +146,7 @@ func (c *cloudProviderTests) createStatefulSetWithStorage(t *testing.T) {
 						},
 						{
 							Name:  "busybox",
-							Image: "registry.k8s.io/busybox",
+							Image: "registry.k8s.io/debian-base:v2.0.0",
 							Args: []string{
 								"/bin/sh",
 								"-c",
