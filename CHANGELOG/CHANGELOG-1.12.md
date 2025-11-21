@@ -2,7 +2,7 @@
 
 ## Changelog since v1.11.0
 
-## Urgent a BREAKING Upgrade Notes
+## Urgent and BREAKING Upgrade Notes
 
 ### (No, really, you MUST read this before you upgrade)
 
@@ -11,7 +11,7 @@
 
 ### Known Issues
 
-- rocky-9 image on hetzner doesn't work as of time of the release, since it's only has IPv6 NS servers configured, regardless of the stack.
+- rocky-9 image on hetzner doesn't work as of time of the release, since it only has IPv6 NS servers configured, regardless of the stack.
 
 ## Changes by Kind
 
@@ -26,7 +26,7 @@
 - Cluster wide KubeletConfig ([#3845](https://github.com/kubermatic/kubeone/pull/3845), [@kron4eg](https://github.com/kron4eg))
 - Export NewRoot() function ([#3809](https://github.com/kubermatic/kubeone/pull/3809), [@kron4eg](https://github.com/kron4eg))
 - Make machine-controller -join-cluster-timeout configurable ([#3779](https://github.com/kubermatic/kubeone/pull/3779), [@kron4eg](https://github.com/kron4eg))
-- Non-root device usage on non-static worker nodes can now be enabled for containerd runtime by setting the value `operatingSystemManager.enableNonRootDeviceOwnership` to `true` when osm is enabled. ([#3793](https://github.com/kubermatic/kubeone/pull/3793), [@soer3n](https://github.com/soer3n))
+- Non-root device usage on non-static worker nodes can now be enabled for containerd runtime by setting the value `operatingSystemManager.enableNonRootDeviceOwnership` to `true` when OSM is enabled. ([#3793](https://github.com/kubermatic/kubeone/pull/3793), [@soer3n](https://github.com/soer3n))
 - TBD ([#3835](https://github.com/kubermatic/kubeone/pull/3835), [@archups](https://github.com/archups))
 - `kubeone certificates renew` command can be used to renew control plane certificates in a KubeOne cluster ([#3773](https://github.com/kubermatic/kubeone/pull/3773), [@kron4eg](https://github.com/kron4eg))
 
@@ -49,7 +49,7 @@
 
 ### Chore
 
-- Add RHEL and Rocky Linux 9.6 test scenarios for v1.34 ([#3851](https://github.com/kubermatic/kubeone/pull/3851), [@kron4eg](https://github.com/kron4eg))
+- Add RHEL and RockyLinux 9.6 test scenarios for v1.34 ([#3851](https://github.com/kubermatic/kubeone/pull/3851), [@kron4eg](https://github.com/kron4eg))
 - Bump machine-controller version to [v1.63.1](https://github.com/kubermatic/machine-controller/releases/tag/v1.63.1) and operating-system-manager version to [v1.7.6](https://github.com/kubermatic/operating-system-manager/releases/tag/v1.7.6) ([#3817](https://github.com/kubermatic/kubeone/pull/3817), [@archups](https://github.com/archups))
 - Cluster-autoscaler addon now supports new variable CLUSTER_AUTOSCALER_SCALE_DOWN_UTIL_THRESHOLD to control `--scale-down-utilization-threshold` parameter. ([#3780](https://github.com/kubermatic/kubeone/pull/3780), [@dharapvj](https://github.com/dharapvj))
 - Update Azure CCM to v1.34.1
