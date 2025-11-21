@@ -31,7 +31,7 @@ patches:
       - op: replace
         path: /spec/template/spec/containers/0/image
         value: |-
-          {{ Registry "ghcr.io" }}/flatcar/flatcar-linux-update-operator:v0.10.0-rc1
+          '{{ .InternalImages.Get "UUFluo" }}'
 
   - target:
       group: apps
@@ -58,4 +58,4 @@ patches:
       - op: replace
         path: /spec/template/spec/containers/0/image
         value: |-
-          {{ Registry "ghcr.io" }}/flatcar/flatcar-linux-update-operator:v0.10.0-rc1
+          '{{ .InternalImages.Get "UUFluo" }}'

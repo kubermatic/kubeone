@@ -38,7 +38,7 @@ spec:
       hostPID: true
       containers:
         - name: "unattended-upgrades-install"
-          image: "alpine:3"
+          image: '{{ .InternalImages.Get "UUApline" }}'
           imagePullPolicy: Always
           securityContext:
             privileged: true
