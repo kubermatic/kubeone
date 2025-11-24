@@ -5,8 +5,8 @@ metadata:
     app.kubernetes.io/instance: openstack-ccm
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: openstack-cloud-controller-manager
-    app.kubernetes.io/version: v1.34.0
-    helm.sh/chart: openstack-cloud-controller-manager-2.34.0
+    app.kubernetes.io/version: v1.34.1
+    helm.sh/chart: openstack-cloud-controller-manager-2.34.1
   name: cloud-controller-manager
   namespace: kube-system
 ---
@@ -17,8 +17,8 @@ metadata:
     app.kubernetes.io/instance: openstack-ccm
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: openstack-cloud-controller-manager
-    app.kubernetes.io/version: v1.34.0
-    helm.sh/chart: openstack-cloud-controller-manager-2.34.0
+    app.kubernetes.io/version: v1.34.1
+    helm.sh/chart: openstack-cloud-controller-manager-2.34.1
   name: system:cloud-controller-manager
 rules:
   - apiGroups:
@@ -117,8 +117,8 @@ metadata:
     app.kubernetes.io/instance: openstack-ccm
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: openstack-cloud-controller-manager
-    app.kubernetes.io/version: v1.34.0
-    helm.sh/chart: openstack-cloud-controller-manager-2.34.0
+    app.kubernetes.io/version: v1.34.1
+    helm.sh/chart: openstack-cloud-controller-manager-2.34.1
   name: system:cloud-controller-manager
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -136,8 +136,8 @@ metadata:
     app.kubernetes.io/instance: openstack-ccm
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: openstack-cloud-controller-manager
-    app.kubernetes.io/version: v1.34.0
-    helm.sh/chart: openstack-cloud-controller-manager-2.34.0
+    app.kubernetes.io/version: v1.34.1
+    helm.sh/chart: openstack-cloud-controller-manager-2.34.1
   name: openstack-cloud-controller-manager
   namespace: kube-system
 spec:
@@ -153,7 +153,7 @@ spec:
         kubeone.k8c.io/cloudconfig-hash: '{{.Config.CloudProvider.CloudConfig | sha256sum}}'
       labels:
         app: openstack-cloud-controller-manager
-        chart: openstack-cloud-controller-manager-2.34.0
+        chart: openstack-cloud-controller-manager-2.34.1
         component: controllermanager
         heritage: Helm
         k8s-app: openstack-cloud-controller-manager
