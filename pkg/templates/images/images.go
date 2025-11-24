@@ -266,7 +266,7 @@ func optionalResources() map[Resource]map[string]string {
 		AzureCCM: {
 			"1.32.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.32.8",
 			"1.33.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.33.3",
-			">= 1.34.x": "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.34.1",
+			">= 1.34.x": "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.34.2",
 		},
 		AzureCNM: {
 			"1.32.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.32.8",
