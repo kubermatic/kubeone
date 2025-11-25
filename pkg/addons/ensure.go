@@ -43,6 +43,7 @@ var embeddedAddons = map[string]string{
 	resources.AddonCCMAzure:               "",
 	resources.AddonCCMDigitalOcean:        "",
 	resources.AddonCCMHetzner:             "",
+	resources.AddonCCMGCP:                 "",
 	resources.AddonCCMOpenStack:           "",
 	resources.AddonCCMEquinixMetal:        "",
 	resources.AddonCCMPacket:              "",

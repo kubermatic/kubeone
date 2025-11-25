@@ -64,6 +64,7 @@ func CloudAddons() []string {
 	return []string{
 		AddonCCMAws,
 		AddonCCMAzure,
+		AddonCCMGCP,
 		AddonCCMDigitalOcean,
 		AddonCCMEquinixMetal,
 		AddonCCMHetzner,
