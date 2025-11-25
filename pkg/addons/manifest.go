@@ -86,9 +86,9 @@ func (a *applier) getManifestsFromDirectory(st *state.State, fsys fs.FS, addonNa
 	)
 
 	if !disableTemplating && addonsToMutate.Has(addonName) {
-		if st.Cluster.CABundle != "" {
+		if st.Cluster.CertificateAuthority.Bundle != "" {
 			if err = mutatePodTemplateSpec(manifests, func(podTpl *corev1.PodTemplateSpec) {
-				cabundle.Inject(st.Cluster.CABundle, podTpl)
+				cabundle.Inject(st.Cluster.CertificateAuthority.Bundle, podTpl)
 			}); err != nil {
 				return "", err
 			}

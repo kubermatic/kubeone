@@ -225,7 +225,7 @@ func WithResources(t Tasks) Tasks {
 			{
 				Fn: saveCABundle,
 				Predicate: func(s *state.State) bool {
-					return s.Cluster.CABundle != ""
+					return s.Cluster.CertificateAuthority.Bundle != ""
 				},
 			},
 			{
@@ -278,7 +278,7 @@ func WithResources(t Tasks) Tasks {
 				Fn:          ensureCABundleConfigMap,
 				Operation:   "ensuring caBundle configMap",
 				Description: "ensure caBundle configMap",
-				Predicate:   func(s *state.State) bool { return s.Cluster.CABundle != "" },
+				Predicate:   func(s *state.State) bool { return s.Cluster.CertificateAuthority.Bundle != "" },
 			},
 			{
 				Fn:          labelNodes,
@@ -321,7 +321,7 @@ func WithResources(t Tasks) Tasks {
 				Operation:   "ensure vSphere CSI caBundle configMap",
 				Description: "ensure vSphere CSI caBundle configMap",
 				Predicate: func(s *state.State) bool {
-					return s.Cluster.CABundle != "" && s.Cluster.CloudProvider.Vsphere != nil && s.Cluster.CloudProvider.External && !s.Cluster.CloudProvider.DisableBundledCSIDrivers
+					return s.Cluster.CertificateAuthority.Bundle != "" && s.Cluster.CloudProvider.Vsphere != nil && s.Cluster.CloudProvider.External && !s.Cluster.CloudProvider.DisableBundledCSIDrivers
 				},
 			},
 			{
@@ -427,7 +427,8 @@ func WithReset(t Tasks) Tasks {
 			Operation: "remove load balancer services",
 			Predicate: func(s *state.State) bool {
 				return s.RemoveLBServices
-			}},
+			},
+		},
 		{
 			Fn:        RemoveVolumes,
 			Operation: "remove dynamically provisioned and unretained volumes",
