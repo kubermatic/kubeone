@@ -180,6 +180,9 @@ type HelmRelease struct {
 	// WaitTimeout --timeout flag of the `helm install` command. Default to 5m
 	WaitTimeout metav1.Duration `json:"timeout,omitempty"`
 
+	// Insecure enables insecure TLS connection when fetching the chart
+	Insecure bool `json:"insecure,omitempty"`
+
 	// Values provide optional overrides of the helm values.
 	Values []HelmValues `json:"values,omitempty"`
 

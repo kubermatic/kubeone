@@ -462,6 +462,7 @@ GCESpec defines the GCE cloud provider
 | namespace | Namespace is --namespace flag of the `helm upgrade` command. A namespace to use for a release. | string | true |
 | wait | Wait is --wait flag of the `helm install` command. | bool | false |
 | timeout | WaitTimeout --timeout flag of the `helm install` command. Default to 5m | metav1.Duration | false |
+| insecure | Insecure enables insecure TLS connection when fetching the chart | bool | false |
 | values | Values provide optional overrides of the helm values. | [][HelmValues](#helmvalues) | false |
 | auth | Auth is used for chart repository authentication. | *[HelmAuth](#helmauth) | false |
 

@@ -178,6 +178,9 @@ type HelmRelease struct {
 	// Wait is --wait flag of the `helm install` command.
 	Wait bool `json:"wait,omitempty"`
 
+	// Insecure enables insecure TLS connection when fetching the chart
+	Insecure bool `json:"insecure,omitempty"`
+
 	// WaitTimeout --timeout flag of the `helm install` command.
 	WaitTimeout metav1.Duration `json:"timeout,omitempty"`
 
