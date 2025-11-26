@@ -353,9 +353,8 @@ func newHelmInstallClient(cfg *helmaction.Configuration, release kubeoneapi.Helm
 	helmInstall.Version = release.Version
 	helmInstall.Wait = release.Wait
 	helmInstall.Timeout = release.WaitTimeout.Duration
-	if release.Insecure {
-		helmInstall.InsecureSkipTLSverify = true
-		helmInstall.PlainHTTP = true
+	helmInstall.InsecureSkipTLSverify = !release.Insecure
+	helmInstall.PlainHTTP = !release.Insecure
 
 	}
 
