@@ -324,6 +324,11 @@ func upgradeRelease(
 	helmUpgrade.RepoURL = release.RepoURL
 	helmUpgrade.Version = release.Version
 
+	if release.Auth != nil {
+		helmUpgrade.Username = release.Auth.Username
+		helmUpgrade.Password = release.Auth.Password
+	}
+
 	chartRequested, err := getChart(release, helmUpgrade.ChartPathOptions, helmSettings, providers)
 	if err != nil {
 		return err
@@ -353,6 +358,11 @@ func newHelmInstallClient(cfg *helmaction.Configuration, release kubeoneapi.Helm
 	helmInstall.Version = release.Version
 	helmInstall.Wait = release.Wait
 	helmInstall.Timeout = release.WaitTimeout.Duration
+
+	if release.Auth != nil {
+		helmInstall.Username = release.Auth.Username
+		helmInstall.Password = release.Auth.Password
+	}
 
 	return helmInstall
 }

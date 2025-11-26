@@ -740,6 +740,15 @@ func validateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.
 			allErrs = append(allErrs, field.Required(fldPath.Child("chart"), hr.Chart))
 		}
 
+		if hr.Auth != nil {
+			if hr.Auth.Username != "" && hr.Auth.Password == "" {
+				allErrs = append(allErrs, field.Required(fldPath.Child("auth").Child("password"), "password is required when username is set"))
+			}
+			if hr.Auth.Password != "" && hr.Auth.Username == "" {
+				allErrs = append(allErrs, field.Required(fldPath.Child("auth").Child("username"), "username is required when password is set"))
+			}
+		}
+
 		if hr.Namespace == "" {
 			allErrs = append(allErrs, field.Required(fldPath.Child("namespace"), hr.Namespace))
 		}

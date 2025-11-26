@@ -2137,6 +2137,61 @@ func TestValidateAddons(t *testing.T) {
 			expectedError: true,
 		},
 		{
+			name: "helm release authentication: without password",
+			addons: &kubeoneapi.Addons{
+				Addons: []kubeoneapi.AddonRef{
+					{
+						HelmRelease: &kubeoneapi.HelmRelease{
+							Namespace: "ns1",
+							Chart:     "chart",
+							RepoURL:   "https://repo.localhost/chart-repo",
+							Auth: &kubeoneapi.HelmAuth{
+								Username: "user1",
+							},
+						},
+					},
+				},
+			},
+			expectedError: true,
+		},
+
+		{
+			name: "helm release authentication: without username",
+			addons: &kubeoneapi.Addons{
+				Addons: []kubeoneapi.AddonRef{
+					{
+						HelmRelease: &kubeoneapi.HelmRelease{
+							Namespace: "ns1",
+							Chart:     "chart",
+							RepoURL:   "https://repo.localhost/chart-repo",
+							Auth: &kubeoneapi.HelmAuth{
+								Password: "1234589",
+							},
+						},
+					},
+				},
+			},
+			expectedError: true,
+		},
+
+		{
+			name: "helm release authentication: empty credentials",
+			addons: &kubeoneapi.Addons{
+				Addons: []kubeoneapi.AddonRef{
+					{
+						HelmRelease: &kubeoneapi.HelmRelease{
+							Namespace: "ns1",
+							Chart:     "chart",
+							RepoURL:   "https://repo.localhost/chart-repo",
+							Auth:      &kubeoneapi.HelmAuth{},
+						},
+					},
+				},
+			},
+			expectedError: false,
+		},
+
+		{
 			name: "helm release",
 			addons: &kubeoneapi.Addons{
 				Addons: []kubeoneapi.AddonRef{
