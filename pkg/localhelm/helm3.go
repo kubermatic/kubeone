@@ -356,8 +356,6 @@ func newHelmInstallClient(cfg *helmaction.Configuration, release kubeoneapi.Helm
 	helmInstall.InsecureSkipTLSverify = !release.Insecure
 	helmInstall.PlainHTTP = !release.Insecure
 
-	}
-
 	return helmInstall
 }
 
