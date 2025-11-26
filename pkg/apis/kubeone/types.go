@@ -185,6 +185,17 @@ type HelmRelease struct {
 
 	// Values provide optional overrides of the helm values.
 	Values []HelmValues `json:"values,omitempty"`
+
+	// Auth is used for chart repository authentication.
+	Auth *HelmAuth `json:"auth,omitempty"`
+}
+
+type HelmAuth struct {
+	// Username for chart repository authentication.
+	Username string `json:"username,omitempty"`
+
+	// Password for chart repository authentication.
+	Password string `json:"password,omitempty"`
 }
 
 // HelmValues configure inputs to `helm upgrade --install` command analog.
