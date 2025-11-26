@@ -324,6 +324,11 @@ func upgradeRelease(
 	helmUpgrade.RepoURL = release.RepoURL
 	helmUpgrade.Version = release.Version
 
+	if release.Auth != nil {
+		helmUpgrade.Username = release.Auth.Username
+		helmUpgrade.Password = release.Auth.Password
+	}
+
 	chartRequested, err := getChart(release, helmUpgrade.ChartPathOptions, helmSettings, providers)
 	if err != nil {
 		return err
