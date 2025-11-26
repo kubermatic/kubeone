@@ -1488,6 +1488,7 @@ func autoConvert_v1beta3_HelmRelease_To_kubeone_HelmRelease(in *HelmRelease, out
 	out.Namespace = in.Namespace
 	out.Wait = in.Wait
 	out.WaitTimeout = in.WaitTimeout
+	out.Insecure = in.Insecure
 	out.Values = *(*[]kubeone.HelmValues)(unsafe.Pointer(&in.Values))
 	return nil
 }
@@ -1506,6 +1507,7 @@ func autoConvert_kubeone_HelmRelease_To_v1beta3_HelmRelease(in *kubeone.HelmRele
 	out.Namespace = in.Namespace
 	out.Wait = in.Wait
 	out.WaitTimeout = in.WaitTimeout
+	out.Insecure = in.Insecure
 	out.Values = *(*[]HelmValues)(unsafe.Pointer(&in.Values))
 	return nil
 }

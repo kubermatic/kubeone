@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2025-10-14T16:55:58+03:00
+date = 2025-11-26T13:09:43+01:00
 weight = 11
 +++
 ## v1beta2
@@ -447,6 +447,7 @@ GCESpec defines the GCE cloud provider
 | releaseName | ReleaseName is [RELEASE] part of the `helm upgrade [RELEASE] [CHART]` command. Empty is defaulted to chart. | string | false |
 | namespace | Namespace is --namespace flag of the `helm upgrade` command. A namespace to use for a release. | string | true |
 | wait | Wait is --wait flag of the `helm install` command. | bool | false |
+| insecure | Insecure enables insecure TLS connection when fetching the chart | bool | false |
 | timeout | WaitTimeout --timeout flag of the `helm install` command. | metav1.Duration | false |
 | values | Values provide optional overrides of the helm values. | [][HelmValues](#helmvalues) | false |
 
