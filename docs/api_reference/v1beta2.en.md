@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2025-10-14T16:55:58+03:00
+date = 2025-11-26T13:51:14+01:00
 weight = 11
 +++
 ## v1beta2
@@ -35,6 +35,7 @@ weight = 11
 * [ExternalCNISpec](#externalcnispec)
 * [Features](#features)
 * [GCESpec](#gcespec)
+* [HelmAuth](#helmauth)
 * [HelmRelease](#helmrelease)
 * [HelmValues](#helmvalues)
 * [HetznerSpec](#hetznerspec)
@@ -434,6 +435,17 @@ GCESpec defines the GCE cloud provider
 
 [Back to Group](#v1beta2)
 
+### HelmAuth
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| username | Username for chart repository authentication. | string | false |
+| password | Password for chart repository authentication. | string | false |
+
+[Back to Group](#v1beta2)
+
 ### HelmRelease
 
 
@@ -449,6 +461,7 @@ GCESpec defines the GCE cloud provider
 | wait | Wait is --wait flag of the `helm install` command. | bool | false |
 | timeout | WaitTimeout --timeout flag of the `helm install` command. | metav1.Duration | false |
 | values | Values provide optional overrides of the helm values. | [][HelmValues](#helmvalues) | false |
+| auth | Auth is used for chart repository authentication. | *[HelmAuth](#helmauth) | false |
 
 [Back to Group](#v1beta2)
 
