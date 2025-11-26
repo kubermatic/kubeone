@@ -355,8 +355,8 @@ func newHelmInstallClient(cfg *helmaction.Configuration, release kubeoneapi.Helm
 	helmInstall.Timeout = release.WaitTimeout.Duration
 
 	if release.Auth != nil {
-		helmInstall.ChartPathOptions.Username = release.Auth.Username
-		helmInstall.ChartPathOptions.Password = release.Auth.Password
+		helmInstall.Username = release.Auth.Username
+		helmInstall.Password = release.Auth.Password
 	}
 
 	return helmInstall
