@@ -271,3 +271,69 @@ func TestDefaultAssetConfiguration(t *testing.T) {
 		})
 	}
 }
+
+func TestAddons_Enabled(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name   string
+		addons *Addons
+		want   bool
+	}{
+		{
+			name:   "nil addons",
+			addons: nil,
+			want:   false,
+		},
+		{
+			name:   "empty addons struct",
+			addons: &Addons{},
+			want:   false,
+		},
+		{
+			name: "only path set",
+			addons: &Addons{
+				Path: "addons/",
+			},
+			want: true,
+		},
+		{
+			name: "one addon reference (Addon)",
+			addons: &Addons{
+				Addons: []AddonRef{
+					{Addon: &Addon{}},
+				},
+			},
+			want: true,
+		},
+		{
+			name: "one addon reference (HelmRelease)",
+			addons: &Addons{
+				Addons: []AddonRef{
+					{HelmRelease: &HelmRelease{}},
+				},
+			},
+			want: true,
+		},
+		{
+			name: "path + addon ref",
+			addons: &Addons{
+				Path: "addons/",
+				Addons: []AddonRef{
+					{Addon: &Addon{Name: "addon1"}},
+				},
+			},
+			want: true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			got := tc.addons.Enabled()
+			if got != tc.want {
+				t.Errorf("Enabled() = %v, want %v", got, tc.want)
+			}
+		})
+	}
+}
