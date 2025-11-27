@@ -359,7 +359,7 @@ func EmbeddedAddonsOnly(addons *kubeoneapi.Addons) (bool, error) {
 	}
 
 	// Iterate over addons specified in the KubeOneCluster object
-	for _, addon := range addons.OnlyAddons() {
+	for _, addon := range addons.DeclaredAddonsOnly() {
 		embedded := false
 		// Iterate over embedded addons directory to check if the addon exists
 		for _, embeddedAddon := range embeddedAddons {

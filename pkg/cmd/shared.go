@@ -86,13 +86,13 @@ func (opts *globalOptions) BuildState() (*state.State, error) {
 		}
 
 		// Check if only embedded addons are being used; path is not required for embedded addons and no validation is required
-		embeddedAddonsOnly, err := addons.EmbeddedAddonsOnly(s.Cluster.Addons)
+		_, err = addons.EmbeddedAddonsOnly(s.Cluster.Addons)
 		if err != nil {
 			return nil, err
 		}
 
-		// If custom addons are being used then addons path is required and should be a valid directory
-		if !embeddedAddonsOnly {
+		// If an addons path is provided, that should be a valid directory
+		if addonsPath != "" {
 			if _, err := os.Stat(addonsPath); os.IsNotExist(err) {
 				return nil, fail.Runtime(err, "checking addons directory")
 			}

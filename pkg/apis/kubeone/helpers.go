@@ -395,11 +395,15 @@ func (r *RegistryConfiguration) InsecureRegistryAddress() string {
 	return insecureRegistry
 }
 
+// Enabled returns whether addons are enabled.
+// this is true when either an addonsPath is provided or the addonsRef are provided
 func (ads *Addons) Enabled() bool {
-	return ads != nil && len(ads.Addons) > 0
+	return ads != nil && (ads.Path != "" || len(ads.Addons) > 0)
 }
 
-func (ads *Addons) OnlyAddons() []Addon {
+// DeclaredAddonsOnly returns a slice of Addons which are declared in the kubeone config manifest
+// it does not return any addons which might exist in the addons' path.
+func (ads *Addons) DeclaredAddonsOnly() []Addon {
 	if ads == nil {
 		return nil
 	}

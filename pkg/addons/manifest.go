@@ -61,7 +61,7 @@ func (a *applier) getManifestsFromDirectory(st *state.State, fsys fs.FS, addonNa
 		disableTemplating = false
 	)
 	if st.Cluster.Addons.Enabled() {
-		for _, addon := range st.Cluster.Addons.OnlyAddons() {
+		for _, addon := range st.Cluster.Addons.DeclaredAddonsOnly() {
 			if addon.Name == addonName {
 				addonParams = addon.Params
 				disableTemplating = addon.DisableTemplating

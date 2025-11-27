@@ -206,7 +206,7 @@ func EnsureUserAddons(s *state.State) error {
 		}
 	}
 
-	for _, embeddedAddon := range s.Cluster.Addons.OnlyAddons() {
+	for _, embeddedAddon := range s.Cluster.Addons.DeclaredAddonsOnly() {
 		if _, ok := embeddedAddons[embeddedAddon.Name]; ok {
 			continue
 		}
