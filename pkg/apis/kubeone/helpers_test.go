@@ -337,3 +337,66 @@ func TestAddons_Enabled(t *testing.T) {
 		})
 	}
 }
+
+func TestSandboxImage(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name        string
+		version     string
+		registry    string
+		want        string
+		expectError bool
+	}{
+		{
+			name:     "version >= 1.33 returns pause:3.10.1",
+			version:  "v1.33.0",
+			registry: "my.registry",
+			want:     "my.registry/pause:3.10.1",
+		},
+		{
+			name:     "version > 1.33 returns pause:3.10.1",
+			version:  "1.34.5",
+			registry: "example.com",
+			want:     "example.com/pause:3.10.1",
+		},
+		{
+			name:     "version < 1.33 returns pause:3.10",
+			version:  "1.32.9",
+			registry: "registry.local",
+			want:     "registry.local/pause:3.10",
+		},
+		{
+			name:        "invalid version returns error",
+			version:     "not-a-version",
+			registry:    "reg",
+			expectError: true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			got, err := SandboxImage(tc.version, tc.registry)
+
+			if tc.expectError {
+				if err == nil {
+					t.Errorf("SandboxImage() error = nil, want error for version %q", tc.version)
+				}
+
+				return
+			}
+
+			if err != nil {
+				t.Errorf("SandboxImage() unexpected error: %v", err)
+
+				return
+			}
+
+			if got != tc.want {
+				t.Errorf("SandboxImage() = %q, want %q", got, tc.want)
+			}
+		})
+	}
+}

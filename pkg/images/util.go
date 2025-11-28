@@ -29,6 +29,7 @@ import (
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/sirupsen/logrus"
 
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates/images"
 
@@ -51,12 +52,10 @@ const (
 	componentScheduler         = "kube-scheduler"          // Scheduler component
 	componentKubeProxy         = "kube-proxy"              // Network proxy component
 	componentCoreDNS           = "coredns"                 // CoreDNS DNS server
-	componentPause             = "pause"                   // Pause container
 )
 
 // versionConstant names from Kubernetes source that store version information.
 const (
-	versionConstPause   = "PauseVersion"       // Constant name for pause container version
 	versionConstEtcd    = "DefaultEtcdVersion" // Constant name for etcd version
 	versionConstCoreDNS = "CoreDNSVersion"     // Constant name for CoreDNS version
 )
@@ -73,13 +72,20 @@ func GetControlPlaneImages(ctx context.Context, version string) ([]string, error
 		images = append(images, getGenericImage(kubernetesRegistry, component, version))
 	}
 
-	for _, component := range []string{componentEtcd, componentCoreDNS, componentPause} {
+	for _, component := range []string{componentEtcd, componentCoreDNS} {
 		img, err := getComponentImage(ctx, component, version)
 		if err != nil {
 			return nil, err
 		}
 		images = append(images, img)
 	}
+
+	pauseImage, err := kubeoneapi.SandboxImage(version, kubernetesRegistry)
+	if err != nil {
+		return nil, err
+	}
+
+	images = append(images, pauseImage)
 
 	return images, nil
 }
@@ -97,8 +103,6 @@ func getComponentImage(ctx context.Context, component, version string) (string, 
 	case componentCoreDNS:
 		registry += "/coredns"
 		target = versionConstCoreDNS
-	case componentPause:
-		target = versionConstPause
 	}
 
 	tag, err := getConstantValue(ctx, version, target)
