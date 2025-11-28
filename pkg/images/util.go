@@ -86,6 +86,7 @@ func GetControlPlaneImages(ctx context.Context, version string) ([]string, error
 	}
 
 	images = append(images, pauseImage)
+
 	return images, nil
 }
 

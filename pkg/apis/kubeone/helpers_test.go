@@ -375,7 +375,6 @@ func TestSandboxImage(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
@@ -385,11 +384,13 @@ func TestSandboxImage(t *testing.T) {
 				if err == nil {
 					t.Errorf("SandboxImage() error = nil, want error for version %q", tc.version)
 				}
+
 				return
 			}
 
 			if err != nil {
 				t.Errorf("SandboxImage() unexpected error: %v", err)
+
 				return
 			}
 
