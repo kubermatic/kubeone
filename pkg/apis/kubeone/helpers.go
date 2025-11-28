@@ -223,12 +223,16 @@ func (crc ContainerRuntimeConfig) CRISocket() string {
 //   - https://github.com/kubernetes/kubernetes/blob/master/cmd/kubeadm/app/constants/constants.go#L438
 //   - https://github.com/containerd/containerd/blob/main/internal/cri/config/config.go#L73
 func (v VersionConfig) SandboxImage(imageRegistry func(string) string) (string, error) {
-	kubeSemVer, err := semver.NewVersion(v.Kubernetes)
+	registry := imageRegistry("registry.k8s.io")
+
+	return SandboxImage(v.Kubernetes, registry)
+}
+
+func SandboxImage(version, registry string) (string, error) {
+	kubeSemVer, err := semver.NewVersion(version)
 	if err != nil {
 		return "", fail.Config(err, "parsing kubernetes semver")
 	}
-
-	registry := imageRegistry("registry.k8s.io")
 
 	switch {
 	case postV133Constraint.Check(kubeSemVer):
