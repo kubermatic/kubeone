@@ -390,6 +390,7 @@ spec:
         - args:
             - --fss-name=internal-feature-states.csi.vsphere.vmware.com
             - --fss-namespace=$(CSI_NAMESPACE)
+            - --enable-profile-server=false
           env:
             - name: CSI_ENDPOINT
               value: unix:///csi/csi.sock
@@ -454,6 +455,7 @@ spec:
             - --leader-election-retry-period=10s
             - --fss-name=internal-feature-states.csi.vsphere.vmware.com
             - --fss-namespace=$(CSI_NAMESPACE)
+            - --enable-profile-server=false
           env:
             - name: FULL_SYNC_INTERVAL_MINUTES
               value: "30"
@@ -513,6 +515,7 @@ spec:
             - --leader-election-lease-duration=120s
             - --leader-election-renew-deadline=60s
             - --leader-election-retry-period=30s
+            - --extra-create-metadata
           env:
             - name: ADDRESS
               value: /csi/csi.sock
