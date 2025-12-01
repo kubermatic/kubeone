@@ -154,7 +154,7 @@ func ensureCABundleConfigMap(s *state.State) error {
 
 	s.Logger.Infoln("Creating ca-bundle configMap...")
 
-	cm := cabundle.ConfigMap(s.Cluster.CABundle, metav1.NamespaceSystem)
+	cm := cabundle.ConfigMap(s.Cluster.CertificateAuthority.Bundle, metav1.NamespaceSystem)
 
 	return clientutil.CreateOrUpdate(s.Context, s.DynamicClient, cm)
 }
@@ -170,13 +170,13 @@ func ensureVsphereCSICABundleConfigMap(s *state.State) error {
 	}
 	s.Logger.Infoln("Creating ca-bundle configmap for vSphere CSI...")
 
-	cm := cabundle.ConfigMap(s.Cluster.CABundle, resources.VsphereCSINamespace)
+	cm := cabundle.ConfigMap(s.Cluster.CertificateAuthority.Bundle, resources.VsphereCSINamespace)
 
 	return clientutil.CreateOrUpdate(s.Context, s.DynamicClient, cm)
 }
 
 func saveCABundle(s *state.State) error {
-	s.Configuration.AddFile("ca-certs/"+cabundle.FileName, s.Cluster.CABundle)
+	s.Configuration.AddFile("ca-certs/"+cabundle.FileName, s.Cluster.CertificateAuthority.Bundle)
 
 	return s.RunTaskOnControlPlane(saveCABundleOnControlPlane, state.RunParallel)
 }

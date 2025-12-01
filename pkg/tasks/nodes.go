@@ -241,7 +241,7 @@ func patchStaticPods(s *state.State) error {
 		}
 
 		cacertDir := cabundle.OriginalCertsDir
-		if s.Cluster.CABundle != "" {
+		if s.Cluster.CertificateAuthority.Bundle != "" {
 			cacertDir = cabundle.CustomCertsDir
 		}
 
