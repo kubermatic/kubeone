@@ -139,7 +139,6 @@ func getConstantValue(ctx context.Context, version, constant string) (string, er
 func CopyImages(ctx context.Context, log logrus.FieldLogger, dryRun, insecure bool, images []string, registry, userAgent string) (int, int, error) {
 	var failedImages []string
 	for i, source := range images {
-
 		dests, err := retagImage(log, source, registry)
 		if err != nil {
 			return 0, len(images), fmt.Errorf("failed to prepare image: %w", err)
@@ -154,6 +153,7 @@ func CopyImages(ctx context.Context, log logrus.FieldLogger, dryRun, insecure bo
 			for _, d := range dests {
 				log.WithField("target", d).Info("Dry run")
 			}
+
 			continue
 		}
 
@@ -231,11 +231,13 @@ func retagImage(log logrus.FieldLogger, source, registry string) ([]string, erro
 		}
 
 		log.WithField("targets", targets).Debug("CoreDNS dual-image retagging")
+
 		return targets, nil
 	}
 
 	// Default case
 	dest := fmt.Sprintf("%s/%s:%s", registry, repo, tag)
+
 	return []string{dest}, nil
 }
 
