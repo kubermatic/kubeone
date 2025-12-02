@@ -1,4 +1,3 @@
-{{ $kubernetesVersion := semver .Config.Versions.Kubernetes }}
 ---
 apiVersion: v1
 kind: ServiceAccount
