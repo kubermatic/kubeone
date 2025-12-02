@@ -139,7 +139,7 @@ func getConstantValue(ctx context.Context, version, constant string) (string, er
 func CopyImages(ctx context.Context, log logrus.FieldLogger, dryRun, insecure bool, images []string, registry, userAgent string) (int, int, error) {
 	var failedImages []string
 	for i, source := range images {
-		dest, err := retagImage(log, source, registry)
+		dests, err := retagImage(log, source, registry)
 		if err != nil {
 			return 0, len(images), fmt.Errorf("failed to prepare image: %w", err)
 		}
@@ -150,14 +150,18 @@ func CopyImages(ctx context.Context, log logrus.FieldLogger, dryRun, insecure bo
 		})
 
 		if dryRun {
-			log.Info("Dry run:")
+			for _, d := range dests {
+				log.WithField("target", d).Info("Dry run")
+			}
 
 			continue
 		}
 
-		if err := copyWithRetry(ctx, log, source, dest, userAgent, insecure); err != nil {
-			log.Errorf("Failed to copy image: %v", err)
-			failedImages = append(failedImages, fmt.Sprintf("  - %s", source))
+		for _, dest := range dests {
+			if err := copyWithRetry(ctx, log, source, dest, userAgent, insecure); err != nil {
+				log.Errorf("Failed to copy image to %s: %v", dest, err)
+				failedImages = append(failedImages, fmt.Sprintf("  - %s → %s", source, dest))
+			}
 		}
 	}
 
@@ -169,42 +173,72 @@ func CopyImages(ctx context.Context, log logrus.FieldLogger, dryRun, insecure bo
 	return copied, len(images), nil
 }
 
-func retagImage(log logrus.FieldLogger, source, registry string) (string, error) {
+func retagImage(log logrus.FieldLogger, source, registry string) ([]string, error) {
 	ref, err := name.ParseReference(source)
 	if err != nil {
-		return "", fmt.Errorf("invalid image reference: %w", err)
+		return nil, fmt.Errorf("invalid image reference: %w", err)
 	}
 
-	// Special Case for CoreDNS Image Retagging
-	//
-	// Kubeadm's CoreDNS image resolution works as follows:
-	// 1. Default behavior (no custom registry):
-	//    - Uses registry.k8s.io/coredns/coredns:tag
-	//    - Note the nested "coredns/coredns" path
-	//
-	// 2. With custom registry (kubeadm config):
-	//    - Expects <custom-registry>/coredns:tag
-	//    - (NOT <custom-registry>/coredns/coredns:tag)
-	//
-	// This is because kubeadm's GetDNSImage() explicitly appends "/coredns"
-	// to the default registry (registry.k8s.io), but doesn't do this for
-	// custom registries. Our retagging must account for this difference.
-	//
-	// You can check this here: https://github.com/kubernetes/kubernetes/blob/v1.33.1/cmd/kubeadm/app/images/images.go#L51-L54
-	//
-	// When mirroring images:
-	// - Original path: registry.k8s.io/coredns/coredns:tag
-	// - Must become: myregistry/coredns:tag
-	// - NOT myregistry/coredns/coredns:tag
 	repo := ref.Context().RepositoryStr()
+	tag := ref.Identifier()
+
+	// Special Case: CoreDNS Requires Dual Retagging
+	//
+	// Background:
+	// CoreDNS is the only Kubernetes image whose repository layout changes
+	// depending on how the cluster pulls images.
+	//
+	// 1. Default kubeadm behavior (no custom registry):
+	//    - kubeadm uses the upstream image:
+	//          registry.k8s.io/coredns/coredns:<tag>
+	//      (Notice the nested path "coredns/coredns")
+	//
+	// 2. kubeadm with a custom imageRepository (no containerd mirrors):
+	//    - kubeadm constructs the image as:
+	//          <custom-registry>/coredns:<tag>
+	//      NOT:
+	//          <custom-registry>/coredns/coredns:<tag>
+	//    - This is hardcoded in kubeadm's GetDNSImage():
+	//      for custom registries, kubeadm does NOT preserve the nested path.
+	//
+	// 3. KubeOne with containerd registry mirrors enabled:
+	//    - containerd mirrors rewrite registry.k8s.io → <mirror>, but they
+	//      still expect the original repository path:
+	//          <mirror>/coredns/coredns:<tag>
+	//    - Therefore, the nested path *must* exist in the custom registry
+	//      so that containerd mirror lookups resolve correctly.
+	//
+	// Because both consumers (kubeadm and containerd mirrors) may pull different
+	// versions of the path, KubeOne must mirror CoreDNS under BOTH targets:
+	//
+	//      1. <registry>/coredns/coredns:<tag>   (for containerd mirrors)
+	//      2. <registry>/coredns:<tag>           (for kubeadm custom registry)
+	//
+	// Summary of required behavior:
+	// - Source: registry.k8s.io/coredns/coredns:<tag>
+	// - Destination mirrors:
+	//        a) <registry>/coredns/coredns:<tag>
+	//        b) <registry>/coredns:<tag>
+	//
+	// This dual-retagging ensures compatibility with:
+	//   - kubeadm’s custom registry logic
+	//   - containerd registry mirror rewrites
+	//   - legacy consumers still expecting nested paths
 	if repo == "coredns/coredns" {
-		repo = "coredns"
+		targets := []string{
+			fmt.Sprintf("%s/coredns/coredns:%s", registry, tag),
+			fmt.Sprintf("%s/coredns:%s", registry, tag),
+		}
+
+		log.WithField("targets", targets).Debug("CoreDNS dual-image retagging")
+
+		return targets, nil
 	}
 
-	dest := fmt.Sprintf("%s/%s:%s", registry, repo, ref.Identifier())
-	log.WithField("target", dest).Debug("Image retagged")
+	// Default case
+	dest := fmt.Sprintf("%s/%s:%s", registry, repo, tag)
 
-	return dest, nil
+	return []string{dest}, nil
 }
 
 func copyWithRetry(ctx context.Context, log logrus.FieldLogger, src, dst, userAgent string, insecure bool) error {
