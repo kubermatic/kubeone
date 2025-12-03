@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
 - name: azurefile-csi-driver
   repo: https://raw.githubusercontent.com/kubernetes-sigs/azurefile-csi-driver/master/charts
-  version: v1.34.0
+  version: v1.34.2
   releaseName: azurefile-csi-driver
   namespace: kube-system
   valuesFile: helm-values
@@ -28,6 +28,8 @@ patches:
               - name: node-driver-registrar
                 image: '{{ .InternalImages.Get "AzureFileCSINodeDriverRegistar" }}'
               - name: azurefile
+                image: '{{ .InternalImages.Get "AzureFileCSI" }}'
+              - name: azfilesrefresh
                 image: '{{ .InternalImages.Get "AzureFileCSI" }}'
   - patch: |-
       apiVersion: apps/v1

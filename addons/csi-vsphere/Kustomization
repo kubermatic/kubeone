@@ -3,8 +3,8 @@ kind: Kustomization
 namespace: vmware-system-csi
 
 resources:
-  - https://raw.githubusercontent.com/kubernetes-sigs/vsphere-csi-driver/refs/tags/v3.5.0/manifests/vanilla/namespace.yaml
-  - https://raw.githubusercontent.com/kubernetes-sigs/vsphere-csi-driver/refs/tags/v3.5.0/manifests/vanilla/vsphere-csi-driver.yaml
+  - https://raw.githubusercontent.com/kubernetes-sigs/vsphere-csi-driver/refs/tags/v3.6.0/manifests/vanilla/namespace.yaml
+  - https://raw.githubusercontent.com/kubernetes-sigs/vsphere-csi-driver/refs/tags/v3.6.0/manifests/vanilla/vsphere-csi-driver.yaml
 
 patches:
   - patch: |-

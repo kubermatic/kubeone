@@ -1,4 +1,3 @@
-{{ $kubernetesVersion := semver .Config.Versions.Kubernetes }}
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -490,7 +489,8 @@ data:
                 "textFormat": "[%Y-%m-%d %T.%e][%t][%l][%n] [%g:%#] %v"
             }
         },
-        "bootstrapExtensions": [{
+        "bootstrapExtensions": [
+            {
                 "name": "envoy.bootstrap.internal_listener",
                 "typedConfig": {
                     "@type": "type.googleapis.com/envoy.extensions.bootstrap.internal_listener.v3.InternalListener"
@@ -501,7 +501,8 @@ data:
             "cdsConfig": {
                 "apiConfigSource": {
                     "apiType": "GRPC",
-                    "grpcServices": [{
+                    "grpcServices": [
+                        {
                             "envoyGrpc": {
                                 "clusterName": "xds-grpc-cilium"
                             }
@@ -516,7 +517,8 @@ data:
             "ldsConfig": {
                 "apiConfigSource": {
                     "apiType": "GRPC",
-                    "grpcServices": [{
+                    "grpcServices": [
+                        {
                             "envoyGrpc": {
                                 "clusterName": "xds-grpc-cilium"
                             }
@@ -534,7 +536,8 @@ data:
             "id": "host~127.0.0.1~no-id~localdomain"
         },
         "overloadManager": {
-            "resourceMonitors": [{
+            "resourceMonitors": [
+                {
                     "name": "envoy.resource_monitors.global_downstream_max_connections",
                     "typedConfig": {
                         "@type": "type.googleapis.com/envoy.extensions.resource_monitors.downstream_connections.v3.DownstreamConnectionsConfig",
@@ -544,9 +547,11 @@ data:
             ]
         },
         "staticResources": {
-            "clusters": [{
+            "clusters": [
+                {
                     "circuitBreakers": {
-                        "thresholds": [{
+                        "thresholds": [
+                            {
                                 "maxRetries": 128
                             }
                         ]
@@ -567,9 +572,11 @@ data:
                             "useDownstreamProtocolConfig": {}
                         }
                     }
-                }, {
+                },
+                {
                     "circuitBreakers": {
-                        "thresholds": [{
+                        "thresholds": [
+                            {
                                 "maxRetries": 128
                             }
                         ]
@@ -597,9 +604,11 @@ data:
                             "useDownstreamProtocolConfig": {}
                         }
                     }
-                }, {
+                },
+                {
                     "circuitBreakers": {
-                        "thresholds": [{
+                        "thresholds": [
+                            {
                                 "maxRetries": 128
                             }
                         ]
@@ -620,9 +629,11 @@ data:
                             "useDownstreamProtocolConfig": {}
                         }
                     }
-                }, {
+                },
+                {
                     "circuitBreakers": {
-                        "thresholds": [{
+                        "thresholds": [
+                            {
                                 "maxRetries": 128
                             }
                         ]
@@ -650,12 +661,15 @@ data:
                             "useDownstreamProtocolConfig": {}
                         }
                     }
-                }, {
+                },
+                {
                     "connectTimeout": "2s",
                     "loadAssignment": {
                         "clusterName": "xds-grpc-cilium",
-                        "endpoints": [{
-                                "lbEndpoints": [{
+                        "endpoints": [
+                            {
+                                "lbEndpoints": [
+                                    {
                                         "endpoint": {
                                             "address": {
                                                 "pipe": {
@@ -678,12 +692,15 @@ data:
                             }
                         }
                     }
-                }, {
+                },
+                {
                     "connectTimeout": "2s",
                     "loadAssignment": {
                         "clusterName": "/envoy-admin",
-                        "endpoints": [{
-                                "lbEndpoints": [{
+                        "endpoints": [
+                            {
+                                "lbEndpoints": [
+                                    {
                                         "endpoint": {
                                             "address": {
                                                 "pipe": {
@@ -700,19 +717,23 @@ data:
                     "type": "STATIC"
                 }
             ],
-            "listeners": [{
+            "listeners": [
+                {
                     "address": {
                         "socketAddress": {
                             "address": "0.0.0.0",
                             "portValue": 9964
                         }
                     },
-                    "filterChains": [{
-                            "filters": [{
+                    "filterChains": [
+                        {
+                            "filters": [
+                                {
                                     "name": "envoy.filters.network.http_connection_manager",
                                     "typedConfig": {
                                         "@type": "type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager",
-                                        "httpFilters": [{
+                                        "httpFilters": [
+                                            {
                                                 "name": "envoy.filters.http.router",
                                                 "typedConfig": {
                                                     "@type": "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"
@@ -720,26 +741,34 @@ data:
                                             }
                                         ],
                                         "internalAddressConfig": {
-                                            "cidrRanges": [{
+                                            "cidrRanges": [
+                                                {
                                                     "addressPrefix": "10.0.0.0",
                                                     "prefixLen": 8
-                                                }, {
+                                                },
+                                                {
                                                     "addressPrefix": "172.16.0.0",
                                                     "prefixLen": 12
-                                                }, {
+                                                },
+                                                {
                                                     "addressPrefix": "192.168.0.0",
                                                     "prefixLen": 16
-                                                }, {
+                                                },
+                                                {
                                                     "addressPrefix": "127.0.0.1",
                                                     "prefixLen": 32
                                                 }
                                             ]
                                         },
                                         "routeConfig": {
-                                            "virtualHosts": [{
-                                                    "domains": ["*"],
+                                            "virtualHosts": [
+                                                {
+                                                    "domains": [
+                                                        "*"
+                                                    ],
                                                     "name": "prometheus_metrics_route",
-                                                    "routes": [{
+                                                    "routes": [
+                                                        {
                                                             "match": {
                                                                 "prefix": "/metrics"
                                                             },
@@ -761,19 +790,23 @@ data:
                         }
                     ],
                     "name": "envoy-prometheus-metrics-listener"
-                }, {
+                },
+                {
                     "address": {
                         "socketAddress": {
                             "address": "127.0.0.1",
                             "portValue": 9878
                         }
                     },
-                    "filterChains": [{
-                            "filters": [{
+                    "filterChains": [
+                        {
+                            "filters": [
+                                {
                                     "name": "envoy.filters.network.http_connection_manager",
                                     "typedConfig": {
                                         "@type": "type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager",
-                                        "httpFilters": [{
+                                        "httpFilters": [
+                                            {
                                                 "name": "envoy.filters.http.router",
                                                 "typedConfig": {
                                                     "@type": "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"
@@ -781,26 +814,34 @@ data:
                                             }
                                         ],
                                         "internalAddressConfig": {
-                                            "cidrRanges": [{
+                                            "cidrRanges": [
+                                                {
                                                     "addressPrefix": "10.0.0.0",
                                                     "prefixLen": 8
-                                                }, {
+                                                },
+                                                {
                                                     "addressPrefix": "172.16.0.0",
                                                     "prefixLen": 12
-                                                }, {
+                                                },
+                                                {
                                                     "addressPrefix": "192.168.0.0",
                                                     "prefixLen": 16
-                                                }, {
+                                                },
+                                                {
                                                     "addressPrefix": "127.0.0.1",
                                                     "prefixLen": 32
                                                 }
                                             ]
                                         },
                                         "routeConfig": {
-                                            "virtual_hosts": [{
-                                                    "domains": ["*"],
+                                            "virtual_hosts": [
+                                                {
+                                                    "domains": [
+                                                        "*"
+                                                    ],
                                                     "name": "health",
-                                                    "routes": [{
+                                                    "routes": [
+                                                        {
                                                             "match": {
                                                                 "prefix": "/healthz"
                                                             },
@@ -1026,10 +1067,6 @@ spec:
   template:
     metadata:
       annotations:
-        container.apparmor.security.beta.kubernetes.io/apply-sysctl-overwrites: unconfined
-        container.apparmor.security.beta.kubernetes.io/cilium-agent: unconfined
-        container.apparmor.security.beta.kubernetes.io/clean-cilium-state: unconfined
-        container.apparmor.security.beta.kubernetes.io/mount-cgroup: unconfined
         kubectl.kubernetes.io/default-container: cilium-agent
       labels:
         app.kubernetes.io/name: cilium-agent
@@ -1404,6 +1441,8 @@ spec:
       priorityClassName: system-node-critical
       restartPolicy: Always
       securityContext:
+        appArmorProfile:
+          type: Unconfined
         seccompProfile:
           type: Unconfined
       serviceAccountName: cilium
@@ -1522,8 +1561,6 @@ spec:
       k8s-app: cilium-envoy
   template:
     metadata:
-      annotations:
-        container.apparmor.security.beta.kubernetes.io/cilium-envoy: unconfined
       labels:
         app.kubernetes.io/name: cilium-envoy
         app.kubernetes.io/part-of: cilium
@@ -1650,6 +1687,9 @@ spec:
         kubernetes.io/os: linux
       priorityClassName: system-node-critical
       restartPolicy: Always
+      securityContext:
+        appArmorProfile:
+          type: Unconfined
       serviceAccountName: cilium-envoy
       terminationGracePeriodSeconds: 1
       tolerations:

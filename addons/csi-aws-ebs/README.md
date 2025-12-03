@@ -10,6 +10,7 @@ helm template \
     --namespace="kube-system" \
     --values="generated-values-csi" \
     --skip-tests \
+    --version=2.53.0 \
     aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver > aws-csi.yaml
 ```
 

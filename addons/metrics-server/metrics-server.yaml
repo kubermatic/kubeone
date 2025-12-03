@@ -5,8 +5,8 @@ metadata:
     app.kubernetes.io/instance: metrics-server
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: metrics-server
-    app.kubernetes.io/version: 0.7.2
-    helm.sh/chart: metrics-server-3.12.2
+    app.kubernetes.io/version: 0.8.0
+    helm.sh/chart: metrics-server-3.13.0
   name: metrics-server
   namespace: kube-system
 ---
@@ -17,8 +17,8 @@ metadata:
     app.kubernetes.io/instance: metrics-server
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: metrics-server
-    app.kubernetes.io/version: 0.7.2
-    helm.sh/chart: metrics-server-3.12.2
+    app.kubernetes.io/version: 0.8.0
+    helm.sh/chart: metrics-server-3.13.0
   name: system:metrics-server
 rules:
   - apiGroups:
@@ -46,8 +46,8 @@ metadata:
     app.kubernetes.io/instance: metrics-server
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: metrics-server
-    app.kubernetes.io/version: 0.7.2
-    helm.sh/chart: metrics-server-3.12.2
+    app.kubernetes.io/version: 0.8.0
+    helm.sh/chart: metrics-server-3.13.0
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
     rbac.authorization.k8s.io/aggregate-to-edit: "true"
     rbac.authorization.k8s.io/aggregate-to-view: "true"
@@ -70,8 +70,8 @@ metadata:
     app.kubernetes.io/instance: metrics-server
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: metrics-server
-    app.kubernetes.io/version: 0.7.2
-    helm.sh/chart: metrics-server-3.12.2
+    app.kubernetes.io/version: 0.8.0
+    helm.sh/chart: metrics-server-3.13.0
   name: metrics-server-auth-reader
   namespace: kube-system
 roleRef:
@@ -90,8 +90,8 @@ metadata:
     app.kubernetes.io/instance: metrics-server
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: metrics-server
-    app.kubernetes.io/version: 0.7.2
-    helm.sh/chart: metrics-server-3.12.2
+    app.kubernetes.io/version: 0.8.0
+    helm.sh/chart: metrics-server-3.13.0
   name: metrics-server:system:auth-delegator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -109,8 +109,8 @@ metadata:
     app.kubernetes.io/instance: metrics-server
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: metrics-server
-    app.kubernetes.io/version: 0.7.2
-    helm.sh/chart: metrics-server-3.12.2
+    app.kubernetes.io/version: 0.8.0
+    helm.sh/chart: metrics-server-3.13.0
   name: system:metrics-server
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -128,8 +128,8 @@ metadata:
     app.kubernetes.io/instance: metrics-server
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: metrics-server
-    app.kubernetes.io/version: 0.7.2
-    helm.sh/chart: metrics-server-3.12.2
+    app.kubernetes.io/version: 0.8.0
+    helm.sh/chart: metrics-server-3.13.0
   name: metrics-server
   namespace: kube-system
 spec:
@@ -151,8 +151,8 @@ metadata:
     app.kubernetes.io/instance: metrics-server
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: metrics-server
-    app.kubernetes.io/version: 0.7.2
-    helm.sh/chart: metrics-server-3.12.2
+    app.kubernetes.io/version: 0.8.0
+    helm.sh/chart: metrics-server-3.13.0
   name: metrics-server
   namespace: kube-system
 spec:
@@ -242,8 +242,8 @@ metadata:
     app.kubernetes.io/instance: metrics-server
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: metrics-server
-    app.kubernetes.io/version: 0.7.2
-    helm.sh/chart: metrics-server-3.12.2
+    app.kubernetes.io/version: 0.8.0
+    helm.sh/chart: metrics-server-3.13.0
   name: metrics-server
   namespace: kube-system
 spec:
@@ -260,8 +260,8 @@ metadata:
     app.kubernetes.io/instance: metrics-server
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: metrics-server
-    app.kubernetes.io/version: 0.7.2
-    helm.sh/chart: metrics-server-3.12.2
+    app.kubernetes.io/version: 0.8.0
+    helm.sh/chart: metrics-server-3.13.0
   name: v1beta1.metrics.k8s.io
 spec:
   group: metrics.k8s.io

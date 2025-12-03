@@ -18,8 +18,3 @@ This section what [addon parameters][params] can be used with this addon.
 ```shell
 kubectl kustomize --enable-helm . | yq > cilium.yaml
 ```
-
-Then should manually:
-* add `{{ $kubernetesVersion := semver .Config.Versions.Kubernetes }}` to the top of the manifest
-* delete the `Namespace` object named `kube-system`
-*
