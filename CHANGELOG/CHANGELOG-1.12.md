@@ -1,3 +1,30 @@
+# [v1.12.2](https://github.com/kubermatic/kubeone/releases/tag/v1.12.2) - 2025-12-04
+
+## Changelog since v1.12.1
+
+## Changes by Kind
+
+### Chore
+
+- Update cloud components versions [#3915](https://github.com/kubermatic/kubeone/pull/3915) [@kron4eg](https://github.com/kron4eg)
+  - Update metrics-server helm chart to v3.13.0
+  - Update vSphere CSI driver to v3.6.0
+  - Update OpenStack Cinder CSI driver to v2.34.1
+  - Update DigitalOcean CSI driver to v4.15.0
+  - Update AzureFile CSI driver to v1.34.2
+  - Update Azure Disk CSI driver to v1.33.7
+  - Update AWS EBS CSI driver to v2.53.0
+  - Update Cilium to v1.18.4
+  - Update Canal to v3.31.2
+  - Update OpenStack CCM to v1.34.1
+  - Update Azure CCM to v1.34.2
+  - Update AWS CCM to v0.0.10
+
+### Fixes of Bugs or Regressions
+
+- Fix error applying cluster-autoscaler addon [#3916](https://github.com/kubermatic/kubeone/pull/3916) [@steled](https://github.com/steled)
+- Respect customized Addons manifests [#3920](https://github.com/kubermatic/kubeone/pull/3920) [@appiepollo14](https://github.com/appiepollo14)
+
 # [v1.12.1](https://github.com/kubermatic/kubeone/releases/tag/v1.12.1) - 2025-11-21
 
 ## Changelog since v1.12.0
