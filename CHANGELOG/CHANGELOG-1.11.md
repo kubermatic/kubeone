@@ -1,3 +1,15 @@
+# [v1.11.4](https://github.com/kubermatic/kubeone/releases/tag/v1.11.4) - 2025-12-04
+
+## Changelog since v1.11.3
+
+## Changes by Kind
+
+### Fixes of Bugs or Regressions
+
+- Fixed defaulting of LoggingConfig [#3881](https://github.com/kubermatic/kubeone/pull/3881) [@kron4eg](https://github.com/kron4eg)
+- Fix openstack CSI image resource reference [#3892](https://github.com/kubermatic/kubeone/pull/3892) [@kron4eg](https://github.com/kron4eg)
+- Respect customized Addons manifests [#3920](https://github.com/kubermatic/kubeone/pull/3920) [@appiepollo14](https://github.com/appiepollo14)
+
 # [v1.11.3](https://github.com/kubermatic/kubeone/releases/tag/v1.11.3) - 2025-09-19
 
 ## Changelog since v1.11.2
