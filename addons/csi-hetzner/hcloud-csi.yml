@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/instance: hcloud-csi
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: hcloud-csi
-    helm.sh/chart: hcloud-csi-2.18.0
+    helm.sh/chart: hcloud-csi-2.18.3
   name: hcloud-csi-controller
   namespace: kube-system
 ---
@@ -19,7 +19,7 @@ metadata:
     app.kubernetes.io/instance: hcloud-csi
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: hcloud-csi
-    helm.sh/chart: hcloud-csi-2.18.0
+    helm.sh/chart: hcloud-csi-2.18.3
   name: hcloud-csi-controller
 rules:
   - apiGroups:
@@ -142,6 +142,14 @@ rules:
       - list
       - watch
   - apiGroups:
+      - storage.k8s.io
+    resources:
+      - volumeattributesclasses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
       - ""
     resources:
       - events
@@ -161,7 +169,7 @@ metadata:
     app.kubernetes.io/instance: hcloud-csi
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: hcloud-csi
-    helm.sh/chart: hcloud-csi-2.18.0
+    helm.sh/chart: hcloud-csi-2.18.3
   name: hcloud-csi-controller
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -181,7 +189,7 @@ metadata:
     app.kubernetes.io/instance: hcloud-csi
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: hcloud-csi
-    helm.sh/chart: hcloud-csi-2.18.0
+    helm.sh/chart: hcloud-csi-2.18.3
   name: hcloud-csi-controller
   namespace: kube-system
 spec:
@@ -200,7 +208,7 @@ spec:
         app.kubernetes.io/instance: hcloud-csi
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: hcloud-csi
-        helm.sh/chart: hcloud-csi-2.18.0
+        helm.sh/chart: hcloud-csi-2.18.3
     spec:
       affinity:
         nodeAffinity:
@@ -224,9 +232,7 @@ spec:
           volumeMounts:
             - mountPath: /run/csi
               name: socket-dir
-        - args:
-            - --feature-gates=RecoverVolumeExpansionFailure=false
-          image: '{{ .InternalImages.Get "HetznerCSIResizer" }}'
+        - image: '{{ .InternalImages.Get "HetznerCSIResizer" }}'
           imagePullPolicy: IfNotPresent
           name: csi-resizer
           resources:
@@ -312,7 +318,7 @@ metadata:
     app.kubernetes.io/instance: hcloud-csi
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: hcloud-csi
-    helm.sh/chart: hcloud-csi-2.18.0
+    helm.sh/chart: hcloud-csi-2.18.3
   name: hcloud-csi-node
   namespace: kube-system
 spec:
@@ -328,7 +334,7 @@ spec:
         app.kubernetes.io/instance: hcloud-csi
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: hcloud-csi
-        helm.sh/chart: hcloud-csi-2.18.0
+        helm.sh/chart: hcloud-csi-2.18.3
     spec:
       affinity:
         nodeAffinity:
