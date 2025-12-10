@@ -77,7 +77,6 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 		allErrs = append(allErrs, ValidateOperatingSystemManager(c.MachineController, field.NewPath("operatingSystemManager"))...)
 	}
 
-	allErrs = append(allErrs, ValidateCABundle(c.CABundle, field.NewPath("bundle"))...)
 	allErrs = append(allErrs, ValidateCABundle(c.CertificateAuthority.Bundle, field.NewPath("certificateAuthority", "bundle"))...)
 	allErrs = append(allErrs, ValidateFeatures(c.Features, field.NewPath("features"))...)
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
@@ -609,9 +608,6 @@ func ValidateDynamicWorkerConfig(workerset []kubeoneapi.DynamicWorkerConfig, pro
 		}
 		if w.Replicas == nil || *w.Replicas < 0 {
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("replicas"), w.Replicas, ".dynamicWorkers.replicas must be specified and >= 0"))
-		}
-		if len(w.Config.MachineAnnotations) > 0 && len(w.Config.NodeAnnotations) > 0 {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("machineAnnotations"), w.Config.MachineAnnotations, "machineAnnotations has been replaced with nodeAnnotations, only one of those two can be set"))
 		}
 		if w.Config.Network != nil && w.Config.Network.IPFamily != "" {
 			allErrs = append(allErrs, validateIPFamily(w.Config.Network.IPFamily, prov, fldPath.Child("network", "ipFamily"))...)

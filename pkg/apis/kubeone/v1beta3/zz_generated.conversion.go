@@ -2170,7 +2170,6 @@ func Convert_kubeone_PodNodeSelectorConfig_To_v1beta3_PodNodeSelectorConfig(in *
 func autoConvert_v1beta3_ProviderSpec_To_kubeone_ProviderSpec(in *ProviderSpec, out *kubeone.ProviderSpec, s conversion.Scope) error {
 	out.CloudProviderSpec = *(*json.RawMessage)(unsafe.Pointer(&in.CloudProviderSpec))
 	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
-	out.MachineAnnotations = *(*map[string]string)(unsafe.Pointer(&in.MachineAnnotations))
 	out.NodeAnnotations = *(*map[string]string)(unsafe.Pointer(&in.NodeAnnotations))
 	out.MachineObjectAnnotations = *(*map[string]string)(unsafe.Pointer(&in.MachineObjectAnnotations))
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
@@ -2191,7 +2190,6 @@ func Convert_v1beta3_ProviderSpec_To_kubeone_ProviderSpec(in *ProviderSpec, out 
 func autoConvert_kubeone_ProviderSpec_To_v1beta3_ProviderSpec(in *kubeone.ProviderSpec, out *ProviderSpec, s conversion.Scope) error {
 	out.CloudProviderSpec = *(*json.RawMessage)(unsafe.Pointer(&in.CloudProviderSpec))
 	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
-	out.MachineAnnotations = *(*map[string]string)(unsafe.Pointer(&in.MachineAnnotations))
 	out.NodeAnnotations = *(*map[string]string)(unsafe.Pointer(&in.NodeAnnotations))
 	out.MachineObjectAnnotations = *(*map[string]string)(unsafe.Pointer(&in.MachineObjectAnnotations))
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))

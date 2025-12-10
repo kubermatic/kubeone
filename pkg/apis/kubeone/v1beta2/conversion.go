@@ -105,3 +105,7 @@ func Convert_kubeone_CiliumSpec_To_v1beta2_CiliumSpec(in *kubeoneapi.CiliumSpec,
 func Convert_kubeone_ContainerRuntimeContainerd_To_v1beta2_ContainerRuntimeContainerd(in *kubeoneapi.ContainerRuntimeContainerd, out *ContainerRuntimeContainerd, s conversion.Scope) error {
 	return autoConvert_kubeone_ContainerRuntimeContainerd_To_v1beta2_ContainerRuntimeContainerd(in, out, s)
 }
+
+func Convert_v1beta2_ProviderSpec_To_kubeone_ProviderSpec(in *ProviderSpec, out *kubeoneapi.ProviderSpec, s conversion.Scope) error {
+	return autoConvert_v1beta2_ProviderSpec_To_kubeone_ProviderSpec(in, out, s)
+}
