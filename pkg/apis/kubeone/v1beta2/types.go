@@ -69,6 +69,7 @@ type KubeOneCluster struct {
 	OperatingSystemManager *OperatingSystemManagerConfig `json:"operatingSystemManager,omitempty"`
 
 	// CABundle PEM encoded global CA.
+	//
 	// Deprecated: Use CertificateAuthorithyConfig instead. Will be overriten by certificateAuthority.bundle if set.
 	CABundle string `json:"caBundle,omitempty"`
 
@@ -743,8 +744,8 @@ type ProviderSpec struct {
 	// Annotations set MachineDeployment.ObjectMeta.Annotations
 	Annotations map[string]string `json:"annotations,omitempty"`
 
-	// MachineAnnotations set MachineDeployment.Spec.Template.Spec.ObjectMeta.Annotations
-	// as a way to annotate resulting Nodes
+	// This field is NOOP and is only provided for backward compatibility reasons
+	//
 	// Deprecated: Use NodeAnnotations instead.
 	MachineAnnotations map[string]string `json:"machineAnnotations,omitempty"`
 
@@ -849,6 +850,7 @@ type Features struct {
 	PodNodeSelector *PodNodeSelector `json:"podNodeSelector,omitempty"`
 
 	// PodSecurityPolicy
+	//
 	// Deprecated: will be removed once Kubernetes 1.24 reaches EOL
 	PodSecurityPolicy *PodSecurityPolicy `json:"podSecurityPolicy,omitempty"`
 

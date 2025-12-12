@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2025-11-26T13:51:14+01:00
+date = 2025-12-10T15:13:37+02:00
 weight = 11
 +++
 ## v1beta3
@@ -562,7 +562,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | dynamicWorkers | DynamicWorkers describes the worker nodes that are managed by Kubermatic machine-controller/Cluster-API. | [][DynamicWorkerConfig](#dynamicworkerconfig) | false |
 | machineController | MachineController configures the Kubermatic machine-controller component. | *[MachineControllerConfig](#machinecontrollerconfig) | false |
 | operatingSystemManager | OperatingSystemManager configures the Kubermatic operating-system-manager component. | *[OperatingSystemManagerConfig](#operatingsystemmanagerconfig) | false |
-| caBundle | CABundle PEM encoded global CA. Deprecated: Use CertificateAuthorithyConfig instead. Will be overriten by certificateAuthority.bundle if set. | string | false |
+| caBundle | CABundle PEM encoded global CA.\n\nDeprecated: Use CertificateAuthorithyConfig instead. Will be overriten by certificateAuthority.bundle if set. | string | false |
 | certificateAuthority | CertificateAuthority configures Central Authority certificate. | [CertificateAuthorithyConfig](#certificateauthorithyconfig) | false |
 | features | Features enables and configures additional cluster features. | [Features](#features) | false |
 | addons | Addons are used to deploy additional manifests. | *[Addons](#addons) | false |
@@ -753,7 +753,6 @@ ProviderSpec describes a worker node
 | ----- | ----------- | ------ | -------- |
 | cloudProviderSpec | CloudProviderSpec | [json.RawMessage](https://golang.org/pkg/encoding/json/#RawMessage) | true |
 | annotations | Annotations set MachineDeployment.ObjectMeta.Annotations | map[string]string | false |
-| machineAnnotations | MachineAnnotations set MachineDeployment.Spec.Template.Spec.ObjectMeta.Annotations as a way to annotate resulting Nodes Deprecated: Use NodeAnnotations instead. | map[string]string | false |
 | nodeAnnotations | NodeAnnotations set MachineDeployment.Spec.Template.Spec.ObjectMeta.Annotations as a way to annotate resulting Nodes | map[string]string | false |
 | machineObjectAnnotations | MachineObjectAnnotations set MachineDeployment.Spec.Template.Metadata.Annotations as a way to annotate resulting Machine objects. Those annotations are not propagated to Node objects. If you want to annotate resulting Nodes as well, see NodeAnnotations | map[string]string | false |
 | labels | Labels | map[string]string | false |

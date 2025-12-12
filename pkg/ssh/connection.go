@@ -209,7 +209,11 @@ func NewConnection(connector *Connector, opts Opts) (executor.Interface, error) 
 			}
 		}
 
-		socket, dialErr := net.Dial("unix", addr)
+		var dialer net.Dialer
+		dialCtx, dialCancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer dialCancel()
+
+		socket, dialErr := dialer.DialContext(dialCtx, "unix", addr)
 		if dialErr != nil {
 			return nil, fail.SSHError{
 				Op:  "agent unix dialing",

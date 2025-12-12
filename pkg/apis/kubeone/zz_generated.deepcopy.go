@@ -1399,13 +1399,6 @@ func (in *ProviderSpec) DeepCopyInto(out *ProviderSpec) {
 			(*out)[key] = val
 		}
 	}
-	if in.MachineAnnotations != nil {
-		in, out := &in.MachineAnnotations, &out.MachineAnnotations
-		*out = make(map[string]string, len(*in))
-		for key, val := range *in {
-			(*out)[key] = val
-		}
-	}
 	if in.NodeAnnotations != nil {
 		in, out := &in.NodeAnnotations, &out.NodeAnnotations
 		*out = make(map[string]string, len(*in))

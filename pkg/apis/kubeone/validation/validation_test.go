@@ -1562,22 +1562,6 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			expectedError: true,
 		},
 		{
-			name: "only machineAnnotations set",
-			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
-				{
-					Name:     "test-1",
-					Replicas: ptr.To(3),
-					Config: kubeoneapi.ProviderSpec{
-						MachineAnnotations: map[string]string{"test": "test"},
-					},
-				},
-			},
-			provider: kubeoneapi.CloudProviderSpec{
-				AWS: &kubeoneapi.AWSSpec{},
-			},
-			expectedError: false,
-		},
-		{
 			name: "only nodeAnnotations set",
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
@@ -1592,23 +1576,6 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 				AWS: &kubeoneapi.AWSSpec{},
 			},
 			expectedError: false,
-		},
-		{
-			name: "both machineAnnotations and nodeAnnotations set",
-			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
-				{
-					Name:     "test-1",
-					Replicas: ptr.To(3),
-					Config: kubeoneapi.ProviderSpec{
-						MachineAnnotations: map[string]string{"test": "test"},
-						NodeAnnotations:    map[string]string{"test": "test"},
-					},
-				},
-			},
-			provider: kubeoneapi.CloudProviderSpec{
-				AWS: &kubeoneapi.AWSSpec{},
-			},
-			expectedError: true,
 		},
 		{
 			name: "ipv4 family (aws)",

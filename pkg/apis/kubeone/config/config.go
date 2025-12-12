@@ -17,6 +17,7 @@ limitations under the License.
 package config
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -24,6 +25,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -107,7 +109,10 @@ func TFOutput(tfOutputPath string) ([]byte, error) {
 			return nil, fail.Runtime(err, "reading terraform output from stdin")
 		}
 	case isDir(tfOutputPath):
-		cmd := exec.Command("terraform", "output", "-json")
+		ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+		defer cancel()
+
+		cmd := exec.CommandContext(ctx, "terraform", "output", "-json")
 		cmd.Dir = tfOutputPath
 		if tfOutput, err = cmd.Output(); err != nil {
 			return nil, fail.Runtime(err, "reading terraform output")
@@ -256,7 +261,7 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 
 	if cluster.CertificateAuthority.Bundle != "" {
 		// Set this for backward compatibility with older addons
-		cluster.CABundle = cluster.CertificateAuthority.Bundle
+		cluster.CABundle = cluster.CertificateAuthority.Bundle //nolint:staticcheck
 	}
 
 	// Parse the credentials file
@@ -287,19 +292,6 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 
 	// Default the AssetsConfiguration internal API
 	cluster.DefaultAssetConfiguration()
-
-	// Copy MachineAnnotations to NodeAnnotations.
-	// MachineAnnotations has been deprecated in favor of NodeAnnotations.
-	// This is supposed to handle renaming of MachineAnnotations to
-	// NodeAnnotations in non backwards-compatibility breaking way.
-	for i, workerset := range cluster.DynamicWorkers {
-		// NB: We don't want to allow both MachineAnnotations and NodeAnnotations
-		// to be set, so we explicitly handle this scenario here and in validation.
-		if len(workerset.Config.MachineAnnotations) > 0 && len(workerset.Config.NodeAnnotations) == 0 {
-			cluster.DynamicWorkers[i].Config.NodeAnnotations = cluster.DynamicWorkers[i].Config.MachineAnnotations
-			cluster.DynamicWorkers[i].Config.MachineAnnotations = nil
-		}
-	}
 
 	return nil
 }
