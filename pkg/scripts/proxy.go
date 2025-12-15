@@ -37,7 +37,7 @@ if sudo systemctl status {{ . }} &>/dev/null; then sudo systemctl restart {{ . }
 `
 
 	environmentFileScriptTemplate = `
-sudo mkdir -p /etc/kubeone
+sudo mkdir -p -m 0755 /etc/kubeone
 cat <<EOF | sudo tee /etc/kubeone/proxy-env
 {{ with .HTTP_PROXY -}}
 HTTP_PROXY="{{ . }}"
@@ -57,6 +57,8 @@ no_proxy="{{ . }}"
 export NO_PROXY no_proxy
 {{ end }}
 EOF
+
+sudo chmod 0644 /etc/kubeone/proxy-env
 
 envtmp=/tmp/k1-etc-environment
 # ensure we delete old file to avoid errors e.g. if username changed

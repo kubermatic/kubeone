@@ -1,13 +1,15 @@
 set -xeuo pipefail
 export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
 
-sudo mkdir -p /etc/kubeone
+sudo mkdir -p -m 0755 /etc/kubeone
 cat <<EOF | sudo tee /etc/kubeone/proxy-env
 HTTP_PROXY="http://http.proxy"
 http_proxy="http://http.proxy"
 export HTTP_PROXY http_proxy
 
 EOF
+
+sudo chmod 0644 /etc/kubeone/proxy-env
 
 envtmp=/tmp/k1-etc-environment
 # ensure we delete old file to avoid errors e.g. if username changed
