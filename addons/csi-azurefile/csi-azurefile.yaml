@@ -913,7 +913,7 @@ spec:
             - /azurefile-proxy/init.sh
           env:
             - name: INSTALL_AZNFS_MOUNT
-              value: '{{ default "true" .Params.SKIP_AZNFS_MOUNT_INSTALLATION }}'
+              value: '{{ default "true" .Params.INSTALL_AZNFS_MOUNT }}'
             - name: DEBIAN_FRONTEND
               value: noninteractive
             - name: AZNFS_NONINTERACTIVE_INSTALL
