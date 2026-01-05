@@ -889,13 +889,13 @@ spec:
         - command:
             - /azurefile-proxy/init.sh
           env:
+            - name: INSTALL_AZNFS_MOUNT
+              value: '{{ default "true" .Params.SKIP_AZNFS_MOUNT_INSTALLATION }}'
             - name: DEBIAN_FRONTEND
               value: noninteractive
             - name: AZNFS_NONINTERACTIVE_INSTALL
               value: "1"
             - name: INSTALL_AZUREFILE_PROXY
-              value: "true"
-            - name: INSTALL_AZNFS_MOUNT
               value: "true"
             - name: KUBELET_PATH
               value: /var/lib/kubelet
