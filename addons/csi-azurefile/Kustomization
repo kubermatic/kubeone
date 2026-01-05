@@ -24,7 +24,7 @@ patches:
                 image: '{{ .InternalImages.Get "AzureFileCSI" }}'
                 env:
                   - name: INSTALL_AZNFS_MOUNT
-                    value: '{{ default "true" .Params.SKIP_AZNFS_MOUNT_INSTALLATION }}'
+                    value: '{{ default "true" .Params.INSTALL_AZNFS_MOUNT }}'
             containers:
               - name: liveness-probe
                 image: '{{ .InternalImages.Get "AzureFileCSILivenessProbe" }}'
