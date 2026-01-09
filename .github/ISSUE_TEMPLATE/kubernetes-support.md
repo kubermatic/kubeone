@@ -32,10 +32,3 @@ This is a collector issue for Kubernetes 1.3x support in KubeOne. The following 
 * [ ] Update daily periodics to use the latest Kubernetes release
 * [ ] Update [the Compatibility Matrix](https://docs.kubermatic.com/kubeone/main/architecture/compatibility/supported-versions/) <!-- (link to the PR) -->
 * [ ] Create an issue to track updating [images](https://github.com/kubermatic/kubeone/blob/main/pkg/templates/images/images.go) <!-- link to the issue -->
-
-**Action items:**
-
-```[tasklist]
-### Tasks
-- [ ] Update this and update images templates to reflect any revisions
-```

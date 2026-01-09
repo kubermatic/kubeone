@@ -17,6 +17,7 @@ labels: sig/cluster-management, kind/documentation, priority/high
 
 ### Before Release
 
+* [ ] Create "Upgrading from previous to next version" [documentation](https://docs.kubermatic.com/kubeone/main/tutorials/upgrading/) <!-- (link to the PR) -->
 * [ ] Write and publish the changelog <!-- (reference to the changelog PR) -->
 <!-- UNCOMMENT FOR RELEASE CANDIDATES (RCs)
 * [ ] Create and push the release branch (`release/1.x`)
