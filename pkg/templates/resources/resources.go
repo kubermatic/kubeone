@@ -35,6 +35,7 @@ const (
 	AddonCCMOpenStack           = "ccm-openstack"
 	AddonCCMPacket              = "ccm-packet" // TODO: Remove after deprecation period.
 	AddonCCMVsphere             = "ccm-vsphere"
+	AddonClusterAutoscaler      = "cluster-autoscaler"
 	AddonCNICanal               = "cni-canal"
 	AddonCNICilium              = "cni-cilium"
 	AddonCNIWeavenet            = "cni-weavenet"

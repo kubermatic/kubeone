@@ -19,13 +19,18 @@ package addons
 import (
 	"fmt"
 	"io/fs"
+	"slices"
 
 	"github.com/pkg/errors"
 
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
 	"k8c.io/kubeone/pkg/templates/weave"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
@@ -48,6 +53,7 @@ var embeddedAddons = map[string]string{
 	resources.AddonCCMEquinixMetal:        "",
 	resources.AddonCCMPacket:              "",
 	resources.AddonCCMVsphere:             "",
+	resources.AddonClusterAutoscaler:      "",
 	resources.AddonCNICanal:               "",
 	resources.AddonCNICilium:              "",
 	resources.AddonCNIWeavenet:            "",
@@ -134,6 +140,29 @@ func collectAddons(s *state.State) []addonAction {
 	if s.Cluster.OperatingSystemManager.Deploy {
 		addonsToDeploy = append(addonsToDeploy, addonAction{
 			name: resources.AddonOperatingSystemManager,
+		})
+	}
+
+	autoscalerSearchFn := func(a kubeoneapi.Addon) bool {
+		return a.Name == resources.AddonClusterAutoscaler && !a.Delete
+	}
+
+	// Check if cluster-autoscaler addon is enabled in the configuration
+	if slices.ContainsFunc(s.Cluster.Addons.DeclaredAddonsOnly(), autoscalerSearchFn) {
+		addonsToDeploy = append(addonsToDeploy, addonAction{
+			name: resources.AddonClusterAutoscaler,
+			supportFn: func() error {
+				addonLabels := map[string]string{
+					"app.kubernetes.io/instance": "cluster-autoscaler",
+					"app.kubernetes.io/name":     "clusterapi-cluster-autoscaler",
+				}
+				addonObjectKey := client.ObjectKey{
+					Name:      "cluster-autoscaler",
+					Namespace: metav1.NamespaceSystem,
+				}
+
+				return migrateDeploymentIfPodSelectorDifferent(s, addonObjectKey, addonLabels)
+			},
 		})
 	}
 
