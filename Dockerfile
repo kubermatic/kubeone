@@ -24,7 +24,7 @@ WORKDIR /go/src/k8c.io/kubeone
 COPY . .
 RUN make build
 
-FROM docker.io/alpine:3.19
+FROM docker.io/alpine:3.23
 LABEL maintainer="support@kubermatic.com"
 
 # openssh-client is required for the ssh binary and for ssh-agent
