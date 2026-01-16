@@ -28,9 +28,6 @@ import (
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
 	"k8c.io/kubeone/pkg/templates/weave"
-
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
@@ -152,16 +149,7 @@ func collectAddons(s *state.State) []addonAction {
 		addonsToDeploy = append(addonsToDeploy, addonAction{
 			name: resources.AddonClusterAutoscaler,
 			supportFn: func() error {
-				addonLabels := map[string]string{
-					"app.kubernetes.io/instance": "cluster-autoscaler",
-					"app.kubernetes.io/name":     "clusterapi-cluster-autoscaler",
-				}
-				addonObjectKey := client.ObjectKey{
-					Name:      "cluster-autoscaler",
-					Namespace: metav1.NamespaceSystem,
-				}
-
-				return migrateDeploymentIfPodSelectorDifferent(s, addonObjectKey, addonLabels)
+				return migrateClusterAutoscaler(s)
 			},
 		})
 	}

@@ -316,6 +316,18 @@ func migrateMetricsServer(state *state.State) error {
 		})
 }
 
+func migrateClusterAutoscaler(s *state.State) error {
+	return migrateDeploymentIfPodSelectorDifferent(s,
+		client.ObjectKey{
+			Name:      "cluster-autoscaler",
+			Namespace: metav1.NamespaceSystem,
+		},
+		map[string]string{
+			"app.kubernetes.io/instance": "cluster-autoscaler",
+			"app.kubernetes.io/name":     "clusterapi-cluster-autoscaler",
+		})
+}
+
 func migrateDeploymentIfPodSelectorDifferent(s *state.State, key client.ObjectKey, expectedPodSelectors map[string]string) error {
 	deploy := &appsv1.Deployment{}
 	if err := s.DynamicClient.Get(s.Context, key, deploy); err != nil {
