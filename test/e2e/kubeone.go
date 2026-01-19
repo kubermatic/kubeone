@@ -116,7 +116,8 @@ func (k1 *kubeoneBin) RestConfig() (*rest.Config, error) {
 }
 
 func (k1 *kubeoneBin) AsyncProxy(ctx context.Context) (string, func() error, error) {
-	list, err := net.Listen("tcp4", "127.0.0.1:0")
+	var lc net.ListenConfig
+	list, err := lc.Listen(ctx, "tcp4", "127.0.0.1:0")
 	if err != nil {
 		return "", nil, err
 	}
