@@ -17,6 +17,7 @@ limitations under the License.
 package config
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -24,6 +25,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -107,7 +109,10 @@ func TFOutput(tfOutputPath string) ([]byte, error) {
 			return nil, fail.Runtime(err, "reading terraform output from stdin")
 		}
 	case isDir(tfOutputPath):
-		cmd := exec.Command("terraform", "output", "-json")
+		ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+		defer cancel()
+
+		cmd := exec.CommandContext(ctx, "terraform", "output", "-json")
 		cmd.Dir = tfOutputPath
 		if tfOutput, err = cmd.Output(); err != nil {
 			return nil, fail.Runtime(err, "reading terraform output")
