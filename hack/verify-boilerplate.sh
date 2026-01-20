@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # Copyright 2019 The KubeOne Authors.
 #
@@ -18,8 +18,19 @@ set -eu
 
 cd $(dirname $0)/..
 
-boilerplate \
-  -boilerplates hack/boilerplate/ \
-  -exclude hack/apidoc-gen \
-  -exclude pkg/apis/apiserver \
-  -exclude pkg/apis/kubeadm
+boilerDir="./hack/boilerplate"
+boiler="${boilerDir}/boilerplate.py"
+
+files_need_boilerplate=()
+while IFS=$'\n' read -r line; do
+  files_need_boilerplate+=( "$line" )
+done < <("${boiler}" "$@")
+
+# Run boilerplate check
+if [[ ${#files_need_boilerplate[@]} -gt 0 ]]; then
+  for file in "${files_need_boilerplate[@]}"; do
+    echo "Boilerplate header is wrong for: ${file}" >&2
+  done
+
+  exit 1
+fi
