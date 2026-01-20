@@ -10,11 +10,9 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic-labs/boilerplate:v0.3.0
+        - image: python:3
           command:
-            - make
-          args:
-            - verify-boilerplate
+            - ./hack/verify-boilerplate.sh
   - name: pull-kubeone-verify-codegen
     always_run: true
     decorate: true
