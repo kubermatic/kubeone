@@ -98,7 +98,7 @@ spec:
           resources:
             limits:
               cpu: "2"
-              memory: 2Gi
+              memory: {{ default "512Mi" .Params.OSM_MEMORY_LIMIT }}
             requests:
               cpu: 50m
               memory: 128Mi
