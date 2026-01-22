@@ -185,7 +185,7 @@ func main() {
 
 	if outputFileFlag != "-" {
 		data, _ := io.ReadAll(outputBuf)
-		if err = os.WriteFile(outputFileFlag, data, 0644); err != nil { //nolint:gosec
+		if err = os.WriteFile(outputFileFlag, data, 0o644); err != nil { //nolint:gosec
 			log.Fatalf("failed to write file %v", err)
 		}
 	}
