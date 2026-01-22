@@ -1,3 +1,17 @@
+# [v1.12.3](https://github.com/kubermatic/kubeone/releases/tag/v1.12.3) - 2026-01-22
+
+## Changelog since v1.12.2
+
+## Changes by Kind
+
+### Chore
+
+- Update Hetzner CSI driver to v2.18.3 [#3935](https://github.com/kubermatic/kubeone/pull/3935) [@kron4eg](https://github.com/kron4eg)
+
+### Fixes of Bugs or Regressions
+
+- fix:(addons) Migrate cluster-autoscaler deployment if matchLabels changed [#3960](https://github.com/kubermatic/kubeone/pull/3960) [@kron4eg](https://github.com/kron4eg)
+
 # [v1.12.2](https://github.com/kubermatic/kubeone/releases/tag/v1.12.2) - 2025-12-04
 
 ## Changelog since v1.12.1
