@@ -8,530 +8,9 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  run_if_changed: (.prow/|addons/|examples/|hack/|pkg/|test/)
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsDefaultInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-ubuntu-previous-lts-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsUbuntuPreviousLtsInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsFlatcarInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsRhelInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsRockylinuxInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureDefaultInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-flatcar-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureFlatcarInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-    preset-rhel: "true"
-  name: pull-kubeone-e2e-azure-rhel-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureRhelInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-rockylinux-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureRockylinuxInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-digitalocean: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestDigitaloceanDefaultInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: digitalocean
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-digitalocean: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-rockylinux-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestDigitaloceanRockylinuxInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: digitalocean
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-gce: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestGceDefaultInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: gce
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-goproxy: "true"
-    preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestHetznerDefaultInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: hetzner
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-goproxy: "true"
-    preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-rockylinux-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestHetznerRockylinuxInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: hetzner
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackDefaultInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: openstack
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackFlatcarInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackRhelInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rockylinux-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackRockylinuxInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-goproxy: "true"
-    preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-default-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestVsphereDefaultInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: vsphere
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-goproxy: "true"
-    preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestVsphereFlatcarInstallContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: vsphere
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-default-install-containerd-external-v1.33
   optional: false
   path_alias: k8c.io/kubeone
-  run_if_changed: (.prow/|addons/|examples/|hack/|pkg/|test/)
   spec:
     containers:
     - command:
@@ -1051,7 +530,6 @@ presubmits:
   name: pull-kubeone-e2e-aws-default-install-containerd-external-v1.34
   optional: false
   path_alias: k8c.io/kubeone
-  run_if_changed: (.prow/|addons/|examples/|hack/|pkg/|test/)
   spec:
     containers:
     - command:
@@ -1565,22 +1043,18 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-aws-default-install-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
+  run_if_changed: (.prow/|addons/|examples/|hack/|pkg/|test/)
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33
+      - TestAwsDefaultInstallContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: aws
@@ -1595,22 +1069,17 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-ubuntu-previous-lts-upgrade-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-aws-ubuntu-previous-lts-install-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsUbuntuPreviousLtsUpgradeContainerdExternalFromV1_32_ToV1_33
+      - TestAwsUbuntuPreviousLtsInstallContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: aws
@@ -1625,22 +1094,17 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-aws-flatcar-install-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsFlatcarStableUpgradeContainerdExternalFromV1_32_ToV1_33
+      - TestAwsFlatcarInstallContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: aws
@@ -1655,22 +1119,67 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rhel-install-containerd-external-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsRhelInstallContainerdExternalV1_35
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rockylinux-install-containerd-external-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsRockylinuxInstallContainerdExternalV1_35
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-stable-upgrade-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-azure-default-install-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33
+      - TestAzureDefaultInstallContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: azure
@@ -1687,22 +1196,17 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-flatcar-stable-upgrade-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-azure-flatcar-install-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureFlatcarStableUpgradeContainerdExternalFromV1_32_ToV1_33
+      - TestAzureFlatcarInstallContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: azure
@@ -1719,22 +1223,72 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+    preset-rhel: "true"
+  name: pull-kubeone-e2e-azure-rhel-install-containerd-external-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureRhelInstallContainerdExternalV1_35
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-rockylinux-install-containerd-external-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureRockylinuxInstallContainerdExternalV1_35
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-stable-upgrade-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-digitalocean-default-install-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33
+      - TestDigitaloceanDefaultInstallContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: digitalocean
@@ -1749,22 +1303,42 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
   labels:
-    preset-gce: "true"
+    preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-stable-upgrade-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-digitalocean-rockylinux-install-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestGceDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33
+      - TestDigitaloceanRockylinuxInstallContainerdExternalV1_35
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-install-containerd-external-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultInstallContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: gce
@@ -1779,22 +1353,17 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-stable-upgrade-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-hetzner-default-install-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33
+      - TestHetznerDefaultInstallContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: hetzner
@@ -1809,22 +1378,67 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-stable-upgrade-containerd-external-from-v1.32-to-v1.33
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-rockylinux-install-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33
+      - TestHetznerRockylinuxInstallContainerdExternalV1_35
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-default-install-containerd-external-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackDefaultInstallContainerdExternalV1_35
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-flatcar-install-containerd-external-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackFlatcarInstallContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: openstack
@@ -1841,22 +1455,17 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-stable-upgrade-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-openstack-rhel-install-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_32_ToV1_33
+      - TestOpenstackRhelInstallContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: openstack
@@ -1873,22 +1482,44 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rockylinux-install-containerd-external-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackRockylinuxInstallContainerdExternalV1_35
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-vsphere-default-install-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereDefaultStableUpgradeContainerdExternalFromV1_32_ToV1_33
+      - TestVsphereDefaultInstallContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: vsphere
@@ -1905,274 +1536,20 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-stable-upgrade-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-vsphere-flatcar-install-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_32_ToV1_33
+      - TestVsphereFlatcarInstallContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: vsphere
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-external-from-v1.32-to-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsRhelUpgradeContainerdExternalFromV1_32_ToV1_33
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-external-from-v1.32-to-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsRockylinuxUpgradeContainerdExternalFromV1_32_ToV1_33
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-    preset-rhel: "true"
-  name: pull-kubeone-e2e-azure-rhel-upgrade-containerd-external-from-v1.32-to-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureRhelUpgradeContainerdExternalFromV1_32_ToV1_33
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-rockylinux-upgrade-containerd-external-from-v1.32-to-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureRockylinuxUpgradeContainerdExternalFromV1_32_ToV1_33
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-digitalocean: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-rockylinux-upgrade-containerd-external-from-v1.32-to-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestDigitaloceanRockylinuxUpgradeContainerdExternalFromV1_32_ToV1_33
-      env:
-      - name: PROVIDER
-        value: digitalocean
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
-    preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-rockylinux-upgrade-containerd-external-from-v1.32-to-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestHetznerRockylinuxUpgradeContainerdExternalFromV1_32_ToV1_33
-      env:
-      - name: PROVIDER
-        value: hetzner
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-upgrade-containerd-external-from-v1.32-to-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackRhelUpgradeContainerdExternalFromV1_32_ToV1_33
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rockylinux-upgrade-containerd-external-from-v1.32-to-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_32_ToV1_33
-      env:
-      - name: PROVIDER
-        value: openstack
       - name: TEST_TIMEOUT
         value: 180m
       image: quay.io/kubermatic/build:go-1.25-node-22-6
@@ -2807,17 +2184,22 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-cilium-containerd-external-v1.32
+  name: pull-kubeone-e2e-aws-default-stable-upgrade-containerd-external-from-v1.34-to-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsDefaultCiliumContainerdExternalV1_32
+      - TestAwsDefaultStableUpgradeContainerdExternalFromV1_34_ToV1_35
       env:
       - name: PROVIDER
         value: aws
@@ -2832,17 +2214,22 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-cilium-containerd-external-v1.32
+  name: pull-kubeone-e2e-aws-ubuntu-previous-lts-upgrade-containerd-external-from-v1.34-to-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsFlatcarCiliumContainerdExternalV1_32
+      - TestAwsUbuntuPreviousLtsUpgradeContainerdExternalFromV1_34_ToV1_35
       env:
       - name: PROVIDER
         value: aws
@@ -2857,17 +2244,22 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-cilium-containerd-external-v1.32
+  name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-containerd-external-from-v1.34-to-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRhelCiliumContainerdExternalV1_32
+      - TestAwsFlatcarStableUpgradeContainerdExternalFromV1_34_ToV1_35
       env:
       - name: PROVIDER
         value: aws
@@ -2882,42 +2274,22 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-cilium-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsRockylinuxCiliumContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-cilium-containerd-external-v1.32
+  name: pull-kubeone-e2e-azure-default-stable-upgrade-containerd-external-from-v1.34-to-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureDefaultCiliumContainerdExternalV1_32
+      - TestAzureDefaultStableUpgradeContainerdExternalFromV1_34_ToV1_35
       env:
       - name: PROVIDER
         value: azure
@@ -2934,17 +2306,22 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-flatcar-cilium-containerd-external-v1.32
+  name: pull-kubeone-e2e-azure-flatcar-stable-upgrade-containerd-external-from-v1.34-to-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureFlatcarCiliumContainerdExternalV1_32
+      - TestAzureFlatcarStableUpgradeContainerdExternalFromV1_34_ToV1_35
       env:
       - name: PROVIDER
         value: azure
@@ -2961,72 +2338,22 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-    preset-rhel: "true"
-  name: pull-kubeone-e2e-azure-rhel-cilium-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureRhelCiliumContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-rockylinux-cilium-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureRockylinuxCiliumContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-cilium-containerd-external-v1.32
+  name: pull-kubeone-e2e-digitalocean-default-stable-upgrade-containerd-external-from-v1.34-to-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanDefaultCiliumContainerdExternalV1_32
+      - TestDigitaloceanDefaultStableUpgradeContainerdExternalFromV1_34_ToV1_35
       env:
       - name: PROVIDER
         value: digitalocean
@@ -3041,42 +2368,22 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  labels:
-    preset-digitalocean: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-rockylinux-cilium-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestDigitaloceanRockylinuxCiliumContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: digitalocean
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-cilium-containerd-external-v1.32
+  name: pull-kubeone-e2e-gce-default-stable-upgrade-containerd-external-from-v1.34-to-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestGceDefaultCiliumContainerdExternalV1_32
+      - TestGceDefaultStableUpgradeContainerdExternalFromV1_34_ToV1_35
       env:
       - name: PROVIDER
         value: gce
@@ -3091,17 +2398,22 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-cilium-containerd-external-v1.32
+  name: pull-kubeone-e2e-hetzner-default-stable-upgrade-containerd-external-from-v1.34-to-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerDefaultCiliumContainerdExternalV1_32
+      - TestHetznerDefaultStableUpgradeContainerdExternalFromV1_34_ToV1_35
       env:
       - name: PROVIDER
         value: hetzner
@@ -3116,67 +2428,22 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  labels:
-    preset-goproxy: "true"
-    preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-rockylinux-cilium-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestHetznerRockylinuxCiliumContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: hetzner
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-cilium-containerd-external-v1.32
+  name: pull-kubeone-e2e-openstack-default-stable-upgrade-containerd-external-from-v1.34-to-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackDefaultCiliumContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: openstack
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-cilium-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackFlatcarCiliumContainerdExternalV1_32
+      - TestOpenstackDefaultStableUpgradeContainerdExternalFromV1_34_ToV1_35
       env:
       - name: PROVIDER
         value: openstack
@@ -3193,17 +2460,22 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-cilium-containerd-external-v1.32
+  name: pull-kubeone-e2e-openstack-flatcar-stable-upgrade-containerd-external-from-v1.34-to-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackRhelCiliumContainerdExternalV1_32
+      - TestOpenstackFlatcarStableUpgradeContainerdExternalFromV1_34_ToV1_35
       env:
       - name: PROVIDER
         value: openstack
@@ -3220,44 +2492,22 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rockylinux-cilium-containerd-external-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackRockylinuxCiliumContainerdExternalV1_32
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-default-cilium-containerd-external-v1.32
+  name: pull-kubeone-e2e-vsphere-default-stable-upgrade-containerd-external-from-v1.34-to-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereDefaultCiliumContainerdExternalV1_32
+      - TestVsphereDefaultStableUpgradeContainerdExternalFromV1_34_ToV1_35
       env:
       - name: PROVIDER
         value: vsphere
@@ -3274,20 +2524,274 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-cilium-containerd-external-v1.32
+  name: pull-kubeone-e2e-vsphere-flatcar-stable-upgrade-containerd-external-from-v1.34-to-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereFlatcarCiliumContainerdExternalV1_32
+      - TestVsphereFlatcarStableUpgradeContainerdExternalFromV1_34_ToV1_35
       env:
       - name: PROVIDER
         value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rhel-upgrade-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsRhelUpgradeContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rockylinux-upgrade-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsRockylinuxUpgradeContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+    preset-rhel: "true"
+  name: pull-kubeone-e2e-azure-rhel-upgrade-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureRhelUpgradeContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-rockylinux-upgrade-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureRockylinuxUpgradeContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-rockylinux-upgrade-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestDigitaloceanRockylinuxUpgradeContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-rockylinux-upgrade-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestHetznerRockylinuxUpgradeContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rhel-upgrade-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackRhelUpgradeContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rockylinux-upgrade-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackRockylinuxUpgradeContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: openstack
       - name: TEST_TIMEOUT
         value: 180m
       image: quay.io/kubermatic/build:go-1.25-node-22-6
@@ -4292,14 +3796,14 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-external-cni-flannel-helm-chart-v1.32
+  name: pull-kubeone-e2e-aws-default-cilium-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsDefaultExternalCniFlannelHelmChartV1_32
+      - TestAwsDefaultCiliumContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: aws
@@ -4317,14 +3821,14 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-external-cni-flannel-helm-chart-v1.32
+  name: pull-kubeone-e2e-aws-flatcar-cilium-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsFlatcarExternalCniFlannelHelmChartV1_32
+      - TestAwsFlatcarCiliumContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: aws
@@ -4342,14 +3846,14 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-external-cni-flannel-helm-chart-v1.32
+  name: pull-kubeone-e2e-aws-rhel-cilium-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRhelExternalCniFlannelHelmChartV1_32
+      - TestAwsRhelCiliumContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: aws
@@ -4367,14 +3871,14 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-external-cni-flannel-helm-chart-v1.32
+  name: pull-kubeone-e2e-aws-rockylinux-cilium-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsRockylinuxExternalCniFlannelHelmChartV1_32
+      - TestAwsRockylinuxCiliumContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: aws
@@ -4392,14 +3896,14 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-external-cni-flannel-helm-chart-v1.32
+  name: pull-kubeone-e2e-azure-default-cilium-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureDefaultExternalCniFlannelHelmChartV1_32
+      - TestAzureDefaultCiliumContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: azure
@@ -4419,14 +3923,14 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-flatcar-external-cni-flannel-helm-chart-v1.32
+  name: pull-kubeone-e2e-azure-flatcar-cilium-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureFlatcarExternalCniFlannelHelmChartV1_32
+      - TestAzureFlatcarCiliumContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: azure
@@ -4447,14 +3951,14 @@ presubmits:
     preset-azure: "true"
     preset-goproxy: "true"
     preset-rhel: "true"
-  name: pull-kubeone-e2e-azure-rhel-external-cni-flannel-helm-chart-v1.32
+  name: pull-kubeone-e2e-azure-rhel-cilium-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRhelExternalCniFlannelHelmChartV1_32
+      - TestAzureRhelCiliumContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: azure
@@ -4474,14 +3978,14 @@ presubmits:
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-rockylinux-external-cni-flannel-helm-chart-v1.32
+  name: pull-kubeone-e2e-azure-rockylinux-cilium-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureRockylinuxExternalCniFlannelHelmChartV1_32
+      - TestAzureRockylinuxCiliumContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: azure
@@ -4501,14 +4005,14 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-external-cni-flannel-helm-chart-v1.32
+  name: pull-kubeone-e2e-digitalocean-default-cilium-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_32
+      - TestDigitaloceanDefaultCiliumContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: digitalocean
@@ -4526,14 +4030,14 @@ presubmits:
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-rockylinux-external-cni-flannel-helm-chart-v1.32
+  name: pull-kubeone-e2e-digitalocean-rockylinux-cilium-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanRockylinuxExternalCniFlannelHelmChartV1_32
+      - TestDigitaloceanRockylinuxCiliumContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: digitalocean
@@ -4551,14 +4055,14 @@ presubmits:
   labels:
     preset-gce: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-external-cni-flannel-helm-chart-v1.32
+  name: pull-kubeone-e2e-gce-default-cilium-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestGceDefaultExternalCniFlannelHelmChartV1_32
+      - TestGceDefaultCiliumContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: gce
@@ -4576,14 +4080,14 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-external-cni-flannel-helm-chart-v1.32
+  name: pull-kubeone-e2e-hetzner-default-cilium-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerDefaultExternalCniFlannelHelmChartV1_32
+      - TestHetznerDefaultCiliumContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: hetzner
@@ -4601,14 +4105,14 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-rockylinux-external-cni-flannel-helm-chart-v1.32
+  name: pull-kubeone-e2e-hetzner-rockylinux-cilium-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerRockylinuxExternalCniFlannelHelmChartV1_32
+      - TestHetznerRockylinuxCiliumContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: hetzner
@@ -4626,14 +4130,14 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-external-cni-flannel-helm-chart-v1.32
+  name: pull-kubeone-e2e-openstack-default-cilium-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackDefaultExternalCniFlannelHelmChartV1_32
+      - TestOpenstackDefaultCiliumContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: openstack
@@ -4651,41 +4155,14 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-external-cni-flannel-helm-chart-v1.32
+  name: pull-kubeone-e2e-openstack-flatcar-cilium-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackFlatcarExternalCniFlannelHelmChartV1_32
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-external-cni-flannel-helm-chart-v1.32
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackRhelExternalCniFlannelHelmChartV1_32
+      - TestOpenstackFlatcarCiliumContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: openstack
@@ -4705,14 +4182,41 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rockylinux-external-cni-flannel-helm-chart-v1.32
+  name: pull-kubeone-e2e-openstack-rhel-cilium-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackRockylinuxExternalCniFlannelHelmChartV1_32
+      - TestOpenstackRhelCiliumContainerdExternalV1_35
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rockylinux-cilium-containerd-external-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackRockylinuxCiliumContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: openstack
@@ -4732,14 +4236,14 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-default-external-cni-flannel-helm-chart-v1.32
+  name: pull-kubeone-e2e-vsphere-default-cilium-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereDefaultExternalCniFlannelHelmChartV1_32
+      - TestVsphereDefaultCiliumContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: vsphere
@@ -4759,14 +4263,14 @@ presubmits:
   labels:
     preset-goproxy: "true"
     preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-external-cni-flannel-helm-chart-v1.32
+  name: pull-kubeone-e2e-vsphere-flatcar-cilium-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereFlatcarExternalCniFlannelHelmChartV1_32
+      - TestVsphereFlatcarCiliumContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: vsphere
@@ -5771,22 +5275,17 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-stable-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-aws-default-external-cni-flannel-helm-chart-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
+      - TestAwsDefaultExternalCniFlannelHelmChartV1_35
       env:
       - name: PROVIDER
         value: aws
@@ -5801,22 +5300,17 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-aws-flatcar-external-cni-flannel-helm-chart-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsFlatcarStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
+      - TestAwsFlatcarExternalCniFlannelHelmChartV1_35
       env:
       - name: PROVIDER
         value: aws
@@ -5831,22 +5325,67 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rhel-external-cni-flannel-helm-chart-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsRhelExternalCniFlannelHelmChartV1_35
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rockylinux-external-cni-flannel-helm-chart-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsRockylinuxExternalCniFlannelHelmChartV1_35
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-default-stable-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-azure-default-external-cni-flannel-helm-chart-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
+      - TestAzureDefaultExternalCniFlannelHelmChartV1_35
       env:
       - name: PROVIDER
         value: azure
@@ -5863,22 +5402,17 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
   labels:
     preset-azure: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-flatcar-stable-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-azure-flatcar-external-cni-flannel-helm-chart-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAzureFlatcarStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
+      - TestAzureFlatcarExternalCniFlannelHelmChartV1_35
       env:
       - name: PROVIDER
         value: azure
@@ -5895,22 +5429,72 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+    preset-rhel: "true"
+  name: pull-kubeone-e2e-azure-rhel-external-cni-flannel-helm-chart-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureRhelExternalCniFlannelHelmChartV1_35
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-rockylinux-external-cni-flannel-helm-chart-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureRockylinuxExternalCniFlannelHelmChartV1_35
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-default-stable-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-digitalocean-default-external-cni-flannel-helm-chart-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestDigitaloceanDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
+      - TestDigitaloceanDefaultExternalCniFlannelHelmChartV1_35
       env:
       - name: PROVIDER
         value: digitalocean
@@ -5925,22 +5509,42 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
   labels:
-    preset-gce: "true"
+    preset-digitalocean: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-gce-default-stable-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-digitalocean-rockylinux-external-cni-flannel-helm-chart-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestGceDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
+      - TestDigitaloceanRockylinuxExternalCniFlannelHelmChartV1_35
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-external-cni-flannel-helm-chart-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultExternalCniFlannelHelmChartV1_35
       env:
       - name: PROVIDER
         value: gce
@@ -5955,22 +5559,17 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-default-stable-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-hetzner-default-external-cni-flannel-helm-chart-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestHetznerDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
+      - TestHetznerDefaultExternalCniFlannelHelmChartV1_35
       env:
       - name: PROVIDER
         value: hetzner
@@ -5985,22 +5584,67 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
   labels:
     preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-default-stable-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-rockylinux-external-cni-flannel-helm-chart-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
+      - TestHetznerRockylinuxExternalCniFlannelHelmChartV1_35
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-default-external-cni-flannel-helm-chart-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackDefaultExternalCniFlannelHelmChartV1_35
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-flatcar-external-cni-flannel-helm-chart-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackFlatcarExternalCniFlannelHelmChartV1_35
       env:
       - name: PROVIDER
         value: openstack
@@ -6017,22 +5661,17 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-flatcar-stable-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-openstack-rhel-external-cni-flannel-helm-chart-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestOpenstackFlatcarStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
+      - TestOpenstackRhelExternalCniFlannelHelmChartV1_35
       env:
       - name: PROVIDER
         value: openstack
@@ -6049,22 +5688,44 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rockylinux-external-cni-flannel-helm-chart-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackRockylinuxExternalCniFlannelHelmChartV1_35
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
   labels:
     preset-goproxy: "true"
     preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-default-stable-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-vsphere-default-external-cni-flannel-helm-chart-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereDefaultStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
+      - TestVsphereDefaultExternalCniFlannelHelmChartV1_35
       env:
       - name: PROVIDER
         value: vsphere
@@ -6081,22 +5742,17 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
   labels:
     preset-goproxy: "true"
     preset-vsphere: "true"
-  name: pull-kubeone-e2e-vsphere-flatcar-stable-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
+  name: pull-kubeone-e2e-vsphere-flatcar-external-cni-flannel-helm-chart-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestVsphereFlatcarStableUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
+      - TestVsphereFlatcarExternalCniFlannelHelmChartV1_35
       env:
       - name: PROVIDER
         value: vsphere
@@ -6463,255 +6119,6 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rhel-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsRhelUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-rockylinux-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAwsRockylinuxUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
-      env:
-      - name: PROVIDER
-        value: aws
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-    preset-rhel: "true"
-  name: pull-kubeone-e2e-azure-rhel-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureRhelUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-azure: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-azure-rockylinux-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestAzureRockylinuxUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
-      env:
-      - name: PROVIDER
-        value: azure
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-digitalocean: "true"
-    preset-goproxy: "true"
-  name: pull-kubeone-e2e-digitalocean-rockylinux-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestDigitaloceanRockylinuxUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
-      env:
-      - name: PROVIDER
-        value: digitalocean
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
-    preset-hetzner: "true"
-  name: pull-kubeone-e2e-hetzner-rockylinux-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestHetznerRockylinuxUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
-      env:
-      - name: PROVIDER
-        value: hetzner
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rhel-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackRhelUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-goproxy: "true"
-    preset-openstack: "true"
-  name: pull-kubeone-e2e-openstack-rockylinux-upgrade-cilium-containerd-external-from-v1.32-to-v1.33
-  optional: false
-  path_alias: k8c.io/kubeone
-  spec:
-    containers:
-    - command:
-      - ./test/go-test-e2e.sh
-      - TestOpenstackRockylinuxUpgradeCiliumContainerdExternalFromV1_32_ToV1_33
-      env:
-      - name: PROVIDER
-        value: openstack
-      - name: TEST_TIMEOUT
-        value: 180m
-      image: quay.io/kubermatic/build:go-1.25-node-22-6
-      imagePullPolicy: Always
-      name: ""
-      resources:
-        requests:
-          cpu: "1"
-- always_run: false
-  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
-  decorate: true
-  decoration_config:
-    timeout: 210m
-  extra_refs:
-  - base_ref: release/v1.11
-    org: kubermatic
-    path_alias: k8c.io/kubeone-stable
-    repo: kubeone
-  labels:
-    preset-aws-e2e-kubeone: "true"
-    preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-rhel-upgrade-cilium-containerd-external-from-v1.33-to-v1.34
   optional: false
   path_alias: k8c.io/kubeone
@@ -6953,17 +6360,658 @@ presubmits:
   decorate: true
   decoration_config:
     timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-external-v1.32
+  name: pull-kubeone-e2e-aws-default-stable-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_32
+      - TestAwsDefaultStableUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-flatcar-stable-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsFlatcarStableUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-default-stable-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureDefaultStableUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-flatcar-stable-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureFlatcarStableUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-default-stable-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestDigitaloceanDefaultStableUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-default-stable-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceDefaultStableUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: gce
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-default-stable-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestHetznerDefaultStableUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-default-stable-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackDefaultStableUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-flatcar-stable-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackFlatcarStableUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-default-stable-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereDefaultStableUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-vsphere: "true"
+  name: pull-kubeone-e2e-vsphere-flatcar-stable-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestVsphereFlatcarStableUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: vsphere
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rhel-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsRhelUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-rockylinux-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsRockylinuxUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+    preset-rhel: "true"
+  name: pull-kubeone-e2e-azure-rhel-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureRhelUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-rockylinux-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureRockylinuxUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-rockylinux-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestDigitaloceanRockylinuxUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-hetzner: "true"
+  name: pull-kubeone-e2e-hetzner-rockylinux-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestHetznerRockylinuxUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: hetzner
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rhel-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackRhelUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  extra_refs:
+  - base_ref: release/v1.11
+    org: kubermatic
+    path_alias: k8c.io/kubeone-stable
+    repo: kubeone
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-rockylinux-upgrade-cilium-containerd-external-from-v1.34-to-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackRockylinuxUpgradeCiliumContainerdExternalFromV1_34_ToV1_35
+      env:
+      - name: PROVIDER
+        value: openstack
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-default-kube-proxy-ipvs-external-v1.33
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsDefaultKubeProxyIpvsExternalV1_33
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-default-kube-proxy-ipvs-external-v1.34
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsDefaultKubeProxyIpvsExternalV1_34
+      env:
+      - name: PROVIDER
+        value: aws
+      image: quay.io/kubermatic/build:go-1.25-node-22-6
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
+    preset-aws-e2e-kubeone: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-aws-default-kube-proxy-ipvs-external-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAwsDefaultKubeProxyIpvsExternalV1_35
       env:
       - name: PROVIDER
         value: aws
@@ -7031,14 +7079,14 @@ presubmits:
   labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
-  name: pull-kubeone-e2e-aws-default-kube-proxy-ipvs-external-v1.34
+  name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-external-v1.35
   optional: false
   path_alias: k8c.io/kubeone
   spec:
     containers:
     - command:
       - ./test/go-test-e2e.sh
-      - TestAwsDefaultKubeProxyIpvsExternalV1_34
+      - TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_35
       env:
       - name: PROVIDER
         value: aws

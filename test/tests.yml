@@ -3,35 +3,9 @@
 ################
 
 - scenario: install_containerd_external
-  initVersion: v1.32
-  infrastructures:
-    - name: aws_default
-      runIfChanged: "(.prow/|addons/|examples/|hack/|pkg/|test/)"
-    - name: aws_ubuntu_previous_lts
-    - name: aws_flatcar
-    - name: aws_rhel
-    - name: aws_rockylinux
-    - name: azure_default
-    - name: azure_flatcar
-    - name: azure_rhel
-    - name: azure_rockylinux
-    - name: digitalocean_default
-    - name: digitalocean_rockylinux
-    - name: gce_default
-    - name: hetzner_default
-    - name: hetzner_rockylinux
-    - name: openstack_default
-    - name: openstack_flatcar
-    - name: openstack_rhel
-    - name: openstack_rockylinux
-    - name: vsphere_default
-    - name: vsphere_flatcar
-
-- scenario: install_containerd_external
   initVersion: v1.33
   infrastructures:
     - name: aws_default
-      runIfChanged: "(.prow/|addons/|examples/|hack/|pkg/|test/)"
     - name: aws_ubuntu_previous_lts
     - name: aws_flatcar
     - name: aws_rhel
@@ -54,6 +28,30 @@
 
 - scenario: install_containerd_external
   initVersion: v1.34
+  infrastructures:
+    - name: aws_default
+    - name: aws_ubuntu_previous_lts
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: aws_rockylinux
+    - name: azure_default
+    - name: azure_flatcar
+    - name: azure_rhel
+    - name: azure_rockylinux
+    - name: digitalocean_default
+    - name: digitalocean_rockylinux
+    - name: gce_default
+    - name: hetzner_default
+    - name: hetzner_rockylinux
+    - name: openstack_default
+    - name: openstack_flatcar
+    - name: openstack_rhel
+    - name: openstack_rockylinux
+    - name: vsphere_default
+    - name: vsphere_flatcar
+
+- scenario: install_containerd_external
+  initVersion: v1.35
   infrastructures:
     - name: aws_default
       runIfChanged: "(.prow/|addons/|examples/|hack/|pkg/|test/)"
@@ -82,8 +80,8 @@
 ###################
 
 - scenario: upgrade_containerd_external
-  initVersion: v1.32
-  upgradedVersion: v1.33
+  initVersion: v1.33
+  upgradedVersion: v1.34
   infrastructures:
     - name: aws_default_stable
     - name: aws_ubuntu_previous_lts
@@ -97,11 +95,6 @@
     - name: openstack_flatcar_stable
     - name: vsphere_default_stable
     - name: vsphere_flatcar_stable
-
-- scenario: upgrade_containerd_external
-  initVersion: v1.32
-  upgradedVersion: v1.33
-  infrastructures:
     - name: aws_rhel
     - name: aws_rockylinux
     - name: azure_rhel
@@ -112,8 +105,8 @@
     - name: openstack_rockylinux
 
 - scenario: upgrade_containerd_external
-  initVersion: v1.33
-  upgradedVersion: v1.34
+  initVersion: v1.34
+  upgradedVersion: v1.35
   infrastructures:
     - name: aws_default_stable
     - name: aws_ubuntu_previous_lts
@@ -127,11 +120,6 @@
     - name: openstack_flatcar_stable
     - name: vsphere_default_stable
     - name: vsphere_flatcar_stable
-
-- scenario: upgrade_containerd_external
-  initVersion: v1.33
-  upgradedVersion: v1.34
-  infrastructures:
     - name: aws_rhel
     - name: aws_rockylinux
     - name: azure_rhel
@@ -146,29 +134,6 @@
 ###########################
 
 - scenario: cilium_containerd_external
-  initVersion: v1.32
-  infrastructures:
-    - name: aws_default
-    - name: aws_flatcar
-    - name: aws_rhel
-    - name: aws_rockylinux
-    - name: azure_default
-    - name: azure_flatcar
-    - name: azure_rhel
-    - name: azure_rockylinux
-    - name: digitalocean_default
-    - name: digitalocean_rockylinux
-    - name: gce_default
-    - name: hetzner_default
-    - name: hetzner_rockylinux
-    - name: openstack_default
-    - name: openstack_flatcar
-    - name: openstack_rhel
-    - name: openstack_rockylinux
-    - name: vsphere_default
-    - name: vsphere_flatcar
-
-- scenario: cilium_containerd_external
   initVersion: v1.33
   infrastructures:
     - name: aws_default
@@ -214,8 +179,8 @@
     - name: vsphere_default
     - name: vsphere_flatcar
 
-- scenario: external_cni_flannel_helm_chart
-  initVersion: v1.32
+- scenario: cilium_containerd_external
+  initVersion: v1.35
   infrastructures:
     - name: aws_default
     - name: aws_flatcar
@@ -283,21 +248,28 @@
     - name: vsphere_default
     - name: vsphere_flatcar
 
-- scenario: upgrade_cilium_containerd_external
-  initVersion: v1.32
-  upgradedVersion: v1.33
+- scenario: external_cni_flannel_helm_chart
+  initVersion: v1.35
   infrastructures:
-    - name: aws_default_stable
-    - name: aws_flatcar_stable
-    - name: azure_default_stable
-    - name: azure_flatcar_stable
-    - name: digitalocean_default_stable
-    - name: gce_default_stable
-    - name: hetzner_default_stable
-    - name: openstack_default_stable
-    - name: openstack_flatcar_stable
-    - name: vsphere_default_stable
-    - name: vsphere_flatcar_stable
+    - name: aws_default
+    - name: aws_flatcar
+    - name: aws_rhel
+    - name: aws_rockylinux
+    - name: azure_default
+    - name: azure_flatcar
+    - name: azure_rhel
+    - name: azure_rockylinux
+    - name: digitalocean_default
+    - name: digitalocean_rockylinux
+    - name: gce_default
+    - name: hetzner_default
+    - name: hetzner_rockylinux
+    - name: openstack_default
+    - name: openstack_flatcar
+    - name: openstack_rhel
+    - name: openstack_rockylinux
+    - name: vsphere_default
+    - name: vsphere_flatcar
 
 - scenario: upgrade_cilium_containerd_external
   initVersion: v1.33
@@ -314,11 +286,6 @@
     - name: openstack_flatcar_stable
     - name: vsphere_default_stable
     - name: vsphere_flatcar_stable
-
-- scenario: upgrade_cilium_containerd_external
-  initVersion: v1.32
-  upgradedVersion: v1.33
-  infrastructures:
     - name: aws_rhel
     - name: aws_rockylinux
     - name: azure_rhel
@@ -329,28 +296,49 @@
     - name: openstack_rockylinux
 
 - scenario: upgrade_cilium_containerd_external
+  initVersion: v1.34
+  upgradedVersion: v1.35
+  infrastructures:
+    - name: aws_default_stable
+    - name: aws_flatcar_stable
+    - name: azure_default_stable
+    - name: azure_flatcar_stable
+    - name: digitalocean_default_stable
+    - name: gce_default_stable
+    - name: hetzner_default_stable
+    - name: openstack_default_stable
+    - name: openstack_flatcar_stable
+    - name: vsphere_default_stable
+    - name: vsphere_flatcar_stable
+    - name: aws_rhel
+    - name: aws_rockylinux
+    - name: azure_rhel
+    - name: azure_rockylinux
+    - name: digitalocean_rockylinux
+    - name: hetzner_rockylinux
+    - name: openstack_rhel
+    - name: openstack_rockylinux
+
+- scenario: kube_proxy_ipvs_external
   initVersion: v1.33
-  upgradedVersion: v1.34
   infrastructures:
-    - name: aws_rhel
-    - name: aws_rockylinux
-    - name: azure_rhel
-    - name: azure_rockylinux
-    - name: digitalocean_rockylinux
-    - name: hetzner_rockylinux
-    - name: openstack_rhel
-    - name: openstack_rockylinux
+    - name: aws_default
+
+- scenario: kube_proxy_ipvs_external
+  initVersion: v1.34
+  infrastructures:
+    - name: aws_default
+
+- scenario: kube_proxy_ipvs_external
+  initVersion: v1.35
+  infrastructures:
+    - name: aws_default
 
 ####################
 # CONFORMANCE TEST #
 ####################
 
 - scenario: conformance_containerd_external
-  initVersion: v1.32
-  infrastructures:
-    - name: aws_long_timeout_default
-
-- scenario: conformance_containerd_external
   initVersion: v1.33
   infrastructures:
     - name: aws_long_timeout_default
@@ -360,7 +348,7 @@
   infrastructures:
     - name: aws_long_timeout_default
 
-- scenario: kube_proxy_ipvs_external
-  initVersion: v1.34
+- scenario: conformance_containerd_external
+  initVersion: v1.35
   infrastructures:
-    - name: aws_default
+    - name: aws_long_timeout_default
