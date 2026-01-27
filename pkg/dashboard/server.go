@@ -14,12 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+//go:generate go run github.com/a-h/templ/cmd/templ@v0.3.977 generate
+
 package dashboard
 
 import (
 	"embed"
 	"fmt"
-	"html/template"
 	"net/http"
 	"slices"
 	"time"
@@ -34,9 +35,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
-
-//go:embed index.html
-var indexTemplate string
 
 //go:embed assets/*
 var assetsFS embed.FS
@@ -83,16 +81,11 @@ type nodesResult struct {
 }
 
 func Serve(st *state.State, port int) error {
-	htmlTemplate, err := template.New("mainPage").Parse(indexTemplate)
-	if err != nil {
-		return err
-	}
-
 	if err := kubeconfig.BuildKubernetesClientset(st); err != nil {
 		return err
 	}
 
-	http.Handle("/", dashboardHandler(st, htmlTemplate))
+	http.Handle("/", dashboardHandler(st))
 	http.Handle("/assets/", http.FileServerFS(assetsFS))
 
 	st.Logger.Infoln(fmt.Sprintf("Visit http://localhost:%d to access UI", port))
@@ -115,14 +108,14 @@ func httpHandleError(handler func(http.ResponseWriter, *http.Request) error) htt
 	})
 }
 
-func dashboardHandler(st *state.State, htmlTemplate *template.Template) http.Handler {
-	return httpHandleError(func(wr http.ResponseWriter, _ *http.Request) error {
+func dashboardHandler(st *state.State) http.Handler {
+	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
 		dashboardData, err := getDashboardData(st)
 		if err != nil {
 			return err
 		}
 
-		if err = htmlTemplate.Execute(wr, dashboardData); err != nil {
+		if err = Layout(dashboardData).Render(req.Context(), wr); err != nil {
 			return err
 		}
 
