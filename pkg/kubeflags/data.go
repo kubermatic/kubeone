@@ -16,32 +16,33 @@ limitations under the License.
 
 package kubeflags
 
+// Up to date list of default admission plugins
+// is: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#which-plugins-are-enabled-by-default
+
 var (
-	defaultAdmissionControllersv132 = []string{
-		"NamespaceLifecycle",
-		"LimitRanger",
-		"ServiceAccount",
-		"TaintNodesByCondition",
-		"PodSecurity",
-		"Priority",
-		"DefaultTolerationSeconds",
-		"DefaultStorageClass",
-		"StorageObjectInUseProtection",
-		"PersistentVolumeClaimResize",
-		"RuntimeClass",
+	defaultAdmissionControllersv135 = []string{
 		"CertificateApproval",
 		"CertificateSigning",
-		"ClusterTrustBundleAttest",
 		"CertificateSubjectRestriction",
 		"DefaultIngressClass",
-		"MutatingAdmissionPolicy",
+		"DefaultStorageClass",
+		"DefaultTolerationSeconds",
+		"LimitRanger",
 		"MutatingAdmissionWebhook",
+		"NamespaceLifecycle",
+		"PersistentVolumeClaimResize",
+		"PodSecurity",
+		"Priority",
+		"ResourceQuota",
+		"RuntimeClass",
+		"ServiceAccount",
+		"StorageObjectInUseProtection",
+		"TaintNodesByCondition",
 		"ValidatingAdmissionPolicy",
 		"ValidatingAdmissionWebhook",
-		"ResourceQuota",
 	}
 
-	defaultAdmissionControllers = []string{
+	defaultAdmissionControllersPreV135 = []string{
 		"NamespaceLifecycle",
 		"LimitRanger",
 		"ServiceAccount",

@@ -24,14 +24,14 @@ import (
 	"k8c.io/kubeone/pkg/semverutil"
 )
 
-var upToV132Constraint = semverutil.MustParseConstraint("< 1.33.0")
+var isV135Constraint = semverutil.MustParseConstraint(">= 1.35.0")
 
 // DefaultAdmissionControllers return list of default admission controllers for given kubernetes version
 func DefaultAdmissionControllers(v *semver.Version) string {
 	switch {
-	case upToV132Constraint.Check(v):
-		return strings.Join(defaultAdmissionControllersv132, ",")
+	case isV135Constraint.Check(v):
+		return strings.Join(defaultAdmissionControllersv135, ",")
 	default:
-		return strings.Join(defaultAdmissionControllers, ",")
+		return strings.Join(defaultAdmissionControllersPreV135, ",")
 	}
 }

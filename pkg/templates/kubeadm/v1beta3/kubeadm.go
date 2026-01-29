@@ -243,17 +243,6 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 		},
 	}
 
-	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
-		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = cluster.AssetConfiguration.Pause.ImageRepository + "/pause:" + cluster.AssetConfiguration.Pause.ImageTag
-	} else {
-		sandboxImage, serr := cluster.Versions.SandboxImage(cluster.RegistryConfiguration.ImageRegistry)
-		if serr != nil {
-			return nil, serr
-		}
-
-		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = sandboxImage
-	}
-
 	if s.ShouldEnableInTreeCloudProvider() {
 		renderedCloudConfig := "/etc/kubernetes/cloud-config"
 		cloudConfigVol := kubeadmv1beta3.HostPathMount{
@@ -522,17 +511,6 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) (*Config, error
 				UnsafeSkipCAVerification: true,
 			},
 		},
-	}
-
-	if cluster.AssetConfiguration.Pause.ImageRepository != "" {
-		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = cluster.AssetConfiguration.Pause.ImageRepository + "/pause:" + cluster.AssetConfiguration.Pause.ImageTag
-	} else {
-		sandboxImage, serr := cluster.Versions.SandboxImage(s.Cluster.RegistryConfiguration.ImageRegistry)
-		if serr != nil {
-			return nil, serr
-		}
-
-		nodeRegistration.KubeletExtraArgs["pod-infra-container-image"] = sandboxImage
 	}
 
 	if s.ShouldEnableInTreeCloudProvider() {

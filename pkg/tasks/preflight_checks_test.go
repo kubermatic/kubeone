@@ -89,7 +89,7 @@ func TestParseContainerImageVersionInvalid(t *testing.T) {
 		{
 			name:          "docker image with the latest tag",
 			image:         "test/test-image:latest",
-			expectedError: fmt.Errorf("Invalid Semantic Version"),
+			expectedError: fmt.Errorf("invalid semantic version"),
 		},
 		{
 			name:          "gcr.io image without version",
