@@ -32,6 +32,6 @@ func DefaultAdmissionControllers(v *semver.Version) string {
 	case isV135Constraint.Check(v):
 		return strings.Join(defaultAdmissionControllersv135, ",")
 	default:
-		return strings.Join(defaultAdmissionControllers, ",")
+		return strings.Join(defaultAdmissionControllersPreV135, ",")
 	}
 }

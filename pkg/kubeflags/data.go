@@ -42,7 +42,7 @@ var (
 		"ValidatingAdmissionWebhook",
 	}
 
-	defaultAdmissionControllers = []string{
+	defaultAdmissionControllersPreV135 = []string{
 		"NamespaceLifecycle",
 		"LimitRanger",
 		"ServiceAccount",
