@@ -152,7 +152,7 @@ spec:
         - args:
             - --cloud-config=/etc/cloud/cloud-config
             - --cloud-provider=kubevirt
-            - --cluster-name='{{ .Config.Name }}'
+            - --cluster-name={{ .Config.Name }}
           command:
             - /bin/kubevirt-cloud-controller-manager
           image: '{{ .InternalImages.Get "KubeVirtCCM" }}'
