@@ -55,7 +55,7 @@ patches:
                 args:
                   - --cloud-config=/etc/cloud/cloud-config
                   - --cloud-provider=kubevirt
-                  - --cluster-name='{{ .Config.Name }}'
+                  - "--cluster-name={{ .Config.Name }}"
                 volumeMounts:
                   - mountPath: /etc/kubernetes/kubeconfig
                     name: kubeconfig
