@@ -96,6 +96,10 @@ spec:
             {{ end -}}
             - -tls-cert-path=/tmp/cert/cert.pem
             - -tls-key-path=/tmp/cert/key.pem
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
           env:
             - name: HTTPS_PROXY
               value: "{{ .Config.Proxy.HTTPS }}"
