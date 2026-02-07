@@ -1564,7 +1564,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1594,7 +1594,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1624,7 +1624,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1654,7 +1654,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1686,7 +1686,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1718,7 +1718,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1748,7 +1748,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1778,7 +1778,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1808,7 +1808,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1840,7 +1840,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1872,7 +1872,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1904,7 +1904,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1936,7 +1936,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1966,7 +1966,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1996,7 +1996,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2029,7 +2029,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2061,7 +2061,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2091,7 +2091,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2121,7 +2121,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2153,7 +2153,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2185,7 +2185,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2215,7 +2215,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2245,7 +2245,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2275,7 +2275,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2307,7 +2307,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2339,7 +2339,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2369,7 +2369,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2399,7 +2399,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2429,7 +2429,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2461,7 +2461,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2493,7 +2493,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2525,7 +2525,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2557,7 +2557,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2587,7 +2587,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2617,7 +2617,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2650,7 +2650,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2682,7 +2682,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2712,7 +2712,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2742,7 +2742,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2774,7 +2774,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -5770,7 +5770,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -5800,7 +5800,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -5830,7 +5830,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -5862,7 +5862,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -5894,7 +5894,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -5924,7 +5924,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -5954,7 +5954,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -5984,7 +5984,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6016,7 +6016,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6048,7 +6048,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6080,7 +6080,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6112,7 +6112,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6142,7 +6142,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6172,7 +6172,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6205,7 +6205,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6237,7 +6237,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6267,7 +6267,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6297,7 +6297,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6329,7 +6329,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6361,7 +6361,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6391,7 +6391,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6421,7 +6421,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6453,7 +6453,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6485,7 +6485,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6515,7 +6515,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6545,7 +6545,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6575,7 +6575,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6607,7 +6607,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6639,7 +6639,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6671,7 +6671,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6703,7 +6703,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6733,7 +6733,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6763,7 +6763,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6796,7 +6796,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6828,7 +6828,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6858,7 +6858,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6888,7 +6888,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6920,7 +6920,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.11
+  - base_ref: release/v1.12
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
