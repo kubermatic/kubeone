@@ -21,8 +21,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Masterminds/semver/v3"
-
 	"k8c.io/kubeone/pkg/containerruntime"
 	"k8c.io/kubeone/pkg/templates/kubernetesconfigs"
 
@@ -63,6 +61,7 @@ func addDefaultingFuncs(scheme *runtime.Scheme) error {
 
 func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_Hosts(obj)
+	SetDefaults_NodeSet(obj)
 	SetDefaults_CloudProvider(obj)
 	SetDefaults_APIEndpoints(obj)
 	SetDefaults_Versions(obj)
@@ -86,15 +85,8 @@ func SetDefaults_CABundle(obj *KubeOneCluster) {
 }
 
 func SetDefaults_CloudProvider(obj *KubeOneCluster) {
-	gteKube129Condition, _ := semver.NewConstraint(">= 1.29")
-	actualVer, err := semver.NewVersion(obj.Versions.Kubernetes)
-	if err != nil {
-		return
-	}
-
-	// if kubernetes version is 1.29+
-	// and cloud provider is configured
-	if gteKube129Condition.Check(actualVer) && obj.CloudProvider.None == nil {
+	// if cloud provider is configured
+	if obj.CloudProvider.None == nil {
 		// and cloud provider is NOT VMwareCloudDirector and NOT Kubevirt,
 		// to prevent kubelet --cloud-provider=external situation where
 		// there will be no CCM to initialize the Node
@@ -142,6 +134,30 @@ func SetDefaults_Hosts(obj *KubeOneCluster) {
 			obj.StaticWorkers.Hosts[idx].Taints = []corev1.Taint{}
 		}
 	}
+}
+
+func SetDefaults_NodeSet(obj *KubeOneCluster) {
+	for idx := range obj.ControlPlane.NodeSets {
+		setDefaultsNodeSets(&obj.ControlPlane.NodeSets[idx])
+	}
+}
+
+func setDefaultsNodeSets(ns *NodeSet) {
+	if ns.Replicas == 0 {
+		ns.Replicas = 1
+	}
+
+	if ns.NodeSettings.Taints == nil {
+		ns.NodeSettings.Taints = append(ns.NodeSettings.Taints, corev1.Taint{
+			Effect: corev1.TaintEffectNoSchedule,
+			Key:    "node-role.kubernetes.io/control-plane",
+		})
+	}
+
+	ns.SSH.Port = defaults(ns.SSH.Port, 22)
+	ns.SSH.BastionPort = defaults(ns.SSH.BastionPort, 22)
+	ns.SSH.Username = defaults(ns.SSH.Username, "root")
+	ns.SSH.BastionUser = defaults(ns.SSH.BastionUser, "root")
 }
 
 func SetDefaults_APIEndpoints(obj *KubeOneCluster) {

@@ -378,6 +378,43 @@ type HostConfig struct {
 type ControlPlaneConfig struct {
 	// Hosts array of all control plane hosts.
 	Hosts []HostConfig `json:"hosts"`
+
+	NodeSets []NodeSet `json:"nodeSets"`
+}
+
+type NodeSet struct {
+	Name                string              `json:"name"`
+	Replicas            int                 `json:"replicas"`
+	Generation          int                 `json:"generation,omitempty"`
+	NodeSettings        NodeSettingsSpec    `json:"nodeSettings,omitempty"`
+	OperatingSystem     OperatingSystemName `json:"operatingSystem"`
+	OperatingSystemSpec OperatingSystemSpec `json:"operatingSystemSpec,omitempty"`
+	SSH                 SSHSpec             `json:"ssh"`
+	CloudProviderSpec   json.RawMessage     `json:"cloudProviderSpec"`
+}
+
+type NodeSettingsSpec struct {
+	Labels      map[string]string `json:"labels,omitempty"`
+	Annotations map[string]string `json:"annotations,omitempty"`
+	Taints      []corev1.Taint    `json:"taints,omitempty"`
+}
+
+type OperatingSystemSpec struct {
+	DistUpgradeOnBoot bool `json:"distUpgradeOnBoot,omitempty"`
+}
+
+type SSHSpec struct {
+	PublicKeys           []string `json:"publicKeys,omitempty"`
+	Port                 int      `json:"port,omitempty"`
+	Username             string   `json:"username,omitempty"`
+	PrivateKeyFile       string   `json:"privateKeyFile,omitempty"`
+	CertFile             string   `json:"certFile,omitempty"`
+	HostPublicKey        []byte   `json:"hostPublicKey,omitempty"`
+	AgentSocket          string   `json:"agentSocket,omitempty"`
+	Bastion              string   `json:"bastion,omitempty"`
+	BastionPort          int      `json:"bastionPort,omitempty"`
+	BastionUser          string   `json:"bastionUser,omitempty"`
+	BastionHostPublicKey []byte   `json:"bastionHostPublicKey,omitempty"`
 }
 
 // StaticWorkersConfig defines static worker nodes provisioned by KubeOne and kubeadm
@@ -509,6 +546,33 @@ type GCESpec struct{}
 type HetznerSpec struct {
 	// NetworkID
 	NetworkID string `json:"networkID,omitempty"`
+
+	// ControlPlane configures
+	ControlPlane *HetznerControlPlane `json:"controlPlane,omitempty"`
+}
+
+// HetznerControlPlane control plane config on Hetzner
+type HetznerControlPlane struct {
+	// LoadBalancer config of a loadbalancer
+	LoadBalancer HetznerLoadBalancer `json:"loadBalancer"`
+}
+
+// HetznerLoadBalancer loadbalancer definition to create for kubeapi-server endpoint
+type HetznerLoadBalancer struct {
+	// Name of the loadbalancer to create. Default: "<CLUSTER_NAME>-kubeapi"
+	Name string `json:"name,omitempty"`
+
+	// Type of the loadbalancer to create. Default: "lb11"
+	Type string `json:"type,omitempty"`
+
+	// Location of the loadbalancer to create. Default: "nbg1"
+	Location string `json:"location,omitempty"`
+
+	// PublicIP indicates whether the loadbalancer should have a public IP assigned. Default: true
+	PublicIP *bool `json:"publicIP,omitempty"`
+
+	// Labels to be applied to the loadbalancer
+	Labels map[string]string `json:"labels,omitempty"`
 }
 
 // KubevirtSpec defines the Kubevirt provider
