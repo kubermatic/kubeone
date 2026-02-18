@@ -39,7 +39,7 @@ type Runner struct {
 }
 
 // TemplateVariables is a render context for templates
-type TemplateVariables map[string]interface{}
+type TemplateVariables map[string]any
 
 func (r *Runner) NewFS() executor.MkdirFS {
 	return executorfs.New(r.Executor)

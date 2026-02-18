@@ -362,7 +362,7 @@ func ValidateKubernetesSupport(c kubeoneapi.KubeOneCluster, fldPath *field.Path)
 func ValidateContainerRuntimeConfig(cr kubeoneapi.ContainerRuntimeConfig, _ kubeoneapi.VersionConfig, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	allCRs := []interface{}{
+	allCRs := []any{
 		cr.Containerd,
 	}
 

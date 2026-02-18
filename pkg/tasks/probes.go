@@ -310,7 +310,7 @@ func safeguardFlatcarMachineDeployments(s *state.State) error {
 		// KubeOne 1.4 has been using cloud-init for Flatcar, but it doesn't work
 		// with OSM, so users have to switch to Ignition.
 		if providerConfig.OperatingSystem == providerconfigtypes.OperatingSystemFlatcar {
-			var osConfig map[string]interface{}
+			var osConfig map[string]any
 			if err := json.Unmarshal(providerConfig.OperatingSystemSpec.Raw, &osConfig); err != nil {
 				return fail.RuntimeError{
 					Err: err,
@@ -718,8 +718,8 @@ func systemdUnitExecStartPath(conn executor.Interface, unitName string) (string,
 		return "", err
 	}
 
-	lines := strings.Split(out, " ")
-	for _, line := range lines {
+	lines := strings.SplitSeq(out, " ")
+	for line := range lines {
 		if strings.HasPrefix(line, "path=") {
 			pathSplit := strings.Split(line, "=")
 			if len(pathSplit) == 2 {

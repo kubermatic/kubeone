@@ -371,7 +371,8 @@ func credentialsHash(s *state.State, credsType credentials.Type) (string, error)
 		return "", err
 	}
 
-	hash := fmt.Sprintf("kubeone-%s", s.Cluster.CloudProvider.CloudProviderName())
+	var hash strings.Builder
+	fmt.Fprintf(&hash, "kubeone-%s", s.Cluster.CloudProvider.CloudProviderName())
 
 	keys := make([]string, 0, len(creds))
 	for k := range creds {
@@ -380,11 +381,11 @@ func credentialsHash(s *state.State, credsType credentials.Type) (string, error)
 	sort.Strings(keys)
 
 	for _, k := range keys {
-		hash += fmt.Sprintf("%s%s", k, creds[k])
+		fmt.Fprintf(&hash, "%s%s", k, creds[k])
 	}
 
 	h := sha256.New()
-	h.Write([]byte(hash))
+	h.Write([]byte(hash.String()))
 
 	return hex.EncodeToString(h.Sum(nil)), nil
 }

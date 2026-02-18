@@ -374,7 +374,7 @@ func txtFuncMap(overwriteRegistry string) template.FuncMap {
 	return funcs
 }
 
-func requiredTemplateFunc(warn string, input interface{}) (interface{}, error) {
+func requiredTemplateFunc(warn string, input any) (any, error) {
 	switch val := input.(type) {
 	case nil:
 		return val, errors.New(warn)

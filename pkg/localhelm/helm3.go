@@ -298,7 +298,7 @@ func upgradeRelease(
 	helmSettings *helmcli.EnvSettings,
 	providers getter.Providers,
 	dynclient ctrlruntimeclient.Client,
-	vals map[string]interface{},
+	vals map[string]any,
 	existingHelmReleases []*helmrelease.Release,
 	logger logrus.FieldLogger,
 ) error {
@@ -380,7 +380,7 @@ func installRelease(
 	helmSettings *helmcli.EnvSettings,
 	providers getter.Providers,
 	dynclient ctrlruntimeclient.Client,
-	vals map[string]interface{},
+	vals map[string]any,
 	logger logrus.FieldLogger,
 ) error {
 	logger.Infof("Deploying helm chart %s as release %s", release.Chart, release.ReleaseName)
@@ -404,7 +404,7 @@ func runInstallRelease(
 	client *helmaction.Install,
 	helmSettings *helmcli.EnvSettings,
 	providers getter.Providers,
-	vals map[string]interface{},
+	vals map[string]any,
 ) (*helmrelease.Release, error) {
 	chartRequested, err := getChart(release, client.ChartPathOptions, helmSettings, providers)
 	if err != nil {

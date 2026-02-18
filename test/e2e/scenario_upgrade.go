@@ -305,7 +305,7 @@ func (scenario *scenarioUpgrade) upgradeMachineDeployments(t *testing.T, client 
 		// KubeOne 1.4 has been using cloud-init for Flatcar, but it doesn't work
 		// with OSM, so we have to switch to Ignition.
 		if providerConfig.OperatingSystem == providerconfigtypes.OperatingSystemFlatcar {
-			var osConfig map[string]interface{}
+			var osConfig map[string]any
 			if err := json.Unmarshal(providerConfig.OperatingSystemSpec.Raw, &osConfig); err != nil {
 				t.Fatalf("decoding operating system config: %v", err)
 			}

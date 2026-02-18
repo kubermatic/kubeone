@@ -25,7 +25,7 @@ import (
 	"k8c.io/kubeone/pkg/templates/machinecontroller"
 )
 
-func unmarshalStrict(buf []byte, obj interface{}) error {
+func unmarshalStrict(buf []byte, obj any) error {
 	dec := json.NewDecoder(bytes.NewReader(buf))
 	dec.DisallowUnknownFields()
 

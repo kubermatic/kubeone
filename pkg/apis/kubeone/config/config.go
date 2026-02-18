@@ -349,7 +349,7 @@ func setRegistriesAuth(cluster *kubeoneapi.KubeOneCluster, buf string) error {
 		}
 	}
 
-	containerdConfigKind := reflect.TypeOf(registriesAuth.ContainerRuntimeContainerd).Name()
+	containerdConfigKind := reflect.TypeFor[kubeonev1beta2.ContainerRuntimeContainerd]().Name()
 	if registriesAuth.Kind != containerdConfigKind {
 		return fail.ConfigError{
 			Op:  "registriesAuth kind checking",

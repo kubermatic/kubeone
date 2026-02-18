@@ -117,7 +117,7 @@ func marshalKubeletFlags(kubeletflags map[string]string) []byte {
 
 	sort.Strings(kvpairs)
 
-	return []byte(fmt.Sprintf(`%s="%s"`, kubeletKubeadmArgsEnv, strings.Join(kvpairs, " ")))
+	return fmt.Appendf(nil, `%s="%s"`, kubeletKubeadmArgsEnv, strings.Join(kvpairs, " "))
 }
 
 func unmarshalKubeletConfig(configBytes []byte) (*kubeletconfigv1beta1.KubeletConfiguration, error) {

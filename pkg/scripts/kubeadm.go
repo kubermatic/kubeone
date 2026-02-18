@@ -130,7 +130,7 @@ func KubeadmReset(verboseFlag, workdir string) (string, error) {
 }
 
 func KubeadmUpgrade(kubeadmCmd, workdir string, leader bool, nodeID int) (string, error) {
-	result, err := Render(kubeadmUpgradeScriptTemplate, map[string]interface{}{
+	result, err := Render(kubeadmUpgradeScriptTemplate, map[string]any{
 		"KUBEADM_UPGRADE": kubeadmCmd,
 		"WORK_DIR":        workdir,
 		"NODE_ID":         nodeID,
@@ -141,7 +141,7 @@ func KubeadmUpgrade(kubeadmCmd, workdir string, leader bool, nodeID int) (string
 }
 
 func KubeadmPauseImageVersion(kubernetesVersion string) (string, error) {
-	result, err := Render(kubeadmPauseImageVersionScriptTemplate, map[string]interface{}{
+	result, err := Render(kubeadmPauseImageVersionScriptTemplate, map[string]any{
 		"KUBERNETES_VERSION": kubernetesVersion,
 	})
 

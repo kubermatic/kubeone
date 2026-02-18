@@ -103,7 +103,7 @@ type hostsSpec struct {
 	BastionUser           string            `json:"bastion_user"`
 	BastionHostKey        []byte            `json:"bastion_host_key"`
 	BastionPrivateKeyFile string            `json:"bastion_private_key_file"`
-	Kubelet               kubeletSpec       `json:"kubelet,omitempty"`
+	Kubelet               kubeletSpec       `json:"kubelet"`
 	Labels                map[string]string `json:"labels"`
 	Annotations           map[string]string `json:"annotations"`
 }
@@ -115,8 +115,8 @@ type kubeletSpec struct {
 	MaxPods                     *int32          `json:"max_pods,omitempty"`
 	ImageGCHighThresholdPercent *int32          `json:"image_gc_high_threshold_percent,omitempty"`
 	ImageGCLowThresholdPercent  *int32          `json:"image_gc_low_threshold_percent,omitempty"`
-	ImageMinimumGCAge           metav1.Duration `json:"image_minimum_gc_age,omitempty"`
-	ImageMaximumGCAge           metav1.Duration `json:"image_maximum_gc_age,omitempty"`
+	ImageMinimumGCAge           metav1.Duration `json:"image_minimum_gc_age"`
+	ImageMaximumGCAge           metav1.Duration `json:"image_maximum_gc_age"`
 }
 
 type hostConfigsOpts func([]kubeonev1beta2.HostConfig)
@@ -191,16 +191,16 @@ func (hs *hostsSpec) toHostConfigs(opts ...hostConfigsOpts) []kubeonev1beta2.Hos
 
 type cloudProviderFlags struct {
 	key   string
-	value interface{}
+	value any
 }
 
 // NewConfigFromJSON creates a new config object from json
 func NewConfigFromJSON(buf []byte) (*Config, error) {
 	wholeTFOutput := struct {
-		KubeoneAPI           interface{} `json:"kubeone_api"`
-		KubeoneHosts         interface{} `json:"kubeone_hosts"`
-		KubeoneWorkers       interface{} `json:"kubeone_workers"`
-		KubeoneStaticWorkers interface{} `json:"kubeone_static_workers"`
+		KubeoneAPI           any `json:"kubeone_api"`
+		KubeoneHosts         any `json:"kubeone_hosts"`
+		KubeoneWorkers       any `json:"kubeone_workers"`
+		KubeoneStaticWorkers any `json:"kubeone_static_workers"`
 	}{}
 
 	// cat off all the excessive fields from the terraform output JSON that will prevent otherwise strict unmarshalling
@@ -393,7 +393,7 @@ func newHostConfig(publicIP, privateIP string, ipv6addr []string, idx int, spec 
 	return hostConfig
 }
 
-func setWorkersetFlag(w *kubeonev1beta2.DynamicWorkerConfig, name string, value interface{}) error {
+func setWorkersetFlag(w *kubeonev1beta2.DynamicWorkerConfig, name string, value any) error {
 	// ignore empty values (i.e. not set in terraform output)
 	switch s := value.(type) {
 	case int:
@@ -440,7 +440,7 @@ func setWorkersetFlag(w *kubeonev1beta2.DynamicWorkerConfig, name string, value 
 
 	// update CloudProviderSpec ONLY IF given terraform output is absent in
 	// original CloudProviderSpec
-	jsonSpec := make(map[string]interface{})
+	jsonSpec := make(map[string]any)
 	if w.Config.CloudProviderSpec != nil {
 		if err := json.Unmarshal(w.Config.CloudProviderSpec, &jsonSpec); err != nil {
 			return fail.Config(err, "reading CloudProviderSpec")

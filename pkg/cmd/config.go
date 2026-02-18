@@ -434,7 +434,7 @@ func parseControlPlaneHosts(cfg *yamled.Document, hostList string) error {
 	hosts := strings.Split(hostList, " ")
 	for i, host := range hosts {
 		fields := strings.Split(host, ",")
-		h := make(map[string]interface{})
+		h := make(map[string]any)
 
 		for _, field := range fields {
 			val := strings.Split(field, ":")
@@ -505,7 +505,7 @@ func runGenerateMachineDeployments(opts *globalOptions) error {
 	return nil
 }
 
-func validateAndPrintConfig(cfgYaml interface{}) error {
+func validateAndPrintConfig(cfgYaml any) error {
 	// Validate new config by unmarshaling
 	var buffer bytes.Buffer
 

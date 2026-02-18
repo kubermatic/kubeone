@@ -19,6 +19,7 @@ package tasks
 import (
 	"context"
 	"fmt"
+	"maps"
 	"strconv"
 	"strings"
 	"time"
@@ -236,9 +237,7 @@ func ccmMigrationUpdateKubeletConfigFile(s *state.State) error {
 			if fgErr != nil {
 				return nil, fgErr
 			}
-			for k, v := range featureGates {
-				kubeletConfig.FeatureGates[k] = v
-			}
+			maps.Copy(kubeletConfig.FeatureGates, featureGates)
 		}
 
 		return marshalKubeletConfig(kubeletConfig)

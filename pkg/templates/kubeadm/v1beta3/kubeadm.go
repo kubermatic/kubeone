@@ -18,6 +18,7 @@ package v1beta3
 
 import (
 	"fmt"
+	"maps"
 	"net"
 	"path/filepath"
 	"strconv"
@@ -439,9 +440,7 @@ func addControlPlaneComponentsAdditionalArgs(cluster *kubeoneapi.KubeOneCluster,
 	if cluster.ControlPlaneComponents != nil {
 		if cluster.ControlPlaneComponents.ControllerManager != nil {
 			if cluster.ControlPlaneComponents.ControllerManager.Flags != nil {
-				for k, v := range cluster.ControlPlaneComponents.ControllerManager.Flags {
-					clusterCfg.ControllerManager.ExtraArgs[k] = v
-				}
+				maps.Copy(clusterCfg.ControllerManager.ExtraArgs, cluster.ControlPlaneComponents.ControllerManager.Flags)
 			}
 			if cluster.ControlPlaneComponents.ControllerManager.FeatureGates != nil {
 				clusterCfg.ControllerManager.ExtraArgs["feature-gates"] = mergeFeatureGates(clusterCfg.ControllerManager.ExtraArgs["feature-gates"], cluster.ControlPlaneComponents.ControllerManager.FeatureGates)
@@ -449,9 +448,7 @@ func addControlPlaneComponentsAdditionalArgs(cluster *kubeoneapi.KubeOneCluster,
 		}
 		if cluster.ControlPlaneComponents.Scheduler != nil {
 			if cluster.ControlPlaneComponents.Scheduler.Flags != nil {
-				for k, v := range cluster.ControlPlaneComponents.Scheduler.Flags {
-					clusterCfg.Scheduler.ExtraArgs[k] = v
-				}
+				maps.Copy(clusterCfg.Scheduler.ExtraArgs, cluster.ControlPlaneComponents.Scheduler.Flags)
 			}
 			if cluster.ControlPlaneComponents.Scheduler.FeatureGates != nil {
 				clusterCfg.Scheduler.ExtraArgs["feature-gates"] = mergeFeatureGates(clusterCfg.Scheduler.ExtraArgs["feature-gates"], cluster.ControlPlaneComponents.Scheduler.FeatureGates)
@@ -459,9 +456,7 @@ func addControlPlaneComponentsAdditionalArgs(cluster *kubeoneapi.KubeOneCluster,
 		}
 		if cluster.ControlPlaneComponents.APIServer != nil {
 			if cluster.ControlPlaneComponents.APIServer.Flags != nil {
-				for k, v := range cluster.ControlPlaneComponents.APIServer.Flags {
-					clusterCfg.APIServer.ExtraArgs[k] = v
-				}
+				maps.Copy(clusterCfg.APIServer.ExtraArgs, cluster.ControlPlaneComponents.APIServer.Flags)
 			}
 			if cluster.ControlPlaneComponents.APIServer.FeatureGates != nil {
 				clusterCfg.APIServer.ExtraArgs["feature-gates"] = mergeFeatureGates(clusterCfg.APIServer.ExtraArgs["feature-gates"], cluster.ControlPlaneComponents.APIServer.FeatureGates)
@@ -641,8 +636,8 @@ func defaults(input, defaultValue string) string {
 
 func mergeFeatureGates(featureGates string, additionalFeatureGates map[string]bool) string {
 	featureGatesMap := make(map[string]bool)
-	featureGatesArr := strings.Split(featureGates, ",")
-	for _, fg := range featureGatesArr {
+	featureGatesArr := strings.SplitSeq(featureGates, ",")
+	for fg := range featureGatesArr {
 		kv := strings.Split(fg, "=")
 		if len(kv) == 2 {
 			key := strings.TrimSpace(kv[0])
@@ -656,9 +651,7 @@ func mergeFeatureGates(featureGates string, additionalFeatureGates map[string]bo
 		}
 	}
 
-	for k, v := range additionalFeatureGates {
-		featureGatesMap[k] = v
-	}
+	maps.Copy(featureGatesMap, additionalFeatureGates)
 
 	featureGatesKeys := sets.List(sets.KeySet(featureGatesMap))
 

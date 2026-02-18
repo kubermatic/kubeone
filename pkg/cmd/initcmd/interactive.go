@@ -18,6 +18,7 @@ package initcmd
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/MakeNowJust/heredoc/v2"
@@ -31,7 +32,7 @@ type interactiveOpts struct {
 	addonBackups          *modelAddonBackups
 	generateTerraform     bool
 	terraformVars         *modelTerraformVars
-	terraformProviderVars map[string]interface{}
+	terraformProviderVars map[string]any
 }
 
 func newInteractiveOpts() *interactiveOpts {
@@ -42,7 +43,7 @@ func newInteractiveOpts() *interactiveOpts {
 		addonBackups:          &modelAddonBackups{},
 		generateTerraform:     false,
 		terraformVars:         &modelTerraformVars{},
-		terraformProviderVars: map[string]interface{}{},
+		terraformProviderVars: map[string]any{},
 	}
 }
 
@@ -56,25 +57,25 @@ var (
 	At the end of this walkthrough, you'll have:
 	    - KubeOneCluster manifest ('kubeone.yaml') that instructs KubeOne how to provision your cluster
 	    - Terraform configurations that can be used to create the infrastructure needed for your cluster
-	
+
 	You'll be asked to provide some basic information about your desired cluster. Depending on your answers, you might be asked some follow-up questions for additional parameters.
 
 	Note: you can't get back to previous question, but you can modify the generated files before provisioning the cluster.
-	
+
 	Help is provided for some questions by typing in '?'. You can cancel this walkthrough any time by pressing CTRL+C.
 	`)
 
 	messageAddonAutoscaler = heredoc.Doc(`
 
 	The selected cluster-autoscaler addon requires additional configuration.
-	
+
 	You need to provide the minimum and the maximum number of worker nodes. Those values must be positive integers. Provided values can be changed anytime by modifying the 'terraform.tfvars' file before provisioning the cluster or by modifying MachineDeployment object in the kube-system namespace after provisioning the cluster.
 	`)
 
 	messageAddonBackups = heredoc.Doc(`
-		
+
 	The selected backups-restic addon requires additional configuration.
-	
+
 	You'll be asked to provide a path to the bucket for storing backups. If you don't have a bucket, you can leave this question empty and provide it manually by modifying the generated 'kubeone.yaml' file. The default AWS region doesn't have to be provided if the provided bucket is not an AWS S3 bucket. All values can be changed by modifying the generated 'kubeone.yaml' file.
 	`)
 
@@ -83,15 +84,15 @@ var (
 	The next step is to decide how do you want to manage your infrastructure. The infrastructure in this case is virtual machines for the Kubernetes control plane and other resources needed for Kubernetes to function properly (e.g. VPCs, Firewalls, Load Balancers...).
 
 	Note: the worker nodes are managed by machine-controller component which is deployed by KubeOne. Worker nodes are defined in 'output.tf' in the 'kubeone_workers' section.
-	
+
 	There are two options:
 	    - Manage infrastructure using Terraform
 	    - Manage infrastructure manually or using some other tool
-	
+
 	KubeOne provides:
 	    - Example Terraform configs for all supported providers that can be used to manage the needed infrastructure
 	    - Terraform integration in a way that KubeOne can read exported Terraform state to determine information about the infrastructure
-	
+
 	Using provided example Terraform configs is recommended for getting started with KubeOne. Terraform integration can be used with any other Terraform configs, but in this case, the 'output.tf' file must follow the structure mandated by KubeOne.
 
 	If you don't want to use Terraform, you can manually extend your generated KubeOneCluster manifest ('kubeone.yaml') with information about your infrastructure.
@@ -121,7 +122,7 @@ func InitInteractive(defaultKubeVersion string) (*GenerateOpts, error) {
 	}
 
 	var autoscaler bool
-	if sliceIncludes(iOpts.addons, addonClusterAutoscaler) {
+	if slices.Contains(iOpts.addons, addonClusterAutoscaler) {
 		fmt.Println(messageAddonAutoscaler)
 
 		if err := survey.Ask(questionsAddonAutoscaler, iOpts.addonAutoscaler); err != nil {
@@ -131,7 +132,7 @@ func InitInteractive(defaultKubeVersion string) (*GenerateOpts, error) {
 		autoscaler = true
 	}
 
-	if sliceIncludes(iOpts.addons, addonBackupsRestic) {
+	if slices.Contains(iOpts.addons, addonBackupsRestic) {
 		fmt.Println(messageAddonBackups)
 
 		if err := survey.Ask(questionsAddonBackups, iOpts.addonBackups); err != nil {
@@ -192,15 +193,15 @@ func (opts *interactiveOpts) parseInteractiveOpts() (*GenerateOpts, error) {
 	}
 
 	// Features
-	if sliceIncludes(opts.cluster.Features, featureEncryption) {
+	if slices.Contains(opts.cluster.Features, featureEncryption) {
 		gOpts.enableFeatureEncryption = true
 	}
-	if sliceIncludes(opts.cluster.Features, featureCoreDNSPDB) {
+	if slices.Contains(opts.cluster.Features, featureCoreDNSPDB) {
 		gOpts.enableFeatureCoreDNSPDB = true
 	}
 
 	// Addons
-	if sliceIncludes(opts.addons, addonClusterAutoscaler) {
+	if slices.Contains(opts.addons, addonClusterAutoscaler) {
 		gOpts.enableAddonAutoscaler = true
 		gOpts.terraformVars[tfvarName(opts.addonAutoscaler, "MinReplicas")] = opts.addonAutoscaler.MinReplicas
 		gOpts.terraformVars[tfvarName(opts.addonAutoscaler, "MaxReplicas")] = opts.addonAutoscaler.MaxReplicas
@@ -208,7 +209,7 @@ func (opts *interactiveOpts) parseInteractiveOpts() (*GenerateOpts, error) {
 		// We don't ask for number of worker nodes if cluster-autoscaler is enabled, instead we take minimum replicas
 		opts.terraformVars.WorkerNodesCount = opts.addonAutoscaler.MinReplicas
 	}
-	if sliceIncludes(opts.addons, addonBackupsRestic) {
+	if slices.Contains(opts.addons, addonBackupsRestic) {
 		gOpts.enableAddonBackups = true
 		gOpts.addonBackupsPassword = opts.addonBackups.ResticPassword
 		gOpts.addonBackupsS3Bucket = opts.addonBackups.S3Bucket

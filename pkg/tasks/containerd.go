@@ -19,6 +19,7 @@ package tasks
 import (
 	"context"
 	"fmt"
+	"maps"
 	"time"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -94,9 +95,7 @@ func migrateToContainerdTask(s *state.State, node *kubeoneapi.HostConfig, _ exec
 		delete(kubeletFlags, networkPluginFlag)
 		delete(kubeletFlags, containerRuntimeFlag)
 
-		for k, v := range containerdKubeletFlags {
-			kubeletFlags[k] = v
-		}
+		maps.Copy(kubeletFlags, containerdKubeletFlags)
 
 		buf := marshalKubeletFlags(kubeletFlags)
 
