@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2025-12-10T15:13:37+02:00
+date = 2026-02-23T21:01:35+01:00
 weight = 11
 +++
 ## v1beta2
@@ -173,6 +173,7 @@ CiliumSpec defines the Cilium CNI plugin
 | ----- | ----------- | ------ | -------- |
 | kubeProxyReplacement | KubeProxyReplacement defines weather cilium relies on underlying Kernel support to replace kube-proxy functionality by eBPF (strict), or disables a subset of those features so cilium does not bail out if the kernel support is missing (disabled). default is \"disabled\" | KubeProxyReplacementType | true |
 | enableHubble | EnableHubble to deploy Hubble relay and UI default value is false | bool | true |
+| enableL2Announcements | EnableL2Announcements enables the Layer 2 announcement feature for the Cilium CNI plugin. If not set, Cilium will use its default behavior. | bool | true |
 
 [Back to Group](#v1beta2)
 

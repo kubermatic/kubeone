@@ -67,6 +67,9 @@ data:
 {{ end }}
   enable-k8s-networkpolicy: "true"
   enable-k8s-terminating-endpoint: "true"
+{{ if .Config.ClusterNetwork.CNI.Cilium.EnableL2Announcements }}
+  enable-l2-announcements: "true"
+{{ end }}
   enable-l2-neigh-discovery: "true"
   enable-l7-proxy: "true"
   enable-local-redirect-policy: "false"

@@ -688,6 +688,10 @@ type CiliumSpec struct {
 	// EnableHubble to deploy Hubble relay and UI
 	// default value is false
 	EnableHubble bool `json:"enableHubble"`
+
+	// EnableL2Announcements enables the Layer 2 announcement feature for the Cilium CNI plugin.
+	// If not set, Cilium will use its default behavior.
+	EnableL2Announcements bool `json:"enableL2Announcements"`
 }
 
 // WeaveNetSpec defines the WeaveNet CNI plugin

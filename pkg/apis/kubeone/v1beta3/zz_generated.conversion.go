@@ -973,12 +973,14 @@ func Convert_kubeone_CertificateAuthorithyConfig_To_v1beta3_CertificateAuthorith
 func autoConvert_v1beta3_CiliumSpec_To_kubeone_CiliumSpec(in *CiliumSpec, out *kubeone.CiliumSpec, s conversion.Scope) error {
 	out.KubeProxyReplacement = in.KubeProxyReplacement
 	out.EnableHubble = in.EnableHubble
+	out.EnableL2Announcements = in.EnableL2Announcements
 	return nil
 }
 
 func autoConvert_kubeone_CiliumSpec_To_v1beta3_CiliumSpec(in *kubeone.CiliumSpec, out *CiliumSpec, s conversion.Scope) error {
 	// INFO: in.KubeProxyReplacement opted out of conversion generation
 	out.EnableHubble = in.EnableHubble
+	out.EnableL2Announcements = in.EnableL2Announcements
 	return nil
 }
 
