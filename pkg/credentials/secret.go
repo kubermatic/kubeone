@@ -19,7 +19,7 @@ package credentials
 import (
 	"context"
 	"fmt"
-	"sort"
+	"slices"
 	"strings"
 	"text/template"
 
@@ -175,9 +175,7 @@ func EnvVarBindings(secretName string, creds map[string]string) []corev1.EnvVar 
 		credsKeys = append(credsKeys, k)
 	}
 
-	sort.Slice(credsKeys, func(i, j int) bool {
-		return credsKeys[i] < credsKeys[j]
-	})
+	slices.Sort(credsKeys)
 
 	for _, key := range credsKeys {
 		envVars = append(envVars, corev1.EnvVar{

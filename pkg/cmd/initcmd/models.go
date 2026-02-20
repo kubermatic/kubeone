@@ -46,7 +46,7 @@ type modelTerraformVars struct {
 	WorkerNodesCount  string `tfvar:"initial_machinedeployment_replicas"`
 }
 
-func tfvarName(obj interface{}, fieldName string) string {
+func tfvarName(obj any, fieldName string) string {
 	elem := reflect.TypeOf(obj).Elem()
 	field, ok := elem.FieldByName(fieldName)
 	if !ok {

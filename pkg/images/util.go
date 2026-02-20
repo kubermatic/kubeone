@@ -126,7 +126,7 @@ func getConstantValue(ctx context.Context, version, constant string) (string, er
 	defer resp.Body.Close()
 
 	body, _ := io.ReadAll(resp.Body)
-	for _, line := range strings.Split(string(body), "\n") {
+	for line := range strings.SplitSeq(string(body), "\n") {
 		line = strings.TrimSpace(line)
 		if strings.HasPrefix(line, constant+" =") {
 			return strings.Trim(strings.SplitN(line, "=", 2)[1], `" `), nil

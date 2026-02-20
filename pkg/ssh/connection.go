@@ -201,8 +201,8 @@ func NewConnection(connector *Connector, opts Opts) (executor.Interface, error) 
 	if len(opts.AgentSocket) > 0 {
 		addr := opts.AgentSocket
 
-		if strings.HasPrefix(opts.AgentSocket, socketEnvPrefix) {
-			envName := strings.TrimPrefix(opts.AgentSocket, socketEnvPrefix)
+		if after, ok := strings.CutPrefix(opts.AgentSocket, socketEnvPrefix); ok {
+			envName := after
 
 			if envAddr := os.Getenv(envName); len(envAddr) > 0 {
 				addr = envAddr

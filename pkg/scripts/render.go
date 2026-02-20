@@ -115,10 +115,10 @@ var containerRuntimeTemplates = map[string]string{
 		`),
 }
 
-type Data map[string]interface{}
+type Data map[string]any
 
 // Render text template with given `variables` Render-context
-func Render(cmd string, variables map[string]interface{}) (string, error) {
+func Render(cmd string, variables map[string]any) (string, error) {
 	tpl := template.New("base").
 		Funcs(sprig.TxtFuncMap())
 

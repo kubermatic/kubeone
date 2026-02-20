@@ -18,6 +18,7 @@ package v1beta4
 
 import (
 	"fmt"
+	"maps"
 	"net"
 	"path/filepath"
 	"strconv"
@@ -618,17 +619,15 @@ func defaults(input, defaultValue string) string {
 func mergeFeatureGates(featureGates string, additionalFeatureGates map[string]bool) string {
 	fgs := splitFeatureGates(featureGates)
 
-	for k, v := range additionalFeatureGates {
-		fgs[k] = v
-	}
+	maps.Copy(fgs, additionalFeatureGates)
 
 	return featureGatesToString(fgs)
 }
 
 func splitFeatureGates(featureGates string) map[string]bool {
 	featureGatesMap := make(map[string]bool)
-	featureGatesArr := strings.Split(featureGates, ",")
-	for _, fg := range featureGatesArr {
+	featureGatesArr := strings.SplitSeq(featureGates, ",")
+	for fg := range featureGatesArr {
 		kv := strings.Split(fg, "=")
 		if len(kv) == 2 {
 			key := strings.TrimSpace(kv[0])

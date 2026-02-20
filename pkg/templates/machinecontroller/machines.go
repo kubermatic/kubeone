@@ -197,7 +197,7 @@ func getKubeletConfigurationAnnotations(cluster *kubeoneapi.KubeOneCluster) map[
 	return annotations
 }
 
-func machineSpec(cluster *kubeoneapi.KubeOneCluster, workerset kubeoneapi.DynamicWorkerConfig, provider kubeoneapi.CloudProviderSpec) (map[string]interface{}, error) {
+func machineSpec(cluster *kubeoneapi.KubeOneCluster, workerset kubeoneapi.DynamicWorkerConfig, provider kubeoneapi.CloudProviderSpec) (map[string]any, error) {
 	var err error
 
 	specRaw := workerset.Config.CloudProviderSpec
@@ -227,7 +227,7 @@ func machineSpec(cluster *kubeoneapi.KubeOneCluster, workerset kubeoneapi.Dynami
 		}
 	}
 
-	spec := make(map[string]interface{})
+	spec := make(map[string]any)
 	err = json.Unmarshal(specRaw, &spec)
 	if err != nil {
 		return nil, fail.Runtime(err, "unmarshalling machineSpec")

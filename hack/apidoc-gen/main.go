@@ -138,7 +138,7 @@ func fmtRawFieldDoc(rawDoc string) string {
 	// Ignore all lines after ---
 	rawDoc = strings.Split(rawDoc, "---")[0]
 
-	for _, line := range strings.Split(rawDoc, "\n") {
+	for line := range strings.SplitSeq(rawDoc, "\n") {
 		line = strings.TrimRight(line, " ")
 		leading := strings.TrimLeft(line, " ")
 		switch {
@@ -179,7 +179,7 @@ func fmtRawObjectDoc(rawDoc string) string {
 	// Ignore all lines after ---
 	rawDoc = strings.Split(rawDoc, "---")[0]
 
-	for _, line := range strings.Split(rawDoc, "\n") {
+	for line := range strings.SplitSeq(rawDoc, "\n") {
 		line = strings.TrimRight(line, " ")
 		leading := strings.TrimLeft(line, " ")
 		switch {

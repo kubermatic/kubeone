@@ -102,7 +102,7 @@ func (dr *drainer) drainHelper(ctx context.Context) (*drain.Helper, error) {
 	}, nil
 }
 
-type loggerIoWriter func(format string, args ...interface{})
+type loggerIoWriter func(format string, args ...any)
 
 func (lw loggerIoWriter) Write(p []byte) (n int, err error) {
 	lw("%s", p)

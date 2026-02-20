@@ -123,11 +123,7 @@ func Fetch(s *state.State, preflightChecks bool) ([]NodeStatus, error) {
 	)
 
 	for _, host := range s.Cluster.ControlPlane.Hosts {
-		statusWG.Add(1)
-
-		go func() {
-			defer statusWG.Done()
-
+		statusWG.Go(func() {
 			var (
 				etcdCh      = make(chan bool)
 				apiserverCh = make(chan bool)
@@ -166,7 +162,7 @@ func Fetch(s *state.State, preflightChecks bool) ([]NodeStatus, error) {
 				APIServer: <-apiserverCh,
 			})
 			statusLock.Unlock()
-		}()
+		})
 	}
 
 	statusWG.Wait()

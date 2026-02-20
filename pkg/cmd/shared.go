@@ -102,7 +102,7 @@ func (opts *globalOptions) BuildState() (*state.State, error) {
 	return s, nil
 }
 
-func longFlagName(obj interface{}, fieldName string) string {
+func longFlagName(obj any, fieldName string) string {
 	elem := reflect.TypeOf(obj).Elem()
 	field, ok := elem.FieldByName(fieldName)
 	if !ok {
@@ -112,7 +112,7 @@ func longFlagName(obj interface{}, fieldName string) string {
 	return field.Tag.Get("longflag")
 }
 
-func shortFlagName(obj interface{}, fieldName string) string {
+func shortFlagName(obj any, fieldName string) string {
 	elem := reflect.TypeOf(obj).Elem()
 	field, _ := elem.FieldByName(fieldName)
 

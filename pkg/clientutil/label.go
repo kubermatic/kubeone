@@ -17,6 +17,8 @@ limitations under the License.
 package clientutil
 
 import (
+	"maps"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 )
@@ -31,13 +33,9 @@ func AddLabels(labels map[string]string, objects ...runtime.Object) []runtime.Ob
 		existingLabels := metaobj.GetLabels()
 		copyLabels := map[string]string{}
 
-		for k, v := range existingLabels {
-			copyLabels[k] = v
-		}
+		maps.Copy(copyLabels, existingLabels)
 
-		for k, v := range labels {
-			copyLabels[k] = v
-		}
+		maps.Copy(copyLabels, labels)
 
 		metaobj.SetLabels(copyLabels)
 		objects[i], _ = metaobj.(runtime.Object)

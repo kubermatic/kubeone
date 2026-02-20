@@ -29,9 +29,9 @@ import (
 )
 
 type containerdConfig struct {
-	Version int                    `toml:"version"`
-	Metrics *containerdMetrics     `toml:"metrics"`
-	Plugins map[string]interface{} `toml:"plugins"`
+	Version int                `toml:"version"`
+	Metrics *containerdMetrics `toml:"metrics"`
+	Plugins map[string]any     `toml:"plugins"`
 }
 
 type containerdMetrics struct {
@@ -168,7 +168,7 @@ func marshalContainerdConfig(cluster *kubeoneapi.KubeOneCluster) (string, error)
 			Address: "127.0.0.1:1338",
 		},
 
-		Plugins: map[string]interface{}{
+		Plugins: map[string]any{
 			"io.containerd.grpc.v1.cri": criPlugin,
 		},
 	}

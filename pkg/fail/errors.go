@@ -69,7 +69,7 @@ type SSHError struct {
 func (e SSHError) Error() string {
 	var (
 		format = "ssh: %s\n%s"
-		args   = []interface{}{e.Op, e.Err}
+		args   = []any{e.Op, e.Err}
 	)
 	if e.Cmd != "" {
 		format += "\n%s"
@@ -98,7 +98,7 @@ type ExecError struct {
 func (e ExecError) Error() string {
 	var (
 		format = "exec: %s\n%s"
-		args   = []interface{}{e.Op, e.Err}
+		args   = []any{e.Op, e.Err}
 	)
 	if e.Cmd != "" {
 		format += "\n%s"

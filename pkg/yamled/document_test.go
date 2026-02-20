@@ -378,7 +378,7 @@ func TestRemoveExistingArrayElement(t *testing.T) {
 func TestFillNewRootKey(t *testing.T) {
 	doc, expected := loadTestcase(t, "fill-new-root-key.yaml")
 
-	ok := doc.Fill(nil, map[string]interface{}{
+	ok := doc.Fill(nil, map[string]any{
 		"newKey": "new value",
 	})
 	if !ok {
@@ -402,9 +402,9 @@ func TestFillNewRootKeyByPath(t *testing.T) {
 func TestFillTwoNewRootKeys(t *testing.T) {
 	doc, expected := loadTestcase(t, "fill-two-new-root-keys.yaml")
 
-	ok := doc.Fill(nil, map[string]interface{}{
+	ok := doc.Fill(nil, map[string]any{
 		"newKey": "new value",
-		"anotherKey": map[string]interface{}{
+		"anotherKey": map[string]any{
 			"subKey": 42,
 		},
 	})
@@ -423,7 +423,7 @@ func TestFillTwoNewRootKeys(t *testing.T) {
 func TestFillExistingRootKey(t *testing.T) {
 	doc, expected := loadTestcase(t, "fill-existing-root-key.yaml")
 
-	ok := doc.Fill(nil, map[string]interface{}{
+	ok := doc.Fill(nil, map[string]any{
 		"foo": "this value is ignored",
 	})
 	if !ok {
@@ -447,7 +447,7 @@ func TestFillExistingRootKeyByPath(t *testing.T) {
 func TestFillIntoArray(t *testing.T) {
 	doc, expected := loadTestcase(t, "fill-into-array.yaml")
 
-	ok := doc.Fill(Path{"foo", 1}, map[string]interface{}{
+	ok := doc.Fill(Path{"foo", 1}, map[string]any{
 		"c": 42,
 	})
 	if !ok {
@@ -460,9 +460,9 @@ func TestFillIntoArray(t *testing.T) {
 func TestFillComplex(t *testing.T) {
 	doc, expected := loadTestcase(t, "fill-complex.yaml")
 
-	ok := doc.Fill(Path{"foo", "bar"}, map[string]interface{}{
+	ok := doc.Fill(Path{"foo", "bar"}, map[string]any{
 		"newKey": "new value",
-		"deeper": map[string]interface{}{
+		"deeper": map[string]any{
 			"key":     "this should not overwrite the existing value",
 			"deepest": "new value",
 		},

@@ -39,8 +39,8 @@ type virtfs struct {
 
 func (vfs *virtfs) Open(name string) (fs.File, error) {
 	var hadSlashPrefix bool
-	if strings.HasPrefix(name, "/") {
-		name = strings.TrimPrefix(name, "/")
+	if after, ok := strings.CutPrefix(name, "/"); ok {
+		name = after
 		hadSlashPrefix = true
 	}
 	if !fs.ValidPath(name) {
@@ -197,4 +197,4 @@ func (fi *fileInfo) Name() string { return fi.name }
 
 func (fi *fileInfo) IsDir() bool { return fi.mode.IsDir() }
 
-func (*fileInfo) Sys() interface{} { return nil }
+func (*fileInfo) Sys() any { return nil }

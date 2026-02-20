@@ -27,7 +27,7 @@ func ConfigValidation(err error) error {
 	return Config(err, "validation")
 }
 
-func NewConfigError(op string, format string, args ...interface{}) error {
+func NewConfigError(op string, format string, args ...any) error {
 	return ConfigError{
 		Op:  op,
 		Err: errors.Errorf(format, args...),
@@ -46,7 +46,7 @@ func Config(err error, op string) error {
 }
 
 // SSH is a shortcut to quickly construct SSHError
-func SSH(err error, op string, args ...interface{}) error {
+func SSH(err error, op string, args ...any) error {
 	if err == nil {
 		return nil
 	}
@@ -70,7 +70,7 @@ func Connection(err error, target string) error {
 }
 
 // KubeClient is a shortcut to quickly construct KubeClientError
-func KubeClient(err error, op string, args ...interface{}) error {
+func KubeClient(err error, op string, args ...any) error {
 	if err == nil {
 		return nil
 	}
@@ -90,7 +90,7 @@ func NoKubeClient() error {
 }
 
 // Etcd is a shortcut to quickly construct EtcdError
-func Etcd(err error, op string, args ...interface{}) error {
+func Etcd(err error, op string, args ...any) error {
 	if err == nil {
 		return nil
 	}
@@ -102,7 +102,7 @@ func Etcd(err error, op string, args ...interface{}) error {
 }
 
 // Runtime is a shortcut to quickly construct RuntimeError
-func Runtime(err error, op string, args ...interface{}) error {
+func Runtime(err error, op string, args ...any) error {
 	if err == nil {
 		return nil
 	}
@@ -113,7 +113,7 @@ func Runtime(err error, op string, args ...interface{}) error {
 	}
 }
 
-func NewRuntimeError(op string, format string, args ...interface{}) error {
+func NewRuntimeError(op string, format string, args ...any) error {
 	return RuntimeError{
 		Op:  op,
 		Err: errors.Errorf(format, args...),

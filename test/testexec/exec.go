@@ -45,7 +45,7 @@ func NewExec(command string, opts ...Opt) *Exec {
 }
 
 type Exec struct {
-	Logf    func(string, ...interface{})
+	Logf    func(string, ...any)
 	Args    []string
 	Command string
 	Cwd     string
@@ -166,7 +166,7 @@ func WithDryRun() Opt {
 	}
 }
 
-func LogFunc(logf func(string, ...interface{})) Opt {
+func LogFunc(logf func(string, ...any)) Opt {
 	return func(e *Exec) *Exec {
 		e.Logf = logf
 
@@ -175,7 +175,7 @@ func LogFunc(logf func(string, ...interface{})) Opt {
 }
 
 func DebugTo(w io.Writer) Opt {
-	return LogFunc(func(format string, a ...interface{}) {
+	return LogFunc(func(format string, a ...any) {
 		fmt.Fprintf(w, "\n +"+format+"\n", a...)
 	})
 }

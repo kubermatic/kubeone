@@ -242,7 +242,7 @@ func areFeatureGatesEqual(result, expected string) bool {
 	expectedMap := make(map[string]bool)
 
 	// Parse the result string into a map
-	for _, fg := range strings.Split(result, ",") {
+	for fg := range strings.SplitSeq(result, ",") {
 		kv := strings.Split(fg, "=")
 		if len(kv) == 2 {
 			resultMap[kv[0]] = kv[1] == "true"
@@ -250,7 +250,7 @@ func areFeatureGatesEqual(result, expected string) bool {
 	}
 
 	// Parse the expected string into a map
-	for _, fg := range strings.Split(expected, ",") {
+	for fg := range strings.SplitSeq(expected, ",") {
 		kv := strings.Split(fg, "=")
 		if len(kv) == 2 {
 			expectedMap[kv[0]] = kv[1] == "true"
