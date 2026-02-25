@@ -82,35 +82,6 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
 	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
 	allErrs = append(allErrs, ValidateControlPlaneComponents(c.ControlPlaneComponents, field.NewPath("controlPlaneComponents"))...)
-	allErrs = append(allErrs,
-		ValidateContainerRuntimeVSRegistryConfiguration(
-			c.ContainerRuntime,
-			field.NewPath("containerRuntime"),
-			c.RegistryConfiguration,
-			field.NewPath("registryConfiguration"),
-		)...)
-
-	return allErrs
-}
-
-func ValidateContainerRuntimeVSRegistryConfiguration(
-	cr kubeoneapi.ContainerRuntimeConfig,
-	crFldPath *field.Path,
-	rc *kubeoneapi.RegistryConfiguration,
-	rcFldPath *field.Path,
-) field.ErrorList {
-	allErrs := field.ErrorList{}
-
-	switch {
-	case rc == nil:
-	case cr.Containerd != nil && cr.Containerd.Registries != nil:
-		containerdRegistriesField := crFldPath.Child("containerd", "registries")
-		allErrs = append(allErrs, field.Invalid(
-			containerdRegistriesField,
-			"",
-			fmt.Sprintf("can't have both %s and %s set", rcFldPath.String(), containerdRegistriesField.String()),
-		))
-	}
 
 	return allErrs
 }
