@@ -17,16 +17,22 @@ limitations under the License.
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
-	"text/tabwriter"
+	"reflect"
+	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	clientv3 "go.etcd.io/etcd/client/v3"
 
-	"k8c.io/kubeone/pkg/clusterstatus/etcdstatus"
+	"k8c.io/kubeone/pkg/etcdutil"
+	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/tabwriter"
 )
 
 func etcdOperationsCmd(rootFlags *pflag.FlagSet) *cobra.Command {
@@ -40,6 +46,8 @@ func etcdOperationsCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 
 	cmd.AddCommand(
 		etcdMembersCmd(rootFlags),
+		etcdDisarmCmd(rootFlags),
+		etcdSnapshotCmd(rootFlags),
 	)
 
 	return cmd
@@ -48,6 +56,45 @@ func etcdOperationsCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 type etcdMembersOpts struct {
 	globalOptions
 	OutputFormat string `longflag:"output" shortflag:"o"`
+}
+
+type etcdMember struct {
+	ID         uint64
+	Name       string
+	PeerURLs   []string
+	ClientURLs []string
+	IsLearner  bool
+	Alarms     []string
+}
+
+func (em etcdMember) TableHeader() string {
+	t := reflect.TypeOf(em)
+	headers := make([]string, 0, t.NumField())
+
+	for i := range t.NumField() {
+		headers = append(headers, strings.ToUpper(t.Field(i).Name))
+	}
+
+	return strings.Join(headers, "\t")
+}
+
+func (em etcdMember) TableFormat() string {
+	t := reflect.TypeOf(em)
+	verbs := make([]string, 0, t.NumField())
+
+	for i := range t.NumField() {
+		switch t.Field(i).Type.Kind() { //nolint:exhaustive
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
+			reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			verbs = append(verbs, "%d")
+		case reflect.String:
+			verbs = append(verbs, "%s")
+		default:
+			verbs = append(verbs, "%v")
+		}
+	}
+
+	return strings.Join(verbs, "\t") + "\n"
 }
 
 func etcdMembersCmd(rootFlags *pflag.FlagSet) *cobra.Command {
@@ -70,9 +117,41 @@ func etcdMembersCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 				return err
 			}
 
-			memberList, err := etcdstatus.MemberList(s)
+			etcdcli, err := etcdutil.NewClient(s)
 			if err != nil {
 				return err
+			}
+			defer etcdcli.Close()
+
+			memberList, err := etcdcli.MemberList(s.Context)
+			if err != nil {
+				return err
+			}
+
+			alarmList, err := clientv3.NewMaintenance(etcdcli).AlarmList(s.Context)
+			if err != nil {
+				return fail.Etcd(err, "alarms listing")
+			}
+
+			alarmsByMember := make(map[uint64][]string)
+			for _, a := range alarmList.Alarms {
+				alarmsByMember[a.MemberID] = append(alarmsByMember[a.MemberID], a.Alarm.String())
+			}
+
+			var response []etcdMember
+			for _, m := range memberList.Members {
+				alarms := alarmsByMember[m.ID]
+				if alarms == nil {
+					alarms = []string{}
+				}
+				response = append(response, etcdMember{
+					ID:         m.ID,
+					Name:       m.Name,
+					PeerURLs:   m.PeerURLs,
+					ClientURLs: m.ClientURLs,
+					IsLearner:  m.IsLearner,
+					Alarms:     alarms,
+				})
 			}
 
 			switch opts.OutputFormat {
@@ -80,21 +159,25 @@ func etcdMembersCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 				enc := json.NewEncoder(os.Stdout)
 				enc.SetIndent("", "  ")
 
-				return enc.Encode(memberList.Members)
+				return enc.Encode(response)
 			default:
-				w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
-				fmt.Fprintln(w, "ID\tNAME\tPEER URLS\tCLIENT URLS\tIS LEARNER")
-				for _, m := range memberList.Members {
-					fmt.Fprintf(w, "%d\t%s\t%v\t%v\t%v\n",
+				tab := tabwriter.NewWithPadding(os.Stdout, 2)
+				member := etcdMember{}
+				fmt.Fprintln(tab, member.TableHeader())
+				tableFormat := member.TableFormat()
+
+				for _, m := range response {
+					fmt.Fprintf(tab, tableFormat,
 						m.ID,
 						m.Name,
 						m.PeerURLs,
 						m.ClientURLs,
 						m.IsLearner,
+						m.Alarms,
 					)
 				}
 
-				return w.Flush()
+				return tab.Flush()
 			}
 		},
 	}
@@ -105,6 +188,186 @@ func etcdMembersCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		shortFlagName(opts, "OutputFormat"),
 		"table",
 		"output format (table|json)")
+
+	return cmd
+}
+
+type etcdDisarmOpts struct {
+	globalOptions
+	All bool `longflag:"all"`
+}
+
+func etcdDisarmCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+	opts := &etcdDisarmOpts{}
+
+	cmd := &cobra.Command{
+		Use:           "disarm [member-name]",
+		Short:         "Disarm etcd alarms",
+		Long:          "Disarm all active alarms on a specific etcd member (by name), or on all members with --all.",
+		SilenceErrors: true,
+		Example: heredoc.Doc(`
+			# Disarm alarms on a specific member
+			kubeone etcd disarm master-0 -m mycluster.yaml -t terraformoutput.json
+
+			# Disarm alarms on all members
+			kubeone etcd disarm --all -m mycluster.yaml -t terraformoutput.json
+		`),
+		Args: func(cmd *cobra.Command, args []string) error {
+			allSet, _ := cmd.Flags().GetBool(longFlagName(opts, "All"))
+			if !allSet && len(args) == 0 {
+				return fmt.Errorf("requires a member name argument or --all flag")
+			}
+			if allSet && len(args) > 0 {
+				return fmt.Errorf("--all and a member name are mutually exclusive")
+			}
+			if len(args) > 1 {
+				return fmt.Errorf("accepts at most one member name, got %d", len(args))
+			}
+
+			return nil
+		},
+		RunE: func(_ *cobra.Command, args []string) error {
+			gopts, err := persistentGlobalOptions(rootFlags)
+			if err != nil {
+				return err
+			}
+
+			s, err := gopts.BuildState()
+			if err != nil {
+				return err
+			}
+
+			etcdcli, err := etcdutil.NewClient(s)
+			if err != nil {
+				return err
+			}
+			defer etcdcli.Close()
+
+			maintenance := clientv3.NewMaintenance(etcdcli)
+
+			if opts.All {
+				s.Logger.Infof("Disarming all alarms on all members")
+
+				return disarmAll(s.Context, maintenance)
+			}
+
+			memberName := args[0]
+
+			etcdRing, err := etcdcli.MemberList(s.Context)
+			if err != nil {
+				return fail.Etcd(err, "member listing")
+			}
+
+			var memberID uint64
+			for _, m := range etcdRing.Members {
+				if m.Name == memberName {
+					memberID = m.ID
+
+					break
+				}
+			}
+
+			if memberID == 0 {
+				return fail.Etcd(fmt.Errorf("etcd member %q not found", memberName), "searching memberID")
+			}
+
+			alarmList, err := maintenance.AlarmList(s.Context)
+			if err != nil {
+				return fail.Etcd(err, "alarm listing")
+			}
+
+			disarmed := 0
+			for _, a := range alarmList.Alarms {
+				if a.MemberID != memberID {
+					continue
+				}
+
+				_, err = maintenance.AlarmDisarm(s.Context, (*clientv3.AlarmMember)(a))
+				if err != nil {
+					return fail.Etcd(err, "disarming alarm %s on member %s", a.Alarm, memberName)
+				}
+
+				disarmed++
+			}
+
+			s.Logger.Infof("Disarmed %d alarm(s) on member %q.\n", disarmed, memberName)
+
+			return nil
+		},
+	}
+
+	cmd.Flags().BoolVar(
+		&opts.All,
+		longFlagName(opts, "All"),
+		false,
+		"disarm alarms on all etcd members")
+
+	return cmd
+}
+
+func disarmAll(ctx context.Context, maintenance clientv3.Maintenance) error {
+	_, err := maintenance.AlarmDisarm(ctx, &clientv3.AlarmMember{})
+
+	return fail.Etcd(err, "disarming all members")
+}
+
+func etcdSnapshotCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:           "snapshot <file>",
+		Short:         "Save an etcd snapshot to a file",
+		Long:          "Save a point-in-time snapshot of the etcd cluster to a local file.",
+		SilenceErrors: true,
+		Example:       `kubeone etcd snapshot etcd.db -m mycluster.yaml -t terraformoutput.json`,
+		Args:          cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			gopts, err := persistentGlobalOptions(rootFlags)
+			if err != nil {
+				return err
+			}
+
+			s, err := gopts.BuildState()
+			if err != nil {
+				return err
+			}
+
+			etcdcli, err := etcdutil.NewClient(s)
+			if err != nil {
+				return err
+			}
+			defer etcdcli.Close()
+
+			maintenance := clientv3.NewMaintenance(etcdcli)
+
+			snapshotResp, err := maintenance.SnapshotWithVersion(s.Context)
+			if err != nil {
+				return fail.Etcd(err, "requesting snapshot")
+			}
+			defer snapshotResp.Snapshot.Close()
+
+			outPath := args[0]
+			var output io.WriteCloser
+
+			if outPath == "-" {
+				output = os.Stdout
+			} else {
+				f, errF := os.Create(outPath)
+				if errF != nil {
+					return fail.Runtime(errF, "creating snapshot file %q", outPath)
+				}
+				defer f.Close()
+
+				output = f
+			}
+
+			if _, err = io.Copy(output, snapshotResp.Snapshot); err != nil {
+				return fail.Runtime(err, "writing snapshot to %q", outPath)
+			}
+
+			s.Logger.Infof("Snapshot saved to %q (etcd version: %s).\n", outPath, snapshotResp.Version)
+
+			return output.Close()
+		},
+	}
 
 	return cmd
 }

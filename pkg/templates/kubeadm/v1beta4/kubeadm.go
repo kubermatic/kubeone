@@ -94,7 +94,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 		"ImagePull",
 	}
 
-	etcdArgs := etcdOptionalFlags(s.Cluster.ControlPlaneComponents.Etcd)
+	etcdArgs := etcdOptionalFlags(s.Cluster.ControlPlaneComponents)
 	etcdArgs = append(etcdArgs, etcdVersionCorruptCheckExtraArgs(cluster.TLSCipherSuites.Etcd)...)
 
 	clusterConfig := &kubeadmv1beta4.ClusterConfiguration{
@@ -275,10 +275,11 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 	}, nil
 }
 
-func etcdOptionalFlags(etcdConfig *kubeoneapi.EtcdConfig) []kubeadmv1beta4.Arg {
+func etcdOptionalFlags(cpc *kubeoneapi.ControlPlaneComponents) []kubeadmv1beta4.Arg {
 	var args []kubeadmv1beta4.Arg
 
-	if etcdConfig != nil {
+	if cpc != nil && cpc.Etcd != nil {
+		etcdConfig := cpc.Etcd
 		if etcdConfig.QuotaBackendBytes != 0 {
 			args = append(args, kubeadmv1beta4.Arg{
 				Name:  "quota-backend-bytes",

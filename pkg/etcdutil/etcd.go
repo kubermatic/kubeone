@@ -34,6 +34,21 @@ import (
 	"k8c.io/kubeone/pkg/tunnel"
 )
 
+// NewClient creates a new etcd client using the provided state with all the TLS and tunneling setup.
+func NewClient(s *state.State) (*clientv3.Client, error) {
+	host, err := s.Cluster.Leader()
+	if err != nil {
+		return nil, err
+	}
+
+	config, err := NewClientConfig(s, host)
+	if err != nil {
+		return nil, err
+	}
+
+	return clientv3.New(*config)
+}
+
 // NewClientConfig returns etcd clientv3 Config configured with TLS certificates
 // and tunneled over SSH
 func NewClientConfig(s *state.State, host kubeoneapi.HostConfig) (*clientv3.Config, error) {
