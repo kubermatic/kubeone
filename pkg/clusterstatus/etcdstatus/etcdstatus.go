@@ -57,7 +57,6 @@ func MemberList(s *state.State) (*clientv3.MemberListResponse, error) {
 		return nil, err
 	}
 
-	etcdcfg.Endpoints = etcdEndpoints
 	etcdcli, err := clientv3.New(*etcdcfg)
 	if err != nil {
 		return nil, fail.Connection(err, strings.Join(etcdEndpoints, ","))

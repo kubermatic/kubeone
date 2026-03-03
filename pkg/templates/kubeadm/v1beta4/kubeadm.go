@@ -94,6 +94,9 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 		"ImagePull",
 	}
 
+	etcdArgs := etcdOptionalFlags(s.Cluster.ControlPlaneComponents.Etcd)
+	etcdArgs = append(etcdArgs, etcdVersionCorruptCheckExtraArgs(cluster.TLSCipherSuites.Etcd)...)
+
 	clusterConfig := &kubeadmv1beta4.ClusterConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "kubeadm.k8s.io/v1beta4",
@@ -177,7 +180,39 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 				ImageMeta: kubeadmv1beta4.ImageMeta{
 					ImageRepository: overwriteRegistry,
 				},
-				ExtraArgs: etcdVersionCorruptCheckExtraArgs(cluster.TLSCipherSuites.Etcd),
+				ExtraArgs: etcdArgs,
+				ExtraEnvs: []kubeadmv1beta4.EnvVar{
+					{
+						EnvVar: corev1.EnvVar{
+							Name:  "ETCDCTL_API",
+							Value: "3",
+						},
+					},
+					{
+						EnvVar: corev1.EnvVar{
+							Name:  "ETCDCTL_CACERT",
+							Value: "/etc/etcd/pki/ca/ca.crt",
+						},
+					},
+					{
+						EnvVar: corev1.EnvVar{
+							Name:  "ETCDCTL_CERT",
+							Value: "/etc/etcd/pki/client/apiserver-etcd-client.crt",
+						},
+					},
+					{
+						EnvVar: corev1.EnvVar{
+							Name:  "ETCDCTL_KEY",
+							Value: "/etc/etcd/pki/client/apiserver-etcd-client.key",
+						},
+					},
+					{
+						EnvVar: corev1.EnvVar{
+							Name:  "ETCDCTL_ENDPOINTS",
+							Value: "https://127.0.0.1:2379",
+						},
+					},
+				},
 			},
 		},
 		DNS: kubeadmv1beta4.DNS{
@@ -238,6 +273,35 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 		KubeletConfiguration:   kubeletConfig,
 		KubeProxyConfiguration: kubeProxyConfig,
 	}, nil
+}
+
+func etcdOptionalFlags(etcdConfig *kubeoneapi.EtcdConfig) []kubeadmv1beta4.Arg {
+	var args []kubeadmv1beta4.Arg
+
+	if etcdConfig != nil {
+		if etcdConfig.QuotaBackendBytes != 0 {
+			args = append(args, kubeadmv1beta4.Arg{
+				Name:  "quota-backend-bytes",
+				Value: fmt.Sprintf("%d", etcdConfig.QuotaBackendBytes),
+			})
+		}
+
+		if etcdConfig.AutoCompactionRetention.Duration != 0 {
+			args = append(args, kubeadmv1beta4.Arg{
+				Name:  "auto-compaction-retention",
+				Value: etcdConfig.AutoCompactionRetention.Duration.String(),
+			})
+		}
+
+		if etcdConfig.AutoCompactionMode != "" {
+			args = append(args, kubeadmv1beta4.Arg{
+				Name:  "auto-compaction-mode",
+				Value: string(etcdConfig.AutoCompactionMode),
+			})
+		}
+	}
+
+	return args
 }
 
 // etcdVersionCorruptCheckExtraArgs provides etcd version and args to be used.

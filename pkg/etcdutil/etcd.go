@@ -68,7 +68,6 @@ func NewClientConfig(s *state.State, host kubeoneapi.HostConfig) (*clientv3.Conf
 		Context:     s.Context,
 		DialTimeout: 5 * time.Second,
 		DialOptions: []grpc.DialOption{
-			grpc.WithBlock(), //nolint:staticcheck
 			grpcDialer,
 		},
 	}, nil

@@ -862,6 +862,15 @@ func ValidateControlPlaneComponents(c *kubeoneapi.ControlPlaneComponents, fldPat
 		}
 	}
 
+	if c.Etcd != nil {
+		switch c.Etcd.AutoCompactionMode {
+		case kubeoneapi.EtcdAutoCompactionModePeriodic:
+		case kubeoneapi.EtcdAutoCompactionModeRevision:
+		default:
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("etcd").Child("autoCompactionMode"), c.Etcd.AutoCompactionMode, "invalid autoCompactionMode"))
+		}
+	}
+
 	return allErrs
 }
 
