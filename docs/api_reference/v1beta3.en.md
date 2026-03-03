@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2026-03-02T12:58:35+02:00
+date = 2026-03-04T00:56:57+02:00
 weight = 11
 +++
 ## v1beta3
@@ -410,7 +410,7 @@ EtcdConfig
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | quotaBackendBytes | QuotaBackendBytes is the maximum backend size in bytes for etcd. Default is empty (etcd's default). | int | false |
-| autoCompactionRetention | AutoCompactionRetention is the duration for automatic compaction. Default is empty (etcd's default). | time.Duration | false |
+| autoCompactionRetention | AutoCompactionRetention is the duration for automatic compaction. Default is empty (etcd's default). | metav1.Duration | false |
 | autoCompactionMode | AutoCompactionMode is the mode for automatic compaction (`periodic` or `revision`).  Default is empty (etcd's default). | EtcdAutoCompactionMode | false |
 
 [Back to Group](#v1beta3)
