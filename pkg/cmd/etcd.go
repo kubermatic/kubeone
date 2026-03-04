@@ -22,8 +22,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"reflect"
-	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
@@ -69,33 +67,11 @@ type etcdMember struct {
 }
 
 func (em etcdMember) TableHeader() string {
-	t := reflect.TypeOf(em)
-	headers := make([]string, 0, t.NumField())
-
-	for i := range t.NumField() {
-		headers = append(headers, strings.ToUpper(t.Field(i).Name))
-	}
-
-	return strings.Join(headers, "\t")
+	return "ID\tNAME\tPEER-URLS\tCLIENT-URLS\tIS-LEARNER\tALARMS"
 }
 
 func (em etcdMember) TableFormat() string {
-	t := reflect.TypeOf(em)
-	verbs := make([]string, 0, t.NumField())
-
-	for i := range t.NumField() {
-		switch t.Field(i).Type.Kind() { //nolint:exhaustive
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
-			reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			verbs = append(verbs, "%d")
-		case reflect.String:
-			verbs = append(verbs, "%s")
-		default:
-			verbs = append(verbs, "%v")
-		}
-	}
-
-	return strings.Join(verbs, "\t") + "\n"
+	return "%d\t%s\t%v\t%v\t%v\t%v\n"
 }
 
 func etcdMembersCmd(rootFlags *pflag.FlagSet) *cobra.Command {
@@ -126,7 +102,7 @@ func etcdMembersCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 
 			memberList, err := etcdcli.MemberList(s.Context)
 			if err != nil {
-				return err
+				return fail.Etcd(err, "member listing")
 			}
 
 			alarmList, err := clientv3.NewMaintenance(etcdcli).AlarmList(s.Context)
@@ -214,11 +190,10 @@ func etcdDisarmCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			kubeone etcd disarm --all -m mycluster.yaml -t terraformoutput.json
 		`),
 		Args: func(cmd *cobra.Command, args []string) error {
-			allSet, _ := cmd.Flags().GetBool(longFlagName(opts, "All"))
-			if !allSet && len(args) == 0 {
+			if !opts.All && len(args) == 0 {
 				return fmt.Errorf("requires a member name argument or --all flag")
 			}
-			if allSet && len(args) > 0 {
+			if opts.All && len(args) > 0 {
 				return fmt.Errorf("--all and a member name are mutually exclusive")
 			}
 			if len(args) > 1 {
@@ -247,9 +222,13 @@ func etcdDisarmCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			maintenance := clientv3.NewMaintenance(etcdcli)
 
 			if opts.All {
-				s.Logger.Infof("Disarming all alarms on all members")
+				err := disarmAll(s.Context, maintenance)
+				if err != nil {
+					return fail.Etcd(err, "disarming all alarms")
+				}
 
-				return disarmAll(s.Context, maintenance)
+				s.Logger.Infof("Disarmed all alarms on all members")
+				return nil
 			}
 
 			memberName := args[0]
@@ -314,7 +293,7 @@ func disarmAll(ctx context.Context, maintenance clientv3.Maintenance) error {
 
 func etcdDefragmentCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:           "defragment [member-name]",
+		Use:           "defragment <member-name>",
 		Short:         "Defragment etcd members",
 		Long:          "Defragment the etcd storage of a specific member (by name).",
 		SilenceErrors: true,

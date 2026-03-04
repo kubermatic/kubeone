@@ -46,7 +46,7 @@ type Report struct {
 func MemberList(s *state.State) (*clientv3.MemberListResponse, error) {
 	etcdcli, err := etcdutil.NewClient(s)
 	if err != nil {
-		return nil, fail.Connection(err, "connecting")
+		return nil, err
 	}
 	defer etcdcli.Close()
 

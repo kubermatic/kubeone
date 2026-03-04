@@ -46,7 +46,9 @@ func NewClient(s *state.State) (*clientv3.Client, error) {
 		return nil, err
 	}
 
-	return clientv3.New(*config)
+	cli, err := clientv3.New(*config)
+
+	return cli, fail.Etcd(err, "creating etcd client")
 }
 
 // NewClientConfig returns etcd clientv3 Config configured with TLS certificates
