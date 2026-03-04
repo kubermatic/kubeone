@@ -23,7 +23,9 @@ import (
 	"net"
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/Masterminds/semver/v3"
 
@@ -860,6 +862,37 @@ func ValidateControlPlaneComponents(c *kubeoneapi.ControlPlaneComponents, fldPat
 		if _, ok := c.APIServer.Flags["feature-gates"]; ok {
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("apiServer").Child("flags"), c.APIServer.Flags, "specifying feature-gates flag is forbidden here. Use .controlPlaneComponents.apiServer.featureGates instead"))
 		}
+	}
+
+	allErrs = ValidateEtcdConfig(c.Etcd, fldPath, allErrs)
+
+	return allErrs
+}
+
+func ValidateEtcdConfig(etcdConf *kubeoneapi.EtcdConfig, fldPath *field.Path, allErrs field.ErrorList) field.ErrorList {
+	if etcdConf == nil {
+		return allErrs
+	}
+
+	etcdFldPath := fldPath.Child("etcd")
+	if etcdConf.QuotaBackendBytes != 0 && etcdConf.QuotaBackendBytes < 2*1024*1024*1024 {
+		allErrs = append(allErrs, field.Invalid(etcdFldPath.Child("quotaBackendBytes"), etcdConf.QuotaBackendBytes, "quotaBackendBytes must be greater than 2GB"))
+	}
+
+	switch etcdConf.AutoCompactionMode {
+	case kubeoneapi.EtcdAutoCompactionModePeriodic, kubeoneapi.EtcdAutoCompactionModeRevision:
+		if etcdConf.AutoCompactionRetention != "" {
+			_, err := time.ParseDuration(etcdConf.AutoCompactionRetention) // validate if it's time.Duration format
+			if err != nil {
+				_, err = strconv.Atoi(etcdConf.AutoCompactionRetention) // validate if it's simply a number
+			}
+			if err != nil {
+				allErrs = append(allErrs, field.Invalid(etcdFldPath.Child("autoCompactionRetention"), etcdConf.AutoCompactionRetention, fmt.Sprintf("invalid duration format: %v", err)))
+			}
+		}
+	case "":
+	default:
+		allErrs = append(allErrs, field.Invalid(etcdFldPath.Child("autoCompactionMode"), etcdConf.AutoCompactionMode, "invalid autoCompactionMode"))
 	}
 
 	return allErrs

@@ -123,20 +123,21 @@ func NewRoot() *cobra.Command {
 	rootCmd.AddCommand(
 		addonsCmd(fs),
 		applyCmd(fs),
+		certificatesCmd(fs),
 		completionCmd(rootCmd),
 		configCmd(fs),
-		certificatesCmd(fs),
 		documentCmd(rootCmd),
+		etcdOperationsCmd(fs),
 		initCmd(),
 		kubeconfigCmd(fs),
 		localCmd(fs),
 		migrateCmd(fs),
+		mirrorImagesCmd(fs),
 		proxyCmd(fs),
 		resetCmd(fs),
 		statusCmd(fs),
-		versionCmd(),
 		uiCmd(fs),
-		mirrorImagesCmd(fs),
+		versionCmd(),
 	)
 
 	return rootCmd

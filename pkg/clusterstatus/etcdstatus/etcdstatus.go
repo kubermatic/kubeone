@@ -23,7 +23,6 @@ import (
 	"io"
 	"net/http"
 	"strconv"
-	"strings"
 
 	clientv3 "go.etcd.io/etcd/client/v3"
 
@@ -36,7 +35,6 @@ import (
 
 const (
 	healthEndpointFmt = "https://%s:2379/health"
-	clientEndpointFmt = "%s:2379"
 )
 
 // Report describes status of the etcd cluster
@@ -46,21 +44,9 @@ type Report struct {
 }
 
 func MemberList(s *state.State) (*clientv3.MemberListResponse, error) {
-	leader, err := s.Cluster.Leader()
+	etcdcli, err := etcdutil.NewClient(s)
 	if err != nil {
 		return nil, err
-	}
-	etcdEndpoints := []string{fmt.Sprintf(clientEndpointFmt, leader.PrivateAddress)}
-
-	etcdcfg, err := etcdutil.NewClientConfig(s, leader)
-	if err != nil {
-		return nil, err
-	}
-
-	etcdcfg.Endpoints = etcdEndpoints
-	etcdcli, err := clientv3.New(*etcdcfg)
-	if err != nil {
-		return nil, fail.Connection(err, strings.Join(etcdEndpoints, ","))
 	}
 	defer etcdcli.Close()
 

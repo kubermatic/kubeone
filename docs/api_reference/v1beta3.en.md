@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2026-02-23T21:01:35+01:00
+date = 2026-03-04T16:21:13+02:00
 weight = 11
 +++
 ## v1beta3
@@ -32,6 +32,7 @@ weight = 11
 * [DynamicWorkerConfig](#dynamicworkerconfig)
 * [EncryptionProviders](#encryptionproviders)
 * [EquinixMetalSpec](#equinixmetalspec)
+* [EtcdConfig](#etcdconfig)
 * [ExternalCNISpec](#externalcnispec)
 * [Features](#features)
 * [GCESpec](#gcespec)
@@ -315,6 +316,7 @@ Configures containerd TLS for a registry
 | controllerManager | ControllerManagerConfig configures the Kubernetes Controller Manager | *[ControlPlaneComponentConfig](#controlplanecomponentconfig) | false |
 | scheduler | Scheduler configures the Kubernetes Scheduler | *[ControlPlaneComponentConfig](#controlplanecomponentconfig) | false |
 | apiServer | APIServer configures the Kubernetes API Server | *[ControlPlaneComponentConfig](#controlplanecomponentconfig) | false |
+| etcd | Etcd configures the etcd | *[EtcdConfig](#etcdconfig) | false |
 
 [Back to Group](#v1beta3)
 
@@ -398,6 +400,18 @@ EquinixMetalSpec defines the Equinix Metal cloud provider
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+
+[Back to Group](#v1beta3)
+
+### EtcdConfig
+
+EtcdConfig
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| quotaBackendBytes | QuotaBackendBytes is the maximum backend size in bytes for etcd. Default 0 means etcd's default (2GiB). | int64 | false |
+| autoCompactionRetention | AutoCompactionRetention is the duration for automatic compaction. Empty or 0 means disabled. | string | false |
+| autoCompactionMode | AutoCompactionMode is the mode for automatic compaction (`periodic` or `revision`).  Empty means `periodic`. | EtcdAutoCompactionMode | false |
 
 [Back to Group](#v1beta3)
 

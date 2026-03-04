@@ -930,6 +930,200 @@ func TestValidateVersionConfig(t *testing.T) {
 	}
 }
 
+func TestValidateEtcdConfig(t *testing.T) {
+	twoGB := int64(2 * 1024 * 1024 * 1024)
+
+	tests := []struct {
+		name          string
+		etcdConf      *kubeoneapi.EtcdConfig
+		existingErrs  field.ErrorList
+		expectedError bool
+	}{
+		{
+			name:          "nil etcd config returns existing errors unchanged (no error)",
+			etcdConf:      nil,
+			existingErrs:  field.ErrorList{},
+			expectedError: false,
+		},
+		{
+			name:          "nil etcd config preserves pre-existing errors",
+			etcdConf:      nil,
+			existingErrs:  field.ErrorList{field.Invalid(field.NewPath("test"), "val", "pre-existing error")},
+			expectedError: true,
+		},
+		{
+			name:          "empty etcd config (zero values) is valid",
+			etcdConf:      &kubeoneapi.EtcdConfig{},
+			existingErrs:  field.ErrorList{},
+			expectedError: false,
+		},
+		{
+			name: "quotaBackendBytes = 0 is valid (disabled)",
+			etcdConf: &kubeoneapi.EtcdConfig{
+				QuotaBackendBytes: 0,
+			},
+			existingErrs:  field.ErrorList{},
+			expectedError: false,
+		},
+		{
+			name: "quotaBackendBytes exactly 2GB is invalid (must be greater than 2GB)",
+			etcdConf: &kubeoneapi.EtcdConfig{
+				QuotaBackendBytes: twoGB,
+			},
+			existingErrs:  field.ErrorList{},
+			expectedError: false,
+		},
+		{
+			name: "quotaBackendBytes less than 2GB (1GB) is invalid",
+			etcdConf: &kubeoneapi.EtcdConfig{
+				QuotaBackendBytes: 1 * 1024 * 1024 * 1024,
+			},
+			existingErrs:  field.ErrorList{},
+			expectedError: true,
+		},
+		{
+			name: "quotaBackendBytes greater than 2GB is valid",
+			etcdConf: &kubeoneapi.EtcdConfig{
+				QuotaBackendBytes: twoGB + 1,
+			},
+			existingErrs:  field.ErrorList{},
+			expectedError: false,
+		},
+		{
+			name: "quotaBackendBytes of 8GB is valid",
+			etcdConf: &kubeoneapi.EtcdConfig{
+				QuotaBackendBytes: 8 * 1024 * 1024 * 1024,
+			},
+			existingErrs:  field.ErrorList{},
+			expectedError: false,
+		},
+		{
+			name: "autoCompactionMode empty string is valid",
+			etcdConf: &kubeoneapi.EtcdConfig{
+				AutoCompactionMode: "",
+			},
+			existingErrs:  field.ErrorList{},
+			expectedError: false,
+		},
+		{
+			name: "autoCompactionMode periodic with empty retention is valid",
+			etcdConf: &kubeoneapi.EtcdConfig{
+				AutoCompactionMode:      kubeoneapi.EtcdAutoCompactionModePeriodic,
+				AutoCompactionRetention: "",
+			},
+			existingErrs:  field.ErrorList{},
+			expectedError: false,
+		},
+		{
+			name: "autoCompactionMode revision with empty retention is valid",
+			etcdConf: &kubeoneapi.EtcdConfig{
+				AutoCompactionMode:      kubeoneapi.EtcdAutoCompactionModeRevision,
+				AutoCompactionRetention: "",
+			},
+			existingErrs:  field.ErrorList{},
+			expectedError: false,
+		},
+		{
+			name: "autoCompactionMode periodic with valid duration retention (1h) is valid",
+			etcdConf: &kubeoneapi.EtcdConfig{
+				AutoCompactionMode:      kubeoneapi.EtcdAutoCompactionModePeriodic,
+				AutoCompactionRetention: "1h",
+			},
+			existingErrs:  field.ErrorList{},
+			expectedError: false,
+		},
+		{
+			name: "autoCompactionMode periodic with valid duration retention (30m) is valid",
+			etcdConf: &kubeoneapi.EtcdConfig{
+				AutoCompactionMode:      kubeoneapi.EtcdAutoCompactionModePeriodic,
+				AutoCompactionRetention: "30m",
+			},
+			existingErrs:  field.ErrorList{},
+			expectedError: false,
+		},
+		{
+			name: "autoCompactionMode revision with valid integer retention is valid",
+			etcdConf: &kubeoneapi.EtcdConfig{
+				AutoCompactionMode:      kubeoneapi.EtcdAutoCompactionModeRevision,
+				AutoCompactionRetention: "1000",
+			},
+			existingErrs:  field.ErrorList{},
+			expectedError: false,
+		},
+		{
+			name: "autoCompactionMode periodic with valid integer retention is valid",
+			etcdConf: &kubeoneapi.EtcdConfig{
+				AutoCompactionMode:      kubeoneapi.EtcdAutoCompactionModePeriodic,
+				AutoCompactionRetention: "5",
+			},
+			existingErrs:  field.ErrorList{},
+			expectedError: false,
+		},
+		{
+			name: "autoCompactionMode periodic with invalid retention is invalid",
+			etcdConf: &kubeoneapi.EtcdConfig{
+				AutoCompactionMode:      kubeoneapi.EtcdAutoCompactionModePeriodic,
+				AutoCompactionRetention: "not-a-duration",
+			},
+			existingErrs:  field.ErrorList{},
+			expectedError: true,
+		},
+		{
+			name: "autoCompactionMode revision with invalid retention is invalid",
+			etcdConf: &kubeoneapi.EtcdConfig{
+				AutoCompactionMode:      kubeoneapi.EtcdAutoCompactionModeRevision,
+				AutoCompactionRetention: "not-a-number",
+			},
+			existingErrs:  field.ErrorList{},
+			expectedError: true,
+		},
+		{
+			name: "unknown autoCompactionMode is invalid",
+			etcdConf: &kubeoneapi.EtcdConfig{
+				AutoCompactionMode: "unknown-mode",
+			},
+			existingErrs:  field.ErrorList{},
+			expectedError: true,
+		},
+		{
+			name: "valid config with both quotaBackendBytes and autoCompactionMode set",
+			etcdConf: &kubeoneapi.EtcdConfig{
+				QuotaBackendBytes:       4 * 1024 * 1024 * 1024,
+				AutoCompactionMode:      kubeoneapi.EtcdAutoCompactionModePeriodic,
+				AutoCompactionRetention: "1h",
+			},
+			existingErrs:  field.ErrorList{},
+			expectedError: false,
+		},
+		{
+			name: "invalid quotaBackendBytes and invalid autoCompactionMode both produce errors",
+			etcdConf: &kubeoneapi.EtcdConfig{
+				QuotaBackendBytes:  1,
+				AutoCompactionMode: "bogus",
+			},
+			existingErrs:  field.ErrorList{},
+			expectedError: true,
+		},
+		{
+			name: "pre-existing errors are preserved alongside new etcd errors",
+			etcdConf: &kubeoneapi.EtcdConfig{
+				QuotaBackendBytes: 1,
+			},
+			existingErrs:  field.ErrorList{field.Invalid(field.NewPath("other"), "val", "pre-existing error")},
+			expectedError: true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			errs := ValidateEtcdConfig(tc.etcdConf, field.NewPath("controlPlaneComponents"), tc.existingErrs)
+			if (len(errs) == 0) == tc.expectedError {
+				t.Errorf("test case failed: expected errors=%v, but got %d error(s): %v", tc.expectedError, len(errs), errs)
+			}
+		})
+	}
+}
+
 func TestValidateKubernetesSupport(t *testing.T) {
 	tests := []struct {
 		name           string

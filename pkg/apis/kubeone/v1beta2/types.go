@@ -128,6 +128,29 @@ type ControlPlaneComponents struct {
 
 	// APIServer configures the Kubernetes API Server
 	APIServer *ControlPlaneComponentConfig `json:"apiServer,omitempty"`
+
+	// Etcd configures the etcd
+	Etcd *EtcdConfig `json:"etcd,omitempty"`
+}
+
+// EtcdAutoCompactionMode accepted auto-compaction modes for etcd
+type EtcdAutoCompactionMode string
+
+const (
+	EtcdAutoCompactionModePeriodic EtcdAutoCompactionMode = "periodic"
+	EtcdAutoCompactionModeRevision EtcdAutoCompactionMode = "revision"
+)
+
+// EtcdConfig
+type EtcdConfig struct {
+	// QuotaBackendBytes is the maximum backend size in bytes for etcd. Default 0 means etcd's default (2GiB).
+	QuotaBackendBytes int64 `json:"quotaBackendBytes,omitempty"`
+
+	// AutoCompactionRetention is the duration for automatic compaction. Empty or 0 means disabled.
+	AutoCompactionRetention string `json:"autoCompactionRetention,omitempty"`
+
+	// AutoCompactionMode is the mode for automatic compaction (`periodic` or `revision`).  Empty means `periodic`.
+	AutoCompactionMode EtcdAutoCompactionMode `json:"autoCompactionMode,omitempty"`
 }
 
 type ControlPlaneComponentConfig struct {
