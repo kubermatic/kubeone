@@ -391,7 +391,6 @@ func etcdSnapshotCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 
 			outPath := args[0]
 			var output io.WriteCloser = os.Stdout
-			defer output.Close()
 
 			if outPath != "-" {
 				f, errF := os.Create(outPath)
@@ -400,6 +399,7 @@ func etcdSnapshotCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 				}
 				output = f
 			}
+			defer output.Close()
 
 			if _, err = io.Copy(output, snapshotResp.Snapshot); err != nil {
 				return fail.Runtime(err, "writing snapshot to %q", outPath)

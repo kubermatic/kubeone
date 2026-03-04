@@ -143,13 +143,13 @@ const (
 
 // EtcdConfig
 type EtcdConfig struct {
-	// QuotaBackendBytes is the maximum backend size in bytes for etcd. Default is empty (etcd's default).
-	QuotaBackendBytes int `json:"quotaBackendBytes,omitempty"`
+	// QuotaBackendBytes is the maximum backend size in bytes for etcd. Default 0 means etcd's default (2GiB).
+	QuotaBackendBytes int64 `json:"quotaBackendBytes,omitempty"`
 
-	// AutoCompactionRetention is the duration for automatic compaction. Default is empty (etcd's default).
-	AutoCompactionRetention metav1.Duration `json:"autoCompactionRetention,omitempty"`
+	// AutoCompactionRetention is the duration for automatic compaction. Empty or 0 means disabled.
+	AutoCompactionRetention string `json:"autoCompactionRetention,omitempty"`
 
-	// AutoCompactionMode is the mode for automatic compaction (`periodic` or `revision`).  Default is empty (etcd's default).
+	// AutoCompactionMode is the mode for automatic compaction (`periodic` or `revision`).  Empty means `periodic`.
 	AutoCompactionMode EtcdAutoCompactionMode `json:"autoCompactionMode,omitempty"`
 }
 

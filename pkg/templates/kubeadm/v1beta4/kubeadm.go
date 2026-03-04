@@ -184,26 +184,20 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 				ExtraEnvs: []kubeadmv1beta4.EnvVar{
 					{
 						EnvVar: corev1.EnvVar{
-							Name:  "ETCDCTL_API",
-							Value: "3",
-						},
-					},
-					{
-						EnvVar: corev1.EnvVar{
 							Name:  "ETCDCTL_CACERT",
-							Value: "/etc/etcd/pki/ca/ca.crt",
+							Value: "/etc/kubernetes/pki/etcd/ca.crt",
 						},
 					},
 					{
 						EnvVar: corev1.EnvVar{
 							Name:  "ETCDCTL_CERT",
-							Value: "/etc/etcd/pki/client/apiserver-etcd-client.crt",
+							Value: "/etc/kubernetes/pki/etcd/healthcheck-client.crt",
 						},
 					},
 					{
 						EnvVar: corev1.EnvVar{
 							Name:  "ETCDCTL_KEY",
-							Value: "/etc/etcd/pki/client/apiserver-etcd-client.key",
+							Value: "/etc/kubernetes/pki/etcd/healthcheck-client.key",
 						},
 					},
 					{
@@ -287,10 +281,10 @@ func etcdOptionalFlags(cpc *kubeoneapi.ControlPlaneComponents) []kubeadmv1beta4.
 			})
 		}
 
-		if etcdConfig.AutoCompactionRetention.Duration != 0 {
+		if etcdConfig.AutoCompactionRetention != "" {
 			args = append(args, kubeadmv1beta4.Arg{
 				Name:  "auto-compaction-retention",
-				Value: etcdConfig.AutoCompactionRetention.Duration.String(),
+				Value: etcdConfig.AutoCompactionRetention,
 			})
 		}
 
