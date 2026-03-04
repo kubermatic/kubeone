@@ -45,8 +45,9 @@ func etcdOperationsCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		etcdMembersCmd(rootFlags),
+		etcdDefragmentCmd(rootFlags),
 		etcdDisarmCmd(rootFlags),
+		etcdMembersCmd(rootFlags),
 		etcdSnapshotCmd(rootFlags),
 	)
 
@@ -105,7 +106,7 @@ func etcdMembersCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		Short:         "List etcd members",
 		Long:          "List the current members of the etcd cluster.",
 		SilenceErrors: true,
-		Example:       `kubeone operations etcd members -m mycluster.yaml -t terraformoutput.json`,
+		Example:       `kubeone etcd members -m mycluster.yaml -t terraformoutput.json`,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
@@ -311,6 +312,70 @@ func disarmAll(ctx context.Context, maintenance clientv3.Maintenance) error {
 	return fail.Etcd(err, "disarming all members")
 }
 
+func etcdDefragmentCmd(rootFlags *pflag.FlagSet) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:           "defragment [member-name]",
+		Short:         "Defragment etcd members",
+		Long:          "Defragment the etcd storage of a specific member (by name).",
+		SilenceErrors: true,
+		Example: heredoc.Doc(`
+			# Defragment a specific member
+			kubeone etcd defragment control-plane-0 -m mycluster.yaml -t terraformoutput.json
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			gopts, err := persistentGlobalOptions(rootFlags)
+			if err != nil {
+				return err
+			}
+
+			s, err := gopts.BuildState()
+			if err != nil {
+				return err
+			}
+
+			etcdcli, err := etcdutil.NewClient(s)
+			if err != nil {
+				return err
+			}
+			defer etcdcli.Close()
+
+			maintenance := clientv3.NewMaintenance(etcdcli)
+
+			etcdRing, err := etcdcli.MemberList(s.Context)
+			if err != nil {
+				return fail.Etcd(err, "member listing")
+			}
+			memberName := args[0]
+
+			var endpoints []string
+			for _, m := range etcdRing.Members {
+				if m.Name == memberName {
+					endpoints = m.ClientURLs
+
+					break
+				}
+			}
+
+			if len(endpoints) == 0 {
+				return fail.Etcd(fmt.Errorf("etcd member %q not found", memberName), "searching member endpoints")
+			}
+
+			for _, endpoint := range endpoints {
+				_, err = maintenance.Defragment(s.Context, endpoint)
+				if err != nil {
+					return fail.Etcd(err, "defragmenting member %s endpoint %s", memberName, endpoint)
+				}
+				s.Logger.Infof("Defragmented member %q endpoint %q.", memberName, endpoint)
+			}
+
+			return nil
+		},
+	}
+
+	return cmd
+}
+
 func etcdSnapshotCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "snapshot <file>",
@@ -345,17 +410,14 @@ func etcdSnapshotCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			defer snapshotResp.Snapshot.Close()
 
 			outPath := args[0]
-			var output io.WriteCloser
+			var output io.WriteCloser = os.Stdout
+			defer output.Close()
 
-			if outPath == "-" {
-				output = os.Stdout
-			} else {
+			if outPath != "-" {
 				f, errF := os.Create(outPath)
 				if errF != nil {
 					return fail.Runtime(errF, "creating snapshot file %q", outPath)
 				}
-				defer f.Close()
-
 				output = f
 			}
 
@@ -365,7 +427,7 @@ func etcdSnapshotCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 
 			s.Logger.Infof("Snapshot saved to %q (etcd version: %s).\n", outPath, snapshotResp.Version)
 
-			return output.Close()
+			return nil
 		},
 	}
 

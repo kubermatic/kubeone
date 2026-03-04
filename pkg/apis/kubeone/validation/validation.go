@@ -866,6 +866,7 @@ func ValidateControlPlaneComponents(c *kubeoneapi.ControlPlaneComponents, fldPat
 		switch c.Etcd.AutoCompactionMode {
 		case kubeoneapi.EtcdAutoCompactionModePeriodic:
 		case kubeoneapi.EtcdAutoCompactionModeRevision:
+		case "":
 		default:
 			allErrs = append(allErrs, field.Invalid(fldPath.Child("etcd").Child("autoCompactionMode"), c.Etcd.AutoCompactionMode, "invalid autoCompactionMode"))
 		}
