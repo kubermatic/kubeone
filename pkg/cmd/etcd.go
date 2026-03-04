@@ -189,7 +189,7 @@ func etcdDisarmCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			# Disarm alarms on all members
 			kubeone etcd disarm --all -m mycluster.yaml -t terraformoutput.json
 		`),
-		Args: func(cmd *cobra.Command, args []string) error {
+		Args: func(_ *cobra.Command, args []string) error {
 			if !opts.All && len(args) == 0 {
 				return fmt.Errorf("requires a member name argument or --all flag")
 			}
@@ -222,12 +222,13 @@ func etcdDisarmCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			maintenance := clientv3.NewMaintenance(etcdcli)
 
 			if opts.All {
-				err := disarmAll(s.Context, maintenance)
+				err = disarmAll(s.Context, maintenance)
 				if err != nil {
 					return fail.Etcd(err, "disarming all alarms")
 				}
 
 				s.Logger.Infof("Disarmed all alarms on all members")
+
 				return nil
 			}
 
