@@ -112,14 +112,21 @@ func TFOutput(tfOutputPath string) ([]byte, error) {
 			return nil, fail.Runtime(err, "reading terraform output from stdin")
 		}
 	case isDir(tfOutputPath):
-		ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-		defer cancel()
+		tfOutput, err = readStateFileOutputs(tfOutputPath)
+		if err != nil {
+			return nil, err
+		}
 
-		// TODO: replace terraform exec with direct file read and decode
-		cmd := exec.CommandContext(ctx, "terraform", "output", "-json")
-		cmd.Dir = tfOutputPath
-		if tfOutput, err = cmd.Output(); err != nil {
-			return nil, fail.Runtime(err, "reading terraform output")
+		if tfOutput == nil {
+			// No local state file found (e.g. remote backend); fall back to running terraform CLI.
+			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+			defer cancel()
+
+			cmd := exec.CommandContext(ctx, "terraform", "output", "-json")
+			cmd.Dir = tfOutputPath
+			if tfOutput, err = cmd.Output(); err != nil {
+				return nil, fail.Runtime(err, "reading terraform output")
+			}
 		}
 	case len(tfOutputPath) != 0:
 		if tfOutput, err = os.ReadFile(tfOutputPath); err != nil {
@@ -615,6 +622,31 @@ func setRegistriesAuth(cluster *kubeoneapi.KubeOneCluster, buf string) error {
 	}
 
 	return nil
+}
+
+func readStateFileOutputs(dir string) ([]byte, error) {
+	stateBytes, err := os.ReadFile(filepath.Join(dir, "terraform.tfstate"))
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
+
+		return nil, fail.Runtime(err, "reading terraform state file")
+	}
+
+	var state struct {
+		Outputs json.RawMessage `json:"outputs"`
+	}
+
+	if err := json.Unmarshal(stateBytes, &state); err != nil {
+		return nil, fail.Runtime(err, "parsing terraform state file")
+	}
+
+	if state.Outputs == nil {
+		return []byte("{}"), nil
+	}
+
+	return state.Outputs, nil
 }
 
 func isDir(dirname string) bool {
