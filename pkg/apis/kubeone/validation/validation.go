@@ -110,8 +110,9 @@ func ValidateControlPlaneConfig(c kubeoneapi.ControlPlaneConfig, clusterNetwork 
 	case len(c.NodeSets) > 0:
 		allErrs = append(allErrs, ValidateControlPlaneMachines(c.NodeSets, fldPath.Child("nodeSets"))...)
 	default:
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("hosts"), "",
-			".controlPlane.Hosts is a required field. There must be at least one control plane instance in the cluster."))
+		allErrs = append(allErrs,
+			field.Invalid(fldPath, "", ".controlPlane.Hosts or .controlPlane.NodeSets is a required field. There must be at least one control plane instance in the cluster."),
+		)
 	}
 
 	return allErrs
