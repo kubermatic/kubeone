@@ -23,6 +23,7 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 	"k8s.io/utils/ptr"
 )
@@ -391,6 +392,144 @@ func TestValidateControlPlaneConfig(t *testing.T) {
 			name:               "no hosts field present",
 			controlPlaneConfig: kubeoneapi.ControlPlaneConfig{},
 			expectedError:      true,
+		},
+		{
+			name: "valid NodeSets config (1 node set)",
+			controlPlaneConfig: kubeoneapi.ControlPlaneConfig{
+				NodeSets: []kubeoneapi.NodeSet{
+					{Name: "control-plane", Replicas: 3},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "invalid NodeSets config (2 node sets / even count)",
+			controlPlaneConfig: kubeoneapi.ControlPlaneConfig{
+				NodeSets: []kubeoneapi.NodeSet{
+					{Name: "control-plane-a", Replicas: 3},
+					{Name: "control-plane-b", Replicas: 2},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "valid NodeSets config (3 node sets / odd count)",
+			controlPlaneConfig: kubeoneapi.ControlPlaneConfig{
+				NodeSets: []kubeoneapi.NodeSet{
+					{Name: "control-plane-a", Replicas: 1},
+					{Name: "control-plane-b", Replicas: 1},
+					{Name: "control-plane-c", Replicas: 1},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "multiple leaders",
+			controlPlaneConfig: kubeoneapi.ControlPlaneConfig{
+				Hosts: []kubeoneapi.HostConfig{
+					{
+						PublicAddress:  "1.1.1.1",
+						PrivateAddress: "10.0.0.1",
+						SSHAgentSocket: "env:SSH_AUTH_SOCK",
+						SSHUsername:    "ubuntu",
+						IsLeader:       true,
+					},
+					{
+						PublicAddress:  "1.1.1.2",
+						PrivateAddress: "10.0.0.2",
+						SSHAgentSocket: "env:SSH_AUTH_SOCK",
+						SSHUsername:    "ubuntu",
+						IsLeader:       true,
+					},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "single explicit leader",
+			controlPlaneConfig: kubeoneapi.ControlPlaneConfig{
+				Hosts: []kubeoneapi.HostConfig{
+					{
+						PublicAddress:  "1.1.1.1",
+						PrivateAddress: "10.0.0.1",
+						SSHAgentSocket: "env:SSH_AUTH_SOCK",
+						SSHUsername:    "ubuntu",
+						IsLeader:       true,
+					},
+					{
+						PublicAddress:  "1.1.1.2",
+						PrivateAddress: "10.0.0.2",
+						SSHAgentSocket: "env:SSH_AUTH_SOCK",
+						SSHUsername:    "ubuntu",
+					},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "no SSH private key or agent socket",
+			controlPlaneConfig: kubeoneapi.ControlPlaneConfig{
+				Hosts: []kubeoneapi.HostConfig{
+					{
+						PublicAddress:  "1.1.1.1",
+						PrivateAddress: "10.0.0.1",
+						SSHUsername:    "ubuntu",
+					},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "IPv6-only network without IPv6 addresses",
+			controlPlaneConfig: kubeoneapi.ControlPlaneConfig{
+				Hosts: []kubeoneapi.HostConfig{
+					{
+						PublicAddress:  "1.1.1.1",
+						PrivateAddress: "10.0.0.1",
+						SSHAgentSocket: "env:SSH_AUTH_SOCK",
+						SSHUsername:    "ubuntu",
+					},
+				},
+			},
+			networkConfig: kubeoneapi.ClusterNetworkConfig{
+				IPFamily: kubeoneapi.IPFamilyIPv6,
+			},
+			expectedError: true,
+		},
+		{
+			name: "IPv6-only network with IPv6 addresses",
+			controlPlaneConfig: kubeoneapi.ControlPlaneConfig{
+				Hosts: []kubeoneapi.HostConfig{
+					{
+						PublicAddress:  "1.1.1.1",
+						PrivateAddress: "10.0.0.1",
+						IPv6Addresses:  []string{"2001:db8::1"},
+						SSHAgentSocket: "env:SSH_AUTH_SOCK",
+						SSHUsername:    "ubuntu",
+					},
+				},
+			},
+			networkConfig: kubeoneapi.ClusterNetworkConfig{
+				IPFamily: kubeoneapi.IPFamilyIPv6,
+			},
+			expectedError: false,
+		},
+		{
+			name: "host with forbidden master taint",
+			controlPlaneConfig: kubeoneapi.ControlPlaneConfig{
+				Hosts: []kubeoneapi.HostConfig{
+					{
+						PublicAddress:  "1.1.1.1",
+						PrivateAddress: "10.0.0.1",
+						SSHAgentSocket: "env:SSH_AUTH_SOCK",
+						SSHUsername:    "ubuntu",
+						Taints: []corev1.Taint{
+							{Key: "node-role.kubernetes.io/master", Effect: corev1.TaintEffectNoSchedule},
+						},
+					},
+				},
+			},
+			expectedError: true,
 		},
 	}
 	for _, tc := range tests {
