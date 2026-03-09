@@ -153,6 +153,7 @@ metadata:
   name: cinder-csi
 provisioner: cinder.csi.openstack.org
 volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
