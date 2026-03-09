@@ -119,3 +119,15 @@ func NewRuntimeError(op string, format string, args ...any) error {
 		Err: errors.Errorf(format, args...),
 	}
 }
+
+// MachineController is a shortcut to quickly construct MachineControllerError
+func MachineController(err error, op string, args ...any) error {
+	if err == nil {
+		return nil
+	}
+
+	return MachineControllerError{
+		Op:  fmt.Sprintf(op, args...),
+		Err: errors.WithStack(err),
+	}
+}
