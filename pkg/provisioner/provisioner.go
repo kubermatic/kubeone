@@ -25,6 +25,7 @@ import (
 	"text/template"
 	"time"
 
+	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/machine-controller/pkg/cloudprovider"
 	cloudprovidererrors "k8c.io/machine-controller/pkg/cloudprovider/errors"
 	"k8c.io/machine-controller/pkg/cloudprovider/instance"
@@ -68,12 +69,12 @@ func getUserData(pconfig *providerconfig.Config) (string, error) {
 
 	tmpl, err := template.New("user-data").Parse(userDataTemplate)
 	if err != nil {
-		return "", fmt.Errorf("failed to parse user-data template: %w", err)
+		return "", fail.Runtime(err, "parsing user-data template")
 	}
 
 	var buf strings.Builder
 	if err := tmpl.Execute(&buf, data); err != nil {
-		return "", fmt.Errorf("failed to execute user-data template: %w", err)
+		return "", fail.Runtime(err, "executing user-data template")
 	}
 
 	return cleanupTemplateOutput(buf.String())
@@ -109,7 +110,7 @@ func CreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine) ([]
 				// Get userdata (needed to inject SSH keys to instances)
 				pconfig, cfgErr := providerconfig.GetConfig(machine.Spec.ProviderSpec)
 				if cfgErr != nil {
-					return nil, fmt.Errorf("failed to get providerSpec: %w", cfgErr)
+					return nil, fail.MachineController(cfgErr, "reading provider config")
 				}
 
 				userdata, userdataErr := getUserData(pconfig)
@@ -120,15 +121,15 @@ func CreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine) ([]
 				// Create the instance
 				_, createErr := prov.Create(ctx, log, &machine, providerData, userdata)
 				if createErr != nil {
-					return nil, createErr
+					return nil, fail.MachineController(createErr, "creating machine at cloudprovider")
 				}
 				machineCreated = true
 			} else if ok, _, _ := cloudprovidererrors.IsTerminalError(err); ok {
 				// case 2: terminal error was returned and manual interaction is required to recover
-				return nil, fmt.Errorf("failed to create machine at cloudprovider, due to %w", err)
+				return nil, fail.MachineController(err, "creating machine at cloudprovider")
 			} else {
 				// case 3: transient error was returned, requeue the request and try again in the future
-				return nil, fmt.Errorf("failed to get instance from provider: %w", err)
+				return nil, fail.MachineController(err, "getting instance from provider")
 			}
 		}
 
@@ -136,7 +137,7 @@ func CreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine) ([]
 			for range maxRetrieForMachines {
 				providerInstance, err = prov.Get(ctx, log, &machine, providerData)
 				if err != nil {
-					return nil, err
+					return nil, fail.MachineController(err, "getting instance from provider")
 				}
 
 				addresses := providerInstance.Addresses()
@@ -151,11 +152,11 @@ func CreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine) ([]
 		// Instance exists
 		addresses := providerInstance.Addresses()
 		if len(addresses) == 0 {
-			return nil, fmt.Errorf("machine %s has not been assigned an IP yet", providerInstance.Name())
+			return nil, fail.MachineController(fmt.Errorf("machine %s has not been assigned an IP yet", providerInstance.Name()), "getting instance addresses from provider")
 		}
 
 		sshUser := "root"
-		if user := machine.Annotations[hostnameAnnotation]; sshUser != "" {
+		if user := machine.Annotations[hostnameAnnotation]; user != "" {
 			sshUser = user
 		}
 
@@ -173,13 +174,13 @@ func CreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine) ([]
 func getProvider(ctx context.Context, machine clusterv1alpha1.Machine) (cloudprovidertypes.Provider, error) {
 	providerConfig, err := providerconfig.GetConfig(machine.Spec.ProviderSpec)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get provider config: %w", err)
+		return nil, fail.MachineController(err, "reading provider config")
 	}
 
 	skg := configvar.NewResolver(ctx, nil)
 	prov, err := cloudprovider.ForProvider(providerConfig.CloudProvider, skg)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get cloud provider %q: %w", providerConfig.CloudProvider, err)
+		return nil, fail.MachineController(err, "getting cloud provider %q", providerConfig.CloudProvider)
 	}
 
 	return prov, nil

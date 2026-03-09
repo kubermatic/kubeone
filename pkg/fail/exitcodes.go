@@ -19,14 +19,15 @@ package fail
 import "errors"
 
 const (
-	DefaultExitCode         = 1
-	RuntimeErrorExitCode    = 10
-	EtcdErrorExitCode       = 11
-	KubeClientErrorExitCode = 12
-	SSHErrorExitCode        = 13
-	ConnectionErrorExitCode = 14
-	ConfigErrorExitCode     = 15
-	ExecErrorExitCode       = 16
+	DefaultExitCode                = 1
+	RuntimeErrorExitCode           = 10
+	EtcdErrorExitCode              = 11
+	KubeClientErrorExitCode        = 12
+	SSHErrorExitCode               = 13
+	ConnectionErrorExitCode        = 14
+	ConfigErrorExitCode            = 15
+	ExecErrorExitCode              = 16
+	MachineControllerErrorExitCode = 17
 )
 
 type exitCoder interface {
