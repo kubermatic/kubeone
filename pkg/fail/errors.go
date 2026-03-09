@@ -165,3 +165,24 @@ func (e CredentialsError) Error() string {
 
 func (e CredentialsError) Unwrap() error { return e.Err }
 func (e CredentialsError) exitCode() int { return ConfigErrorExitCode }
+
+// MachineControllerError wraps machine creation related errors
+type MachineControllerError struct {
+	Err error
+	Op  string
+}
+
+func (e MachineControllerError) Error() string {
+	var res strings.Builder
+	fmt.Fprintf(&res, "machine controller:\n")
+
+	if e.Op != "" {
+		fmt.Fprintf(&res, "%s:\n", e.Op)
+	}
+	res.WriteString(e.Err.Error())
+
+	return res.String()
+}
+
+func (e MachineControllerError) Unwrap() error { return e.Err }
+func (e MachineControllerError) exitCode() int { return MachineControllerErrorExitCode }
