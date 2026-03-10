@@ -24,7 +24,6 @@ import (
 
 	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
 	"k8s.io/apimachinery/pkg/types"
-	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -50,7 +49,7 @@ func creationPreventingWebhook(ctx context.Context, c client.Client, apiGroup st
 	// Must be a domain with at least three segments separated by dots
 	vwc.Webhooks[0].Name = "kubernetes.cluster.cleanup"
 	vwc.Webhooks[0].ClientConfig = admissionregistrationv1.WebhookClientConfig{
-		URL: ptr.To("https://127.0.0.1:1"),
+		URL: new("https://127.0.0.1:1"),
 	}
 	vwc.Webhooks[0].Rules = []admissionregistrationv1.RuleWithOperations{
 		{

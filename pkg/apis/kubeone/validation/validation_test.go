@@ -25,7 +25,6 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/validation/field"
-	"k8s.io/utils/ptr"
 )
 
 func TestValidateKubeOneCluster(t *testing.T) {
@@ -74,15 +73,15 @@ func TestValidateKubeOneCluster(t *testing.T) {
 				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
 					{
 						Name:     "test-1",
-						Replicas: ptr.To(3),
+						Replicas: new(3),
 					},
 					{
 						Name:     "test-2",
-						Replicas: ptr.To(5),
+						Replicas: new(5),
 					},
 					{
 						Name:     "test-3",
-						Replicas: ptr.To(0),
+						Replicas: new(0),
 					},
 				},
 			},
@@ -127,15 +126,15 @@ func TestValidateKubeOneCluster(t *testing.T) {
 				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
 					{
 						Name:     "test-1",
-						Replicas: ptr.To(3),
+						Replicas: new(3),
 					},
 					{
 						Name:     "test-2",
-						Replicas: ptr.To(5),
+						Replicas: new(5),
 					},
 					{
 						Name:     "test-3",
-						Replicas: ptr.To(0),
+						Replicas: new(0),
 					},
 				},
 			},
@@ -180,15 +179,15 @@ func TestValidateKubeOneCluster(t *testing.T) {
 				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
 					{
 						Name:     "test-1",
-						Replicas: ptr.To(3),
+						Replicas: new(3),
 					},
 					{
 						Name:     "test-2",
-						Replicas: ptr.To(5),
+						Replicas: new(5),
 					},
 					{
 						Name:     "test-3",
-						Replicas: ptr.To(0),
+						Replicas: new(0),
 					},
 				},
 			},
@@ -233,15 +232,15 @@ func TestValidateKubeOneCluster(t *testing.T) {
 				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
 					{
 						Name:     "test-1",
-						Replicas: ptr.To(3),
+						Replicas: new(3),
 					},
 					{
 						Name:     "test-2",
-						Replicas: ptr.To(5),
+						Replicas: new(5),
 					},
 					{
 						Name:     "test-3",
-						Replicas: ptr.To(0),
+						Replicas: new(0),
 					},
 				},
 			},
@@ -1477,7 +1476,7 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 				PodSubnet:            "192.168.1.0/16",
 				ServiceSubnet:        "192.168.0.0/16",
 				IPFamily:             kubeoneapi.IPFamilyIPv4,
-				NodeCIDRMaskSizeIPv4: ptr.To(24),
+				NodeCIDRMaskSizeIPv4: new(24),
 			},
 			provider: kubeoneapi.CloudProviderSpec{
 				None: &kubeoneapi.NoneSpec{},
@@ -1490,7 +1489,7 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 				PodSubnet:            "192.168.1.0/16",
 				ServiceSubnet:        "192.168.0.0/16",
 				IPFamily:             kubeoneapi.IPFamilyIPv4,
-				NodeCIDRMaskSizeIPv4: ptr.To(24),
+				NodeCIDRMaskSizeIPv4: new(24),
 				CNI: &kubeoneapi.CNI{
 					Canal: &kubeoneapi.CanalSpec{MTU: 1500},
 				},
@@ -1552,7 +1551,7 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 				IPFamily:             kubeoneapi.IPFamilyIPv6,
 				PodSubnetIPv6:        "fd01::/48",
 				ServiceSubnetIPv6:    "fd02::/120",
-				NodeCIDRMaskSizeIPv6: ptr.To(64),
+				NodeCIDRMaskSizeIPv6: new(64),
 			},
 			provider: kubeoneapi.CloudProviderSpec{
 				None: &kubeoneapi.NoneSpec{},
@@ -1567,8 +1566,8 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 				PodSubnetIPv6:        "fd01::/48",
 				ServiceSubnet:        "10.96.0.0/12",
 				ServiceSubnetIPv6:    "fd02::/120",
-				NodeCIDRMaskSizeIPv4: ptr.To(24),
-				NodeCIDRMaskSizeIPv6: ptr.To(64),
+				NodeCIDRMaskSizeIPv4: new(24),
+				NodeCIDRMaskSizeIPv6: new(64),
 			},
 			provider: kubeoneapi.CloudProviderSpec{
 				None: &kubeoneapi.NoneSpec{},
@@ -1582,8 +1581,8 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 				PodSubnetIPv6:        "fd01::/48",
 				ServiceSubnet:        "10.96.0.0/12",
 				ServiceSubnetIPv6:    "fd02::/120",
-				NodeCIDRMaskSizeIPv4: ptr.To(24),
-				NodeCIDRMaskSizeIPv6: ptr.To(64),
+				NodeCIDRMaskSizeIPv4: new(24),
+				NodeCIDRMaskSizeIPv6: new(64),
 			},
 			provider: kubeoneapi.CloudProviderSpec{
 				AWS: &kubeoneapi.AWSSpec{},
@@ -1597,8 +1596,8 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 				PodSubnetIPv6:        "fd01::/48",
 				ServiceSubnet:        "10.96.0.0/12",
 				ServiceSubnetIPv6:    "fd02::/120",
-				NodeCIDRMaskSizeIPv4: ptr.To(24),
-				NodeCIDRMaskSizeIPv6: ptr.To(64),
+				NodeCIDRMaskSizeIPv4: new(24),
+				NodeCIDRMaskSizeIPv6: new(64),
 			},
 			provider: kubeoneapi.CloudProviderSpec{
 				None: &kubeoneapi.NoneSpec{},
@@ -1611,8 +1610,8 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 				IPFamily:             kubeoneapi.IPFamilyIPv6IPv4,
 				PodSubnet:            "10.244.0.0/16,fd01::/48",
 				ServiceSubnet:        "10.96.0.0/12,fd02::/120",
-				NodeCIDRMaskSizeIPv4: ptr.To(24),
-				NodeCIDRMaskSizeIPv6: ptr.To(64),
+				NodeCIDRMaskSizeIPv4: new(24),
+				NodeCIDRMaskSizeIPv6: new(64),
 			},
 			provider: kubeoneapi.CloudProviderSpec{
 				None: &kubeoneapi.NoneSpec{},
@@ -1625,8 +1624,8 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 				IPFamily:             kubeoneapi.IPFamilyIPv4IPv6,
 				PodSubnet:            "10.244.0.0/16,fd01::/48",
 				ServiceSubnet:        "10.96.0.0/12,fd02::/120",
-				NodeCIDRMaskSizeIPv4: ptr.To(16),
-				NodeCIDRMaskSizeIPv6: ptr.To(48),
+				NodeCIDRMaskSizeIPv4: new(16),
+				NodeCIDRMaskSizeIPv6: new(48),
 			},
 			provider: kubeoneapi.CloudProviderSpec{
 				None: &kubeoneapi.NoneSpec{},
@@ -1639,8 +1638,8 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 				IPFamily:             kubeoneapi.IPFamilyIPv4IPv6,
 				PodSubnet:            "10.244.0.0/16",
 				ServiceSubnet:        "10.96.0.0/12,fd02::/120",
-				NodeCIDRMaskSizeIPv4: ptr.To(16),
-				NodeCIDRMaskSizeIPv6: ptr.To(48),
+				NodeCIDRMaskSizeIPv4: new(16),
+				NodeCIDRMaskSizeIPv6: new(48),
 			},
 			provider: kubeoneapi.CloudProviderSpec{
 				None: &kubeoneapi.NoneSpec{},
@@ -1842,15 +1841,15 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: ptr.To(3),
+					Replicas: new(3),
 				},
 				{
 					Name:     "test-2",
-					Replicas: ptr.To(5),
+					Replicas: new(5),
 				},
 				{
 					Name:     "test-3",
-					Replicas: ptr.To(0),
+					Replicas: new(0),
 				},
 			},
 			provider: kubeoneapi.CloudProviderSpec{
@@ -1871,7 +1870,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: ptr.To(3),
+					Replicas: new(3),
 				},
 				{
 					Name: "test-2",
@@ -1886,7 +1885,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			name: "invalid worker config (no name given)",
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
-					Replicas: ptr.To(3),
+					Replicas: new(3),
 				},
 			},
 			provider: kubeoneapi.CloudProviderSpec{
@@ -1899,7 +1898,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: ptr.To(3),
+					Replicas: new(3),
 					Config: kubeoneapi.ProviderSpec{
 						NodeAnnotations: map[string]string{"test": "test"},
 					},
@@ -1915,7 +1914,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: ptr.To(3),
+					Replicas: new(3),
 					Config: kubeoneapi.ProviderSpec{
 						Network: &kubeoneapi.ProviderStaticNetworkConfig{
 							IPFamily: kubeoneapi.IPFamilyIPv4,
@@ -1933,7 +1932,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: ptr.To(3),
+					Replicas: new(3),
 					Config: kubeoneapi.ProviderSpec{
 						Network: &kubeoneapi.ProviderStaticNetworkConfig{
 							IPFamily: kubeoneapi.IPFamilyIPv4IPv6,
@@ -1951,7 +1950,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: ptr.To(3),
+					Replicas: new(3),
 					Config: kubeoneapi.ProviderSpec{
 						Network: &kubeoneapi.ProviderStaticNetworkConfig{
 							IPFamily: kubeoneapi.IPFamilyIPv4IPv6,
@@ -1969,7 +1968,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: ptr.To(3),
+					Replicas: new(3),
 					Config: kubeoneapi.ProviderSpec{
 						Network: &kubeoneapi.ProviderStaticNetworkConfig{
 							IPFamily: kubeoneapi.IPFamilyIPv6IPv4,
@@ -1987,7 +1986,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: ptr.To(3),
+					Replicas: new(3),
 					Config: kubeoneapi.ProviderSpec{
 						Network: &kubeoneapi.ProviderStaticNetworkConfig{
 							IPFamily: kubeoneapi.IPFamilyIPv6IPv4,
@@ -2005,7 +2004,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: ptr.To(3),
+					Replicas: new(3),
 					Config: kubeoneapi.ProviderSpec{
 						Network: &kubeoneapi.ProviderStaticNetworkConfig{
 							IPFamily: kubeoneapi.IPFamilyIPv6,
@@ -2023,7 +2022,7 @@ func TestValidateDynamicWorkerConfig(t *testing.T) {
 			dynamicWorkerConfig: []kubeoneapi.DynamicWorkerConfig{
 				{
 					Name:     "test-1",
-					Replicas: ptr.To(3),
+					Replicas: new(3),
 					Config: kubeoneapi.ProviderSpec{
 						Network: &kubeoneapi.ProviderStaticNetworkConfig{
 							IPFamily: kubeoneapi.IPFamilyIPv6,
@@ -2205,7 +2204,7 @@ func TestValidateFeatures(t *testing.T) {
 			name: "coredns replicas > 0",
 			features: kubeoneapi.Features{
 				CoreDNS: &kubeoneapi.CoreDNS{
-					Replicas: ptr.To(int32(2)),
+					Replicas: new(int32(2)),
 				},
 			},
 			expectedError: false,
@@ -2214,7 +2213,7 @@ func TestValidateFeatures(t *testing.T) {
 			name: "coredns replicas = 0",
 			features: kubeoneapi.Features{
 				CoreDNS: &kubeoneapi.CoreDNS{
-					Replicas: ptr.To(int32(0)),
+					Replicas: new(int32(0)),
 				},
 			},
 			expectedError: false,
@@ -2223,7 +2222,7 @@ func TestValidateFeatures(t *testing.T) {
 			name: "coredns replicas < 0",
 			features: kubeoneapi.Features{
 				CoreDNS: &kubeoneapi.CoreDNS{
-					Replicas: ptr.To(int32(-1)),
+					Replicas: new(int32(-1)),
 				},
 			},
 			expectedError: true,
@@ -2722,7 +2721,7 @@ func TestValidateHostConfig(t *testing.T) {
 					SSHAgentSocket:    "test",
 					SSHUsername:       "root",
 					Kubelet: kubeoneapi.KubeletConfig{
-						MaxPods: ptr.To(int32(110)),
+						MaxPods: new(int32(110)),
 					},
 				},
 			},
@@ -2738,7 +2737,7 @@ func TestValidateHostConfig(t *testing.T) {
 					SSHAgentSocket:    "test",
 					SSHUsername:       "root",
 					Kubelet: kubeoneapi.KubeletConfig{
-						MaxPods: ptr.To(int32(0)),
+						MaxPods: new(int32(0)),
 					},
 				},
 			},
@@ -2754,7 +2753,7 @@ func TestValidateHostConfig(t *testing.T) {
 					SSHAgentSocket:    "test",
 					SSHUsername:       "root",
 					Kubelet: kubeoneapi.KubeletConfig{
-						MaxPods: ptr.To(int32(-10)),
+						MaxPods: new(int32(-10)),
 					},
 				},
 			},
