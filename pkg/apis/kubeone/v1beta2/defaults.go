@@ -26,7 +26,6 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/utils/ptr"
 )
 
 const (
@@ -182,7 +181,7 @@ func SetDefaults_ContainerRuntime(obj *KubeOneCluster) {
 		obj.ContainerRuntime.Containerd = &ContainerRuntimeContainerd{}
 	}
 	if obj.ContainerRuntime.Containerd.DeviceOwnershipFromSecurityContext == nil {
-		obj.ContainerRuntime.Containerd.DeviceOwnershipFromSecurityContext = ptr.To(false)
+		obj.ContainerRuntime.Containerd.DeviceOwnershipFromSecurityContext = new(false)
 	}
 }
 
@@ -194,18 +193,18 @@ func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
 	case IPFamilyIPv4:
 		obj.ClusterNetwork.PodSubnet = defaults(obj.ClusterNetwork.PodSubnet, DefaultPodSubnet)
 		obj.ClusterNetwork.ServiceSubnet = defaults(obj.ClusterNetwork.ServiceSubnet, DefaultServiceSubnet)
-		obj.ClusterNetwork.NodeCIDRMaskSizeIPv4 = defaults(obj.ClusterNetwork.NodeCIDRMaskSizeIPv4, ptr.To(DefaultNodeCIDRMaskSizeIPv4))
+		obj.ClusterNetwork.NodeCIDRMaskSizeIPv4 = defaults(obj.ClusterNetwork.NodeCIDRMaskSizeIPv4, new(DefaultNodeCIDRMaskSizeIPv4))
 	case IPFamilyIPv6:
 		obj.ClusterNetwork.PodSubnetIPv6 = defaults(obj.ClusterNetwork.PodSubnetIPv6, DefaultPodSubnetIPv6)
 		obj.ClusterNetwork.ServiceSubnetIPv6 = defaults(obj.ClusterNetwork.ServiceSubnetIPv6, DefaultServiceSubnetIPv6)
-		obj.ClusterNetwork.NodeCIDRMaskSizeIPv6 = defaults(obj.ClusterNetwork.NodeCIDRMaskSizeIPv6, ptr.To(DefaultNodeCIDRMaskSizeIPv6))
+		obj.ClusterNetwork.NodeCIDRMaskSizeIPv6 = defaults(obj.ClusterNetwork.NodeCIDRMaskSizeIPv6, new(DefaultNodeCIDRMaskSizeIPv6))
 	case IPFamilyIPv4IPv6, IPFamilyIPv6IPv4:
 		obj.ClusterNetwork.PodSubnet = defaults(obj.ClusterNetwork.PodSubnet, DefaultPodSubnet)
 		obj.ClusterNetwork.ServiceSubnet = defaults(obj.ClusterNetwork.ServiceSubnet, DefaultServiceSubnet)
 		obj.ClusterNetwork.PodSubnetIPv6 = defaults(obj.ClusterNetwork.PodSubnetIPv6, DefaultPodSubnetIPv6)
 		obj.ClusterNetwork.ServiceSubnetIPv6 = defaults(obj.ClusterNetwork.ServiceSubnetIPv6, DefaultServiceSubnetIPv6)
-		obj.ClusterNetwork.NodeCIDRMaskSizeIPv4 = defaults(obj.ClusterNetwork.NodeCIDRMaskSizeIPv4, ptr.To(DefaultNodeCIDRMaskSizeIPv4))
-		obj.ClusterNetwork.NodeCIDRMaskSizeIPv6 = defaults(obj.ClusterNetwork.NodeCIDRMaskSizeIPv6, ptr.To(DefaultNodeCIDRMaskSizeIPv6))
+		obj.ClusterNetwork.NodeCIDRMaskSizeIPv4 = defaults(obj.ClusterNetwork.NodeCIDRMaskSizeIPv4, new(DefaultNodeCIDRMaskSizeIPv4))
+		obj.ClusterNetwork.NodeCIDRMaskSizeIPv6 = defaults(obj.ClusterNetwork.NodeCIDRMaskSizeIPv6, new(DefaultNodeCIDRMaskSizeIPv6))
 	}
 
 	obj.ClusterNetwork.ServiceDomainName = defaults(obj.ClusterNetwork.ServiceDomainName, DefaultServiceDNS)
@@ -303,10 +302,10 @@ func SetDefaults_Features(obj *KubeOneCluster) {
 		obj.Features.CoreDNS = &CoreDNS{}
 	}
 	if obj.Features.CoreDNS.Replicas == nil {
-		obj.Features.CoreDNS.Replicas = ptr.To(int32(2))
+		obj.Features.CoreDNS.Replicas = new(int32(2))
 	}
 	if obj.Features.CoreDNS.DeployPodDisruptionBudget == nil {
-		obj.Features.CoreDNS.DeployPodDisruptionBudget = ptr.To(true)
+		obj.Features.CoreDNS.DeployPodDisruptionBudget = new(true)
 	}
 
 	if obj.Features.MetricsServer == nil {

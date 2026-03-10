@@ -50,7 +50,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/validation/field"
-	"k8s.io/utils/ptr"
 	"sigs.k8s.io/yaml"
 )
 
@@ -364,7 +363,7 @@ func setDefaultHetznerControlPlane(clusterName string, hzCP *kubeoneapi.HetznerC
 	)
 	hzCP.LoadBalancer.PublicIP = defaults(
 		hzCP.LoadBalancer.PublicIP,
-		ptr.To(true),
+		new(true),
 	)
 	if hzCP.LoadBalancer.Labels == nil {
 		hzCP.LoadBalancer.Labels = map[string]string{}
@@ -519,13 +518,13 @@ func createLoadBalancer(
 		Services: []hcloud.LoadBalancerCreateOptsService{
 			{
 				Protocol:        hcloud.LoadBalancerServiceProtocolTCP,
-				ListenPort:      hcloud.Ptr(6443),
-				DestinationPort: hcloud.Ptr(6443),
+				ListenPort:      new(6443),
+				DestinationPort: new(6443),
 			},
 		},
 		Targets: []hcloud.LoadBalancerCreateOptsTarget{
 			{
-				UsePrivateIP: hcloud.Ptr(true),
+				UsePrivateIP: new(true),
 				Type:         hcloud.LoadBalancerTargetTypeLabelSelector,
 				LabelSelector: hcloud.LoadBalancerCreateOptsTargetLabelSelector{
 					Selector: vmsLabelSelector,
