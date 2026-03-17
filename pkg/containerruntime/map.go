@@ -28,5 +28,8 @@ func UpdateDataMap(cluster *kubeoneapi.KubeOneCluster, inputMap map[string]any) 
 	inputMap["CONTAINER_RUNTIME_CONFIG"] = crConfig
 	inputMap["CONTAINER_RUNTIME_SOCKET"] = cluster.ContainerRuntime.CRISocket()
 
+	// Add registry hosts config for containerd v2 hosts directory model
+	inputMap["REGISTRY_HOSTS_CONFIG"] = MarshalRegistryHostsConfig(cluster)
+
 	return nil
 }

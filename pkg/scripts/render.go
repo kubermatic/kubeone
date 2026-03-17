@@ -42,6 +42,15 @@ var containerRuntimeTemplates = map[string]string{
 			runtime-endpoint: unix://{{ .CONTAINER_RUNTIME_SOCKET }}
 			EOF
 			{{- end }}
+
+			{{- if .REGISTRY_HOSTS_CONFIG }}
+			{{- range $path, $content := .REGISTRY_HOSTS_CONFIG }}
+			sudo mkdir -p $(dirname {{ $path }})
+			cat <<EOF | sudo tee {{ $path }}
+			{{ $content }}
+			EOF
+			{{- end }}
+			{{- end }}
 		`),
 
 	"containerd-systemd-setup": heredoc.Doc(`

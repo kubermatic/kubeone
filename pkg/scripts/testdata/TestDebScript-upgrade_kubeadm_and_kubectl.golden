@@ -95,7 +95,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 	--option "Dpkg::Options::=--force-confold" \
 	--no-install-recommends \
 	-y \
-	containerd.io='1.7.*'
+	containerd.io='2.2.*'
 sudo apt-mark hold containerd.io
 
 
@@ -103,29 +103,41 @@ sudo mkdir -p $(dirname /etc/containerd/config.toml)
 sudo touch /etc/containerd/config.toml
 sudo chmod 600 /etc/containerd/config.toml
 cat <<EOF | sudo tee /etc/containerd/config.toml
-version = 2
+version = 3
 
 [metrics]
 address = "127.0.0.1:1338"
 
 [plugins]
-[plugins."io.containerd.grpc.v1.cri"]
-sandbox_image = "registry.k8s.io/pause:3.10"
+[plugins."io.containerd.cri.v1.images"]
+discard_unpacked_layers = false
+[plugins."io.containerd.cri.v1.images".pinned_images]
+sandbox = "registry.k8s.io/pause:3.10"
+[plugins."io.containerd.cri.v1.images".registry]
+config_path = "/etc/containerd/certs.d"
+[plugins."io.containerd.cri.v1.runtime"]
 device_ownership_from_security_context = true
-[plugins."io.containerd.grpc.v1.cri".containerd]
-[plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
-[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+[plugins."io.containerd.cri.v1.runtime".containerd]
+[plugins."io.containerd.cri.v1.runtime".containerd.runtimes]
+[plugins."io.containerd.cri.v1.runtime".containerd.runtimes.runc]
 runtime_type = "io.containerd.runc.v2"
-[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+[plugins."io.containerd.cri.v1.runtime".containerd.runtimes.runc.options]
 SystemdCgroup = true
-[plugins."io.containerd.grpc.v1.cri".registry]
-[plugins."io.containerd.grpc.v1.cri".registry.mirrors]
-[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
-endpoint = ["https://registry-1.docker.io"]
+[plugins."io.containerd.cri.v1.runtime".cni]
+bin_dirs = ["/opt/cni/bin"]
+conf_dir = "/etc/cni/net.d"
 
 EOF
 cat <<EOF | sudo tee /etc/crictl.yaml
 runtime-endpoint: unix:///run/containerd/containerd.sock
+EOF
+sudo mkdir -p $(dirname /etc/containerd/certs.d/docker.io/hosts.toml)
+cat <<EOF | sudo tee /etc/containerd/certs.d/docker.io/hosts.toml
+server = "https://registry-1.docker.io"
+
+[host."https://registry-1.docker.io"]
+capabilities = ["pull", "resolve"]
+
 EOF
 
 sudo systemctl daemon-reload

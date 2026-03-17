@@ -59,8 +59,15 @@ type containerdPinnedImages struct {
 
 // containerdCRIRuntimePlugin represents the "io.containerd.cri.v1.runtime" plugin in containerd 2.x.
 type containerdCRIRuntimePlugin struct {
-	Containerd                         *containerdCRISettings `toml:"containerd"`
-	DeviceOwnershipFromSecurityContext bool                   `toml:"device_ownership_from_security_context"`
+	Containerd                         *containerdCRISettings  `toml:"containerd"`
+	DeviceOwnershipFromSecurityContext bool                    `toml:"device_ownership_from_security_context"`
+	CNI                                *containerdCRICNIConfig `toml:"cni"`
+}
+
+// containerdCRICNIConfig represents the CNI config under the runtime plugin in containerd 2.x.
+type containerdCRICNIConfig struct {
+	BinDirs []string `toml:"bin_dirs"`
+	ConfDir string   `toml:"conf_dir"`
 }
 
 type containerdCRISettings struct {
@@ -133,24 +140,27 @@ func marshalContainerdConfig(cluster *kubeoneapi.KubeOneCluster) (string, error)
 	// Add registry credentials to CRI config for authentication.
 	// Per containerd v2 docs, auth is configured under
 	// [plugins."io.containerd.cri.v1.images".registry.configs."<registry>".auth]
-	// The registry key must be a host (with optional port), not a URL.
+	// The registry key must be the mirror host (with optional port), not the source registry.
 	if cluster.ContainerRuntime.Containerd != nil && cluster.ContainerRuntime.Containerd.Registries != nil {
-		for registryName, registry := range cluster.ContainerRuntime.Containerd.Registries {
-			if registry.Auth != nil {
+		for _, registry := range cluster.ContainerRuntime.Containerd.Registries {
+			if registry.Auth != nil && len(registry.Mirrors) > 0 {
 				if criRegistry.Configs == nil {
 					criRegistry.Configs = make(map[string]containerdRegistryConfig)
 				}
-				host := registryName
-				if u, err := url.Parse(registryName); err == nil && u.Host != "" {
-					host = u.Host
-				}
-				criRegistry.Configs[host] = containerdRegistryConfig{
-					Auth: &containerdRegistryAuth{
-						Username:      registry.Auth.Username,
-						Password:      registry.Auth.Password,
-						Auth:          registry.Auth.Auth,
-						IdentityToken: registry.Auth.IdentityToken,
-					},
+				// Auth applies to the mirror endpoints, not the source registry
+				for _, mirror := range registry.Mirrors {
+					host := mirror
+					if u, err := url.Parse(mirror); err == nil && u.Host != "" {
+						host = u.Host
+					}
+					criRegistry.Configs[host] = containerdRegistryConfig{
+						Auth: &containerdRegistryAuth{
+							Username:      registry.Auth.Username,
+							Password:      registry.Auth.Password,
+							Auth:          registry.Auth.Auth,
+							IdentityToken: registry.Auth.IdentityToken,
+						},
+					}
 				}
 			}
 		}
@@ -178,6 +188,10 @@ func marshalContainerdConfig(cluster *kubeoneapi.KubeOneCluster) (string, error)
 					},
 				},
 			},
+		},
+		CNI: &containerdCRICNIConfig{
+			BinDirs: []string{"/opt/cni/bin"},
+			ConfDir: "/etc/cni/net.d",
 		},
 	}
 
