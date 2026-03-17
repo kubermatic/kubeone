@@ -150,7 +150,7 @@ func marshalContainerdConfig(cluster *kubeoneapi.KubeOneCluster) (string, error)
 				// Auth applies to the mirror endpoints, not the source registry
 				for _, mirror := range registry.Mirrors {
 					host := mirror
-					if u, err := url.Parse(mirror); err == nil && u.Host != "" {
+					if u, parseErr := url.Parse(mirror); parseErr == nil && u.Host != "" {
 						host = u.Host
 					}
 					criRegistry.Configs[host] = containerdRegistryConfig{
