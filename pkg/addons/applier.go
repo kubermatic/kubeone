@@ -17,7 +17,7 @@ limitations under the License.
 package addons
 
 import (
-	"crypto/rsa"
+	"crypto"
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/hex"
@@ -261,7 +261,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	}, nil
 }
 
-func csiWebhookCerts(s *state.State, data *templateData, csiMigration bool, kubeCAPrivateKey *rsa.PrivateKey, kubeCACert *x509.Certificate) error {
+func csiWebhookCerts(s *state.State, data *templateData, csiMigration bool, kubeCAPrivateKey crypto.Signer, kubeCACert *x509.Certificate) error {
 	webhookName := resources.GenericCSIWebhookName
 	webhookNamespace := resources.GenericCSIWebhookNamespace
 	certNamePrefix := webhookCertsCSI
@@ -299,7 +299,7 @@ func csiWebhookCerts(s *state.State, data *templateData, csiMigration bool, kube
 	)
 }
 
-func webhookCerts(certs map[string]string, prefix, webhookName, webhookNamespace, serviceDomainName string, kubeCAPrivateKey *rsa.PrivateKey, kubeCACert *x509.Certificate) error {
+func webhookCerts(certs map[string]string, prefix, webhookName, webhookNamespace, serviceDomainName string, kubeCAPrivateKey crypto.Signer, kubeCACert *x509.Certificate) error {
 	certsMap, err := certificate.NewSignedKubernetesServiceTLSCert(
 		webhookName,
 		webhookNamespace,
