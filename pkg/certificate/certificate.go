@@ -18,6 +18,7 @@ package certificate
 
 import (
 	"crypto"
+	"crypto/ecdsa"
 	"crypto/rsa"
 	"crypto/x509"
 	"fmt"
@@ -41,7 +42,7 @@ import (
 )
 
 // CAKeyPair parses generated PKI CA certificate and key
-func CAKeyPair(config *configupload.Configuration) (*rsa.PrivateKey, *x509.Certificate, error) {
+func CAKeyPair(config *configupload.Configuration) (crypto.Signer, *x509.Certificate, error) {
 	caCert, found := config.KubernetesPKI[KubernetesCACertPath]
 	if !found {
 		return nil, nil, fail.RuntimeError{
@@ -80,12 +81,14 @@ func CAKeyPair(config *configupload.Configuration) (*rsa.PrivateKey, *x509.Certi
 		return nil, nil, fail.Runtime(err, "parsing kubernetes CA key")
 	}
 
-	rsaKey, ok := possibleKey.(*rsa.PrivateKey)
-	if !ok {
-		return nil, nil, fail.Runtime(fmt.Errorf("private key is not a RSA private key"), "parsing kubernetes CA key")
+	switch possibleKey := possibleKey.(type) {
+	case *rsa.PrivateKey:
+		return possibleKey, certs[0], nil
+	case *ecdsa.PrivateKey:
+		return possibleKey, certs[0], nil
+	default:
+		return nil, nil, fail.Runtime(fmt.Errorf("private key is not a RSA or ECDSA type"), "parsing kubernetes CA key")
 	}
-
-	return rsaKey, certs[0], nil
 }
 
 func NewSignedKubernetesServiceTLSCert(name, namespace, domain string, caKey crypto.Signer, caCert *x509.Certificate) (map[string]string, error) {
