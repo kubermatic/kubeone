@@ -43,6 +43,8 @@ var containerRuntimeTemplates = map[string]string{
 			EOF
 			{{- end }}
 
+			# Clear and recreate registry host configs to remove stale entries
+			sudo rm -rf /etc/containerd/certs.d/*
 			{{- if .REGISTRY_HOSTS_CONFIG }}
 			{{- range $path, $content := .REGISTRY_HOSTS_CONFIG }}
 			sudo mkdir -p $(dirname {{ $path }})

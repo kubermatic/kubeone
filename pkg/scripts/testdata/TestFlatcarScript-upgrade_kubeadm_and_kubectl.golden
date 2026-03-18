@@ -94,6 +94,9 @@ EOF
 cat <<EOF | sudo tee /etc/crictl.yaml
 runtime-endpoint: unix:///run/containerd/containerd.sock
 EOF
+
+# Clear and recreate registry host configs to remove stale entries
+sudo rm -rf /etc/containerd/certs.d/*
 sudo mkdir -p $(dirname /etc/containerd/certs.d/docker.io/hosts.toml)
 cat <<EOF | sudo tee /etc/containerd/certs.d/docker.io/hosts.toml
 server = "https://registry-1.docker.io"
