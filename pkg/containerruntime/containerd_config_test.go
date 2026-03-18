@@ -74,6 +74,18 @@ func Test_marshalContainerdConfig(t *testing.T) {
 				},
 			})),
 		},
+		{
+			name: "mirror registry with auth",
+			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
+				"docker.io": {
+					Mirrors: []string{"https://mirror.example.com"},
+					Auth: &kubeoneapi.ContainerdRegistryAuthConfig{
+						Username: "testuser",
+						Password: "testpass",
+					},
+				},
+			})),
+		},
 	}
 
 	for _, tt := range tests {
