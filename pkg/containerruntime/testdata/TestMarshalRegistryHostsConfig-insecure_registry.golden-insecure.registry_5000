@@ -1,5 +1,0 @@
-server = "https://insecure.registry:5000"
-
-[host."https://insecure.registry:5000"]
-capabilities = ["pull", "resolve", "push"]
-skip_verify = true

@@ -1,3 +1,4 @@
+### /etc/containerd/config.toml
 version = 3
 
 [metrics]
@@ -21,3 +22,23 @@ SystemdCgroup = true
 [plugins."io.containerd.cri.v1.runtime".cni]
 bin_dirs = ["/opt/cni/bin"]
 conf_dir = "/etc/cni/net.d"
+
+### /etc/containerd/certs.d/*/hosts.toml
+server = "https://*"
+
+[host."https://custom.insecure.registry"]
+capabilities = ["pull", "resolve"]
+skip_verify = true
+
+### /etc/containerd/certs.d/docker.io/hosts.toml
+server = "https://registry-1.docker.io"
+
+[host."https://registry-1.docker.io"]
+capabilities = ["pull", "resolve"]
+
+### /etc/containerd/certs.d/registry.k8s.io/hosts.toml
+server = "https://registry.k8s.io"
+
+[host."https://some"]
+capabilities = ["pull", "resolve"]
+

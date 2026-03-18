@@ -1,4 +1,0 @@
-server = "https://registry-1.docker.io"
-
-[host."https://registry-1.docker.io"]
-capabilities = ["pull", "resolve"]

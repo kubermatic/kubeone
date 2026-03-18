@@ -18,6 +18,9 @@ package containerruntime
 
 import (
 	"flag"
+	"fmt"
+	"maps"
+	"slices"
 	"strings"
 	"testing"
 
@@ -90,12 +93,25 @@ func Test_marshalContainerdConfig(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			var buf strings.Builder
+
 			got, err := marshalContainerdConfig(tt.cluster)
 			if err != nil {
 				t.Errorf("marshalContainerdConfig() error = %v", err)
 			}
 
-			testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
+			fmt.Fprintf(&buf, "### /etc/containerd/config.toml\n")
+			fmt.Fprintf(&buf, "%s\n", got)
+
+			gotRegistries := marshalRegistryHostsConfig(tt.cluster)
+			keys := slices.Sorted(maps.Keys(gotRegistries))
+
+			for _, path := range keys {
+				fmt.Fprintf(&buf, "### %s\n", path)
+				fmt.Fprintf(&buf, "%s\n", gotRegistries[path])
+			}
+
+			testhelper.DiffOutput(t, testhelper.FSGoldenName(t), buf.String(), *updateFlag)
 		})
 	}
 }
@@ -129,71 +145,5 @@ func withRegistryConfiguration(regCfg kubeoneapi.RegistryConfiguration) clusterO
 func withContainerdRegistry(regCfg map[string]kubeoneapi.ContainerdRegistry) clusterOpts {
 	return func(cls *kubeoneapi.KubeOneCluster) {
 		cls.ContainerRuntime.Containerd.Registries = regCfg
-	}
-}
-
-func TestMarshalRegistryHostsConfig(t *testing.T) {
-	tests := []struct {
-		name    string
-		cluster *kubeoneapi.KubeOneCluster
-	}{
-		{
-			name:    "simple",
-			cluster: genCluster(),
-		},
-		{
-			name: "docker.io with mirror",
-			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
-				"docker.io": {
-					Mirrors: []string{"https://custom.secure.registry"},
-				},
-			})),
-		},
-		{
-			name: "multiple registries",
-			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
-				"docker.io": {
-					Mirrors: []string{"https://mirror.example.com"},
-				},
-				"registry.k8s.io": {
-					Mirrors: []string{"https://k8s-mirror.example.com"},
-				},
-			})),
-		},
-		{
-			name: "insecure registry",
-			cluster: genCluster(withRegistryConfiguration(kubeoneapi.RegistryConfiguration{
-				OverwriteRegistry: "insecure.registry:5000",
-				InsecureRegistry:  true,
-			})),
-		},
-		{
-			name: "mirror with auth",
-			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
-				"docker.io": {
-					Mirrors: []string{"https://mirror.example.com"},
-					Auth: &kubeoneapi.ContainerdRegistryAuthConfig{
-						Username: "testuser",
-						Password: "testpass",
-					},
-				},
-			})),
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := MarshalRegistryHostsConfig(tt.cluster)
-
-			for path, content := range got {
-				// Create a sub-test for each registry path
-				registryName := strings.TrimPrefix(path, "/etc/containerd/certs.d/")
-				registryName = strings.TrimSuffix(registryName, "/hosts.toml")
-				registryName = strings.ReplaceAll(registryName, ":", "_")
-
-				goldenName := testhelper.FSGoldenName(t) + "-" + registryName
-				testhelper.DiffOutput(t, goldenName, content, *updateFlag)
-			}
-		})
 	}
 }

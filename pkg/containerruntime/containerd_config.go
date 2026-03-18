@@ -259,10 +259,10 @@ func buildRegistryHostConfigs(cluster *kubeoneapi.KubeOneCluster) map[string]*re
 	return configs
 }
 
-// MarshalRegistryHostsConfig returns a map of file path to file content for containerd
+// marshalRegistryHostsConfig returns a map of file path to file content for containerd
 // registry host configuration files. Each key is a path like
 // "/etc/containerd/certs.d/<registry>/hosts.toml" and the value is the TOML content.
-func MarshalRegistryHostsConfig(cluster *kubeoneapi.KubeOneCluster) map[string]string {
+func marshalRegistryHostsConfig(cluster *kubeoneapi.KubeOneCluster) map[string]string {
 	result := make(map[string]string)
 	configs := buildRegistryHostConfigs(cluster)
 
