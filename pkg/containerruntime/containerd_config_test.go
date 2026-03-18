@@ -122,16 +122,12 @@ func withContainerdRegistry(regCfg map[string]kubeoneapi.ContainerdRegistry) clu
 
 func TestMarshalRegistryHostsConfig(t *testing.T) {
 	tests := []struct {
-		name          string
-		cluster       *kubeoneapi.KubeOneCluster
-		expectedPaths []string
+		name    string
+		cluster *kubeoneapi.KubeOneCluster
 	}{
 		{
-			name:    "simple - docker.io only",
+			name:    "simple",
 			cluster: genCluster(),
-			expectedPaths: []string{
-				"/etc/containerd/certs.d/docker.io/hosts.toml",
-			},
 		},
 		{
 			name: "docker.io with mirror",
@@ -140,9 +136,6 @@ func TestMarshalRegistryHostsConfig(t *testing.T) {
 					Mirrors: []string{"https://custom.secure.registry"},
 				},
 			})),
-			expectedPaths: []string{
-				"/etc/containerd/certs.d/docker.io/hosts.toml",
-			},
 		},
 		{
 			name: "multiple registries",
@@ -154,10 +147,6 @@ func TestMarshalRegistryHostsConfig(t *testing.T) {
 					Mirrors: []string{"https://k8s-mirror.example.com"},
 				},
 			})),
-			expectedPaths: []string{
-				"/etc/containerd/certs.d/docker.io/hosts.toml",
-				"/etc/containerd/certs.d/registry.k8s.io/hosts.toml",
-			},
 		},
 		{
 			name: "insecure registry",
@@ -165,10 +154,18 @@ func TestMarshalRegistryHostsConfig(t *testing.T) {
 				OverwriteRegistry: "insecure.registry:5000",
 				InsecureRegistry:  true,
 			})),
-			expectedPaths: []string{
-				"/etc/containerd/certs.d/docker.io/hosts.toml",
-				"/etc/containerd/certs.d/insecure.registry:5000/hosts.toml",
-			},
+		},
+		{
+			name: "mirror with auth",
+			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
+				"docker.io": {
+					Mirrors: []string{"https://mirror.example.com"},
+					Auth: &kubeoneapi.ContainerdRegistryAuthConfig{
+						Username: "testuser",
+						Password: "testpass",
+					},
+				},
+			})),
 		},
 	}
 
@@ -176,30 +173,14 @@ func TestMarshalRegistryHostsConfig(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := MarshalRegistryHostsConfig(tt.cluster)
 
-			// Check that all expected paths are present
-			for _, expectedPath := range tt.expectedPaths {
-				if _, ok := got[expectedPath]; !ok {
-					t.Errorf("MarshalRegistryHostsConfig() missing expected path %q", expectedPath)
-				}
-			}
-
-			// Check that we don't have unexpected paths
-			if len(got) != len(tt.expectedPaths) {
-				t.Errorf("MarshalRegistryHostsConfig() returned %d paths, expected %d", len(got), len(tt.expectedPaths))
-				for path := range got {
-					t.Logf("  got path: %s", path)
-				}
-			}
-
-			// For each path, verify the content is valid TOML and contains expected fields
 			for path, content := range got {
-				if content == "" {
-					t.Errorf("MarshalRegistryHostsConfig() path %q has empty content", path)
-				}
-				// Basic sanity check - content should contain server field
-				if !strings.Contains(content, "server = ") {
-					t.Errorf("MarshalRegistryHostsConfig() path %q content missing 'server' field", path)
-				}
+				// Create a sub-test for each registry path
+				registryName := strings.TrimPrefix(path, "/etc/containerd/certs.d/")
+				registryName = strings.TrimSuffix(registryName, "/hosts.toml")
+				registryName = strings.ReplaceAll(registryName, ":", "_")
+
+				goldenName := testhelper.FSGoldenName(t) + "-" + registryName
+				testhelper.DiffOutput(t, goldenName, content, *updateFlag)
 			}
 		})
 	}
