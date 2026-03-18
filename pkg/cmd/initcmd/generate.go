@@ -34,7 +34,6 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/tabwriter"
 
-	"k8s.io/utils/ptr"
 	kyaml "sigs.k8s.io/yaml"
 )
 
@@ -323,7 +322,7 @@ func clusterAdditionalParams(cluster *kubeonev1beta2.KubeOneCluster, generateOpt
 	}
 	if generateOpts.enableFeatureCoreDNSPDB {
 		cluster.Features.CoreDNS = &kubeonev1beta2.CoreDNS{
-			DeployPodDisruptionBudget: ptr.To(true),
+			DeployPodDisruptionBudget: new(true),
 		}
 	}
 
