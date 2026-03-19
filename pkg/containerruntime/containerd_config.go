@@ -337,7 +337,7 @@ func marshalContainerdConfigs(cluster *kubeoneapi.KubeOneCluster) (*orderedStrin
 		}
 
 		// If insecure registry has no endpoints, add its own endpoint
-		if rc.insecure && len(rc.endpoints) == 0 {
+		if rc.insecure && len(rc.endpoints) == 0 && serverURL != "" {
 			cfg.Host[serverURL] = hostEntryConfig{
 				Capabilities: []string{"pull", "resolve", "push"},
 				SkipVerify:   true,
