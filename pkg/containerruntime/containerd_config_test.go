@@ -87,6 +87,17 @@ func Test_ContainerdConfigs(t *testing.T) {
 				},
 			})),
 		},
+		{
+			name: "registry with auth",
+			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
+				"docker.io": {
+					Auth: &kubeoneapi.ContainerdRegistryAuthConfig{
+						Username: "testuser",
+						Password: "testpass",
+					},
+				},
+			})),
+		},
 	}
 
 	for _, tt := range tests {

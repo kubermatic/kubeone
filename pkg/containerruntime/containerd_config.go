@@ -142,15 +142,35 @@ func marshalContainerdConfigToml(cluster *kubeoneapi.KubeOneCluster) (string, er
 	// [plugins."io.containerd.cri.v1.images".registry.configs."<registry>".auth]
 	// The registry key must be the mirror host (with optional port), not the source registry.
 	if cluster.ContainerRuntime.Containerd != nil && cluster.ContainerRuntime.Containerd.Registries != nil {
-		for _, registry := range cluster.ContainerRuntime.Containerd.Registries {
-			if registry.Auth != nil && len(registry.Mirrors) > 0 {
+		for registryName, registry := range cluster.ContainerRuntime.Containerd.Registries {
+			if registryName == "*" {
+				continue
+			}
+			var host string
+			if registry.Auth != nil {
 				if criRegistry.Configs == nil {
 					criRegistry.Configs = make(map[string]containerdRegistryConfig)
 				}
-				// Auth applies to the mirror endpoints, not the source registry
-				for _, mirror := range registry.Mirrors {
-					host := mirror
-					if u, parseErr := url.Parse(mirror); parseErr == nil && u.Host != "" {
+				if len(registry.Mirrors) > 0 {
+					// Auth applies to the mirror endpoints, not the source registry
+					for _, mirror := range registry.Mirrors {
+						host = mirror
+						if u, parseErr := url.Parse(mirror); parseErr == nil && u.Host != "" {
+							host = u.Host
+						}
+						criRegistry.Configs[host] = containerdRegistryConfig{
+							Auth: &containerdRegistryAuth{
+								Username:      registry.Auth.Username,
+								Password:      registry.Auth.Password,
+								Auth:          registry.Auth.Auth,
+								IdentityToken: registry.Auth.IdentityToken,
+							},
+						}
+					}
+				} else {
+					// No mirrors configured; apply auth to the registry itself using its name/host as the key.
+					host = registryName
+					if u, parseErr := url.Parse(registryName); parseErr == nil && u.Host != "" {
 						host = u.Host
 					}
 					criRegistry.Configs[host] = containerdRegistryConfig{
