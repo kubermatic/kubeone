@@ -34,11 +34,3 @@ server = "https://registry-1.docker.io"
 [host."https://registry-1.docker.io"]
 capabilities = ["pull", "resolve"]
 
-### /etc/containerd/certs.d/registry.k8s.io/hosts.toml
-server = "https://registry.k8s.io"
-
-[host."https://other"]
-capabilities = ["pull", "resolve"]
-[host."https://some"]
-capabilities = ["pull", "resolve"]
-

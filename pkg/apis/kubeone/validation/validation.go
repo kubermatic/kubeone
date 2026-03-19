@@ -349,6 +349,14 @@ func ValidateContainerRuntimeConfig(cr kubeoneapi.ContainerRuntimeConfig, _ kube
 		}
 	}
 
+	if cr.Containerd != nil && cr.Containerd.Registries != nil {
+		registriesPath := fldPath.Child("containerd").Child("registries")
+		if _, hasDefault := cr.Containerd.Registries["_default"]; hasDefault {
+			allErrs = append(allErrs, field.Invalid(registriesPath.Key("_default"), "_default",
+				`"_default" is not a valid registry name; use "*" for the catch-all registry configuration`))
+		}
+	}
+
 	return allErrs
 }
 

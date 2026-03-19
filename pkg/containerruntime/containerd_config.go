@@ -109,7 +109,7 @@ type registryHostConfig struct {
 
 // hostsTomlConfig represents the top-level structure of a hosts.toml file.
 type hostsTomlConfig struct {
-	Server string                     `toml:"server"`
+	Server string                     `toml:"server,omitempty"`
 	Host   map[string]hostEntryConfig `toml:"host,omitempty"`
 }
 
@@ -240,6 +240,10 @@ func buildRegistryHostConfigs(cluster *kubeoneapi.KubeOneCluster) map[string]*re
 	// Process registry mirrors from ContainerRuntime configuration
 	if cluster.ContainerRuntime.Containerd != nil && cluster.ContainerRuntime.Containerd.Registries != nil {
 		for registryName, registry := range cluster.ContainerRuntime.Containerd.Registries {
+			// Normalize "*" (containerd v1 wildcard) to "_default" (containerd v2 fallback).
+			if registryName == "*" {
+				registryName = "_default"
+			}
 			if _, ok := configs[registryName]; !ok {
 				configs[registryName] = &registryHostConfig{}
 			}
@@ -282,10 +286,17 @@ func marshalContainerdConfigs(cluster *kubeoneapi.KubeOneCluster) (*orderedStrin
 	for _, registryName := range registryNames {
 		rc := configs[registryName]
 
-		// Determine the server URL (the upstream registry)
-		serverURL := fmt.Sprintf("https://%s", registryName)
-		if registryName == "docker.io" {
+		// Determine the server URL (the upstream registry).
+		// For _default (catch-all), leave server empty — containerd will
+		// automatically use the actual registry from the image reference.
+		var serverURL string
+		switch registryName {
+		case "_default":
+			// No server for default — containerd resolves it at pull time
+		case "docker.io":
 			serverURL = "https://registry-1.docker.io"
+		default:
+			serverURL = fmt.Sprintf("https://%s", registryName)
 		}
 
 		cfg := hostsTomlConfig{
