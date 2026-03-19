@@ -76,7 +76,7 @@ func Test_ContainerdConfigs(t *testing.T) {
 			})),
 		},
 		{
-			name: "mirror registry with auth",
+			name: "registry/mirror-registry with auth",
 			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
 				"docker.io": {
 					Mirrors: []string{"https://mirror.example.com"},
@@ -85,12 +85,14 @@ func Test_ContainerdConfigs(t *testing.T) {
 						Password: "testpass",
 					},
 				},
-			})),
-		},
-		{
-			name: "registry with auth",
-			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
-				"docker.io": {
+				"gcr.io": {
+					Auth: &kubeoneapi.ContainerdRegistryAuthConfig{
+						Username: "testuser",
+						Password: "testpass",
+					},
+				},
+				"registry.k8s.io": {
+					Mirrors: []string{"https://mirror.example.com", "https://mirror2.example.com"},
 					Auth: &kubeoneapi.ContainerdRegistryAuthConfig{
 						Username: "testuser",
 						Password: "testpass",
