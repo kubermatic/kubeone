@@ -31,8 +31,8 @@ import (
 )
 
 const (
-	// ContainerdRegistryConfigPath is the directory for containerd registry host configs
-	ContainerdRegistryConfigPath = "/etc/containerd/certs.d"
+	// containerdRegistryConfigPath is the directory for containerd registry host configs
+	containerdRegistryConfigPath = "/etc/containerd/certs.d"
 )
 
 type containerdConfig struct {
@@ -120,7 +120,7 @@ type hostEntryConfig struct {
 	OverridePath bool     `toml:"override_path,omitempty"`
 }
 
-func marshalContainerdConfig(cluster *kubeoneapi.KubeOneCluster) (string, error) {
+func marshalContainerdConfigToml(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	var sandboxImage string
 	var err error
 
@@ -134,7 +134,7 @@ func marshalContainerdConfig(cluster *kubeoneapi.KubeOneCluster) (string, error)
 	}
 
 	criRegistry := &containerdCRIRegistry{
-		ConfigPath: ContainerdRegistryConfigPath,
+		ConfigPath: containerdRegistryConfigPath,
 	}
 
 	// Add registry credentials to CRI config for authentication.
@@ -259,11 +259,17 @@ func buildRegistryHostConfigs(cluster *kubeoneapi.KubeOneCluster) map[string]*re
 	return configs
 }
 
-// marshalRegistryHostsConfig returns a map of file path to file content for containerd
+// marshalContainerdConfigs returns a map of file path to file content for containerd
 // registry host configuration files. Each key is a path like
 // "/etc/containerd/certs.d/<registry>/hosts.toml" and the value is the TOML content.
-func marshalRegistryHostsConfig(cluster *kubeoneapi.KubeOneCluster) map[string]string {
-	result := make(map[string]string)
+func marshalContainerdConfigs(cluster *kubeoneapi.KubeOneCluster) (*orderedStringMap, error) {
+	result := newOrderedMap()
+	crConfig, err := marshalContainerdConfigToml(cluster)
+	if err != nil {
+		return nil, err
+	}
+
+	result.set(cluster.ContainerRuntime.ConfigPath(), crConfig)
 	configs := buildRegistryHostConfigs(cluster)
 
 	// Sort registry names for deterministic output
@@ -315,9 +321,9 @@ func marshalRegistryHostsConfig(cluster *kubeoneapi.KubeOneCluster) map[string]s
 		// Remove empty parent table header that TOML encoder generates for nested maps
 		output := strings.ReplaceAll(buf.String(), "[host]\n", "")
 
-		filePath := fmt.Sprintf("%s/%s/hosts.toml", ContainerdRegistryConfigPath, registryName)
-		result[filePath] = output
+		filePath := fmt.Sprintf("%s/%s/hosts.toml", containerdRegistryConfigPath, registryName)
+		result.set(filePath, output)
 	}
 
-	return result
+	return result, nil
 }

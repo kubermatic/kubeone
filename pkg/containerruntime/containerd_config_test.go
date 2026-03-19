@@ -19,8 +19,6 @@ package containerruntime
 import (
 	"flag"
 	"fmt"
-	"maps"
-	"slices"
 	"strings"
 	"testing"
 
@@ -30,7 +28,7 @@ import (
 
 var updateFlag = flag.Bool("update", false, "update testdata files")
 
-func Test_marshalContainerdConfig(t *testing.T) {
+func Test_ContainerdConfigs(t *testing.T) {
 	tests := []struct {
 		name    string
 		cluster *kubeoneapi.KubeOneCluster
@@ -95,20 +93,14 @@ func Test_marshalContainerdConfig(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			var buf strings.Builder
 
-			got, err := marshalContainerdConfig(tt.cluster)
+			cr2Configs, err := marshalContainerdConfigs(tt.cluster)
 			if err != nil {
-				t.Errorf("marshalContainerdConfig() error = %v", err)
+				t.Errorf("marshalContainerdConfigs() error = %v", err)
 			}
 
-			fmt.Fprintf(&buf, "### /etc/containerd/config.toml\n")
-			fmt.Fprintf(&buf, "%s\n", got)
-
-			gotRegistries := marshalRegistryHostsConfig(tt.cluster)
-			keys := slices.Sorted(maps.Keys(gotRegistries))
-
-			for _, path := range keys {
+			for path, config := range cr2Configs.Iter() {
 				fmt.Fprintf(&buf, "### %s\n", path)
-				fmt.Fprintf(&buf, "%s\n", gotRegistries[path])
+				fmt.Fprintf(&buf, "%s\n", config)
 			}
 
 			testhelper.DiffOutput(t, testhelper.FSGoldenName(t), buf.String(), *updateFlag)

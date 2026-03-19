@@ -98,9 +98,13 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install \
 sudo apt-mark hold containerd.io
 
 
+cat <<EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: unix:///run/containerd/containerd.sock
+EOF
+
+# Clear and recreate registry host configs to remove stale entries
+sudo rm -rf /etc/containerd/certs.d/*
 sudo mkdir -p $(dirname /etc/containerd/config.toml)
-sudo touch /etc/containerd/config.toml
-sudo chmod 600 /etc/containerd/config.toml
 cat <<EOF | sudo tee /etc/containerd/config.toml
 version = 3
 
@@ -127,12 +131,7 @@ bin_dirs = ["/opt/cni/bin"]
 conf_dir = "/etc/cni/net.d"
 
 EOF
-cat <<EOF | sudo tee /etc/crictl.yaml
-runtime-endpoint: unix:///run/containerd/containerd.sock
-EOF
-
-# Clear and recreate registry host configs to remove stale entries
-sudo rm -rf /etc/containerd/certs.d/*
+sudo chmod 600 /etc/containerd/config.toml
 sudo mkdir -p $(dirname /etc/containerd/certs.d/docker.io/hosts.toml)
 cat <<EOF | sudo tee /etc/containerd/certs.d/docker.io/hosts.toml
 server = "https://registry-1.docker.io"
@@ -141,6 +140,7 @@ server = "https://registry-1.docker.io"
 capabilities = ["pull", "resolve"]
 
 EOF
+sudo chmod 600 /etc/containerd/certs.d/docker.io/hosts.toml
 
 sudo systemctl daemon-reload
 sudo systemctl enable containerd

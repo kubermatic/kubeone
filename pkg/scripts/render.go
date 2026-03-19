@@ -28,15 +28,6 @@ import (
 
 var containerRuntimeTemplates = map[string]string{
 	"container-runtime-daemon-config": heredoc.Doc(`
-			{{- if .CONTAINER_RUNTIME_CONFIG_PATH }}
-			sudo mkdir -p $(dirname {{ .CONTAINER_RUNTIME_CONFIG_PATH }})
-			sudo touch {{ .CONTAINER_RUNTIME_CONFIG_PATH }}
-			sudo chmod 600 {{ .CONTAINER_RUNTIME_CONFIG_PATH }}
-			cat <<EOF | sudo tee {{ .CONTAINER_RUNTIME_CONFIG_PATH }}
-			{{ .CONTAINER_RUNTIME_CONFIG }}
-			EOF
-			{{- end }}
-
 			{{- if .CONTAINER_RUNTIME_SOCKET }}
 			cat <<EOF | sudo tee /etc/crictl.yaml
 			runtime-endpoint: unix://{{ .CONTAINER_RUNTIME_SOCKET }}
@@ -45,13 +36,12 @@ var containerRuntimeTemplates = map[string]string{
 
 			# Clear and recreate registry host configs to remove stale entries
 			sudo rm -rf /etc/containerd/certs.d/*
-			{{- if .REGISTRY_HOSTS_CONFIG }}
-			{{- range $path, $content := .REGISTRY_HOSTS_CONFIG }}
+			{{- range $path, $content := .CONTAINER_RUNTIME_CONFIGS.Iter }}
 			sudo mkdir -p $(dirname {{ $path }})
 			cat <<EOF | sudo tee {{ $path }}
 			{{ $content }}
 			EOF
-			{{- end }}
+			sudo chmod 600 {{ $path }}
 			{{- end }}
 		`),
 
