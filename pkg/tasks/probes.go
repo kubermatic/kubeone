@@ -475,6 +475,7 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn executor.
 
 func kernelSemver(krelease string) (*semver.Version, error) {
 	kver := strings.SplitN(krelease, "-", 2)[0]
+	kver = strings.SplitN(kver, "+", 2)[0]
 
 	return semver.NewVersion(kver)
 }
