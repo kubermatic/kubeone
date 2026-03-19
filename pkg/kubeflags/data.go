@@ -16,8 +16,9 @@ limitations under the License.
 
 package kubeflags
 
-// Up to date list of default admission plugins
-// is: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#which-plugins-are-enabled-by-default
+// Based on the upstream default admission plugin lists documented at:
+// https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#which-plugins-are-enabled-by-default
+// KubeOne may add hardening-specific plugins on top of that baseline.
 
 var (
 	defaultAdmissionControllersv135 = []string{
@@ -30,6 +31,7 @@ var (
 		"LimitRanger",
 		"MutatingAdmissionWebhook",
 		"NamespaceLifecycle",
+		"NodeRestriction", // CIS 1.2.16
 		"PersistentVolumeClaimResize",
 		"PodSecurity",
 		"Priority",
@@ -47,6 +49,7 @@ var (
 		"LimitRanger",
 		"ServiceAccount",
 		"TaintNodesByCondition",
+		"NodeRestriction", // CIS 1.2.16
 		"PodSecurity",
 		"Priority",
 		"DefaultTolerationSeconds",
