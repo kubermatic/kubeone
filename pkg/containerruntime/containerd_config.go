@@ -349,7 +349,11 @@ func marshalContainerdConfigs(cluster *kubeoneapi.KubeOneCluster) (*maputils.Ord
 		var buf strings.Builder
 		enc := toml.NewEncoder(&buf)
 		enc.Indent = ""
-		_ = enc.Encode(cfg)
+
+		err = enc.Encode(cfg)
+		if err != nil {
+			return nil, fail.Config(err, "generating containerd configs")
+		}
 
 		// Remove empty parent table header that TOML encoder generates for nested maps
 		output := strings.ReplaceAll(buf.String(), "[host]\n", "")
