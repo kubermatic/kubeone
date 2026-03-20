@@ -70,6 +70,16 @@ func Test_ContainerdConfigs(t *testing.T) {
 			})),
 		},
 		{
+			name: "registry in subpath",
+			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
+				"gitlab.com/project1/repo1": {
+					Auth: &kubeoneapi.ContainerdRegistryAuthConfig{
+						Auth: "token1",
+					},
+				},
+			})),
+		},
+		{
 			name: "multi registry mirrors",
 			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
 				"registry.k8s.io": {
