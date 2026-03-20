@@ -223,7 +223,7 @@ func marshalContainerdConfigToml(cluster *kubeoneapi.KubeOneCluster) (string, er
 			Address: "127.0.0.1:1338",
 		},
 
-		Plugins: map[string]interface{}{
+		Plugins: map[string]any{
 			"io.containerd.cri.v1.images":  criImagesPlugin,
 			"io.containerd.cri.v1.runtime": criRuntimePlugin,
 		},

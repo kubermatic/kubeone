@@ -62,6 +62,14 @@ func Test_ContainerdConfigs(t *testing.T) {
 			})),
 		},
 		{
+			name: "mirror registry with plain-text http",
+			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
+				"docker.io": {
+					Mirrors: []string{"http://custom.insecure.registry"},
+				},
+			})),
+		},
+		{
 			name: "multi registry mirrors",
 			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
 				"registry.k8s.io": {
