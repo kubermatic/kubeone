@@ -1,18 +1,4 @@
-set -xeuo pipefail
-export "PATH=$PATH:/sbin:/usr/local/bin:/opt/bin"
-sudo systemctl stop kubelet
-sudo docker ps -q | xargs sudo docker stop || true
-sudo docker ps -qa | xargs sudo docker rm || true
-
-
-cat <<EOF | sudo tee /etc/crictl.yaml
-runtime-endpoint: unix:///run/containerd/containerd.sock
-EOF
-
-# Clear and recreate registry host configs to remove stale entries
-sudo rm -rf /etc/containerd/certs.d/*
-sudo mkdir -p $(dirname /etc/containerd/config.toml)
-cat <<EOF | sudo tee /etc/containerd/config.toml
+### /etc/containerd/config.toml
 version = 3
 
 [metrics]
@@ -37,19 +23,22 @@ SystemdCgroup = true
 bin_dirs = ["/opt/cni/bin"]
 conf_dir = "/etc/cni/net.d"
 
-EOF
-sudo chmod 600 /etc/containerd/config.toml
-sudo mkdir -p $(dirname /etc/containerd/certs.d/docker.io/hosts.toml)
-cat <<EOF | sudo tee /etc/containerd/certs.d/docker.io/hosts.toml
+### /etc/containerd/certs.d/_default/hosts.toml
+[host."https://custom.insecure.registry"]
+capabilities = ["pull", "resolve"]
+skip_verify = true
+
+### /etc/containerd/certs.d/docker.io/hosts.toml
 server = "https://registry-1.docker.io"
 
 [host."https://registry-1.docker.io"]
 capabilities = ["pull", "resolve"]
 
-EOF
-sudo chmod 600 /etc/containerd/certs.d/docker.io/hosts.toml
+### /etc/containerd/certs.d/registry.k8s.io/hosts.toml
+server = "https://registry.k8s.io"
 
-sudo systemctl daemon-reload
-sudo systemctl enable containerd
-sudo systemctl restart containerd
-sudo systemctl restart kubelet
+[host."https://other"]
+capabilities = ["pull", "resolve"]
+[host."https://some"]
+capabilities = ["pull", "resolve"]
+

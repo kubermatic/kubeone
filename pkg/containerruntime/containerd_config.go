@@ -18,14 +18,22 @@ package containerruntime
 
 import (
 	"fmt"
+	"net/url"
+	"sort"
 	"strings"
 
 	"github.com/BurntSushi/toml"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/maputils"
 
 	"k8s.io/utils/ptr"
+)
+
+const (
+	// containerdRegistryConfigPath is the directory for containerd registry host configs
+	containerdRegistryConfigPath = "/etc/containerd/certs.d"
 )
 
 type containerdConfig struct {
@@ -38,11 +46,29 @@ type containerdMetrics struct {
 	Address string `toml:"address"`
 }
 
-type containerdCRIPlugin struct {
-	SandboxImage                       string                 `toml:"sandbox_image"`
-	Containerd                         *containerdCRISettings `toml:"containerd"`
-	Registry                           *containerdCRIRegistry `toml:"registry"`
-	DeviceOwnershipFromSecurityContext bool                   `toml:"device_ownership_from_security_context"`
+// containerdCRIImagesPlugin represents the "io.containerd.cri.v1.images" plugin in containerd 2.x.
+type containerdCRIImagesPlugin struct {
+	DiscardUnpackedLayers bool                    `toml:"discard_unpacked_layers"`
+	PinnedImages          *containerdPinnedImages `toml:"pinned_images,omitempty"`
+	Registry              *containerdCRIRegistry  `toml:"registry"`
+}
+
+// containerdPinnedImages represents the pinned_images config in containerd 2.x.
+type containerdPinnedImages struct {
+	Sandbox string `toml:"sandbox,omitempty"`
+}
+
+// containerdCRIRuntimePlugin represents the "io.containerd.cri.v1.runtime" plugin in containerd 2.x.
+type containerdCRIRuntimePlugin struct {
+	Containerd                         *containerdCRISettings  `toml:"containerd"`
+	DeviceOwnershipFromSecurityContext bool                    `toml:"device_ownership_from_security_context"`
+	CNI                                *containerdCRICNIConfig `toml:"cni"`
+}
+
+// containerdCRICNIConfig represents the CNI config under the runtime plugin in containerd 2.x.
+type containerdCRICNIConfig struct {
+	BinDirs []string `toml:"bin_dirs"`
+	ConfDir string   `toml:"conf_dir"`
 }
 
 type containerdCRISettings struct {
@@ -55,36 +81,47 @@ type containerdCRIRuntime struct {
 }
 
 type containerdCRIRuncOptions struct {
-	SystemdCgroup bool
+	SystemdCgroup bool `toml:"SystemdCgroup"`
 }
 
 type containerdCRIRegistry struct {
-	Mirrors map[string]containerdRegistryMirror `toml:"mirrors"`
-	Configs map[string]containerdRegistryConfig `toml:"configs"`
-}
-
-type containerdRegistryMirror struct {
-	Endpoint     []string `toml:"endpoint"`
-	OverridePath bool     `toml:"override_path,omitempty"`
+	ConfigPath string                              `toml:"config_path"`
+	Configs    map[string]containerdRegistryConfig `toml:"configs,omitempty"`
 }
 
 type containerdRegistryConfig struct {
-	TLS  *containerdRegistryTLSConfig `toml:"tls"`
-	Auth *containerdRegistryAuth      `toml:"auth"`
+	Auth *containerdRegistryAuth `toml:"auth,omitempty"`
 }
 
 type containerdRegistryAuth struct {
-	Username      string `toml:"username"`
-	Password      string `toml:"password"`
-	Auth          string `toml:"auth"`
-	IdentityToken string `toml:"identitytoken"`
+	Username      string `toml:"username,omitempty"`
+	Password      string `toml:"password,omitempty"`
+	Auth          string `toml:"auth,omitempty"`
+	IdentityToken string `toml:"identitytoken,omitempty"`
 }
 
-type containerdRegistryTLSConfig struct {
-	InsecureSkipVerify bool `toml:"insecure_skip_verify"`
+// registryHostConfig holds the parsed mirror configuration for a single registry,
+// used internally when building hosts.toml files.
+type registryHostConfig struct {
+	endpoints    []string
+	overridePath bool
+	insecure     bool
 }
 
-func marshalContainerdConfig(cluster *kubeoneapi.KubeOneCluster) (string, error) {
+// hostsTomlConfig represents the top-level structure of a hosts.toml file.
+type hostsTomlConfig struct {
+	Server string                     `toml:"server,omitempty"`
+	Host   map[string]hostEntryConfig `toml:"host,omitempty"`
+}
+
+// hostEntryConfig represents a single host entry in a hosts.toml file.
+type hostEntryConfig struct {
+	Capabilities []string `toml:"capabilities"`
+	SkipVerify   bool     `toml:"skip_verify,omitempty"`
+	OverridePath bool     `toml:"override_path,omitempty"`
+}
+
+func marshalContainerdConfigToml(cluster *kubeoneapi.KubeOneCluster) (string, error) {
 	var sandboxImage string
 	var err error
 
@@ -97,9 +134,72 @@ func marshalContainerdConfig(cluster *kubeoneapi.KubeOneCluster) (string, error)
 		}
 	}
 
-	criPlugin := containerdCRIPlugin{
+	criRegistry := &containerdCRIRegistry{
+		ConfigPath: containerdRegistryConfigPath,
+	}
+
+	// Add registry credentials to CRI config for authentication.
+	// Per containerd v2 docs, auth is configured under
+	// [plugins."io.containerd.cri.v1.images".registry.configs."<registry>".auth]
+	// The registry key must be the mirror host (with optional port), not the source registry.
+	if cluster.ContainerRuntime.Containerd != nil && cluster.ContainerRuntime.Containerd.Registries != nil {
+		for registryName, registry := range cluster.ContainerRuntime.Containerd.Registries {
+			if registryName == "*" {
+				continue
+			}
+			var host string
+			if registry.Auth != nil {
+				if criRegistry.Configs == nil {
+					criRegistry.Configs = make(map[string]containerdRegistryConfig)
+				}
+				if len(registry.Mirrors) > 0 {
+					// Auth applies to the mirror endpoints, not the source registry
+					for _, mirror := range registry.Mirrors {
+						host = mirror
+						if u, parseErr := url.Parse(mirror); parseErr == nil && u.Host != "" {
+							host = u.Host
+						}
+						criRegistry.Configs[host] = containerdRegistryConfig{
+							Auth: &containerdRegistryAuth{
+								Username:      registry.Auth.Username,
+								Password:      registry.Auth.Password,
+								Auth:          registry.Auth.Auth,
+								IdentityToken: registry.Auth.IdentityToken,
+							},
+						}
+					}
+				} else {
+					// No mirrors configured; apply auth to the registry itself using its name/host as the key.
+					host = registryName
+					if u, parseErr := url.Parse(registryName); parseErr == nil && u.Host != "" {
+						host = u.Host
+					}
+					criRegistry.Configs[host] = containerdRegistryConfig{
+						Auth: &containerdRegistryAuth{
+							Username:      registry.Auth.Username,
+							Password:      registry.Auth.Password,
+							Auth:          registry.Auth.Auth,
+							IdentityToken: registry.Auth.IdentityToken,
+						},
+					}
+				}
+			}
+		}
+	}
+
+	criImagesPlugin := containerdCRIImagesPlugin{
+		DiscardUnpackedLayers: false,
+		Registry:              criRegistry,
+	}
+
+	if sandboxImage != "" {
+		criImagesPlugin.PinnedImages = &containerdPinnedImages{
+			Sandbox: sandboxImage,
+		}
+	}
+
+	criRuntimePlugin := containerdCRIRuntimePlugin{
 		DeviceOwnershipFromSecurityContext: ptr.Deref(cluster.ContainerRuntime.Containerd.DeviceOwnershipFromSecurityContext, true),
-		SandboxImage:                       sandboxImage,
 		Containerd: &containerdCRISettings{
 			Runtimes: map[string]containerdCRIRuntime{
 				"runc": {
@@ -110,66 +210,22 @@ func marshalContainerdConfig(cluster *kubeoneapi.KubeOneCluster) (string, error)
 				},
 			},
 		},
-		Registry: &containerdCRIRegistry{
-			Mirrors: map[string]containerdRegistryMirror{
-				"docker.io": {
-					Endpoint: []string{"https://registry-1.docker.io"},
-				},
-			},
+		CNI: &containerdCRICNIConfig{
+			BinDirs: []string{"/opt/cni/bin"},
+			ConfDir: "/etc/cni/net.d",
 		},
 	}
 
-	if cluster.RegistryConfiguration != nil {
-		insecureRegistry := cluster.RegistryConfiguration.InsecureRegistryAddress()
-		if insecureRegistry != "" {
-			criPlugin.Registry.Mirrors[insecureRegistry] = containerdRegistryMirror{
-				Endpoint: []string{fmt.Sprintf("http://%s", insecureRegistry)},
-			}
-		}
-	}
-
-	if regs := cluster.ContainerRuntime.Containerd.Registries; regs != nil {
-		criPlugin.Registry = &containerdCRIRegistry{
-			Mirrors: map[string]containerdRegistryMirror{},
-			Configs: map[string]containerdRegistryConfig{},
-		}
-
-		for registryName, registry := range regs {
-			criPlugin.Registry.Mirrors[registryName] = containerdRegistryMirror{
-				Endpoint:     registry.Mirrors,
-				OverridePath: registry.OverridePath,
-			}
-
-			if registry.TLSConfig != nil {
-				criPlugin.Registry.Configs[registryName] = containerdRegistryConfig{
-					TLS: &containerdRegistryTLSConfig{
-						InsecureSkipVerify: registry.TLSConfig.InsecureSkipVerify,
-					},
-				}
-			}
-
-			if registry.Auth != nil {
-				regConfig := criPlugin.Registry.Configs[registryName]
-				regConfig.Auth = &containerdRegistryAuth{
-					Username:      registry.Auth.Username,
-					Password:      registry.Auth.Password,
-					Auth:          registry.Auth.Auth,
-					IdentityToken: registry.Auth.IdentityToken,
-				}
-				criPlugin.Registry.Configs[registryName] = regConfig
-			}
-		}
-	}
-
 	cfg := containerdConfig{
-		Version: 2,
+		Version: 3,
 		Metrics: &containerdMetrics{
 			// metrics available at http://127.0.0.1:1338/v1/metrics
 			Address: "127.0.0.1:1338",
 		},
 
 		Plugins: map[string]any{
-			"io.containerd.grpc.v1.cri": criPlugin,
+			"io.containerd.cri.v1.images":  criImagesPlugin,
+			"io.containerd.cri.v1.runtime": criRuntimePlugin,
 		},
 	}
 
@@ -179,4 +235,132 @@ func marshalContainerdConfig(cluster *kubeoneapi.KubeOneCluster) (string, error)
 	err = enc.Encode(cfg)
 
 	return buf.String(), fail.Runtime(err, "encoding containerd config")
+}
+
+// buildRegistryHostConfigs processes the registry mirrors, insecure registries,
+// and returns a per-registry configuration.
+func buildRegistryHostConfigs(cluster *kubeoneapi.KubeOneCluster) map[string]*registryHostConfig {
+	configs := make(map[string]*registryHostConfig)
+
+	// Start with default docker.io entry
+	configs["docker.io"] = &registryHostConfig{
+		endpoints: []string{"https://registry-1.docker.io"},
+	}
+
+	// Process insecure registry from RegistryConfiguration
+	if cluster.RegistryConfiguration != nil {
+		insecureRegistry := cluster.RegistryConfiguration.InsecureRegistryAddress()
+		if insecureRegistry != "" {
+			if _, ok := configs[insecureRegistry]; !ok {
+				configs[insecureRegistry] = &registryHostConfig{}
+			}
+			configs[insecureRegistry].insecure = true
+		}
+	}
+
+	// Process registry mirrors from ContainerRuntime configuration
+	if cluster.ContainerRuntime.Containerd != nil && cluster.ContainerRuntime.Containerd.Registries != nil {
+		for registryName, registry := range cluster.ContainerRuntime.Containerd.Registries {
+			// Normalize "*" (containerd v1 wildcard) to "_default" (containerd v2 fallback).
+			if registryName == "*" {
+				registryName = "_default"
+			}
+			if _, ok := configs[registryName]; !ok {
+				configs[registryName] = &registryHostConfig{}
+			}
+			rc := configs[registryName]
+
+			if len(registry.Mirrors) > 0 {
+				rc.endpoints = registry.Mirrors
+			}
+			rc.overridePath = registry.OverridePath
+
+			if registry.TLSConfig != nil && registry.TLSConfig.InsecureSkipVerify {
+				rc.insecure = true
+			}
+		}
+	}
+
+	return configs
+}
+
+// marshalContainerdConfigs returns a map of file path to file content for containerd
+// registry host configuration files. Each key is a path like
+// "/etc/containerd/certs.d/<registry>/hosts.toml" and the value is the TOML content.
+func marshalContainerdConfigs(cluster *kubeoneapi.KubeOneCluster) (*maputils.OrderEntryMap[string, string], error) {
+	crConfig, err := marshalContainerdConfigToml(cluster)
+	if err != nil {
+		return nil, err
+	}
+
+	result := maputils.NewOrderEntryMap[string, string]()
+	result.Set(cluster.ContainerRuntime.ConfigPath(), crConfig)
+
+	configs := buildRegistryHostConfigs(cluster)
+
+	// Sort registry names for deterministic output
+	registryNames := make([]string, 0, len(configs))
+	for name := range configs {
+		registryNames = append(registryNames, name)
+	}
+	sort.Strings(registryNames)
+
+	for _, registryName := range registryNames {
+		rc := configs[registryName]
+
+		// Determine the server URL (the upstream registry).
+		// For _default (catch-all), leave server empty — containerd will
+		// automatically use the actual registry from the image reference.
+		var serverURL string
+		switch registryName {
+		case "_default":
+			// No server for default — containerd resolves it at pull time
+		case "docker.io":
+			serverURL = "https://registry-1.docker.io"
+		default:
+			serverURL = fmt.Sprintf("https://%s", registryName)
+		}
+
+		cfg := hostsTomlConfig{
+			Server: serverURL,
+			Host:   make(map[string]hostEntryConfig),
+		}
+
+		// Add mirror host entries
+		for _, endpoint := range rc.endpoints {
+			if !strings.HasPrefix(endpoint, "http") {
+				endpoint = "https://" + endpoint
+			}
+			cfg.Host[endpoint] = hostEntryConfig{
+				Capabilities: []string{"pull", "resolve"},
+				OverridePath: rc.overridePath,
+				SkipVerify:   rc.insecure,
+			}
+		}
+
+		// If insecure registry has no endpoints, add its own endpoint
+		if rc.insecure && len(rc.endpoints) == 0 && serverURL != "" {
+			cfg.Host[serverURL] = hostEntryConfig{
+				Capabilities: []string{"pull", "resolve", "push"},
+				SkipVerify:   true,
+			}
+		}
+
+		var buf strings.Builder
+		enc := toml.NewEncoder(&buf)
+		enc.Indent = ""
+
+		err = enc.Encode(cfg)
+		if err != nil {
+			return nil, fail.Config(err, "generating containerd configs")
+		}
+
+		// Remove empty parent table header that TOML encoder generates for nested maps
+		output := strings.ReplaceAll(buf.String(), "[host]\n", "")
+
+		filePath := fmt.Sprintf("%s/%s/hosts.toml", containerdRegistryConfigPath, registryName)
+		result.Set(filePath, output)
+	}
+
+	return result, nil
 }

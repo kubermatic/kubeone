@@ -84,5 +84,5 @@ var libraryTemplate = heredoc.Doc(`
 	`)
 
 const (
-	defaultContainerdVersion = "'1.7.*'"
+	defaultContainerdVersion = "'2.2.*'"
 )

@@ -16,16 +16,17 @@ limitations under the License.
 
 package containerruntime
 
-import kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+import (
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+)
 
 func UpdateDataMap(cluster *kubeoneapi.KubeOneCluster, inputMap map[string]any) error {
-	crConfig, err := marshalContainerdConfig(cluster)
+	containerd2Configs, err := marshalContainerdConfigs(cluster)
 	if err != nil {
 		return err
 	}
 
-	inputMap["CONTAINER_RUNTIME_CONFIG_PATH"] = cluster.ContainerRuntime.ConfigPath()
-	inputMap["CONTAINER_RUNTIME_CONFIG"] = crConfig
+	inputMap["CONTAINER_RUNTIME_CONFIGS"] = containerd2Configs
 	inputMap["CONTAINER_RUNTIME_SOCKET"] = cluster.ContainerRuntime.CRISocket()
 
 	return nil

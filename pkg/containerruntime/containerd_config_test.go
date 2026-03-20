@@ -18,6 +18,8 @@ package containerruntime
 
 import (
 	"flag"
+	"fmt"
+	"strings"
 	"testing"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -26,7 +28,7 @@ import (
 
 var updateFlag = flag.Bool("update", false, "update testdata files")
 
-func Test_marshalContainerdConfig(t *testing.T) {
+func Test_ContainerdConfigs(t *testing.T) {
 	tests := []struct {
 		name    string
 		cluster *kubeoneapi.KubeOneCluster
@@ -60,10 +62,28 @@ func Test_marshalContainerdConfig(t *testing.T) {
 			})),
 		},
 		{
+			name: "mirror registry with plain-text http",
+			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
+				"docker.io": {
+					Mirrors: []string{"http://custom.insecure.registry"},
+				},
+			})),
+		},
+		{
+			name: "registry in subpath",
+			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
+				"gitlab.com/project1/repo1": {
+					Auth: &kubeoneapi.ContainerdRegistryAuthConfig{
+						Auth: "token1",
+					},
+				},
+			})),
+		},
+		{
 			name: "multi registry mirrors",
 			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
 				"registry.k8s.io": {
-					Mirrors: []string{"https://some"},
+					Mirrors: []string{"https://some", "https://other"},
 				},
 				"*": {
 					Mirrors: []string{"https://custom.insecure.registry"},
@@ -73,16 +93,48 @@ func Test_marshalContainerdConfig(t *testing.T) {
 				},
 			})),
 		},
+		{
+			name: "registry/mirror-registry with auth",
+			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
+				"docker.io": {
+					Mirrors: []string{"https://mirror.example.com"},
+					Auth: &kubeoneapi.ContainerdRegistryAuthConfig{
+						Username: "testuser",
+						Password: "testpass",
+					},
+				},
+				"gcr.io": {
+					Auth: &kubeoneapi.ContainerdRegistryAuthConfig{
+						Username: "testuser",
+						Password: "testpass",
+					},
+				},
+				"registry.k8s.io": {
+					Mirrors: []string{"https://mirror.example.com", "https://mirror2.example.com"},
+					Auth: &kubeoneapi.ContainerdRegistryAuthConfig{
+						Username: "testuser",
+						Password: "testpass",
+					},
+				},
+			})),
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := marshalContainerdConfig(tt.cluster)
+			var buf strings.Builder
+
+			cr2Configs, err := marshalContainerdConfigs(tt.cluster)
 			if err != nil {
-				t.Errorf("marshalContainerdConfig() error = %v", err)
+				t.Errorf("marshalContainerdConfigs() error = %v", err)
 			}
 
-			testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
+			for path, config := range cr2Configs.Iter() {
+				fmt.Fprintf(&buf, "### %s\n", path)
+				fmt.Fprintf(&buf, "%s\n", config)
+			}
+
+			testhelper.DiffOutput(t, testhelper.FSGoldenName(t), buf.String(), *updateFlag)
 		})
 	}
 }
