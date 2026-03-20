@@ -26,6 +26,7 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/maputils"
 
 	"k8s.io/utils/ptr"
 )
@@ -286,14 +287,15 @@ func buildRegistryHostConfigs(cluster *kubeoneapi.KubeOneCluster) map[string]*re
 // marshalContainerdConfigs returns a map of file path to file content for containerd
 // registry host configuration files. Each key is a path like
 // "/etc/containerd/certs.d/<registry>/hosts.toml" and the value is the TOML content.
-func marshalContainerdConfigs(cluster *kubeoneapi.KubeOneCluster) (*orderedStringMap, error) {
-	result := newOrderedMap()
+func marshalContainerdConfigs(cluster *kubeoneapi.KubeOneCluster) (*maputils.OrderEntryMap[string, string], error) {
 	crConfig, err := marshalContainerdConfigToml(cluster)
 	if err != nil {
 		return nil, err
 	}
 
-	result.set(cluster.ContainerRuntime.ConfigPath(), crConfig)
+	result := maputils.NewOrderEntryMap[string, string]()
+	result.Set(cluster.ContainerRuntime.ConfigPath(), crConfig)
+
 	configs := buildRegistryHostConfigs(cluster)
 
 	// Sort registry names for deterministic output
@@ -353,7 +355,7 @@ func marshalContainerdConfigs(cluster *kubeoneapi.KubeOneCluster) (*orderedStrin
 		output := strings.ReplaceAll(buf.String(), "[host]\n", "")
 
 		filePath := fmt.Sprintf("%s/%s/hosts.toml", containerdRegistryConfigPath, registryName)
-		result.set(filePath, output)
+		result.Set(filePath, output)
 	}
 
 	return result, nil
