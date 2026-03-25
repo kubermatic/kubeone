@@ -61,7 +61,7 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateControlPlaneConfig(c.ControlPlane, c.ClusterNetwork, field.NewPath("controlPlane"))...)
 	allErrs = append(allErrs, ValidateKubeletConfig(c.KubeletConfig, field.NewPath("kubeletConfig"))...)
 	allErrs = append(allErrs, ValidateAPIEndpoint(c.APIEndpoint, field.NewPath("apiEndpoint"))...)
-	allErrs = append(allErrs, ValidateCloudProviderSpec(c, field.NewPath("provider"))...)
+	allErrs = append(allErrs, ValidateCloudProviderSpec(c, field.NewPath("cloudProvider"))...)
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
 	allErrs = append(allErrs, ValidateKubernetesSupport(c, field.NewPath(""))...)
 	allErrs = append(allErrs, ValidateContainerRuntimeConfig(c.ContainerRuntime, c.Versions, field.NewPath("containerRuntime"))...)
@@ -92,8 +92,11 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 func ValidateName(name string, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	errs := validation.IsDNS1123Subdomain(name)
-	for _, err := range errs {
+	if name == "" {
+		allErrs = append(allErrs, field.Invalid(fldPath, name, "can't be empty"))
+	}
+
+	for _, err := range validation.IsDNS1123Subdomain(name) {
 		allErrs = append(allErrs, field.Invalid(fldPath, name, err))
 	}
 

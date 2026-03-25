@@ -44,13 +44,21 @@ func getMachineInfo(instance MachineInstance) Machine {
 	for address, addressType := range instance.inst.Addresses() {
 		switch addressType {
 		case corev1.NodeExternalIP:
-			publicAddress = address
+			if publicAddress == "" {
+				publicAddress = address
+			}
 		case corev1.NodeInternalIP:
-			privateAddress = address
+			if privateAddress == "" {
+				privateAddress = address
+			}
 		case corev1.NodeHostName:
-			hostname = address
+			if hostname == "" {
+				hostname = address
+			}
 		case corev1.NodeInternalDNS:
-			hostname = address
+			if hostname == "" {
+				hostname = address
+			}
 		case corev1.NodeExternalDNS:
 			if hostname == "" {
 				hostname = address

@@ -25,6 +25,8 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/sirupsen/logrus"
+
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/machine-controller/pkg/cloudprovider"
 	cloudprovidererrors "k8c.io/machine-controller/pkg/cloudprovider/errors"
@@ -85,7 +87,7 @@ type MachineInstance struct {
 	sshUser string
 }
 
-func CreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine) ([]Machine, error) {
+func CreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine, logger logrus.FieldLogger) ([]Machine, error) {
 	providerData := &cloudprovidertypes.ProviderData{
 		Ctx: ctx,
 	}
@@ -147,6 +149,8 @@ func CreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine) ([]
 
 				time.Sleep(5 * time.Second)
 			}
+		} else {
+			logger.Infof("control-plane %q VM already exists with id: %s", machine.Name, providerInstance.ID())
 		}
 
 		// Instance exists

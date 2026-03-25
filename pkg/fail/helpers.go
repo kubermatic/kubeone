@@ -131,3 +131,15 @@ func MachineController(err error, op string, args ...any) error {
 		Err: errors.WithStack(err),
 	}
 }
+
+func Cloud(err error, provider string, op string, args ...any) error {
+	if err == nil {
+		return nil
+	}
+
+	return CloudError{
+		Provider: provider,
+		Op:       fmt.Sprintf(op, args...),
+		Err:      errors.WithStack(err),
+	}
+}
