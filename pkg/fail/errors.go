@@ -186,3 +186,26 @@ func (e MachineControllerError) Error() string {
 
 func (e MachineControllerError) Unwrap() error { return e.Err }
 func (e MachineControllerError) exitCode() int { return MachineControllerErrorExitCode }
+
+// CloudError wraps cloud provider related errors
+type CloudError struct {
+	Provider string
+	Err      error
+	Op       string
+}
+
+func (e CloudError) Error() string {
+	var res strings.Builder
+	fmt.Fprintf(&res, "%s cloud provider:", e.Provider)
+
+	if e.Op != "" {
+		fmt.Fprintf(&res, " %s:", e.Op)
+	}
+	res.WriteString("\n")
+	res.WriteString(e.Err.Error())
+
+	return res.String()
+}
+
+func (e CloudError) Unwrap() error { return e.Err }
+func (e CloudError) exitCode() int { return CloudErrorExitCode }
