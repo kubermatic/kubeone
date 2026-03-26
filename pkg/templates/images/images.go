@@ -404,8 +404,8 @@ func optionalResources() map[Resource]map[string]string {
 
 		// Cluster-autoscaler addon
 		ClusterAutoscaler: {
-			"1.33.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.33.1",
-			"1.34.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.34.1",
+			"1.33.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.33.4",
+			"1.34.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.34.3",
 			">= 1.35.x": "registry.k8s.io/autoscaling/cluster-autoscaler:v1.35.0",
 		},
 

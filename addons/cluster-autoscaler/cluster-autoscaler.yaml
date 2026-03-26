@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/instance: cluster-autoscaler
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: clusterapi-cluster-autoscaler
-    helm.sh/chart: cluster-autoscaler-9.50.1
+    helm.sh/chart: cluster-autoscaler-9.56.0
     k8s-addon: cluster-autoscaler.addons.k8s.io
     k8s-app: cluster-autoscaler
   name: cluster-autoscaler
@@ -19,7 +19,7 @@ metadata:
     app.kubernetes.io/instance: cluster-autoscaler
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: clusterapi-cluster-autoscaler
-    helm.sh/chart: cluster-autoscaler-9.50.1
+    helm.sh/chart: cluster-autoscaler-9.56.0
     k8s-addon: cluster-autoscaler.addons.k8s.io
     k8s-app: cluster-autoscaler
   name: cluster-autoscaler
@@ -49,7 +49,7 @@ metadata:
     app.kubernetes.io/instance: cluster-autoscaler
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: clusterapi-cluster-autoscaler
-    helm.sh/chart: cluster-autoscaler-9.50.1
+    helm.sh/chart: cluster-autoscaler-9.56.0
     k8s-addon: cluster-autoscaler.addons.k8s.io
     k8s-app: cluster-autoscaler
   name: cluster-autoscaler
@@ -90,10 +90,18 @@ rules:
     verbs:
       - watch
       - list
-      - create
-      - delete
       - get
       - update
+  - apiGroups:
+      - resource.k8s.io
+    resources:
+      - resourceslices
+      - deviceclasses
+      - resourceclaims
+    verbs:
+      - watch
+      - list
+      - get
   - apiGroups:
       - ""
     resources:
@@ -237,7 +245,7 @@ metadata:
     app.kubernetes.io/instance: cluster-autoscaler
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: clusterapi-cluster-autoscaler
-    helm.sh/chart: cluster-autoscaler-9.50.1
+    helm.sh/chart: cluster-autoscaler-9.56.0
     k8s-addon: cluster-autoscaler.addons.k8s.io
     k8s-app: cluster-autoscaler
   name: cluster-autoscaler
@@ -258,7 +266,7 @@ metadata:
     app.kubernetes.io/instance: cluster-autoscaler
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: clusterapi-cluster-autoscaler
-    helm.sh/chart: cluster-autoscaler-9.50.1
+    helm.sh/chart: cluster-autoscaler-9.56.0
     k8s-addon: cluster-autoscaler.addons.k8s.io
     k8s-app: cluster-autoscaler
   name: cluster-autoscaler
@@ -281,7 +289,7 @@ metadata:
     app.kubernetes.io/instance: cluster-autoscaler
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: clusterapi-cluster-autoscaler
-    helm.sh/chart: cluster-autoscaler-9.50.1
+    helm.sh/chart: cluster-autoscaler-9.56.0
     k8s-addon: cluster-autoscaler.addons.k8s.io
     k8s-app: cluster-autoscaler
   name: cluster-autoscaler
@@ -304,7 +312,7 @@ metadata:
     app.kubernetes.io/instance: cluster-autoscaler
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: clusterapi-cluster-autoscaler
-    helm.sh/chart: cluster-autoscaler-9.50.1
+    helm.sh/chart: cluster-autoscaler-9.56.0
     k8s-addon: cluster-autoscaler.addons.k8s.io
     k8s-app: cluster-autoscaler
   name: cluster-autoscaler
@@ -379,7 +387,7 @@ metadata:
     app.kubernetes.io/instance: cluster-autoscaler
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: clusterapi-cluster-autoscaler
-    helm.sh/chart: cluster-autoscaler-9.50.1
+    helm.sh/chart: cluster-autoscaler-9.56.0
     k8s-addon: cluster-autoscaler.addons.k8s.io
     k8s-app: cluster-autoscaler
   name: cluster-autoscaler
