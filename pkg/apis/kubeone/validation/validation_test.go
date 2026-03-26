@@ -2671,6 +2671,35 @@ func TestValidateContainerRuntimeConfig(t *testing.T) {
 			},
 			expectedError: true,
 		},
+		{
+			name: "valid: single subpath registry",
+			cr: kubeoneapi.ContainerRuntimeConfig{
+				Containerd: &kubeoneapi.ContainerRuntimeContainerd{
+					Registries: map[string]kubeoneapi.ContainerdRegistry{
+						"gitlab.com/org1/repo1": {
+							Mirrors: []string{"https://mirror.example.com"},
+						},
+					},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "invalid: conflicting subpath registries",
+			cr: kubeoneapi.ContainerRuntimeConfig{
+				Containerd: &kubeoneapi.ContainerRuntimeContainerd{
+					Registries: map[string]kubeoneapi.ContainerdRegistry{
+						"gitlab.com/org1": {
+							Mirrors: []string{"https://mirror1.example.com"},
+						},
+						"gitlab.com/org2": {
+							Mirrors: []string{"https://mirror2.example.com"},
+						},
+					},
+				},
+			},
+			expectedError: true,
+		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {

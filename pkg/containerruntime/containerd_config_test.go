@@ -98,6 +98,20 @@ func Test_ContainerdConfigs(t *testing.T) {
 			})),
 		},
 		{
+			name: "registry with custom port",
+			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
+				"myregistry.io:5000": {
+					Auth: &kubeoneapi.ContainerdRegistryAuthConfig{
+						Auth: "token1",
+					},
+					Mirrors: []string{"https://mirror.myregistry.io"},
+					TLSConfig: &kubeoneapi.ContainerdTLSConfig{
+						InsecureSkipVerify: true,
+					},
+				},
+			})),
+		},
+		{
 			name: "registry in subpath",
 			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
 				"gitlab.com/project1/repo1": {
