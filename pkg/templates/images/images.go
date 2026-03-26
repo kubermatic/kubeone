@@ -430,7 +430,7 @@ func optionalResources() map[Resource]map[string]string {
 
 		// Backup Restic
 		BackupResticSnapshotter: {"*": "registry.k8s.io/etcd:3.5.16-0"},
-		BackupResticUploader:    {"*": "ghcr.io/restic/restic:0.18.0"},
+		BackupResticUploader:    {"*": "ghcr.io/restic/restic:0.18.1"},
 
 		// Unattended upgrades
 		UUApline: {"*": "docker.io/library/alpine:3.22.2"},
