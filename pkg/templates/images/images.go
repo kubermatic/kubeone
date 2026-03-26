@@ -433,7 +433,7 @@ func optionalResources() map[Resource]map[string]string {
 		BackupResticUploader:    {"*": "ghcr.io/restic/restic:0.18.1"},
 
 		// Unattended upgrades
-		UUApline: {"*": "docker.io/library/alpine:3.22.2"},
+		UUApline: {"*": "docker.io/library/alpine:3.23"},
 		UUFluo:   {"*": "ghcr.io/flatcar/flatcar-linux-update-operator:v0.10.0-rc1"},
 	}
 }
