@@ -272,8 +272,9 @@ func buildRegistryHostConfigs(cluster *kubeoneapi.KubeOneCluster) map[string]*re
 			}
 			rc.overridePath = registry.OverridePath
 
-			if registry.TLSConfig != nil && registry.TLSConfig.InsecureSkipVerify {
-				rc.insecure = true
+			if registry.TLSConfig != nil {
+				// TLSConfig takes precedence over RegistryConfiguration.InsecureRegistry
+				rc.insecure = registry.TLSConfig.InsecureSkipVerify
 			}
 		}
 	}
@@ -305,9 +306,9 @@ func marshalContainerdConfigs(cluster *kubeoneapi.KubeOneCluster) (*maputils.Ord
 	for _, registryName := range registryNames {
 		rc := configs[registryName]
 
-		// Skip registries that have no mirrors and are not insecure —
+		// Skip registries that have no mirrors, are not insecure, and don't use override_path —
 		// a hosts.toml with only a server URL adds no value over containerd defaults.
-		if len(rc.endpoints) == 0 && !rc.insecure {
+		if len(rc.endpoints) == 0 && !rc.insecure && !rc.overridePath {
 			continue
 		}
 
@@ -342,11 +343,17 @@ func marshalContainerdConfigs(cluster *kubeoneapi.KubeOneCluster) (*maputils.Ord
 			}
 		}
 
-		// If insecure registry has no endpoints, add its own endpoint
-		if rc.insecure && len(rc.endpoints) == 0 && serverURL != "" {
-			cfg.Host[serverURL] = hostEntryConfig{
+		// If no mirrors are configured but the registry needs custom settings
+		// (insecure or override_path), create a self-referencing host entry.
+		if len(rc.endpoints) == 0 && serverURL != "" && (rc.insecure || rc.overridePath) {
+			hostURL := serverURL
+			if rc.overridePath {
+				hostURL = fmt.Sprintf("https://%s", registryName)
+			}
+			cfg.Host[hostURL] = hostEntryConfig{
 				Capabilities: []string{"pull", "resolve", "push"},
-				SkipVerify:   true,
+				OverridePath: rc.overridePath,
+				SkipVerify:   rc.insecure,
 			}
 		}
 

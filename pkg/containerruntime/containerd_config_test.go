@@ -45,6 +45,34 @@ func Test_ContainerdConfigs(t *testing.T) {
 			})),
 		},
 		{
+			name: "insecure registry with skip_verify",
+			cluster: genCluster(
+				withRegistryConfiguration(kubeoneapi.RegistryConfiguration{
+					OverwriteRegistry: "some.registry",
+					InsecureRegistry:  true,
+				}),
+				withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
+					"some.registry": {
+						TLSConfig: &kubeoneapi.ContainerdTLSConfig{
+							InsecureSkipVerify: true,
+						},
+					},
+					"some-1.registry": {
+						Mirrors: []string{"some.registry"},
+						TLSConfig: &kubeoneapi.ContainerdTLSConfig{
+							InsecureSkipVerify: true,
+						},
+					},
+					"some-2.registry": {
+						Mirrors: []string{"some.registry"},
+						TLSConfig: &kubeoneapi.ContainerdTLSConfig{
+							InsecureSkipVerify: false,
+						},
+					},
+				}),
+			),
+		},
+		{
 			name: "docker.io mirror registry",
 			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
 				"docker.io": {
@@ -76,6 +104,22 @@ func Test_ContainerdConfigs(t *testing.T) {
 					Auth: &kubeoneapi.ContainerdRegistryAuthConfig{
 						Auth: "token1",
 					},
+				},
+			})),
+		},
+		{
+			name: "registry in subpath and override_path",
+			cluster: genCluster(withContainerdRegistry(map[string]kubeoneapi.ContainerdRegistry{
+				"gitlab.com/project1/repo1": {
+					Auth: &kubeoneapi.ContainerdRegistryAuthConfig{
+						Auth: "token1",
+					},
+				},
+				"gitlab.com/project1/repo2": {
+					Auth: &kubeoneapi.ContainerdRegistryAuthConfig{
+						Auth: "token1",
+					},
+					OverridePath: true,
 				},
 			})),
 		},
