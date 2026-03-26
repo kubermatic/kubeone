@@ -71,5 +71,6 @@ func (oem *OrderEntryMap[K, V]) Get(key K) (V, bool) {
 	}
 
 	var zero V
+
 	return zero, false
 }

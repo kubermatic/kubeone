@@ -42,9 +42,6 @@ server = "https://registry-1.docker.io"
 [host."https://mirror.example.com"]
 capabilities = ["pull", "resolve"]
 
-### /etc/containerd/certs.d/gcr.io/hosts.toml
-server = "https://gcr.io"
-
 ### /etc/containerd/certs.d/registry.k8s.io/hosts.toml
 server = "https://registry.k8s.io"
 

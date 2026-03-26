@@ -12,8 +12,8 @@ sandbox = "registry.k8s.io/pause:3.10"
 [plugins."io.containerd.cri.v1.images".registry]
 config_path = "/etc/containerd/certs.d"
 [plugins."io.containerd.cri.v1.images".registry.configs]
-[plugins."io.containerd.cri.v1.images".registry.configs."gitlab.com/project1/repo1"]
-[plugins."io.containerd.cri.v1.images".registry.configs."gitlab.com/project1/repo1".auth]
+[plugins."io.containerd.cri.v1.images".registry.configs."gitlab.com"]
+[plugins."io.containerd.cri.v1.images".registry.configs."gitlab.com".auth]
 auth = "token1"
 [plugins."io.containerd.cri.v1.runtime"]
 device_ownership_from_security_context = true
@@ -32,7 +32,4 @@ server = "https://registry-1.docker.io"
 
 [host."https://registry-1.docker.io"]
 capabilities = ["pull", "resolve"]
-
-### /etc/containerd/certs.d/gitlab.com/project1/repo1/hosts.toml
-server = "https://gitlab.com/project1/repo1"
 

@@ -169,11 +169,8 @@ func marshalContainerdConfigToml(cluster *kubeoneapi.KubeOneCluster) (string, er
 						}
 					}
 				} else {
-					// No mirrors configured; apply auth to the registry itself using its name/host as the key.
-					host = registryName
-					if u, parseErr := url.Parse(registryName); parseErr == nil && u.Host != "" {
-						host = u.Host
-					}
+					// No mirrors configured; apply auth to the registry itself using its host[:port] as the key.
+					host = registryHost(registryName)
 					criRegistry.Configs[host] = containerdRegistryConfig{
 						Auth: &containerdRegistryAuth{
 							Username:      registry.Auth.Username,
@@ -308,17 +305,24 @@ func marshalContainerdConfigs(cluster *kubeoneapi.KubeOneCluster) (*maputils.Ord
 	for _, registryName := range registryNames {
 		rc := configs[registryName]
 
+		// Skip registries that have no mirrors and are not insecure —
+		// a hosts.toml with only a server URL adds no value over containerd defaults.
+		if len(rc.endpoints) == 0 && !rc.insecure {
+			continue
+		}
+
 		// Determine the server URL (the upstream registry).
 		// For _default (catch-all), leave server empty — containerd will
 		// automatically use the actual registry from the image reference.
 		var serverURL string
-		switch registryName {
+		host := registryHost(registryName)
+		switch host {
 		case "_default":
 			// No server for default — containerd resolves it at pull time
 		case "docker.io":
 			serverURL = "https://registry-1.docker.io"
 		default:
-			serverURL = fmt.Sprintf("https://%s", registryName)
+			serverURL = fmt.Sprintf("https://%s", host)
 		}
 
 		cfg := hostsTomlConfig{
@@ -358,9 +362,24 @@ func marshalContainerdConfigs(cluster *kubeoneapi.KubeOneCluster) (*maputils.Ord
 		// Remove empty parent table header that TOML encoder generates for nested maps
 		output := strings.ReplaceAll(buf.String(), "[host]\n", "")
 
-		filePath := fmt.Sprintf("%s/%s/hosts.toml", containerdRegistryConfigPath, registryName)
+		filePath := fmt.Sprintf("%s/%s/hosts.toml", containerdRegistryConfigPath, registryHost(registryName))
 		result.Set(filePath, output)
 	}
 
 	return result, nil
+}
+
+// registryHost extracts the host[:port] from a registry name,
+// stripping any subpath. Containerd's certs.d directory and auth
+// config keys only use the host[:port] portion.
+// e.g. "gitlab.com/project1/repo1" -> "gitlab.com"
+//
+//	"myregistry.io:5000/path" -> "myregistry.io:5000"
+//	"docker.io" -> "docker.io"
+func registryHost(name string) string {
+	if i := strings.IndexByte(name, '/'); i >= 0 {
+		return name[:i]
+	}
+
+	return name
 }
