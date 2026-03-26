@@ -57,6 +57,25 @@ kind: Role
 metadata:
   labels:
     app.kubernetes.io/part-of: cilium
+  name: cilium-operator-ztunnel
+  namespace: kube-system
+rules:
+  - apiGroups:
+      - apps
+    resources:
+      - daemonsets
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/part-of: cilium
   name: cilium-tlsinterception-secrets
   namespace: kube-system
 rules:
@@ -116,7 +135,6 @@ rules:
       - cilium.io
     resources:
       - ciliumloadbalancerippools
-      - ciliumbgppeeringpolicies
       - ciliumbgpnodeconfigs
       - ciliumbgpadvertisements
       - ciliumbgppeerconfigs
@@ -336,7 +354,6 @@ rules:
       - apiextensions.k8s.io
     resourceNames:
       - ciliumloadbalancerippools.cilium.io
-      - ciliumbgppeeringpolicies.cilium.io
       - ciliumbgpclusterconfigs.cilium.io
       - ciliumbgppeerconfigs.cilium.io
       - ciliumbgpadvertisements.cilium.io
@@ -366,7 +383,6 @@ rules:
     resources:
       - ciliumloadbalancerippools
       - ciliumpodippools
-      - ciliumbgppeeringpolicies
       - ciliumbgpclusterconfigs
       - ciliumbgpnodeconfigoverrides
       - ciliumbgppeerconfigs
@@ -394,6 +410,12 @@ rules:
       - create
       - get
       - update
+  - apiGroups:
+      - cilium.io
+    resources:
+      - ciliumendpointslices
+    verbs:
+      - deletecollection
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -422,6 +444,22 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: cilium-operator-tlsinterception-secrets
+subjects:
+  - kind: ServiceAccount
+    name: cilium-operator
+    namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/part-of: cilium
+  name: cilium-operator-ztunnel
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cilium-operator-ztunnel
 subjects:
   - kind: ServiceAccount
     name: cilium-operator
@@ -480,6 +518,7 @@ data:
         "admin": {
             "address": {
                 "pipe": {
+                    "mode": 432,
                     "path": "/var/run/cilium/envoy/sockets/admin.sock"
                 }
             }
@@ -552,6 +591,8 @@ data:
                     "circuitBreakers": {
                         "thresholds": [
                             {
+                                "maxConnections": 1024,
+                                "maxRequests": 1024,
                                 "maxRetries": 128
                             }
                         ]
@@ -577,6 +618,8 @@ data:
                     "circuitBreakers": {
                         "thresholds": [
                             {
+                                "maxConnections": 1024,
+                                "maxRequests": 1024,
                                 "maxRetries": 128
                             }
                         ]
@@ -609,6 +652,8 @@ data:
                     "circuitBreakers": {
                         "thresholds": [
                             {
+                                "maxConnections": 1024,
+                                "maxRequests": 1024,
                                 "maxRetries": 128
                             }
                         ]
@@ -634,6 +679,8 @@ data:
                     "circuitBreakers": {
                         "thresholds": [
                             {
+                                "maxConnections": 1024,
+                                "maxRequests": 1024,
                                 "maxRetries": 128
                             }
                         ]
@@ -892,7 +939,7 @@ spec:
     - name: envoy-metrics
       port: 9964
       protocol: TCP
-      targetPort: envoy-metrics
+      targetPort: 9964
   selector:
     k8s-app: cilium-envoy
   type: ClusterIP
@@ -978,13 +1025,16 @@ spec:
             httpGet:
               host: 127.0.0.1
               path: /healthz
-              port: 9234
+              port: health
               scheme: HTTP
             initialDelaySeconds: 60
             periodSeconds: 10
             timeoutSeconds: 3
           name: cilium-operator
           ports:
+            - containerPort: 9234
+              hostPort: 9234
+              name: health
             - containerPort: 9963
               hostPort: 9963
               name: prometheus
@@ -994,7 +1044,7 @@ spec:
             httpGet:
               host: 127.0.0.1
               path: /healthz
-              port: 9234
+              port: health
               scheme: HTTP
             initialDelaySeconds: 0
             periodSeconds: 5
@@ -1162,12 +1212,17 @@ spec:
                 - name: require-k8s-connectivity
                   value: "false"
               path: /healthz
-              port: 9879
+              port: health
               scheme: HTTP
             periodSeconds: 30
             successThreshold: 1
             timeoutSeconds: 5
           name: cilium-agent
+          ports:
+            - containerPort: 9879
+              hostPort: 9879
+              name: health
+              protocol: TCP
           readinessProbe:
             failureThreshold: 3
             httpGet:
@@ -1176,7 +1231,7 @@ spec:
                 - name: brief
                   value: "true"
               path: /healthz
-              port: 9879
+              port: health
               scheme: HTTP
             periodSeconds: 30
             successThreshold: 1
@@ -1196,6 +1251,7 @@ spec:
                 - FOWNER
                 - SETGID
                 - SETUID
+                - SYSLOG
               drop:
                 - ALL
             seLinuxOptions:
@@ -1209,7 +1265,7 @@ spec:
                 - name: brief
                   value: "true"
               path: /healthz
-              port: 9879
+              port: health
               scheme: HTTP
             initialDelaySeconds: 5
             periodSeconds: 2
@@ -1277,6 +1333,12 @@ spec:
           image: '{{ .InternalImages.Get "Cilium" }}'
           imagePullPolicy: IfNotPresent
           name: config
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+              drop:
+                - ALL
           terminationMessagePolicy: FallbackToLogsOnError
           volumeMounts:
             - mountPath: /tmp
@@ -1422,6 +1484,9 @@ spec:
           imagePullPolicy: IfNotPresent
           name: install-cni-binaries
           resources:
+            limits:
+              cpu: 1
+              memory: 1Gi
             requests:
               cpu: 100m
               memory: 10Mi
