@@ -34,7 +34,7 @@ server = "https://registry-1.docker.io"
 capabilities = ["pull", "resolve"]
 
 ### /etc/containerd/certs.d/myregistry.io:5000/hosts.toml
-server = "https://myregistry.io:5000"
+server = "myregistry.io:5000"
 
 [host."https://mirror.myregistry.io"]
 capabilities = ["pull", "resolve"]

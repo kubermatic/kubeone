@@ -34,9 +34,9 @@ server = "https://registry-1.docker.io"
 capabilities = ["pull", "resolve"]
 
 ### /etc/containerd/certs.d/gitlab.com/hosts.toml
-server = "https://gitlab.com"
+server = "gitlab.com/project1/repo2"
 
-[host."https://gitlab.com/project1/repo2"]
-capabilities = ["pull", "resolve", "push"]
+[host."gitlab.com/project1/repo2"]
+capabilities = ["pull", "resolve"]
 override_path = true
 

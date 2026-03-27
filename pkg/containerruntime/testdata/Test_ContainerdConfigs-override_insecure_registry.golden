@@ -30,9 +30,9 @@ server = "https://registry-1.docker.io"
 capabilities = ["pull", "resolve"]
 
 ### /etc/containerd/certs.d/some.registry/hosts.toml
-server = "https://some.registry"
+server = "some.registry"
 
-[host."https://some.registry"]
-capabilities = ["pull", "resolve", "push"]
+[host."some.registry"]
+capabilities = ["pull", "resolve"]
 skip_verify = true
 

@@ -30,22 +30,22 @@ server = "https://registry-1.docker.io"
 capabilities = ["pull", "resolve"]
 
 ### /etc/containerd/certs.d/some-1.registry/hosts.toml
-server = "https://some-1.registry"
+server = "some-1.registry"
 
-[host."https://some.registry"]
+[host."some.registry"]
 capabilities = ["pull", "resolve"]
 skip_verify = true
 
 ### /etc/containerd/certs.d/some-2.registry/hosts.toml
-server = "https://some-2.registry"
+server = "some-2.registry"
 
-[host."https://some.registry"]
+[host."some.registry"]
 capabilities = ["pull", "resolve"]
 
 ### /etc/containerd/certs.d/some.registry/hosts.toml
-server = "https://some.registry"
+server = "some.registry"
 
-[host."https://some.registry"]
-capabilities = ["pull", "resolve", "push"]
+[host."some.registry"]
+capabilities = ["pull", "resolve"]
 skip_verify = true
 

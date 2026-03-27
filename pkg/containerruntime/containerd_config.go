@@ -323,7 +323,7 @@ func marshalContainerdConfigs(cluster *kubeoneapi.KubeOneCluster) (*maputils.Ord
 		case "docker.io":
 			serverURL = "https://registry-1.docker.io"
 		default:
-			serverURL = fmt.Sprintf("https://%s", host)
+			serverURL = registryName
 		}
 
 		cfg := hostsTomlConfig{
@@ -333,9 +333,6 @@ func marshalContainerdConfigs(cluster *kubeoneapi.KubeOneCluster) (*maputils.Ord
 
 		// Add mirror host entries
 		for _, endpoint := range rc.endpoints {
-			if !strings.HasPrefix(endpoint, "http") {
-				endpoint = "https://" + endpoint
-			}
 			cfg.Host[endpoint] = hostEntryConfig{
 				Capabilities: []string{"pull", "resolve"},
 				OverridePath: rc.overridePath,
@@ -348,10 +345,10 @@ func marshalContainerdConfigs(cluster *kubeoneapi.KubeOneCluster) (*maputils.Ord
 		if len(rc.endpoints) == 0 && serverURL != "" && (rc.insecure || rc.overridePath) {
 			hostURL := serverURL
 			if rc.overridePath {
-				hostURL = fmt.Sprintf("https://%s", registryName)
+				hostURL = registryName
 			}
 			cfg.Host[hostURL] = hostEntryConfig{
-				Capabilities: []string{"pull", "resolve", "push"},
+				Capabilities: []string{"pull", "resolve"},
 				OverridePath: rc.overridePath,
 				SkipVerify:   rc.insecure,
 			}
