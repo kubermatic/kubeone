@@ -245,9 +245,9 @@ func baseResources() map[Resource]map[string]string {
 func optionalResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
 		AwsCCM: {
-			"1.33.x":   "registry.k8s.io/provider-aws/cloud-controller-manager:v1.33.3",
-			"1.34.x":   "registry.k8s.io/provider-aws/cloud-controller-manager:v1.34.2",
-			">=1.35.x": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.35.1",
+			"1.33.x":   "registry.k8s.io/provider-aws/cloud-controller-manager:v1.33.2",
+			"1.34.x":   "registry.k8s.io/provider-aws/cloud-controller-manager:v1.34.0",
+			">=1.35.x": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.35.0",
 		},
 
 		CSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v8.1.1"},
