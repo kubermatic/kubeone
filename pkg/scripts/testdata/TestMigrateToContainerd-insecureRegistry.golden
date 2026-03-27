@@ -50,10 +50,10 @@ EOF
 sudo chmod 600 /etc/containerd/certs.d/docker.io/hosts.toml
 sudo mkdir -p $(dirname /etc/containerd/certs.d/some.registry/hosts.toml)
 cat <<EOF | sudo tee /etc/containerd/certs.d/some.registry/hosts.toml
-server = "https://some.registry"
+server = "some.registry"
 
-[host."https://some.registry"]
-capabilities = ["pull", "resolve", "push"]
+[host."some.registry"]
+capabilities = ["pull", "resolve"]
 skip_verify = true
 
 EOF
