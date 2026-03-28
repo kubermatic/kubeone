@@ -23,6 +23,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io/fs"
+	"net/url"
 	"os"
 	"sort"
 	"strings"
@@ -333,13 +334,37 @@ func containerdRegistryCredentials(containerdConfig *kubeoneapi.ContainerRuntime
 
 	sort.Strings(regNames)
 
+	seen := map[string]struct{}{}
 	for _, reg := range regNames {
 		regConfig := containerdConfig.Registries[reg]
-		if regConfig.Auth != nil {
+		if regConfig.Auth == nil {
+			continue
+		}
+
+		// Include the source registry name for backward compatibility.
+		if _, exists := seen[reg]; !exists {
+			seen[reg] = struct{}{}
 			regCredentials = append(regCredentials, registryCredentialsContainer{
 				RegistryName: reg,
 				Auth:         *regConfig.Auth,
 			})
+		}
+
+		// In containerd v2, auth is keyed by mirror host. Include mirror
+		// host entries so machine-controller can configure worker nodes
+		// with the correct auth keys.
+		for _, mirror := range regConfig.Mirrors {
+			host := mirror
+			if u, parseErr := url.Parse(mirror); parseErr == nil && u.Host != "" {
+				host = u.Host
+			}
+			if _, exists := seen[host]; !exists {
+				seen[host] = struct{}{}
+				regCredentials = append(regCredentials, registryCredentialsContainer{
+					RegistryName: host,
+					Auth:         *regConfig.Auth,
+				})
+			}
 		}
 	}
 
