@@ -33,6 +33,7 @@ import (
 	embeddedaddons "k8c.io/kubeone/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate"
+	"k8c.io/kubeone/pkg/containerruntime"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
@@ -341,11 +342,13 @@ func containerdRegistryCredentials(containerdConfig *kubeoneapi.ContainerRuntime
 			continue
 		}
 
-		// Include the source registry name for backward compatibility.
-		if _, exists := seen[reg]; !exists {
-			seen[reg] = struct{}{}
+		// Include the source registry host for credential lookup.
+		// Strip subpath — containerd auth keys use host[:port] only.
+		regHost := containerruntime.RegistryHost(reg)
+		if _, exists := seen[regHost]; !exists {
+			seen[regHost] = struct{}{}
 			regCredentials = append(regCredentials, registryCredentialsContainer{
-				RegistryName: reg,
+				RegistryName: regHost,
 				Auth:         *regConfig.Auth,
 			})
 		}
