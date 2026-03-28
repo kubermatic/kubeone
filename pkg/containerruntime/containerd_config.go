@@ -152,25 +152,23 @@ func marshalContainerdConfigToml(cluster *kubeoneapi.KubeOneCluster) (string, er
 				if criRegistry.Configs == nil {
 					criRegistry.Configs = make(map[string]containerdRegistryConfig)
 				}
-				if len(registry.Mirrors) > 0 {
-					// Auth applies to the mirror endpoints, not the source registry
-					for _, mirror := range registry.Mirrors {
-						host = mirror
-						if u, parseErr := url.Parse(mirror); parseErr == nil && u.Host != "" {
-							host = u.Host
-						}
-						criRegistry.Configs[host] = containerdRegistryConfig{
-							Auth: &containerdRegistryAuth{
-								Username:      registry.Auth.Username,
-								Password:      registry.Auth.Password,
-								Auth:          registry.Auth.Auth,
-								IdentityToken: registry.Auth.IdentityToken,
-							},
-						}
+
+				// Always add auth for the source registry itself.
+				criRegistry.Configs[registryHost(registryName)] = containerdRegistryConfig{
+					Auth: &containerdRegistryAuth{
+						Username:      registry.Auth.Username,
+						Password:      registry.Auth.Password,
+						Auth:          registry.Auth.Auth,
+						IdentityToken: registry.Auth.IdentityToken,
+					},
+				}
+
+				// When mirrors are configured, also add auth for each mirror host.
+				for _, mirror := range registry.Mirrors {
+					host = mirror
+					if u, parseErr := url.Parse(mirror); parseErr == nil && u.Host != "" {
+						host = u.Host
 					}
-				} else {
-					// No mirrors configured; apply auth to the registry itself using its host[:port] as the key.
-					host = registryHost(registryName)
 					criRegistry.Configs[host] = containerdRegistryConfig{
 						Auth: &containerdRegistryAuth{
 							Username:      registry.Auth.Username,

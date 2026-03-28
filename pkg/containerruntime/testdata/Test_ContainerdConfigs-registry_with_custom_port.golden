@@ -15,6 +15,9 @@ config_path = "/etc/containerd/certs.d"
 [plugins."io.containerd.cri.v1.images".registry.configs."mirror.myregistry.io"]
 [plugins."io.containerd.cri.v1.images".registry.configs."mirror.myregistry.io".auth]
 auth = "token1"
+[plugins."io.containerd.cri.v1.images".registry.configs."myregistry.io:5000"]
+[plugins."io.containerd.cri.v1.images".registry.configs."myregistry.io:5000".auth]
+auth = "token1"
 [plugins."io.containerd.cri.v1.runtime"]
 device_ownership_from_security_context = true
 [plugins."io.containerd.cri.v1.runtime".containerd]
