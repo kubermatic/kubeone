@@ -349,6 +349,32 @@ func ValidateContainerRuntimeConfig(cr kubeoneapi.ContainerRuntimeConfig, _ kube
 		}
 	}
 
+	if cr.Containerd != nil && cr.Containerd.Registries != nil {
+		registriesPath := fldPath.Child("containerd").Child("registries")
+		if _, hasDefault := cr.Containerd.Registries["_default"]; hasDefault {
+			allErrs = append(allErrs, field.Invalid(registriesPath.Key("_default"), "_default",
+				`"_default" is not a valid registry name; use "*" for the catch-all registry configuration`))
+		}
+
+		// Detect multiple registry keys that resolve to the same host.
+		// Containerd's certs.d/ supports one hosts.toml per host, so
+		// conflicting entries (e.g. "gitlab.com/org1" and "gitlab.com/org2")
+		// would overwrite each other.
+		hostSeen := make(map[string]string) // host -> first registry key
+		for registryName := range cr.Containerd.Registries {
+			host := registryName
+			if i := strings.IndexByte(host, '/'); i >= 0 {
+				host = host[:i]
+			}
+			if first, ok := hostSeen[host]; ok && first != registryName {
+				allErrs = append(allErrs, field.Invalid(registriesPath.Key(registryName), registryName,
+					fmt.Sprintf("conflicts with %q: both resolve to the same host %q", first, host)))
+			} else {
+				hostSeen[host] = registryName
+			}
+		}
+	}
+
 	return allErrs
 }
 

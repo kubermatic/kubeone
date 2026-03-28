@@ -2626,6 +2626,91 @@ func TestValidateHostConfig(t *testing.T) {
 	}
 }
 
+func TestValidateContainerRuntimeConfig(t *testing.T) {
+	tests := []struct {
+		name          string
+		cr            kubeoneapi.ContainerRuntimeConfig
+		expectedError bool
+	}{
+		{
+			name: "valid: wildcard registry",
+			cr: kubeoneapi.ContainerRuntimeConfig{
+				Containerd: &kubeoneapi.ContainerRuntimeContainerd{
+					Registries: map[string]kubeoneapi.ContainerdRegistry{
+						"*": {
+							Mirrors: []string{"https://mirror.example.com"},
+						},
+					},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "valid: specific registry",
+			cr: kubeoneapi.ContainerRuntimeConfig{
+				Containerd: &kubeoneapi.ContainerRuntimeContainerd{
+					Registries: map[string]kubeoneapi.ContainerdRegistry{
+						"docker.io": {
+							Mirrors: []string{"https://mirror.example.com"},
+						},
+					},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "invalid: _default registry",
+			cr: kubeoneapi.ContainerRuntimeConfig{
+				Containerd: &kubeoneapi.ContainerRuntimeContainerd{
+					Registries: map[string]kubeoneapi.ContainerdRegistry{
+						"_default": {
+							Mirrors: []string{"https://mirror.example.com"},
+						},
+					},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "valid: single subpath registry",
+			cr: kubeoneapi.ContainerRuntimeConfig{
+				Containerd: &kubeoneapi.ContainerRuntimeContainerd{
+					Registries: map[string]kubeoneapi.ContainerdRegistry{
+						"gitlab.com/org1/repo1": {
+							Mirrors: []string{"https://mirror.example.com"},
+						},
+					},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "invalid: conflicting subpath registries",
+			cr: kubeoneapi.ContainerRuntimeConfig{
+				Containerd: &kubeoneapi.ContainerRuntimeContainerd{
+					Registries: map[string]kubeoneapi.ContainerdRegistry{
+						"gitlab.com/org1": {
+							Mirrors: []string{"https://mirror1.example.com"},
+						},
+						"gitlab.com/org2": {
+							Mirrors: []string{"https://mirror2.example.com"},
+						},
+					},
+				},
+			},
+			expectedError: true,
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			errs := ValidateContainerRuntimeConfig(tc.cr, kubeoneapi.VersionConfig{}, field.NewPath("containerRuntime"))
+			if (len(errs) == 0) == tc.expectedError {
+				t.Errorf("test case failed: expected error=%v, but got %v", tc.expectedError, errs)
+			}
+		})
+	}
+}
+
 func TestValidateRegistryConfiguration(t *testing.T) {
 	tests := []struct {
 		name                  string

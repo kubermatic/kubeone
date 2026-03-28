@@ -1,0 +1,38 @@
+### /etc/containerd/config.toml
+version = 3
+
+[metrics]
+address = "127.0.0.1:1338"
+
+[plugins]
+[plugins."io.containerd.cri.v1.images"]
+discard_unpacked_layers = false
+[plugins."io.containerd.cri.v1.images".pinned_images]
+sandbox = "some.registry/pause:3.10"
+[plugins."io.containerd.cri.v1.images".registry]
+config_path = "/etc/containerd/certs.d"
+[plugins."io.containerd.cri.v1.runtime"]
+device_ownership_from_security_context = true
+[plugins."io.containerd.cri.v1.runtime".containerd]
+[plugins."io.containerd.cri.v1.runtime".containerd.runtimes]
+[plugins."io.containerd.cri.v1.runtime".containerd.runtimes.runc]
+runtime_type = "io.containerd.runc.v2"
+[plugins."io.containerd.cri.v1.runtime".containerd.runtimes.runc.options]
+SystemdCgroup = true
+[plugins."io.containerd.cri.v1.runtime".cni]
+bin_dirs = ["/opt/cni/bin"]
+conf_dir = "/etc/cni/net.d"
+
+### /etc/containerd/certs.d/docker.io/hosts.toml
+server = "https://registry-1.docker.io"
+
+[host."https://registry-1.docker.io"]
+capabilities = ["pull", "resolve"]
+
+### /etc/containerd/certs.d/some.registry/hosts.toml
+server = "some.registry"
+
+[host."some.registry"]
+capabilities = ["pull", "resolve"]
+skip_verify = true
+
