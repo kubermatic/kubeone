@@ -344,13 +344,15 @@ func containerdRegistryCredentials(containerdConfig *kubeoneapi.ContainerRuntime
 
 		// Include the source registry host for credential lookup.
 		// Strip subpath — containerd auth keys use host[:port] only.
-		regHost := containerruntime.RegistryHost(reg)
-		if _, exists := seen[regHost]; !exists {
-			seen[regHost] = struct{}{}
-			regCredentials = append(regCredentials, registryCredentialsContainer{
-				RegistryName: regHost,
-				Auth:         *regConfig.Auth,
-			})
+		if !(reg == "*" || reg == "_default") {
+			regHost := containerruntime.RegistryHost(reg)
+			if _, exists := seen[regHost]; !exists {
+				seen[regHost] = struct{}{}
+				regCredentials = append(regCredentials, registryCredentialsContainer{
+					RegistryName: regHost,
+					Auth:         *regConfig.Auth,
+				})
+			}
 		}
 
 		// In containerd v2, auth is keyed by mirror host. Include mirror

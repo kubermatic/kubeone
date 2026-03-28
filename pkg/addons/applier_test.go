@@ -149,6 +149,40 @@ func Test_containerdRegistryCredentials(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "wildcard registry with auth and mirrors",
+			config: &kubeoneapi.ContainerRuntimeContainerd{
+				Registries: map[string]kubeoneapi.ContainerdRegistry{
+					"*": {
+						Mirrors: []string{"https://docker.io"},
+						Auth: &kubeoneapi.ContainerdRegistryAuthConfig{
+							Username: "user",
+							Password: "pass",
+						},
+					},
+				},
+			},
+			expected: []registryCredentialsContainer{
+				{
+					RegistryName: "docker.io",
+					Auth:         kubeoneapi.ContainerdRegistryAuthConfig{Username: "user", Password: "pass"},
+				},
+			},
+		},
+		{
+			name: "wildcard registry with auth",
+			config: &kubeoneapi.ContainerRuntimeContainerd{
+				Registries: map[string]kubeoneapi.ContainerdRegistry{
+					"*": {
+						Auth: &kubeoneapi.ContainerdRegistryAuthConfig{
+							Username: "user",
+							Password: "pass",
+						},
+					},
+				},
+			},
+			expected: nil,
+		},
 	}
 
 	for _, tt := range tests {
