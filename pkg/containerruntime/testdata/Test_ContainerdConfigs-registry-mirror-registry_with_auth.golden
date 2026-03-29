@@ -55,6 +55,6 @@ server = "registry.k8s.io"
 
 [host."https://mirror.example.com"]
 capabilities = ["pull", "resolve"]
-[host."https://mirror2.example.com"]
+[host."https://mirror2.example.com/v2/someproject"]
 capabilities = ["pull", "resolve"]
 

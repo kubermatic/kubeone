@@ -165,9 +165,10 @@ func marshalContainerdConfigToml(cluster *kubeoneapi.KubeOneCluster) (string, er
 
 				// When mirrors are configured, also add auth for each mirror host.
 				for _, mirror := range registry.Mirrors {
-					host = mirror
 					if u, parseErr := url.Parse(mirror); parseErr == nil && u.Host != "" {
 						host = u.Host
+					} else {
+						host = RegistryHost(mirror)
 					}
 					criRegistry.Configs[host] = containerdRegistryConfig{
 						Auth: &containerdRegistryAuth{
