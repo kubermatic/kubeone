@@ -18,15 +18,19 @@ package config
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
+	"maps"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
@@ -35,11 +39,21 @@ import (
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
 	kubeonevalidation "k8c.io/kubeone/pkg/apis/kubeone/validation"
+	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/provisioner"
 	terraformv1beta2 "k8c.io/kubeone/pkg/terraform/v1beta2"
 	terraformv1beta3 "k8c.io/kubeone/pkg/terraform/v1beta3"
+	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
+	hetznertypes "k8c.io/machine-controller/sdk/cloudprovider/hetzner"
+	"k8c.io/machine-controller/sdk/jsonutil"
+	"k8c.io/machine-controller/sdk/providerconfig"
 
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/util/validation/field"
 	"sigs.k8s.io/yaml"
 )
 
@@ -86,15 +100,7 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath, credentialsFilePath string
 		return nil, err
 	}
 
-	var credentialsFile []byte
-	if len(credentialsFilePath) != 0 {
-		credentialsFile, err = os.ReadFile(credentialsFilePath)
-		if err != nil {
-			return nil, fail.Runtime(err, "reading credentials file")
-		}
-	}
-
-	return BytesToKubeOneCluster(cluster, tfOutput, credentialsFile, logger, cfgBaseDir)
+	return BytesToKubeOneCluster(cluster, tfOutput, credentialsFilePath, logger, cfgBaseDir)
 }
 
 func TFOutput(tfOutputPath string) ([]byte, error) {
@@ -109,13 +115,21 @@ func TFOutput(tfOutputPath string) ([]byte, error) {
 			return nil, fail.Runtime(err, "reading terraform output from stdin")
 		}
 	case isDir(tfOutputPath):
-		ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-		defer cancel()
+		tfOutput, err = readStateFileOutputs(tfOutputPath)
+		if err != nil {
+			return nil, err
+		}
 
-		cmd := exec.CommandContext(ctx, "terraform", "output", "-json")
-		cmd.Dir = tfOutputPath
-		if tfOutput, err = cmd.Output(); err != nil {
-			return nil, fail.Runtime(err, "reading terraform output")
+		if tfOutput == nil {
+			// No local state file found (e.g. remote backend); fall back to running terraform CLI.
+			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+			defer cancel()
+
+			cmd := exec.CommandContext(ctx, "terraform", "output", "-json")
+			cmd.Dir = tfOutputPath
+			if tfOutput, err = cmd.Output(); err != nil {
+				return nil, fail.Runtime(err, "reading terraform output")
+			}
 		}
 	case len(tfOutputPath) != 0:
 		if tfOutput, err = os.ReadFile(tfOutputPath); err != nil {
@@ -127,7 +141,7 @@ func TFOutput(tfOutputPath string) ([]byte, error) {
 }
 
 // BytesToKubeOneCluster parses the bytes of the versioned KubeOneCluster manifests
-func BytesToKubeOneCluster(cluster, tfOutput, credentialsFile []byte, logger logrus.FieldLogger, baseDir string) (*kubeoneapi.KubeOneCluster, error) {
+func BytesToKubeOneCluster(cluster, tfOutput []byte, credentialsFilePath string, logger logrus.FieldLogger, baseDir string) (*kubeoneapi.KubeOneCluster, error) {
 	// Get the GVK from the given KubeOneCluster manifest
 	typeMeta := runtime.TypeMeta{}
 	if err := yaml.Unmarshal(cluster, &typeMeta); err != nil {
@@ -178,8 +192,21 @@ func BytesToKubeOneCluster(cluster, tfOutput, credentialsFile []byte, logger log
 	}
 
 	// Apply the dynamic defaults
-	if err := SetKubeOneClusterDynamicDefaults(internalCluster, credentialsFile, baseDir); err != nil {
+	if err := SetKubeOneClusterDynamicDefaults(internalCluster, credentialsFilePath, baseDir, logger); err != nil {
 		return nil, err
+	}
+
+	if len(internalCluster.ControlPlane.NodeSets) > 0 {
+		v1beta2Cluster := kubeonev1beta2.NewKubeOneCluster()
+		if err := kubeonescheme.Scheme.Convert(internalCluster, v1beta2Cluster, nil); err != nil {
+			return nil, fail.Config(err, "converting internal to v1beta2 object")
+		}
+
+		kubeonescheme.Scheme.Default(v1beta2Cluster)
+
+		if err := kubeonescheme.Scheme.Convert(v1beta2Cluster, internalCluster, nil); err != nil {
+			return nil, fail.Config(err, fmt.Sprintf("converting %s to internal object", v1beta2Cluster.GroupVersionKind()))
+		}
 	}
 
 	// Validate the configuration
@@ -242,7 +269,7 @@ func DefaultedV1Beta3KubeOneCluster(versionedCluster *kubeonev1beta3.KubeOneClus
 }
 
 // SetKubeOneClusterDynamicDefaults sets the dynamic defaults for a given KubeOneCluster object
-func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, credentialsFile []byte, baseDir string) error {
+func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath string, baseDir string, logger logrus.FieldLogger) error {
 	// Set the default cloud config
 	SetDefaultsCloudConfig(cluster)
 
@@ -267,8 +294,15 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 	// Parse the credentials file
 	credentials := make(map[string]string)
 
-	if err := yaml.Unmarshal(credentialsFile, &credentials); err != nil {
-		return fail.Config(err, "YAML unmarshalling credentials file")
+	if len(credentialsFilePath) != 0 {
+		credentialsFile, err := os.ReadFile(credentialsFilePath)
+		if err != nil {
+			return fail.Runtime(err, "reading credentials file")
+		}
+
+		if err := yaml.Unmarshal(credentialsFile, &credentials); err != nil {
+			return fail.Config(err, "YAML unmarshalling credentials file")
+		}
 	}
 
 	// Source cloud-config from the credentials file if it's present
@@ -293,7 +327,325 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 	// Default the AssetsConfiguration internal API
 	cluster.DefaultAssetConfiguration()
 
+	var err error
+
+	if cluster.ControlPlane.NodeSets != nil {
+		// We have to partially validate early to be able to set defaults
+		if err := kubeonevalidation.ValidateCloudProviderSpec(*cluster, field.NewPath("cloudProvider")).ToAggregate(); err != nil {
+			return fail.ConfigValidation(err)
+		}
+
+		switch {
+		case cluster.CloudProvider.Hetzner != nil:
+			if cluster.CloudProvider.Hetzner.ControlPlane == nil {
+				cluster.CloudProvider.Hetzner.ControlPlane = &kubeoneapi.HetznerControlPlane{}
+			}
+			setDefaultHetznerControlPlane(cluster.Name, cluster.CloudProvider.Hetzner.ControlPlane)
+
+			if cluster.APIEndpoint.Host == "" {
+				cluster.APIEndpoint, err = getOrCreateHetznerLB(cluster, credentialsFilePath, logger)
+				if err != nil {
+					return err
+				}
+			}
+
+			machines, err := generateHetznerControlPlaneMachines(cluster.Name, cluster.ControlPlane.NodeSets, cluster.Versions.Kubernetes)
+			if err != nil {
+				return err
+			}
+
+			provMachines, err := provisioner.CreateMachines(context.Background(), machines, logger)
+			if err != nil {
+				return err
+			}
+
+			cluster.ControlPlane.Hosts = hostConfigsFromMachines(provMachines, cluster.ControlPlane.NodeSets)
+		default:
+			return fail.ConfigError{
+				Op:  "cloud provider checking",
+				Err: errors.New("configured cloud provider does not support managed control plane nodes"),
+			}
+		}
+	}
+
 	return nil
+}
+
+func setDefaultHetznerControlPlane(clusterName string, hzCP *kubeoneapi.HetznerControlPlane) {
+	hzCP.LoadBalancer.Name = defaults(
+		hzCP.LoadBalancer.Name,
+		clusterName+"-kubeapi",
+	)
+	hzCP.LoadBalancer.Type = defaults(
+		hzCP.LoadBalancer.Type,
+		"lb11",
+	)
+	hzCP.LoadBalancer.Location = defaults(
+		hzCP.LoadBalancer.Location,
+		"nbg1",
+	)
+	hzCP.LoadBalancer.PublicIP = defaults(
+		hzCP.LoadBalancer.PublicIP,
+		new(true),
+	)
+	if hzCP.LoadBalancer.Labels == nil {
+		hzCP.LoadBalancer.Labels = map[string]string{}
+	}
+	maps.Copy(
+		hzCP.LoadBalancer.Labels,
+		map[string]string{
+			"kubeone_cluster_name": hzCP.LoadBalancer.Name,
+			"kubeone_role":         "api",
+		},
+	)
+}
+
+func hetznerLabels(clusterName string) map[string]string {
+	return map[string]string{
+		"kubeone_cluster_name": clusterName,
+		"kubeone_role":         "api",
+	}
+}
+
+func generateHetznerControlPlaneMachines(clusterName string, nodeSet []kubeoneapi.NodeSet, kubeletVersion string) ([]clusterv1alpha1.Machine, error) {
+	var machines []clusterv1alpha1.Machine
+
+	for _, node := range nodeSet {
+		timestamp := strconv.FormatInt(time.Now().UTC().Unix(), 10)
+		labels := map[string]string{
+			"kubeone_own_since_timestamp": timestamp,
+			"kubeone_role":                "control-plane",
+		}
+		maps.Copy(labels, hetznerLabels(clusterName))
+
+		if node.NodeSettings.Labels == nil {
+			node.NodeSettings.Labels = map[string]string{}
+		}
+		maps.Copy(node.NodeSettings.Labels, labels)
+
+		for idx := range node.Replicas {
+			osSpecRaw, err := json.Marshal(node.OperatingSystemSpec)
+			if err != nil {
+				return nil, err
+			}
+
+			var hetznerConfig hetznertypes.RawConfig
+			if err = jsonutil.StrictUnmarshal(node.CloudProviderSpec, &hetznerConfig); err != nil {
+				return nil, fail.Config(err, "decode hetzner config")
+			}
+
+			if hetznerConfig.Labels == nil {
+				hetznerConfig.Labels = map[string]string{}
+			}
+
+			maps.Copy(hetznerConfig.Labels, labels)
+
+			hetznerSpec, err := json.Marshal(hetznerConfig)
+			if err != nil {
+				return nil, fail.Config(err, "marshaling cloud provider spec")
+			}
+
+			providerConfig := providerconfig.Config{
+				SSHPublicKeys: node.SSH.PublicKeys,
+				CloudProvider: providerconfig.CloudProviderHetzner,
+				CloudProviderSpec: runtime.RawExtension{
+					Raw: hetznerSpec,
+				},
+				OperatingSystem: providerconfig.OperatingSystem(node.OperatingSystem),
+				OperatingSystemSpec: runtime.RawExtension{
+					Raw: osSpecRaw,
+				},
+			}
+
+			providerSpecRaw, err := json.Marshal(providerConfig)
+			if err != nil {
+				return nil, fail.Cloud(err, "hetzner", "json marshaling provider config")
+			}
+
+			name := fmt.Sprintf("%s-%s-%d", clusterName, node.Name, idx)
+			machines = append(machines, clusterv1alpha1.Machine{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: name,
+					UID:  types.UID(name),
+				},
+				Spec: clusterv1alpha1.MachineSpec{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:        name,
+						Labels:      node.NodeSettings.Labels,
+						Annotations: node.NodeSettings.Annotations,
+					},
+					Taints: node.NodeSettings.Taints,
+					Versions: clusterv1alpha1.MachineVersionInfo{
+						Kubelet: kubeletVersion,
+					},
+					ProviderSpec: clusterv1alpha1.ProviderSpec{
+						Value: &runtime.RawExtension{
+							Raw: providerSpecRaw,
+						},
+					},
+				},
+			})
+		}
+	}
+
+	return machines, nil
+}
+
+func hostConfigsFromMachines(machines []provisioner.Machine, nodeSets []kubeoneapi.NodeSet) []kubeoneapi.HostConfig {
+	var hosts []kubeoneapi.HostConfig
+	idx := 0
+
+	for _, nodeSet := range nodeSets {
+		sshUsername := nodeSet.SSH.Username
+		if sshUsername == "" {
+			sshUsername = "root"
+		}
+
+		for range nodeSet.Replicas {
+			if idx >= len(machines) {
+				break
+			}
+
+			m := machines[idx]
+			host := kubeoneapi.HostConfig{
+				PublicAddress:        m.PublicAddress,
+				PrivateAddress:       m.PrivateAddress,
+				Hostname:             m.Hostname,
+				SSHUsername:          sshUsername,
+				SSHPort:              nodeSet.SSH.Port,
+				SSHPrivateKeyFile:    nodeSet.SSH.PrivateKeyFile,
+				SSHCertFile:          nodeSet.SSH.CertFile,
+				SSHHostPublicKey:     nodeSet.SSH.HostPublicKey,
+				SSHAgentSocket:       nodeSet.SSH.AgentSocket,
+				Bastion:              nodeSet.SSH.Bastion,
+				BastionPort:          nodeSet.SSH.BastionPort,
+				BastionUser:          nodeSet.SSH.BastionUser,
+				BastionHostPublicKey: nodeSet.SSH.BastionHostPublicKey,
+				OperatingSystem:      nodeSet.OperatingSystem,
+				Labels:               nodeSet.NodeSettings.Labels,
+				Annotations:          nodeSet.NodeSettings.Annotations,
+				Taints:               nodeSet.NodeSettings.Taints,
+				IsLeader:             idx == 0,
+			}
+
+			hosts = append(hosts, host)
+			idx++
+		}
+	}
+
+	return hosts
+}
+
+func getOrCreateHetznerLB(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath string, logger logrus.FieldLogger) (kubeoneapi.APIEndpoint, error) {
+	if cluster.APIEndpoint.Host != "" {
+		return cluster.APIEndpoint, nil
+	}
+
+	providerCreds, err := credentials.ProviderCredentials(cluster.CloudProvider, credentialsFilePath, credentials.TypeUniversal)
+	if err != nil {
+		return cluster.APIEndpoint, err
+	}
+
+	hzclient := hcloud.NewClient(hcloud.WithToken(providerCreds[credentials.HetznerTokenKeyMC]))
+	var networkID int64
+
+	networkName := cluster.CloudProvider.Hetzner.NetworkID
+	ctx := context.Background()
+
+	networks, _, err := hzclient.Network.List(ctx, hcloud.NetworkListOpts{
+		Name: networkName,
+	})
+	if err != nil {
+		return cluster.APIEndpoint, fail.Cloud(err, "hetzner", "listing networks")
+	}
+
+	if len(networks) == 0 {
+		return cluster.APIEndpoint, fail.Cloud(fmt.Errorf("no network ID found with ID: %s", networkName), "hetzner", "looking up network")
+	}
+
+	networkID = networks[0].ID
+
+	clusterLBName := cluster.CloudProvider.Hetzner.ControlPlane.LoadBalancer.Name
+	lbs, _, err := hzclient.LoadBalancer.List(ctx, hcloud.LoadBalancerListOpts{
+		Name: clusterLBName,
+	})
+	if err != nil {
+		return cluster.APIEndpoint, fail.Cloud(err, "hetzner", "listing loadbalancers")
+	}
+
+	var realLB *hcloud.LoadBalancer
+
+	if len(lbs) > 0 {
+		logger.Infof("loadbalancer already exists with id: %d", lbs[0].ID)
+		realLB = lbs[0]
+	} else {
+		logger.Infof("no existing loadbalancer found, creating a new one")
+		lb, err := createLoadBalancer(
+			ctx,
+			&hzclient.LoadBalancer,
+			cluster,
+			networkID,
+		)
+		if err != nil {
+			return cluster.APIEndpoint, fail.Cloud(err, "hetzner", "creating loadbalancer")
+		}
+		realLB = lb
+	}
+
+	cluster.APIEndpoint.Host = realLB.PublicNet.IPv4.IP.String()
+	cluster.APIEndpoint.Port = 6443
+
+	return cluster.APIEndpoint, nil
+}
+
+func createLoadBalancer(
+	ctx context.Context,
+	client hcloud.ILoadBalancerClient,
+	cluster *kubeoneapi.KubeOneCluster,
+	networkID int64,
+) (*hcloud.LoadBalancer, error) {
+	vmsLabelSelector := labels.SelectorFromSet(hetznerLabels(cluster.Name)).String()
+	now := time.Now().UTC()
+	timestamp := strconv.FormatInt(now.Unix(), 10)
+	newLabels := map[string]string{
+		"kubeone_own_since_timestamp": timestamp,
+	}
+	hzlbSpec := cluster.CloudProvider.Hetzner.ControlPlane.LoadBalancer
+	labels := make(map[string]string)
+	maps.Copy(labels, hzlbSpec.Labels)
+	maps.Copy(labels, newLabels)
+
+	createReq := hcloud.LoadBalancerCreateOpts{
+		Name:             hzlbSpec.Name,
+		LoadBalancerType: &hcloud.LoadBalancerType{Name: hzlbSpec.Type},
+		Location:         &hcloud.Location{Name: hzlbSpec.Location},
+		Labels:           labels,
+		PublicInterface:  hzlbSpec.PublicIP,
+		Services: []hcloud.LoadBalancerCreateOptsService{
+			{
+				Protocol:        hcloud.LoadBalancerServiceProtocolTCP,
+				ListenPort:      new(6443),
+				DestinationPort: new(6443),
+			},
+		},
+		Targets: []hcloud.LoadBalancerCreateOptsTarget{
+			{
+				UsePrivateIP: new(true),
+				Type:         hcloud.LoadBalancerTargetTypeLabelSelector,
+				LabelSelector: hcloud.LoadBalancerCreateOptsTargetLabelSelector{
+					Selector: vmsLabelSelector,
+				},
+			},
+		},
+		Network: &hcloud.Network{ID: networkID},
+	}
+
+	result, _, err := client.Create(ctx, createReq)
+	if err != nil {
+		return nil, err
+	}
+
+	return result.LoadBalancer, nil
 }
 
 // SetDefaultsCloudConfig sets default values for the CloudConfig field in the KubeOneCluster object.
@@ -377,6 +729,31 @@ func setRegistriesAuth(cluster *kubeoneapi.KubeOneCluster, buf string) error {
 	return nil
 }
 
+func readStateFileOutputs(dir string) ([]byte, error) {
+	stateBytes, err := os.ReadFile(filepath.Join(dir, "terraform.tfstate"))
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
+
+		return nil, fail.Runtime(err, "reading terraform state file")
+	}
+
+	var state struct {
+		Outputs json.RawMessage `json:"outputs"`
+	}
+
+	if err := json.Unmarshal(stateBytes, &state); err != nil {
+		return nil, fail.Runtime(err, "parsing terraform state file")
+	}
+
+	if state.Outputs == nil {
+		return []byte("{}"), nil
+	}
+
+	return state.Outputs, nil
+}
+
 func isDir(dirname string) bool {
 	stat, statErr := os.Stat(dirname)
 
@@ -417,4 +794,14 @@ func checkFlagsAndFeatureGateOverrides(cluster kubeoneapi.KubeOneCluster, logger
 			}
 		}
 	}
+}
+
+func defaults[T comparable](input, defaultValue T) T {
+	var zero T
+
+	if input != zero {
+		return input
+	}
+
+	return defaultValue
 }

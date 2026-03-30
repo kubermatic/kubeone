@@ -353,7 +353,7 @@ func DeleteAddonByName(s *state.State, addonName string) error {
 	}
 
 	return fail.RuntimeError{
-		Op:  fmt.Sprintf("installing %q addon", addonName),
+		Op:  fmt.Sprintf("deleting %q addon", addonName),
 		Err: errors.New("addon does not exist"),
 	}
 }
