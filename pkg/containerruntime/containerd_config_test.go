@@ -168,7 +168,7 @@ func Test_ContainerdConfigs(t *testing.T) {
 					},
 				},
 				"registry.k8s.io": {
-					Mirrors: []string{"https://mirror.example.com", "https://mirror2.example.com"},
+					Mirrors: []string{"https://mirror.example.com", "https://mirror2.example.com/v2/someproject"},
 					Auth: &kubeoneapi.ContainerdRegistryAuthConfig{
 						Username: "testuser",
 						Password: "testpass",

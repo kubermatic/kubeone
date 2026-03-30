@@ -23,6 +23,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io/fs"
+	"net/url"
 	"os"
 	"sort"
 	"strings"
@@ -32,6 +33,7 @@ import (
 	embeddedaddons "k8c.io/kubeone/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate"
+	"k8c.io/kubeone/pkg/containerruntime"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
@@ -333,13 +335,43 @@ func containerdRegistryCredentials(containerdConfig *kubeoneapi.ContainerRuntime
 
 	sort.Strings(regNames)
 
+	seen := map[string]struct{}{}
 	for _, reg := range regNames {
 		regConfig := containerdConfig.Registries[reg]
-		if regConfig.Auth != nil {
-			regCredentials = append(regCredentials, registryCredentialsContainer{
-				RegistryName: reg,
-				Auth:         *regConfig.Auth,
-			})
+		if regConfig.Auth == nil {
+			continue
+		}
+
+		// Include the source registry host for credential lookup.
+		// Strip subpath — containerd auth keys use host[:port] only.
+		if reg != "*" && reg != "_default" {
+			regHost := containerruntime.RegistryHost(reg)
+			if _, exists := seen[regHost]; !exists {
+				seen[regHost] = struct{}{}
+				regCredentials = append(regCredentials, registryCredentialsContainer{
+					RegistryName: regHost,
+					Auth:         *regConfig.Auth,
+				})
+			}
+		}
+
+		// In containerd v2, auth is keyed by mirror host. Include mirror
+		// host entries so machine-controller can configure worker nodes
+		// with the correct auth keys.
+		for _, mirror := range regConfig.Mirrors {
+			var host string
+			if u, parseErr := url.Parse(mirror); parseErr == nil && u.Host != "" {
+				host = u.Host
+			} else {
+				host = containerruntime.RegistryHost(mirror)
+			}
+			if _, exists := seen[host]; !exists {
+				seen[host] = struct{}{}
+				regCredentials = append(regCredentials, registryCredentialsContainer{
+					RegistryName: host,
+					Auth:         *regConfig.Auth,
+				})
+			}
 		}
 	}
 

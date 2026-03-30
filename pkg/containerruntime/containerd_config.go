@@ -152,25 +152,24 @@ func marshalContainerdConfigToml(cluster *kubeoneapi.KubeOneCluster) (string, er
 				if criRegistry.Configs == nil {
 					criRegistry.Configs = make(map[string]containerdRegistryConfig)
 				}
-				if len(registry.Mirrors) > 0 {
-					// Auth applies to the mirror endpoints, not the source registry
-					for _, mirror := range registry.Mirrors {
-						host = mirror
-						if u, parseErr := url.Parse(mirror); parseErr == nil && u.Host != "" {
-							host = u.Host
-						}
-						criRegistry.Configs[host] = containerdRegistryConfig{
-							Auth: &containerdRegistryAuth{
-								Username:      registry.Auth.Username,
-								Password:      registry.Auth.Password,
-								Auth:          registry.Auth.Auth,
-								IdentityToken: registry.Auth.IdentityToken,
-							},
-						}
+
+				// Always add auth for the source registry itself.
+				criRegistry.Configs[RegistryHost(registryName)] = containerdRegistryConfig{
+					Auth: &containerdRegistryAuth{
+						Username:      registry.Auth.Username,
+						Password:      registry.Auth.Password,
+						Auth:          registry.Auth.Auth,
+						IdentityToken: registry.Auth.IdentityToken,
+					},
+				}
+
+				// When mirrors are configured, also add auth for each mirror host.
+				for _, mirror := range registry.Mirrors {
+					if u, parseErr := url.Parse(mirror); parseErr == nil && u.Host != "" {
+						host = u.Host
+					} else {
+						host = RegistryHost(mirror)
 					}
-				} else {
-					// No mirrors configured; apply auth to the registry itself using its host[:port] as the key.
-					host = registryHost(registryName)
 					criRegistry.Configs[host] = containerdRegistryConfig{
 						Auth: &containerdRegistryAuth{
 							Username:      registry.Auth.Username,
@@ -316,7 +315,7 @@ func marshalContainerdConfigs(cluster *kubeoneapi.KubeOneCluster) (*maputils.Ord
 		// For _default (catch-all), leave server empty — containerd will
 		// automatically use the actual registry from the image reference.
 		var serverURL string
-		host := registryHost(registryName)
+		host := RegistryHost(registryName)
 		switch host {
 		case "_default":
 			// No server for default — containerd resolves it at pull time
@@ -366,21 +365,21 @@ func marshalContainerdConfigs(cluster *kubeoneapi.KubeOneCluster) (*maputils.Ord
 		// Remove empty parent table header that TOML encoder generates for nested maps
 		output := strings.ReplaceAll(buf.String(), "[host]\n", "")
 
-		filePath := fmt.Sprintf("%s/%s/hosts.toml", containerdRegistryConfigPath, registryHost(registryName))
+		filePath := fmt.Sprintf("%s/%s/hosts.toml", containerdRegistryConfigPath, RegistryHost(registryName))
 		result.Set(filePath, output)
 	}
 
 	return result, nil
 }
 
-// registryHost extracts the host[:port] from a registry name,
+// RegistryHost extracts the host[:port] from a registry name,
 // stripping any subpath. Containerd's certs.d directory and auth
 // config keys only use the host[:port] portion.
 // e.g. "gitlab.com/project1/repo1" -> "gitlab.com"
 //
 //	"myregistry.io:5000/path" -> "myregistry.io:5000"
 //	"docker.io" -> "docker.io"
-func registryHost(name string) string {
+func RegistryHost(name string) string {
 	if i := strings.IndexByte(name, '/'); i >= 0 {
 		return name[:i]
 	}

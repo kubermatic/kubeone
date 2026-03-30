@@ -12,6 +12,10 @@ sandbox = "registry.k8s.io/pause:3.10"
 [plugins."io.containerd.cri.v1.images".registry]
 config_path = "/etc/containerd/certs.d"
 [plugins."io.containerd.cri.v1.images".registry.configs]
+[plugins."io.containerd.cri.v1.images".registry.configs."docker.io"]
+[plugins."io.containerd.cri.v1.images".registry.configs."docker.io".auth]
+username = "testuser"
+password = "testpass"
 [plugins."io.containerd.cri.v1.images".registry.configs."gcr.io"]
 [plugins."io.containerd.cri.v1.images".registry.configs."gcr.io".auth]
 username = "testuser"
@@ -22,6 +26,10 @@ username = "testuser"
 password = "testpass"
 [plugins."io.containerd.cri.v1.images".registry.configs."mirror2.example.com"]
 [plugins."io.containerd.cri.v1.images".registry.configs."mirror2.example.com".auth]
+username = "testuser"
+password = "testpass"
+[plugins."io.containerd.cri.v1.images".registry.configs."registry.k8s.io"]
+[plugins."io.containerd.cri.v1.images".registry.configs."registry.k8s.io".auth]
 username = "testuser"
 password = "testpass"
 [plugins."io.containerd.cri.v1.runtime"]
@@ -47,6 +55,6 @@ server = "registry.k8s.io"
 
 [host."https://mirror.example.com"]
 capabilities = ["pull", "resolve"]
-[host."https://mirror2.example.com"]
+[host."https://mirror2.example.com/v2/someproject"]
 capabilities = ["pull", "resolve"]
 
