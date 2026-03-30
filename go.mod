@@ -35,7 +35,7 @@ require (
 	google.golang.org/grpc v1.79.3
 	gopkg.in/yaml.v2 v2.4.0
 	helm.sh/helm/v3 v3.18.5
-	k8c.io/machine-controller/sdk v1.64.0
+	k8c.io/machine-controller/sdk v1.65.0
 	k8s.io/api v0.35.0
 	k8s.io/apiextensions-apiserver v0.35.0
 	k8s.io/apimachinery v0.35.0
