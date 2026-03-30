@@ -14,7 +14,7 @@ postsubmits:
       preset-docker-mirror: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.26-node-22-1
+        - image: quay.io/kubermatic/build:go-1.26-node-22-kind-0.31-1
           command:
             - /bin/bash
             - -c
