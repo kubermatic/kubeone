@@ -348,7 +348,7 @@ func optionalResources() map[Resource]map[string]string {
 		VsphereCCM: {
 			"1.33.x":    "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.33.0",
 			"1.34.x":    "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.34.0",
-			">= 1.35.x": "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.35.0",
+			">= 1.35.x": "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.35.1",
 		},
 
 		// vSphere CSI
