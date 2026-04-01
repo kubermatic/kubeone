@@ -157,6 +157,7 @@ func setDefaultsNodeSets(ns *NodeSet) {
 	ns.SSH.BastionPort = defaults(ns.SSH.BastionPort, 22)
 	ns.SSH.Username = defaults(ns.SSH.Username, "root")
 	ns.SSH.BastionUser = defaults(ns.SSH.BastionUser, "root")
+	ns.SSH.AgentSocket = defaults(ns.SSH.AgentSocket, "env:SSH_AUTH_SOCK")
 }
 
 func SetDefaults_APIEndpoints(obj *KubeOneCluster) {
@@ -218,6 +219,11 @@ func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
 		defaultCanal.MTU = defaults(defaultCanal.MTU, 1410) // GCE specific 1460 bytes - 50 VXLAN bytes
 	case obj.CloudProvider.Hetzner != nil:
 		defaultCanal.MTU = defaults(defaultCanal.MTU, 1400) // Hetzner specific 1450 bytes - 50 VXLAN bytes
+		if obj.ControlPlane.NodeSets != nil {
+			if obj.CloudProvider.Hetzner.ControlPlane == nil {
+				obj.CloudProvider.Hetzner.ControlPlane = &HetznerControlPlane{}
+			}
+		}
 	case obj.CloudProvider.Openstack != nil:
 		defaultCanal.MTU = defaults(defaultCanal.MTU, 1400) // Openstack specific 1450 bytes - 50 VXLAN bytes
 	}

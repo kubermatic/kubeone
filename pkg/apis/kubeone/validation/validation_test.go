@@ -596,7 +596,7 @@ func TestValidateAPIEndpoint(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			errs := ValidateAPIEndpoint(tc.apiEndpoint, nil)
+			errs := ValidateAPIEndpoint(tc.apiEndpoint, nil, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}

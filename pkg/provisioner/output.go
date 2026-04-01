@@ -18,17 +18,17 @@ package provisioner
 
 import (
 	corev1 "k8s.io/api/core/v1"
+
+	cloud "k8c.io/machine-controller/pkg/cloudprovider/instance"
 )
 
 type Machine struct {
 	PublicAddress  string `json:"public_address,omitempty"`
 	PrivateAddress string `json:"private_address,omitempty"`
 	Hostname       string `json:"hostname,omitempty"`
-	SSHUser        string `json:"ssh_user,omitempty"`
-	Bastion        bool   `json:"bastion,omitempty"`
 }
 
-func getMachineProvisionerOutput(instances []MachineInstance) []Machine {
+func getMachineProvisionerOutput(instances []cloud.Instance) []Machine {
 	var out []Machine
 
 	for _, instance := range instances {
@@ -39,9 +39,9 @@ func getMachineProvisionerOutput(instances []MachineInstance) []Machine {
 	return out
 }
 
-func getMachineInfo(instance MachineInstance) Machine {
+func getMachineInfo(instance cloud.Instance) Machine {
 	var publicAddress, privateAddress, hostname string
-	for address, addressType := range instance.inst.Addresses() {
+	for address, addressType := range instance.Addresses() {
 		switch addressType {
 		case corev1.NodeExternalIP:
 			if publicAddress == "" {
@@ -70,7 +70,6 @@ func getMachineInfo(instance MachineInstance) Machine {
 		PublicAddress:  publicAddress,
 		PrivateAddress: privateAddress,
 		Hostname:       hostname,
-		SSHUser:        instance.sshUser,
 	}
 }
 

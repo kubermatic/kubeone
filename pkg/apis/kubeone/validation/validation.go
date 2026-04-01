@@ -60,7 +60,7 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateName(c.Name, field.NewPath("name"))...)
 	allErrs = append(allErrs, ValidateControlPlaneConfig(c.ControlPlane, c.ClusterNetwork, field.NewPath("controlPlane"))...)
 	allErrs = append(allErrs, ValidateKubeletConfig(c.KubeletConfig, field.NewPath("kubeletConfig"))...)
-	allErrs = append(allErrs, ValidateAPIEndpoint(c.APIEndpoint, field.NewPath("apiEndpoint"))...)
+	allErrs = append(allErrs, ValidateAPIEndpoint(c.APIEndpoint, c.ControlPlane.NodeSets, field.NewPath("apiEndpoint"))...)
 	allErrs = append(allErrs, ValidateCloudProviderSpec(c, field.NewPath("cloudProvider"))...)
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
 	allErrs = append(allErrs, ValidateKubernetesSupport(c, field.NewPath(""))...)
@@ -134,10 +134,10 @@ func ValidateControlPlaneMachines(nodeSets []kubeoneapi.NodeSet, fld *field.Path
 }
 
 // ValidateAPIEndpoint validates the APIEndpoint structure
-func ValidateAPIEndpoint(a kubeoneapi.APIEndpoint, fldPath *field.Path) field.ErrorList {
+func ValidateAPIEndpoint(a kubeoneapi.APIEndpoint, nodeSets []kubeoneapi.NodeSet, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	if len(a.Host) == 0 {
+	if len(a.Host) == 0 && len(nodeSets) == 0 {
 		allErrs = append(allErrs, field.Required(fldPath.Child("host"), ".apiEndpoint.host is a required field"))
 	}
 	if a.Port <= 0 {

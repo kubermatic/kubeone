@@ -30,7 +30,7 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/machine-controller/pkg/cloudprovider"
 	cloudprovidererrors "k8c.io/machine-controller/pkg/cloudprovider/errors"
-	"k8c.io/machine-controller/pkg/cloudprovider/instance"
+	cloud "k8c.io/machine-controller/pkg/cloudprovider/instance"
 	cloudprovidertypes "k8c.io/machine-controller/pkg/cloudprovider/types"
 	machinecontrollerlog "k8c.io/machine-controller/pkg/log"
 	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
@@ -40,7 +40,6 @@ import (
 
 const (
 	maxRetrieForMachines = 5
-	hostnameAnnotation   = "ssh-username"
 
 	userDataTemplate = `#cloud-config
 ssh_pwauth: false
@@ -82,12 +81,7 @@ func getUserData(pconfig *providerconfig.Config) (string, error) {
 	return cleanupTemplateOutput(buf.String())
 }
 
-type MachineInstance struct {
-	inst    instance.Instance
-	sshUser string
-}
-
-func CreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine, logger logrus.FieldLogger) ([]Machine, error) {
+func FindOrCreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine, logger logrus.FieldLogger) ([]Machine, error) {
 	providerData := &cloudprovidertypes.ProviderData{
 		Ctx: ctx,
 	}
@@ -95,7 +89,7 @@ func CreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine, log
 	rawLog := machinecontrollerlog.New(false, machinecontrollerlog.FormatConsole)
 	log := rawLog.Sugar()
 
-	var instances []MachineInstance
+	var instances []cloud.Instance
 
 	// TODO: Dump all the errors in an array and do the max that is possible without early exit
 	for _, machine := range machines {
@@ -125,6 +119,7 @@ func CreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine, log
 				if createErr != nil {
 					return nil, fail.MachineController(createErr, "creating machine at cloudprovider")
 				}
+				logger.Infof("created a new control-plane machine %q", machine.Name)
 				machineCreated = true
 			} else if ok, _, _ := cloudprovidererrors.IsTerminalError(err); ok {
 				// case 2: terminal error was returned and manual interaction is required to recover
@@ -159,17 +154,7 @@ func CreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine, log
 			return nil, fail.MachineController(fmt.Errorf("machine %s has not been assigned an IP yet", providerInstance.Name()), "getting instance addresses from provider")
 		}
 
-		sshUser := "root"
-		if user := machine.Annotations[hostnameAnnotation]; user != "" {
-			sshUser = user
-		}
-
-		machineInstance := MachineInstance{
-			inst:    providerInstance,
-			sshUser: sshUser,
-		}
-
-		instances = append(instances, machineInstance)
+		instances = append(instances, providerInstance)
 	}
 
 	return getMachineProvisionerOutput(instances), nil

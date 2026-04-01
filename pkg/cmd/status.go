@@ -57,5 +57,9 @@ func runStatus(opts *globalOptions) error {
 		return err
 	}
 
+	if err := tasks.WithEnsureControlPlane(nil).Run(s); err != nil {
+		return err
+	}
+
 	return tasks.WithClusterStatus(nil).Run(s)
 }

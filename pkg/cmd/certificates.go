@@ -61,6 +61,10 @@ func certificatesRenewCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 				return err
 			}
 
+			if err := tasks.WithEnsureControlPlane(nil).Run(st); err != nil {
+				return err
+			}
+
 			renew := tasks.Tasks{
 				{Fn: certificate.RenewAll, Operation: "renew all the certificates of the Kubernetes control plane and kubelets"},
 				{Fn: kubeconfig.BuildKubernetesClientset, Operation: "building kubernetes clientset"},

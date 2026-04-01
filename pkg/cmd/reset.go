@@ -23,6 +23,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"k8c.io/kubeone/pkg/confirmation"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tasks"
@@ -119,6 +120,11 @@ func runReset(opts *resetOpts) error {
 		return err
 	}
 
+	// TODO: replace with cleanup
+	if err = tasks.WithEnsureControlPlane(nil).Run(s); err != nil {
+		return err
+	}
+
 	if opts.DestroyWorkers || opts.RemoveVolumes || opts.RemoveLBServices {
 		if cErr := kubeconfig.BuildKubernetesClientset(s); cErr != nil {
 			s.Logger.Errorln("Failed to build the Kubernetes clientset.")
@@ -180,12 +186,12 @@ func runReset(opts *resetOpts) error {
 
 	fmt.Printf("\nAfter the command is complete, there's NO way to recover the cluster or its data!\n")
 
-	confirm, err := confirmCommand(opts.AutoApprove)
+	approved, err := confirmation.Approved(opts.AutoApprove)
 	if err != nil {
 		return err
 	}
 
-	if !confirm {
+	if !approved {
 		s.Logger.Println("Operation canceled.")
 
 		return nil

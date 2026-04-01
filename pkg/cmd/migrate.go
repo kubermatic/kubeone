@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"k8c.io/kubeone/pkg/confirmation"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tasks"
@@ -62,6 +63,10 @@ func migrateToContainerdCmd(fs *pflag.FlagSet) *cobra.Command {
 func runMigrateToContainerd(opts *globalOptions) error {
 	s, err := opts.BuildState()
 	if err != nil {
+		return err
+	}
+
+	if err = tasks.WithEnsureControlPlane(nil).Run(s); err != nil {
 		return err
 	}
 
@@ -176,6 +181,10 @@ func runMigrateToCCMCSI(opts *migrateCCMOptions) error {
 		return err
 	}
 
+	if err = tasks.WithEnsureControlPlane(nil).Run(s); err != nil {
+		return err
+	}
+
 	// Validate credentials
 	if err = validateCredentials(s, opts.CredentialsFile); err != nil {
 		return err
@@ -213,12 +222,12 @@ func runMigrateToCCMCSI(opts *migrateCCMOptions) error {
 		s.Logger.Warnln("Make sure to check documentation for more details.")
 	}
 
-	confirm, err := confirmCommand(opts.AutoApprove)
+	approved, err := confirmation.Approved(opts.AutoApprove)
 	if err != nil {
 		return err
 	}
 
-	if !confirm {
+	if !approved {
 		s.Logger.Println("Operation canceled.")
 
 		return nil
