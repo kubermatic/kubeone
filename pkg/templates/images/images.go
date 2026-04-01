@@ -307,12 +307,12 @@ func optionalResources() map[Resource]map[string]string {
 		HetznerCCM: {"*": "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.30.1"},
 
 		// Hetzner CSI
-		HetznerCSI:                   {"*": "docker.io/hetznercloud/hcloud-csi-driver:v2.18.3"},
-		HetznerCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.10.0"},
-		HetznerCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v2.0.0"},
-		HetznerCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v6.1.0"},
-		HetznerCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.17.0"},
-		HetznerCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.15.0"},
+		HetznerCSI:                   {"*": "docker.io/hetznercloud/hcloud-csi-driver:v2.20.0"},
+		HetznerCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.11.0"},
+		HetznerCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v2.1.0"},
+		HetznerCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v6.1.1"},
+		HetznerCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.18.0"},
+		HetznerCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.16.0"},
 
 		// OpenStack CCM
 		OpenstackCCM: {
