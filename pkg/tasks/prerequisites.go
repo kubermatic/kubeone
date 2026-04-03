@@ -26,6 +26,7 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/runner"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/state"
@@ -96,14 +97,21 @@ func generateConfigurationFiles(s *state.State) error {
 			return err
 		}
 	}
-	if s.Cluster.Features.PodNodeSelector != nil && s.Cluster.Features.PodNodeSelector.Enable {
-		admissionCfg, err := admissionconfig.NewAdmissionConfig(s.Cluster.Versions.Kubernetes, s.Cluster.Features.PodNodeSelector)
+	if features.RequiresAdmissionConfig(s.Cluster.Features) {
+		admissionCfg, err := admissionconfig.NewAdmissionConfig(s.Cluster.Versions.Kubernetes, s.Cluster.Features.PodNodeSelector, s.Cluster.Features.EventRateLimit)
 		if err != nil {
 			return err
 		}
 		s.Configuration.AddFile("cfg/admission-config.yaml", admissionCfg)
+	}
 
+	if s.Cluster.Features.PodNodeSelector != nil && s.Cluster.Features.PodNodeSelector.Enable {
 		if err := s.Configuration.AddFilePath("cfg/podnodeselector.yaml", s.Cluster.Features.PodNodeSelector.Config.ConfigFilePath, s.ManifestFilePath); err != nil {
+			return err
+		}
+	}
+	if s.Cluster.Features.EventRateLimit != nil && s.Cluster.Features.EventRateLimit.Enable {
+		if err := s.Configuration.AddFilePath("cfg/eventratelimit.yaml", s.Cluster.Features.EventRateLimit.Config.ConfigFilePath, s.ManifestFilePath); err != nil {
 			return err
 		}
 	}
@@ -254,13 +262,13 @@ func uploadConfigurationFilesToNode(s *state.State, _ *kubeoneapi.HostConfig, co
 		return fail.SSH(err, "saving audit-webhook-config")
 	}
 
-	cmd, err = scripts.SavePodNodeSelectorConfig(s.WorkDir)
+	cmd, err = scripts.SaveAdmissionControlConfigs(s.WorkDir)
 	if err != nil {
 		return err
 	}
 	_, _, err = s.Runner.RunRaw(cmd)
 	if err != nil {
-		return fail.SSH(err, "saving podnodeselector config")
+		return fail.SSH(err, "saving admission control config")
 	}
 
 	cmd, err = scripts.SaveEncryptionProvidersConfig(s.WorkDir, s.GetEncryptionProviderConfigName())

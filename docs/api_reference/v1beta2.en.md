@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2026-04-03T10:58:32+02:00
+date = 2026-04-03T12:52:19+02:00
 weight = 11
 +++
 ## v1beta2
@@ -34,6 +34,8 @@ weight = 11
 * [EncryptionProviders](#encryptionproviders)
 * [EquinixMetalSpec](#equinixmetalspec)
 * [EtcdConfig](#etcdconfig)
+* [EventRateLimit](#eventratelimit)
+* [EventRateLimitConfig](#eventratelimitconfig)
 * [ExternalCNISpec](#externalcnispec)
 * [Features](#features)
 * [GCESpec](#gcespec)
@@ -425,6 +427,27 @@ EtcdConfig
 
 [Back to Group](#v1beta2)
 
+### EventRateLimit
+
+EventRateLimit enables the EventRateLimit admission plugin.
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| enable | Enable the EventRateLimit admission plugin. | bool | false |
+| config | Config | [EventRateLimitConfig](#eventratelimitconfig) | true |
+
+[Back to Group](#v1beta2)
+
+### EventRateLimitConfig
+
+EventRateLimitConfig contains configuration for the EventRateLimit admission plugin.
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| configFilePath | ConfigFilePath is a path on the local file system to the EventRateLimit configuration file. ConfigFilePath is a required field. More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#eventratelimit | string | true |
+
+[Back to Group](#v1beta2)
+
 ### ExternalCNISpec
 
 ExternalCNISpec defines the external CNI plugin.
@@ -443,6 +466,7 @@ Features controls what features will be enabled on the cluster
 | ----- | ----------- | ------ | -------- |
 | coreDNS | CoreDNS | *[CoreDNS](#coredns) | false |
 | alwaysPullImages | AlwaysPullImages | *[AlwaysPullImages](#alwayspullimages) | false |
+| eventRateLimit | EventRateLimit | *[EventRateLimit](#eventratelimit) | false |
 | podNodeSelector | PodNodeSelector | *[PodNodeSelector](#podnodeselector) | false |
 | podSecurityPolicy | PodSecurityPolicy\n\nDeprecated: will be removed once Kubernetes 1.24 reaches EOL | *[PodSecurityPolicy](#podsecuritypolicy) | false |
 | staticAuditLog | StaticAuditLog | *[StaticAuditLog](#staticauditlog) | false |

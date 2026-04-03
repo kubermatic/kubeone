@@ -74,6 +74,7 @@ type printOpts struct {
 	NoProxy    string `longflag:"proxy-no-proxy"`
 
 	EnableAlwaysPullImages    bool `longflag:"enable-always-pull-images"`
+	EnableEventRateLimit      bool `longflag:"enable-event-rate-limit"`
 	EnablePodNodeSelector     bool `longflag:"enable-pod-node-selector"`
 	EnablePodSecurityPolicy   bool `longflag:"enable-pod-security-policy"` // TODO: remove in future release
 	EnableStaticAuditLog      bool `longflag:"enable-static-audit-log"`
@@ -173,6 +174,7 @@ func configPrintCmd() *cobra.Command {
 
 	// Features
 	cmd.Flags().BoolVar(&opts.EnableAlwaysPullImages, longFlagName(opts, "EnableAlwaysPullImages"), false, "enable AlwaysPullImages admission plugin")
+	cmd.Flags().BoolVar(&opts.EnableEventRateLimit, longFlagName(opts, "EnableEventRateLimit"), false, "enable EventRateLimit admission plugin")
 	cmd.Flags().BoolVar(&opts.EnablePodNodeSelector, longFlagName(opts, "EnablePodNodeSelector"), false, "enable PodNodeSelector admission plugin")
 	cmd.Flags().BoolVar(&opts.EnablePodSecurityPolicy, longFlagName(opts, "EnablePodSecurityPolicy"), false, "enable PodSecurityPolicy. NO-OP: this feature is removed")
 	cmd.Flags().BoolVar(&opts.EnableStaticAuditLog, longFlagName(opts, "EnableStaticAuditLog"), false, "enable StaticAuditLog")
@@ -407,6 +409,10 @@ func createAndPrintManifest(printOptions *printOpts) error {
 func printFeatures(cfg *yamled.Document, printOptions *printOpts) {
 	if printOptions.EnableAlwaysPullImages {
 		cfg.Set(yamled.Path{"features", "alwaysPullImages", "enable"}, printOptions.EnableAlwaysPullImages)
+	}
+	if printOptions.EnableEventRateLimit {
+		cfg.Set(yamled.Path{"features", "eventRateLimit", "enable"}, printOptions.EnableEventRateLimit)
+		cfg.Set(yamled.Path{"features", "eventRateLimit", "config", "configFilePath"}, "")
 	}
 	if printOptions.EnablePodNodeSelector {
 		cfg.Set(yamled.Path{"features", "podNodeSelector", "enable"}, printOptions.EnablePodNodeSelector)

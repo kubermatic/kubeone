@@ -29,8 +29,13 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
-// NewAdmissionConfig generates the AdmissionConfiguration manifest
-func NewAdmissionConfig(k8sVersion string, podNodeSelectorFeature *kubeoneapi.PodNodeSelector) (string, error) {
+const (
+	eventRateLimitAdmissionConfigPath  = "/etc/kubernetes/admission/eventratelimit.yaml"
+	podNodeSelectorAdmissionConfigPath = "/etc/kubernetes/admission/podnodeselector.yaml"
+)
+
+// NewAdmissionConfig generates the AdmissionConfiguration manifest.
+func NewAdmissionConfig(k8sVersion string, podNodeSelectorFeature *kubeoneapi.PodNodeSelector, eventRateLimitFeature *kubeoneapi.EventRateLimit) (string, error) {
 	sver, err := semver.NewVersion(k8sVersion)
 	if err != nil {
 		return "", fail.Runtime(err, "parsing kubernetes semver")
@@ -43,15 +48,15 @@ func NewAdmissionConfig(k8sVersion string, podNodeSelectorFeature *kubeoneapi.Po
 	var admissionCfg []runtime.Object
 	switch {
 	case c.Check(sver):
-		admissionCfg = admissionConfigV1alpha1(podNodeSelectorFeature)
+		admissionCfg = admissionConfigV1alpha1(podNodeSelectorFeature, eventRateLimitFeature)
 	default:
-		admissionCfg = admissionConfigV1(podNodeSelectorFeature)
+		admissionCfg = admissionConfigV1(podNodeSelectorFeature, eventRateLimitFeature)
 	}
 
 	return templates.KubernetesToYAML(admissionCfg)
 }
 
-func admissionConfigV1(podNodeSelectorFeature *kubeoneapi.PodNodeSelector) []runtime.Object {
+func admissionConfigV1(podNodeSelectorFeature *kubeoneapi.PodNodeSelector, eventRateLimitFeature *kubeoneapi.EventRateLimit) []runtime.Object {
 	admissionConfig := &apiserverv1.AdmissionConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "apiserver.config.k8s.io/v1",
@@ -62,15 +67,22 @@ func admissionConfigV1(podNodeSelectorFeature *kubeoneapi.PodNodeSelector) []run
 	if podNodeSelectorFeature != nil && podNodeSelectorFeature.Enable {
 		pnsPlugin := apiserverv1.AdmissionPluginConfiguration{
 			Name: "PodNodeSelector",
-			Path: "/etc/kubernetes/admission/podnodeselector.yaml",
+			Path: podNodeSelectorAdmissionConfigPath,
 		}
 		admissionConfig.Plugins = append(admissionConfig.Plugins, pnsPlugin)
+	}
+	if eventRateLimitFeature != nil && eventRateLimitFeature.Enable {
+		erlPlugin := apiserverv1.AdmissionPluginConfiguration{
+			Name: "EventRateLimit",
+			Path: eventRateLimitAdmissionConfigPath,
+		}
+		admissionConfig.Plugins = append(admissionConfig.Plugins, erlPlugin)
 	}
 
 	return []runtime.Object{admissionConfig}
 }
 
-func admissionConfigV1alpha1(podNodeSelectorFeature *kubeoneapi.PodNodeSelector) []runtime.Object {
+func admissionConfigV1alpha1(podNodeSelectorFeature *kubeoneapi.PodNodeSelector, eventRateLimitFeature *kubeoneapi.EventRateLimit) []runtime.Object {
 	admissionConfig := &apiserverv1alpha1.AdmissionConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "apiserver.k8s.io/v1alpha1",
@@ -81,9 +93,16 @@ func admissionConfigV1alpha1(podNodeSelectorFeature *kubeoneapi.PodNodeSelector)
 	if podNodeSelectorFeature != nil && podNodeSelectorFeature.Enable {
 		pnsPlugin := apiserverv1alpha1.AdmissionPluginConfiguration{
 			Name: "PodNodeSelector",
-			Path: "/etc/kubernetes/admission/podnodeselector.yaml",
+			Path: podNodeSelectorAdmissionConfigPath,
 		}
 		admissionConfig.Plugins = append(admissionConfig.Plugins, pnsPlugin)
+	}
+	if eventRateLimitFeature != nil && eventRateLimitFeature.Enable {
+		erlPlugin := apiserverv1alpha1.AdmissionPluginConfiguration{
+			Name: "EventRateLimit",
+			Path: eventRateLimitAdmissionConfigPath,
+		}
+		admissionConfig.Plugins = append(admissionConfig.Plugins, erlPlugin)
 	}
 
 	return []runtime.Object{admissionConfig}

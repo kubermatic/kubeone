@@ -2043,6 +2043,16 @@ func TestValidateFeatures(t *testing.T) {
 			expectedError: true,
 		},
 		{
+			name: "invalid eventRateLimit config",
+			features: kubeoneapi.Features{
+				EventRateLimit: &kubeoneapi.EventRateLimit{
+					Enable: true,
+					Config: kubeoneapi.EventRateLimitConfig{},
+				},
+			},
+			expectedError: true,
+		},
+		{
 			name: "invalid podNodeSelector config",
 			features: kubeoneapi.Features{
 				PodNodeSelector: &kubeoneapi.PodNodeSelector{
@@ -2084,6 +2094,35 @@ func TestValidateFeatures(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			errs := ValidateFeatures(tc.features, nil)
+			if (len(errs) == 0) == tc.expectedError {
+				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
+			}
+		})
+	}
+}
+
+func TestValidateEventRateLimitConfig(t *testing.T) {
+	tests := []struct {
+		name                 string
+		eventRateLimitConfig kubeoneapi.EventRateLimitConfig
+		expectedError        bool
+	}{
+		{
+			name: "valid eventRateLimit config",
+			eventRateLimitConfig: kubeoneapi.EventRateLimitConfig{
+				ConfigFilePath: "./eventratelimit.yaml",
+			},
+			expectedError: false,
+		},
+		{
+			name:                 "invalid eventRateLimit config",
+			eventRateLimitConfig: kubeoneapi.EventRateLimitConfig{},
+			expectedError:        true,
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			errs := ValidateEventRateLimitConfig(tc.eventRateLimitConfig, nil)
 			if (len(errs) == 0) == tc.expectedError {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}
