@@ -283,7 +283,6 @@ func uploadConfigurationFilesToNode(s *state.State, _ *kubeoneapi.HostConfig, co
 	return nil
 }
 
-
 func containerRuntimeEnvironment(s *state.State) error {
 	if s.Cluster.Proxy.HTTP == "" && s.Cluster.Proxy.HTTPS == "" && s.Cluster.Proxy.NoProxy == "" {
 		return nil
