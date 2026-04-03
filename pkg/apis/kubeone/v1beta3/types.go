@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The KubeOne Authors.
+Copyright 2026 The KubeOne Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -852,6 +852,9 @@ type Features struct {
 	// CoreDNS
 	CoreDNS *CoreDNS `json:"coreDNS,omitempty"`
 
+	// AlwaysPullImages
+	AlwaysPullImages *AlwaysPullImages `json:"alwaysPullImages,omitempty"`
+
 	// PodNodeSelector
 	PodNodeSelector *PodNodeSelector `json:"podNodeSelector,omitempty"`
 
@@ -894,6 +897,13 @@ type CoreDNS struct {
 	// ImageRepository has the highest priority, meaning that it'll override
 	// overwriteRegistry if specified.
 	ImageRepository string `json:"imageRepository,omitempty"`
+}
+
+// AlwaysPullImages enables the AlwaysPullImages admission plugin, which forces
+// every new pod to have its image pull policy set to Always.
+type AlwaysPullImages struct {
+	// Enable the AlwaysPullImages admission plugin.
+	Enable bool `json:"enable,omitempty"`
 }
 
 // PodNodeSelector feature flag

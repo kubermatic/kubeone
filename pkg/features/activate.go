@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The KubeOne Authors.
+Copyright 2026 The KubeOne Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ func UpdateKubeadmArguments(featuresCfg kubeoneapi.Features, args *kubeadmargs.A
 	activateKubeadmDynamicAuditLogs(featuresCfg.DynamicAuditLog, args)
 	activateKubeadmWebhookAuditLogs(featuresCfg.WebhookAuditLog, args)
 	activateKubeadmOIDC(featuresCfg.OpenIDConnect, args)
+	activateKubeadmAlwaysPullImages(featuresCfg.AlwaysPullImages, args)
 	activateKubeadmPodNodeSelector(featuresCfg.PodNodeSelector, args)
 	activateEncryptionProviders(featuresCfg.EncryptionProviders, args)
 }
