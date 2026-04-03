@@ -639,6 +639,9 @@ func ValidateFeatures(f kubeoneapi.Features, fldPath *field.Path) field.ErrorLis
 	if f.CoreDNS != nil && f.CoreDNS.Replicas != nil && *f.CoreDNS.Replicas < 0 {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("coreDNS", "replicas"), *f.CoreDNS.Replicas, "coreDNS replicas cannot be < 0"))
 	}
+	if f.EventRateLimit != nil && f.EventRateLimit.Enable {
+		allErrs = append(allErrs, ValidateEventRateLimitConfig(f.EventRateLimit.Config, fldPath.Child("eventRateLimit"))...)
+	}
 	if f.PodNodeSelector != nil && f.PodNodeSelector.Enable {
 		allErrs = append(allErrs, ValidatePodNodeSelectorConfig(f.PodNodeSelector.Config, fldPath.Child("podNodeSelector"))...)
 	}
@@ -650,6 +653,17 @@ func ValidateFeatures(f kubeoneapi.Features, fldPath *field.Path) field.ErrorLis
 	}
 	if f.OpenIDConnect != nil && f.OpenIDConnect.Enable {
 		allErrs = append(allErrs, ValidateOIDCConfig(f.OpenIDConnect.Config, fldPath.Child("openidConnect"))...)
+	}
+
+	return allErrs
+}
+
+// ValidateEventRateLimitConfig validates the EventRateLimitConfig structure.
+func ValidateEventRateLimitConfig(n kubeoneapi.EventRateLimitConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if len(n.ConfigFilePath) == 0 {
+		allErrs = append(allErrs, field.Required(fldPath.Child("configFilePath"), ".eventRateLimit.config.configFilePath is a required field"))
 	}
 
 	return allErrs

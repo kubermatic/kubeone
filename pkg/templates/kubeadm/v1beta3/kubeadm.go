@@ -339,7 +339,7 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, logVol)
 	}
 
-	if cluster.Features.PodNodeSelector != nil && cluster.Features.PodNodeSelector.Enable {
+	if features.RequiresAdmissionConfig(cluster.Features) {
 		admissionVol := kubeadmv1beta3.HostPathMount{
 			Name:      "admission-conf",
 			HostPath:  "/etc/kubernetes/admission",

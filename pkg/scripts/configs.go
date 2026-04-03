@@ -47,13 +47,21 @@ var (
 		fi
 	`)
 
-	podNodeSelectorConfigTemplate = heredoc.Doc(`
-		if sudo test -f "{{ .WORK_DIR }}/cfg/podnodeselector.yaml"; then
+	admissionControlConfigsTemplate = heredoc.Doc(`
+		if sudo test -f "{{ .WORK_DIR }}/cfg/podnodeselector.yaml" || sudo test -f "{{ .WORK_DIR }}/cfg/eventratelimit.yaml" || sudo test -f "{{ .WORK_DIR }}/cfg/admission-config.yaml"; then
 			sudo mkdir -p /etc/kubernetes/admission
-			sudo mv {{ .WORK_DIR }}/cfg/podnodeselector.yaml /etc/kubernetes/admission/podnodeselector.yaml
-			sudo mv {{ .WORK_DIR }}/cfg/admission-config.yaml /etc/kubernetes/admission/admission-config.yaml
-			sudo chown root:root /etc/kubernetes/admission/podnodeselector.yaml
-			sudo chown root:root /etc/kubernetes/admission/admission-config.yaml
+			if sudo test -f "{{ .WORK_DIR }}/cfg/podnodeselector.yaml"; then
+				sudo mv {{ .WORK_DIR }}/cfg/podnodeselector.yaml /etc/kubernetes/admission/podnodeselector.yaml
+				sudo chown root:root /etc/kubernetes/admission/podnodeselector.yaml
+			fi
+			if sudo test -f "{{ .WORK_DIR }}/cfg/eventratelimit.yaml"; then
+				sudo mv {{ .WORK_DIR }}/cfg/eventratelimit.yaml /etc/kubernetes/admission/eventratelimit.yaml
+				sudo chown root:root /etc/kubernetes/admission/eventratelimit.yaml
+			fi
+			if sudo test -f "{{ .WORK_DIR }}/cfg/admission-config.yaml"; then
+				sudo mv {{ .WORK_DIR }}/cfg/admission-config.yaml /etc/kubernetes/admission/admission-config.yaml
+				sudo chown root:root /etc/kubernetes/admission/admission-config.yaml
+			fi
 		fi
 	`)
 
@@ -101,8 +109,8 @@ func SaveAuditWebhookConfig(workdir string) (string, error) {
 	return result, fail.Runtime(err, "rendering auditWebHookConfigScriptTemplate script")
 }
 
-func SavePodNodeSelectorConfig(workdir string) (string, error) {
-	result, err := Render(podNodeSelectorConfigTemplate, Data{
+func SaveAdmissionControlConfigs(workdir string) (string, error) {
+	result, err := Render(admissionControlConfigsTemplate, Data{
 		"WORK_DIR": workdir,
 	})
 

@@ -354,7 +354,7 @@ func addFeaturesExtraMounts(s *state.State, clusterConfig *kubeadmv1beta4.Cluste
 		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, logVol)
 	}
 
-	if cluster.Features.PodNodeSelector != nil && cluster.Features.PodNodeSelector.Enable {
+	if features.RequiresAdmissionConfig(cluster.Features) {
 		admissionVol := kubeadmv1beta4.HostPathMount{
 			Name:      "admission-conf",
 			HostPath:  "/etc/kubernetes/admission",

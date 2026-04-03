@@ -39,6 +39,13 @@ func Activate(s *state.State) error {
 	return installPodNodeSelector(s.Context, s.DynamicClient, s.Cluster.Features.PodNodeSelector)
 }
 
+// RequiresAdmissionConfig returns true if any enabled feature needs an
+// AdmissionConfiguration manifest and the /etc/kubernetes/admission volume.
+func RequiresAdmissionConfig(f kubeoneapi.Features) bool {
+	return (f.PodNodeSelector != nil && f.PodNodeSelector.Enable) ||
+		(f.EventRateLimit != nil && f.EventRateLimit.Enable)
+}
+
 // UpdateKubeadmArguments provides arguments to be passed to the Kubernetes
 // control plane components. Those arguments are lated integrated into
 // kubeadm.ClusterConfiguration according to enabled features
@@ -48,6 +55,7 @@ func UpdateKubeadmArguments(featuresCfg kubeoneapi.Features, args *kubeadmargs.A
 	activateKubeadmWebhookAuditLogs(featuresCfg.WebhookAuditLog, args)
 	activateKubeadmOIDC(featuresCfg.OpenIDConnect, args)
 	activateKubeadmAlwaysPullImages(featuresCfg.AlwaysPullImages, args)
+	activateKubeadmEventRateLimit(featuresCfg.EventRateLimit, args)
 	activateKubeadmPodNodeSelector(featuresCfg.PodNodeSelector, args)
 	activateEncryptionProviders(featuresCfg.EncryptionProviders, args)
 }

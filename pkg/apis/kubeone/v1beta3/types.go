@@ -854,7 +854,8 @@ type Features struct {
 
 	// AlwaysPullImages
 	AlwaysPullImages *AlwaysPullImages `json:"alwaysPullImages,omitempty"`
-
+	// EventRateLimit
+	EventRateLimit *EventRateLimit `json:"eventRateLimit,omitempty"`
 	// PodNodeSelector
 	PodNodeSelector *PodNodeSelector `json:"podNodeSelector,omitempty"`
 
@@ -904,6 +905,24 @@ type CoreDNS struct {
 type AlwaysPullImages struct {
 	// Enable the AlwaysPullImages admission plugin.
 	Enable bool `json:"enable,omitempty"`
+}
+
+// EventRateLimit enables the EventRateLimit admission plugin.
+type EventRateLimit struct {
+	// Enable the EventRateLimit admission plugin.
+	Enable bool `json:"enable,omitempty"`
+
+	// Config
+	Config EventRateLimitConfig `json:"config"`
+}
+
+// EventRateLimitConfig contains configuration for the EventRateLimit admission plugin.
+type EventRateLimitConfig struct {
+	// ConfigFilePath is a path on the local file system to the EventRateLimit
+	// configuration file.
+	// ConfigFilePath is a required field.
+	// More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#eventratelimit
+	ConfigFilePath string `json:"configFilePath"`
 }
 
 // PodNodeSelector feature flag
