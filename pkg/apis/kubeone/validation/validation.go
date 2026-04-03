@@ -663,7 +663,7 @@ func ValidateEventRateLimitConfig(n kubeoneapi.EventRateLimitConfig, fldPath *fi
 	allErrs := field.ErrorList{}
 
 	if len(n.ConfigFilePath) == 0 {
-		allErrs = append(allErrs, field.Required(fldPath.Child("configFilePath"), ".eventRateLimit.config.configFilePath is a required field"))
+		allErrs = append(allErrs, field.Required(fldPath.Child("configFilePath"), ""))
 	}
 
 	return allErrs
