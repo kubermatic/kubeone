@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2026-03-04T16:21:13+02:00
+date = 2026-04-03T10:58:32+02:00
 weight = 11
 +++
 ## v1beta3
@@ -10,6 +10,7 @@ weight = 11
 * [Addon](#addon)
 * [AddonRef](#addonref)
 * [Addons](#addons)
+* [AlwaysPullImages](#alwayspullimages)
 * [AzureSpec](#azurespec)
 * [CNI](#cni)
 * [CanalSpec](#canalspec)
@@ -131,6 +132,17 @@ Addons config
 | ----- | ----------- | ------ | -------- |
 | path | Path on the local file system to the directory with addons manifests. | string | false |
 | addons | Addons is a list of config options for named addon | [][AddonRef](#addonref) | false |
+
+[Back to Group](#v1beta3)
+
+### AlwaysPullImages
+
+AlwaysPullImages enables the AlwaysPullImages admission plugin, which forces
+every new pod to have its image pull policy set to Always.
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| enable | Enable the AlwaysPullImages admission plugin. | bool | false |
 
 [Back to Group](#v1beta3)
 
@@ -432,6 +444,7 @@ Features controls what features will be enabled on the cluster
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | coreDNS | CoreDNS | *[CoreDNS](#coredns) | false |
+| alwaysPullImages | AlwaysPullImages | *[AlwaysPullImages](#alwayspullimages) | false |
 | podNodeSelector | PodNodeSelector | *[PodNodeSelector](#podnodeselector) | false |
 | staticAuditLog | StaticAuditLog | *[StaticAuditLog](#staticauditlog) | false |
 | dynamicAuditLog | DynamicAuditLog | *[DynamicAuditLog](#dynamicauditlog) | false |
