@@ -81,8 +81,8 @@ func fixFilePermissions(s *state.State) error {
 		return fail.KubeClient(err, "waiting for all Nodes to be Ready")
 	}
 
-	// CIS benchmark tests mode of files only on control-plane nodes
-	return s.RunTaskOnControlPlane(func(ctx *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
+	// Reconcile kubelet and CNI file permissions on all SSH-managed nodes for CIS hardening.
+	return s.RunTaskOnAllNodes(func(ctx *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
 		for _, globPatterns := range systemFiles {
 			for _, pattern := range globPatterns {
 				nodeFS := executorfs.New(conn)
