@@ -66,7 +66,7 @@ func runMigrateToContainerd(opts *globalOptions) error {
 		return err
 	}
 
-	if err = tasks.WithEnsureControlPlane(nil).Run(s); err != nil {
+	if err = tasks.WithFindControlPlane(nil).Run(s); err != nil {
 		return err
 	}
 
@@ -181,7 +181,7 @@ func runMigrateToCCMCSI(opts *migrateCCMOptions) error {
 		return err
 	}
 
-	if err = tasks.WithEnsureControlPlane(nil).Run(s); err != nil {
+	if err = tasks.WithFindControlPlane(nil).Run(s); err != nil {
 		return err
 	}
 

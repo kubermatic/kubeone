@@ -97,7 +97,7 @@ func etcdMembersCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 				return err
 			}
 
-			if err = tasks.WithEnsureControlPlane(nil).Run(s); err != nil {
+			if err = tasks.WithFindControlPlane(nil).Run(s); err != nil {
 				return err
 			}
 
@@ -220,7 +220,7 @@ func etcdDisarmCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 				return err
 			}
 
-			if err = tasks.WithEnsureControlPlane(nil).Run(s); err != nil {
+			if err = tasks.WithFindControlPlane(nil).Run(s); err != nil {
 				return err
 			}
 
@@ -325,7 +325,7 @@ func etcdDefragmentCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 				return err
 			}
 
-			if err = tasks.WithEnsureControlPlane(nil).Run(s); err != nil {
+			if err = tasks.WithFindControlPlane(nil).Run(s); err != nil {
 				return err
 			}
 
@@ -390,7 +390,7 @@ func etcdSnapshotCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 				return err
 			}
 
-			if err = tasks.WithEnsureControlPlane(nil).Run(s); err != nil {
+			if err = tasks.WithFindControlPlane(nil).Run(s); err != nil {
 				return err
 			}
 

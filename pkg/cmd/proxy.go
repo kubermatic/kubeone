@@ -73,7 +73,7 @@ func setupProxyTunnel(opts *proxyOpts) error {
 		return err
 	}
 
-	if err := tasks.WithEnsureControlPlane(nil).Run(s); err != nil {
+	if err := tasks.WithFindControlPlane(nil).Run(s); err != nil {
 		return err
 	}
 

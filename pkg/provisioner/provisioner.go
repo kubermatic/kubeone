@@ -81,6 +81,44 @@ func getUserData(pconfig *providerconfig.Config) (string, error) {
 	return cleanupTemplateOutput(buf.String())
 }
 
+func FindMachines(ctx context.Context, machines []clusterv1alpha1.Machine, logger logrus.FieldLogger) ([]Machine, error) {
+	providerData := &cloudprovidertypes.ProviderData{
+		Ctx: ctx,
+	}
+
+	rawLog := machinecontrollerlog.New(false, machinecontrollerlog.FormatConsole)
+	log := rawLog.Sugar()
+
+	var instances []cloud.Instance
+
+	for _, machine := range machines {
+		prov, err := getProvider(ctx, machine)
+		if err != nil {
+			return nil, err
+		}
+
+		providerInstance, err := prov.Get(ctx, log, &machine, providerData)
+		if err != nil {
+			if errors.Is(err, cloudprovidererrors.ErrInstanceNotFound) {
+				return nil, fail.MachineController(fmt.Errorf("machine %q not found", machine.Name), "looking up machine at cloudprovider")
+			}
+
+			return nil, fail.MachineController(err, "getting instance from provider")
+		}
+
+		logger.Infof("found control-plane %q VM with id: %s", machine.Name, providerInstance.ID())
+
+		addresses := providerInstance.Addresses()
+		if len(addresses) == 0 {
+			return nil, fail.MachineController(fmt.Errorf("machine %s has not been assigned an IP yet", providerInstance.Name()), "getting instance addresses from provider")
+		}
+
+		instances = append(instances, providerInstance)
+	}
+
+	return getMachineProvisionerOutput(instances), nil
+}
+
 func FindOrCreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine, logger logrus.FieldLogger) ([]Machine, error) {
 	providerData := &cloudprovidertypes.ProviderData{
 		Ctx: ctx,

@@ -121,7 +121,7 @@ func runReset(opts *resetOpts) error {
 	}
 
 	// TODO: replace with cleanup
-	if err = tasks.WithEnsureControlPlane(nil).Run(s); err != nil {
+	if err = tasks.WithFindControlPlane(nil).Run(s); err != nil {
 		return err
 	}
 

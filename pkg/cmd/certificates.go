@@ -61,7 +61,7 @@ func certificatesRenewCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 				return err
 			}
 
-			if err := tasks.WithEnsureControlPlane(nil).Run(st); err != nil {
+			if err := tasks.WithFindControlPlane(nil).Run(st); err != nil {
 				return err
 			}
 

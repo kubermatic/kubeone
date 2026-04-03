@@ -163,7 +163,15 @@ func runApply(st *state.State, opts *applyOpts) error {
 		return err
 	}
 
-	managedCP := tasks.WithEnsureControlPlane(nil)
+	managedCP, err := tasks.WithEnsureControlPlane(nil,
+		st.Cluster.Name,
+		st.Cluster.ControlPlane.NodeSets,
+		st.Cluster.Versions.Kubernetes,
+	)
+	if err != nil {
+		return err
+	}
+
 	if ops := managedCP.Descriptions(st); len(ops) > 0 {
 		for _, op := range ops {
 			fmt.Printf("\t~ %s\n", op)

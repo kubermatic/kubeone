@@ -43,40 +43,137 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-func WithEnsureControlPlane(t Tasks) Tasks {
+func WithFindControlPlane(t Tasks) Tasks {
 	return t.append(
 		Task{
-			Description: "Ensure Hetzner load balancer",
-			Operation:   "ensure Hetzner load balancer",
+			Description: "Find Hetzner load balancer",
+			Operation:   "find Hetzner load balancer",
 			Predicate:   isHetznerControlPlaneEnabled,
-			Fn:          ensureHetznerLoadBalancer,
+			Fn:          lookupHetznerLoadBalancer,
 		},
 		Task{
-			Description: "Ensure Hetzner control-plane VMs",
-			Operation:   "ensure Hetzner control-plane VMs",
+			Description: "Find Hetzner VMs",
+			Operation:   "find Hetzner VMs",
 			Predicate:   isHetznerControlPlaneEnabled,
-			Fn:          ensureHetznerControlPlaneVMs,
+			Fn:          lookupHetznerVMs,
 		},
 		Task{
 			Operation: "defaulting cluster hosts",
 			Predicate: func(s *state.State) bool { return len(s.Cluster.ControlPlane.NodeSets) != 0 },
-			Fn: func(s *state.State) error {
-				v1beta3Cluster := kubeonev1beta3.NewKubeOneCluster()
-				if err := kubeonescheme.Scheme.Convert(s.Cluster, v1beta3Cluster, nil); err != nil {
-					return fail.Config(err, "converting internal to v1beta3 object")
-				}
-
-				// run defauling again, to populate Hosts
-				kubeonescheme.Scheme.Default(v1beta3Cluster)
-
-				if err := kubeonescheme.Scheme.Convert(v1beta3Cluster, s.Cluster, nil); err != nil {
-					return fail.Config(err, fmt.Sprintf("converting %s to internal object", v1beta3Cluster.GroupVersionKind()))
-				}
-
-				return nil
-			},
+			Fn:        defaultCluster,
 		},
 	)
+}
+
+func lookupHetznerLoadBalancer(s *state.State) error {
+	if s.Cluster.APIEndpoint.Host != "" {
+		return nil
+	}
+
+	providerCreds, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeUniversal)
+	if err != nil {
+		return err
+	}
+
+	hzclient := hcloud.NewClient(hcloud.WithToken(providerCreds[credentials.HetznerTokenKeyMC]))
+	ctx := context.Background()
+
+	clusterLBName := s.Cluster.CloudProvider.Hetzner.ControlPlane.LoadBalancer.Name
+	lbs, _, err := hzclient.LoadBalancer.List(ctx, hcloud.LoadBalancerListOpts{
+		Name: clusterLBName,
+	})
+	if err != nil {
+		return fail.Cloud(err, "hetzner", "listing loadbalancers")
+	}
+
+	if len(lbs) == 0 {
+		return fail.Cloud(fmt.Errorf("no load balancer found with name: %s", clusterLBName), "hetzner", "looking up loadbalancer")
+	}
+
+	s.Logger.Infof("found loadbalancer %q with id: %d", clusterLBName, lbs[0].ID)
+	s.Cluster.APIEndpoint.Host = lbs[0].PublicNet.IPv4.IP.String()
+	s.Cluster.APIEndpoint.Port = 6443
+
+	return nil
+}
+
+func lookupHetznerVMs(s *state.State) error {
+	capimachines, err := generateHetznerControlPlaneMachines(
+		s.Cluster.Name,
+		s.Cluster.ControlPlane.NodeSets,
+		s.Cluster.Versions.Kubernetes,
+	)
+	if err != nil {
+		return err
+	}
+
+	provMachines, err := provisioner.FindMachines(s.Context, capimachines, s.Logger)
+	if err != nil {
+		return err
+	}
+
+	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, hostConfigsFromMachines(provMachines, s.Cluster.ControlPlane.NodeSets)...)
+
+	return nil
+}
+
+func WithEnsureControlPlane(t Tasks, clusterName string, nodeSet []kubeoneapi.NodeSet, kubeletVersion string) (Tasks, error) {
+	capimachines, err := generateHetznerControlPlaneMachines(clusterName, nodeSet, kubeletVersion)
+	if err != nil {
+		return t, err
+	}
+
+	return t.
+		append(
+			Task{
+				Description: "Ensure Hetzner load balancer",
+				Operation:   "ensure Hetzner load balancer",
+				Predicate:   isHetznerControlPlaneEnabled,
+				Fn:          ensureHetznerLoadBalancer,
+			}).
+		append(generateHetznerControlPlaneTasks(capimachines)...).
+		append(
+			Task{
+				Operation: "defaulting cluster hosts",
+				Predicate: func(s *state.State) bool { return len(s.Cluster.ControlPlane.NodeSets) != 0 },
+				Fn:        defaultCluster,
+			},
+		), nil
+}
+
+func defaultCluster(st *state.State) error {
+	v1beta3Cluster := kubeonev1beta3.NewKubeOneCluster()
+	if err := kubeonescheme.Scheme.Convert(st.Cluster, v1beta3Cluster, nil); err != nil {
+		return fail.Config(err, fmt.Sprintf("converting internal to %s object", v1beta3Cluster.GroupVersionKind()))
+	}
+
+	// run defauling again, to populate Hosts
+	kubeonescheme.Scheme.Default(v1beta3Cluster)
+
+	if err := kubeonescheme.Scheme.Convert(v1beta3Cluster, st.Cluster, nil); err != nil {
+		return fail.Config(err, fmt.Sprintf("converting %s to internal object", v1beta3Cluster.GroupVersionKind()))
+	}
+
+	return nil
+}
+
+func generateHetznerControlPlaneTasks(capimachines []clusterv1alpha1.Machine) Tasks {
+	tasks := Tasks{}
+
+	for _, machine := range capimachines {
+		tasks = append(tasks,
+			Task{
+				Description: fmt.Sprintf("Ensure Hetzner control-plane %q VM", machine.Name),
+				Operation:   fmt.Sprintf("ensure Hetzner control-plane %q VM", machine.Name),
+				Predicate:   isHetznerControlPlaneEnabled,
+				Fn: func(s *state.State) error {
+					return ensureHetznerControlPlaneVM(s, machine)
+				},
+			},
+		)
+	}
+
+	return tasks
 }
 
 func isHetznerControlPlaneEnabled(s *state.State) bool {
@@ -195,18 +292,13 @@ func createLoadBalancer(
 	return result.LoadBalancer, nil
 }
 
-func ensureHetznerControlPlaneVMs(s *state.State) error {
-	capimachines, err := generateHetznerControlPlaneMachines(s.Cluster.Name, s.Cluster.ControlPlane.NodeSets, s.Cluster.Versions.Kubernetes)
+func ensureHetznerControlPlaneVM(s *state.State, capimachine clusterv1alpha1.Machine) error {
+	provMachines, err := provisioner.FindOrCreateMachines(s.Context, []clusterv1alpha1.Machine{capimachine}, s.Logger)
 	if err != nil {
 		return err
 	}
 
-	provMachines, err := provisioner.FindOrCreateMachines(s.Context, capimachines, s.Logger)
-	if err != nil {
-		return err
-	}
-
-	s.Cluster.ControlPlane.Hosts = hostConfigsFromMachines(provMachines, s.Cluster.ControlPlane.NodeSets)
+	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, hostConfigsFromMachines(provMachines, s.Cluster.ControlPlane.NodeSets)...)
 
 	return nil
 }
