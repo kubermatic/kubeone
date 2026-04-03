@@ -47,6 +47,7 @@ func UpdateKubeadmArguments(featuresCfg kubeoneapi.Features, args *kubeadmargs.A
 	activateKubeadmDynamicAuditLogs(featuresCfg.DynamicAuditLog, args)
 	activateKubeadmWebhookAuditLogs(featuresCfg.WebhookAuditLog, args)
 	activateKubeadmOIDC(featuresCfg.OpenIDConnect, args)
+	activateKubeadmAlwaysPullImages(featuresCfg.AlwaysPullImages, args)
 	activateKubeadmPodNodeSelector(featuresCfg.PodNodeSelector, args)
 	activateEncryptionProviders(featuresCfg.EncryptionProviders, args)
 }

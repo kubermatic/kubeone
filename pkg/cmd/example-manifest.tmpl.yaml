@@ -144,6 +144,11 @@ features:
   nodeLocalDNS:
     deploy: true
 
+  # Enable the AlwaysPullImages admission plugin in API server.
+  # More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#alwayspullimages
+  alwaysPullImages:
+    enable: {{ .EnableAlwaysPullImages }}
+
   # Enable the PodNodeSelector admission plugin in API server.
   # More info: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podnodeselector
   podNodeSelector:

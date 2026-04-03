@@ -73,6 +73,7 @@ type printOpts struct {
 	HTTPSProxy string `longflag:"proxy-https"`
 	NoProxy    string `longflag:"proxy-no-proxy"`
 
+	EnableAlwaysPullImages    bool `longflag:"enable-always-pull-images"`
 	EnablePodNodeSelector     bool `longflag:"enable-pod-node-selector"`
 	EnablePodSecurityPolicy   bool `longflag:"enable-pod-security-policy"` // TODO: remove in future release
 	EnableStaticAuditLog      bool `longflag:"enable-static-audit-log"`
@@ -171,6 +172,7 @@ func configPrintCmd() *cobra.Command {
 	cmd.Flags().StringVar(&opts.NoProxy, longFlagName(opts, "NoProxy"), "", "No Proxy to be used for provisioning and Docker")
 
 	// Features
+	cmd.Flags().BoolVar(&opts.EnableAlwaysPullImages, longFlagName(opts, "EnableAlwaysPullImages"), false, "enable AlwaysPullImages admission plugin")
 	cmd.Flags().BoolVar(&opts.EnablePodNodeSelector, longFlagName(opts, "EnablePodNodeSelector"), false, "enable PodNodeSelector admission plugin")
 	cmd.Flags().BoolVar(&opts.EnablePodSecurityPolicy, longFlagName(opts, "EnablePodSecurityPolicy"), false, "enable PodSecurityPolicy. NO-OP: this feature is removed")
 	cmd.Flags().BoolVar(&opts.EnableStaticAuditLog, longFlagName(opts, "EnableStaticAuditLog"), false, "enable StaticAuditLog")
@@ -403,6 +405,9 @@ func createAndPrintManifest(printOptions *printOpts) error {
 }
 
 func printFeatures(cfg *yamled.Document, printOptions *printOpts) {
+	if printOptions.EnableAlwaysPullImages {
+		cfg.Set(yamled.Path{"features", "alwaysPullImages", "enable"}, printOptions.EnableAlwaysPullImages)
+	}
 	if printOptions.EnablePodNodeSelector {
 		cfg.Set(yamled.Path{"features", "podNodeSelector", "enable"}, printOptions.EnablePodNodeSelector)
 		cfg.Set(yamled.Path{"features", "podNodeSelector", "config", "configFilePath"}, "")
