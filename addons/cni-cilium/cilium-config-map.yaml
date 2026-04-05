@@ -7,7 +7,6 @@ metadata:
   namespace: kube-system
 data:
   agent-not-ready-taint-key: "node.cilium.io/agent-not-ready"
-  arping-refresh-period: "30s"
   auto-direct-node-routes: "false"
   bpf-events-drop-enabled: "true"
   bpf-events-policy-verdict-enabled: "true"
@@ -32,58 +31,59 @@ data:
   cluster-pool-ipv6-cidr: "{{ .Config.ClusterNetwork.PodSubnetIPv6 }}"
   cluster-pool-ipv6-mask-size: "{{ .Config.ClusterNetwork.NodeCIDRMaskSizeIPv6 }}"
 {{ end }}
+  clustermesh-cache-ttl: 0s
   clustermesh-enable-endpoint-sync: "false"
   clustermesh-enable-mcs-api: "false"
+  clustermesh-mcs-api-install-crds: "true"
   cni-exclusive: "false"
   cni-log-file: "/var/run/cilium/cilium-cni.log"
   custom-cni-conf: "false"
   datapath-mode: veth
   debug-verbose: ""
   debug: "false"
+  default-lb-service-ipam: lbipam
   direct-routing-skip-unreachable: "false"
   dnsproxy-enable-transparent-mode: "true"
   dnsproxy-socket-linger-timeout: "10"
-  egress-gateway-reconciliation-trigger-interval: "1s"
+  egress-gateway-reconciliation-trigger-interval: 1s
   enable-auto-protect-node-port-range: "true"
   enable-bpf-clock-probe: "false"
   enable-endpoint-health-checking: "true"
+  enable-endpoint-lockdown-on-policy-overflow: "false"
   enable-health-check-loadbalancer-ip: "false"
   enable-health-check-nodeport: "true"
   enable-health-checking: "true"
-{{ if .Config.ClusterNetwork.CNI.Cilium.EnableHubble }}
-  enable-hubble: "true"
-{{ else }}
-  enable-hubble: "false"
-{{ end }}
+  enable-hubble: "{{ .Config.ClusterNetwork.CNI.Cilium.EnableHubble }}"
   enable-ipv4-big-tcp: "false"
   enable-ipv4-masquerade: "true"
   enable-ipv4: "true"
   enable-ipv6-big-tcp: "false"
   enable-ipv6-masquerade: "true"
-{{ if .Config.ClusterNetwork.HasIPv6 }}
-  enable-ipv6: "true"
-{{ else }}
-  enable-ipv6: "false"
-{{ end }}
+  enable-ipv6: "{{ .Config.ClusterNetwork.HasIPv6 }}"
   enable-k8s-networkpolicy: "true"
   enable-k8s-terminating-endpoint: "true"
 {{ if .Config.ClusterNetwork.CNI.Cilium.EnableL2Announcements }}
   enable-l2-announcements: "true"
 {{ end }}
-  enable-l2-neigh-discovery: "true"
+  enable-l2-neigh-discovery: "false"
   enable-l7-proxy: "true"
-  enable-local-redirect-policy: "false"
+  enable-lb-ipam: "true"
   enable-masquerade-to-route-source: "false"
   enable-metrics: "true"
+  enable-no-service-endpoints-routable: "true"
   enable-node-selector-labels: "false"
-  enable-policy: "default"
-  enable-runtime-device-detection: "true"
+  enable-non-default-deny-policies: "true"
+  enable-policy-secrets-sync: "true"
+  enable-policy: default
   enable-sctp: "false"
-  enable-svc-source-range-check: "true"
+  enable-service-topology: "false"
+  enable-source-ip-verification: "true"
   enable-tcx: "true"
+  enable-tunnel-big-tcp: "false"
   enable-vtep: "false"
   enable-well-known-identities: "false"
   enable-xt-socket-fallback: "true"
+  envoy-access-log-buffer-size: "4096"
   envoy-base-id: "0"
   envoy-keep-cap-netbindservice: "false"
   external-envoy-proxy: "true"
@@ -95,14 +95,17 @@ data:
   hubble-tls-cert-file: /var/lib/cilium/tls/hubble/server.crt
   hubble-tls-client-ca-files: /var/lib/cilium/tls/hubble/client-ca.crt
   hubble-tls-key-file: /var/lib/cilium/tls/hubble/server.key
+  health-check-icmp-failure-threshold: "3"
+  http-retry-count: "3"
+  http-stream-idle-timeout: "300"
   identity-allocation-mode: crd
-  identity-gc-interval: "15m0s"
-  identity-heartbeat-timeout: "30m0s"
+  identity-gc-interval: 15m0s
+  identity-heartbeat-timeout: 30m0s
+  identity-management-mode: agent
   install-no-conntrack-iptables-rules: "false"
-  ipam-cilium-node-update-rate: "15s"
-  ipam: "cluster-pool"
-  k8s-client-burst: "20"
-  k8s-client-qps: "10"
+  ipam-cilium-node-update-rate: 15s
+  ipam: cluster-pool
+  iptables-random-fully: "false"
   k8s-require-ipv4-pod-cidr: "false"
   k8s-require-ipv6-pod-cidr: "false"
 {{ if .Config.ClusterNetwork.CNI.Cilium.KubeProxyReplacement }}
@@ -112,43 +115,57 @@ data:
   kube-proxy-replacement: "false"
 {{ end }}
   max-connected-clusters: "255"
-  mesh-auth-enabled: "true"
-  mesh-auth-gc-interval: "5m0s"
+  mesh-auth-enabled: "false"
+  mesh-auth-gc-interval: 5m0s
   mesh-auth-queue-size: "1024"
   mesh-auth-rotated-identities-queue-size: "1024"
+  metrics-sampling-interval: 5m
   monitor-aggregation-flags: all
-  monitor-aggregation-interval: "5s"
+  monitor-aggregation-interval: 5s
   monitor-aggregation: medium
   nat-map-stats-entries: "32"
   nat-map-stats-interval: 30s
   node-port-bind-protection: "true"
   nodeport-addresses: ""
-  nodes-gc-interval: "5m0s"
-  operator-api-serve-addr: "127.0.0.1:9234"
+  nodes-gc-interval: 5m0s
+  operator-api-serve-addr: 127.0.0.1:9234
   operator-prometheus-serve-addr: :9963
-  policy-cidr-match-mode: "nodes"
+  packetization-layer-pmtud-mode: blackhole
+  policy-cidr-match-mode: ""
+  policy-default-local-cluster: "true"
+  policy-deny-response: none
+  policy-secrets-namespace: cilium-secrets
+  policy-secrets-only-from-secrets-namespace: "true"
   preallocate-bpf-maps: "false"
-  procfs: "/host/proc"
+  procfs: /host/proc
+  proxy-cluster-max-connections: "1024"
+  proxy-cluster-max-requests: "1024"
   proxy-connect-timeout: "2"
   proxy-idle-timeout-seconds: "60"
+  proxy-initial-fetch-timeout: "30"
+  proxy-max-active-downstream-connections: "50000"
+  proxy-max-concurrent-retries: "128"
   proxy-max-connection-duration-seconds: "0"
   proxy-max-requests-per-connection: "0"
+  proxy-use-original-source-address: "true"
   proxy-xff-num-trusted-hops-egress: "0"
   proxy-xff-num-trusted-hops-ingress: "0"
   remove-cilium-node-taints: "true"
-  routing-mode: "tunnel"
+  routing-mode: tunnel
   service-no-backend-response: reject
   set-cilium-is-up-condition: "true"
   set-cilium-node-taints: "true"
   synchronize-k8s-nodes: "true"
-  tofqdns-dns-reject-response-code: "refused"
+  tofqdns-dns-reject-response-code: refused
   tofqdns-enable-dns-compression: "true"
-  tofqdns-endpoint-max-ip-per-hostname: "50"
-  tofqdns-idle-connection-grace-period: "0s"
+  tofqdns-endpoint-max-ip-per-hostname: "1000"
+  tofqdns-idle-connection-grace-period: 0s
   tofqdns-max-deferred-connection-deletes: "10000"
-  tofqdns-proxy-response-max-delay: "100ms"
-  tunnel-protocol: "vxlan"
-  unmanaged-pod-watcher-interval: "15"
+  tofqdns-preallocate-identities: "true"
+  tofqdns-proxy-response-max-delay: 100ms
+  tunnel-protocol: vxlan
+  tunnel-source-port-range: 0-0
+  unmanaged-pod-watcher-interval: 15s
   vtep-cidr: ""
   vtep-endpoint: ""
   vtep-mac: ""
