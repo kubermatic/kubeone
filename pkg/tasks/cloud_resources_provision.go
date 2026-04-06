@@ -428,7 +428,6 @@ func hostConfigsFromMachines(machines []provisioner.Machine, nodeSets []kubeonea
 				Labels:               nodeSet.NodeSettings.Labels,
 				Annotations:          nodeSet.NodeSettings.Annotations,
 				Taints:               nodeSet.NodeSettings.Taints,
-				IsLeader:             idx == 0,
 			}
 
 			hosts = append(hosts, host)

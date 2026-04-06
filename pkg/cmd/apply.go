@@ -185,7 +185,6 @@ func runApply(st *state.State, opts *applyOpts) error {
 
 			return nil
 		}
-		// we got st.Cluster.Hosts initialized
 	}
 
 	// Probe the cluster for the actual state and the needed tasks.

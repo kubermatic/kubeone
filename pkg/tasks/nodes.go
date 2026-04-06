@@ -46,14 +46,6 @@ func restartKubeAPIServer(s *state.State) error {
 	}, state.RunSequentially)
 }
 
-func ensureRestartKubeAPIServer(s *state.State) error {
-	s.Logger.Infoln("Restarting API servers...")
-
-	return s.RunTaskOnControlPlane(func(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
-		return ensureRestartKubeAPIServerOnOS(s, *node)
-	}, state.RunSequentially)
-}
-
 func restartKubeAPIServerOnOS(s *state.State, node kubeoneapi.HostConfig) error {
 	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
 		kubeoneapi.OperatingSystemNameCentOS:     restartKubeAPIServerCrictl,
@@ -65,29 +57,8 @@ func restartKubeAPIServerOnOS(s *state.State, node kubeoneapi.HostConfig) error 
 	})
 }
 
-func ensureRestartKubeAPIServerOnOS(s *state.State, node kubeoneapi.HostConfig) error {
-	return runOnOS(s, node.OperatingSystem, map[kubeoneapi.OperatingSystemName]runOnOSFn{
-		kubeoneapi.OperatingSystemNameCentOS:     ensureRestartKubeAPIServerCrictl,
-		kubeoneapi.OperatingSystemNameDebian:     ensureRestartKubeAPIServerCrictl,
-		kubeoneapi.OperatingSystemNameFlatcar:    ensureRestartKubeAPIServerCrictl,
-		kubeoneapi.OperatingSystemNameRHEL:       ensureRestartKubeAPIServerCrictl,
-		kubeoneapi.OperatingSystemNameRockyLinux: ensureRestartKubeAPIServerCrictl,
-		kubeoneapi.OperatingSystemNameUbuntu:     ensureRestartKubeAPIServerCrictl,
-	})
-}
-
 func restartKubeAPIServerCrictl(s *state.State) error {
 	cmd, err := scripts.RestartKubeAPIServerCrictl(false)
-	if err != nil {
-		return err
-	}
-	_, _, err = s.Runner.RunRaw(cmd)
-
-	return fail.SSH(err, "restarting kubeapi-server pod")
-}
-
-func ensureRestartKubeAPIServerCrictl(s *state.State) error {
-	cmd, err := scripts.RestartKubeAPIServerCrictl(true)
 	if err != nil {
 		return err
 	}
