@@ -17,6 +17,8 @@ limitations under the License.
 package provisioner
 
 import (
+	"net"
+
 	corev1 "k8s.io/api/core/v1"
 
 	cloud "k8c.io/machine-controller/pkg/cloudprovider/instance"
@@ -32,24 +34,38 @@ func getMachineProvisionerOutput(instances []cloud.Instance) []Machine {
 	var out []Machine
 
 	for _, instance := range instances {
-		machine := getMachineInfo(instance)
+		machine := GetMachineInfo(instance)
 		out = append(out, machine)
 	}
 
 	return out
 }
 
-func getMachineInfo(instance cloud.Instance) Machine {
+func GetMachineInfo(instance cloud.Instance) Machine {
 	var publicAddress, privateAddress, hostname string
+	var publicAddressIPv6, privateAddressIPv6 string
+
 	for address, addressType := range instance.Addresses() {
 		switch addressType {
 		case corev1.NodeExternalIP:
-			if publicAddress == "" {
-				publicAddress = address
+			if ip := net.ParseIP(address); ip != nil && ip.To4() != nil {
+				if publicAddress == "" {
+					publicAddress = address
+				}
+			} else if ip != nil {
+				if publicAddressIPv6 == "" {
+					publicAddressIPv6 = address
+				}
 			}
 		case corev1.NodeInternalIP:
-			if privateAddress == "" {
-				privateAddress = address
+			if ip := net.ParseIP(address); ip != nil && ip.To4() != nil {
+				if privateAddress == "" {
+					privateAddress = address
+				}
+			} else if ip != nil {
+				if privateAddressIPv6 == "" {
+					privateAddressIPv6 = address
+				}
 			}
 		case corev1.NodeHostName:
 			if hostname == "" {
@@ -64,6 +80,13 @@ func getMachineInfo(instance cloud.Instance) Machine {
 				hostname = address
 			}
 		}
+	}
+
+	if publicAddress == "" {
+		publicAddress = publicAddressIPv6
+	}
+	if privateAddress == "" {
+		privateAddress = privateAddressIPv6
 	}
 
 	return Machine{
