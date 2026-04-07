@@ -19,9 +19,9 @@ package provisioner
 import (
 	"testing"
 
-	corev1 "k8s.io/api/core/v1"
-
 	cloud "k8c.io/machine-controller/pkg/cloudprovider/instance"
+
+	corev1 "k8s.io/api/core/v1"
 )
 
 // fakeInstance implements cloud.Instance for testing.

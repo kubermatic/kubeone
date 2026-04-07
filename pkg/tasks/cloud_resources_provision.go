@@ -24,6 +24,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/hetznercloud/hcloud-go/v2/hcloud"
+
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	kubeonescheme "k8c.io/kubeone/pkg/apis/kubeone/scheme"
 	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
@@ -36,7 +38,6 @@ import (
 	"k8c.io/machine-controller/sdk/jsonutil"
 	"k8c.io/machine-controller/sdk/providerconfig"
 
-	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -62,6 +63,8 @@ func WithFindControlPlane(t Tasks) Tasks {
 			Predicate: func(s *state.State) bool { return len(s.Cluster.ControlPlane.NodeSets) != 0 },
 			Fn:        defaultCluster,
 		},
+	).append(
+		WithHostnameOS(nil)...,
 	)
 }
 
@@ -90,7 +93,7 @@ func lookupHetznerLoadBalancer(s *state.State) error {
 		return fail.Cloud(fmt.Errorf("no load balancer found with name: %s", clusterLBName), "hetzner", "looking up loadbalancer")
 	}
 
-	s.Logger.Infof("found loadbalancer %q with id: %d", clusterLBName, lbs[0].ID)
+	s.Logger.Debugf("found loadbalancer %q with id: %d", clusterLBName, lbs[0].ID)
 	s.Cluster.APIEndpoint.Host = lbs[0].PublicNet.IPv4.IP.String()
 	s.Cluster.APIEndpoint.Port = 6443
 
@@ -220,10 +223,10 @@ func ensureHetznerLoadBalancer(s *state.State) error {
 	var realLB *hcloud.LoadBalancer
 
 	if len(lbs) > 0 {
-		s.Logger.Infof("loadbalancer already exists with id: %d", lbs[0].ID)
+		s.Logger.Debugf("loadbalancer already exists with id: %d", lbs[0].ID)
 		realLB = lbs[0]
 	} else {
-		s.Logger.Infof("no existing loadbalancer found, creating a new one")
+		s.Logger.Debugf("no existing loadbalancer found, creating a new one")
 		lb, err := createLoadBalancer(
 			ctx,
 			&hzclient.LoadBalancer,

@@ -106,7 +106,7 @@ func FindMachines(ctx context.Context, machines []clusterv1alpha1.Machine, logge
 			return nil, fail.MachineController(err, "getting instance from provider")
 		}
 
-		logger.Infof("found control-plane %q VM with id: %s", machine.Name, providerInstance.ID())
+		logger.Debugf("found control-plane %q VM with id: %s", machine.Name, providerInstance.ID())
 
 		addresses := providerInstance.Addresses()
 		if len(addresses) == 0 {
@@ -157,7 +157,7 @@ func FindOrCreateMachines(ctx context.Context, machines []clusterv1alpha1.Machin
 				if createErr != nil {
 					return nil, fail.MachineController(createErr, "creating machine at cloudprovider")
 				}
-				logger.Infof("created a new control-plane machine %q", machine.Name)
+				logger.Debugf("created a new control-plane machine %q", machine.Name)
 				machineCreated = true
 			} else if ok, _, _ := cloudprovidererrors.IsTerminalError(err); ok {
 				// case 2: terminal error was returned and manual interaction is required to recover
@@ -183,7 +183,7 @@ func FindOrCreateMachines(ctx context.Context, machines []clusterv1alpha1.Machin
 				time.Sleep(5 * time.Second)
 			}
 		} else {
-			logger.Infof("control-plane %q VM already exists with id: %s", machine.Name, providerInstance.ID())
+			logger.Debugf("control-plane %q VM already exists with id: %s", machine.Name, providerInstance.ID())
 		}
 
 		// Instance exists
