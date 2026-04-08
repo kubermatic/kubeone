@@ -148,6 +148,13 @@ func annotateNodes(s *state.State) error {
 
 	return syncHostsToNodes(s, func(host *kubeoneapi.HostConfig, node *corev1.Node) {
 		addRemoveKeyValues(host.Annotations, node.Annotations)
+		// For KubeVirt: the CSI node driver reads cluster.x-k8s.io/cluster-namespace
+		// to determine the infra namespace where the VM resides. Machine-controller
+		// sets this on dynamic worker nodes, but control plane nodes need it too.
+		if s.Cluster.CloudProvider.Kubevirt != nil && s.Cluster.CloudProvider.Kubevirt.InfraNamespace != "" {
+			s.Logger.Debugf("Annotating control plane node %s with KubeVirt infra namespace", node.Name)
+			node.Annotations["cluster.x-k8s.io/cluster-namespace"] = s.Cluster.CloudProvider.Kubevirt.InfraNamespace
+		}
 	})
 }
 
