@@ -71,6 +71,15 @@ rules:
       - list
       - watch
       - update
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - services/status
+    verbs:
+      - get
+      - update
+      - patch
   - apiGroups:
       - ""
     resources:
