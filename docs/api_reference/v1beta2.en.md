@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2026-04-03T16:57:31+03:00
+date = 2026-04-15T10:59:17+03:00
 weight = 11
 +++
 ## v1beta2
@@ -242,6 +242,7 @@ ClusterNetworkConfig describes the cluster network
 | ipFamily | IPFamily allows specifying IP family of a cluster. Valid values are IPv4 \| IPv6 \| IPv4+IPv6 \| IPv6+IPv4. | IPFamily | false |
 | nodeCIDRMaskSizeIPv4 | NodeCIDRMaskSizeIPv4 is the mask size used to address the nodes within provided IPv4 Pods CIDR. It has to be larger than the provided IPv4 Pods CIDR. Defaults to 24. | *int | false |
 | nodeCIDRMaskSizeIPv6 | NodeCIDRMaskSizeIPv6 is the mask size used to address the nodes within provided IPv6 Pods CIDR. It has to be larger than the provided IPv6 Pods CIDR. Defaults to 64. | *int | false |
+| dnsServiceIP | DNSServiceIP is an optional override for the cluster DNS service IP. If not set, it defaults to the 10th IP of the serviceSubnet (e.g. 10.96.0.10 for 10.96.0.0/12). When nodeLocalDNS is enabled, OSM always uses the NodeLocalDNS virtual IP regardless of this field. | string | false |
 
 [Back to Group](#v1beta2)
 
