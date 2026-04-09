@@ -90,10 +90,10 @@ presubmits:
             - build
           resources:
             requests:
-              memory: 1Gi
+              memory: 2Gi
               cpu: 1
             limits:
-              memory: 2Gi
+              memory: 3Gi
               cpu: 2
   - name: pull-kubeone-test
     always_run: true
@@ -110,10 +110,10 @@ presubmits:
             - test
           resources:
             requests:
-              memory: 1Gi
+              memory: 2Gi
               cpu: 1
             limits:
-              memory: 2Gi
+              memory: 3Gi
               cpu: 2
   - name: pull-kubeone-build-image
     always_run: true
