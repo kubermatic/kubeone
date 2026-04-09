@@ -47,7 +47,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/sets"
 	kyaml "k8s.io/apimachinery/pkg/util/yaml"
-	"k8s.io/utils/ptr"
 	"sigs.k8s.io/yaml"
 )
 
@@ -101,7 +100,7 @@ func (a *applier) getManifestsFromDirectory(st *state.State, fsys fs.FS, addonNa
 					VolumeSource: corev1.VolumeSource{
 						CSI: &corev1.CSIVolumeSource{
 							Driver:   "secrets-store.csi.k8s.io",
-							ReadOnly: ptr.To(true),
+							ReadOnly: new(true),
 							VolumeAttributes: map[string]string{
 								"secretProviderClass": st.Cluster.CloudProvider.SecretProviderClassName,
 							},

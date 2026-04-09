@@ -17,7 +17,6 @@ limitations under the License.
 package cmd
 
 import (
-	"bufio"
 	"context"
 	"fmt"
 	"os"
@@ -30,7 +29,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
-	"golang.org/x/term"
 
 	"k8c.io/kubeone/pkg/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -99,6 +97,7 @@ func (opts *globalOptions) BuildState() (*state.State, error) {
 		}
 	}
 
+	// TODO: insert cloud resource discovery/creation
 	return s, nil
 }
 
@@ -186,28 +185,6 @@ func loadClusterConfig(filename, terraformOutputPath, credentialsFilePath string
 	}
 
 	return cls, nil
-}
-
-func confirmCommand(autoApprove bool) (bool, error) {
-	if autoApprove {
-		return true, nil
-	}
-
-	if !term.IsTerminal(int(os.Stdin.Fd())) || !term.IsTerminal(int(os.Stdout.Fd())) {
-		return false, fail.Runtime(fmt.Errorf("not running in the terminal"), "terminal detecting")
-	}
-
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Do you want to proceed (yes/no): ")
-
-	confirmation, err := reader.ReadString('\n')
-	if err != nil {
-		return false, fail.Runtime(err, "reading confirmation")
-	}
-
-	fmt.Println()
-
-	return strings.Trim(confirmation, "\n") == yes, nil
 }
 
 func validateCredentials(s *state.State, credentialsFile string) error {

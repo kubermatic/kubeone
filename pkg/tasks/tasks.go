@@ -364,12 +364,12 @@ func WithResources(t Tasks) Tasks {
 func WithUpgrade(t Tasks, followers ...kubeoneapi.HostConfig) Tasks {
 	return WithHostnameOSAndProbes(t).
 		append(kubernetesConfigFiles()...). // this, in the upgrade process where config rails are handled
-		append(Tasks{
-			{Fn: kubeconfig.BuildKubernetesClientset, Operation: "building kubernetes clientset"},
-			{Fn: uploadKubeadmToConfigMaps, Operation: "updating kubeadm configmaps"},
-			{Fn: runPreflightChecks, Operation: "checking preflight safetynet", Retries: 1},
-			{Fn: upgradeLeader, Operation: "upgrading leader control plane"},
-		}...).
+		append(
+			Task{Fn: kubeconfig.BuildKubernetesClientset, Operation: "building kubernetes clientset"},
+			Task{Fn: uploadKubeadmToConfigMaps, Operation: "updating kubeadm configmaps"},
+			Task{Fn: runPreflightChecks, Operation: "checking preflight safetynet", Retries: 1},
+			Task{Fn: upgradeLeader, Operation: "upgrading leader control plane"},
+		).
 		append(generateUpgradeFollowersTasks(followers)...).
 		append(Task{
 			Fn: func(s *state.State) error {
@@ -507,7 +507,7 @@ func WithDisableEncryptionProviders(t Tasks, customConfig bool) Tasks {
 				Description: "remove old Encryption Providers configuration file",
 			},
 			{
-				Fn:          ensureRestartKubeAPIServer,
+				Fn:          restartKubeAPIServer,
 				Operation:   "restarting KubeAPI",
 				Description: "restart KubeAPI containers",
 			},
@@ -532,7 +532,7 @@ func WithDisableEncryptionProviders(t Tasks, customConfig bool) Tasks {
 			Description: "upload updated Encryption Providers configuration file",
 		},
 		{
-			Fn:          ensureRestartKubeAPIServer,
+			Fn:          restartKubeAPIServer,
 			Operation:   "restarting kube-apiserver pods",
 			Description: "restart KubeAPI containers",
 		},
@@ -561,7 +561,7 @@ func WithRewriteSecrets(t Tasks) Tasks {
 func WithCustomEncryptionConfigUpdated(t Tasks) Tasks {
 	return t.append(Tasks{
 		{
-			Fn:          ensureRestartKubeAPIServer,
+			Fn:          restartKubeAPIServer,
 			Operation:   "restarting KubeAPI",
 			Description: "restart KubeAPI containers",
 		},
@@ -587,7 +587,7 @@ func WithRotateKey(t Tasks) Tasks {
 				Description: "upload updated Encryption Providers configuration file",
 			},
 			{
-				Fn:          ensureRestartKubeAPIServer,
+				Fn:          restartKubeAPIServer,
 				Operation:   "restarting KubeAPI",
 				Description: "restart KubeAPI containers",
 			},
@@ -602,7 +602,7 @@ func WithRotateKey(t Tasks) Tasks {
 				Description: "upload updated Encryption Providers configuration file",
 			},
 			{
-				Fn:          ensureRestartKubeAPIServer,
+				Fn:          restartKubeAPIServer,
 				Operation:   "restarting kube-apiserver pods",
 				Description: "restart KubeAPI containers",
 			},

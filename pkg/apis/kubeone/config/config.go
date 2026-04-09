@@ -18,8 +18,10 @@ package config
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
+	"maps"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -86,15 +88,7 @@ func LoadKubeOneCluster(clusterCfgPath, tfOutputPath, credentialsFilePath string
 		return nil, err
 	}
 
-	var credentialsFile []byte
-	if len(credentialsFilePath) != 0 {
-		credentialsFile, err = os.ReadFile(credentialsFilePath)
-		if err != nil {
-			return nil, fail.Runtime(err, "reading credentials file")
-		}
-	}
-
-	return BytesToKubeOneCluster(cluster, tfOutput, credentialsFile, logger, cfgBaseDir)
+	return BytesToKubeOneCluster(cluster, tfOutput, credentialsFilePath, logger, cfgBaseDir)
 }
 
 func TFOutput(tfOutputPath string) ([]byte, error) {
@@ -109,13 +103,21 @@ func TFOutput(tfOutputPath string) ([]byte, error) {
 			return nil, fail.Runtime(err, "reading terraform output from stdin")
 		}
 	case isDir(tfOutputPath):
-		ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-		defer cancel()
+		tfOutput, err = readStateFileOutputs(tfOutputPath)
+		if err != nil {
+			return nil, err
+		}
 
-		cmd := exec.CommandContext(ctx, "terraform", "output", "-json")
-		cmd.Dir = tfOutputPath
-		if tfOutput, err = cmd.Output(); err != nil {
-			return nil, fail.Runtime(err, "reading terraform output")
+		if tfOutput == nil {
+			// No local state file found (e.g. remote backend); fall back to running terraform CLI.
+			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+			defer cancel()
+
+			cmd := exec.CommandContext(ctx, "terraform", "output", "-json")
+			cmd.Dir = tfOutputPath
+			if tfOutput, err = cmd.Output(); err != nil {
+				return nil, fail.Runtime(err, "reading terraform output")
+			}
 		}
 	case len(tfOutputPath) != 0:
 		if tfOutput, err = os.ReadFile(tfOutputPath); err != nil {
@@ -127,7 +129,7 @@ func TFOutput(tfOutputPath string) ([]byte, error) {
 }
 
 // BytesToKubeOneCluster parses the bytes of the versioned KubeOneCluster manifests
-func BytesToKubeOneCluster(cluster, tfOutput, credentialsFile []byte, logger logrus.FieldLogger, baseDir string) (*kubeoneapi.KubeOneCluster, error) {
+func BytesToKubeOneCluster(cluster, tfOutput []byte, credentialsFilePath string, logger logrus.FieldLogger, baseDir string) (*kubeoneapi.KubeOneCluster, error) {
 	// Get the GVK from the given KubeOneCluster manifest
 	typeMeta := runtime.TypeMeta{}
 	if err := yaml.Unmarshal(cluster, &typeMeta); err != nil {
@@ -177,14 +179,27 @@ func BytesToKubeOneCluster(cluster, tfOutput, credentialsFile []byte, logger log
 		return nil, fail.Config(fmt.Errorf("invalid api version %q", typeMeta.APIVersion), "api version")
 	}
 
-	// Apply the dynamic defaults
-	if err := SetKubeOneClusterDynamicDefaults(internalCluster, credentialsFile, baseDir); err != nil {
-		return nil, err
+	if len(internalCluster.ControlPlane.NodeSets) > 0 {
+		v1beta3Cluster := kubeonev1beta3.NewKubeOneCluster()
+		if err := kubeonescheme.Scheme.Convert(internalCluster, v1beta3Cluster, nil); err != nil {
+			return nil, fail.Config(err, "converting internal to v1beta3 object")
+		}
+
+		kubeonescheme.Scheme.Default(v1beta3Cluster)
+
+		if err := kubeonescheme.Scheme.Convert(v1beta3Cluster, internalCluster, nil); err != nil {
+			return nil, fail.Config(err, fmt.Sprintf("converting %s to internal object", v1beta3Cluster.GroupVersionKind()))
+		}
 	}
 
 	// Validate the configuration
 	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
 		return nil, fail.ConfigValidation(err)
+	}
+
+	// Apply the dynamic defaults
+	if err := SetKubeOneClusterDynamicDefaults(internalCluster, credentialsFilePath, baseDir); err != nil {
+		return nil, err
 	}
 
 	// Check for deprecated fields/features for a cluster
@@ -242,7 +257,7 @@ func DefaultedV1Beta3KubeOneCluster(versionedCluster *kubeonev1beta3.KubeOneClus
 }
 
 // SetKubeOneClusterDynamicDefaults sets the dynamic defaults for a given KubeOneCluster object
-func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, credentialsFile []byte, baseDir string) error {
+func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, credentialsFilePath string, baseDir string) error {
 	// Set the default cloud config
 	SetDefaultsCloudConfig(cluster)
 
@@ -267,8 +282,15 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 	// Parse the credentials file
 	credentials := make(map[string]string)
 
-	if err := yaml.Unmarshal(credentialsFile, &credentials); err != nil {
-		return fail.Config(err, "YAML unmarshalling credentials file")
+	if len(credentialsFilePath) != 0 {
+		credentialsFile, err := os.ReadFile(credentialsFilePath)
+		if err != nil {
+			return fail.Runtime(err, "reading credentials file")
+		}
+
+		if err := yaml.Unmarshal(credentialsFile, &credentials); err != nil {
+			return fail.Config(err, "YAML unmarshalling credentials file")
+		}
 	}
 
 	// Source cloud-config from the credentials file if it's present
@@ -293,7 +315,48 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 	// Default the AssetsConfiguration internal API
 	cluster.DefaultAssetConfiguration()
 
+	if cluster.ControlPlane.NodeSets != nil {
+		switch {
+		case cluster.CloudProvider.Hetzner != nil:
+			setDefaultHetznerControlPlane(cluster.Name, cluster.CloudProvider.Hetzner.ControlPlane)
+		default:
+			return fail.ConfigError{
+				Op:  "cloud provider checking",
+				Err: errors.New("configured cloud provider does not support managed control plane nodes"),
+			}
+		}
+	}
+
 	return nil
+}
+
+func setDefaultHetznerControlPlane(clusterName string, hzCP *kubeoneapi.HetznerControlPlane) {
+	hzCP.LoadBalancer.Name = defaults(
+		hzCP.LoadBalancer.Name,
+		clusterName+"-kubeapi",
+	)
+	hzCP.LoadBalancer.Type = defaults(
+		hzCP.LoadBalancer.Type,
+		"lb11",
+	)
+	hzCP.LoadBalancer.Location = defaults(
+		hzCP.LoadBalancer.Location,
+		"nbg1",
+	)
+	hzCP.LoadBalancer.PublicIP = defaults(
+		hzCP.LoadBalancer.PublicIP,
+		new(true),
+	)
+	if hzCP.LoadBalancer.Labels == nil {
+		hzCP.LoadBalancer.Labels = map[string]string{}
+	}
+	maps.Copy(
+		hzCP.LoadBalancer.Labels,
+		map[string]string{
+			"kubeone_cluster_name": hzCP.LoadBalancer.Name,
+			"kubeone_role":         "api",
+		},
+	)
 }
 
 // SetDefaultsCloudConfig sets default values for the CloudConfig field in the KubeOneCluster object.
@@ -377,6 +440,31 @@ func setRegistriesAuth(cluster *kubeoneapi.KubeOneCluster, buf string) error {
 	return nil
 }
 
+func readStateFileOutputs(dir string) ([]byte, error) {
+	stateBytes, err := os.ReadFile(filepath.Join(dir, "terraform.tfstate"))
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
+
+		return nil, fail.Runtime(err, "reading terraform state file")
+	}
+
+	var state struct {
+		Outputs json.RawMessage `json:"outputs"`
+	}
+
+	if err := json.Unmarshal(stateBytes, &state); err != nil {
+		return nil, fail.Runtime(err, "parsing terraform state file")
+	}
+
+	if state.Outputs == nil {
+		return []byte("{}"), nil
+	}
+
+	return state.Outputs, nil
+}
+
 func isDir(dirname string) bool {
 	stat, statErr := os.Stat(dirname)
 
@@ -417,4 +505,14 @@ func checkFlagsAndFeatureGateOverrides(cluster kubeoneapi.KubeOneCluster, logger
 			}
 		}
 	}
+}
+
+func defaults[T comparable](input, defaultValue T) T {
+	var zero T
+
+	if input != zero {
+		return input
+	}
+
+	return defaultValue
 }

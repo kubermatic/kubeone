@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/pflag"
 
 	"k8c.io/kubeone/pkg/dashboard"
+	"k8c.io/kubeone/pkg/tasks"
 )
 
 type uiOpts struct {
@@ -39,7 +40,7 @@ func uiCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		Long: heredoc.Doc(`
 			Starts a webserver providing a minimalistic overview of the KubeOne Kubernetes Cluster.
 
-			By default port 8080 will be used, you can customize the port via the port flag. 
+			By default port 8080 will be used, you can customize the port via the port flag.
 		`),
 		SilenceErrors: true,
 		Args:          cobra.ExactArgs(0),
@@ -50,12 +51,16 @@ func uiCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 			}
 			opts.globalOptions = *gopts
 
-			state, err := opts.BuildState()
+			st, err := opts.BuildState()
 			if err != nil {
 				return err
 			}
 
-			return dashboard.Serve(state, opts.Port)
+			if err := tasks.WithFindControlPlane(nil).Run(st); err != nil {
+				return err
+			}
+
+			return dashboard.Serve(st, opts.Port)
 		},
 	}
 

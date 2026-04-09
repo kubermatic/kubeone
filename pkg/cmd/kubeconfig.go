@@ -28,6 +28,7 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/tasks"
 )
 
 // KubeconfigCommand returns the structure for declaring the "install" subcommand.
@@ -51,6 +52,10 @@ func kubeconfigCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 
 			st, err := gopts.BuildState()
 			if err != nil {
+				return err
+			}
+
+			if err = tasks.WithFindControlPlane(nil).Run(st); err != nil {
 				return err
 			}
 
@@ -94,6 +99,10 @@ func kubeconfigGenerateCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 
 			st, err := gopts.BuildState()
 			if err != nil {
+				return err
+			}
+
+			if err := tasks.WithFindControlPlane(nil).Run(st); err != nil {
 				return err
 			}
 

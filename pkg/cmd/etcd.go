@@ -31,6 +31,7 @@ import (
 	"k8c.io/kubeone/pkg/etcdutil"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/tabwriter"
+	"k8c.io/kubeone/pkg/tasks"
 )
 
 func etcdOperationsCmd(rootFlags *pflag.FlagSet) *cobra.Command {
@@ -84,6 +85,8 @@ func etcdMembersCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		SilenceErrors: true,
 		Example:       `kubeone etcd members -m mycluster.yaml -t terraformoutput.json`,
 		RunE: func(_ *cobra.Command, _ []string) error {
+			var err error
+
 			gopts, err := persistentGlobalOptions(rootFlags)
 			if err != nil {
 				return err
@@ -91,6 +94,10 @@ func etcdMembersCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 
 			s, err := gopts.BuildState()
 			if err != nil {
+				return err
+			}
+
+			if err = tasks.WithFindControlPlane(nil).Run(s); err != nil {
 				return err
 			}
 
@@ -213,6 +220,10 @@ func etcdDisarmCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 				return err
 			}
 
+			if err = tasks.WithFindControlPlane(nil).Run(s); err != nil {
+				return err
+			}
+
 			etcdcli, err := etcdutil.NewClient(s)
 			if err != nil {
 				return err
@@ -314,6 +325,10 @@ func etcdDefragmentCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 				return err
 			}
 
+			if err = tasks.WithFindControlPlane(nil).Run(s); err != nil {
+				return err
+			}
+
 			etcdcli, err := etcdutil.NewClient(s)
 			if err != nil {
 				return err
@@ -372,6 +387,10 @@ func etcdSnapshotCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 
 			s, err := gopts.BuildState()
 			if err != nil {
+				return err
+			}
+
+			if err = tasks.WithFindControlPlane(nil).Run(s); err != nil {
 				return err
 			}
 

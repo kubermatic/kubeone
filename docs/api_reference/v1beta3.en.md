@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2026-04-03T12:52:19+02:00
+date = 2026-04-03T16:57:31+03:00
 weight = 11
 +++
 ## v1beta3
@@ -42,6 +42,8 @@ weight = 11
 * [HelmAuth](#helmauth)
 * [HelmRelease](#helmrelease)
 * [HelmValues](#helmvalues)
+* [HetznerControlPlane](#hetznercontrolplane)
+* [HetznerLoadBalancer](#hetznerloadbalancer)
 * [HetznerSpec](#hetznerspec)
 * [HostConfig](#hostconfig)
 * [IPTables](#iptables)
@@ -54,18 +56,22 @@ weight = 11
 * [MachineControllerConfig](#machinecontrollerconfig)
 * [MetricsServer](#metricsserver)
 * [NodeLocalDNS](#nodelocaldns)
+* [NodeSet](#nodeset)
+* [NodeSettingsSpec](#nodesettingsspec)
 * [NoneSpec](#nonespec)
 * [NutanixSpec](#nutanixspec)
 * [OpenIDConnect](#openidconnect)
 * [OpenIDConnectConfig](#openidconnectconfig)
 * [OpenstackSpec](#openstackspec)
 * [OperatingSystemManagerConfig](#operatingsystemmanagerconfig)
+* [OperatingSystemSpec](#operatingsystemspec)
 * [PodNodeSelector](#podnodeselector)
 * [PodNodeSelectorConfig](#podnodeselectorconfig)
 * [ProviderSpec](#providerspec)
 * [ProviderStaticNetworkConfig](#providerstaticnetworkconfig)
 * [ProxyConfig](#proxyconfig)
 * [RegistryConfiguration](#registryconfiguration)
+* [SSHSpec](#sshspec)
 * [StaticAuditLog](#staticauditlog)
 * [StaticAuditLogConfig](#staticauditlogconfig)
 * [StaticWorkersConfig](#staticworkersconfig)
@@ -341,6 +347,7 @@ ControlPlaneConfig defines control plane nodes
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | hosts | Hosts array of all control plane hosts. | [][HostConfig](#hostconfig) | true |
+| nodeSets |  | [][NodeSet](#nodeset) | true |
 
 [Back to Group](#v1beta3)
 
@@ -531,6 +538,30 @@ HelmValues configure inputs to `helm upgrade --install` command analog.
 
 [Back to Group](#v1beta3)
 
+### HetznerControlPlane
+
+HetznerControlPlane control plane config on Hetzner
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| loadBalancer | LoadBalancer config of a loadbalancer | [HetznerLoadBalancer](#hetznerloadbalancer) | true |
+
+[Back to Group](#v1beta3)
+
+### HetznerLoadBalancer
+
+HetznerLoadBalancer loadbalancer definition to create for kubeapi-server endpoint
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| name | Name of the loadbalancer to create. Default: \"<CLUSTER_NAME>-kubeapi\" | string | false |
+| type | Type of the loadbalancer to create. Default: \"lb11\" | string | false |
+| location | Location of the loadbalancer to create. Default: \"nbg1\" | string | false |
+| publicIP | PublicIP indicates whether the loadbalancer should have a public IP assigned. Default: true | *bool | false |
+| labels | Labels to be applied to the loadbalancer | map[string]string | false |
+
+[Back to Group](#v1beta3)
+
 ### HetznerSpec
 
 HetznerSpec defines the Hetzner cloud provider
@@ -538,6 +569,7 @@ HetznerSpec defines the Hetzner cloud provider
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | networkID | NetworkID | string | false |
+| controlPlane | ControlPlane configures | *[HetznerControlPlane](#hetznercontrolplane) | false |
 
 [Back to Group](#v1beta3)
 
@@ -709,6 +741,35 @@ MetricsServer feature flag
 
 [Back to Group](#v1beta3)
 
+### NodeSet
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| name |  | string | true |
+| replicas |  | int | true |
+| generation |  | int | false |
+| nodeSettings |  | [NodeSettingsSpec](#nodesettingsspec) | false |
+| operatingSystem |  | OperatingSystemName | true |
+| operatingSystemSpec |  | [OperatingSystemSpec](#operatingsystemspec) | false |
+| ssh |  | [SSHSpec](#sshspec) | true |
+| cloudProviderSpec |  | [json.RawMessage](https://golang.org/pkg/encoding/json/#RawMessage) | true |
+
+[Back to Group](#v1beta3)
+
+### NodeSettingsSpec
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| labels |  | map[string]string | false |
+| annotations |  | map[string]string | false |
+| taints |  | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#taint-v1-core) | false |
+
+[Back to Group](#v1beta3)
+
 ### NoneSpec
 
 NoneSpec defines a none provider
@@ -773,6 +834,16 @@ OperatingSystemManagerConfig configures kubermatic operating-system-manager depl
 | ----- | ----------- | ------ | -------- |
 | deploy | Deploy | bool | false |
 | enableNonRootDeviceOwnership | EnableNonRootDeviceOwnership enables the non-root device ownership feature in the container runtime. | bool | false |
+
+[Back to Group](#v1beta3)
+
+### OperatingSystemSpec
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| distUpgradeOnBoot |  | bool | false |
 
 [Back to Group](#v1beta3)
 
@@ -851,6 +922,26 @@ KubeOne and kubeadm are pulled from an image registry
 | ----- | ----------- | ------ | -------- |
 | overwriteRegistry | OverwriteRegistry specifies a custom Docker registry which will be used for all images required for KubeOne and kubeadm. This also applies to addons deployed by KubeOne. This field doesn't modify the user/organization part of the image. For example, if OverwriteRegistry is set to 127.0.0.1:5000/example, image called calico/cni would translate to 127.0.0.1:5000/example/calico/cni. Default: \"\" | string | false |
 | insecureRegistry | InsecureRegistry configures Docker to threat the registry specified in OverwriteRegistry as an insecure registry. This is also propagated to the worker nodes managed by machine-controller and/or KubeOne. | bool | false |
+
+[Back to Group](#v1beta3)
+
+### SSHSpec
+
+
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| publicKeys |  | []string | false |
+| port |  | int | false |
+| username |  | string | false |
+| privateKeyFile |  | string | false |
+| certFile |  | string | false |
+| hostPublicKey |  | []byte | false |
+| agentSocket |  | string | false |
+| bastion |  | string | false |
+| bastionPort |  | int | false |
+| bastionUser |  | string | false |
+| bastionHostPublicKey |  | []byte | false |
 
 [Back to Group](#v1beta3)
 

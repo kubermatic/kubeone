@@ -27,6 +27,7 @@ import (
 	"github.com/spf13/pflag"
 
 	"k8c.io/kubeone/pkg/clusterstatus/etcdstatus"
+	"k8c.io/kubeone/pkg/confirmation"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tasks"
@@ -160,6 +161,30 @@ func runApply(st *state.State, opts *applyOpts) error {
 	// Validate credentials
 	if err := validateCredentials(st, opts.CredentialsFile); err != nil {
 		return err
+	}
+
+	managedCP, err := tasks.WithEnsureControlPlane(nil,
+		st.Cluster.Name,
+		st.Cluster.ControlPlane.NodeSets,
+		st.Cluster.Versions.Kubernetes,
+	)
+	if err != nil {
+		return err
+	}
+
+	if ops := managedCP.Descriptions(st); len(ops) > 0 {
+		for _, op := range ops {
+			fmt.Printf("\t~ %s\n", op)
+		}
+		if approved, _ := confirmation.Approved(opts.AutoApprove); approved {
+			if err := managedCP.Run(st); err != nil {
+				return err
+			}
+		} else {
+			st.Logger.Warnln("Managed control plane changes were not approved, exit")
+
+			return nil
+		}
 	}
 
 	// Probe the cluster for the actual state and the needed tasks.
@@ -311,12 +336,12 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 	}
 
 	fmt.Println()
-	confirm, err := confirmCommand(opts.AutoApprove)
+	approved, err := confirmation.Approved(opts.AutoApprove)
 	if err != nil {
 		return err
 	}
 
-	if !confirm {
+	if !approved {
 		s.Logger.Println("Operation canceled.")
 
 		return nil
@@ -423,12 +448,12 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 	}
 
 	fmt.Println()
-	confirm, err := confirmCommand(opts.AutoApprove)
+	approved, err := confirmation.Approved(opts.AutoApprove)
 	if err != nil {
 		return err
 	}
 
-	if !confirm {
+	if !approved {
 		s.Logger.Println("Operation canceled.")
 
 		return nil
@@ -458,12 +483,12 @@ func runApplyRotateKey(s *state.State, opts *applyOpts) error {
 	}
 
 	fmt.Println()
-	confirm, err := confirmCommand(opts.AutoApprove)
+	approved, err := confirmation.Approved(opts.AutoApprove)
 	if err != nil {
 		return err
 	}
 
-	if !confirm {
+	if !approved {
 		s.Logger.Println("Operation canceled.")
 
 		return nil

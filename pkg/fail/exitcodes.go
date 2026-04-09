@@ -19,17 +19,20 @@ package fail
 import "errors"
 
 const (
-	DefaultExitCode         = 1
-	RuntimeErrorExitCode    = 10
-	EtcdErrorExitCode       = 11
-	KubeClientErrorExitCode = 12
-	SSHErrorExitCode        = 13
-	ConnectionErrorExitCode = 14
-	ConfigErrorExitCode     = 15
-	ExecErrorExitCode       = 16
+	DefaultExitCode                = 1
+	RuntimeErrorExitCode           = 10
+	EtcdErrorExitCode              = 11
+	KubeClientErrorExitCode        = 12
+	SSHErrorExitCode               = 13
+	ConnectionErrorExitCode        = 14
+	ConfigErrorExitCode            = 15
+	ExecErrorExitCode              = 16
+	MachineControllerErrorExitCode = 17
+	CloudErrorExitCode             = 18
 )
 
 type exitCoder interface {
+	error
 	exitCode() int
 }
 
@@ -41,6 +44,8 @@ var (
 	_ exitCoder = ConnectionError{}
 	_ exitCoder = ConfigError{}
 	_ exitCoder = CredentialsError{}
+	_ exitCoder = MachineControllerError{}
+	_ exitCoder = CloudError{}
 )
 
 func ExitCode(err error) int {
@@ -48,8 +53,7 @@ func ExitCode(err error) int {
 		return 0
 	}
 
-	var exiter exitCoder
-	if errors.As(err, &exiter) {
+	if exiter, ok := errors.AsType[exitCoder](err); ok {
 		return exiter.exitCode()
 	}
 

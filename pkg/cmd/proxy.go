@@ -29,6 +29,7 @@ import (
 
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
+	"k8c.io/kubeone/pkg/tasks"
 )
 
 type proxyOpts struct {
@@ -69,6 +70,10 @@ func proxyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 func setupProxyTunnel(opts *proxyOpts) error {
 	s, err := opts.BuildState()
 	if err != nil {
+		return err
+	}
+
+	if err := tasks.WithFindControlPlane(nil).Run(s); err != nil {
 		return err
 	}
 
