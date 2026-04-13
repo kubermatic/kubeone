@@ -115,23 +115,3 @@ presubmits:
             limits:
               memory: 3Gi
               cpu: 2
-  - name: pull-kubeone-build-image
-    always_run: true
-    decorate: true
-    clone_uri: "ssh://git@github.com/kubermatic/kubeone.git"
-    labels:
-      preset-goproxy: "true"
-      preset-docker-mirror: "true"
-    spec:
-      containers:
-        - image: quay.io/kubermatic/build:go-1.26-node-22-kind-0.31-1
-          command:
-            - /bin/bash
-            - -c
-            - |
-              set -euo pipefail
-              start-docker.sh
-              ./hack/ci/push-image.sh
-          # docker-in-docker needs privileged mode
-          securityContext:
-            privileged: true
