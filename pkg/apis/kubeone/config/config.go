@@ -192,14 +192,14 @@ func BytesToKubeOneCluster(cluster, tfOutput []byte, credentialsFilePath string,
 		}
 	}
 
-	// Validate the configuration
-	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
-		return nil, fail.ConfigValidation(err)
-	}
-
 	// Apply the dynamic defaults
 	if err := SetKubeOneClusterDynamicDefaults(internalCluster, credentialsFilePath, baseDir); err != nil {
 		return nil, err
+	}
+
+	// Validate the configuration
+	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
+		return nil, fail.ConfigValidation(err)
 	}
 
 	// Check for deprecated fields/features for a cluster
