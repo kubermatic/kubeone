@@ -131,7 +131,7 @@ data:
   operator-api-serve-addr: 127.0.0.1:9234
   operator-prometheus-serve-addr: :9963
   packetization-layer-pmtud-mode: blackhole
-  policy-cidr-match-mode: "node"
+  policy-cidr-match-mode: "nodes"
   policy-default-local-cluster: "true"
   policy-deny-response: none
   policy-secrets-namespace: cilium-secrets
