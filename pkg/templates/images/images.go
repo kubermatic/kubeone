@@ -264,14 +264,14 @@ func optionalResources() map[Resource]map[string]string {
 
 		// Azure CCM
 		AzureCCM: {
-			"1.33.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.33.3",
-			"1.34.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.34.2",
-			">= 1.35.x": "mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.35.0",
+			"1.33.x":    "mcr.microsoft.com/oss/v2/kubernetes/azure-cloud-controller-manager:v1.33.11",
+			"1.34.x":    "mcr.microsoft.com/oss/v2/kubernetes/azure-cloud-controller-manager:v1.34.8",
+			">= 1.35.x": "mcr.microsoft.com/oss/v2/kubernetes/azure-cloud-controller-manager:v1.35.3",
 		},
 		AzureCNM: {
-			"1.33.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.33.3",
-			"1.34.x":    "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.34.1",
-			">= 1.35.x": "mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.35.0",
+			"1.33.x":    "mcr.microsoft.com/oss/v2/kubernetes/azure-cloud-node-manager:v1.33.11",
+			"1.34.x":    "mcr.microsoft.com/oss/v2/kubernetes/azure-cloud-node-manager:v1.34.8",
+			">= 1.35.x": "mcr.microsoft.com/oss/v2/kubernetes/azure-cloud-node-manager:v1.35.3",
 		},
 
 		// AzureFile CSI driver
