@@ -1,3 +1,23 @@
+# [v1.13.2](https://github.com/kubermatic/kubeone/releases/tag/v1.13.2) - 2026-04-13
+
+## Changelog since v1.13.1
+
+## Changes by Kind
+
+### Fixes of Bugs or Regressions
+
+- Fix typo in cilium config [#4044](https://github.com/kubermatic/kubeone/pull/4044), [@kron4eg](https://github.com/kron4eg)
+
+# [v1.13.1](https://github.com/kubermatic/kubeone/releases/tag/v1.13.1) - 2026-04-13
+
+## Changelog since v1.13.0
+
+## Changes by Kind
+
+### Fixes of Bugs or Regressions
+
+- Fix Azure CCM and CNM image versions [#4042](https://github.com/kubermatic/kubeone/pull/4042), [@kron4eg](https://github.com/kron4eg)
+
 # [v1.13.0](https://github.com/kubermatic/kubeone/releases/tag/v1.13.0) - 2026-04-09
 
 ## Changelog since v1.12.0
