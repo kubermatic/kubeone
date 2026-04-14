@@ -16,6 +16,7 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version: stable
+          cache: true
       - name: fetch default stable for Kubernetes 1.35
         run: |
           echo "DEFAULT_STABLE=$(curl -SsL https://dl.k8s.io/release/stable-1.35.txt)" >> "$GITHUB_ENV"
