@@ -15,7 +15,11 @@ jobs:
         with:
           go-version: stable
           cache: true
+
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
           version: v2.11
+
+      - name: govulncheck
+        run: go run golang.org/x/vuln/cmd/govulncheck@latest ./...
