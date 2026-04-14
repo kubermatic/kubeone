@@ -20,8 +20,7 @@ builds:
       - arm64
 archives:
   - id: kubeone
-    format_overrides:
-      - formats: ["zip"]
+    formats: ["zip"]
     files:
       - README.md
       - LICENSE
