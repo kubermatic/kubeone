@@ -1,3 +1,13 @@
+# [v1.13.3](https://github.com/kubermatic/kubeone/releases/tag/v1.13.3) - 2026-04-14
+
+## Changelog since v1.13.2
+
+## Changes by Kind
+
+### Fixes of Bugs or Regressions
+
+- Fix release formats, return zip files in release assets back [#4049](https://github.com/kubermatic/kubeone/pull/4049), [@kron4eg](https://github.com/kron4eg)
+
 # [v1.13.2](https://github.com/kubermatic/kubeone/releases/tag/v1.13.2) - 2026-04-13
 
 ## Changelog since v1.13.1
@@ -17,6 +27,7 @@
 ### Fixes of Bugs or Regressions
 
 - Fix Azure CCM and CNM image versions [#4042](https://github.com/kubermatic/kubeone/pull/4042), [@kron4eg](https://github.com/kron4eg)
+- Bump helm.sh/helm/v3 to 3.20.2 [#4041](https://github.com/kubermatic/kubeone/pull/4041)
 
 # [v1.13.0](https://github.com/kubermatic/kubeone/releases/tag/v1.13.0) - 2026-04-09
 
