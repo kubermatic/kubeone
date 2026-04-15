@@ -3,8 +3,8 @@ kind: Kustomization
 namespace: kube-system
 
 resources:
-  - https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver/deploy/kubernetes/base/controller?ref=v1.22.1
-  - https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver/deploy/kubernetes/base/node_linux?ref=v1.22.1
+  - https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver/deploy/kubernetes/base/controller?ref=v1.23.3
+  - https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver/deploy/kubernetes/base/node_linux?ref=v1.23.3
 
 patches:
   - patch: |-
@@ -34,25 +34,12 @@ patches:
                 image: '{{ .InternalImages.Get "GCPComputeCSIProvisioner" }}'
               - name: csi-attacher
                 image: '{{ .InternalImages.Get "GCPComputeCSIAttacher" }}'
-                args:
-                  - --v=5
-                  - --csi-address=/csi/csi.sock
-                  - --http-endpoint=:22012
-                  - --leader-election
-                  - --leader-election-namespace=$(PDCSI_NAMESPACE)
-                  - --timeout=250s
-                  - --default-fstype=ext4
               - name: csi-resizer
                 image: '{{ .InternalImages.Get "GCPComputeCSIResizer" }}'
               - name: csi-snapshotter
                 image: '{{ .InternalImages.Get "GCPComputeCSISnapshotter" }}'
               - name: gce-pd-driver
                 image: '{{ .InternalImages.Get "GCPComputeCSIDriver" }}'
-                args:
-                  - --v=5
-                  - --endpoint=unix:/csi/csi.sock
-                  - --supports-dynamic-iops-provisioning=hyperdisk-balanced,hyperdisk-extreme
-                  - --supports-dynamic-throughput-provisioning=hyperdisk-balanced,hyperdisk-throughput,hyperdisk-ml
 
   - target:
       group: apps
@@ -83,7 +70,3 @@ patches:
                 image: '{{ .InternalImages.Get "GCPComputeCSINodeDriverRegistrar" }}'
               - name: gce-pd-driver
                 image: '{{ .InternalImages.Get "GCPComputeCSIDriver" }}'
-                args:
-                  - --v=5
-                  - --endpoint=unix:/csi/csi.sock
-                  - --run-controller-service=false
