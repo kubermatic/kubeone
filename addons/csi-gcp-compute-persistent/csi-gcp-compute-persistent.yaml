@@ -516,7 +516,6 @@ spec:
             - --leader-election
             - --leader-election-namespace=$(PDCSI_NAMESPACE)
             - --timeout=250s
-            - --default-fstype=ext4
           env:
             - name: PDCSI_NAMESPACE
               valueFrom:
@@ -591,6 +590,8 @@ spec:
             - --endpoint=unix:/csi/csi.sock
             - --supports-dynamic-iops-provisioning=hyperdisk-balanced,hyperdisk-extreme
             - --supports-dynamic-throughput-provisioning=hyperdisk-balanced,hyperdisk-throughput,hyperdisk-ml
+            - --enable-data-cache
+            - --run-node-service=false
           command:
             - /gce-pd-csi-driver
           env:
@@ -664,6 +665,8 @@ spec:
             - --v=5
             - --endpoint=unix:/csi/csi.sock
             - --run-controller-service=false
+            - --enable-data-cache
+            - --node-name=$(KUBE_NODE_NAME)
           env:
             - name: KUBE_NODE_NAME
               valueFrom:

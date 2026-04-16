@@ -11,80 +11,80 @@ metadata:
     rbac.authorization.kubernetes.io/autoupdate: "true"
   name: system:cloud-controller-manager
 rules:
-- apiGroups:
-  - coordination.k8s.io
-  resources:
-  - leases
-  verbs:
-  - get
-  - watch
-  - list
-  - create
-  - update
-  - delete
-- apiGroups:
-  - ""
-  resources:
-  - events
-  verbs:
-  - create
-  - patch
-  - update
-- apiGroups:
-  - ""
-  resources:
-  - nodes
-  verbs:
-  - '*'
-- apiGroups:
-  - ""
-  resources:
-  - nodes/status
-  verbs:
-  - patch
-- apiGroups:
-  - ""
-  resources:
-  - services
-  verbs:
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - services/status
-  verbs:
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - serviceaccounts
-  verbs:
-  - create
-- apiGroups:
-  - ""
-  resources:
-  - persistentvolumes
-  verbs:
-  - get
-  - list
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - endpoints
-  verbs:
-  - create
-  - get
-  - list
-  - watch
-  - update
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - get
+      - watch
+      - list
+      - create
+      - update
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - '*'
+  - apiGroups:
+      - ""
+    resources:
+      - nodes/status
+    verbs:
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - services/status
+    verbs:
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - serviceaccounts
+    verbs:
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumes
+    verbs:
+      - get
+      - list
+      - update
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - endpoints
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -95,9 +95,9 @@ roleRef:
   kind: ClusterRole
   name: system:cloud-controller-manager
 subjects:
-- kind: ServiceAccount
-  name: cloud-controller-manager
-  namespace: kube-system
+  - kind: ServiceAccount
+    name: cloud-controller-manager
+    namespace: kube-system
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -118,33 +118,33 @@ spec:
         app: digitalocean-cloud-controller-manager
     spec:
       containers:
-      - command:
-        - /bin/digitalocean-cloud-controller-manager
-        - --leader-elect=false
-        env:
-        - name: DO_ACCESS_TOKEN
-          valueFrom:
-            secretKeyRef:
-              key: DO_TOKEN
-              name: kubeone-ccm-credentials
-        image: '{{ .InternalImages.Get "DigitaloceanCCM" }}'
-        name: digitalocean-cloud-controller-manager
-        resources:
-          requests:
-            cpu: 100m
-            memory: 50Mi
+        - command:
+            - /bin/digitalocean-cloud-controller-manager
+            - --leader-elect=false
+          env:
+            - name: DO_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: DO_TOKEN
+                  name: kubeone-ccm-credentials
+          image: '{{ .InternalImages.Get "DigitaloceanCCM" }}'
+          name: digitalocean-cloud-controller-manager
+          resources:
+            requests:
+              cpu: 100m
+              memory: 50Mi
       dnsPolicy: Default
       hostNetwork: true
       priorityClassName: system-cluster-critical
       serviceAccountName: cloud-controller-manager
       tolerations:
-      - effect: NoSchedule
-        key: node.cloudprovider.kubernetes.io/uninitialized
-        value: "true"
-      - key: CriticalAddonsOnly
-        operator: Exists
-      - effect: NoSchedule
-        key: node-role.kubernetes.io/master
-      - effect: NoSchedule
-        key: node-role.kubernetes.io/control-plane
+        - effect: NoSchedule
+          key: node.cloudprovider.kubernetes.io/uninitialized
+          value: "true"
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
       volumes: []
