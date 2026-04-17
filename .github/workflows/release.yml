@@ -1,0 +1,42 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v1.12.*"
+
+# Prevent concurrent releases
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  gorelease:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write # Needed for GoReleaser to create releases
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version: 1.25
+          cache: true
+
+      - name: fetch default stable for Kubernetes
+        run: |
+          echo "DEFAULT_STABLE=$(curl -SsL $(cat hack/stable-kubernetes-url.txt))" >> "$GITHUB_ENV"
+
+      - name: GoReleaser run
+        uses: goreleaser/goreleaser-action@v7
+        with:
+          distribution: goreleaser
+          version: "~> v2"
+          args: release --clean --parallelism 1 --fail-fast
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
