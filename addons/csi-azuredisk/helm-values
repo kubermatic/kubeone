@@ -8,6 +8,12 @@ controller:
   runOnControlPlane: true
   cloudConfigSecretName: cloud-config
 
+  featureGates:
+    csiProvisioner:
+      - Topology=true
+      - HonorPVReclaimPolicy=true
+      - VolumeAttributesClass=true
+
 node:
   cloudConfigSecretName: cloud-config
   allowEmptyCloudConfig: false
