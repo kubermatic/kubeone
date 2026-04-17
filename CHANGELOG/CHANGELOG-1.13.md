@@ -1,3 +1,18 @@
+# [v1.13.4](https://github.com/kubermatic/kubeone/releases/tag/v1.13.4) - 2026-04-17
+
+## Changelog since v1.13.3
+
+## Changes by Kind
+
+### Updates
+
+- Upgrade AzureFile CSI Driver to v1.35.2 [#4055](https://github.com/kubermatic/kubeone/pull/4055), [@kron4eg](https://github.com/kron4eg)
+- Upgrade AzureDisk CSI Driver to v1.34.3 [#4055](https://github.com/kubermatic/kubeone/pull/4055), [@kron4eg](https://github.com/kron4eg)
+- Upgrade DigitalOcean CCM to v0.1.66  [#4054](https://github.com/kubermatic/kubeone/pull/4054), [@kron4eg](https://github.com/kron4eg)
+- Upgrade DigitalOceam CSI Driver to v4.16.0 [#4054](https://github.com/kubermatic/kubeone/pull/4054), [@kron4eg](https://github.com/kron4eg)
+- Upgrade GCP CCM to v35.0.2 [#4054](https://github.com/kubermatic/kubeone/pull/4054), [@kron4eg](https://github.com/kron4eg)
+- Upgrade GCP CSI compute-persistent driver to v1.23.3 [#4054](https://github.com/kubermatic/kubeone/pull/4054), [@kron4eg](https://github.com/kron4eg)
+
 # [v1.13.3](https://github.com/kubermatic/kubeone/releases/tag/v1.13.3) - 2026-04-14
 
 ## Changelog since v1.13.2
