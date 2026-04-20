@@ -437,12 +437,18 @@ func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, prov kubeon
 func validateIPFamily(ipFamily kubeoneapi.IPFamily, prov kubeoneapi.CloudProviderSpec, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	if ipFamily == kubeoneapi.IPFamilyIPv6 || ipFamily == kubeoneapi.IPFamilyIPv6IPv4 {
-		allErrs = append(allErrs, field.Forbidden(fldPath, "ipv6 and ipv6+ipv4 ip families are currently not supported"))
-	}
-
-	if ipFamily == kubeoneapi.IPFamilyIPv4IPv6 && prov.AWS == nil && prov.None == nil && prov.Vsphere == nil {
-		allErrs = append(allErrs, field.Forbidden(fldPath, "dualstack is currently supported only on AWS, vSphere and baremetal (none)"))
+	switch ipFamily {
+	case kubeoneapi.IPFamilyIPv4IPv6:
+		switch {
+		case prov.AWS != nil:
+		case prov.GCE != nil:
+		case prov.Vsphere != nil:
+		case prov.None != nil:
+		default:
+			allErrs = append(allErrs, field.Forbidden(fldPath, "dualstack is currently supported only on AWS, GCE, vSphere and baremetal (none)"))
+		}
+	default:
+		allErrs = append(allErrs, field.Forbidden(fldPath, "only IPv4+IPv6 ip family is currently supported"))
 	}
 
 	return allErrs
@@ -857,8 +863,9 @@ func ValidateHostConfig(hosts []kubeoneapi.HostConfig, clusterNetwork kubeoneapi
 		if len(host.PublicAddress) == 0 {
 			allErrs = append(allErrs, field.Required(hostFldPath.Child("publicAddress"), "no public IP/address given"))
 		}
-		if (clusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv6 || clusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv4IPv6 || clusterNetwork.IPFamily == kubeoneapi.IPFamilyIPv6IPv4) && len(host.IPv6Addresses) == 0 {
-			allErrs = append(allErrs, field.Required(hostFldPath.Child("ipFamily"), "no IPv6 address given"))
+
+		if len(host.IPv6Addresses) == 0 {
+			allErrs = append(allErrs, field.Required(fldPath, "no IPv6 address given"))
 		}
 		if len(host.PrivateAddress) == 0 {
 			allErrs = append(allErrs, field.Required(hostFldPath.Child("privateAddress"), "no private IP/address givevn"))
