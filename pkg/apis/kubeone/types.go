@@ -675,6 +675,11 @@ type ClusterNetworkConfig struct {
 
 	// NodeCIDRMaskSizeIPv6 is the mask size used to address the nodes within provided IPv6 Pods CIDR. It has to be larger than the provided IPv6 Pods CIDR. Defaults to 64.
 	NodeCIDRMaskSizeIPv6 *int `json:"nodeCIDRMaskSizeIPv6,omitempty"`
+
+	// DNSServiceIP is an optional override for the cluster DNS service IP.
+	// If not set, it defaults to the 10th IP of the serviceSubnet (e.g. 10.96.0.10 for 10.96.0.0/12).
+	// When nodeLocalDNS is enabled, OSM always uses the NodeLocalDNS virtual IP regardless of this field.
+	DNSServiceIP string `json:"dnsServiceIP,omitempty"`
 }
 
 // IPFamily allows specifying IP family of a cluster.
