@@ -231,16 +231,17 @@ func NewConnection(connector *Connector, opts Opts) (executor.Interface, error) 
 		agentClient := agent.NewClient(socket)
 
 		signers, signersErr := agentClient.Signers()
-		if signersErr != nil {
+		switch {
+		case signersErr != nil:
 			socket.Close()
 
 			return nil, fail.SSHError{
 				Op:  "creating signer for SSH agent",
 				Err: signersErr,
 			}
-		} else if len(signers) == 0 {
+		case len(signers) == 0:
 			socket.Close()
-		} else {
+		default:
 			nodeAuthMethods = append(nodeAuthMethods, ssh.PublicKeys(signers...))
 			// only add agent keys to bastion if no dedicated bastion key was set
 			if len(opts.BastionPrivateKey) == 0 {
