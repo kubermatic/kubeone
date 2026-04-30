@@ -141,10 +141,11 @@ func NewConnection(connector *Connector, opts Opts) (executor.Interface, error) 
 		return nil, err
 	}
 
-	authMethods := make([]ssh.AuthMethod, 0)
+	// nodeAuthMethods are used to authenticate to the target node.
+	nodeAuthMethods := make([]ssh.AuthMethod, 0)
 
 	if len(opts.Password) > 0 {
-		authMethods = append(authMethods, ssh.Password(opts.Password))
+		nodeAuthMethods = append(nodeAuthMethods, ssh.Password(opts.Password))
 	}
 
 	if len(opts.PrivateKey) > 0 {
@@ -181,11 +182,17 @@ func NewConnection(connector *Connector, opts Opts) (executor.Interface, error) 
 				}
 			}
 
-			authMethods = append(authMethods, ssh.PublicKeys(certSigner))
+			nodeAuthMethods = append(nodeAuthMethods, ssh.PublicKeys(certSigner))
 		} else {
-			authMethods = append(authMethods, ssh.PublicKeys(signer))
+			nodeAuthMethods = append(nodeAuthMethods, ssh.PublicKeys(signer))
 		}
 	}
+
+	// bastionAuthMethods are used exclusively for the bastion hop. When a
+	// dedicated bastion key is provided we use only that key so we never waste
+	// MaxAuthTries attempts on the node key (which the bastion does not know).
+	// If no bastion key is configured we fall back to the node auth methods.
+	bastionAuthMethods := nodeAuthMethods
 
 	if len(opts.BastionPrivateKey) > 0 {
 		signer, parseErr := ssh.ParsePrivateKey(opts.BastionPrivateKey)
@@ -195,7 +202,7 @@ func NewConnection(connector *Connector, opts Opts) (executor.Interface, error) 
 				Err: errors.Wrap(parseErr, "bastion SSH key could not be parsed (note that password-protected keys are not supported)"),
 			}
 		}
-		authMethods = append(authMethods, ssh.PublicKeys(signer))
+		bastionAuthMethods = []ssh.AuthMethod{ssh.PublicKeys(signer)}
 	}
 
 	if len(opts.AgentSocket) > 0 {
@@ -224,92 +231,95 @@ func NewConnection(connector *Connector, opts Opts) (executor.Interface, error) 
 		agentClient := agent.NewClient(socket)
 
 		signers, signersErr := agentClient.Signers()
-		if signersErr != nil {
+		switch {
+		case signersErr != nil:
 			socket.Close()
 
 			return nil, fail.SSHError{
 				Op:  "creating signer for SSH agent",
 				Err: signersErr,
 			}
-		} else if len(signers) == 0 {
+		case len(signers) == 0:
 			socket.Close()
-
-			return nil, fail.SSHError{
-				Err: errors.New("could not retrieve signers"),
-				Op:  "creating signer for SSH agent",
+		default:
+			nodeAuthMethods = append(nodeAuthMethods, ssh.PublicKeys(signers...))
+			// only add agent keys to bastion if no dedicated bastion key was set
+			if len(opts.BastionPrivateKey) == 0 {
+				bastionAuthMethods = nodeAuthMethods
 			}
 		}
-
-		authMethods = append(authMethods, ssh.PublicKeys(signers...))
 	}
 
-	sshConfig := &ssh.ClientConfig{
+	nodeConfig := &ssh.ClientConfig{
 		User:            opts.Username,
 		Timeout:         opts.Timeout,
-		Auth:            authMethods,
+		Auth:            nodeAuthMethods,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(), //nolint:gosec
 	}
 
 	if opts.HostPublicKey != nil {
-		sshConfig.HostKeyCallback = hostKeyCallback(opts.HostPublicKey)
+		nodeConfig.HostKeyCallback = hostKeyCallback(opts.HostPublicKey)
 	}
 
-	targetHost := opts.Hostname
-	targetPort := strconv.Itoa(opts.Port)
-
-	if opts.Bastion != "" {
-		targetHost = opts.Bastion
-		targetPort = strconv.Itoa(opts.BastionPort)
-		sshConfig.User = opts.BastionUser
-
-		if opts.BastionHostPublicKey != nil {
-			sshConfig.HostKeyCallback = hostKeyCallback(opts.BastionHostPublicKey)
-		}
-	}
-
-	// do not use fmt.Sprintf() to allow proper IPv6 handling if hostname is an IP address
-	endpoint := net.JoinHostPort(targetHost, targetPort)
-
-	client, err := ssh.Dial("tcp", endpoint, sshConfig)
-	if err != nil {
-		return nil, fail.SSH(fail.Connection(err, endpoint), "dialing")
-	}
-
-	ctx, cancelFn := context.WithCancel(connector.ctx)
-	sshConn := &connection{
-		connector: connector,
-		ctx:       ctx,
-		cancel:    cancelFn,
-	}
-
+	// No bastion: connect directly to the node.
 	if opts.Bastion == "" {
-		sshConn.sshclient = client
-		// connection established
-		return sshConn, nil
+		endpoint := net.JoinHostPort(opts.Hostname, strconv.Itoa(opts.Port))
+
+		client, dialErr := ssh.Dial("tcp", endpoint, nodeConfig)
+		if dialErr != nil {
+			return nil, fail.SSH(fail.Connection(dialErr, endpoint), "dialing")
+		}
+
+		ctx, cancelFn := context.WithCancel(connector.ctx)
+
+		return &connection{
+			sshclient: client,
+			connector: connector,
+			ctx:       ctx,
+			cancel:    cancelFn,
+		}, nil
 	}
 
-	// continue to setup if we are running over bastion
-	endpointBehindBastion := net.JoinHostPort(opts.Hostname, strconv.Itoa(opts.Port))
+	// Connect to the bastion with its own dedicated auth methods.
+	bastionConfig := &ssh.ClientConfig{
+		User:            opts.BastionUser,
+		Timeout:         opts.Timeout,
+		Auth:            bastionAuthMethods,
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(), //nolint:gosec
+	}
 
-	if opts.HostPublicKey != nil {
-		sshConfig.HostKeyCallback = hostKeyCallback(opts.HostPublicKey)
+	if opts.BastionHostPublicKey != nil {
+		bastionConfig.HostKeyCallback = hostKeyCallback(opts.BastionHostPublicKey)
+	}
+
+	bastionEndpoint := net.JoinHostPort(opts.Bastion, strconv.Itoa(opts.BastionPort))
+
+	bastionClient, err := ssh.Dial("tcp", bastionEndpoint, bastionConfig)
+	if err != nil {
+		return nil, fail.SSH(fail.Connection(err, bastionEndpoint), "dialing")
 	}
 
 	// Dial a connection to the service host, from the bastion
-	conn, err := client.Dial("tcp", endpointBehindBastion)
+	endpointBehindBastion := net.JoinHostPort(opts.Hostname, strconv.Itoa(opts.Port))
+
+	conn, err := bastionClient.Dial("tcp", endpointBehindBastion)
 	if err != nil {
 		return nil, fail.SSH(fail.Connection(err, endpointBehindBastion), "dialing behind the bastion")
 	}
 
-	sshConfig.User = opts.Username
-	ncc, chans, reqs, err := ssh.NewClientConn(conn, endpointBehindBastion, sshConfig)
+	ncc, chans, reqs, err := ssh.NewClientConn(conn, endpointBehindBastion, nodeConfig)
 	if err != nil {
 		return nil, fail.SSH(fail.Connection(err, endpointBehindBastion), "new client")
 	}
 
-	sshConn.sshclient = ssh.NewClient(ncc, chans, reqs)
+	ctx, cancelFn := context.WithCancel(connector.ctx)
 
-	return sshConn, nil
+	return &connection{
+		sshclient: ssh.NewClient(ncc, chans, reqs),
+		connector: connector,
+		ctx:       ctx,
+		cancel:    cancelFn,
+	}, nil
 }
 
 func hostKeyCallback(knownKey []byte) ssh.HostKeyCallback {
