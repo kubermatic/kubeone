@@ -1039,6 +1039,7 @@ func autoConvert_v1beta2_CiliumSpec_To_kubeone_CiliumSpec(in *CiliumSpec, out *k
 	// INFO: in.KubeProxyReplacement opted out of conversion generation
 	out.EnableHubble = in.EnableHubble
 	out.EnableL2Announcements = in.EnableL2Announcements
+	out.EnableGatewayAPI = in.EnableGatewayAPI
 	return nil
 }
 
@@ -1046,6 +1047,7 @@ func autoConvert_kubeone_CiliumSpec_To_v1beta2_CiliumSpec(in *kubeone.CiliumSpec
 	// INFO: in.KubeProxyReplacement opted out of conversion generation
 	out.EnableHubble = in.EnableHubble
 	out.EnableL2Announcements = in.EnableL2Announcements
+	out.EnableGatewayAPI = in.EnableGatewayAPI
 	return nil
 }
 

@@ -791,6 +791,10 @@ type CiliumSpec struct {
 	// EnableL2Announcements enables the Layer 2 announcement feature for the Cilium CNI plugin.
 	// If not set, Cilium will use its default behavior.
 	EnableL2Announcements bool `json:"enableL2Announcements"`
+
+	// EnableGatewayAPI enables the Gateway API feature for the Cilium CNI plugin.
+	// If not set, Cilium will use its default behavior.
+	EnableGatewayAPI bool `json:"enableGatewayAPI"`
 }
 
 // WeaveNetSpec defines the WeaveNet CNI plugin

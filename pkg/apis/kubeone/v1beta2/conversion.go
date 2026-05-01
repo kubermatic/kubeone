@@ -88,6 +88,8 @@ func Convert_v1beta2_Features_To_kubeone_Features(in *Features, out *kubeoneapi.
 func Convert_v1beta2_CiliumSpec_To_kubeone_CiliumSpec(in *CiliumSpec, out *kubeoneapi.CiliumSpec, _ conversion.Scope) error {
 	out.KubeProxyReplacement = in.KubeProxyReplacement == KubeProxyReplacementStrict
 	out.EnableHubble = in.EnableHubble
+	out.EnableL2Announcements = in.EnableL2Announcements
+	out.EnableGatewayAPI = in.EnableGatewayAPI
 
 	return nil
 }
@@ -98,6 +100,8 @@ func Convert_kubeone_CiliumSpec_To_v1beta2_CiliumSpec(in *kubeoneapi.CiliumSpec,
 		out.KubeProxyReplacement = KubeProxyReplacementStrict
 	}
 	out.EnableHubble = in.EnableHubble
+	out.EnableL2Announcements = in.EnableL2Announcements
+	out.EnableGatewayAPI = in.EnableGatewayAPI
 
 	return nil
 }
