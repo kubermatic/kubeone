@@ -65,6 +65,9 @@ data:
 {{ if .Config.ClusterNetwork.CNI.Cilium.EnableL2Announcements }}
   enable-l2-announcements: "true"
 {{ end }}
+{{ if .Config.ClusterNetwork.CNI.Cilium.EnableGatewayAPI }}
+  enable-gateway-api: "true"
+{{ end }}
   enable-l2-neigh-discovery: "false"
   enable-l7-proxy: "true"
   enable-lb-ipam: "true"
