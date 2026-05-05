@@ -515,7 +515,7 @@ spec:
                     operator: Exists
       containers:
         - args:
-            - --feature-gates=Topology=true,HonorPVReclaimPolicy=true,VolumeAttributesClass=true
+            - --feature-gates=Topology=true,VolumeAttributesClass=true
             - --csi-address=$(ADDRESS)
             - --v=2
             - --timeout=30s
