@@ -57,6 +57,7 @@ const (
 	AddonMachineController      = "machinecontroller"
 	AddonMetricsServer          = "metrics-server"
 	AddonNodeLocalDNS           = "nodelocaldns"
+	AddonNodeLocalDNSCilium     = "nodelocaldns-cilium"
 	AddonOperatingSystemManager = "operating-system-manager"
 	AddonBackupsRestic          = "backups-restic"
 )

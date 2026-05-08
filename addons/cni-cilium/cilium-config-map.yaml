@@ -68,6 +68,9 @@ data:
 {{ if .Config.ClusterNetwork.CNI.Cilium.EnableGatewayAPI }}
   enable-gateway-api: "true"
 {{ end }}
+{{ if .Config.ClusterNetwork.CNI.Cilium.EnableLocalRedirectPolicy }}
+  enable-local-redirect-policy: "true"
+{{ end }}
   enable-l2-neigh-discovery: "false"
   enable-l7-proxy: "true"
   enable-lb-ipam: "true"

@@ -85,6 +85,13 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
 	allErrs = append(allErrs, ValidateControlPlaneComponents(c.ControlPlaneComponents, field.NewPath("controlPlaneComponents"))...)
 
+	// validate cilium local redirect policy is mutually exclusive with features.nodeLocalDNS.deploy
+	if c.ClusterNetwork.CNI != nil && c.ClusterNetwork.CNI.Cilium != nil && c.ClusterNetwork.CNI.Cilium.EnableLocalRedirectPolicy && c.Features.NodeLocalDNS != nil && c.Features.NodeLocalDNS.Deploy {
+		allErrs = append(allErrs, field.Forbidden(
+			field.NewPath("clusterNetwork", "cni", "cilium", "enableLocalRedirectPolicy"),
+			"cannot be used together with features.nodeLocalDNS.deploy; disable nodeLocalDNS when using Cilium Local Redirect Policy"))
+	}
+
 	return allErrs
 }
 
@@ -422,9 +429,20 @@ func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, prov kubeon
 	if c.CNI != nil {
 		allErrs = append(allErrs, ValidateCNI(c.CNI, fldPath.Child("cni"))...)
 
-		// validated cilium kube-proxy replacement
-		if c.CNI.Cilium != nil && c.CNI.Cilium.KubeProxyReplacement && (c.KubeProxy == nil || !c.KubeProxy.SkipInstallation) {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("cni"), c.CNI.Cilium.KubeProxyReplacement, ".cilium.kubeProxyReplacement cannot be set with kube-proxy enabled"))
+		if c.CNI.Cilium != nil {
+			// validated cilium kube-proxy replacement
+			if c.CNI.Cilium.KubeProxyReplacement && (c.KubeProxy == nil || !c.KubeProxy.SkipInstallation) {
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("cni"), c.CNI.Cilium.KubeProxyReplacement, ".cilium.kubeProxyReplacement cannot be set with kube-proxy enabled"))
+			}
+
+			if c.CNI.Cilium.EnableGatewayAPI && !c.CNI.Cilium.KubeProxyReplacement {
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("cni", "cilium", "enableGatewayAPI"), c.CNI.Cilium.EnableGatewayAPI, "enableGatewayAPI requires kubeProxyReplacement to be enabled"))
+			}
+
+			// validate cilium local redirect policy requires kube-proxy replacement
+			if c.CNI.Cilium.EnableLocalRedirectPolicy && !c.CNI.Cilium.KubeProxyReplacement {
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("cni", "cilium", "enableLocalRedirectPolicy"), c.CNI.Cilium.EnableLocalRedirectPolicy, "enableLocalRedirectPolicy requires kubeProxyReplacement to be enabled"))
+			}
 		}
 	}
 	if c.KubeProxy != nil {

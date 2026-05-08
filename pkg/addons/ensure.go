@@ -69,6 +69,7 @@ var embeddedAddons = map[string]string{
 	resources.AddonMachineController:      "",
 	resources.AddonMetricsServer:          "",
 	resources.AddonNodeLocalDNS:           "",
+	resources.AddonNodeLocalDNSCilium:     "",
 	resources.AddonOperatingSystemManager: "",
 }
 
@@ -125,6 +126,10 @@ func collectAddons(s *state.State) []addonAction {
 	if s.Cluster.Features.NodeLocalDNS.Deploy {
 		addonsToDeploy = append(addonsToDeploy, addonAction{
 			name: resources.AddonNodeLocalDNS,
+		})
+	} else if s.Cluster.ClusterNetwork.CNI.Cilium != nil && s.Cluster.ClusterNetwork.CNI.Cilium.EnableLocalRedirectPolicy {
+		addonsToDeploy = append(addonsToDeploy, addonAction{
+			name: resources.AddonNodeLocalDNSCilium,
 		})
 	}
 

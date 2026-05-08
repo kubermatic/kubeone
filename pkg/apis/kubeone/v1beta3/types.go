@@ -779,6 +779,12 @@ type CiliumSpec struct {
 	// EnableGatewayAPI enables the Gateway API feature for the Cilium CNI plugin.
 	// If not set, Cilium will use its default behavior.
 	EnableGatewayAPI bool `json:"enableGatewayAPI"`
+
+	// EnableLocalRedirectPolicy enables the Cilium Local Redirect Policy for node-local DNS cache.
+	// When enabled, a Cilium-compatible node-local-dns DaemonSet and a CiliumLocalRedirectPolicy
+	// resource are deployed instead of the standard node-local-dns addon.
+	// Requires kubeProxyReplacement to be enabled. Mutually exclusive with features.nodeLocalDNS.deploy.
+	EnableLocalRedirectPolicy bool `json:"enableLocalRedirectPolicy"`
 }
 
 // WeaveNetSpec defines the WeaveNet CNI plugin
