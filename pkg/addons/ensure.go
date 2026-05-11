@@ -183,7 +183,7 @@ func cleanupAddons(s *state.State) error {
 		if err := DeleteAddonByName(s, resources.AddonNodeLocalDNS); err != nil {
 			return err
 		}
-	} else if s.Cluster.Features.NodeLocalDNS.Deploy {
+	} else if s.Cluster.Features.NodeLocalDNS != nil && s.Cluster.Features.NodeLocalDNS.Deploy {
 		if err := DeleteAddonByName(s, resources.AddonNodeLocalDNSCilium); err != nil {
 			return err
 		}
