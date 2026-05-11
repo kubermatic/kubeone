@@ -177,6 +177,18 @@ func cleanupAddons(s *state.State) error {
 		}
 	}
 
+	// When switching between standard nodelocaldns and Cilium LRP nodelocaldns,
+	// clean up the variant that is no longer in use.
+	if s.Cluster.ClusterNetwork.CNI.Cilium != nil && s.Cluster.ClusterNetwork.CNI.Cilium.EnableLocalRedirectPolicy {
+		if err := DeleteAddonByName(s, resources.AddonNodeLocalDNS); err != nil {
+			return err
+		}
+	} else if s.Cluster.Features.NodeLocalDNS.Deploy {
+		if err := DeleteAddonByName(s, resources.AddonNodeLocalDNSCilium); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
