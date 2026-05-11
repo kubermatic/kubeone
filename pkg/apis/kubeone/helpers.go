@@ -18,8 +18,10 @@ package kubeone
 
 import (
 	"bytes"
+	"encoding/binary"
 	"fmt"
 	"math/rand"
+	"net"
 	"net/url"
 	"path/filepath"
 	"sort"
@@ -546,4 +548,32 @@ func (v VersionConfig) KubernetesMajorMinorVersion() string {
 	kubeSemVer := semver.MustParse(v.Kubernetes)
 
 	return fmt.Sprintf("v%d.%d", kubeSemVer.Major(), kubeSemVer.Minor())
+}
+
+// EffectiveDNSServiceIP returns the cluster DNS service IP to use for kubelet and OSM.
+// If DNSServiceIP is explicitly set, it is returned as-is.
+// Otherwise the 10th IP in the ServiceSubnet is computed (e.g. 10.96.0.10 for 10.96.0.0/12),
+// matching the CoreDNS service IP assigned by kubeadm.
+func (c ClusterNetworkConfig) EffectiveDNSServiceIP() (string, error) {
+	if c.DNSServiceIP != "" {
+		return c.DNSServiceIP, nil
+	}
+
+	return nthIPInSubnet(c.ServiceSubnet, 10)
+}
+
+// nthIPInSubnet returns the n-th IP address within the given CIDR subnet.
+func nthIPInSubnet(cidr string, n uint32) (string, error) {
+	_, network, err := net.ParseCIDR(cidr)
+	if err != nil {
+		return "", fmt.Errorf("parsing subnet %q: %w", cidr, err)
+	}
+
+	ip := network.IP.To4()
+	addr := binary.BigEndian.Uint32(ip)
+	addr += n
+	result := make(net.IP, 4)
+	binary.BigEndian.PutUint32(result, addr)
+
+	return result.String(), nil
 }

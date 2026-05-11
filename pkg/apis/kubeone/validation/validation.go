@@ -431,6 +431,19 @@ func ValidateClusterNetworkConfig(c kubeoneapi.ClusterNetworkConfig, prov kubeon
 		allErrs = append(allErrs, ValidateKubeProxy(c.KubeProxy, fldPath.Child("kubeProxy"))...)
 	}
 
+	if c.DNSServiceIP != "" {
+		ip := net.ParseIP(c.DNSServiceIP)
+		if ip == nil {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("dnsServiceIP"), c.DNSServiceIP, "must be a valid IP address"))
+		} else if c.ServiceSubnet != "" {
+			_, serviceSubnet, err := net.ParseCIDR(c.ServiceSubnet)
+			if err == nil && !serviceSubnet.Contains(ip) {
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("dnsServiceIP"), c.DNSServiceIP,
+					fmt.Sprintf("must be within the service subnet %q", c.ServiceSubnet)))
+			}
+		}
+	}
+
 	return allErrs
 }
 

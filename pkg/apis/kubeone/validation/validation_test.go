@@ -1646,6 +1646,48 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 			},
 			expectedError: true,
 		},
+		{
+			name: "valid dnsServiceIP within service subnet",
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
+				PodSubnet:            "192.168.1.0/16",
+				ServiceSubnet:        "10.96.0.0/12",
+				IPFamily:             kubeoneapi.IPFamilyIPv4,
+				NodeCIDRMaskSizeIPv4: new(24),
+				DNSServiceIP:         "10.96.0.100",
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
+			},
+			expectedError: false,
+		},
+		{
+			name: "invalid dnsServiceIP not within service subnet",
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
+				PodSubnet:            "192.168.1.0/16",
+				ServiceSubnet:        "10.96.0.0/12",
+				IPFamily:             kubeoneapi.IPFamilyIPv4,
+				NodeCIDRMaskSizeIPv4: new(24),
+				DNSServiceIP:         "192.168.1.1",
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
+			},
+			expectedError: true,
+		},
+		{
+			name: "invalid dnsServiceIP not a valid IP",
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
+				PodSubnet:            "192.168.1.0/16",
+				ServiceSubnet:        "10.96.0.0/12",
+				IPFamily:             kubeoneapi.IPFamilyIPv4,
+				NodeCIDRMaskSizeIPv4: new(24),
+				DNSServiceIP:         "not-an-ip",
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
+			},
+			expectedError: true,
+		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {

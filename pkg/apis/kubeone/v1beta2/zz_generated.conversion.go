@@ -1123,6 +1123,7 @@ func autoConvert_v1beta2_ClusterNetworkConfig_To_kubeone_ClusterNetworkConfig(in
 	out.IPFamily = kubeone.IPFamily(in.IPFamily)
 	out.NodeCIDRMaskSizeIPv4 = (*int)(unsafe.Pointer(in.NodeCIDRMaskSizeIPv4))
 	out.NodeCIDRMaskSizeIPv6 = (*int)(unsafe.Pointer(in.NodeCIDRMaskSizeIPv6))
+	out.DNSServiceIP = in.DNSServiceIP
 	return nil
 }
 
@@ -1151,6 +1152,7 @@ func autoConvert_kubeone_ClusterNetworkConfig_To_v1beta2_ClusterNetworkConfig(in
 	out.IPFamily = IPFamily(in.IPFamily)
 	out.NodeCIDRMaskSizeIPv4 = (*int)(unsafe.Pointer(in.NodeCIDRMaskSizeIPv4))
 	out.NodeCIDRMaskSizeIPv6 = (*int)(unsafe.Pointer(in.NodeCIDRMaskSizeIPv6))
+	out.DNSServiceIP = in.DNSServiceIP
 	return nil
 }
 

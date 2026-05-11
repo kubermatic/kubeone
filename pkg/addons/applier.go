@@ -90,6 +90,7 @@ type templateData struct {
 	InternalImages                           *internalImages
 	Resources                                map[string]string
 	Params                                   map[string]string
+	ClusterDNSIP                             string
 }
 
 type registryCredentialsContainer struct {
@@ -185,6 +186,14 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		}
 	}
 
+	clusterDNSIP := resources.NodeLocalDNSVirtualIP
+	if !s.Cluster.Features.NodeLocalDNS.Deploy {
+		clusterDNSIP, err = s.Cluster.ClusterNetwork.EffectiveDNSServiceIP()
+		if err != nil {
+			return nil, fail.Runtime(err, "computing cluster DNS service IP")
+		}
+	}
+
 	data := templateData{
 		Config: s.Cluster,
 		Certificates: map[string]string{
@@ -211,8 +220,9 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 			pauseImage: s.PauseImage,
 			resolver:   s.Images.Get,
 		},
-		Resources: resources.All(),
-		Params:    map[string]string{},
+		Resources:    resources.All(),
+		Params:       map[string]string{},
+		ClusterDNSIP: clusterDNSIP,
 	}
 
 	if !s.LiveCluster.IsProvisioned() {

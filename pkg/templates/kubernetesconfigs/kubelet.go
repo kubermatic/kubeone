@@ -61,6 +61,8 @@ func NewKubeletConfiguration(cluster *kubeoneapi.KubeOneCluster, featureGates ma
 
 	if cluster.Features.NodeLocalDNS.Deploy {
 		kubeletConfig.ClusterDNS = []string{resources.NodeLocalDNSVirtualIP}
+	} else if dnsip, err := cluster.ClusterNetwork.EffectiveDNSServiceIP(); err == nil && dnsip != "" {
+		kubeletConfig.ClusterDNS = []string{dnsip}
 	}
 
 	return dropFields(kubeletConfig,
