@@ -1,3 +1,20 @@
+# [v1.13.5](https://github.com/kubermatic/kubeone/releases/tag/v1.13.5) - 2026-05-13
+
+## Changelog since v1.13.4
+
+## Changes by Kind
+
+### Fixes of Bugs or Regressions
+
+- Update golang.org/x/net to v0.54.0 [#4076](https://github.com/kubermatic/kubeone/pull/4076), [@kron4eg](https://github.com/kron4eg)
+- Update OSM to v1.10.5 with the Flatcar fix [#4068](https://github.com/kubermatic/kubeone/pull/4068), [@kron4eg](https://github.com/kron4eg)
+- Removed HonorPVReclaimPolicy feature flag from csi-azuredisk addon [#4064](https://github.com/kubermatic/kubeone/pull/4064), @[bastianpaetzold](https://github.com/bastianpaetzold)
+- Fix bastion host can have different ssh key [#4063](https://github.com/kubermatic/kubeone/pull/4063), @[mohamed-rafraf](https://github.com/mohamed-rafraf)
+
+### Updates
+
+- Use fixed Go minor version 1.26 in CI workflows #4056
+
 # [v1.13.4](https://github.com/kubermatic/kubeone/releases/tag/v1.13.4) - 2026-04-17
 
 ## Changelog since v1.13.3
