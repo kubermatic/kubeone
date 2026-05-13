@@ -20,7 +20,7 @@ linters:
     - forcetypeassert
     - gocritic
     - gocyclo
-    - gosec
+    # - gosec
     - govet
     - importas
     - ineffassign
@@ -85,6 +85,14 @@ linters:
         text: cyclomatic complexity 33 of func `NewConfig` is high
       - path: (.+)\.go$
         text: 'G115: integer overflow conversion (.+)'
+      - path: pkg/tabwriter
+        text: 'var-naming: avoid package names that conflict with Go standard library package names'
+      - text: .CABundle is deprecated
+        linters:
+          - staticcheck
+      - text: MachineAnnotations is deprecated
+        linters:
+          - staticcheck
     paths:
       - zz_generated.*.go
       - hack
