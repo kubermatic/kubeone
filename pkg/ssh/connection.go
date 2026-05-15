@@ -201,15 +201,19 @@ func NewConnection(connector *Connector, opts Opts) (executor.Interface, error) 
 	if len(opts.AgentSocket) > 0 {
 		addr := opts.AgentSocket
 
-		if strings.HasPrefix(opts.AgentSocket, socketEnvPrefix) {
-			envName := strings.TrimPrefix(opts.AgentSocket, socketEnvPrefix)
+		if after, ok := strings.CutPrefix(opts.AgentSocket, socketEnvPrefix); ok {
+			envName := after
 
 			if envAddr := os.Getenv(envName); len(envAddr) > 0 {
 				addr = envAddr
 			}
 		}
 
-		socket, dialErr := net.Dial("unix", addr)
+		var dialer net.Dialer
+		dialCtx, dialCancel := context.WithTimeout(context.TODO(), 5*time.Second)
+		defer dialCancel()
+
+		socket, dialErr := dialer.DialContext(dialCtx, "unix", addr)
 		if dialErr != nil {
 			return nil, fail.SSHError{
 				Op:  "agent unix dialing",

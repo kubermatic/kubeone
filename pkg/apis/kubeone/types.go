@@ -69,6 +69,7 @@ type KubeOneCluster struct {
 	OperatingSystemManager *OperatingSystemManagerConfig `json:"operatingSystemManager,omitempty"`
 
 	// CABundle PEM encoded global CA.
+	//
 	// Deprecated: Use CertificateAuthorithyConfig instead. Will be overriten by certificateAuthority.Bundle if set.
 	CABundle string `json:"caBundle,omitempty"`
 
@@ -719,6 +720,7 @@ type ProviderSpec struct {
 
 	// MachineAnnotations set MachineDeployment.Spec.Template.Spec.ObjectMeta.Annotations
 	// as a way to annotate resulting Nodes
+	//
 	// Deprecated: Use NodeAnnotations instead.
 	MachineAnnotations map[string]string `json:"machineAnnotations,omitempty"`
 

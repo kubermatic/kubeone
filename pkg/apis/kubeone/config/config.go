@@ -17,6 +17,7 @@ limitations under the License.
 package config
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -107,7 +108,7 @@ func TFOutput(tfOutputPath string) ([]byte, error) {
 			return nil, fail.Runtime(err, "reading terraform output from stdin")
 		}
 	case isDir(tfOutputPath):
-		cmd := exec.Command("terraform", "output", "-json")
+		cmd := exec.CommandContext(context.TODO(), "terraform", "output", "-json")
 		cmd.Dir = tfOutputPath
 		if tfOutput, err = cmd.Output(); err != nil {
 			return nil, fail.Runtime(err, "reading terraform output")
