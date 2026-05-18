@@ -1,3 +1,17 @@
+# [v1.12.4](https://github.com/kubermatic/kubeone/releases/tag/v1.12.4) - 2026-05-18
+
+## Changelog since v1.12.3
+
+## Changes by Kind
+
+### Chore
+
+### Fixes of Bugs or Regressions
+
+- Update Operating System Manager v1.9.1 and fix Flatcar issue with readonly /etc/environment #4080
+- Update vulnerable golang.org/x/net and github.com/containerd/containerd #4079
+- Fix cluster-name in KubeVirt CCM args #3984
+
 # [v1.12.3](https://github.com/kubermatic/kubeone/releases/tag/v1.12.3) - 2026-01-22
 
 ## Changelog since v1.12.2
