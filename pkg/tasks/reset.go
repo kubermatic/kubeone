@@ -41,6 +41,11 @@ func RemoveLBServices(s *state.State) error {
 	lastErr = clientutil.CleanupLBs(s.Context, s.Logger, s.DynamicClient)
 	if lastErr != nil {
 		s.Logger.Warn("Unable to delete services of type load balancer.")
+		s.Logger.Infoln("Deleting ValidatingWebhookConfiguration to enable future Service creation...")
+		if err := clientutil.DeletePreventingWebhook(s.Context, s.DynamicClient,
+			"kubernetes-cluster-cleanup-"+strings.Join(clientutil.LBResources, "-")); err != nil {
+			s.Logger.Warn("Unable to delete ValidatingWebhookConfiguration.")
+		}
 
 		return lastErr
 	}
