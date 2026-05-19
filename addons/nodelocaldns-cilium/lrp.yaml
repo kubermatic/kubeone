@@ -11,7 +11,7 @@ spec:
   redirectBackend:
     localEndpointSelector:
       matchLabels:
-        k8s-app: node-local-dns
+        k8s-app: cilium-node-local-dns
     toPorts:
       - port: "53"
         name: dns

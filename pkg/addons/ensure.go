@@ -127,7 +127,9 @@ func collectAddons(s *state.State) []addonAction {
 		addonsToDeploy = append(addonsToDeploy, addonAction{
 			name: resources.AddonNodeLocalDNS,
 		})
-	} else if s.Cluster.ClusterNetwork.CNI.Cilium != nil && s.Cluster.ClusterNetwork.CNI.Cilium.EnableLocalRedirectPolicy {
+	}
+
+	if cil := s.Cluster.ClusterNetwork.CNI.Cilium; cil != nil && cil.EnableLocalRedirectPolicy {
 		addonsToDeploy = append(addonsToDeploy, addonAction{
 			name: resources.AddonNodeLocalDNSCilium,
 		})
@@ -177,15 +179,13 @@ func cleanupAddons(s *state.State) error {
 		}
 	}
 
-	// if Cilium is not enabled or EnableLocalRedirectPolicy is not enabled, make sure nodelocaldns-cilium is removed
-	if cil := s.Cluster.ClusterNetwork.CNI.Cilium; cil == nil || !cil.EnableLocalRedirectPolicy {
+	if s.Cluster.ClusterNetwork.CNI.Cilium == nil || !s.Cluster.ClusterNetwork.CNI.Cilium.EnableLocalRedirectPolicy {
 		if err := DeleteAddonByName(s, resources.AddonNodeLocalDNSCilium); err != nil {
 			return err
 		}
 	}
 
-	// if NodeLocalDNS is not enabled, make sure nodelocaldns is removed
-	if s.Cluster.Features.NodeLocalDNS != nil && !s.Cluster.Features.NodeLocalDNS.Deploy {
+	if s.Cluster.Features.NodeLocalDNS == nil || !s.Cluster.Features.NodeLocalDNS.Deploy {
 		if err := DeleteAddonByName(s, resources.AddonNodeLocalDNS); err != nil {
 			return err
 		}
