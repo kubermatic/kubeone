@@ -1001,8 +1001,8 @@ var (
 		},
 		"upgrade_cilium_containerd_external": &scenarioUpgrade{
 			Name:                 "upgrade_cilium_containerd_external",
-			HumanReadableName:    "Cluster Upgrading (External, Calico)",
-			ManifestTemplatePath: "testdata/containerd_cilium_external_v1beta2.yaml",
+			HumanReadableName:    "Cluster Upgrading (External, Cilium)",
+			ManifestTemplatePath: "testdata/containerd_cilium_external.yaml",
 		},
 		"kube_proxy_ipvs_external": &scenarioInstall{
 			Name:                 "kube_proxy_ipvs_external",

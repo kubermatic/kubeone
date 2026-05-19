@@ -5,6 +5,8 @@ versions:
   kubernetes: "{{ .VERSION }}"
 
 clusterNetwork:
+  kubeProxy:
+    skipInstallation: true
   cni:
     cilium:
       enableHubble: true
