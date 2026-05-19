@@ -29,7 +29,17 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+// LBResources is the list of resources blocked by the LB creation-preventing webhook.
+var LBResources = []string{"services"}
+
 func CleanupLBs(ctx context.Context, logger logrus.FieldLogger, c client.Client) error {
+	// Block service creation so gateway/other controllers can't recreate LB services
+	// while we're deleting them.
+	logger.Infoln("Creating ValidatingWebhookConfiguration to disable future Service creation...")
+	if err := creationPreventingWebhook(ctx, c, "", LBResources); err != nil {
+		return fail.KubeClient(err, "disabling future Service creation")
+	}
+
 	serviceList := &corev1.ServiceList{}
 	if err := c.List(ctx, serviceList); err != nil {
 		return fail.KubeClient(err, "listing services")
