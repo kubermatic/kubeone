@@ -177,8 +177,8 @@ func cleanupAddons(s *state.State) error {
 		}
 	}
 
-	// if EnableLocalRedirectPolicy is not enabled, make sure nodelocaldns-cilium is removed
-	if s.Cluster.ClusterNetwork.CNI.Cilium != nil && !s.Cluster.ClusterNetwork.CNI.Cilium.EnableLocalRedirectPolicy {
+	// if Cilium is not enabled or EnableLocalRedirectPolicy is not enabled, make sure nodelocaldns-cilium is removed
+	if cil := s.Cluster.ClusterNetwork.CNI.Cilium; cil == nil || !cil.EnableLocalRedirectPolicy {
 		if err := DeleteAddonByName(s, resources.AddonNodeLocalDNSCilium); err != nil {
 			return err
 		}

@@ -1646,6 +1646,52 @@ func TestValidateClusterNetworkConfig(t *testing.T) {
 			},
 			expectedError: true,
 		},
+		{
+			name: "valid cilium config",
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
+				KubeProxy: &kubeoneapi.KubeProxyConfig{
+					SkipInstallation: true,
+				},
+				PodSubnet:            "192.168.1.0/16",
+				ServiceSubnet:        "192.168.0.0/16",
+				IPFamily:             kubeoneapi.IPFamilyIPv4,
+				NodeCIDRMaskSizeIPv4: new(24),
+				CNI: &kubeoneapi.CNI{
+					Cilium: &kubeoneapi.CiliumSpec{
+						KubeProxyReplacement:      true,
+						EnableLocalRedirectPolicy: true,
+						EnableGatewayAPI:          true,
+					},
+				},
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
+			},
+			expectedError: false,
+		},
+		{
+			name: "cilium EnableGatewayAPI requires kubeProxyReplacement to be enabled",
+			clusterNetworkConfig: kubeoneapi.ClusterNetworkConfig{
+				KubeProxy: &kubeoneapi.KubeProxyConfig{
+					SkipInstallation: true,
+				},
+				PodSubnet:            "192.168.1.0/16",
+				ServiceSubnet:        "192.168.0.0/16",
+				IPFamily:             kubeoneapi.IPFamilyIPv4,
+				NodeCIDRMaskSizeIPv4: new(24),
+				CNI: &kubeoneapi.CNI{
+					Cilium: &kubeoneapi.CiliumSpec{
+						KubeProxyReplacement:      false,
+						EnableLocalRedirectPolicy: true,
+						EnableGatewayAPI:          true,
+					},
+				},
+			},
+			provider: kubeoneapi.CloudProviderSpec{
+				None: &kubeoneapi.NoneSpec{},
+			},
+			expectedError: true,
+		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
