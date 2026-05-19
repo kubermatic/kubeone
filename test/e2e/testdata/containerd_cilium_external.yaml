@@ -2,18 +2,18 @@ apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
 
 versions:
-  kubernetes: "{{ required ".VERSION is required" .VERSION }}"
-    
-containerRuntime:
-  containerd: {}
+  kubernetes: "{{ .VERSION }}"
 
 clusterNetwork:
   cni:
     cilium:
       enableHubble: true
+      kubeProxyReplacement: strict
+      enableLocalRedirectPolicy: true
 
-cloudProvider:
-  external: true
+features:
+  nodeLocalDNS:
+    deploy: false
 
 addons:
   enable: true
