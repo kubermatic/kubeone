@@ -20,6 +20,7 @@ import (
 	"testing"
 
 	"github.com/MakeNowJust/heredoc/v2"
+	"github.com/google/go-cmp/cmp"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 
@@ -3125,5 +3126,120 @@ func TestValidateAssetConfiguration(t *testing.T) {
 				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
 			}
 		})
+	}
+}
+
+func TestValidateCilium(t *testing.T) {
+	cilFld := field.NewPath("clusterNetwork", "cni", "cilium")
+
+	tests := []struct {
+		name    string
+		cilFld  *field.Path
+		cluster kubeoneapi.KubeOneCluster
+		want    error
+	}{
+		{
+			name:    "valid minimal config",
+			cilFld:  cilFld,
+			cluster: getCluster(withCiliumSpec(&kubeoneapi.CiliumSpec{})),
+			want:    field.ErrorList{}.ToAggregate(),
+		},
+		{
+			name:   "require kube-proxy replacement",
+			cilFld: cilFld,
+			cluster: getCluster(
+				withCiliumSpec(
+					&kubeoneapi.CiliumSpec{
+						KubeProxyReplacement: true,
+					},
+				),
+			),
+			want: field.ErrorList{
+				field.Invalid(
+					cilFld.Child("kubeProxyReplacement"),
+					true,
+					".cilium.kubeProxyReplacement cannot be set with kube-proxy enabled",
+				),
+			}.ToAggregate(),
+		},
+		{
+			name:   "require kube-proxy replacement for gatewayAPI",
+			cilFld: cilFld,
+			cluster: getCluster(
+				withCiliumSpec(
+					&kubeoneapi.CiliumSpec{
+						EnableGatewayAPI: true,
+					},
+				),
+			),
+			want: field.ErrorList{
+				field.Invalid(
+					cilFld.Child("enableGatewayAPI"),
+					true,
+					"enableGatewayAPI requires kubeProxyReplacement to be enabled",
+				),
+			}.ToAggregate(),
+		},
+		{
+			name:   "require EnableLocalRedirectPolicy to disable nodelocaldns and enable KubeProxyReplacement",
+			cilFld: cilFld,
+			cluster: getCluster(
+				withCiliumSpec(
+					&kubeoneapi.CiliumSpec{
+						EnableLocalRedirectPolicy: true,
+					},
+				),
+			),
+			want: field.ErrorList{
+				field.Invalid(
+					cilFld.Child("enableLocalRedirectPolicy"),
+					true,
+					"cannot be used together with features.nodeLocalDNS.deploy; disable nodeLocalDNS when using Cilium Local Redirect Policy",
+				),
+				field.Invalid(
+					cilFld.Child("enableLocalRedirectPolicy"),
+					true,
+					"enableLocalRedirectPolicy requires kubeProxyReplacement to be enabled",
+				),
+			}.ToAggregate(),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := ValidateCilium(tt.cluster.ClusterNetwork.CNI.Cilium, tt.cilFld, tt.cluster).ToAggregate()
+
+			if !cmp.Equal(got, tt.want) {
+				t.Errorf("ValidateCilium() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func getCluster(opts ...func(*kubeoneapi.KubeOneCluster)) kubeoneapi.KubeOneCluster {
+	cls := kubeoneapi.KubeOneCluster{
+		ClusterNetwork: kubeoneapi.ClusterNetworkConfig{
+			CNI: &kubeoneapi.CNI{},
+		},
+		Features: kubeoneapi.Features{
+			NodeLocalDNS: &kubeoneapi.NodeLocalDNS{
+				Deploy: true, // default value
+			},
+		},
+	}
+
+	for _, opt := range opts {
+		opt(&cls)
+	}
+
+	return cls
+}
+
+func withCiliumSpec(ciliumSpec *kubeoneapi.CiliumSpec) func(*kubeoneapi.KubeOneCluster) {
+	return func(cls *kubeoneapi.KubeOneCluster) {
+		if cls.ClusterNetwork.CNI == nil {
+			cls.ClusterNetwork.CNI = &kubeoneapi.CNI{}
+		}
+		cls.ClusterNetwork.CNI.Cilium = ciliumSpec
 	}
 }

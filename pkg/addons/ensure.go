@@ -69,6 +69,7 @@ var embeddedAddons = map[string]string{
 	resources.AddonMachineController:      "",
 	resources.AddonMetricsServer:          "",
 	resources.AddonNodeLocalDNS:           "",
+	resources.AddonNodeLocalDNSCilium:     "",
 	resources.AddonOperatingSystemManager: "",
 }
 
@@ -128,6 +129,12 @@ func collectAddons(s *state.State) []addonAction {
 		})
 	}
 
+	if cil := s.Cluster.ClusterNetwork.CNI.Cilium; cil != nil && cil.EnableLocalRedirectPolicy {
+		addonsToDeploy = append(addonsToDeploy, addonAction{
+			name: resources.AddonNodeLocalDNSCilium,
+		})
+	}
+
 	if s.Cluster.MachineController.Deploy {
 		addonsToDeploy = append(addonsToDeploy, addonAction{
 			name: resources.AddonMachineController,
@@ -168,6 +175,18 @@ func collectAddons(s *state.State) []addonAction {
 func cleanupAddons(s *state.State) error {
 	if !*s.Cluster.Features.CoreDNS.DeployPodDisruptionBudget {
 		if err := DeleteAddonByName(s, resources.AddonCoreDNSPDB); err != nil {
+			return err
+		}
+	}
+
+	if s.Cluster.ClusterNetwork.CNI.Cilium == nil || !s.Cluster.ClusterNetwork.CNI.Cilium.EnableLocalRedirectPolicy {
+		if err := DeleteAddonByName(s, resources.AddonNodeLocalDNSCilium); err != nil {
+			return err
+		}
+	}
+
+	if s.Cluster.Features.NodeLocalDNS == nil || !s.Cluster.Features.NodeLocalDNS.Deploy {
+		if err := DeleteAddonByName(s, resources.AddonNodeLocalDNS); err != nil {
 			return err
 		}
 	}

@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2026-04-03T16:57:31+03:00
+date = 2026-05-08T17:16:28+03:00
 weight = 11
 +++
 ## v1beta2
@@ -196,6 +196,7 @@ CiliumSpec defines the Cilium CNI plugin
 | enableHubble | EnableHubble to deploy Hubble relay and UI default value is false | bool | true |
 | enableL2Announcements | EnableL2Announcements enables the Layer 2 announcement feature for the Cilium CNI plugin. If not set, Cilium will use its default behavior. | bool | true |
 | enableGatewayAPI | EnableGatewayAPI enables the Gateway API feature for the Cilium CNI plugin. If not set, Cilium will use its default behavior. | bool | true |
+| enableLocalRedirectPolicy | EnableLocalRedirectPolicy enables the Cilium Local Redirect Policy for node-local DNS cache. When enabled, a Cilium-compatible node-local-dns DaemonSet and a CiliumLocalRedirectPolicy resource are deployed instead of the standard node-local-dns addon. Requires kubeProxyReplacement to be enabled. Mutually exclusive with features.nodeLocalDNS.deploy. | bool | true |
 
 [Back to Group](#v1beta2)
 

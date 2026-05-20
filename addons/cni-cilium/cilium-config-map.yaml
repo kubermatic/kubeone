@@ -62,12 +62,9 @@ data:
   enable-ipv6: "{{ .Config.ClusterNetwork.HasIPv6 }}"
   enable-k8s-networkpolicy: "true"
   enable-k8s-terminating-endpoint: "true"
-{{ if .Config.ClusterNetwork.CNI.Cilium.EnableL2Announcements }}
-  enable-l2-announcements: "true"
-{{ end }}
-{{ if .Config.ClusterNetwork.CNI.Cilium.EnableGatewayAPI }}
-  enable-gateway-api: "true"
-{{ end }}
+  enable-l2-announcements: "{{.Config.ClusterNetwork.CNI.Cilium.EnableL2Announcements }}"
+  enable-gateway-api: "{{ .Config.ClusterNetwork.CNI.Cilium.EnableGatewayAPI }}"
+  enable-local-redirect-policy: "{{ .Config.ClusterNetwork.CNI.Cilium.EnableLocalRedirectPolicy }}"
   enable-l2-neigh-discovery: "false"
   enable-l7-proxy: "true"
   enable-lb-ipam: "true"

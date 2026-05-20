@@ -1,0 +1,191 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    addonmanager.kubernetes.io/mode: Reconcile
+    kubernetes.io/cluster-service: "true"
+  name: cilium-node-local-dns
+  namespace: kube-system
+---
+apiVersion: v1
+data:
+  Corefile: |
+    {{ .Config.ClusterNetwork.ServiceDomainName }}:53 {
+        errors
+        cache {
+                success 9984 30
+                denial 9984 5
+        }
+        reload
+        loop
+        bind 0.0.0.0
+        forward . __PILLAR__CLUSTER__DNS__ {
+                force_tcp
+        }
+        prometheus :9253
+        health 0.0.0.0:8080
+        }
+    in-addr.arpa:53 {
+        errors
+        cache 30
+        reload
+        loop
+        bind 0.0.0.0
+        forward . __PILLAR__CLUSTER__DNS__ {
+                force_tcp
+        }
+        prometheus :9253
+        }
+    ip6.arpa:53 {
+        errors
+        cache 30
+        reload
+        loop
+        bind 0.0.0.0
+        forward . __PILLAR__CLUSTER__DNS__ {
+                force_tcp
+        }
+        prometheus :9253
+        }
+    .:53 {
+        errors
+        cache 30
+        reload
+        loop
+        bind 0.0.0.0
+        forward . __PILLAR__UPSTREAM__SERVERS__
+        prometheus :9253
+        }
+kind: ConfigMap
+metadata:
+  labels:
+    addonmanager.kubernetes.io/mode: Reconcile
+  name: cilium-node-local-dns
+  namespace: kube-system
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    addonmanager.kubernetes.io/mode: Reconcile
+    k8s-app: kube-dns
+    kubernetes.io/cluster-service: "true"
+    kubernetes.io/name: KubeDNSUpstream
+  name: cilium-kube-dns-upstream
+  namespace: kube-system
+spec:
+  ports:
+    - name: dns
+      port: 53
+      protocol: UDP
+      targetPort: 53
+    - name: dns-tcp
+      port: 53
+      protocol: TCP
+      targetPort: 53
+  selector:
+    k8s-app: kube-dns
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/port: "9253"
+    prometheus.io/scrape: "true"
+  labels:
+    k8s-app: node-local-dns
+  name: cilium-node-local-dns
+  namespace: kube-system
+spec:
+  clusterIP: None
+  ports:
+    - name: metrics
+      port: 9253
+      targetPort: 9253
+  selector:
+    k8s-app: node-local-dns
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    addonmanager.kubernetes.io/mode: Reconcile
+    k8s-app: node-local-dns
+    kubernetes.io/cluster-service: "true"
+  name: cilium-node-local-dns
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      k8s-app: node-local-dns
+  template:
+    metadata:
+      annotations:
+        policy.cilium.io/no-track-port: "53"
+        prometheus.io/port: "9253"
+        prometheus.io/scrape: "true"
+      labels:
+        k8s-app: node-local-dns
+    spec:
+      containers:
+        - args:
+            - -localip
+            - '{{ .Resources.CiliumNodeLocalDNSVirtualIP }}'
+            - -conf
+            - /etc/Corefile
+            - -upstreamsvc
+            - cilium-kube-dns-upstream
+            - -skipteardown=true
+            - -setupinterface=false
+            - -setupiptables=false
+          image: '{{ .InternalImages.Get "DNSNodeCache" }}'
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+          name: node-cache
+          ports:
+            - containerPort: 53
+              name: dns
+              protocol: UDP
+            - containerPort: 53
+              name: dns-tcp
+              protocol: TCP
+            - containerPort: 9253
+              name: metrics
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 25m
+              memory: 5Mi
+          volumeMounts:
+            - mountPath: /etc/coredns
+              name: config-volume
+            - mountPath: /etc/kube-dns
+              name: kube-dns-config
+      dnsPolicy: Default
+      priorityClassName: system-node-critical
+      serviceAccountName: cilium-node-local-dns
+      tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoExecute
+          operator: Exists
+        - effect: NoSchedule
+          operator: Exists
+      volumes:
+        - configMap:
+            name: kube-dns
+            optional: true
+          name: kube-dns-config
+        - configMap:
+            items:
+              - key: Corefile
+                path: Corefile.base
+            name: cilium-node-local-dns
+          name: config-volume
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 10%

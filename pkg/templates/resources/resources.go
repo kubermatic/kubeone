@@ -17,6 +17,8 @@ limitations under the License.
 package resources
 
 import (
+	"fmt"
+
 	"k8c.io/kubeone/pkg/certificate/cabundle"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -57,6 +59,7 @@ const (
 	AddonMachineController      = "machinecontroller"
 	AddonMetricsServer          = "metrics-server"
 	AddonNodeLocalDNS           = "nodelocaldns"
+	AddonNodeLocalDNSCilium     = "nodelocaldns-cilium"
 	AddonOperatingSystemManager = "operating-system-manager"
 	AddonBackupsRestic          = "backups-restic"
 )
@@ -131,6 +134,7 @@ func All() map[string]string {
 		"OperatingSystemManagerWebhookName": OperatingSystemManagerWebhookName,
 		"KubeletImageRepository":            KubeletImageRepository,
 		"NodeLocalDNSVirtualIP":             NodeLocalDNSVirtualIP,
+		"CiliumNodeLocalDNSVirtualIP":       fmt.Sprintf("%s,10.96.0.10", NodeLocalDNSVirtualIP),
 		"CABundleSSLCertFilePath":           cabundle.SSLCertFilePath,
 	}
 }
