@@ -41,11 +41,9 @@ var libraryTemplate = heredoc.Doc(`
 		cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
 		overlay
 		br_netfilter
-		ip_tables
 		EOF
 		sudo modprobe overlay
 		sudo modprobe br_netfilter
-		sudo modprobe ip_tables
 		if modinfo nf_conntrack_ipv4 &> /dev/null; then
 			sudo modprobe nf_conntrack_ipv4
 		else
