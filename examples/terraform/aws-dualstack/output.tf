@@ -96,6 +96,17 @@ output "kubeone_workers" {
           "k8c.io/operating-system-profile"                           = var.initial_machinedeployment_operating_system_profile
           "cluster.k8s.io/cluster-api-autoscaler-node-group-min-size" = tostring(local.cluster_autoscaler_min_replicas)
           "cluster.k8s.io/cluster-api-autoscaler-node-group-max-size" = tostring(local.cluster_autoscaler_max_replicas)
+          # annotations are applied on resulting MachineDeployment objects
+          # uncomment to following to set those kubelet parameters. More into at:
+          # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/SystemReserved"              = "cpu=200m,memory=200Mi"
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/KubeReserved"                = "cpu=200m,memory=300Mi"
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/EvictionHard"                = ""
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/MaxPods"                     = "110"
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageGCHighThresholdPercent" = "85"
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageGCLowThresholdPercent"  = "80"
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageMinimumGCAge"           = "2m"
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageMaximumGCAge"           = "0"
         }
         sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
@@ -109,19 +120,6 @@ output "kubeone_workers" {
         # nodeAnnotations are applied on resulting Node objects
         # nodeAnnotations = {
         #   "key" = "value"
-        # }
-        # machineObjectAnnotations are applied on resulting Machine objects
-        # uncomment to following to set those kubelet parameters. More into at:
-        # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
-        # machineObjectAnnotations = {
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/SystemReserved"              = "cpu=200m,memory=200Mi"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/KubeReserved"                = "cpu=200m,memory=300Mi"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/EvictionHard"                = ""
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/MaxPods"                     = "110"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageGCHighThresholdPercent" = "85"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageGCLowThresholdPercent"  = "80"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageMinimumGCAge"           = "2m"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageMaximumGCAge"           = "0"
         # }
         cloudProviderSpec = {
           # provider specific fields:
@@ -163,6 +161,17 @@ output "kubeone_workers" {
           "k8c.io/operating-system-profile"                           = var.initial_machinedeployment_operating_system_profile
           "cluster.k8s.io/cluster-api-autoscaler-node-group-min-size" = tostring(local.cluster_autoscaler_min_replicas)
           "cluster.k8s.io/cluster-api-autoscaler-node-group-max-size" = tostring(local.cluster_autoscaler_max_replicas)
+          # annotations are applied on resulting MachineDeployment objects
+          # uncomment to following to set those kubelet parameters. More into at:
+          # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/SystemReserved"              = "cpu=200m,memory=200Mi"
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/KubeReserved"                = "cpu=200m,memory=300Mi"
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/EvictionHard"                = ""
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/MaxPods"                     = "110"
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageGCHighThresholdPercent" = "85"
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageGCLowThresholdPercent"  = "80"
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageMinimumGCAge"           = "2m"
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageMaximumGCAge"           = "0"
         }
         sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
@@ -176,19 +185,6 @@ output "kubeone_workers" {
         # nodeAnnotations are applied on resulting Node objects
         # nodeAnnotations = {
         #   "key" = "value"
-        # }
-        # machineObjectAnnotations are applied on resulting Machine objects
-        # uncomment to following to set those kubelet parameters. More into at:
-        # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
-        # machineObjectAnnotations = {
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/SystemReserved"              = "cpu=200m,memory=200Mi"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/KubeReserved"                = "cpu=200m,memory=300Mi"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/EvictionHard"                = ""
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/MaxPods"                     = "110"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageGCHighThresholdPercent" = "85"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageGCLowThresholdPercent"  = "80"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageMinimumGCAge"           = "2m"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageMaximumGCAge"           = "0"
         # }
         cloudProviderSpec = {
           # provider specific fields:
@@ -230,6 +226,17 @@ output "kubeone_workers" {
           "k8c.io/operating-system-profile"                           = var.initial_machinedeployment_operating_system_profile
           "cluster.k8s.io/cluster-api-autoscaler-node-group-min-size" = tostring(local.cluster_autoscaler_min_replicas)
           "cluster.k8s.io/cluster-api-autoscaler-node-group-max-size" = tostring(local.cluster_autoscaler_max_replicas)
+          # annotations are applied on resulting MachineDeployment objects
+          # uncomment to following to set those kubelet parameters. More into at:
+          # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/SystemReserved"              = "cpu=200m,memory=200Mi"
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/KubeReserved"                = "cpu=200m,memory=300Mi"
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/EvictionHard"                = ""
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/MaxPods"                     = "110"
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageGCHighThresholdPercent" = "85"
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageGCLowThresholdPercent"  = "80"
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageMinimumGCAge"           = "2m"
+          #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageMaximumGCAge"           = "0"
         }
         sshPublicKeys   = local.worker_deploy_ssh_key
         operatingSystem = local.worker_os
@@ -243,19 +250,6 @@ output "kubeone_workers" {
         # nodeAnnotations are applied on resulting Node objects
         # nodeAnnotations = {
         #   "key" = "value"
-        # }
-        # machineObjectAnnotations are applied on resulting Machine objects
-        # uncomment to following to set those kubelet parameters. More into at:
-        # https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
-        # machineObjectAnnotations = {
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/SystemReserved"              = "cpu=200m,memory=200Mi"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/KubeReserved"                = "cpu=200m,memory=300Mi"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/EvictionHard"                = ""
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/MaxPods"                     = "110"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageGCHighThresholdPercent" = "85"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageGCLowThresholdPercent"  = "80"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageMinimumGCAge"           = "2m"
-        #   "v1.kubelet-config.machine-controller.kubermatic.io/ImageMaximumGCAge"           = "0"
         # }
         cloudProviderSpec = {
           # provider specific fields:

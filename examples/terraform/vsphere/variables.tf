@@ -265,7 +265,7 @@ variable "ip_family" {
 }
 
 variable "enable_disk_uuid" {
-  default = true
-  type = bool
+  default     = true
+  type        = bool
   description = "Expose the UUIDs of attached virtual disks to the virtual machine, allowing access to them in the guest"
 }
