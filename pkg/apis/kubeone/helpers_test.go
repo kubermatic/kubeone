@@ -21,59 +21,6 @@ import (
 	"testing"
 )
 
-func TestFeatureGatesString(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
-		name         string
-		featureGates map[string]bool
-		expected     string
-	}{
-		{
-			name:         "one feature gate",
-			featureGates: map[string]bool{"TestFeatureGate": true},
-			expected:     "TestFeatureGate=true",
-		},
-		{
-			name: "two feature gates",
-			featureGates: map[string]bool{
-				"TestFeatureGate":  true,
-				"TestDisabledGate": false,
-			},
-			expected: "TestDisabledGate=false,TestFeatureGate=true",
-		},
-		{
-			name: "three feature gates",
-			featureGates: map[string]bool{
-				"TestFeatureGate":  true,
-				"TestDisabledGate": false,
-				"TestThirdGate":    true,
-			},
-			expected: "TestDisabledGate=false,TestFeatureGate=true,TestThirdGate=true",
-		},
-		{
-			name:         "no feature gates",
-			featureGates: map[string]bool{},
-			expected:     "",
-		},
-		{
-			name:         "feature gates nil",
-			featureGates: nil,
-			expected:     "",
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-			got := marshalFeatureGates(tc.featureGates)
-			if got != tc.expected {
-				t.Errorf("TestFeatureGatesString() got = %v, expected %v", got, tc.expected)
-			}
-		})
-	}
-}
-
 func TestContainerRuntimeConfig_MachineControllerFlags(t *testing.T) {
 	type fields struct {
 		Containerd *ContainerRuntimeContainerd

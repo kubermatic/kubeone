@@ -26,7 +26,7 @@ import (
 
 var (
 	isV136Constraint = semverutil.MustParseConstraint(">= 1.36.0")
-	isV135Constraint = semverutil.MustParseConstraint(">= 1.35.0")
+	isV135Constraint = semverutil.MustParseConstraint(">= 1.35.0, < 1.36.0")
 )
 
 // DefaultAdmissionControllers return list of default admission controllers for given kubernetes version
