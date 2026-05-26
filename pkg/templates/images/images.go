@@ -245,9 +245,9 @@ func baseResources() map[Resource]map[string]string {
 func optionalResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
 		AwsCCM: {
-			"1.34.x":   "registry.k8s.io/provider-aws/cloud-controller-manager:v1.34.3",
-			"1.35.x":   "registry.k8s.io/provider-aws/cloud-controller-manager:v1.35.2",
-			">=1.36.x": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.36.0",
+			"1.34.x":   "registry.k8s.io/provider-aws/cloud-controller-manager:v1.34.0",
+			"1.35.x":   "registry.k8s.io/provider-aws/cloud-controller-manager:v1.35.0",
+			">=1.36.x": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.35.0",
 		},
 
 		CSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v8.1.1"},
@@ -323,7 +323,7 @@ func optionalResources() map[Resource]map[string]string {
 
 		// OpenStack CSI
 		OpenstackCSI: {
-			"1.34.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.34.3",
+			"1.34.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.34.1",
 			"1.35.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.35.0",
 			">= 1.36.x": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.36.0",
 		},
