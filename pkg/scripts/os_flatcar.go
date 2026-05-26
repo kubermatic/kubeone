@@ -156,19 +156,19 @@ func RemoveBinariesFlatcar() (string, error) {
 	return result, fail.Runtime(err, "rendering removeBinariesFlatcarScriptTemplate script")
 }
 
-func flatcarCNIVersion(kubeVersion string) string {
-	kubeSemVer := semver.MustParse(kubeVersion)
+func flatcarCNIVersion(_ string) string {
+	// kubeSemVer := semver.MustParse(kubeVersion)
 
-	switch kubeSemVer.Minor() {
-	case 34:
-		return "1.7.1"
-	case 35:
-		return "1.7.1"
-	case 36:
-		return "1.7.1"
-	default:
-		return "1.7.1"
-	}
+	// switch kubeSemVer.Minor() {
+	// case 34:
+	// 	return "1.7.1"
+	// case 35:
+	// 	return "1.7.1"
+	// case 36:
+	// 	return "1.7.1"
+	// default:
+	return "1.7.1"
+	// }
 }
 
 func criToolsVersion(kubeVersion string) string {
