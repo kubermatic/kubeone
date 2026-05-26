@@ -36,7 +36,10 @@ const (
 	credentialSecretName = "kube-system/kubeone-registry-credentials" //nolint:gosec
 )
 
-var postV133Constraint = semverutil.MustParseConstraint(">= 1.33")
+var (
+	postV133Constraint = semverutil.MustParseConstraint(">= 1.33")
+	postV136Constraint = semverutil.MustParseConstraint(">= 1.36")
+)
 
 // Leader returns the first configured host. Only call this after
 // validating the cluster config to ensure a leader exists.
@@ -235,6 +238,8 @@ func SandboxImage(version, registry string) (string, error) {
 	}
 
 	switch {
+	case postV136Constraint.Check(kubeSemVer):
+		return fmt.Sprintf("%s/pause:3.10.2", registry), nil
 	case postV133Constraint.Check(kubeSemVer):
 		return fmt.Sprintf("%s/pause:3.10.1", registry), nil
 	default:

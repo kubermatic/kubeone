@@ -349,14 +349,20 @@ func TestSandboxImage(t *testing.T) {
 		expectError bool
 	}{
 		{
+			name:     "version >= 1.36 returns pause:3.10.2",
+			version:  "v1.36.0",
+			registry: "my.registry",
+			want:     "my.registry/pause:3.10.2",
+		},
+		{
 			name:     "version >= 1.33 returns pause:3.10.1",
-			version:  "v1.33.0",
+			version:  "v1.34.0",
 			registry: "my.registry",
 			want:     "my.registry/pause:3.10.1",
 		},
 		{
-			name:     "version > 1.33 returns pause:3.10.1",
-			version:  "1.34.5",
+			name:     "version 1.35 returns pause:3.10.1",
+			version:  "1.35.5",
 			registry: "example.com",
 			want:     "example.com/pause:3.10.1",
 		},

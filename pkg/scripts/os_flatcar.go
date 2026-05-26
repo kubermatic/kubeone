@@ -160,11 +160,11 @@ func flatcarCNIVersion(kubeVersion string) string {
 	kubeSemVer := semver.MustParse(kubeVersion)
 
 	switch kubeSemVer.Minor() {
-	case 33:
-		return "1.6.0"
 	case 34:
 		return "1.7.1"
 	case 35:
+		return "1.7.1"
+	case 36:
 		return "1.7.1"
 	default:
 		return "1.7.1"
@@ -176,13 +176,13 @@ func criToolsVersion(kubeVersion string) string {
 	kubeSemVer := semver.MustParse(kubeVersion)
 
 	switch kubeSemVer.Minor() {
-	case 33:
-		return "1.33.0"
 	case 34:
 		return "1.34.0"
 	case 35:
 		return "1.35.0"
+	case 36:
+		return "1.36.0"
 	default:
-		return "1.35.0"
+		return "1.36.0"
 	}
 }

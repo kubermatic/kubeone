@@ -238,16 +238,16 @@ func baseResources() map[Resource]map[string]string {
 		Flannel:                {"*": "docker.io/flannel/flannel:v0.24.4"},
 		MachineController:      {"*": "quay.io/kubermatic/machine-controller:v1.65.0"},
 		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.8.1"},
-		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:732717073b6fa61d4bce5874070173489de06d48"},
+		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:b74cafebe2ff929ce3483fd4dde8405e188f2d03"},
 	}
 }
 
 func optionalResources() map[Resource]map[string]string {
 	return map[Resource]map[string]string{
 		AwsCCM: {
-			"1.33.x":   "registry.k8s.io/provider-aws/cloud-controller-manager:v1.33.2",
-			"1.34.x":   "registry.k8s.io/provider-aws/cloud-controller-manager:v1.34.0",
-			">=1.35.x": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.35.0",
+			"1.34.x":   "registry.k8s.io/provider-aws/cloud-controller-manager:v1.34.3",
+			"1.35.x":   "registry.k8s.io/provider-aws/cloud-controller-manager:v1.35.2",
+			">=1.36.x": "registry.k8s.io/provider-aws/cloud-controller-manager:v1.36.0",
 		},
 
 		CSISnapshotController: {"*": "registry.k8s.io/sig-storage/snapshot-controller:v8.1.1"},
@@ -264,14 +264,14 @@ func optionalResources() map[Resource]map[string]string {
 
 		// Azure CCM
 		AzureCCM: {
-			"1.33.x":    "mcr.microsoft.com/oss/v2/kubernetes/azure-cloud-controller-manager:v1.33.11",
-			"1.34.x":    "mcr.microsoft.com/oss/v2/kubernetes/azure-cloud-controller-manager:v1.34.8",
-			">= 1.35.x": "mcr.microsoft.com/oss/v2/kubernetes/azure-cloud-controller-manager:v1.35.3",
+			"1.34.x":    "mcr.microsoft.com/oss/v2/kubernetes/azure-cloud-controller-manager:v1.34.10",
+			"1.35.x":    "mcr.microsoft.com/oss/v2/kubernetes/azure-cloud-controller-manager:v1.35.5",
+			">= 1.36.x": "mcr.microsoft.com/oss/v2/kubernetes/azure-cloud-controller-manager:v1.36.1",
 		},
 		AzureCNM: {
-			"1.33.x":    "mcr.microsoft.com/oss/v2/kubernetes/azure-cloud-node-manager:v1.33.11",
-			"1.34.x":    "mcr.microsoft.com/oss/v2/kubernetes/azure-cloud-node-manager:v1.34.8",
-			">= 1.35.x": "mcr.microsoft.com/oss/v2/kubernetes/azure-cloud-node-manager:v1.35.3",
+			"1.34.x":    "mcr.microsoft.com/oss/v2/kubernetes/azure-cloud-node-manager:v1.34.10",
+			"1.35.x":    "mcr.microsoft.com/oss/v2/kubernetes/azure-cloud-node-manager:v1.35.5",
+			">= 1.36.x": "mcr.microsoft.com/oss/v2/kubernetes/azure-cloud-node-manager:v1.36.1",
 		},
 
 		// AzureFile CSI driver
@@ -316,16 +316,16 @@ func optionalResources() map[Resource]map[string]string {
 
 		// OpenStack CCM
 		OpenstackCCM: {
-			"1.33.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.33.1",
 			"1.34.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.34.1",
-			">= 1.35.x": "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.35.0",
+			"1.35.x":    "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.35.0",
+			">= 1.36.x": "registry.k8s.io/provider-os/openstack-cloud-controller-manager:v1.36.0",
 		},
 
 		// OpenStack CSI
 		OpenstackCSI: {
-			"1.33.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.33.1",
-			"1.34.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.34.1",
-			">= 1.35.x": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.35.0",
+			"1.34.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.34.3",
+			"1.35.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.35.0",
+			">= 1.36.x": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.36.0",
 		},
 		OpenstackCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.15.0"},
 		OpenstackCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.17.0"},
@@ -346,9 +346,9 @@ func optionalResources() map[Resource]map[string]string {
 
 		// vSphere CPI (A.K.A. CCM)
 		VsphereCCM: {
-			"1.33.x":    "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.33.0",
 			"1.34.x":    "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.34.0",
-			">= 1.35.x": "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.35.1",
+			"1.35.x":    "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.35.1",
+			">= 1.36.x": "registry.k8s.io/cloud-pv-vsphere/cloud-provider-vsphere:v1.36.0",
 		},
 
 		// vSphere CSI
@@ -404,9 +404,9 @@ func optionalResources() map[Resource]map[string]string {
 
 		// Cluster-autoscaler addon
 		ClusterAutoscaler: {
-			"1.33.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.33.4",
 			"1.34.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.34.3",
-			">= 1.35.x": "registry.k8s.io/autoscaling/cluster-autoscaler:v1.35.0",
+			"1.35.x":    "registry.k8s.io/autoscaling/cluster-autoscaler:v1.35.0",
+			">= 1.36.x": "registry.k8s.io/autoscaling/cluster-autoscaler:v1.35.0",
 		},
 
 		// CSI Vault Secret Provider
