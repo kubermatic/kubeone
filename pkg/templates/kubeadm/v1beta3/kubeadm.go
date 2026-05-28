@@ -89,8 +89,6 @@ type Config struct {
 }
 
 // NewConfig returns all required configs to init a cluster via a set of v1beta3 configs
-//
-//nolint:gocyclo
 func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 	cluster := s.Cluster
 	kubeSemVer, err := semver.NewVersion(cluster.Versions.Kubernetes)
@@ -244,75 +242,10 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 		},
 	}
 
-	if s.ShouldEnableInTreeCloudProvider() {
-		renderedCloudConfig := "/etc/kubernetes/cloud-config"
-		cloudConfigVol := kubeadmv1beta3.HostPathMount{
-			Name:      "cloud-config",
-			HostPath:  renderedCloudConfig,
-			MountPath: renderedCloudConfig,
-			ReadOnly:  true,
-			PathType:  corev1.HostPathFile,
-		}
-		provider := cluster.CloudProvider.CloudProviderName()
-
-		clusterConfig.APIServer.ExtraArgs["cloud-provider"] = provider
-		clusterConfig.APIServer.ExtraArgs["cloud-config"] = renderedCloudConfig
-		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, cloudConfigVol)
-
-		clusterConfig.ControllerManager.ExtraArgs["cloud-provider"] = provider
-		clusterConfig.ControllerManager.ExtraArgs["cloud-config"] = renderedCloudConfig
-		clusterConfig.ControllerManager.ExtraArgs["cluster-name"] = s.Cluster.Name
-		clusterConfig.ControllerManager.ExtraVolumes = append(clusterConfig.ControllerManager.ExtraVolumes, cloudConfigVol)
-
-		nodeRegistration.KubeletExtraArgs["cloud-provider"] = provider
-		nodeRegistration.KubeletExtraArgs["cloud-config"] = renderedCloudConfig
-
-		switch {
-		case cluster.CloudProvider.Azure != nil:
-			clusterConfig.ControllerManager.ExtraArgs["configure-cloud-routes"] = "false"
-		case cluster.CloudProvider.AWS != nil:
-			clusterConfig.ControllerManager.ExtraArgs["configure-cloud-routes"] = "false"
-		}
-	}
-
-	var (
-		kubeletFeatureGates map[string]bool
-		featureGatesFlag    string
-	)
+	var kubeletFeatureGates map[string]bool
 
 	if cluster.CloudProvider.External {
-		if !s.ShouldEnableInTreeCloudProvider() {
-			delete(clusterConfig.APIServer.ExtraArgs, "cloud-provider")
-			delete(clusterConfig.ControllerManager.ExtraArgs, "cloud-provider")
-			nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
-		} else {
-			// .cloudProvider.external enabled, but in-tree cloud provider should be enabled
-			// means that we're in the CCM migration process.
-			// In that case, we should leave cloud-provider flags in place, but explicitly
-			// disable CCM-related controllers.
-			clusterConfig.ControllerManager.ExtraArgs["controllers"] = "*,bootstrapsigner,tokencleaner,-cloud-node-lifecycle,-route,-service"
-		}
-
-		if s.ShouldEnableCSIMigration() {
-			kubeletFeatureGates, featureGatesFlag, err = s.Cluster.CSIMigrationFeatureGates(s.ShouldUnregisterInTreeCloudProvider())
-			if err != nil {
-				return nil, err
-			}
-
-			// Kubernetes API server
-			if fg, ok := clusterConfig.APIServer.ExtraArgs["feature-gates"]; ok && len(fg) > 0 {
-				clusterConfig.APIServer.ExtraArgs["feature-gates"] = fmt.Sprintf("%s,%s", clusterConfig.APIServer.ExtraArgs["feature-gates"], featureGatesFlag)
-			} else {
-				clusterConfig.APIServer.ExtraArgs["feature-gates"] = featureGatesFlag
-			}
-
-			// Kubernetes Controller Manager
-			if fg, ok := clusterConfig.ControllerManager.ExtraArgs["feature-gates"]; ok && len(fg) > 0 {
-				clusterConfig.ControllerManager.ExtraArgs["feature-gates"] = fmt.Sprintf("%s,%s", clusterConfig.ControllerManager.ExtraArgs["feature-gates"], featureGatesFlag)
-			} else {
-				clusterConfig.ControllerManager.ExtraArgs["feature-gates"] = featureGatesFlag
-			}
-		}
+		nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
 	}
 
 	// StaticAuditLog and WebhookAuditLog both share the audit-conf volume and since both
@@ -508,17 +441,8 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) (*Config, error
 		},
 	}
 
-	if s.ShouldEnableInTreeCloudProvider() {
-		renderedCloudConfig := "/etc/kubernetes/cloud-config"
-
-		nodeRegistration.KubeletExtraArgs["cloud-provider"] = cluster.CloudProvider.CloudProviderName()
-		nodeRegistration.KubeletExtraArgs["cloud-config"] = renderedCloudConfig
-	}
-
 	if cluster.CloudProvider.External {
-		if !s.ShouldEnableInTreeCloudProvider() {
-			nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
-		}
+		nodeRegistration.KubeletExtraArgs["cloud-provider"] = "external"
 	}
 
 	joinConfig.NodeRegistration = nodeRegistration

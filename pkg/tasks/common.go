@@ -28,9 +28,6 @@ import (
 	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
-
-	kubeletconfigv1beta1 "k8s.io/kubelet/config/v1beta1"
-	"sigs.k8s.io/yaml"
 )
 
 const (
@@ -118,23 +115,4 @@ func marshalKubeletFlags(kubeletflags map[string]string) []byte {
 	sort.Strings(kvpairs)
 
 	return fmt.Appendf(nil, `%s="%s"`, kubeletKubeadmArgsEnv, strings.Join(kvpairs, " "))
-}
-
-func unmarshalKubeletConfig(configBytes []byte) (*kubeletconfigv1beta1.KubeletConfiguration, error) {
-	var config kubeletconfigv1beta1.KubeletConfiguration
-	err := yaml.Unmarshal(configBytes, &config)
-	if err != nil {
-		return nil, fail.Runtime(err, "unmarshalling %T", config)
-	}
-
-	return &config, nil
-}
-
-func marshalKubeletConfig(config *kubeletconfigv1beta1.KubeletConfiguration) ([]byte, error) {
-	encodedCfg, err := yaml.Marshal(config)
-	if err != nil {
-		return nil, fail.Runtime(err, "marshalling %T", config)
-	}
-
-	return encodedCfg, nil
 }

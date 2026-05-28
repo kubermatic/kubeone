@@ -285,47 +285,6 @@ func (p CloudProviderSpec) MachineControllerCloudProvider() string {
 	}
 }
 
-// CloudProviderInTree detects is there in-tree cloud provider implementation for specified provider.
-// List of in-tree provider can be found here: https://github.com/kubernetes/kubernetes/tree/master/pkg/cloudprovider
-func (p CloudProviderSpec) CloudProviderInTree() bool {
-	switch {
-	case p.AWS != nil:
-	case p.Azure != nil:
-	case p.GCE != nil:
-	case p.Openstack != nil:
-	case p.Vsphere != nil:
-	default:
-		return false
-	}
-
-	return !p.External
-}
-
-// OriginalInTreeCloudProvider indicates if configured cloud provider originally been an in-tree provider.
-func (p CloudProviderSpec) OriginalInTreeCloudProvider() bool {
-	switch {
-	case p.AWS != nil:
-	case p.Azure != nil:
-	case p.GCE != nil:
-	case p.Openstack != nil:
-	case p.Vsphere != nil:
-	default:
-		return false
-	}
-
-	return true
-}
-
-// CSIMigrationSupported always returns false
-func (c KubeOneCluster) CSIMigrationSupported() bool {
-	return false
-}
-
-// CSIMigrationFeatureGates statically return empty map
-func (c KubeOneCluster) CSIMigrationFeatureGates(bool) (map[string]bool, string, error) {
-	return map[string]bool{}, "", nil
-}
-
 // ImageRegistry returns the image registry to use or the passed in
 // default if no override is specified
 func (r *RegistryConfiguration) ImageRegistry(defaultRegistry string) string {
