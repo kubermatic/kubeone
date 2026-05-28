@@ -457,9 +457,6 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 		addonsToDeploy = append(addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIVsphere,
-				supportFn: func() error {
-					return removeCSIVsphereFromKubeSystem(s)
-				},
 			},
 		)
 	default:
