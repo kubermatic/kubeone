@@ -88,9 +88,6 @@ spec:
             {{ if .Config.CloudProvider.External -}}
             - -node-external-cloud-provider
             {{ end -}}
-            {{ if .CSIMigrationFeatureGates -}}
-            - -node-kubelet-feature-gates={{ .CSIMigrationFeatureGates }}
-            {{ end -}}
             {{ if CABundle -}}
             - -ca-bundle={{ .Resources.CABundleSSLCertFilePath }}
             {{ end -}}

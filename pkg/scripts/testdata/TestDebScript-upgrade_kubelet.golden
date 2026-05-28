@@ -114,7 +114,7 @@ address = "127.0.0.1:1338"
 [plugins."io.containerd.cri.v1.images"]
 discard_unpacked_layers = false
 [plugins."io.containerd.cri.v1.images".pinned_images]
-sandbox = "registry.k8s.io/pause:3.10"
+sandbox = "registry.k8s.io/pause:3.10.1"
 [plugins."io.containerd.cri.v1.images".registry]
 config_path = "/etc/containerd/certs.d"
 [plugins."io.containerd.cri.v1.runtime"]

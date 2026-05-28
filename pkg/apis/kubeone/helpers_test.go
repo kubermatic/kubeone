@@ -21,59 +21,6 @@ import (
 	"testing"
 )
 
-func TestFeatureGatesString(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
-		name         string
-		featureGates map[string]bool
-		expected     string
-	}{
-		{
-			name:         "one feature gate",
-			featureGates: map[string]bool{"TestFeatureGate": true},
-			expected:     "TestFeatureGate=true",
-		},
-		{
-			name: "two feature gates",
-			featureGates: map[string]bool{
-				"TestFeatureGate":  true,
-				"TestDisabledGate": false,
-			},
-			expected: "TestDisabledGate=false,TestFeatureGate=true",
-		},
-		{
-			name: "three feature gates",
-			featureGates: map[string]bool{
-				"TestFeatureGate":  true,
-				"TestDisabledGate": false,
-				"TestThirdGate":    true,
-			},
-			expected: "TestDisabledGate=false,TestFeatureGate=true,TestThirdGate=true",
-		},
-		{
-			name:         "no feature gates",
-			featureGates: map[string]bool{},
-			expected:     "",
-		},
-		{
-			name:         "feature gates nil",
-			featureGates: nil,
-			expected:     "",
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-			got := marshalFeatureGates(tc.featureGates)
-			if got != tc.expected {
-				t.Errorf("TestFeatureGatesString() got = %v, expected %v", got, tc.expected)
-			}
-		})
-	}
-}
-
 func TestContainerRuntimeConfig_MachineControllerFlags(t *testing.T) {
 	type fields struct {
 		Containerd *ContainerRuntimeContainerd
@@ -339,8 +286,6 @@ func TestAddons_Enabled(t *testing.T) {
 }
 
 func TestSandboxImage(t *testing.T) {
-	t.Parallel()
-
 	tests := []struct {
 		name        string
 		version     string
@@ -349,22 +294,22 @@ func TestSandboxImage(t *testing.T) {
 		expectError bool
 	}{
 		{
+			name:     "version >= 1.36 returns pause:3.10.2",
+			version:  "v1.36.0",
+			registry: "my.registry",
+			want:     "my.registry/pause:3.10.2",
+		},
+		{
 			name:     "version >= 1.33 returns pause:3.10.1",
-			version:  "v1.33.0",
+			version:  "v1.34.0",
 			registry: "my.registry",
 			want:     "my.registry/pause:3.10.1",
 		},
 		{
-			name:     "version > 1.33 returns pause:3.10.1",
-			version:  "1.34.5",
+			name:     "version 1.35 returns pause:3.10.1",
+			version:  "1.35.5",
 			registry: "example.com",
 			want:     "example.com/pause:3.10.1",
-		},
-		{
-			name:     "version < 1.33 returns pause:3.10",
-			version:  "1.32.9",
-			registry: "registry.local",
-			want:     "registry.local/pause:3.10",
 		},
 		{
 			name:        "invalid version returns error",
@@ -376,8 +321,6 @@ func TestSandboxImage(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
 			got, err := SandboxImage(tc.version, tc.registry)
 
 			if tc.expectError {

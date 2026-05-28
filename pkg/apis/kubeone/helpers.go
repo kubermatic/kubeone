@@ -36,7 +36,7 @@ const (
 	credentialSecretName = "kube-system/kubeone-registry-credentials" //nolint:gosec
 )
 
-var postV133Constraint = semverutil.MustParseConstraint(">= 1.33")
+var postV136Constraint = semverutil.MustParseConstraint(">= 1.36")
 
 // Leader returns the first configured host. Only call this after
 // validating the cluster config to ensure a leader exists.
@@ -235,10 +235,10 @@ func SandboxImage(version, registry string) (string, error) {
 	}
 
 	switch {
-	case postV133Constraint.Check(kubeSemVer):
-		return fmt.Sprintf("%s/pause:3.10.1", registry), nil
+	case postV136Constraint.Check(kubeSemVer):
+		return fmt.Sprintf("%s/pause:3.10.2", registry), nil
 	default:
-		return fmt.Sprintf("%s/pause:3.10", registry), nil
+		return fmt.Sprintf("%s/pause:3.10.1", registry), nil
 	}
 }
 
@@ -283,106 +283,6 @@ func (p CloudProviderSpec) MachineControllerCloudProvider() string {
 	default:
 		return p.CloudProviderName()
 	}
-}
-
-// CloudProviderInTree detects is there in-tree cloud provider implementation for specified provider.
-// List of in-tree provider can be found here: https://github.com/kubernetes/kubernetes/tree/master/pkg/cloudprovider
-func (p CloudProviderSpec) CloudProviderInTree() bool {
-	switch {
-	case p.AWS != nil:
-	case p.Azure != nil:
-	case p.GCE != nil:
-	case p.Openstack != nil:
-	case p.Vsphere != nil:
-	default:
-		return false
-	}
-
-	return !p.External
-}
-
-// OriginalInTreeCloudProvider indicates if configured cloud provider originally been an in-tree provider.
-func (p CloudProviderSpec) OriginalInTreeCloudProvider() bool {
-	switch {
-	case p.AWS != nil:
-	case p.Azure != nil:
-	case p.GCE != nil:
-	case p.Openstack != nil:
-	case p.Vsphere != nil:
-	default:
-		return false
-	}
-
-	return true
-}
-
-// CSIMigrationSupported returns if CSI migration is supported for the specified provider.
-// NB: The CSI migration can be supported only if KubeOne supports CSI plugin and driver
-// for the provider
-func (c KubeOneCluster) CSIMigrationSupported() bool {
-	if !c.CloudProvider.External {
-		return false
-	}
-
-	_, err := c.csiMigrationFeatureGates(false)
-
-	return err == nil
-}
-
-func (c KubeOneCluster) csiMigrationFeatureGates(complete bool) (map[string]bool, error) {
-	switch {
-	case c.CloudProvider.AWS != nil:
-	case c.CloudProvider.Azure != nil:
-	case c.CloudProvider.GCE != nil:
-	case c.CloudProvider.Openstack != nil:
-	case c.CloudProvider.Vsphere != nil:
-	default:
-		return nil, fail.ConfigValidation(fmt.Errorf("csi migration is not supported for selected provider"))
-	}
-
-	featureGates := map[string]bool{}
-
-	if complete && c.canHaveCloudProviderFeatureGates() {
-		featureGates["DisableCloudProviders"] = true
-	}
-
-	return featureGates, nil
-}
-
-// CSIMigrationFeatureGates returns CSI migration feature gates in form of a map
-// (to be used with Kubelet config) and string (to be used with kube-apiserver
-// and kube-controller-manager)
-// NB: We're intentionally not enabling CSIMigration feature gate because it's
-// enabled by default since Kubernetes 1.18
-// (https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/)
-// This is a KubeOneCluster function because feature gates are Kubernetes-version dependent.
-func (c KubeOneCluster) CSIMigrationFeatureGates(complete bool) (map[string]bool, string, error) {
-	featureGates, err := c.csiMigrationFeatureGates(complete)
-	if err != nil {
-		return nil, "", err
-	}
-
-	return featureGates, marshalFeatureGates(featureGates), nil
-}
-
-// canHaveCloudProviderFeatureGates returns boolean value to decide whether cloud provider feature gate
-// should be added to kubelet configs
-// for kubernetes 1.33+ we need to skip setting this feature gate because it was removed
-func (c KubeOneCluster) canHaveCloudProviderFeatureGates() bool {
-	currentVersion := semver.MustParse(c.Versions.Kubernetes)
-
-	return !postV133Constraint.Check(currentVersion)
-}
-
-func marshalFeatureGates(fgm map[string]bool) string {
-	keys := []string{}
-	for k, v := range fgm {
-		keys = append(keys, fmt.Sprintf("%s=%t", k, v))
-	}
-
-	sort.Strings(keys)
-
-	return strings.Join(keys, ",")
 }
 
 // ImageRegistry returns the image registry to use or the passed in

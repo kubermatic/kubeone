@@ -300,10 +300,6 @@ func migratePacketToEquinixCCM(s *state.State) error {
 	return DeleteAddonByName(s, resources.AddonCCMPacket)
 }
 
-func removeCSIVsphereFromKubeSystem(s *state.State) error {
-	return DeleteAddonByName(s, resources.AddonCSIVsphereKubeSystem)
-}
-
 func migrateMetricsServer(state *state.State) error {
 	return migrateDeploymentIfPodSelectorDifferent(state,
 		client.ObjectKey{

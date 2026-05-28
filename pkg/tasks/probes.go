@@ -51,13 +51,8 @@ const (
 
 	kubeletInitializedCMD = `test -f /etc/kubernetes/kubelet.conf`
 
-	k8sAppLabel = "k8s-app"
-
-	awsCCMAppLabelValue       = "aws-cloud-controller-manager"
-	azureCCMAppLabelValue     = "azure-cloud-controller-manager"
-	gceCCMAppLabelValue       = "gce-cloud-controller-manager"
+	k8sAppLabel               = "k8s-app"
 	openstackCCMAppLabelValue = "openstack-cloud-controller-manager"
-	vsphereCCMAppLabelValue   = "vsphere-cloud-controller-manager"
 
 	nodeRoleMaster = "node-role.kubernetes.io/master"
 
@@ -128,28 +123,6 @@ func safeguard(s *state.State) error {
 					errMsg,
 				),
 				Op: "container runtime",
-			}
-		}
-	}
-
-	// Block kubeone apply if .cloudProvider.external is enabled on cluster with
-	// in-tree cloud provider, but with no external CCM
-	st := s.LiveCluster.CCMStatus
-	if st != nil {
-		if s.Cluster.CloudProvider.External {
-			if st.InTreeCloudProviderEnabled && !st.ExternalCCMDeployed {
-				return fail.RuntimeError{
-					Err: errors.New("cluster is using in-tree provider. run ccm/csi migration by running 'kubeone migrate to-ccm-csi'"),
-					Op:  ".cloudProvider.external is enabled",
-				}
-			}
-		} else {
-			if st.ExternalCCMDeployed {
-				// Block disabling .cloudProvider.external
-				return fail.RuntimeError{
-					Err: errors.New("external ccm is deployed"),
-					Op:  ".cloudProvider.external is disabled",
-				}
 			}
 		}
 	}
@@ -617,16 +590,6 @@ func investigateCluster(s *state.State) error {
 		}
 	}
 
-	ccmStatus, err := detectCCMMigrationStatus(s)
-	if err != nil {
-		return err
-	}
-	if ccmStatus != nil {
-		s.LiveCluster.Lock.Lock()
-		s.LiveCluster.CCMStatus = ccmStatus
-		s.LiveCluster.Lock.Unlock()
-	}
-
 	return nil
 }
 
@@ -804,94 +767,6 @@ func detectEncryptionProvidersEnabled(s *state.State) (ees encryptionEnabledStat
 	return ees, nil
 }
 
-func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
-	if s.DynamicClient == nil {
-		return nil, fail.NoKubeClient()
-	}
-
-	pods := corev1.PodList{}
-	err := s.DynamicClient.List(s.Context, &pods, &dynclient.ListOptions{
-		Namespace: metav1.NamespaceSystem,
-		LabelSelector: labels.SelectorFromSet(map[string]string{
-			"component": "kube-controller-manager",
-		}),
-	})
-	if err != nil {
-		return nil, fail.KubeClient(err, "listing kube-controller-manager pods")
-	}
-
-	status := &state.CCMStatus{
-		// permanently enable CSIMigrationEnabled for all former in-tree providers since now all the providers are
-		// extrnal
-		CSIMigrationEnabled: s.Cluster.CloudProvider.OriginalInTreeCloudProvider(),
-	}
-
-	for _, pod := range pods.Items {
-		for _, command := range pod.Spec.Containers[0].Command {
-			switch {
-			case strings.HasPrefix(command, "--cloud-provider") && !strings.Contains(command, "external"):
-				status.InTreeCloudProviderEnabled = true
-			case strings.HasPrefix(command, "--feature-gates"):
-				csiFeatureGates, _, _ := s.Cluster.CSIMigrationFeatureGates(true)
-				unregistered := []string{}
-
-				for fg := range csiFeatureGates {
-					if strings.Contains(fg, "Unregister") || strings.Contains(fg, "DisableCloudProviders") {
-						unregistered = append(unregistered, fg)
-					}
-				}
-
-				foundUnregister := 0
-				for _, fg := range unregistered {
-					if strings.Contains(command, fmt.Sprintf("%s=true", fg)) {
-						foundUnregister++
-					}
-				}
-
-				if len(unregistered) > 0 && foundUnregister == len(unregistered) {
-					status.InTreeCloudProviderUnregistered = true
-				}
-			}
-		}
-	}
-
-	ccmLabel := k8sAppLabel
-	var ccmLabelValue string
-
-	switch {
-	case s.Cluster.CloudProvider.Azure != nil:
-		ccmLabelValue = azureCCMAppLabelValue
-	case s.Cluster.CloudProvider.AWS != nil:
-		ccmLabelValue = awsCCMAppLabelValue
-	case s.Cluster.CloudProvider.GCE != nil:
-		ccmLabelValue = gceCCMAppLabelValue
-	case s.Cluster.CloudProvider.Openstack != nil:
-		ccmLabelValue = openstackCCMAppLabelValue
-	case s.Cluster.CloudProvider.Vsphere != nil:
-		ccmLabelValue = vsphereCCMAppLabelValue
-	default:
-		status.ExternalCCMDeployed = false
-
-		return status, nil
-	}
-
-	pods = corev1.PodList{}
-	err = s.DynamicClient.List(s.Context, &pods, &dynclient.ListOptions{
-		Namespace: metav1.NamespaceSystem,
-		LabelSelector: labels.SelectorFromSet(map[string]string{
-			ccmLabel: ccmLabelValue,
-		}),
-	})
-	if err != nil {
-		return nil, fail.KubeClient(err, "listing CCM pods")
-	}
-	if len(pods.Items) > 0 {
-		status.ExternalCCMDeployed = true
-	}
-
-	return status, nil
-}
-
 // detectClusterName is used to detect the value that should be passed to the
 // external CCM via the --cluster-name flag.
 //
@@ -924,13 +799,7 @@ func detectCCMMigrationStatus(s *state.State) (*state.CCMStatus, error) {
 // CCM, they need to edit the CCM DaemonSet manually. KubeOne will
 // automatically pick up the provided value when reconciling the cluster.
 func detectClusterName(s *state.State) (string, error) {
-	if !s.LiveCluster.IsProvisioned() ||
-		s.LiveCluster.CCMStatus == nil ||
-		s.Cluster.CloudProvider.Openstack == nil {
-		return s.Cluster.Name, nil
-	}
-
-	if s.LiveCluster.CCMStatus.InTreeCloudProviderEnabled && !s.LiveCluster.CCMStatus.ExternalCCMDeployed {
+	if !s.LiveCluster.IsProvisioned() || s.Cluster.CloudProvider.Openstack == nil {
 		return s.Cluster.Name, nil
 	}
 

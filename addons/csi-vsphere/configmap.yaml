@@ -5,6 +5,6 @@ metadata:
   name: internal-feature-states.csi.vsphere.vmware.com
   namespace: vmware-system-csi
 data:
-  "csi-migration": "{{ .CSIMigration }}"
+  "csi-migration": "true"
   "trigger-csi-fullsync": "false"
   "pv-to-backingdiskobjectid-mapping": "false"

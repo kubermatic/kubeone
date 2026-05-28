@@ -45,8 +45,7 @@ import (
 )
 
 const (
-	webhookCertsCSI          = "CSI"
-	webhookCertsCSIMigration = "CSIMigration"
+	webhookCertsCSI = "CSI"
 )
 
 var (
@@ -76,8 +75,6 @@ type templateData struct {
 	CredentialsCCM                           map[string]string
 	CredentialsCCMHash                       string
 	CCMClusterName                           string
-	CSIMigration                             bool
-	CSIMigrationFeatureGates                 string
 	CalicoIptablesBackend                    string
 	DeployCSIAddon                           bool
 	SnapshotterWebhookFailurePolicy          string
@@ -121,22 +118,6 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	kubeCAPrivateKey, kubeCACert, err := certificate.CAKeyPair(s.Configuration)
 	if err != nil {
 		return nil, err
-	}
-
-	// We want this to be true in two cases:
-	// 	* if the CSI migration is already enabled
-	//	* if we are starting the CCM/CSI migration process
-	csiMigration := s.CCMMigration
-	if !csiMigration && s.LiveCluster != nil && s.LiveCluster.CCMStatus != nil {
-		csiMigration = s.LiveCluster.CCMStatus.CSIMigrationEnabled
-	}
-
-	// We're intentionally ignoring the error here. If the provider is not supported
-	// the function will return an empty string (""), which we can easily detect in
-	// the templates
-	csiMigrationFeatureGates := ""
-	if s.ShouldEnableCSIMigration() {
-		_, csiMigrationFeatureGates, _ = s.Cluster.CSIMigrationFeatureGates(s.ShouldUnregisterInTreeCloudProvider())
 	}
 
 	// Certs for machine-controller-webhook
@@ -198,8 +179,6 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		CredentialsCCM:                      credsCCM,
 		CredentialsCCMHash:                  credsCCMHash,
 		CCMClusterName:                      s.LiveCluster.CCMClusterName,
-		CSIMigration:                        csiMigration,
-		CSIMigrationFeatureGates:            csiMigrationFeatureGates,
 		CalicoIptablesBackend:               calicoIptablesBackend,
 		DeployCSIAddon:                      deployCSI,
 		SnapshotterWebhookFailurePolicy:     "Fail",
@@ -219,7 +198,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		data.SnapshotterWebhookFailurePolicy = "Ignore"
 	}
 
-	if err := csiWebhookCerts(s, &data, csiMigration, kubeCAPrivateKey, kubeCACert); err != nil {
+	if err := csiWebhookCerts(s, &data, kubeCAPrivateKey, kubeCACert); err != nil {
 		return nil, err
 	}
 
@@ -263,38 +242,12 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	}, nil
 }
 
-func csiWebhookCerts(s *state.State, data *templateData, csiMigration bool, kubeCAPrivateKey crypto.Signer, kubeCACert *x509.Certificate) error {
-	webhookName := resources.GenericCSIWebhookName
-	webhookNamespace := resources.GenericCSIWebhookNamespace
-	certNamePrefix := webhookCertsCSI
-
-	// Certs for vsphere-csi-webhook (deployed only if CSIMigration is enabled)
-	if s.Cluster.CloudProvider.Vsphere != nil {
-		if err := webhookCerts(data.Certificates,
-			webhookCertsCSI,
-			webhookName,
-			webhookNamespace,
-			s.Cluster.ClusterNetwork.ServiceDomainName,
-			kubeCAPrivateKey,
-			kubeCACert,
-		); err != nil {
-			return err
-		}
-
-		certNamePrefix = webhookCertsCSIMigration
-		webhookName = resources.VsphereCSIWebhookName
-		webhookNamespace = resources.VsphereCSIWebhookNamespace
-
-		if !csiMigration {
-			return nil
-		}
-	}
-
+func csiWebhookCerts(s *state.State, data *templateData, kubeCAPrivateKey crypto.Signer, kubeCACert *x509.Certificate) error {
 	return webhookCerts(
 		data.Certificates,
-		certNamePrefix,
-		webhookName,
-		webhookNamespace,
+		webhookCertsCSI,
+		resources.GenericCSIWebhookName,
+		resources.GenericCSIWebhookNamespace,
 		s.Cluster.ClusterNetwork.ServiceDomainName,
 		kubeCAPrivateKey,
 		kubeCACert,

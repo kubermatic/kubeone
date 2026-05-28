@@ -56,7 +56,7 @@ sudo mkdir -p /opt/bin /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifest
 curl -L "https://github.com/containernetworking/plugins/releases/download/v1.7.1/cni-plugins-linux-${HOST_ARCH}-v1.7.1.tgz" |
 	sudo tar -C /opt/cni/bin -xz
 sudo chown -R root:root /opt/cni/bin
-CRI_TOOLS_RELEASE="v1.35.0"
+CRI_TOOLS_RELEASE="v1.36.0"
 curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_TOOLS_RELEASE}/crictl-${CRI_TOOLS_RELEASE}-linux-${HOST_ARCH}.tar.gz |
 	sudo tar -C /opt/bin -xz
 
@@ -77,7 +77,7 @@ address = "127.0.0.1:1338"
 [plugins."io.containerd.cri.v1.images"]
 discard_unpacked_layers = false
 [plugins."io.containerd.cri.v1.images".pinned_images]
-sandbox = "registry.k8s.io/pause:3.10"
+sandbox = "registry.k8s.io/pause:3.10.1"
 [plugins."io.containerd.cri.v1.images".registry]
 config_path = "/etc/containerd/certs.d"
 [plugins."io.containerd.cri.v1.runtime"]

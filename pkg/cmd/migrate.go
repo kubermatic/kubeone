@@ -22,9 +22,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
-	"k8c.io/kubeone/pkg/confirmation"
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tasks"
 )
 
@@ -34,7 +32,7 @@ func migrateCmd(fs *pflag.FlagSet) *cobra.Command {
 		Short: "Commands for running different migrations",
 	}
 	cmd.AddCommand(migrateToContainerdCmd(fs))
-	cmd.AddCommand(migrateToCCMCSICmd(fs))
+	cmd.AddCommand(migrateToCCMCSICmd())
 
 	return cmd
 }
@@ -95,143 +93,34 @@ func runMigrateToContainerd(opts *globalOptions) error {
 	return tasks.WithContainerDMigration(nil).Run(s)
 }
 
-type migrateCCMOptions struct {
-	globalOptions
-	AutoApprove       bool `longflag:"auto-approve" shortflag:"y"`
-	CompleteMigration bool `longflag:"complete"`
-}
-
-func (opts *migrateCCMOptions) buildCCMMigrationState() (*state.State, error) {
-	s, err := opts.BuildState()
-	if err != nil {
-		return nil, err
-	}
-
-	s.CCMMigration = true
-	s.CCMMigrationComplete = opts.CompleteMigration
-
-	return s, nil
-}
-
-func migrateToCCMCSICmd(fs *pflag.FlagSet) *cobra.Command {
-	opts := &migrateCCMOptions{}
-
+func migrateToCCMCSICmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "to-ccm-csi",
-		Short: "Migrate live cluster from the in-tree cloud provider to external cloud-controller-manager (CCM) and CSI plugin",
-		Long: heredoc.Doc(`
-			Following the in-tree cloud provider deprecation (http://kep.k8s.io/2395),
-			this command helps to migrate existing clusters from the in-tree cloud provider to external
-			cloud-controller-manager (CCM) and CSI plugin.
-
-			Note: if your cluster was created with .cloudProvider.external enabled, the CCM/CSI migration is not needed
-			because the cluster is already using external CCM.
-
-			Migration is currently available for OpenStack and vSphere. Other providers will be added in future KubeOne releases.
-
-			The migration is done in two phases:
-
-			  * Phase 1: deploy external CCM and CSI plugin, while leaving in-tree provider enabled.
-			    Kubernetes API server and kube-controller-manager are configured to:
-				  - use controllers integrated in external CCM instead of in-tree cloud provider
-				    for all cloud-related operations
-				  - redirect all volumes-related operations to the CSI plugin
-				The existing worker nodes will continue to use in-tree provider (that's why it's still left enabled),
-				so therefore, all worker nodes managed by machine-controller must be rolled out after phase 1 is complete.
-
-			  * Phase 2: complete the CCM/CSI migration by fully-disabling in-tree provider. To trigger the phase 2,
-			    users need to run "kubeone migrate to-ccm-csi" command with the "--complete" flag. This should be
-			    done after all worker nodes managed by machine-controller are rolled-out.
-
-			Make sure to familiarize yourself with the CCM/CSI migration requirements by checking the following document:
-			https://docs.kubermatic.com/kubeone/main/guides/ccm-csi-migration/
-		`),
+		Short: "This command is NO OP since Kubernetes moved on from CSI migration and now all persistent volumes are managed by CSI",
+		Long:  heredoc.Doc(``),
 		RunE: func(_ *cobra.Command, _ []string) error {
-			gopts, err := persistentGlobalOptions(fs)
-			if err != nil {
-				return err
-			}
-
-			opts.globalOptions = *gopts
-
-			return runMigrateToCCMCSI(opts)
+			return nil
 		},
 	}
 
+	var (
+		autoApprove       bool
+		completeMigration bool
+	)
+
 	cmd.Flags().BoolVarP(
-		&opts.AutoApprove,
-		longFlagName(opts, "AutoApprove"),
-		shortFlagName(opts, "AutoApprove"),
+		&autoApprove,
+		"auto-approve",
+		"y",
 		false,
 		"auto approve plan")
 
 	cmd.Flags().BoolVarP(
-		&opts.CompleteMigration,
-		longFlagName(opts, "CompleteMigration"),
-		shortFlagName(opts, "CompleteMigration"),
+		&completeMigration,
+		"complete",
+		"",
 		false,
 		"complete ccm/csi migration")
 
 	return cmd
-}
-
-func runMigrateToCCMCSI(opts *migrateCCMOptions) error {
-	s, err := opts.buildCCMMigrationState()
-	if err != nil {
-		return err
-	}
-
-	if err = tasks.WithFindControlPlane(nil).Run(s); err != nil {
-		return err
-	}
-
-	// Validate credentials
-	if err = validateCredentials(s, opts.CredentialsFile); err != nil {
-		return err
-	}
-
-	// Probe the cluster for the actual state and the needed tasks.
-	probbing := tasks.WithHostnameOS(nil)
-	probbing = tasks.WithProbes(probbing)
-
-	if err = probbing.Run(s); err != nil {
-		return err
-	}
-
-	if !s.LiveCluster.IsProvisioned() {
-		return fail.RuntimeError{
-			Op:  "migrating CCM/CSI",
-			Err: errors.New("the target cluster is not provisioned"),
-		}
-	}
-
-	if !s.LiveCluster.Healthy() {
-		return fail.RuntimeError{
-			Op:  "migrating CCM/CSI",
-			Err: errors.New("the target cluster is not healthy, please run 'kubeone apply' first"),
-		}
-	}
-
-	s.Logger.Warnln("This command will migrate your cluster from in-tree cloud provider to the external CCM and CSI plugin.")
-	s.Logger.Warnln("Make sure to familiarize yourself with the process by checking the following document:")
-	s.Logger.Warnln("https://docs.kubermatic.com/kubeone/main/guides/ccm-csi-migration/")
-	if s.Cluster.CloudProvider.Openstack != nil {
-		s.Logger.Warnln("The OpenStack external CCM uses Octavia Load Balancers by default.")
-		s.Logger.Warnln("If you currently use Neutron Load Balancers, migrating to the external CCM/CSI will cause *ALL* Load Balancers to be recreated!")
-		s.Logger.Warnln("The existing Neutron Load Balancers will **NOT** be removed automatically. Instead, those Load Balancers must be removed manually!")
-		s.Logger.Warnln("Make sure to check documentation for more details.")
-	}
-
-	approved, err := confirmation.Approved(opts.AutoApprove)
-	if err != nil {
-		return err
-	}
-
-	if !approved {
-		s.Logger.Println("Operation canceled.")
-
-		return nil
-	}
-
-	return tasks.WithCCMCSIMigration(nil).Run(s)
 }

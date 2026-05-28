@@ -609,64 +609,6 @@ func WithRotateKey(t Tasks) Tasks {
 		}...)
 }
 
-func WithCCMCSIMigration(t Tasks) Tasks {
-	return t.append(Tasks{
-		{Fn: ccmMigrationValidateConfig, Operation: "validating config", Retries: 1},
-		{
-			Fn:        readyToCompleteCCMMigration,
-			Operation: "validating readiness to complete migration",
-			Predicate: func(s *state.State) bool {
-				return s.CCMMigrationComplete
-			},
-		},
-		{Fn: generateKubeadm, Operation: "generating kubeadm config files"},
-	}...).
-		append(
-			Task{Fn: ccmMigrationRegenerateControlPlaneManifestsAndKubeletConfig, Operation: "regenerating static pod manifests and kubelet config"},
-			Task{
-				Fn:        ccmMigrationUpdateStaticWorkersKubeletConfig,
-				Operation: "updating kubelet config on static worker nodes",
-				Predicate: func(s *state.State) bool {
-					return len(s.Cluster.StaticWorkers.Hosts) > 0
-				},
-			},
-		).
-		append(WithResources(nil)...).
-		append(
-			// Regenerate files only when finishing the CCM/CSI migration.
-			Task{
-				Fn:        generateConfigurationFiles,
-				Operation: "generating config files",
-				Predicate: func(s *state.State) bool {
-					return s.CCMMigrationComplete
-				},
-			},
-			Task{
-				Fn:        uploadConfigurationFiles,
-				Operation: "uploading config files",
-				Predicate: func(s *state.State) bool {
-					return s.CCMMigrationComplete
-				},
-			},
-			Task{
-				Fn:        migrateOpenStackPVs,
-				Operation: "migrating openstack persistentvolumes",
-				Predicate: func(s *state.State) bool { return s.Cluster.CloudProvider.Openstack != nil },
-			},
-			Task{
-				Fn: func(s *state.State) error {
-					s.Logger.Warn("Now please rolling restart your machineDeployments to migrate to ccm/csi")
-					s.Logger.Warn("see more at: https://docs.kubermatic.com/kubeone/main/cheat-sheets/rollout-machinedeployment/")
-					s.Logger.Warn("Once you're done, please run this command again with the '--complete' flag to finish migration")
-
-					return nil
-				},
-				Operation: "show next steps",
-				Predicate: func(s *state.State) bool { return s.Cluster.MachineController.Deploy && !s.CCMMigrationComplete },
-			},
-		)
-}
-
 func updateAllKubelets(s *state.State) error {
 	return s.RunTaskOnAllNodes(func(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 		logger := s.Logger.WithField("node", node.PublicAddress)

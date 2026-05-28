@@ -21,6 +21,30 @@ package kubeflags
 // KubeOne may add hardening-specific plugins on top of that baseline.
 
 var (
+	defaultAdmissionControllersv136 = []string{
+		"CertificateApproval",
+		"CertificateSigning",
+		"CertificateSubjectRestriction",
+		"DefaultIngressClass",
+		"DefaultStorageClass",
+		"DefaultTolerationSeconds",
+		"LimitRanger",
+		"MutatingAdmissionWebhook",
+		"NamespaceLifecycle",
+		"NodeRestriction", // CIS 1.2.16
+		"PersistentVolumeClaimResize",
+		"PodGroupProtection",
+		"PodSecurity",
+		"Priority",
+		"ResourceQuota",
+		"RuntimeClass",
+		"ServiceAccount",
+		"StorageObjectInUseProtection",
+		"TaintNodesByCondition",
+		"ValidatingAdmissionPolicy",
+		"ValidatingAdmissionWebhook",
+	}
+
 	defaultAdmissionControllersv135 = []string{
 		"CertificateApproval",
 		"CertificateSigning",

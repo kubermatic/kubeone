@@ -38,7 +38,6 @@ type Cluster struct {
 	StaticWorkers             []Host
 	EncryptionConfiguration   *EncryptionConfiguration
 	CCMClusterName            string
-	CCMStatus                 *CCMStatus
 	Lock                      sync.Mutex
 }
 
@@ -46,13 +45,6 @@ type EncryptionConfiguration struct {
 	Enable bool
 	Config *apiserverconfigv1.EncryptionConfiguration
 	Custom bool
-}
-
-type CCMStatus struct {
-	InTreeCloudProviderEnabled      bool
-	InTreeCloudProviderUnregistered bool
-	ExternalCCMDeployed             bool
-	CSIMigrationEnabled             bool
 }
 
 type Host struct {

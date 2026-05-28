@@ -58,9 +58,6 @@ spec:
             {{ if CABundle -}}
             - -host-ca-bundle={{ .Resources.CABundleSSLCertFilePath }}
             {{ end -}}
-            {{ if .CSIMigrationFeatureGates }}
-            - -node-kubelet-feature-gates={{ .CSIMigrationFeatureGates }}
-            {{ end }}
             {{ range .Config.ContainerRuntime.MachineControllerFlags -}}
             - {{ . }}
             {{ end -}}
