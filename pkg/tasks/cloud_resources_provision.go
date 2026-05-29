@@ -59,6 +59,12 @@ func WithFindControlPlane(t Tasks) Tasks {
 			Fn:          lookupHetznerVMs,
 		},
 		Task{
+			Description: "Find OpenStack VMs",
+			Operation:   "find OpenStack VMs",
+			Predicate:   isOpenstackControlPlaneEnabled,
+			Fn:          lookupOpenstackVMs,
+		},
+		Task{
 			Operation: "defaulting cluster hosts",
 			Predicate: func(s *state.State) bool { return len(s.Cluster.ControlPlane.NodeSets) != 0 },
 			Fn:        defaultCluster,
@@ -126,6 +132,11 @@ func WithEnsureControlPlane(t Tasks, clusterName string, nodeSet []kubeoneapi.No
 		return t, err
 	}
 
+	openstackTasks, err := withOpenstackEnsureControlPlane(clusterName, nodeSet, kubeletVersion)
+	if err != nil {
+		return t, err
+	}
+
 	return t.
 		append(
 			Task{
@@ -135,6 +146,7 @@ func WithEnsureControlPlane(t Tasks, clusterName string, nodeSet []kubeoneapi.No
 				Fn:          ensureHetznerLoadBalancer,
 			}).
 		append(generateHetznerControlPlaneTasks(capimachines)...).
+		append(openstackTasks...).
 		append(
 			Task{
 				Operation: "defaulting cluster hosts",
