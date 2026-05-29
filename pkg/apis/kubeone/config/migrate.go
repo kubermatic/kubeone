@@ -102,8 +102,7 @@ func MigrateV1beta2V1beta3(clusterFilePath string, tfOutput []byte) ([]byte, err
 				originalManifest.Walk(p, func(key yamled.Path, value any) {
 					refval := reflect.ValueOf(value)
 
-					//nolint:exhaustive
-					switch refval.Kind() {
+					switch refval.Kind() { //nolint:exhaustive
 					case reflect.Pointer, reflect.Map, reflect.Slice:
 						if refval.IsNil() {
 							originalManifest.Remove(key)

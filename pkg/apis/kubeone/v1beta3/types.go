@@ -605,7 +605,25 @@ type KubevirtSpec struct {
 type NutanixSpec struct{}
 
 // OpenstackSpec defines the Openstack provider
-type OpenstackSpec struct{}
+type OpenstackSpec struct {
+	// ControlPlane configures control plane provisioning on OpenStack
+	ControlPlane *OpenstackControlPlane `json:"controlPlane,omitempty"`
+}
+
+// OpenstackControlPlane defines control plane config on OpenStack
+type OpenstackControlPlane struct {
+	// LoadBalancer config of a pre-existing loadbalancer to register control plane members
+	LoadBalancer OpenstackLoadBalancer `json:"loadBalancer"`
+}
+
+// OpenstackLoadBalancer references a pre-existing Octavia loadbalancer for the kubeapi-server endpoint
+type OpenstackLoadBalancer struct {
+	// Name of the pre-existing loadbalancer. Default: "<CLUSTER_NAME>-kube-apiserver"
+	Name string `json:"name,omitempty"`
+
+	// PoolID is the optional Octavia pool ID. If empty, KubeOne discovers the pool from the loadbalancer.
+	PoolID string `json:"poolID,omitempty"`
+}
 
 // EquinixMetalSpec defines the Equinix Metal cloud provider
 type EquinixMetalSpec struct{}

@@ -98,9 +98,10 @@ func GetMachineInfo(instance cloud.Instance) Machine {
 
 func publicAndPrivateIPExist(addresses map[string]corev1.NodeAddressType) bool {
 	var publicIPExists, privateIPExists bool
-	// we only care about ExternalIP and InternalIP specifically, thus nolint
-	//nolint:exhaustive
+
 	for _, addressType := range addresses {
+		// we only care about ExternalIP and InternalIP specifically, thus nolint
+		//nolint:exhaustive
 		switch addressType {
 		case corev1.NodeExternalIP:
 			publicIPExists = true

@@ -273,13 +273,15 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 		providerFound = true
 	}
 	if providerSpec.Openstack != nil {
+		openstackFld := fldPath.Child("openstack")
 		if providerFound {
-			allErrs = append(allErrs, field.Forbidden(fldPath.Child("openstack"), "only one provider can be used at the same time"))
+			allErrs = append(allErrs, field.Forbidden(openstackFld, "only one provider can be used at the same time"))
 		}
 		if len(providerSpec.CloudConfig) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), ".cloudProvider.cloudConfig is required for openstack provider"))
 		}
 		providerFound = true
+		allErrs = append(allErrs, validateOpenstackSpec(providerSpec.Openstack, openstackFld)...)
 	}
 	if providerSpec.EquinixMetal != nil {
 		if providerFound {
@@ -342,6 +344,19 @@ func validateHetznerSpec(hetznerSpec *kubeoneapi.HetznerSpec, fldPath *field.Pat
 	if hetznerSpec.ControlPlane != nil {
 		if hetznerSpec.NetworkID == "" {
 			allErrs = append(allErrs, field.Required(fldPath.Child("networkID"), "networkID is required controlPlane is specified"))
+		}
+	}
+
+	return allErrs
+}
+
+func validateOpenstackSpec(openstackSpec *kubeoneapi.OpenstackSpec, fldPath *field.Path) field.ErrorList {
+	var allErrs field.ErrorList
+
+	if openstackSpec.ControlPlane != nil {
+		lbFld := fldPath.Child("controlPlane").Child("loadBalancer")
+		if openstackSpec.ControlPlane.LoadBalancer.Name == "" {
+			allErrs = append(allErrs, field.Required(lbFld.Child("name"), "loadBalancer name is required when controlPlane is specified"))
 		}
 	}
 

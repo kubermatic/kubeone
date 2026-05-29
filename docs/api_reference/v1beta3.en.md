@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2026-05-08T17:16:28+03:00
+date = 2026-05-29T13:59:16+03:00
 weight = 11
 +++
 ## v1beta3
@@ -62,6 +62,8 @@ weight = 11
 * [NutanixSpec](#nutanixspec)
 * [OpenIDConnect](#openidconnect)
 * [OpenIDConnectConfig](#openidconnectconfig)
+* [OpenstackControlPlane](#openstackcontrolplane)
+* [OpenstackLoadBalancer](#openstackloadbalancer)
 * [OpenstackSpec](#openstackspec)
 * [OperatingSystemManagerConfig](#operatingsystemmanagerconfig)
 * [OperatingSystemSpec](#operatingsystemspec)
@@ -819,12 +821,34 @@ OpenIDConnectConfig config
 
 [Back to Group](#v1beta3)
 
+### OpenstackControlPlane
+
+OpenstackControlPlane defines control plane config on OpenStack
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| loadBalancer | LoadBalancer config of a pre-existing loadbalancer to register control plane members | [OpenstackLoadBalancer](#openstackloadbalancer) | true |
+
+[Back to Group](#v1beta3)
+
+### OpenstackLoadBalancer
+
+OpenstackLoadBalancer references a pre-existing Octavia loadbalancer for the kubeapi-server endpoint
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| name | Name of the pre-existing loadbalancer. Default: \"<CLUSTER_NAME>-kube-apiserver\" | string | false |
+| poolID | PoolID is the optional Octavia pool ID. If empty, KubeOne discovers the pool from the loadbalancer. | string | false |
+
+[Back to Group](#v1beta3)
+
 ### OpenstackSpec
 
 OpenstackSpec defines the Openstack provider
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+| controlPlane | ControlPlane configures control plane provisioning on OpenStack | *[OpenstackControlPlane](#openstackcontrolplane) | false |
 
 [Back to Group](#v1beta3)
 
