@@ -218,6 +218,11 @@ func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
 		}
 	case obj.CloudProvider.Openstack != nil:
 		defaultCanal.MTU = defaults(defaultCanal.MTU, 1400) // Openstack specific 1450 bytes - 50 VXLAN bytes
+		if obj.ControlPlane.NodeSets != nil {
+			if obj.CloudProvider.Openstack.ControlPlane == nil {
+				obj.CloudProvider.Openstack.ControlPlane = &OpenstackControlPlane{}
+			}
+		}
 	}
 
 	if obj.ClusterNetwork.CNI == nil {
