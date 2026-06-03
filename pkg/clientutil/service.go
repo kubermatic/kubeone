@@ -36,7 +36,7 @@ func CleanupLBs(ctx context.Context, logger logrus.FieldLogger, c client.Client)
 	// Block service creation so gateway/other controllers can't recreate LB services
 	// while we're deleting them.
 	logger.Infoln("Creating ValidatingWebhookConfiguration to disable future Service creation...")
-	if err := creationPreventingWebhook(ctx, c, "", LBResources); err != nil {
+	if err := creationPreventingWebhook(ctx, c, "", LBResources, nil); err != nil {
 		return fail.KubeClient(err, "disabling future Service creation")
 	}
 

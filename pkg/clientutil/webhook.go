@@ -23,13 +23,15 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 
 	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // creationPreventingWebhook returns a ValidatingWebhookConfiguration that is intentionally defunct
-// and will prevent all creation requests from succeeding.
-func creationPreventingWebhook(ctx context.Context, c client.Client, apiGroup string, resources []string) error {
+// and will prevent all creation requests from succeeding. An optional namespaceSelector limits which
+// namespaces the webhook applies to (e.g. to keep CSI controllers in kube-system running during cleanup).
+func creationPreventingWebhook(ctx context.Context, c client.Client, apiGroup string, resources []string, namespaceSelector *metav1.LabelSelector) error {
 	failurePolicy := admissionregistrationv1.Fail
 	sideEffects := admissionregistrationv1.SideEffectClassNone
 	vwc := admissionregistrationv1.ValidatingWebhookConfiguration{}
@@ -62,6 +64,7 @@ func creationPreventingWebhook(ctx context.Context, c client.Client, apiGroup st
 			},
 		},
 	}
+	vwc.Webhooks[0].NamespaceSelector = namespaceSelector
 	vwc.Webhooks[0].FailurePolicy = &failurePolicy
 	vwc.Webhooks[0].SideEffects = &sideEffects
 	vwc.Webhooks[0].AdmissionReviewVersions = []string{"v1"}

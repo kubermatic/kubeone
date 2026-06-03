@@ -27,6 +27,7 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -45,11 +46,23 @@ const (
 
 var VolumeResources = []string{"persistentvolumes", "persistentvolumeclaims"}
 
+// PodResources is the list of resources blocked by the Pod creation-preventing webhook.
+var PodResources = []string{"pods"}
+
 func CleanupUnretainedVolumes(ctx context.Context, logger logrus.FieldLogger, c client.Client, restConfig *rest.Config) error {
 	// We disable the PV & PVC creation so nothing creates new PV's while we delete them
 	logger.Infoln("Creating ValidatingWebhookConfiguration to disable future PV & PVC creation...")
 	if err := disablePVCreation(ctx, c); err != nil {
 		return fail.KubeClient(err, "disabling future PV & PVC creation.")
+	}
+
+	// We also disable Pod creation so workload controllers (Deployments, StatefulSets, ...) can't
+	// recreate the Pods we delete below. A recreated Pod would re-mount the PVC and keep the
+	// kubernetes.io/pvc-protection finalizer, leaving the PVC stuck in Terminating. The webhook
+	// excludes kube-system so the CSI controllers keep running to actually delete the cloud volumes.
+	logger.Infoln("Creating ValidatingWebhookConfiguration to disable future Pod creation...")
+	if err := disablePodCreation(ctx, c); err != nil {
+		return fail.KubeClient(err, "disabling future Pod creation.")
 	}
 
 	pvcList, pvList, err := getDynamicallyProvisionedUnretainedPvs(ctx, c)
@@ -91,7 +104,24 @@ func CleanupUnretainedVolumes(ctx context.Context, logger logrus.FieldLogger, c 
 
 func disablePVCreation(ctx context.Context, c client.Client) error {
 	// Prevent re-creation of PVs and PVCs by using an intentionally defunct admissionWebhook
-	return creationPreventingWebhook(ctx, c, "", VolumeResources)
+	return creationPreventingWebhook(ctx, c, "", VolumeResources, nil)
+}
+
+func disablePodCreation(ctx context.Context, c client.Client) error {
+	// Prevent re-creation of Pods by using an intentionally defunct admissionWebhook. kube-system is
+	// excluded so the CSI controllers (and other system components) keep running to delete the cloud
+	// volumes backing the PVCs we remove.
+	namespaceSelector := &metav1.LabelSelector{
+		MatchExpressions: []metav1.LabelSelectorRequirement{
+			{
+				Key:      corev1.LabelMetadataName,
+				Operator: metav1.LabelSelectorOpNotIn,
+				Values:   []string{metav1.NamespaceSystem},
+			},
+		},
+	}
+
+	return creationPreventingWebhook(ctx, c, "", PodResources, namespaceSelector)
 }
 
 func cleanupPVCUsingPods(ctx context.Context, c client.Client, log logrus.FieldLogger, kubeClient *kubernetes.Clientset) error {
@@ -100,11 +130,11 @@ func cleanupPVCUsingPods(ctx context.Context, c client.Client, log logrus.FieldL
 		return fail.KubeClient(err, "listing Pods from user cluster.")
 	}
 
-	var pvUsingPods []*corev1.Pod
+	var pvUsingPods []corev1.Pod
 	for idx := range podList.Items {
 		pod := &podList.Items[idx]
 		if podUsesPV(pod) {
-			pvUsingPods = append(pvUsingPods, pod)
+			pvUsingPods = append(pvUsingPods, *pod)
 		}
 	}
 
@@ -119,6 +149,10 @@ func cleanupPVCUsingPods(ctx context.Context, c client.Client, log logrus.FieldL
 		// ReplicaSet)
 		Force:              true,
 		DeleteEmptyDirData: true,
+		// DisableEviction makes drain delete pods directly instead of using the
+		// eviction API. The cluster is being torn down, so PodDisruptionBudgets
+		// must not be allowed to block (and indefinitely fail) the deletion.
+		DisableEviction:    true,
 		GracePeriodSeconds: -1,
 		Out:                os.Stdout,
 		ErrOut:             os.Stdout,
@@ -135,16 +169,9 @@ func cleanupPVCUsingPods(ctx context.Context, c client.Client, log logrus.FieldL
 			log.Infof("pod %s/%s is %s", pod.GetNamespace(), pod.GetName(), evicted)
 		},
 	}
-	evictionGroupVersion, err := drain.CheckEvictionSupport(kubeClient)
-	if err != nil {
-		return err
-	}
 
-	for _, pod := range pvUsingPods {
-		err := helper.EvictPod(*pod, evictionGroupVersion)
-		if err != nil {
-			return fail.KubeClient(err, "deleting the pod.")
-		}
+	if err := helper.DeleteOrEvictPods(pvUsingPods); err != nil {
+		return fail.KubeClient(err, "deleting the pods using PVs.")
 	}
 
 	return nil

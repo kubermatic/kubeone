@@ -73,6 +73,11 @@ func RemoveVolumes(s *state.State) error {
 			"kubernetes-cluster-cleanup-"+strings.Join(clientutil.VolumeResources, "-")); err != nil {
 			s.Logger.Warn("Unable to delete ValidatingWebhookConfiguration.")
 		}
+		s.Logger.Infoln("Deleting ValidatingWebhookConfiguration to enable future Pod creation...")
+		if err := clientutil.DeletePreventingWebhook(s.Context, s.DynamicClient,
+			"kubernetes-cluster-cleanup-"+strings.Join(clientutil.PodResources, "-")); err != nil {
+			s.Logger.Warn("Unable to delete ValidatingWebhookConfiguration.")
+		}
 
 		return lastErr
 	}
