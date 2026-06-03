@@ -28,6 +28,7 @@ jobs:
         with:
           go-version: 1.26
           cache: true
+          check-latest: true
 
       - name: fetch default stable for Kubernetes
         run: |
