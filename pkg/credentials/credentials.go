@@ -229,7 +229,7 @@ func ProviderCredentials(cloudProvider kubeoneapi.CloudProviderSpec, credentials
 	case cloudProvider.Openstack != nil:
 		return credentialsFinder.parseCredentialVariables([]ProviderEnvironmentVariable{
 			{Name: OpenStackAuthURL},
-			{Name: OpenStackUserName, MachineControllerName: OpenStackUserNameMC},
+			{Name: OpenStackUserName},
 			{Name: OpenStackPassword},
 			{Name: OpenStackApplicationCredentialID},
 			{Name: OpenStackApplicationCredentialSecret},

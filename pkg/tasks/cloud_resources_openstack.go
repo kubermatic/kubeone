@@ -167,18 +167,14 @@ func openstackLBClient(s *state.State) (*gophercloud.ServiceClient, error) {
 	}
 
 	opts := gophercloud.AuthOptions{
-		IdentityEndpoint: providerCreds["OS_AUTH_URL"],
-		Username:         providerCreds["OS_USERNAME"],
-		Password:         providerCreds["OS_PASSWORD"],
-		DomainName:       providerCreds["OS_DOMAIN_NAME"],
-		TenantName:       providerCreds["OS_TENANT_NAME"],
-		TenantID:         providerCreds["OS_TENANT_ID"],
-	}
-
-	// Support application credentials
-	if appCredID := providerCreds["OS_APPLICATION_CREDENTIAL_ID"]; appCredID != "" {
-		opts.ApplicationCredentialID = appCredID
-		opts.ApplicationCredentialSecret = providerCreds["OS_APPLICATION_CREDENTIAL_SECRET"]
+		IdentityEndpoint:            providerCreds["OS_AUTH_URL"],
+		Username:                    providerCreds["OS_USERNAME"],
+		Password:                    providerCreds["OS_PASSWORD"],
+		DomainName:                  providerCreds["OS_DOMAIN_NAME"],
+		TenantName:                  providerCreds["OS_TENANT_NAME"],
+		TenantID:                    providerCreds["OS_TENANT_ID"],
+		ApplicationCredentialID:     providerCreds["OS_APPLICATION_CREDENTIAL_ID"],
+		ApplicationCredentialSecret: providerCreds["OS_APPLICATION_CREDENTIAL_SECRET"],
 	}
 
 	provider, err := openstack.AuthenticatedClient(opts)
