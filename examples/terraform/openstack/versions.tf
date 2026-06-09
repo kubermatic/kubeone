@@ -4,11 +4,10 @@ terraform {
   required_providers {
     openstack = {
       source  = "terraform-provider-openstack/openstack"
-      version = "~> 1.52.0"
+      version = "~> 3.4.0"
     }
   }
 }
 
 provider "openstack" {
-  use_octavia = true
 }
