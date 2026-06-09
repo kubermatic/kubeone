@@ -48,7 +48,6 @@ func generateHetznerControlPlaneTasks(capimachines []clusterv1alpha1.Machine) Ta
 		tasks = append(tasks,
 			Task{
 				Description: fmt.Sprintf("Ensure Hetzner control-plane %q VM", machine.Name),
-				Operation:   fmt.Sprintf("ensure Hetzner control-plane %q VM", machine.Name),
 				Predicate:   isHetznerControlPlaneEnabled,
 				Fn: func(s *state.State) error {
 					return ensureHetznerControlPlaneVM(s, machine)
@@ -325,7 +324,6 @@ func lookupHetznerLoadBalancer(s *state.State) error {
 
 	s.Logger.Debugf("found loadbalancer %q with id: %d", clusterLBName, lbs[0].ID)
 	s.Cluster.APIEndpoint.Host = lbs[0].PublicNet.IPv4.IP.String()
-	s.Cluster.APIEndpoint.Port = 6443
 
 	return nil
 }

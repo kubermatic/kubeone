@@ -31,19 +31,21 @@ func WithFindControlPlane(t Tasks) Tasks {
 	return t.append(
 		Task{
 			Description: "Find Hetzner load balancer",
-			Operation:   "find Hetzner load balancer",
 			Predicate:   isHetznerControlPlaneEnabled,
 			Fn:          lookupHetznerLoadBalancer,
 		},
 		Task{
 			Description: "Find Hetzner VMs",
-			Operation:   "find Hetzner VMs",
 			Predicate:   isHetznerControlPlaneEnabled,
 			Fn:          lookupHetznerVMs,
 		},
 		Task{
+			Description: "Find OpenStack load balancer",
+			Predicate:   isOpenstackControlPlaneEnabled,
+			Fn:          lookupOpenstackLoadBalancer,
+		},
+		Task{
 			Description: "Find OpenStack VMs",
-			Operation:   "find OpenStack VMs",
 			Predicate:   isOpenstackControlPlaneEnabled,
 			Fn:          lookupOpenstackVMs,
 		},
@@ -72,7 +74,6 @@ func WithEnsureControlPlane(steps Tasks, cluster *kubeoneapi.KubeOneCluster) (Ta
 		steps = steps.
 			append(Task{
 				Description: "Ensure Hetzner load balancer",
-				Operation:   "ensure Hetzner load balancer",
 				Predicate:   isHetznerControlPlaneEnabled,
 				Fn:          ensureHetznerLoadBalancer,
 			}).
@@ -85,9 +86,15 @@ func WithEnsureControlPlane(steps Tasks, cluster *kubeoneapi.KubeOneCluster) (Ta
 
 		steps = steps.
 			append(generateOpenstackControlPlaneTasks(openstackCAPIMachines)...).
+			append(
+				Task{
+					Description: "Find OpenStack load balancer",
+					Predicate:   isOpenstackControlPlaneEnabled,
+					Fn:          lookupOpenstackLoadBalancer,
+				},
+			).
 			append(Task{
 				Description: "Register OpenStack LB members",
-				Operation:   "register OpenStack LB members",
 				Predicate:   isOpenstackControlPlaneEnabled,
 				Fn:          ensureOpenstackLBMembers,
 			})

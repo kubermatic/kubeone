@@ -57,7 +57,8 @@ func GetMachineInfo(instance cloud.Instance) Machine {
 					publicAddressIPv6 = address
 				}
 			}
-		case corev1.NodeInternalIP:
+		case corev1.NodeInternalIP, "":
+			// empty addressType will be considered NodeInternalIP
 			if ip := net.ParseIP(address); ip != nil && ip.To4() != nil {
 				if privateAddress == "" {
 					privateAddress = address

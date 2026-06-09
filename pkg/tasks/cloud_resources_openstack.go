@@ -82,13 +82,12 @@ func ensureOpenstackControlPlaneVM(s *state.State, capimachine clusterv1alpha1.M
 }
 
 func generateOpenstackControlPlaneTasks(capimachines []clusterv1alpha1.Machine) Tasks {
-	tasks := Tasks{}
+	var tasks Tasks
 
 	for _, machine := range capimachines {
 		tasks = append(tasks,
 			Task{
 				Description: fmt.Sprintf("Ensure OpenStack control-plane %q VM", machine.Name),
-				Operation:   fmt.Sprintf("ensure OpenStack control-plane %q VM", machine.Name),
 				Predicate:   isOpenstackControlPlaneEnabled,
 				Fn: func(s *state.State) error {
 					return ensureOpenstackControlPlaneVM(s, machine)
@@ -237,6 +236,47 @@ func discoverOpenstackLBPool(lbClient *gophercloud.ServiceClient, lbName string)
 	}
 
 	return poolID, nil
+}
+
+func lookupOpenstackLoadBalancer(s *state.State) error {
+	if s.Cluster.APIEndpoint.Host != "" {
+		return nil
+	}
+
+	lbClient, err := openstackLBClient(s)
+	if err != nil {
+		return err
+	}
+
+	lbName := s.Cluster.CloudProvider.Openstack.ControlPlane.LoadBalancer.Name
+	if lbName == "" {
+		lbName = fmt.Sprintf("%s-kube-apiserver", s.Cluster.Name)
+	}
+
+	var vipAddress string
+	err = loadbalancers.List(lbClient, loadbalancers.ListOpts{Name: lbName}).EachPage(func(page pagination.Page) (bool, error) {
+		lbs, oserr := loadbalancers.ExtractLoadBalancers(page)
+		if oserr != nil {
+			return false, oserr
+		}
+		if len(lbs) > 0 {
+			vipAddress = lbs[0].VipAddress
+			s.Logger.Debugf("found loadbalancer %q with id: %s", lbName, lbs[0].ID)
+		}
+
+		return true, nil
+	})
+	if err != nil {
+		return fail.Cloud(err, "openstack", "listing load balancers")
+	}
+
+	if vipAddress == "" {
+		return fail.Cloud(fmt.Errorf("no load balancer found with name: %s", lbName), "openstack", "looking up load balancer VIP")
+	}
+
+	s.Cluster.APIEndpoint.Host = vipAddress
+
+	return nil
 }
 
 func openstackLabels(clusterName string) map[string]string {
