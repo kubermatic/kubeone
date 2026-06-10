@@ -82,8 +82,6 @@ func prePullImages(s *state.State) error {
 }
 
 func generateConfigurationFiles(s *state.State) error {
-	s.Configuration.AddFile("cfg/cloud-config", s.Cluster.CloudProvider.CloudConfig)
-
 	if s.Cluster.Features.StaticAuditLog != nil && s.Cluster.Features.StaticAuditLog.Enable {
 		if err := s.Configuration.AddFilePath("cfg/audit-policy.yaml", s.Cluster.Features.StaticAuditLog.Config.PolicyFilePath, s.ManifestFilePath); err != nil {
 			return err
@@ -231,18 +229,7 @@ func uploadConfigurationFilesToNode(s *state.State, _ *kubeoneapi.HostConfig, co
 		return err
 	}
 
-	cmd, err := scripts.SaveCloudConfig(s.WorkDir)
-	if err != nil {
-		return err
-	}
-
-	// move config files to their permanent locations
-	_, _, err = s.Runner.RunRaw(cmd)
-	if err != nil {
-		return fail.SSH(err, "saving cloud-config")
-	}
-
-	cmd, err = scripts.SaveAuditPolicyConfig(s.WorkDir)
+	cmd, err := scripts.SaveAuditPolicyConfig(s.WorkDir)
 	if err != nil {
 		return err
 	}
