@@ -3,8 +3,8 @@ kind: Kustomization
 namespace: kube-system
 
 resources:
-  - https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver/deploy/kubernetes/base/controller?ref=v1.23.3
-  - https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver/deploy/kubernetes/base/node_linux?ref=v1.23.3
+  - https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver/deploy/kubernetes/base/controller?ref=v1.26.0
+  - https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver/deploy/kubernetes/base/node_linux?ref=v1.26.0
 
 patches:
   - patch: |-
@@ -40,6 +40,19 @@ patches:
                 image: '{{ .InternalImages.Get "GCPComputeCSISnapshotter" }}'
               - name: gce-pd-driver
                 image: '{{ .InternalImages.Get "GCPComputeCSIDriver" }}'
+              - name: taint-controller
+                image: '{{ .InternalImages.Get "GCPComputeCSIDriver" }}'
+
+  - patch: |-
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      metadata:
+        name: pd-csi-taint-controller-binding
+      subjects:
+        - kind: ServiceAccount
+          name: csi-gce-pd-controller-sa
+          namespace: kube-system
+
 
   - target:
       group: apps
