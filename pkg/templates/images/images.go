@@ -295,13 +295,13 @@ func optionalResources() map[Resource]map[string]string {
 		DigitaloceanCCM: {"*": "docker.io/digitalocean/digitalocean-cloud-controller-manager:v0.1.67"},
 
 		// DigitalOcean CSI
-		DigitalOceanCSI:                   {"*": "docker.io/digitalocean/do-csi-plugin:v4.16.0"},
+		DigitalOceanCSI:                   {"*": "docker.io/digitalocean/do-csi-plugin:v4.17.0"},
 		DigitalOceanCSIAlpine:             {"*": "docker.io/alpine:3"},
-		DigitalOceanCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.10.0"},
-		DigitalOceanCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.15.0"},
-		DigitalOceanCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v6.1.0"},
-		DigitalOceanCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v2.0.0"},
-		DigitalOceanCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.4.0"},
+		DigitalOceanCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.11.0"},
+		DigitalOceanCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.16.0"},
+		DigitalOceanCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v6.2.0"},
+		DigitalOceanCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v2.1.0"},
+		DigitalOceanCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.5.0"},
 
 		// Hetzner CCM
 		HetznerCCM: {"*": "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.30.1"},
