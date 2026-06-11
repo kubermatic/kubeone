@@ -254,13 +254,13 @@ func optionalResources() map[Resource]map[string]string {
 		CSISnapshotWebhook:    {"*": "registry.k8s.io/sig-storage/snapshot-validation-webhook:v8.1.1"},
 
 		// AWS EBS CSI driver
-		AwsEbsCSI:                    {"*": "public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.57.1"},
-		AwsEbsCSIAttacher:            {"*": "public.ecr.aws/csi-components/csi-attacher:v4.11.0-eksbuild.3"},
-		AwsEbsCSILivenessProbe:       {"*": "public.ecr.aws/csi-components/livenessprobe:v2.18.0-eksbuild.3"},
-		AwsEbsCSINodeDriverRegistrar: {"*": "public.ecr.aws/csi-components/csi-node-driver-registrar:v2.16.0-eksbuild.3"},
-		AwsEbsCSIProvisioner:         {"*": "public.ecr.aws/csi-components/csi-provisioner:v6.2.0-eksbuild.2"},
-		AwsEbsCSIResizer:             {"*": "public.ecr.aws/csi-components/csi-resizer:v2.1.0-eksbuild.3"},
-		AwsEbsCSISnapshotter:         {"*": "public.ecr.aws/csi-components/csi-snapshotter:v8.5.0-eksbuild.3"},
+		AwsEbsCSI:                    {"*": "public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v1.61.1"},
+		AwsEbsCSIAttacher:            {"*": "public.ecr.aws/csi-components/csi-attacher:v4.12.0-eksbuild.2"},
+		AwsEbsCSILivenessProbe:       {"*": "public.ecr.aws/csi-components/livenessprobe:v2.19.0-eksbuild.2"},
+		AwsEbsCSINodeDriverRegistrar: {"*": "public.ecr.aws/csi-components/csi-node-driver-registrar:v2.17.0-eksbuild.2"},
+		AwsEbsCSIProvisioner:         {"*": "public.ecr.aws/csi-components/csi-provisioner:v6.2.0-eksbuild.7"},
+		AwsEbsCSIResizer:             {"*": "public.ecr.aws/csi-components/csi-resizer:v2.2.0-eksbuild.2"},
+		AwsEbsCSISnapshotter:         {"*": "public.ecr.aws/csi-components/csi-snapshotter:v8.6.0-eksbuild.2"},
 
 		// Azure CCM
 		AzureCCM: {
