@@ -58,15 +58,6 @@ rules:
     verbs:
       - create
   - apiGroups:
-      - ""
-    resources:
-      - persistentvolumes
-    verbs:
-      - get
-      - list
-      - update
-      - watch
-  - apiGroups:
       - coordination.k8s.io
     resources:
       - leases
