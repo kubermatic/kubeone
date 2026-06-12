@@ -140,7 +140,7 @@ func GetMachineInfo(instance cloud.Instance) Machine {
 func publicAndPrivateIPExist(addresses map[string]corev1.NodeAddressType) bool {
 	var publicIPExists, privateIPExists bool
 
-	for _, addressType := range addresses {
+	for address, addressType := range addresses {
 		// we only care about ExternalIP and InternalIP specifically, thus nolint
 		//nolint:exhaustive
 		switch addressType {
@@ -148,6 +148,20 @@ func publicAndPrivateIPExist(addresses map[string]corev1.NodeAddressType) bool {
 			publicIPExists = true
 		case corev1.NodeInternalIP:
 			privateIPExists = true
+		case "":
+			// handle unknown
+			ip := net.ParseIP(address)
+			// is it even an IP?
+			if ip == nil {
+				// no, skip
+				continue
+			}
+
+			if isPrivateIP(ip) {
+				privateIPExists = true
+			} else {
+				publicIPExists = true
+			}
 		}
 	}
 
