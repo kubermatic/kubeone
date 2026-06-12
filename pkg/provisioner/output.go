@@ -25,15 +25,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-var privateIPNets = []*net.IPNet{
-	mustParseCIDR("10.0.0.0/8"),
-	mustParseCIDR("172.16.0.0/12"),
-	mustParseCIDR("192.168.0.0/16"),
-	mustParseCIDR("100.64.0.0/10"),
-	mustParseCIDR("fc00::/7"),
-	mustParseCIDR("fe80::/10"),
-}
-
 type Machine struct {
 	PublicAddress  string `json:"public_address,omitempty"`
 	PrivateAddress string `json:"private_address,omitempty"`
@@ -56,9 +47,11 @@ func GetMachineInfo(instance cloud.Instance) Machine {
 	var publicAddressIPv6, privateAddressIPv6 string
 
 	for address, addressType := range maputils.IterateInOrder(instance.Addresses()) {
+		ip := net.ParseIP(address)
+
 		switch addressType {
 		case corev1.NodeExternalIP:
-			if ip := net.ParseIP(address); ip != nil && ip.To4() != nil {
+			if ip.To4() != nil {
 				if publicAddress == "" {
 					publicAddress = address
 				}
@@ -68,7 +61,7 @@ func GetMachineInfo(instance cloud.Instance) Machine {
 				}
 			}
 		case corev1.NodeInternalIP:
-			if ip := net.ParseIP(address); ip != nil && ip.To4() != nil {
+			if ip.To4() != nil {
 				if privateAddress == "" {
 					privateAddress = address
 				}
@@ -77,21 +70,12 @@ func GetMachineInfo(instance cloud.Instance) Machine {
 					privateAddressIPv6 = address
 				}
 			}
-		case corev1.NodeHostName:
-			if hostname == "" {
-				hostname = address
-			}
-		case corev1.NodeInternalDNS:
-			if hostname == "" {
-				hostname = address
-			}
-		case corev1.NodeExternalDNS:
+		case corev1.NodeHostName, corev1.NodeInternalDNS, corev1.NodeExternalDNS:
 			if hostname == "" {
 				hostname = address
 			}
 		case "":
 			// we will try to guess the type
-			ip := net.ParseIP(address)
 			if ip == nil {
 				// not an IP, guess this is a hostname
 				if hostname != "" {
@@ -102,7 +86,9 @@ func GetMachineInfo(instance cloud.Instance) Machine {
 			}
 
 			ipv4 := ip.To4()
-			if isPrivateIP(ip) {
+
+			switch {
+			case ip.IsPrivate():
 				if ipv4 != nil {
 					if privateAddress == "" {
 						privateAddress = address
@@ -110,15 +96,14 @@ func GetMachineInfo(instance cloud.Instance) Machine {
 				} else if privateAddressIPv6 == "" {
 					privateAddressIPv6 = address
 				}
+
 				continue
-			} else {
-				if ipv4 != nil {
-					if publicAddress == "" {
-						publicAddress = address
-					}
-				} else if publicAddressIPv6 == "" {
-					publicAddressIPv6 = address
+			case ipv4 != nil:
+				if publicAddress == "" {
+					publicAddress = address
 				}
+			case publicAddressIPv6 == "":
+				publicAddressIPv6 = address
 			}
 		}
 	}
@@ -157,7 +142,7 @@ func publicAndPrivateIPExist(addresses map[string]corev1.NodeAddressType) bool {
 				continue
 			}
 
-			if isPrivateIP(ip) {
+			if ip.IsPrivate() {
 				privateIPExists = true
 			} else {
 				publicIPExists = true
@@ -166,23 +151,4 @@ func publicAndPrivateIPExist(addresses map[string]corev1.NodeAddressType) bool {
 	}
 
 	return publicIPExists && privateIPExists
-}
-
-func mustParseCIDR(cidr string) *net.IPNet {
-	_, ipNet, err := net.ParseCIDR(cidr)
-	if err != nil {
-		panic(err)
-	}
-
-	return ipNet
-}
-
-func isPrivateIP(ip net.IP) bool {
-	for _, network := range privateIPNets {
-		if network.Contains(ip) {
-			return true
-		}
-	}
-
-	return false
 }
