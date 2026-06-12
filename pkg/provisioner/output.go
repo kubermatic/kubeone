@@ -19,10 +19,20 @@ package provisioner
 import (
 	"net"
 
+	"k8c.io/kubeone/pkg/maputils"
 	cloud "k8c.io/machine-controller/pkg/cloudprovider/instance"
 
 	corev1 "k8s.io/api/core/v1"
 )
+
+var privateIPNets = []*net.IPNet{
+	mustParseCIDR("10.0.0.0/8"),
+	mustParseCIDR("172.16.0.0/12"),
+	mustParseCIDR("192.168.0.0/16"),
+	mustParseCIDR("100.64.0.0/10"),
+	mustParseCIDR("fc00::/7"),
+	mustParseCIDR("fe80::/10"),
+}
 
 type Machine struct {
 	PublicAddress  string `json:"public_address,omitempty"`
@@ -45,7 +55,7 @@ func GetMachineInfo(instance cloud.Instance) Machine {
 	var publicAddress, privateAddress, hostname string
 	var publicAddressIPv6, privateAddressIPv6 string
 
-	for address, addressType := range instance.Addresses() {
+	for address, addressType := range maputils.IterateInOrder(instance.Addresses()) {
 		switch addressType {
 		case corev1.NodeExternalIP:
 			if ip := net.ParseIP(address); ip != nil && ip.To4() != nil {
@@ -57,8 +67,7 @@ func GetMachineInfo(instance cloud.Instance) Machine {
 					publicAddressIPv6 = address
 				}
 			}
-		case corev1.NodeInternalIP, "":
-			// empty addressType will be considered NodeInternalIP
+		case corev1.NodeInternalIP:
 			if ip := net.ParseIP(address); ip != nil && ip.To4() != nil {
 				if privateAddress == "" {
 					privateAddress = address
@@ -79,6 +88,37 @@ func GetMachineInfo(instance cloud.Instance) Machine {
 		case corev1.NodeExternalDNS:
 			if hostname == "" {
 				hostname = address
+			}
+		case "":
+			// we will try to guess the type
+			ip := net.ParseIP(address)
+			if ip == nil {
+				// not an IP, guess this is a hostname
+				if hostname != "" {
+					hostname = address
+				}
+
+				continue
+			}
+
+			ipv4 := ip.To4()
+			if isPrivateIP(ip) {
+				if ipv4 != nil {
+					if privateAddress == "" {
+						privateAddress = address
+					}
+				} else if privateAddressIPv6 == "" {
+					privateAddressIPv6 = address
+				}
+				continue
+			} else {
+				if ipv4 != nil {
+					if publicAddress == "" {
+						publicAddress = address
+					}
+				} else if publicAddressIPv6 == "" {
+					publicAddressIPv6 = address
+				}
 			}
 		}
 	}
@@ -112,4 +152,23 @@ func publicAndPrivateIPExist(addresses map[string]corev1.NodeAddressType) bool {
 	}
 
 	return publicIPExists && privateIPExists
+}
+
+func mustParseCIDR(cidr string) *net.IPNet {
+	_, ipNet, err := net.ParseCIDR(cidr)
+	if err != nil {
+		panic(err)
+	}
+
+	return ipNet
+}
+
+func isPrivateIP(ip net.IP) bool {
+	for _, network := range privateIPNets {
+		if network.Contains(ip) {
+			return true
+		}
+	}
+
+	return false
 }
