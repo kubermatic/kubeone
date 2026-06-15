@@ -135,6 +135,7 @@ rules:
       - cilium.io
     resources:
       - ciliumloadbalancerippools
+      - ciliumbgppeeringpolicies
       - ciliumbgpnodeconfigs
       - ciliumbgpadvertisements
       - ciliumbgppeerconfigs
@@ -383,6 +384,7 @@ rules:
     resources:
       - ciliumloadbalancerippools
       - ciliumpodippools
+      - ciliumbgppeeringpolicies
       - ciliumbgpclusterconfigs
       - ciliumbgpnodeconfigoverrides
       - ciliumbgppeerconfigs
@@ -1344,7 +1346,7 @@ spec:
             - mountPath: /tmp
               name: tmp
         - command:
-            - sh
+            - bash
             - -ec
             - |
               cp /usr/bin/cilium-mount /hostbin/cilium-mount;
@@ -1376,7 +1378,7 @@ spec:
             - mountPath: /hostbin
               name: cni-path
         - command:
-            - sh
+            - bash
             - -ec
             - |
               cp /usr/bin/cilium-sysctlfix /hostbin/cilium-sysctlfix;

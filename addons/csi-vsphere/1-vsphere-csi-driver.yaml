@@ -593,8 +593,6 @@ spec:
                   fieldPath: spec.nodeName
             - name: CSI_ENDPOINT
               value: unix:///csi/csi.sock
-            - name: MAX_VOLUMES_PER_NODE
-              value: "59"
             - name: X_CSI_MODE
               value: node
             - name: X_CSI_SPEC_REQ_VALIDATION

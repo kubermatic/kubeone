@@ -72,6 +72,7 @@ rules:
     resources:
       - endpoints
       - serviceaccounts
+      - services
     verbs:
       - create
       - get
@@ -94,6 +95,7 @@ rules:
       - ""
     resources:
       - nodes/status
+      - services/status
     verbs:
       - patch
       - update

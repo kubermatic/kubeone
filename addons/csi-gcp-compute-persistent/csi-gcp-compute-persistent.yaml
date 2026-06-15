@@ -323,6 +323,30 @@ rules:
       - patch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pd-csi-taint-controller-role
+rules:
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - csinodes
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+      - list
+      - watch
+      - patch
+      - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
@@ -437,6 +461,19 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: csi-gce-pd-resizer-role
+subjects:
+  - kind: ServiceAccount
+    name: csi-gce-pd-controller-sa
+    namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: pd-csi-taint-controller-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: pd-csi-taint-controller-role
 subjects:
   - kind: ServiceAccount
     name: csi-gce-pd-controller-sa
@@ -592,6 +629,7 @@ spec:
             - --supports-dynamic-throughput-provisioning=hyperdisk-balanced,hyperdisk-throughput,hyperdisk-ml
             - --enable-data-cache
             - --run-node-service=false
+            - --enable-multitenancy=false
           command:
             - /gce-pd-csi-driver
           env:
@@ -602,6 +640,26 @@ spec:
           volumeMounts:
             - mountPath: /csi
               name: socket-dir
+            - mountPath: /etc/cloud-sa
+              name: cloud-sa-volume
+              readOnly: true
+        - args:
+            - --v=5
+            - --run-taint-controller=true
+            - --taint-metrics-addr=:8081
+            - --run-node-service=false
+          command:
+            - /gce-pd-csi-driver
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /etc/cloud-sa/cloud-sa.json
+          image: '{{ .InternalImages.Get "GCPComputeCSIDriver" }}'
+          imagePullPolicy: IfNotPresent
+          name: taint-controller
+          ports:
+            - containerPort: 8081
+              name: metrics-taint
+          volumeMounts:
             - mountPath: /etc/cloud-sa
               name: cloud-sa-volume
               readOnly: true
@@ -677,9 +735,12 @@ spec:
           securityContext:
             privileged: true
           volumeMounts:
-            - mountPath: /var/lib/kubelet
+            - mountPath: /var/lib/kubelet/plugins/kubernetes.io/csi
               mountPropagation: Bidirectional
-              name: kubelet-dir
+              name: kubelet-plugin-dir
+            - mountPath: /var/lib/kubelet/pods
+              mountPropagation: Bidirectional
+              name: kubelet-pods
             - mountPath: /csi
               name: plugin-dir
             - mountPath: /dev
@@ -708,9 +769,12 @@ spec:
             type: Directory
           name: registration-dir
         - hostPath:
-            path: /var/lib/kubelet
-            type: Directory
-          name: kubelet-dir
+            path: /var/lib/kubelet/pods
+          name: kubelet-pods
+        - hostPath:
+            path: /var/lib/kubelet/plugins/kubernetes.io/csi
+            type: DirectoryOrCreate
+          name: kubelet-plugin-dir
         - hostPath:
             path: /var/lib/kubelet/plugins/pd.csi.storage.gke.io/
             type: DirectoryOrCreate
