@@ -319,6 +319,8 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 		switch {
 		case cluster.CloudProvider.Hetzner != nil:
 			setDefaultHetznerControlPlane(cluster.Name, cluster.CloudProvider.Hetzner.ControlPlane)
+		case cluster.CloudProvider.Openstack != nil:
+			setDefaultOpenstackControlPlane(cluster.Name, cluster.CloudProvider.Openstack.ControlPlane)
 		default:
 			return fail.ConfigError{
 				Op:  "cloud provider checking",
@@ -356,6 +358,13 @@ func setDefaultHetznerControlPlane(clusterName string, hzCP *kubeoneapi.HetznerC
 			"kubeone_cluster_name": hzCP.LoadBalancer.Name,
 			"kubeone_role":         "api",
 		},
+	)
+}
+
+func setDefaultOpenstackControlPlane(clusterName string, osCP *kubeoneapi.OpenstackControlPlane) {
+	osCP.LoadBalancer.Name = defaults(
+		osCP.LoadBalancer.Name,
+		clusterName+"-kube-apiserver",
 	)
 }
 

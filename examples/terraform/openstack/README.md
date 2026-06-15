@@ -17,13 +17,13 @@ See the [Terraform loadbalancers in examples document][docs-tf-loadbalancer].
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
-| <a name="requirement_openstack"></a> [openstack](#requirement\_openstack) | ~> 1.52.0 |
+| <a name="requirement_openstack"></a> [openstack](#requirement\_openstack) | ~> 3.4.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_openstack"></a> [openstack](#provider\_openstack) | ~> 1.52.0 |
+| <a name="provider_openstack"></a> [openstack](#provider\_openstack) | ~> 3.4.0 |
 
 ## Modules
 

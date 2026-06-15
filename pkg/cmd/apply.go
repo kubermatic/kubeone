@@ -163,11 +163,7 @@ func runApply(st *state.State, opts *applyOpts) error {
 		return err
 	}
 
-	managedCP, err := tasks.WithEnsureControlPlane(nil,
-		st.Cluster.Name,
-		st.Cluster.ControlPlane.NodeSets,
-		st.Cluster.Versions.Kubernetes,
-	)
+	managedCP, err := tasks.WithEnsureControlPlane(nil, st.Cluster)
 	if err != nil {
 		return err
 	}

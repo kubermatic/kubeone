@@ -33,7 +33,6 @@ import (
 const (
 	kubeadmEnvFlagsFile   = "/var/lib/kubelet/kubeadm-flags.env"
 	kubeletKubeadmArgsEnv = "KUBELET_KUBEADM_ARGS"
-	kubeletConfigFile     = "/var/lib/kubelet/config.yaml"
 )
 
 func updateRemoteFile(s *state.State, filePath string, modifier func(content []byte) ([]byte, error)) error {

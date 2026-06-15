@@ -23,33 +23,6 @@ import (
 	"k8c.io/kubeone/pkg/testhelper"
 )
 
-func TestSaveCloudConfig(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		name    string
-		workdir string
-		wantErr error
-	}{
-		{name: "kubeone1", workdir: "test-dir1"},
-		{name: "kubeone2", workdir: "./subdir/test"},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			got, err := SaveCloudConfig(tt.workdir)
-			if !errors.Is(err, tt.wantErr) {
-				t.Errorf("SaveCloudConfig() error = %v, wantErr %v", err, tt.wantErr)
-
-				return
-			}
-
-			testhelper.DiffOutput(t, testhelper.FSGoldenName(t), got, *updateFlag)
-		})
-	}
-}
-
 func TestSaveAuditPolicyConfig(t *testing.T) {
 	t.Parallel()
 

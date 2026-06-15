@@ -24,13 +24,6 @@ import (
 )
 
 var (
-	cloudConfigScriptTemplate = heredoc.Doc(`
-		sudo mkdir -p /etc/systemd/system/kubelet.service.d/ /etc/kubernetes
-		sudo mv {{ .WORK_DIR }}/cfg/cloud-config /etc/kubernetes/cloud-config
-		sudo chown root:root /etc/kubernetes/cloud-config
-		sudo chmod 600 /etc/kubernetes/cloud-config
-	`)
-
 	auditPolicyScriptTemplate = heredoc.Doc(`
 		if sudo test -f "{{ .WORK_DIR }}/cfg/audit-policy.yaml"; then
 			sudo mkdir -p /etc/kubernetes/audit
@@ -84,14 +77,6 @@ var (
 		sudo rm -rf /etc/kubernetes/encryption-providers/*
 	`)
 )
-
-func SaveCloudConfig(workdir string) (string, error) {
-	result, err := Render(cloudConfigScriptTemplate, Data{
-		"WORK_DIR": workdir,
-	})
-
-	return result, fail.Runtime(err, "rendering cloudConfigScriptTemplate script")
-}
 
 func SaveAuditPolicyConfig(workdir string) (string, error) {
 	result, err := Render(auditPolicyScriptTemplate, Data{

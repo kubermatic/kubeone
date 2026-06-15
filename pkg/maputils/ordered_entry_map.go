@@ -23,6 +23,20 @@ type KeyValue[K comparable, V any] struct {
 	Value V
 }
 
+func IterateInOrder[K comparable, V any](m map[K]V) iter.Seq2[K, V] {
+	return FromMap(m).Iter()
+}
+
+func FromMap[K comparable, V any](m map[K]V) *OrderEntryMap[K, V] {
+	oem := NewOrderEntryMap[K, V]()
+
+	for k, v := range m {
+		oem.Set(k, v)
+	}
+
+	return oem
+}
+
 // OrderEntryMap is a hashmap that preserves insertion order at the iteration.
 type OrderEntryMap[K comparable, V any] struct {
 	entries []KeyValue[K, V]

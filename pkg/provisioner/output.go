@@ -19,6 +19,7 @@ package provisioner
 import (
 	"net"
 
+	"k8c.io/kubeone/pkg/maputils"
 	cloud "k8c.io/machine-controller/pkg/cloudprovider/instance"
 
 	corev1 "k8s.io/api/core/v1"
@@ -45,10 +46,12 @@ func GetMachineInfo(instance cloud.Instance) Machine {
 	var publicAddress, privateAddress, hostname string
 	var publicAddressIPv6, privateAddressIPv6 string
 
-	for address, addressType := range instance.Addresses() {
+	for address, addressType := range maputils.IterateInOrder(instance.Addresses()) {
+		ip := net.ParseIP(address)
+
 		switch addressType {
 		case corev1.NodeExternalIP:
-			if ip := net.ParseIP(address); ip != nil && ip.To4() != nil {
+			if ip.To4() != nil {
 				if publicAddress == "" {
 					publicAddress = address
 				}
@@ -58,7 +61,7 @@ func GetMachineInfo(instance cloud.Instance) Machine {
 				}
 			}
 		case corev1.NodeInternalIP:
-			if ip := net.ParseIP(address); ip != nil && ip.To4() != nil {
+			if ip.To4() != nil {
 				if privateAddress == "" {
 					privateAddress = address
 				}
@@ -67,17 +70,40 @@ func GetMachineInfo(instance cloud.Instance) Machine {
 					privateAddressIPv6 = address
 				}
 			}
-		case corev1.NodeHostName:
+		case corev1.NodeHostName, corev1.NodeInternalDNS, corev1.NodeExternalDNS:
 			if hostname == "" {
 				hostname = address
 			}
-		case corev1.NodeInternalDNS:
-			if hostname == "" {
-				hostname = address
+		case "":
+			// we will try to guess the type
+			if ip == nil {
+				// not an IP, guess this is a hostname
+				if hostname != "" {
+					hostname = address
+				}
+
+				continue
 			}
-		case corev1.NodeExternalDNS:
-			if hostname == "" {
-				hostname = address
+
+			ipv4 := ip.To4()
+
+			switch {
+			case ip.IsPrivate():
+				if ipv4 != nil {
+					if privateAddress == "" {
+						privateAddress = address
+					}
+				} else if privateAddressIPv6 == "" {
+					privateAddressIPv6 = address
+				}
+
+				continue
+			case ipv4 != nil:
+				if publicAddress == "" {
+					publicAddress = address
+				}
+			case publicAddressIPv6 == "":
+				publicAddressIPv6 = address
 			}
 		}
 	}
@@ -98,14 +124,29 @@ func GetMachineInfo(instance cloud.Instance) Machine {
 
 func publicAndPrivateIPExist(addresses map[string]corev1.NodeAddressType) bool {
 	var publicIPExists, privateIPExists bool
-	// we only care about ExternalIP and InternalIP specifically, thus nolint
-	//nolint:exhaustive
-	for _, addressType := range addresses {
+
+	for address, addressType := range addresses {
+		// we only care about ExternalIP and InternalIP specifically, thus nolint
+		//nolint:exhaustive
 		switch addressType {
 		case corev1.NodeExternalIP:
 			publicIPExists = true
 		case corev1.NodeInternalIP:
 			privateIPExists = true
+		case "":
+			// handle unknown
+			ip := net.ParseIP(address)
+			// is it even an IP?
+			if ip == nil {
+				// no, skip
+				continue
+			}
+
+			if ip.IsPrivate() {
+				privateIPExists = true
+			} else {
+				publicIPExists = true
+			}
 		}
 	}
 
