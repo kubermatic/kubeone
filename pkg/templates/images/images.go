@@ -487,7 +487,7 @@ type ListFilter int
 const (
 	ListFilterNone ListFilter = iota
 	ListFilterBase
-	ListFilterOpional
+	ListFilterOptional
 )
 
 func (r *Resolver) List(lf ListFilter) []string {
@@ -497,7 +497,7 @@ func (r *Resolver) List(lf ListFilter) []string {
 	switch lf {
 	case ListFilterBase:
 		fn = baseResources
-	case ListFilterOpional:
+	case ListFilterOptional:
 		fn = optionalResources
 	case ListFilterNone:
 	}

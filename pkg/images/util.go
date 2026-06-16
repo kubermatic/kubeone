@@ -23,11 +23,13 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/google/go-containerregistry/pkg/crane"
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/sirupsen/logrus"
+	"golang.org/x/sync/errgroup"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/fail"
@@ -136,33 +138,50 @@ func getConstantValue(ctx context.Context, version, constant string) (string, er
 	return "", fmt.Errorf("cannot find the value for %s", constant)
 }
 
-func CopyImages(ctx context.Context, log logrus.FieldLogger, dryRun, insecure bool, images []string, registry, userAgent string) (int, int, error) {
-	var failedImages []string
+func CopyImages(ctx context.Context, log logrus.FieldLogger, dryRun, insecure bool, images []string, registry, userAgent string, parallelImageCopyLimit int) (int, int, error) {
+	var (
+		failedImages []string
+		failLock     sync.Mutex
+		eg           errgroup.Group
+	)
+
+	eg.SetLimit(parallelImageCopyLimit)
+
 	for i, source := range images {
 		dests, err := retagImage(log, source, registry)
 		if err != nil {
 			return 0, len(images), fmt.Errorf("failed to prepare image: %w", err)
 		}
 
-		log := log.WithFields(logrus.Fields{
-			"count": fmt.Sprintf("%d/%d", i+1, len(images)),
-			"image": source,
+		eg.Go(func() error {
+			log := log.WithFields(logrus.Fields{
+				"count": fmt.Sprintf("%d/%d", i+1, len(images)),
+				"image": source,
+			})
+
+			if dryRun {
+				for _, d := range dests {
+					log.WithField("target", d).Info("Dry run")
+				}
+
+				return nil
+			}
+
+			for _, dest := range dests {
+				if err := copyWithRetry(ctx, log.WithField("target", dest), source, dest, userAgent, insecure); err != nil {
+					log.Errorf("Failed to copy image to %s: %v", dest, err)
+					failLock.Lock()
+					failedImages = append(failedImages, fmt.Sprintf("  - %s → %s", source, dest))
+					failLock.Unlock()
+				}
+			}
+
+			return nil
 		})
+	}
 
-		if dryRun {
-			for _, d := range dests {
-				log.WithField("target", d).Info("Dry run")
-			}
-
-			continue
-		}
-
-		for _, dest := range dests {
-			if err := copyWithRetry(ctx, log, source, dest, userAgent, insecure); err != nil {
-				log.Errorf("Failed to copy image to %s: %v", dest, err)
-				failedImages = append(failedImages, fmt.Sprintf("  - %s → %s", source, dest))
-			}
-		}
+	if err := eg.Wait(); err != nil {
+		return 0, len(images), err
 	}
 
 	copied := len(images) - len(failedImages)
@@ -271,7 +290,7 @@ func copyWithRetry(ctx context.Context, log logrus.FieldLogger, src, dst, userAg
 
 // FetchLatestPatchForKubernetesVersion fetches the latest patch for a specific Kubernetes version.
 func FetchLatestPatchForKubernetesVersion(version string) (string, error) {
-	ctx := context.Background()
+	ctx := context.TODO()
 	req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf(stableVersionURL, version), nil)
 	if err != nil {
 		return "", err
@@ -298,10 +317,14 @@ func FetchLatestPatchForKubernetesVersion(version string) (string, error) {
 }
 
 func GetKubeoneImages(ctx context.Context, filter string, versions []string) ([]string, error) {
-	var err error
-	var cpImages []string
-	controlPlaneOnly := false
+	var (
+		err              error
+		cpImages         []string
+		controlPlaneOnly bool
+	)
+
 	listFilter := images.ListFilterNone
+
 	switch filter {
 	case "none":
 	case "control-plane":
@@ -309,7 +332,7 @@ func GetKubeoneImages(ctx context.Context, filter string, versions []string) ([]
 	case "base":
 		listFilter = images.ListFilterBase
 	case "optional":
-		listFilter = images.ListFilterOpional
+		listFilter = images.ListFilterOptional
 	default:
 		return nil, fail.RuntimeError{
 			Op:  "checking filter flag",

@@ -112,7 +112,7 @@ func listImages(opts *listImagesOpts) error {
 	case "base":
 		listFilter = images.ListFilterBase
 	case "optional":
-		listFilter = images.ListFilterOpional
+		listFilter = images.ListFilterOptional
 	default:
 		return fail.RuntimeError{
 			Op:  "checking filter flag",
@@ -121,7 +121,6 @@ func listImages(opts *listImagesOpts) error {
 	}
 
 	imgResolver, err := newImageResolver(opts.KubernetesVersion, opts.ManifestFile)
-
 	if err != nil {
 		return err
 	}
