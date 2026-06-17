@@ -20,12 +20,14 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/Masterminds/semver/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"golang.org/x/sync/errgroup"
 
 	kubeonevalidation "k8c.io/kubeone/pkg/apis/kubeone/validation"
 	"k8c.io/kubeone/pkg/images"
@@ -34,11 +36,13 @@ import (
 
 type mirrorImagesOpts struct {
 	globalOptions
-	Filter             string `longflag:"filter"`
-	KubernetesVersions string `longflag:"kubernetes-versions" shortflag:"k"`
-	Insecure           bool   `longflag:"insecure"`
-	DryRun             bool   `longflag:"dry-run"`
-	Registry           string
+	Filter                 string `longflag:"filter"`
+	KubernetesVersions     string `longflag:"kubernetes-versions" shortflag:"k"`
+	Insecure               bool   `longflag:"insecure"`
+	DryRun                 bool   `longflag:"dry-run"`
+	ParallelImageCopyLimit int    `longflag:"parallel-image-copy-limit" shortflag:"p"`
+
+	Registry string
 }
 
 func mirrorImagesCmd(*pflag.FlagSet) *cobra.Command {
@@ -112,6 +116,13 @@ func mirrorImagesCmd(*pflag.FlagSet) *cobra.Command {
 		"insecure option to bypass TLS certificate verification",
 	)
 
+	cmd.Flags().IntVar(
+		&opts.ParallelImageCopyLimit,
+		longFlagName(opts, "ParallelImageCopyLimit"),
+		10,
+		"Maximum number of images to copy in parallel",
+	)
+
 	return cmd
 }
 
@@ -138,30 +149,49 @@ func defaultVersions(logger *logrus.Logger) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve minor version range: %w", err)
 	}
+
+	var (
+		versionsLock sync.Mutex
+		wg           errgroup.Group
+	)
+
 	for _, minor := range minorVersions {
-		// Get the latest patch for the given minor version.
-		latestPatch, err := images.FetchLatestPatchForKubernetesVersion(minor)
-		if err != nil {
-			return nil, fmt.Errorf("failed to fetch latest patch for version %s: %w", minor, err)
-		}
+		wg.Go(func() error {
+			logger.Infof("🚢 Extracting patches for Kubernetes version %s", minor)
 
-		patchRange, err := semverutil.GetPatchRange(fmt.Sprintf("%s.0", minor), latestPatch)
-		if err != nil {
-			return nil, fmt.Errorf("failed to get patch range from for %s: %w", minor, err)
-		}
+			// Get the latest patch for the given minor version.
+			latestPatch, err := images.FetchLatestPatchForKubernetesVersion(minor)
+			if err != nil {
+				return fmt.Errorf("failed to fetch latest patch for version %s: %w", minor, err)
+			}
 
-		logger.Infof("🚢 Extracted patches for Kubernetes version %s", minor)
-		allVersions = append(allVersions, patchRange...)
+			patchRange, err := semverutil.GetPatchRange(fmt.Sprintf("%s.0", minor), latestPatch)
+			if err != nil {
+				return fmt.Errorf("failed to get patch range from for %s: %w", minor, err)
+			}
+
+			versionsLock.Lock()
+			allVersions = append(allVersions, patchRange...)
+			versionsLock.Unlock()
+
+			return nil
+		})
+	}
+
+	if err := wg.Wait(); err != nil {
+		return nil, err
 	}
 
 	return allVersions, nil
 }
 
 func mirrorImages(logger *logrus.Logger, opts *mirrorImagesOpts, versions []string) error {
-	var verb string
-	var count, fullCount int
+	var (
+		verb             string
+		count, fullCount int
+	)
 
-	ctx := context.Background()
+	ctx := context.TODO()
 
 	logger.Info("🚀 Collecting images used by kubeone ...")
 
@@ -171,7 +201,7 @@ func mirrorImages(logger *logrus.Logger, opts *mirrorImagesOpts, versions []stri
 	}
 
 	logger.WithField("registry", opts.Registry).Info("📦 Mirroring images…")
-	count, fullCount, err = images.CopyImages(ctx, logger, opts.DryRun, opts.Insecure, imageList, opts.Registry, "kubeone")
+	count, fullCount, err = images.CopyImages(ctx, logger, opts.DryRun, opts.Insecure, imageList, opts.Registry, "kubeone", opts.ParallelImageCopyLimit)
 	if err != nil {
 		return fmt.Errorf("failed to mirror all images (successfully copied %d/%d): %w", count, fullCount, err)
 	}
