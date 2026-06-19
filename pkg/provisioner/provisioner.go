@@ -136,6 +136,15 @@ func FindOrCreateMachines(ctx context.Context, machines []clusterv1alpha1.Machin
 			return nil, err
 		}
 
+		// Some providers (e.g. KubeVirt) only ever assign a single in-cluster
+		// (internal) IP to the instance, so we can't wait for both a public and
+		// a private IP to be present before considering the instance ready.
+		pconfig, err := providerconfig.GetConfig(machine.Spec.ProviderSpec)
+		if err != nil {
+			return nil, fail.MachineController(err, "reading provider config")
+		}
+		privateIPOnly := pconfig.CloudProvider == providerconfig.CloudProviderKubeVirt
+
 		machineCreated := false
 		providerInstance, err := prov.Get(ctx, log, &machine, providerData)
 		if err != nil {
@@ -176,7 +185,11 @@ func FindOrCreateMachines(ctx context.Context, machines []clusterv1alpha1.Machin
 				}
 
 				addresses := providerInstance.Addresses()
-				if len(addresses) > 0 && publicAndPrivateIPExist(addresses) {
+				if privateIPOnly {
+					if len(addresses) > 0 {
+						break
+					}
+				} else if len(addresses) > 0 && publicAndPrivateIPExist(addresses) {
 					break
 				}
 
