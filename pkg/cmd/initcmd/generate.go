@@ -220,7 +220,7 @@ func genKubeOneClusterYAML(params *GenerateOpts) ([]byte, error) {
 	prov := ValidProviders[params.providerName]
 	clusterName := params.clusterName
 
-	if params.generateTerraform && params.providerName != "none" {
+	if params.generateTerraform && prov.terraformPath != "" {
 		clusterName = ""
 	}
 

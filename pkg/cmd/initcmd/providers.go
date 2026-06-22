@@ -168,6 +168,12 @@ var ValidProviders = map[string]initProvider{
 			},
 		},
 	},
+	"kubevirt": {
+		title:    "KubeVirt",
+		external: true,
+		// terraformPath is intentionally empty: KubeVirt runs on an existing Kubernetes
+		// infra cluster, so there is no Terraform template to provision infrastructure.
+	},
 	"none": {
 		title:         "None (e.g. baremetal)",
 		terraformPath: "",
