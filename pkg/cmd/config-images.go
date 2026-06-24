@@ -155,11 +155,12 @@ func listImages(opts *listImagesOpts) error {
 		}
 	}
 
-	var images []string
+	var images sets.Set[string]
+
 	if opts.AllImages {
-		images = append(images, imgResolver.ListAll()...)
+		images = sets.New(imgResolver.ListAll()...)
 	} else {
-		images = imgResolver.List(listFilter)
+		images = sets.New(imgResolver.List(listFilter)...)
 	}
 
 	if provider != "" {
@@ -167,10 +168,10 @@ func listImages(opts *listImagesOpts) error {
 		if err != nil {
 			return fail.RuntimeError{Op: "listing images for provider", Err: err}
 		}
-		images = append(images, provImages...)
+		images = images.Intersection(sets.New(provImages...))
 	}
 
-	for _, img := range sets.NewString(images...).List() {
+	for _, img := range sets.List(images) {
 		fmt.Println(img)
 	}
 
