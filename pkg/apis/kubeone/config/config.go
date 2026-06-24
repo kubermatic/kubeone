@@ -321,6 +321,12 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 			setDefaultHetznerControlPlane(cluster.Name, cluster.CloudProvider.Hetzner.ControlPlane)
 		case cluster.CloudProvider.Openstack != nil:
 			setDefaultOpenstackControlPlane(cluster.Name, cluster.CloudProvider.Openstack.ControlPlane)
+		case cluster.CloudProvider.Kubevirt != nil:
+			// ControlPlane (load balancer) is optional on KubeVirt: when it's not
+			// set, the user is expected to provide the apiEndpoint manually.
+			if cluster.CloudProvider.Kubevirt.ControlPlane != nil {
+				setDefaultKubevirtControlPlane(cluster.Name, cluster.CloudProvider.Kubevirt.ControlPlane)
+			}
 		default:
 			return fail.ConfigError{
 				Op:  "cloud provider checking",
@@ -365,6 +371,17 @@ func setDefaultOpenstackControlPlane(clusterName string, osCP *kubeoneapi.Openst
 	osCP.LoadBalancer.Name = defaults(
 		osCP.LoadBalancer.Name,
 		clusterName+"-kube-apiserver",
+	)
+}
+
+func setDefaultKubevirtControlPlane(clusterName string, kvCP *kubeoneapi.KubevirtControlPlane) {
+	kvCP.LoadBalancer.Name = defaults(
+		kvCP.LoadBalancer.Name,
+		clusterName+"-kubeapi",
+	)
+	kvCP.LoadBalancer.ServiceType = defaults(
+		kvCP.LoadBalancer.ServiceType,
+		"LoadBalancer",
 	)
 }
 

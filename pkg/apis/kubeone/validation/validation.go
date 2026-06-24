@@ -262,9 +262,7 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 			allErrs = append(allErrs, field.Forbidden(kubevirtFld, "only one provider can be used at the same time"))
 		}
 		providerFound = true
-		if providerSpec.Kubevirt.InfraNamespace == "" {
-			allErrs = append(allErrs, field.Required(kubevirtFld.Child("infraNamespace"), "is required for kubevirt provider"))
-		}
+		allErrs = append(allErrs, validateKubevirtSpec(providerSpec.Kubevirt, kubevirtFld)...)
 	}
 	if providerSpec.Nutanix != nil {
 		if providerFound {
@@ -357,6 +355,31 @@ func validateOpenstackSpec(openstackSpec *kubeoneapi.OpenstackSpec, fldPath *fie
 		lbFld := fldPath.Child("controlPlane").Child("loadBalancer")
 		if openstackSpec.ControlPlane.LoadBalancer.Name == "" {
 			allErrs = append(allErrs, field.Required(lbFld.Child("name"), "loadBalancer name is required when controlPlane is specified"))
+		}
+	}
+
+	return allErrs
+}
+
+func validateKubevirtSpec(kubevirtSpec *kubeoneapi.KubevirtSpec, fldPath *field.Path) field.ErrorList {
+	var allErrs field.ErrorList
+
+	if kubevirtSpec.InfraNamespace == "" {
+		allErrs = append(allErrs, field.Required(fldPath.Child("infraNamespace"), "is required for kubevirt provider"))
+	}
+
+	if kubevirtSpec.ControlPlane != nil {
+		lbFld := fldPath.Child("controlPlane").Child("loadBalancer")
+		switch kubevirtSpec.ControlPlane.LoadBalancer.ServiceType {
+		case "", "LoadBalancer", "NodePort":
+			// valid
+		default:
+			allErrs = append(allErrs,
+				field.Invalid(
+					lbFld.Child("serviceType"),
+					kubevirtSpec.ControlPlane.LoadBalancer.ServiceType,
+					`must be either "LoadBalancer" or "NodePort"`,
+				))
 		}
 	}
 
