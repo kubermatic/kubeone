@@ -18,12 +18,20 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/sets"
 
+	kubeoneconfig "k8c.io/kubeone/pkg/apis/kubeone/config"
+	kubeonescheme "k8c.io/kubeone/pkg/apis/kubeone/scheme"
+	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
+	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/templates/images"
 )
@@ -31,6 +39,7 @@ import (
 type listImagesOpts struct {
 	ManifestFile      string `longflag:"manifest" shortflag:"m"`
 	Filter            string `longflag:"filter"`
+	Provider          string `longflag:"provider"`
 	KubernetesVersion string `longflag:"kubernetes-version" shortflag:"k"`
 	AllImages         bool   `longflag:"all" shortflag:"a"`
 }
@@ -69,6 +78,9 @@ func listImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 
 			# To see images list affected by the registryConfiguration configuration (in case if any)
 			kubeone config images list -m mycluster.yaml
+
+			# To see images only related to a specific provider
+			kubeone config images list --provider aws
 		`),
 		SilenceErrors: true,
 		RunE: func(*cobra.Command, []string) error {
@@ -101,6 +113,14 @@ func listImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		"list all images, including optional ones",
 	)
 
+	cmd.Flags().StringVar(
+		&opts.Provider,
+		longFlagName(opts, "Provider"),
+		"",
+		fmt.Sprintf("filter images for a specific cloud provider, one of [%s]",
+			strings.Join(images.SupportedProviders(), "|")),
+	)
+
 	return cmd
 }
 
@@ -125,16 +145,90 @@ func listImages(opts *listImagesOpts) error {
 		return err
 	}
 
-	var images []string
-	if opts.AllImages {
-		images = imgResolver.ListAll()
-	} else {
-		images = imgResolver.List(listFilter)
+	// Determine the active provider: explicit flag takes priority, then
+	// auto-detect from the manifest's cloudProvider field.
+	provider := opts.Provider
+	if provider == "" && opts.ManifestFile != "" {
+		provider, err = detectProviderFromManifest(opts.ManifestFile)
+		if err != nil {
+			return err
+		}
 	}
 
-	for _, img := range images {
+	var images sets.Set[string]
+
+	if opts.AllImages {
+		images = sets.New(imgResolver.ListAll()...)
+	} else {
+		images = sets.New(imgResolver.List(listFilter)...)
+	}
+
+	if provider != "" {
+		provImages, err := imgResolver.ListForProvider(provider)
+		if err != nil {
+			return fail.RuntimeError{Op: "listing images for provider", Err: err}
+		}
+		images = images.Intersection(sets.New(provImages...))
+	}
+
+	for _, img := range sets.List(images) {
 		fmt.Println(img)
 	}
 
 	return nil
+}
+
+// detectProviderFromManifest reads the KubeOneCluster manifest and returns the
+// cloud provider name as reported by CloudProviderSpec.Name().  Returns an
+// empty string when the manifest file cannot be read or when no provider is
+// configured ("none" / "unknown").
+func detectProviderFromManifest(manifestFile string) (string, error) {
+	configBuf, err := os.ReadFile(manifestFile)
+	if err != nil {
+		// manifest not accessible – silently skip provider detection
+		return "", nil
+	}
+
+	apiVersion, err := kubeoneconfig.KubeOneClusterAPIVersion(configBuf)
+	if err != nil {
+		return "", fail.RuntimeError{Op: "parsing manifest for provider detection", Err: err}
+	}
+
+	var providerName string
+
+	switch apiVersion {
+	case kubeonev1beta2.SchemeGroupVersion.String():
+		providerName, err = inspectCluster(configBuf, kubeonev1beta2.NewKubeOneCluster)
+	case kubeonev1beta3.SchemeGroupVersion.String():
+		providerName, err = inspectCluster(configBuf, kubeonev1beta3.NewKubeOneCluster)
+	}
+	if err != nil {
+		return "", err
+	}
+
+	if providerName == "none" || providerName == "unknown" || providerName == "" {
+		return "", nil
+	}
+
+	return providerName, nil
+}
+
+type cloudProviderNamer interface {
+	CloudProviderName() string
+	runtime.Object
+}
+
+// inspectCluster decodes a raw KubeOneCluster manifest into the
+// versioned type T (created by newCluster), then calls inspectFn to
+// extract the cloud provider name string.  T must implement runtime.Object.
+func inspectCluster[T cloudProviderNamer](
+	configBuf []byte,
+	newCluster func() T,
+) (string, error) {
+	cluster := newCluster()
+	if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), configBuf, cluster); err != nil {
+		return "", fail.Config(err, fmt.Sprintf("decoding %s", cluster.GetObjectKind().GroupVersionKind()))
+	}
+
+	return cluster.CloudProviderName(), nil
 }

@@ -59,6 +59,10 @@ func SetCloudProvider(cp *CloudProviderSpec, name string) error {
 	return nil
 }
 
+func (c *KubeOneCluster) CloudProviderName() string {
+	return c.CloudProvider.Name()
+}
+
 func (cps *CloudProviderSpec) Name() string {
 	switch {
 	case cps.AWS != nil:
