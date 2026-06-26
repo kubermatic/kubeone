@@ -146,7 +146,7 @@ func TestKubeadmCert(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			got, err := KubeadmCert(tt.args.workdir, tt.args.nodeID, tt.args.verboseFlag)
+			got, err := KubeadmCertsAll(tt.args.workdir, tt.args.nodeID, tt.args.verboseFlag)
 			if !errors.Is(err, tt.err) {
 				t.Errorf("KubeadmCert() error = %v, wantErr %v", err, tt.err)
 

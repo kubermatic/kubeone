@@ -39,7 +39,7 @@ var (
 		sudo find /etc/kubernetes/pki/ -name *.crt -exec chmod 600 {} \;
 	`)
 
-	kubeadmCertScriptTemplate = heredoc.Doc(`
+	kubeadmCertsAllScriptTemplate = heredoc.Doc(`
 		sudo kubeadm {{ .VERBOSE }} init phase certs all \
 			--config={{ .WORK_DIR }}/cfg/control_plane_full_{{ .NODE_ID }}.yaml
 		sudo find /etc/kubernetes/pki/ -name *.crt -exec chmod 600 {} \;
@@ -97,14 +97,14 @@ func KubeadmJoinWorker(workdir string, nodeID int, verboseFlag string) (string, 
 	return result, fail.Runtime(err, "rendering kubeadmWorkerJoinScriptTemplate script")
 }
 
-func KubeadmCert(workdir string, nodeID int, verboseFlag string) (string, error) {
-	result, err := Render(kubeadmCertScriptTemplate, Data{
+func KubeadmCertsAll(workdir string, nodeID int, verboseFlag string) (string, error) {
+	result, err := Render(kubeadmCertsAllScriptTemplate, Data{
 		"WORK_DIR": workdir,
 		"NODE_ID":  nodeID,
 		"VERBOSE":  verboseFlag,
 	})
 
-	return result, fail.Runtime(err, "rendering kubeadmCertScriptTemplate script")
+	return result, fail.Runtime(err, "rendering kubeadmCertsAllScriptTemplate script")
 }
 
 func KubeadmInit(workdir string, nodeID int, verboseFlag, token, tokenTTL string, skipPhases string) (string, error) {

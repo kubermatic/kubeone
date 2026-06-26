@@ -21,8 +21,11 @@ import (
 	"crypto/ecdsa"
 	"crypto/rsa"
 	"crypto/x509"
+	"encoding/pem"
 	"fmt"
+	"io/fs"
 	"os"
+	"slices"
 	"strings"
 	"time"
 
@@ -93,7 +96,7 @@ func CAKeyPair(config *configupload.Configuration) (crypto.Signer, *x509.Certifi
 
 func NewSignedKubernetesServiceTLSCert(name, namespace, domain string, caKey crypto.Signer, caCert *x509.Certificate) (map[string]string, error) {
 	serviceCommonName := strings.Join([]string{name, namespace, "svc"}, ".")
-	serviceFQDNCommonName := strings.Join([]string{serviceCommonName, domain, ""}, ".")
+	serviceFQDNCommonName := strings.Join([]string{serviceCommonName, domain}, ".")
 
 	altdnsNames := []string{
 		serviceFQDNCommonName,
@@ -140,7 +143,43 @@ func RenewAll(st *state.State) error {
 		logger := ctx.Logger.WithField("node", node.PublicAddress)
 		logger.Infoln("Renew certificates...")
 
-		_, _, err := ctx.Runner.RunRaw("sudo kubeadm certs renew all")
+		sshfs := ctx.Runner.NewFS()
+		apiserverCertFile, err := fs.ReadFile(sshfs, KubernetesAPIServerPath)
+		if err != nil {
+			return fail.SSH(err, "reading Kubernetes API server certificate")
+		}
+
+		apiserverPEM, _ := pem.Decode(apiserverCertFile)
+		if apiserverPEM == nil {
+			return fail.Runtime(fmt.Errorf("PEM block is empty"), "decoding Kubernetes API server certificate PEM")
+		}
+
+		apiserverCert, err := x509.ParseCertificate(apiserverPEM.Bytes)
+		if err != nil {
+			return fail.Runtime(err, "parsing Kubernetes API server certificate")
+		}
+
+		needToRecreateAPIServerCerts := false
+		for _, san := range ctx.Cluster.APIEndpoint.AlternativeNames {
+			if !slices.Contains(apiserverCert.DNSNames, san) {
+				needToRecreateAPIServerCerts = true
+			}
+		}
+
+		var certsCmd strings.Builder
+		if needToRecreateAPIServerCerts {
+			fmt.Fprintf(&certsCmd, "sudo rm %q\n", KubernetesAPIServerPath)
+			kubeadmInitAllCertsCmd, serr := scripts.KubeadmCertsAll(ctx.WorkDir, node.ID, ctx.KubeadmVerboseFlag())
+			if serr != nil {
+				return serr
+			}
+			certsCmd.WriteString(kubeadmInitAllCertsCmd)
+			certsCmd.WriteString("\n")
+		}
+
+		certsCmd.WriteString("sudo kubeadm certs renew all")
+
+		_, _, err = ctx.Runner.RunRaw(certsCmd.String())
 		if err != nil {
 			return fail.SSH(err, "renewing certificates")
 		}
