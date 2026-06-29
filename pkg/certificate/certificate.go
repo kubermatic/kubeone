@@ -144,7 +144,7 @@ func RenewAll(st *state.State) error {
 		logger.Infoln("Renew certificates...")
 
 		sshfs := ctx.Runner.NewFS()
-		apiserverCertFile, err := fs.ReadFile(sshfs, KubernetesAPIServerPath)
+		apiserverCertFile, err := fs.ReadFile(sshfs, KubernetesAPIServerCertPath)
 		if err != nil {
 			return fail.SSH(err, "reading Kubernetes API server certificate")
 		}
@@ -168,7 +168,7 @@ func RenewAll(st *state.State) error {
 
 		var certsCmd strings.Builder
 		if needToRecreateAPIServerCerts {
-			fmt.Fprintf(&certsCmd, "sudo rm %q\n", KubernetesAPIServerPath)
+			fmt.Fprintf(&certsCmd, "sudo rm %q %q\n", KubernetesAPIServerCertPath, KubernetesAPIServerKeyPath)
 			kubeadmInitAllCertsCmd, serr := scripts.KubeadmCertsAll(ctx.WorkDir, node.ID, ctx.KubeadmVerboseFlag())
 			if serr != nil {
 				return serr

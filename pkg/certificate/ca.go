@@ -29,9 +29,10 @@ import (
 )
 
 const (
-	KubernetesAPIServerPath = "/etc/kubernetes/pki/apiserver.crt"
-	KubernetesCACertPath    = "/etc/kubernetes/pki/ca.crt"
-	KubernetesCAKeyPath     = "/etc/kubernetes/pki/ca.key"
+	KubernetesAPIServerCertPath = "/etc/kubernetes/pki/apiserver.crt"
+	KubernetesAPIServerKeyPath  = "/etc/kubernetes/pki/apiserver.key"
+	KubernetesCACertPath        = "/etc/kubernetes/pki/ca.crt"
+	KubernetesCAKeyPath         = "/etc/kubernetes/pki/ca.key"
 )
 
 func kubernetesPKICAFiles() []string {
