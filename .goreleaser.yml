@@ -18,9 +18,27 @@ builds:
     goarch:
       - amd64
       - arm64
+
 archives:
   - id: kubeone
     formats: ["zip"]
     files:
       - README.md
       - LICENSE
+
+sboms:
+  - id: binary-sbom
+    artifacts: binary
+    documents:
+      - "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}.sbom.spdx.json"
+
+signs:
+  - cmd: cosign
+    artifacts: checksum
+    signature: "${artifact}.sigstore.json"
+    args:
+      - sign-blob
+      - "--bundle=${signature}"
+      - "${artifact}"
+      - "--yes"
+    output: true
