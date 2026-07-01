@@ -1,0 +1,44 @@
+name: mirror-images
+
+on:
+  push:
+    tags:
+      - "v1.*"
+  workflow_dispatch: {}
+
+# Prevent concurrent mirroring
+concurrency:
+  group: mirror-images
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+permissions: {}
+
+jobs:
+  mirror-images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      packages: write # to write the mirrored images to GHCR
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - name: build kubeone
+        run: |
+          make install
+      - name: login to GHCR
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: mirror kubeone images
+        run: |
+          kubeone mirror-images ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
