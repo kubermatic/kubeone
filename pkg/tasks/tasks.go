@@ -133,7 +133,7 @@ func WithFullInstall(t Tasks) Tasks {
 			Operation: "installing prerequisites",
 		},
 	}...).
-		append(kubernetesConfigFiles()...).
+		append(KubernetesConfigFiles()...).
 		append(Tasks{
 			{
 				Fn:        kubeadmPreflightChecks,
@@ -363,7 +363,7 @@ func WithResources(t Tasks) Tasks {
 
 func WithUpgrade(t Tasks, followers ...kubeoneapi.HostConfig) Tasks {
 	return WithHostnameOSAndProbes(t).
-		append(kubernetesConfigFiles()...). // this, in the upgrade process where config rails are handled
+		append(KubernetesConfigFiles()...). // this, in the upgrade process where config rails are handled
 		append(
 			Task{Fn: kubeconfig.BuildKubernetesClientset, Operation: "building kubernetes clientset"},
 			Task{Fn: uploadKubeadmToConfigMaps, Operation: "updating kubeadm configmaps"},
@@ -489,11 +489,11 @@ func WithClusterStatus(t Tasks) Tasks {
 		}...)
 }
 
-func kubernetesConfigFiles() Tasks {
+func KubernetesConfigFiles() Tasks {
 	return Tasks{
-		{Fn: generateKubeadm, Operation: "generating kubeadm config files"},
-		{Fn: generateConfigurationFiles, Operation: "generating config files"},
-		{Fn: uploadConfigurationFiles, Operation: "uploading config files"},
+		{Fn: generateKubeadm, Description: "Generating kubeadm config files"},
+		{Fn: generateConfigurationFiles, Description: "Generating config files"},
+		{Fn: uploadConfigurationFiles, Description: "Uploading config files"},
 	}
 }
 

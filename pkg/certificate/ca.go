@@ -29,11 +29,13 @@ import (
 )
 
 const (
-	KubernetesCACertPath = "/etc/kubernetes/pki/ca.crt"
-	KubernetesCAKeyPath  = "/etc/kubernetes/pki/ca.key"
+	KubernetesAPIServerCertPath = "/etc/kubernetes/pki/apiserver.crt"
+	KubernetesAPIServerKeyPath  = "/etc/kubernetes/pki/apiserver.key"
+	KubernetesCACertPath        = "/etc/kubernetes/pki/ca.crt"
+	KubernetesCAKeyPath         = "/etc/kubernetes/pki/ca.key"
 )
 
-func kubernetesPKIFiles() []string {
+func kubernetesPKICAFiles() []string {
 	return []string{
 		KubernetesCACertPath,
 		KubernetesCAKeyPath,
@@ -49,7 +51,7 @@ func kubernetesPKIFiles() []string {
 func DownloadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, _ executor.Interface) error {
 	sshfs := s.Runner.NewFS()
 
-	for _, fname := range kubernetesPKIFiles() {
+	for _, fname := range kubernetesPKICAFiles() {
 		buf, err := fs.ReadFile(sshfs, fname)
 		if err != nil {
 			return err
@@ -74,13 +76,13 @@ func DownloadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, _ executor.Interf
 func UploadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, _ executor.Interface) error {
 	sshfs := s.Runner.NewFS()
 
-	for _, fname := range kubernetesPKIFiles() {
+	for _, fname := range kubernetesPKICAFiles() {
 		buf, found := s.Configuration.KubernetesPKI[fname]
 		if !found {
-			return fmt.Errorf("file %q found found in PKI", fname)
+			return fmt.Errorf("file %q not found in PKI", fname)
 		}
 
-		if err := sshfs.MkdirAll(path.Dir(fname), 0700); err != nil {
+		if err := sshfs.MkdirAll(path.Dir(fname), 0o700); err != nil {
 			return err
 		}
 
@@ -95,7 +97,7 @@ func UploadKubePKI(s *state.State, _ *kubeoneapi.HostConfig, _ executor.Interfac
 			return err
 		}
 
-		if err = fw.Chmod(0600); err != nil {
+		if err = fw.Chmod(0o600); err != nil {
 			return err
 		}
 

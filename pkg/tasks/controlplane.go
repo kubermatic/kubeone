@@ -55,7 +55,7 @@ func joinControlPlaneNodeInternal(s *state.State, node *kubeoneapi.HostConfig, c
 
 func kubeadmCertsExecutor(s *state.State, node *kubeoneapi.HostConfig, _ executor.Interface) error {
 	s.Logger.Infoln("Ensuring Certificates...")
-	cmd, err := scripts.KubeadmCert(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
+	cmd, err := scripts.KubeadmCertsAll(s.WorkDir, node.ID, s.KubeadmVerboseFlag())
 	if err != nil {
 		return err
 	}

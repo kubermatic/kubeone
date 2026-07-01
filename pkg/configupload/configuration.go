@@ -80,7 +80,7 @@ func (c *Configuration) UploadTo(conn executor.Interface, directory string) erro
 
 		// ensure the base dir exists
 		dir := filepath.Dir(target)
-		if err := virtfs.MkdirAll(dir, 0700); err != nil {
+		if err := virtfs.MkdirAll(dir, 0o700); err != nil {
 			return err
 		}
 
@@ -105,7 +105,7 @@ func (c *Configuration) UploadTo(conn executor.Interface, directory string) erro
 			return fail.Runtime(err, "copying to %s file", target)
 		}
 
-		if err := file.Chmod(0600); err != nil {
+		if err := file.Chmod(0o600); err != nil {
 			return err
 		}
 	}

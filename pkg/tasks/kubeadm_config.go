@@ -58,8 +58,6 @@ func determinePauseImageExecutor(s *state.State, _ *kubeoneapi.HostConfig, _ exe
 }
 
 func generateKubeadm(s *state.State) error {
-	s.Logger.Infoln("Generating kubeadm config file...")
-
 	if err := determinePauseImage(s); err != nil {
 		return err
 	}
