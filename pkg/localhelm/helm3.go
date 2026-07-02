@@ -27,18 +27,19 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/sirupsen/logrus"
-	helmaction "helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chart"
-	"helm.sh/helm/v3/pkg/chart/loader"
-	helmcli "helm.sh/helm/v3/pkg/cli"
-	"helm.sh/helm/v3/pkg/cli/values"
-	"helm.sh/helm/v3/pkg/downloader"
-	"helm.sh/helm/v3/pkg/getter"
-	"helm.sh/helm/v3/pkg/registry"
-	helmrelease "helm.sh/helm/v3/pkg/release"
-	"helm.sh/helm/v3/pkg/storage/driver"
+	helmaction "helm.sh/helm/v4/pkg/action"
+	helmchart "helm.sh/helm/v4/pkg/chart"
+	helmchartv2 "helm.sh/helm/v4/pkg/chart/v2"
+	"helm.sh/helm/v4/pkg/chart/v2/loader"
+	helmcli "helm.sh/helm/v4/pkg/cli"
+	"helm.sh/helm/v4/pkg/cli/values"
+	"helm.sh/helm/v4/pkg/downloader"
+	"helm.sh/helm/v4/pkg/getter"
+	"helm.sh/helm/v4/pkg/kube"
+	"helm.sh/helm/v4/pkg/registry"
+	helmrelease "helm.sh/helm/v4/pkg/release"
+	"helm.sh/helm/v4/pkg/storage/driver"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/fail"
@@ -143,7 +144,7 @@ func Deploy(st *state.State) error {
 		}
 
 		restClientGetter := newRestClientGetter(tmpKubeConf.Name(), release.Namespace, st)
-		if err = helmCfg.Init(restClientGetter, release.Namespace, helmStorageDriver, st.Logger.Debugf); err != nil {
+		if err = helmCfg.Init(restClientGetter, release.Namespace, helmStorageDriver); err != nil {
 			return fail.Runtime(err, "initializing helm action configuration")
 		}
 
@@ -168,22 +169,31 @@ func Deploy(st *state.State) error {
 	return uninstallReleases(releasesToUninstall, helmCfg, tmpKubeConf.Name(), st)
 }
 
-func releasesFilterFn(helmReleases []kubeoneapi.HelmRelease, logger logrus.FieldLogger) func(rel *helmrelease.Release) bool {
-	return func(rel *helmrelease.Release) bool {
+func releasesFilterFn(helmReleases []kubeoneapi.HelmRelease, logger logrus.FieldLogger) func(rel helmrelease.Releaser) bool {
+	return func(rel helmrelease.Releaser) bool {
+		release, err := helmrelease.NewAccessor(rel)
+		if err != nil {
+			return false
+		}
+
 		for _, hr := range helmReleases {
-			if rel.Name == hr.ReleaseName && rel.Namespace == hr.Namespace {
+			if release.Name() == hr.ReleaseName && release.Namespace() == hr.Namespace {
 				chartName := hr.Chart
 				if hr.RepoURL == "" && !strings.HasPrefix(hr.ChartURL, "oci://") {
 					chartName, _ = GetChartNameFromChartYAML(chartName)
 				}
-				if chartName == rel.Chart.Name() {
+				chartAcc, err := helmchart.NewDefaultAccessor(release.Chart())
+				if err != nil {
+					return false
+				}
+				if chartName == chartAcc.Name() {
 					return false
 				}
 			}
 		}
-		_, found := rel.Labels[releasedByKubeone]
+		_, found := release.Labels()[releasedByKubeone]
 		if found {
-			logger.Infof("queue %s/%s v%d helm release to uninstall", rel.Namespace, rel.Name, rel.Version)
+			logger.Infof("queue %s/%s v%d helm release to uninstall", release.Namespace(), release.Name(), release.Version())
 		}
 
 		return found
@@ -261,33 +271,50 @@ func cleanManifest(manifest string) string {
 	return strings.TrimSpace(buf.String())
 }
 
-func helmReleasesEqual(rel *helmrelease.Release, oldRels []*helmrelease.Release) bool {
+func helmReleasesEqual(rel helmrelease.Releaser, oldRels []helmrelease.Releaser) bool {
 	if len(oldRels) == 0 {
 		return false
 	}
 
 	sort.Slice(oldRels, func(i, j int) bool {
-		return oldRels[i].Version > oldRels[j].Version
+		accI, err := helmrelease.NewAccessor(oldRels[i])
+		if err != nil {
+			return false
+		}
+		accJ, err := helmrelease.NewAccessor(oldRels[j])
+		if err != nil {
+			return false
+		}
+
+		return accI.Version() > accJ.Version()
 	})
 	latestHelmRelease := oldRels[0]
 
-	if rel.Chart.Metadata.Version != latestHelmRelease.Chart.Metadata.Version {
+	relAcc, err := helmrelease.NewAccessor(rel)
+	if err != nil {
+		return false
+	}
+	latestAcc, err := helmrelease.NewAccessor(latestHelmRelease)
+	if err != nil {
 		return false
 	}
 
-	if !cmp.Equal(neverNilMap(rel.Config), neverNilMap(latestHelmRelease.Config)) {
+	relChartAcc, err := helmchart.NewDefaultAccessor(relAcc.Chart())
+	if err != nil {
+		return false
+	}
+	latestChartAcc, err := helmchart.NewDefaultAccessor(latestAcc.Chart())
+	if err != nil {
 		return false
 	}
 
-	return cleanManifest(rel.Manifest) == cleanManifest(latestHelmRelease.Manifest)
-}
-
-func neverNilMap(m1 map[string]any) map[string]any {
-	if m1 == nil {
-		return map[string]any{}
+	relVersion, _ := relChartAcc.MetadataAsMap()["version"].(string)
+	latestVersion, _ := latestChartAcc.MetadataAsMap()["version"].(string)
+	if relVersion != latestVersion {
+		return false
 	}
 
-	return m1
+	return cleanManifest(relAcc.Manifest()) == cleanManifest(latestAcc.Manifest())
 }
 
 func upgradeRelease(
@@ -298,11 +325,11 @@ func upgradeRelease(
 	providers getter.Providers,
 	dynclient ctrlruntimeclient.Client,
 	vals map[string]any,
-	existingHelmReleases []*helmrelease.Release,
+	existingHelmReleases []helmrelease.Releaser,
 	logger logrus.FieldLogger,
 ) error {
 	helmInstall := newHelmInstallClient(cfg, release)
-	helmInstall.DryRun = true
+	helmInstall.DryRunStrategy = helmaction.DryRunClient
 	dryRunHelmRelease, err := runInstallRelease(ctx, release, helmInstall, helmSettings, providers, vals)
 	if err != nil {
 		return err
@@ -322,9 +349,12 @@ func upgradeRelease(
 	helmUpgrade.Namespace = release.Namespace
 	helmUpgrade.RepoURL = release.RepoURL
 	helmUpgrade.Version = release.Version
-	helmUpgrade.InsecureSkipTLSverify = release.Insecure
+	helmUpgrade.InsecureSkipTLSVerify = release.Insecure
 	helmUpgrade.PlainHTTP = release.Insecure
-	helmUpgrade.Wait = release.Wait
+	helmUpgrade.WaitStrategy = kube.HookOnlyStrategy
+	if release.Wait {
+		helmUpgrade.WaitStrategy = kube.StatusWatcherStrategy
+	}
 	helmUpgrade.Timeout = release.WaitTimeout.Duration
 
 	if release.Auth != nil {
@@ -343,8 +373,12 @@ func upgradeRelease(
 		return fail.Runtime(err, "upgrading helm release %q from chart %q", release.Chart, release.ReleaseName)
 	}
 
+	relAcc, err := helmrelease.NewAccessor(rel)
+	if err != nil {
+		return fail.Runtime(err, "creating helm release accessor")
+	}
 	secretObjectKey := ctrlruntimeclient.ObjectKey{
-		Name:      makeKey(rel.Name, rel.Version),
+		Name:      makeKey(relAcc.Name(), relAcc.Version()),
 		Namespace: release.Namespace,
 	}
 
@@ -359,9 +393,12 @@ func newHelmInstallClient(cfg *helmaction.Configuration, release kubeoneapi.Helm
 	helmInstall.ReleaseName = release.ReleaseName
 	helmInstall.RepoURL = release.RepoURL
 	helmInstall.Version = release.Version
-	helmInstall.Wait = release.Wait
+	helmInstall.WaitStrategy = kube.HookOnlyStrategy
+	if release.Wait {
+		helmInstall.WaitStrategy = kube.StatusWatcherStrategy
+	}
 	helmInstall.Timeout = release.WaitTimeout.Duration
-	helmInstall.InsecureSkipTLSverify = release.Insecure
+	helmInstall.InsecureSkipTLSVerify = release.Insecure
 	helmInstall.PlainHTTP = release.Insecure
 
 	if release.Auth != nil {
@@ -389,8 +426,13 @@ func installRelease(
 		return err
 	}
 
+	relAcc, err := helmrelease.NewAccessor(rel)
+	if err != nil {
+		return fail.Runtime(err, "creating helm release accessor")
+	}
+
 	secretObjectKey := ctrlruntimeclient.ObjectKey{
-		Name:      makeKey(rel.Name, rel.Version),
+		Name:      makeKey(relAcc.Name(), relAcc.Version()),
 		Namespace: release.Namespace,
 	}
 
@@ -404,7 +446,7 @@ func runInstallRelease(
 	helmSettings *helmcli.EnvSettings,
 	providers getter.Providers,
 	vals map[string]any,
-) (*helmrelease.Release, error) {
+) (helmrelease.Releaser, error) {
 	chartRequested, err := getChart(release, client.ChartPathOptions, helmSettings, providers)
 	if err != nil {
 		return nil, err
@@ -419,25 +461,30 @@ func runInstallRelease(
 }
 
 func uninstallReleases(
-	toUninstall []*helmrelease.Release,
+	toUninstall []helmrelease.Releaser,
 	helmCfg *helmaction.Configuration,
 	kubeconfPath string,
 	st *state.State,
 ) error {
 	logger := st.Logger
 	for _, release := range toUninstall {
-		restClientGetter := newRestClientGetter(kubeconfPath, release.Namespace, st)
-		if err := helmCfg.Init(restClientGetter, release.Namespace, helmStorageDriver, logger.Debugf); err != nil {
-			return fail.Runtime(err, "initializing helm action configuration")
+		releaseAcc, err := helmrelease.NewAccessor(release)
+		if err != nil {
+			return fail.Runtime(err, "creating helm release accessor")
+		}
+
+		restClientGetter := newRestClientGetter(kubeconfPath, releaseAcc.Namespace(), st)
+		if errInit := helmCfg.Init(restClientGetter, releaseAcc.Namespace(), helmStorageDriver); errInit != nil {
+			return fail.Runtime(errInit, "initializing helm action configuration")
 		}
 
 		helmUninstall := helmaction.NewUninstall(helmCfg)
-		resp, err := helmUninstall.Run(release.Name)
+		resp, err := helmUninstall.Run(releaseAcc.Name())
 		if err != nil {
-			return fail.Runtime(err, "uninstalling helm release %s/%s", release.Namespace, release.Name)
+			return fail.Runtime(err, "uninstalling helm release %s/%s", releaseAcc.Namespace(), releaseAcc.Name())
 		}
 
-		logger.Infof("uninstalled helm release %s/%s: %s", release.Namespace, release.Name, resp.Info)
+		logger.Infof("uninstalled helm release %s/%s: %s", releaseAcc.Namespace(), releaseAcc.Name(), resp.Info)
 	}
 
 	return nil
@@ -470,7 +517,7 @@ func getChart(
 	chartPathOpts helmaction.ChartPathOptions,
 	helmSettings *helmcli.EnvSettings,
 	providers getter.Providers,
-) (*chart.Chart, error) {
+) (*helmchartv2.Chart, error) {
 	chartName := release.Chart
 	if release.ChartURL != "" {
 		chartName = release.ChartURL
@@ -484,7 +531,7 @@ func getChart(
 	return newChart(chartPath, chartName, providers, helmSettings)
 }
 
-func newChart(chartPath string, chartName string, providers getter.Providers, helmSettings *helmcli.EnvSettings) (*chart.Chart, error) {
+func newChart(chartPath string, chartName string, providers getter.Providers, helmSettings *helmcli.EnvSettings) (*helmchartv2.Chart, error) {
 	chartRequested, err := loader.Load(chartPath)
 	if err != nil {
 		return nil, fail.Runtime(err, "loading helm chart")
@@ -497,7 +544,11 @@ func newChart(chartPath string, chartName string, providers getter.Providers, he
 	}
 
 	if req := chartRequested.Metadata.Dependencies; req != nil {
-		if errMiss := helmaction.CheckDependencies(chartRequested, req); errMiss != nil {
+		chartAcc, errAcc := helmchart.NewDefaultAccessor(chartRequested)
+		if errAcc != nil {
+			return nil, fail.Runtime(errAcc, "creating chart accessor for dependency check")
+		}
+		if errMiss := helmaction.CheckDependencies(chartRequested, chartAcc.MetaDependencies()); errMiss != nil {
 			chartRequested, err = dependencyUpdate(chartName, helmSettings, providers)
 			if err != nil {
 				return nil, err
@@ -508,7 +559,7 @@ func newChart(chartPath string, chartName string, providers getter.Providers, he
 	return chartRequested, nil
 }
 
-func dependencyUpdate(chartPath string, helmSettings *helmcli.EnvSettings, providers []getter.Provider) (*chart.Chart, error) {
+func dependencyUpdate(chartPath string, helmSettings *helmcli.EnvSettings, providers []getter.Provider) (*helmchartv2.Chart, error) {
 	mgr := &downloader.Manager{
 		Out:              os.Stdout,
 		ChartPath:        chartPath,
