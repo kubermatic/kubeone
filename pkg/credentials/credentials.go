@@ -17,11 +17,12 @@ limitations under the License.
 package credentials
 
 import (
+	"context"
 	"encoding/base64"
 	"os"
 	"strings"
 
-	awscredentials "github.com/aws/aws-sdk-go/aws/credentials"
+	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 
@@ -361,7 +362,8 @@ func (lookup lookupFunc) aws() (map[string]string, error) {
 		return creds, nil
 	}
 
-	if os.Getenv("AWS_PROFILE") == "" {
+	awsProfile := os.Getenv("AWS_PROFILE")
+	if awsProfile == "" {
 		// no profile is specified, we refuse to totally implicitly use shared
 		// credentials. This is needed as a precaution, to avoid accidental
 		// exposure of credentials not meant for sharing with cluster.
@@ -372,22 +374,30 @@ func (lookup lookupFunc) aws() (map[string]string, error) {
 		}
 	}
 
-	// If env fails resort to config file
-	sharedCredsProvider := awscredentials.NewSharedCredentials("", "")
-
-	// will error out in case when ether ID or KEY are missing from shared file
-	configCreds, err := sharedCredsProvider.Get()
+	ctx := context.TODO()
+	conf, err := awsconfig.LoadDefaultConfig(ctx,
+		awsconfig.WithSharedConfigProfile(awsProfile),
+	)
 	if err != nil {
 		return nil, fail.CredentialsError{
-			Op:       "lookup",
+			Op:       "loading default config",
+			Provider: "AWS",
+			Err:      errors.WithStack(err),
+		}
+	}
+
+	awscreds, err := conf.Credentials.Retrieve(ctx)
+	if err != nil {
+		return nil, fail.CredentialsError{
+			Op:       "retrieving credentials",
 			Provider: "AWS",
 			Err:      errors.WithStack(err),
 		}
 	}
 
 	// safe to assume credentials were found
-	creds[AWSAccessKeyID] = configCreds.AccessKeyID
-	creds[AWSSecretAccessKey] = configCreds.SecretAccessKey
+	creds[AWSAccessKeyID] = awscreds.AccessKeyID
+	creds[AWSSecretAccessKey] = awscreds.SecretAccessKey
 
 	return creds, nil
 }
