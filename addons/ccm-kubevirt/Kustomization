@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: kube-system
 
 resources:
-  - 'https://github.com/kubevirt/cloud-provider-kubevirt/config/default?=ref=v0.5.1'
+  - 'https://github.com/kubevirt/cloud-provider-kubevirt/config/default?=ref=v0.6.0'
 
 patches:
   - patch: |-
