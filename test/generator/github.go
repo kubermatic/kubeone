@@ -29,8 +29,6 @@ import (
 	"github.com/google/go-github/v65/github"
 
 	"k8c.io/kubeone/test/e2e"
-
-	"k8s.io/utils/ptr"
 )
 
 const GitHubTokenEnv = "GITHUB_TOKEN" //nolint:gosec
@@ -131,7 +129,7 @@ func generateGitHubIssues(outputBuf io.ReadWriter, kubeoneTest []KubeoneTest, pr
 						"sig/cluster-management",
 						"priority/high",
 					},
-					State: ptr.To("open"),
+					State: new("open"),
 				}
 
 				issue, _, err := gh.Issues.Create(context.Background(), "kubermatic", "kubeone", request)
@@ -141,7 +139,7 @@ func generateGitHubIssues(outputBuf io.ReadWriter, kubeoneTest []KubeoneTest, pr
 
 				fmt.Fprintf(outputBuf, "Testing issue created #%d (https://github.com/kubermatic/kubeone/issue/%d)!\n", issue.GetNumber(), issue.GetNumber())
 			} else {
-				fmt.Fprintf(outputBuf, "%s\n\n", title)
+				fmt.Fprintf(outputBuf, "# %s\n\n", title)
 				if _, err := outputBuf.Write(out.Bytes()); err != nil {
 					return err
 				}

@@ -42,8 +42,8 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
-	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
+	ctrlrt "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const kubevirtAPIServerPort = 6443
@@ -125,8 +125,8 @@ func kubevirtKubeconfig(s *state.State) ([]byte, error) {
 	return []byte(raw), nil
 }
 
-func kubevirtInfraClient(s *state.State) (kubernetes.Interface, string, error) {
-	kubeconfig, err := kubevirtKubeconfig(s)
+func kubevirtInfraClient(st *state.State) (ctrlrt.Client, string, error) {
+	kubeconfig, err := kubevirtKubeconfig(st)
 	if err != nil {
 		return nil, "", err
 	}
@@ -135,56 +135,53 @@ func kubevirtInfraClient(s *state.State) (kubernetes.Interface, string, error) {
 	if err != nil {
 		return nil, "", fail.Config(err, "parsing kubevirt kubeconfig")
 	}
+	infraClient, err := ctrlrt.New(restConfig, ctrlrt.Options{})
 
-	client, err := kubernetes.NewForConfig(restConfig)
-	if err != nil {
-		return nil, "", fail.Runtime(err, "creating kubevirt infra cluster client")
-	}
-
-	return client, s.Cluster.CloudProvider.Kubevirt.InfraNamespace, nil
+	return infraClient, st.Cluster.CloudProvider.Kubevirt.InfraNamespace, fail.Runtime(err, "creating kubevirt infra cluster client")
 }
 
-func ensureKubevirtLoadBalancer(s *state.State) error {
-	if s.Cluster.APIEndpoint.Host != "" {
+func ensureKubevirtLoadBalancer(st *state.State) error {
+	if st.Cluster.APIEndpoint.Host != "" {
 		return nil
 	}
 
-	client, ns, err := kubevirtInfraClient(s)
+	infraClient, ns, err := kubevirtInfraClient(st)
 	if err != nil {
 		return err
 	}
 
-	lbSpec := s.Cluster.CloudProvider.Kubevirt.ControlPlane.LoadBalancer
-	ctx := s.Context
+	lbSpec := st.Cluster.CloudProvider.Kubevirt.ControlPlane.LoadBalancer
+	ctx := st.Context
 
-	svc, err := client.CoreV1().Services(ns).Get(ctx, lbSpec.Name, metav1.GetOptions{})
+	svc := &corev1.Service{}
+	err = infraClient.Get(ctx, types.NamespacedName{Name: lbSpec.Name, Namespace: ns}, svc)
 	switch {
 	case apierrors.IsNotFound(err):
-		s.Logger.Debugf("no existing apiserver service found, creating a new one")
-		svc, err = createKubevirtLoadBalancer(ctx, client, s.Cluster, ns)
+		st.Logger.Debugf("no existing apiserver service found, creating a new one")
+		svc, err = createKubevirtLoadBalancer(ctx, infraClient, st.Cluster, ns)
 		if err != nil {
 			return fail.KubeClient(err, "creating kubevirt apiserver service")
 		}
 	case err != nil:
 		return fail.KubeClient(err, "getting kubevirt apiserver service")
 	default:
-		s.Logger.Debugf("apiserver service %q already exists", lbSpec.Name)
+		st.Logger.Debugf("apiserver service %q already exists", lbSpec.Name)
 	}
 
-	host, port, err := kubevirtServiceEndpoint(ctx, client, svc, ns)
+	host, port, err := kubevirtServiceEndpoint(ctx, infraClient, svc, ns)
 	if err != nil {
 		return err
 	}
 
-	s.Cluster.APIEndpoint.Host = host
-	s.Cluster.APIEndpoint.Port = port
+	st.Cluster.APIEndpoint.Host = host
+	st.Cluster.APIEndpoint.Port = port
 
 	return nil
 }
 
 func createKubevirtLoadBalancer(
 	ctx context.Context,
-	client kubernetes.Interface,
+	infraClient ctrlrt.Client,
 	cluster *kubeoneapi.KubeOneCluster,
 	namespace string,
 ) (*corev1.Service, error) {
@@ -216,7 +213,7 @@ func createKubevirtLoadBalancer(
 		},
 	}
 
-	return client.CoreV1().Services(namespace).Create(ctx, service, metav1.CreateOptions{})
+	return service, infraClient.Create(ctx, service)
 }
 
 // kubevirtServiceEndpoint resolves the externally reachable host and port of the
@@ -225,12 +222,12 @@ func createKubevirtLoadBalancer(
 // address combined with the allocated node port.
 func kubevirtServiceEndpoint(
 	ctx context.Context,
-	client kubernetes.Interface,
+	infraClient ctrlrt.Client,
 	svc *corev1.Service,
 	namespace string,
 ) (string, int, error) {
 	if svc.Spec.Type == corev1.ServiceTypeNodePort {
-		return kubevirtNodePortEndpoint(ctx, client, svc)
+		return kubevirtNodePortEndpoint(ctx, infraClient, svc)
 	}
 
 	for range 60 {
@@ -245,8 +242,8 @@ func kubevirtServiceEndpoint(
 
 		time.Sleep(5 * time.Second)
 
-		updated, err := client.CoreV1().Services(namespace).Get(ctx, svc.Name, metav1.GetOptions{})
-		if err != nil {
+		updated := &corev1.Service{}
+		if err := infraClient.Get(ctx, types.NamespacedName{Name: svc.Name, Namespace: namespace}, updated); err != nil {
 			return "", 0, fail.KubeClient(err, "polling kubevirt apiserver service")
 		}
 		svc = updated
@@ -257,7 +254,7 @@ func kubevirtServiceEndpoint(
 
 func kubevirtNodePortEndpoint(
 	ctx context.Context,
-	client kubernetes.Interface,
+	infraClient ctrlrt.Client,
 	svc *corev1.Service,
 ) (string, int, error) {
 	var nodePort int32
@@ -273,13 +270,13 @@ func kubevirtNodePortEndpoint(
 		return "", 0, fail.Cloud(fmt.Errorf("no node port was allocated for service %q", svc.Name), "kubevirt", "looking up node port")
 	}
 
-	nodes, err := client.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
-	if err != nil {
+	nodeList := &corev1.NodeList{}
+	if err := infraClient.List(ctx, nodeList); err != nil {
 		return "", 0, fail.KubeClient(err, "listing kubevirt infra cluster nodes")
 	}
 
 	var internalIP string
-	for _, node := range nodes.Items {
+	for _, node := range nodeList.Items {
 		for _, addr := range node.Status.Addresses {
 			switch addr.Type {
 			case corev1.NodeExternalIP:
@@ -385,68 +382,68 @@ func generateKubevirtControlPlaneMachines(clusterName string, nodeSet []kubeonea
 	return machines, nil
 }
 
-func ensureKubevirtControlPlaneVM(s *state.State, capimachine clusterv1alpha1.Machine) error {
-	if err := prepareKubevirtEnv(s); err != nil {
+func ensureKubevirtControlPlaneVM(st *state.State, capimachine clusterv1alpha1.Machine) error {
+	if err := prepareKubevirtEnv(st); err != nil {
 		return err
 	}
 
-	provMachines, err := provisioner.FindOrCreateMachines(s.Context, []clusterv1alpha1.Machine{capimachine}, s.Logger)
+	provMachines, err := provisioner.FindOrCreateMachines(st.Context, []clusterv1alpha1.Machine{capimachine}, st.Logger)
 	if err != nil {
 		return err
 	}
 
-	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, hostConfigsFromKubevirtMachines(provMachines, s.Cluster.ControlPlane.NodeSets)...)
+	st.Cluster.ControlPlane.Hosts = append(st.Cluster.ControlPlane.Hosts, hostConfigsFromKubevirtMachines(provMachines, st.Cluster.ControlPlane.NodeSets)...)
 
 	return nil
 }
 
-func lookupKubevirtVMs(s *state.State) error {
-	if err := prepareKubevirtEnv(s); err != nil {
+func lookupKubevirtVMs(st *state.State) error {
+	if err := prepareKubevirtEnv(st); err != nil {
 		return err
 	}
 
 	capimachines, err := generateKubevirtControlPlaneMachines(
-		s.Cluster.Name,
-		s.Cluster.ControlPlane.NodeSets,
-		s.Cluster.Versions.Kubernetes,
+		st.Cluster.Name,
+		st.Cluster.ControlPlane.NodeSets,
+		st.Cluster.Versions.Kubernetes,
 	)
 	if err != nil {
 		return err
 	}
 
-	provMachines, err := provisioner.FindMachines(s.Context, capimachines, s.Logger)
+	provMachines, err := provisioner.FindMachines(st.Context, capimachines, st.Logger)
 	if err != nil {
 		return err
 	}
 
-	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, hostConfigsFromKubevirtMachines(provMachines, s.Cluster.ControlPlane.NodeSets)...)
+	st.Cluster.ControlPlane.Hosts = append(st.Cluster.ControlPlane.Hosts, hostConfigsFromKubevirtMachines(provMachines, st.Cluster.ControlPlane.NodeSets)...)
 
 	return nil
 }
 
-func lookupKubevirtLoadBalancer(s *state.State) error {
-	if s.Cluster.APIEndpoint.Host != "" {
+func lookupKubevirtLoadBalancer(st *state.State) error {
+	if st.Cluster.APIEndpoint.Host != "" {
 		return nil
 	}
 
-	client, ns, err := kubevirtInfraClient(s)
+	infraClient, ns, err := kubevirtInfraClient(st)
 	if err != nil {
 		return err
 	}
 
-	lbName := s.Cluster.CloudProvider.Kubevirt.ControlPlane.LoadBalancer.Name
-	svc, err := client.CoreV1().Services(ns).Get(s.Context, lbName, metav1.GetOptions{})
-	if err != nil {
-		return fail.KubeClient(err, "getting kubevirt apiserver service")
+	lbName := st.Cluster.CloudProvider.Kubevirt.ControlPlane.LoadBalancer.Name
+	svc := &corev1.Service{}
+	if geterr := infraClient.Get(st.Context, types.NamespacedName{Name: lbName, Namespace: ns}, svc); geterr != nil {
+		return fail.KubeClient(geterr, "getting kubevirt apiserver service")
 	}
 
-	host, port, err := kubevirtServiceEndpoint(s.Context, client, svc, ns)
+	host, port, err := kubevirtServiceEndpoint(st.Context, infraClient, svc, ns)
 	if err != nil {
 		return err
 	}
 
-	s.Cluster.APIEndpoint.Host = host
-	s.Cluster.APIEndpoint.Port = port
+	st.Cluster.APIEndpoint.Host = host
+	st.Cluster.APIEndpoint.Port = port
 
 	return nil
 }
