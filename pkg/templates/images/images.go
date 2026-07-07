@@ -429,8 +429,8 @@ func optionalResources() map[Resource]map[string]string {
 		KubeVirtCSIAttacher:            {"*": "quay.io/openshift/origin-csi-external-attacher:4.20.0"},
 
 		// Backup Restic
-		BackupResticSnapshotter: {"*": "registry.k8s.io/etcd:3.5.16-0"},
-		BackupResticUploader:    {"*": "ghcr.io/restic/restic:0.18.1"},
+		BackupResticSnapshotter: {"*": "registry.k8s.io/etcd:3.5.32-0"},
+		BackupResticUploader:    {"*": "ghcr.io/restic/restic:0.19.1"},
 
 		// Unattended upgrades
 		UUApline: {"*": "docker.io/library/alpine:3.23"},
