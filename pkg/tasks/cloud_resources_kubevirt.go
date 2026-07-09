@@ -356,8 +356,9 @@ func generateKubevirtControlPlaneMachines(clusterName string, nodeSet []kubeonea
 			name := fmt.Sprintf("%s-%s-%d", clusterName, node.Name, idx)
 			machines = append(machines, clusterv1alpha1.Machine{
 				ObjectMeta: metav1.ObjectMeta{
-					Name: name,
-					UID:  types.UID(name),
+					Name:   name,
+					UID:    types.UID(name),
+					Labels: labels,
 				},
 				Spec: clusterv1alpha1.MachineSpec{
 					ObjectMeta: metav1.ObjectMeta{
