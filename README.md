@@ -26,6 +26,8 @@ For a quick start, you should check the following documents:
 * [Getting KubeOne][docs-getting-kubeone] to download and install KubeOne locally.
 * [Provisioning][docs-provisioning] to provision the Kubernetes cluster.
 
+AWS provisioning and upgrading with K1.
+
 
 ## Quick Start
 The fastest way to deploy a KubeOne kubernetes cluster is to use the installation script:
