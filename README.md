@@ -26,6 +26,8 @@ For a quick start, you should check the following documents:
 * [Getting KubeOne][docs-getting-kubeone] to download and install KubeOne locally.
 * [Provisioning][docs-provisioning] to provision the Kubernetes cluster.
 
+This test validates cluster provisioning with an external cloud provider and Cilium configured with strict kube-proxy replacement.
+
 
 ## Quick Start
 The fastest way to deploy a KubeOne kubernetes cluster is to use the installation script:
