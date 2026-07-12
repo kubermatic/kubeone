@@ -263,6 +263,14 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 		}
 		providerFound = true
 		allErrs = append(allErrs, validateKubevirtSpec(providerSpec.Kubevirt, kubevirtFld)...)
+
+		// When KubeVirt managed control plane is used without a load balancer
+		// (cloudProvider.kubevirt.controlPlane is nil), the user must provide
+		// apiEndpoint.host explicitly because there's no LB to provide one.
+		if len(cluster.ControlPlane.NodeSets) > 0 && providerSpec.Kubevirt.ControlPlane == nil && len(cluster.APIEndpoint.Host) == 0 {
+			allErrs = append(allErrs, field.Required(field.NewPath("apiEndpoint", "host"),
+				".apiEndpoint.host is required when using KubeVirt managed control plane without .cloudProvider.kubevirt.controlPlane"))
+		}
 	}
 	if providerSpec.Nutanix != nil {
 		if providerFound {
