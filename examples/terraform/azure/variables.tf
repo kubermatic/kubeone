@@ -148,7 +148,7 @@ variable "image_references" {
         publisher = "kinvolk"
         offer     = "flatcar-container-linux-corevm-amd64"
         sku       = "stable"
-        version   = "4230.2.2"
+        version   = "4593.2.2"
       }
       plan         = []
       ssh_username = "core"
