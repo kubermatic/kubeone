@@ -38,8 +38,8 @@ require (
 	google.golang.org/grpc v1.82.0
 	gopkg.in/yaml.v2 v2.4.0
 	helm.sh/helm/v4 v4.2.2
-	k8c.io/machine-controller v1.65.1-0.20260609121331-090279e10f65
-	k8c.io/machine-controller/sdk v1.65.1-0.20260609121331-090279e10f65
+	k8c.io/machine-controller v1.66.0
+	k8c.io/machine-controller/sdk v1.66.0
 	k8s.io/api v0.36.2
 	k8s.io/apiextensions-apiserver v0.36.2
 	k8s.io/apimachinery v0.36.2
@@ -222,7 +222,7 @@ require (
 	go.anx.io/go-anxcloud v0.7.3 // indirect
 	go.etcd.io/etcd/api/v3 v3.6.13 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.6.13 // indirect
-	go.mongodb.org/mongo-driver v1.16.1 // indirect
+	go.mongodb.org/mongo-driver v1.17.7 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.65.0 // indirect
