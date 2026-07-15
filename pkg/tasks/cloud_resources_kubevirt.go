@@ -42,7 +42,9 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/util/retry"
 	ctrlrt "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -231,26 +233,33 @@ func kubevirtServiceEndpoint(
 		return kubevirtNodePortEndpoint(ctx, infraClient, svc)
 	}
 
-	for range 60 {
-		for _, ingress := range svc.Status.LoadBalancer.Ingress {
-			if ingress.IP != "" {
-				return ingress.IP, kubevirtAPIServerPort, nil
-			}
-			if ingress.Hostname != "" {
-				return ingress.Hostname, kubevirtAPIServerPort, nil
-			}
-		}
+	pollCtx, pollCancelFn := context.WithTimeoutCause(ctx, 5*time.Minute, fmt.Errorf("timeout waiting for loadbalancer ingress"))
+	defer pollCancelFn()
 
-		time.Sleep(5 * time.Second)
-
+	var ingressAddress string
+	err := wait.PollUntilContextCancel(pollCtx, 5*time.Second, false, func(ctx context.Context) (bool, error) {
 		updated := &corev1.Service{}
-		if err := infraClient.Get(ctx, types.NamespacedName{Name: svc.Name, Namespace: namespace}, updated); err != nil {
-			return "", 0, fail.KubeClient(err, "polling kubevirt apiserver service")
-		}
-		svc = updated
-	}
 
-	return "", 0, fail.Cloud(fmt.Errorf("load balancer ingress was not assigned for service %q", svc.Name), "kubevirt", "waiting for load balancer")
+		err := retry.OnError(retry.DefaultRetry, apierrors.IsServiceUnavailable, func() error {
+			return infraClient.Get(ctx, types.NamespacedName{Name: svc.Name, Namespace: namespace}, updated)
+		})
+		if err != nil {
+			return false, fail.KubeClient(err, "getting kubevirt apiserver service")
+		}
+
+		for _, ingress := range updated.Status.LoadBalancer.Ingress {
+			switch {
+			case ingress.IP != "":
+				ingressAddress = ingress.IP
+			case ingress.Hostname != "":
+				ingressAddress = ingress.Hostname
+			}
+		}
+
+		return ingressAddress != "", nil
+	})
+
+	return ingressAddress, kubevirtAPIServerPort, fail.Cloud(err, "kubevirt", "waiting for loadbalancer ingress")
 }
 
 func kubevirtNodePortEndpoint(
