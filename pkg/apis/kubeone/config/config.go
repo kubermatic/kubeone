@@ -381,7 +381,7 @@ func setDefaultKubevirtControlPlane(clusterName string, kvCP *kubeoneapi.Kubevir
 	)
 	kvCP.LoadBalancer.ServiceType = defaults(
 		kvCP.LoadBalancer.ServiceType,
-		"LoadBalancer",
+		"NodePort",
 	)
 }
 

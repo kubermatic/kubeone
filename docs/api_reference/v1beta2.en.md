@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2026-06-19T08:40:40+03:00
+date = 2026-07-15T09:49:40+03:00
 weight = 11
 +++
 ## v1beta2
@@ -709,7 +709,7 @@ KubevirtLoadBalancer defines a Kubernetes Service to create in the infra cluster
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | name | Name of the Service to create. Default: \"<CLUSTER_NAME>-kubeapi\" | string | false |
-| serviceType | ServiceType of the Service to create, either \"LoadBalancer\" or \"NodePort\". Default: \"LoadBalancer\" | string | false |
+| serviceType | ServiceType of the Service to create, either \"LoadBalancer\" or \"NodePort\". Default: \"NodePort\" | string | false |
 | annotations | Annotations to be applied to the Service | map[string]string | false |
 
 [Back to Group](#v1beta2)

@@ -52,7 +52,8 @@ func generateKubevirtControlPlaneTasks(capimachines []clusterv1alpha1.Machine) T
 	tasks := Tasks{}
 
 	for _, machine := range capimachines {
-		tasks = append(tasks,
+		tasks = append(
+			tasks,
 			Task{
 				Description: fmt.Sprintf("Ensure KubeVirt control-plane %q VM", machine.Name),
 				Predicate:   isKubevirtControlPlaneEnabled,
@@ -187,7 +188,7 @@ func createKubevirtLoadBalancer(
 ) (*corev1.Service, error) {
 	lbSpec := cluster.CloudProvider.Kubevirt.ControlPlane.LoadBalancer
 
-	serviceType := corev1.ServiceTypeLoadBalancer
+	serviceType := corev1.ServiceTypeNodePort
 	if lbSpec.ServiceType != "" {
 		serviceType = corev1.ServiceType(lbSpec.ServiceType)
 	}
