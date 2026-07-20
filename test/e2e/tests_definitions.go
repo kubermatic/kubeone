@@ -599,7 +599,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/hetzner",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
+					"disable_kubeapi_loadbalancer=false",
 				},
 			},
 			protokol: protokolBin{
@@ -641,7 +641,7 @@ var (
 			terraform: terraformBin{
 				path: "../../examples/terraform/hetzner",
 				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
+					"disable_kubeapi_loadbalancer=false",
 					"os=rockylinux",
 				},
 			},
