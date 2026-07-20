@@ -96,7 +96,7 @@ variable "bastion_host_key" {
 
 variable "disable_kubeapi_loadbalancer" {
   type        = bool
-  default     = true
+  default     = false
   description = "E2E tests specific variable to disable usage of any loadbalancer in front of kubeapi-server"
 }
 
