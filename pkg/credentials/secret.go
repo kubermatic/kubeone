@@ -18,7 +18,9 @@ package credentials
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
+	"maps"
 	"slices"
 	"strings"
 	"text/template"
@@ -130,19 +132,30 @@ func Ensure(s *state.State) error {
 		}
 	}
 
-	if (s.Cluster.CloudProvider.External && s.Cluster.CloudProvider.Vsphere == nil) || s.Cluster.CloudProvider.GCE != nil {
+	switch {
+	case (s.Cluster.CloudProvider.External && s.Cluster.CloudProvider.Vsphere == nil) || s.Cluster.CloudProvider.GCE != nil:
 		s.Logger.Infoln("Creating CCM credentials secret...")
 
 		ccmSecret := credentialsSecret(SecretNameCCM, ccmCreds)
 		if createErr := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, ccmSecret); createErr != nil {
 			return createErr
 		}
-	} else if s.Cluster.CloudProvider.Vsphere != nil {
+	case s.Cluster.CloudProvider.Vsphere != nil:
 		s.Logger.Infoln("Creating vSphere CCM credentials secret...")
 
 		vsecret := vsphereSecret(ccmCreds)
 		if err := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, vsecret); err != nil {
 			return err
+		}
+	case s.Cluster.CloudProvider.Kubevirt != nil:
+		s.Logger.Infoln("Creating KubeVirt CCM credentials secret...")
+
+		ccmSecret, createErr := kubevirtSecret(SecretNameCCM, ccmCreds)
+		if createErr != nil {
+			return createErr
+		}
+		if createErr = clientutil.CreateOrReplace(context.Background(), s.DynamicClient, ccmSecret); createErr != nil {
+			return createErr
 		}
 	}
 
@@ -224,6 +237,28 @@ func vsphereSecret(credentials map[string]string) *corev1.Secret {
 		Type:       corev1.SecretTypeOpaque,
 		StringData: vscreds,
 	}
+}
+
+func kubevirtSecret(secretName string, credentials map[string]string) (*corev1.Secret, error) {
+	kubevirtCreds := make(map[string]string, len(credentials))
+	maps.Copy(kubevirtCreds, credentials)
+
+	if encoded, ok := kubevirtCreds[KubevirtKubeconfigKey]; ok {
+		decoded, err := base64.StdEncoding.DecodeString(encoded)
+		if err != nil {
+			return nil, fail.Config(err, "decoding KUBEVIRT_KUBECONFIG")
+		}
+		kubevirtCreds[KubevirtKubeconfigKey] = string(decoded)
+	}
+
+	return &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      secretName,
+			Namespace: SecretNamespace,
+		},
+		Type:       corev1.SecretTypeOpaque,
+		StringData: kubevirtCreds,
+	}, nil
 }
 
 func cloudConfigSecret(cloudConfig string) *corev1.Secret {
