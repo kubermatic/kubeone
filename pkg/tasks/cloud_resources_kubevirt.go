@@ -190,11 +190,10 @@ func createKubevirtLoadBalancer(
 ) (*corev1.Service, error) {
 	lbSpec := cluster.CloudProvider.Kubevirt.ControlPlane.LoadBalancer
 
-	serviceType := corev1.ServiceTypeNodePort
-	if lbSpec.ServiceType != "" {
-		serviceType = corev1.ServiceType(lbSpec.ServiceType)
+	clusterIP := ""
+	if lbSpec.ServiceType == corev1.ServiceTypeClusterIP {
+		clusterIP = "None"
 	}
-
 	service := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:        lbSpec.Name,
@@ -203,8 +202,9 @@ func createKubevirtLoadBalancer(
 			Annotations: lbSpec.Annotations,
 		},
 		Spec: corev1.ServiceSpec{
-			Type:     serviceType,
-			Selector: kubevirtLabels(cluster.Name),
+			Type:      lbSpec.ServiceType,
+			Selector:  kubevirtLabels(cluster.Name),
+			ClusterIP: clusterIP,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "kube-apiserver",
@@ -229,10 +229,19 @@ func kubevirtServiceEndpoint(
 	svc *corev1.Service,
 	namespace string,
 ) (string, int, error) {
-	if svc.Spec.Type == corev1.ServiceTypeNodePort {
-		return kubevirtNodePortEndpoint(ctx, infraClient, svc)
+	switch svc.Spec.Type {
+	case corev1.ServiceTypeLoadBalancer:
+		return kubevirtLoadBalancerEndpoint(ctx, infraClient, svc, namespace)
+	case corev1.ServiceTypeExternalName:
+		return svc.Spec.ExternalName, kubevirtAPIServerPort, nil
+	case corev1.ServiceTypeClusterIP, corev1.ServiceTypeNodePort:
+		return fmt.Sprintf("%s.%s.svc.cluster.local", svc.Name, namespace), kubevirtAPIServerPort, nil
+	default:
+		return "", 0, fail.Cloud(fmt.Errorf("unsupported service type %q", svc.Spec.Type), "kubevirt", "resolving service endpoint")
 	}
+}
 
+func kubevirtLoadBalancerEndpoint(ctx context.Context, infraClient ctrlrt.Client, svc *corev1.Service, namespace string) (string, int, error) {
 	pollCtx, pollCancelFn := context.WithTimeoutCause(ctx, 5*time.Minute, fmt.Errorf("timeout waiting for loadbalancer ingress"))
 	defer pollCancelFn()
 
@@ -260,52 +269,6 @@ func kubevirtServiceEndpoint(
 	})
 
 	return ingressAddress, kubevirtAPIServerPort, fail.Cloud(err, "kubevirt", "waiting for loadbalancer ingress")
-}
-
-func kubevirtNodePortEndpoint(
-	ctx context.Context,
-	infraClient ctrlrt.Client,
-	svc *corev1.Service,
-) (string, int, error) {
-	var nodePort int32
-	for _, port := range svc.Spec.Ports {
-		if port.Port == kubevirtAPIServerPort {
-			nodePort = port.NodePort
-
-			break
-		}
-	}
-
-	if nodePort == 0 {
-		return "", 0, fail.Cloud(fmt.Errorf("no node port was allocated for service %q", svc.Name), "kubevirt", "looking up node port")
-	}
-
-	nodeList := &corev1.NodeList{}
-	if err := infraClient.List(ctx, nodeList); err != nil {
-		return "", 0, fail.KubeClient(err, "listing kubevirt infra cluster nodes")
-	}
-
-	var internalIP string
-	for _, node := range nodeList.Items {
-		for _, addr := range node.Status.Addresses {
-			switch addr.Type {
-			case corev1.NodeExternalIP:
-				return addr.Address, int(nodePort), nil
-			case corev1.NodeInternalIP:
-				if internalIP == "" {
-					internalIP = addr.Address
-				}
-			case corev1.NodeHostName, corev1.NodeInternalDNS, corev1.NodeExternalDNS:
-				// hostnames/DNS records are not used as apiserver endpoints
-			}
-		}
-	}
-
-	if internalIP == "" {
-		return "", 0, fail.Cloud(fmt.Errorf("no reachable node address found for service %q", svc.Name), "kubevirt", "looking up node address")
-	}
-
-	return internalIP, int(nodePort), nil
 }
 
 func generateKubevirtControlPlaneMachines(clusterName string, nodeSet []kubeoneapi.NodeSet, kubeletVersion string) ([]clusterv1alpha1.Machine, error) {

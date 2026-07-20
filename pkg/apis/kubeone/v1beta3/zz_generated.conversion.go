@@ -2201,7 +2201,7 @@ func Convert_kubeone_KubevirtControlPlane_To_v1beta3_KubevirtControlPlane(in *ku
 
 func autoConvert_v1beta3_KubevirtLoadBalancer_To_kubeone_KubevirtLoadBalancer(in *KubevirtLoadBalancer, out *kubeone.KubevirtLoadBalancer, s conversion.Scope) error {
 	out.Name = in.Name
-	out.ServiceType = in.ServiceType
+	out.ServiceType = corev1.ServiceType(in.ServiceType)
 	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
 	return nil
 }
@@ -2213,7 +2213,7 @@ func Convert_v1beta3_KubevirtLoadBalancer_To_kubeone_KubevirtLoadBalancer(in *Ku
 
 func autoConvert_kubeone_KubevirtLoadBalancer_To_v1beta3_KubevirtLoadBalancer(in *kubeone.KubevirtLoadBalancer, out *KubevirtLoadBalancer, s conversion.Scope) error {
 	out.Name = in.Name
-	out.ServiceType = in.ServiceType
+	out.ServiceType = corev1.ServiceType(in.ServiceType)
 	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
 	return nil
 }

@@ -625,8 +625,8 @@ type KubevirtLoadBalancer struct {
 	// Name of the Service to create. Default: "<CLUSTER_NAME>-kubeapi"
 	Name string `json:"name,omitempty"`
 
-	// ServiceType of the Service to create, either "LoadBalancer" or "NodePort". Default: "NodePort"
-	ServiceType string `json:"serviceType,omitempty"`
+	// ServiceType of the Service to create, if given
+	ServiceType corev1.ServiceType `json:"serviceType,omitempty"`
 
 	// Annotations to be applied to the Service
 	Annotations map[string]string `json:"annotations,omitempty"`
