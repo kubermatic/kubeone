@@ -122,7 +122,7 @@ const (
 	KubeletImageRepository = "quay.io/kubermatic/kubelet"
 )
 
-func All() map[string]string {
+func All(dnsServiceIP string) map[string]string {
 	return map[string]string{
 		"MachineControllerName":             MachineControllerName,
 		"MachineControllerNameSpace":        MachineControllerNameSpace,
@@ -132,7 +132,7 @@ func All() map[string]string {
 		"OperatingSystemManagerWebhookName": OperatingSystemManagerWebhookName,
 		"KubeletImageRepository":            KubeletImageRepository,
 		"NodeLocalDNSVirtualIP":             NodeLocalDNSVirtualIP,
-		"CiliumNodeLocalDNSVirtualIP":       fmt.Sprintf("%s,10.96.0.10", NodeLocalDNSVirtualIP),
+		"CiliumNodeLocalDNSVirtualIP":       fmt.Sprintf("%s,%s", NodeLocalDNSVirtualIP, dnsServiceIP),
 		"CABundleSSLCertFilePath":           cabundle.SSLCertFilePath,
 	}
 }

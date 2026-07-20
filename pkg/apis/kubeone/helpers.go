@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"fmt"
 	"math/rand"
+	"net"
 	"net/url"
 	"path/filepath"
 	"sort"
@@ -161,7 +162,8 @@ func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 				mirror = mirrorURL.String()
 			}
 
-			mcFlags = append(mcFlags,
+			mcFlags = append(
+				mcFlags,
 				fmt.Sprintf("-node-containerd-registry-mirrors=%s=%s", registryName, mirror),
 			)
 		}
@@ -172,7 +174,8 @@ func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 	}
 
 	if registryCredentialsSecretFlag {
-		mcFlags = append(mcFlags,
+		mcFlags = append(
+			mcFlags,
 			fmt.Sprintf("-node-registry-credentials-secret=%s", credentialSecretName),
 		)
 	}
@@ -185,7 +188,8 @@ func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 		}
 
 		sort.Strings(insecureNames)
-		mcFlags = append(mcFlags,
+		mcFlags = append(
+			mcFlags,
 			fmt.Sprintf("-node-insecure-registries=%s", strings.Join(insecureNames, ",")),
 		)
 	}
@@ -446,4 +450,26 @@ func (v VersionConfig) KubernetesMajorMinorVersion() string {
 	kubeSemVer := semver.MustParse(v.Kubernetes)
 
 	return fmt.Sprintf("v%d.%d", kubeSemVer.Major(), kubeSemVer.Minor())
+}
+
+// NthServiceSubnetIP returns the n-th IP address within the ServiceSubnet CIDR,
+// where n=0 is the network address, n=1 is the first host address, etc.
+func (c ClusterNetworkConfig) NthServiceSubnetIP(n int) string {
+	// ignore error as we validate and default ServiceSubnet field
+	_, ipNet, _ := net.ParseCIDR(c.ServiceSubnet)
+
+	ip := ipNet.IP
+	if v4 := ip.To4(); v4 != nil {
+		ip = v4
+	}
+
+	result := make(net.IP, len(ip))
+	carry := n
+	for i := len(ip) - 1; i >= 0; i-- {
+		val := int(ip[i]) + carry
+		result[i] = byte(val & 0xff)
+		carry = val >> 8
+	}
+
+	return result.String()
 }
