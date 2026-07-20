@@ -379,10 +379,6 @@ func setDefaultKubevirtControlPlane(clusterName string, kvCP *kubeoneapi.Kubevir
 		kvCP.LoadBalancer.Name,
 		clusterName+"-kubeapi",
 	)
-	kvCP.LoadBalancer.ServiceType = defaults(
-		kvCP.LoadBalancer.ServiceType,
-		"NodePort",
-	)
 }
 
 // SetDefaultsCloudConfig sets default values for the CloudConfig field in the KubeOneCluster object.
