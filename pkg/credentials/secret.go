@@ -17,10 +17,8 @@ limitations under the License.
 package credentials
 
 import (
-	"context"
 	"encoding/base64"
 	"fmt"
-	"maps"
 	"slices"
 	"strings"
 	"text/template"
@@ -96,7 +94,7 @@ func Ensure(s *state.State) error {
 		}
 
 		mcSecret := credentialsSecret(SecretNameMC, providerCreds)
-		if err = clientutil.CreateOrReplace(context.Background(), s.DynamicClient, mcSecret); err != nil {
+		if err = clientutil.CreateOrReplace(s.Context, s.DynamicClient, mcSecret); err != nil {
 			return err
 		}
 	}
@@ -108,7 +106,7 @@ func Ensure(s *state.State) error {
 		}
 
 		osmSecret := credentialsSecret(SecretNameOSM, osmCreds)
-		if err := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, osmSecret); err != nil {
+		if err := clientutil.CreateOrReplace(s.Context, s.DynamicClient, osmSecret); err != nil {
 			return err
 		}
 	}
@@ -127,7 +125,7 @@ func Ensure(s *state.State) error {
 		s.Cluster.CloudProvider.CloudConfig = cloudConfig
 
 		cloudCfgSecret := cloudConfigSecret(cloudConfig)
-		if err := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, cloudCfgSecret); err != nil {
+		if err := clientutil.CreateOrReplace(s.Context, s.DynamicClient, cloudCfgSecret); err != nil {
 			return err
 		}
 	}
@@ -137,25 +135,22 @@ func Ensure(s *state.State) error {
 		s.Logger.Infoln("Creating CCM credentials secret...")
 
 		ccmSecret := credentialsSecret(SecretNameCCM, ccmCreds)
-		if createErr := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, ccmSecret); createErr != nil {
+		if createErr := clientutil.CreateOrReplace(s.Context, s.DynamicClient, ccmSecret); createErr != nil {
 			return createErr
 		}
 	case s.Cluster.CloudProvider.Vsphere != nil:
 		s.Logger.Infoln("Creating vSphere CCM credentials secret...")
 
 		vsecret := vsphereSecret(ccmCreds)
-		if err := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, vsecret); err != nil {
+		if err := clientutil.CreateOrReplace(s.Context, s.DynamicClient, vsecret); err != nil {
 			return err
 		}
 	case s.Cluster.CloudProvider.Kubevirt != nil:
 		s.Logger.Infoln("Creating KubeVirt CCM credentials secret...")
 
-		ccmSecret, createErr := kubevirtSecret(SecretNameCCM, ccmCreds)
-		if createErr != nil {
-			return createErr
-		}
-		if createErr = clientutil.CreateOrReplace(context.Background(), s.DynamicClient, ccmSecret); createErr != nil {
-			return createErr
+		kubevirtKubeconfigSecret := kubevirtSecret(SecretNameCCM, ccmCreds)
+		if err := clientutil.CreateOrReplace(s.Context, s.DynamicClient, kubevirtKubeconfigSecret); err != nil {
+			return err
 		}
 	}
 
@@ -239,16 +234,18 @@ func vsphereSecret(credentials map[string]string) *corev1.Secret {
 	}
 }
 
-func kubevirtSecret(secretName string, credentials map[string]string) (*corev1.Secret, error) {
-	kubevirtCreds := make(map[string]string, len(credentials))
-	maps.Copy(kubevirtCreds, credentials)
+func kubevirtSecret(secretName string, credentials map[string]string) *corev1.Secret {
+	kubevirtCreds := map[string][]byte{
+		KubevirtKubeconfigKey: []byte(credentials[KubevirtKubeconfigKey]),
+	}
 
-	if encoded, ok := kubevirtCreds[KubevirtKubeconfigKey]; ok {
-		decoded, err := base64.StdEncoding.DecodeString(encoded)
-		if err != nil {
-			return nil, fail.Config(err, "decoding KUBEVIRT_KUBECONFIG")
+	if b64, ok := credentials[KubevirtKubeconfigKey]; ok {
+		decoded := make([]byte, base64.StdEncoding.DecodedLen(len(b64)))
+		_, err := base64.StdEncoding.Decode(decoded, []byte(b64))
+		if err == nil {
+			// we've got base64 encoded KUBEVIRT_KUBECONFIG
+			kubevirtCreds[KubevirtKubeconfigKey] = decoded
 		}
-		kubevirtCreds[KubevirtKubeconfigKey] = string(decoded)
 	}
 
 	return &corev1.Secret{
@@ -256,9 +253,9 @@ func kubevirtSecret(secretName string, credentials map[string]string) (*corev1.S
 			Name:      secretName,
 			Namespace: SecretNamespace,
 		},
-		Type:       corev1.SecretTypeOpaque,
-		StringData: kubevirtCreds,
-	}, nil
+		Type: corev1.SecretTypeOpaque,
+		Data: kubevirtCreds,
+	}
 }
 
 func cloudConfigSecret(cloudConfig string) *corev1.Secret {
