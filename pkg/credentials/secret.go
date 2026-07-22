@@ -17,7 +17,7 @@ limitations under the License.
 package credentials
 
 import (
-	"context"
+	"encoding/base64"
 	"fmt"
 	"slices"
 	"strings"
@@ -94,7 +94,7 @@ func Ensure(s *state.State) error {
 		}
 
 		mcSecret := credentialsSecret(SecretNameMC, providerCreds)
-		if err = clientutil.CreateOrReplace(context.Background(), s.DynamicClient, mcSecret); err != nil {
+		if err = clientutil.CreateOrReplace(s.Context, s.DynamicClient, mcSecret); err != nil {
 			return err
 		}
 	}
@@ -106,7 +106,7 @@ func Ensure(s *state.State) error {
 		}
 
 		osmSecret := credentialsSecret(SecretNameOSM, osmCreds)
-		if err := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, osmSecret); err != nil {
+		if err := clientutil.CreateOrReplace(s.Context, s.DynamicClient, osmSecret); err != nil {
 			return err
 		}
 	}
@@ -125,23 +125,31 @@ func Ensure(s *state.State) error {
 		s.Cluster.CloudProvider.CloudConfig = cloudConfig
 
 		cloudCfgSecret := cloudConfigSecret(cloudConfig)
-		if err := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, cloudCfgSecret); err != nil {
+		if err := clientutil.CreateOrReplace(s.Context, s.DynamicClient, cloudCfgSecret); err != nil {
 			return err
 		}
 	}
 
-	if (s.Cluster.CloudProvider.External && s.Cluster.CloudProvider.Vsphere == nil) || s.Cluster.CloudProvider.GCE != nil {
+	switch {
+	case (s.Cluster.CloudProvider.External && s.Cluster.CloudProvider.Vsphere == nil) || s.Cluster.CloudProvider.GCE != nil:
 		s.Logger.Infoln("Creating CCM credentials secret...")
 
 		ccmSecret := credentialsSecret(SecretNameCCM, ccmCreds)
-		if createErr := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, ccmSecret); createErr != nil {
+		if createErr := clientutil.CreateOrReplace(s.Context, s.DynamicClient, ccmSecret); createErr != nil {
 			return createErr
 		}
-	} else if s.Cluster.CloudProvider.Vsphere != nil {
+	case s.Cluster.CloudProvider.Vsphere != nil:
 		s.Logger.Infoln("Creating vSphere CCM credentials secret...")
 
 		vsecret := vsphereSecret(ccmCreds)
-		if err := clientutil.CreateOrReplace(context.Background(), s.DynamicClient, vsecret); err != nil {
+		if err := clientutil.CreateOrReplace(s.Context, s.DynamicClient, vsecret); err != nil {
+			return err
+		}
+	case s.Cluster.CloudProvider.Kubevirt != nil:
+		s.Logger.Infoln("Creating KubeVirt CCM credentials secret...")
+
+		kubevirtKubeconfigSecret := kubevirtSecret(SecretNameCCM, ccmCreds)
+		if err := clientutil.CreateOrReplace(s.Context, s.DynamicClient, kubevirtKubeconfigSecret); err != nil {
 			return err
 		}
 	}
@@ -223,6 +231,30 @@ func vsphereSecret(credentials map[string]string) *corev1.Secret {
 		},
 		Type:       corev1.SecretTypeOpaque,
 		StringData: vscreds,
+	}
+}
+
+func kubevirtSecret(secretName string, credentials map[string]string) *corev1.Secret {
+	kubevirtCreds := map[string][]byte{
+		KubevirtKubeconfigKey: []byte(credentials[KubevirtKubeconfigKey]),
+	}
+
+	if b64, ok := credentials[KubevirtKubeconfigKey]; ok {
+		decoded := make([]byte, base64.StdEncoding.DecodedLen(len(b64)))
+		_, err := base64.StdEncoding.Decode(decoded, []byte(b64))
+		if err == nil {
+			// we've got base64 encoded KUBEVIRT_KUBECONFIG
+			kubevirtCreds[KubevirtKubeconfigKey] = decoded
+		}
+	}
+
+	return &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      secretName,
+			Namespace: SecretNamespace,
+		},
+		Type: corev1.SecretTypeOpaque,
+		Data: kubevirtCreds,
 	}
 }
 

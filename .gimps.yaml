@@ -42,3 +42,6 @@ aliasRules:
   - name: kubeoneapi
     expr: '^k8c.io/kubeone/pkg/apis/([a-z0-9-]+)/(v[a-z0-9-]+)(/([a-z0-9-]+))?$'
     alias: '$1$2$4'
+  # - name: dynclient
+  #   expr: '^sigs.k8s.io/controller-runtime/pkg/client$'
+  #   alias: 'ctrlrt'

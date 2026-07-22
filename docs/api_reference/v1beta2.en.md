@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2026-05-29T13:59:16+03:00
+date = 2026-07-20T15:06:24+03:00
 weight = 11
 +++
 ## v1beta2
@@ -51,6 +51,8 @@ weight = 11
 * [KubeOneCluster](#kubeonecluster)
 * [KubeProxyConfig](#kubeproxyconfig)
 * [KubeletConfig](#kubeletconfig)
+* [KubevirtControlPlane](#kubevirtcontrolplane)
+* [KubevirtLoadBalancer](#kubevirtloadbalancer)
 * [KubevirtSpec](#kubevirtspec)
 * [LoggingConfig](#loggingconfig)
 * [MachineControllerConfig](#machinecontrollerconfig)
@@ -690,6 +692,28 @@ KubeletConfig provides some kubelet configuration options
 
 [Back to Group](#v1beta2)
 
+### KubevirtControlPlane
+
+KubevirtControlPlane control plane config on KubeVirt
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| loadBalancer | LoadBalancer config of a Kubernetes Service to create in the infra cluster as the kube-apiserver endpoint | [KubevirtLoadBalancer](#kubevirtloadbalancer) | true |
+
+[Back to Group](#v1beta2)
+
+### KubevirtLoadBalancer
+
+KubevirtLoadBalancer defines a Kubernetes Service to create in the infra cluster for the kube-apiserver endpoint
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| name | Name of the Service to create. Default: \"<CLUSTER_NAME>-kubeapi\" | string | false |
+| serviceType | ServiceType of the Service to create, if given | corev1.ServiceType | false |
+| annotations | Annotations to be applied to the Service | map[string]string | false |
+
+[Back to Group](#v1beta2)
+
 ### KubevirtSpec
 
 KubevirtSpec defines the Kubevirt provider
@@ -699,6 +723,7 @@ KubevirtSpec defines the Kubevirt provider
 | infraNamespace | InfraNamespace is the namespace that KubeVirt provider will use to create and manage resources in the infra cluster, such as VirtualMachines, VirtualMachineInstances, etc... | string | true |
 | zoneAndRegionEnabled | ZoneAndRegionEnabled indicates if need to get Region and zone labels from the cloud provider | bool | false |
 | loadBalancerEnabled | LoadBalancerEnabled indicates if the ccm should create and manage the clusters load balancers. | bool | false |
+| controlPlane | ControlPlane configures control plane provisioning on KubeVirt | *[KubevirtControlPlane](#kubevirtcontrolplane) | false |
 
 [Back to Group](#v1beta2)
 

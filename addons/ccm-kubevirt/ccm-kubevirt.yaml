@@ -58,44 +58,13 @@ rules:
     resources:
       - nodes
     verbs:
-      - get
-      - list
-      - watch
-      - update
-  - apiGroups:
-      - ""
-    resources:
-      - services
-    verbs:
-      - get
-      - list
-      - watch
-      - update
-      - patch
-  - apiGroups:
-      - ""
-    resources:
-      - services/status
-    verbs:
-      - get
-      - update
-      - patch
-  - apiGroups:
-      - ""
-    resources:
-      - events
-    verbs:
-      - "*"
+      - '*'
   - apiGroups:
       - coordination.k8s.io
     resources:
       - leases
     verbs:
-      - get
-      - create
-      - list
-      - watch
-      - update
+      - '*'
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

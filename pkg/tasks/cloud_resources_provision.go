@@ -50,6 +50,16 @@ func WithFindControlPlane(t Tasks) Tasks {
 			Fn:          lookupOpenstackVMs,
 		},
 		Task{
+			Description: "Find KubeVirt load balancer",
+			Predicate:   isKubevirtLoadBalancerEnabled,
+			Fn:          lookupKubevirtLoadBalancer,
+		},
+		Task{
+			Description: "Find KubeVirt VMs",
+			Predicate:   isKubevirtControlPlaneEnabled,
+			Fn:          lookupKubevirtVMs,
+		},
+		Task{
 			Operation: "defaulting cluster hosts",
 			Predicate: func(s *state.State) bool { return len(s.Cluster.ControlPlane.NodeSets) != 0 },
 			Fn:        defaultCluster,
@@ -98,6 +108,19 @@ func WithEnsureControlPlane(steps Tasks, cluster *kubeoneapi.KubeOneCluster) (Ta
 				Predicate:   isOpenstackControlPlaneEnabled,
 				Fn:          ensureOpenstackLBMembers,
 			})
+	case cluster.CloudProvider.Kubevirt != nil:
+		kubevirtCAPIMachines, err := generateKubevirtControlPlaneMachines(clusterName, nodeSet, kubeletVersion)
+		if err != nil {
+			return nil, err
+		}
+
+		steps = steps.
+			append(Task{
+				Description: "Ensure KubeVirt load balancer",
+				Predicate:   isKubevirtLoadBalancerEnabled,
+				Fn:          ensureKubevirtLoadBalancer,
+			}).
+			append(generateKubevirtControlPlaneTasks(kubevirtCAPIMachines)...)
 	}
 
 	return steps.

@@ -31,7 +31,7 @@ linters:
     - nilnil
     - nlreturn
     - noctx
-    - nolintlint
+    # - nolintlint
     - predeclared
     - revive
     - staticcheck

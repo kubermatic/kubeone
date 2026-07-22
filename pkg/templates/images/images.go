@@ -419,7 +419,7 @@ func optionalResources() map[Resource]map[string]string {
 		SecretStoreCSIDriverCRDs:          {"*": "registry.k8s.io/csi-secrets-store/driver-crds:v1.2.1"},
 
 		// KubeVirt's CCM
-		KubeVirtCCM: {"*": "quay.io/kubevirt/kubevirt-cloud-controller-manager:v0.5.1"},
+		KubeVirtCCM: {"*": "quay.io/kubevirt/kubevirt-cloud-controller-manager:v0.6.0"},
 
 		// KubeVirt CSI
 		KubeVirtCSI:                    {"*": "quay.io/kubermatic/kubevirt-csi-driver:v0.4.5"},

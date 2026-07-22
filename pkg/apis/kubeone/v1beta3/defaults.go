@@ -85,13 +85,11 @@ func SetDefaults_CABundle(obj *KubeOneCluster) {
 
 func SetDefaults_CloudProvider(obj *KubeOneCluster) {
 	// if cloud provider is configured
-	if obj.CloudProvider.None == nil {
-		// and cloud provider is NOT VMwareCloudDirector and NOT Kubevirt,
+	if obj.CloudProvider.None == nil && obj.CloudProvider.VMwareCloudDirector == nil {
+		// and cloud provider is NOT VMwareCloudDirector,
 		// to prevent kubelet --cloud-provider=external situation where
 		// there will be no CCM to initialize the Node
-		if obj.CloudProvider.Kubevirt == nil && obj.CloudProvider.VMwareCloudDirector == nil {
-			obj.CloudProvider.External = true
-		}
+		obj.CloudProvider.External = true
 	}
 }
 

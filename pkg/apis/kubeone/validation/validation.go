@@ -96,7 +96,8 @@ func ValidateCilium(cilium *kubeoneapi.CiliumSpec, cilFld *field.Path, cluster k
 
 	// validate cilium local redirect policy requires nodeLocalDNS to be disabled
 	if cilium.EnableLocalRedirectPolicy && cluster.Features.NodeLocalDNS != nil && cluster.Features.NodeLocalDNS.Deploy {
-		allErrs = append(allErrs,
+		allErrs = append(
+			allErrs,
 			field.Invalid(
 				cilFld.Child("enableLocalRedirectPolicy"),
 				cilium.EnableLocalRedirectPolicy,
@@ -107,7 +108,8 @@ func ValidateCilium(cilium *kubeoneapi.CiliumSpec, cilFld *field.Path, cluster k
 
 	// validated cilium kube-proxy replacement
 	if cilium.KubeProxyReplacement && (cluster.ClusterNetwork.KubeProxy == nil || !cluster.ClusterNetwork.KubeProxy.SkipInstallation) {
-		allErrs = append(allErrs,
+		allErrs = append(
+			allErrs,
 			field.Invalid(
 				cilFld.Child("kubeProxyReplacement"),
 				cilium.KubeProxyReplacement,
@@ -117,7 +119,8 @@ func ValidateCilium(cilium *kubeoneapi.CiliumSpec, cilFld *field.Path, cluster k
 	}
 
 	if cilium.EnableGatewayAPI && !cilium.KubeProxyReplacement {
-		allErrs = append(allErrs,
+		allErrs = append(
+			allErrs,
 			field.Invalid(
 				cilFld.Child("enableGatewayAPI"),
 				cilium.EnableGatewayAPI,
@@ -128,7 +131,8 @@ func ValidateCilium(cilium *kubeoneapi.CiliumSpec, cilFld *field.Path, cluster k
 
 	// validate cilium local redirect policy requires kube-proxy replacement
 	if cilium.EnableLocalRedirectPolicy && !cilium.KubeProxyReplacement {
-		allErrs = append(allErrs,
+		allErrs = append(
+			allErrs,
 			field.Invalid(
 				cilFld.Child("enableLocalRedirectPolicy"),
 				cilium.EnableLocalRedirectPolicy,
@@ -165,7 +169,8 @@ func ValidateControlPlaneConfig(c kubeoneapi.ControlPlaneConfig, clusterNetwork 
 	case len(c.NodeSets) > 0:
 		allErrs = append(allErrs, ValidateControlPlaneMachines(c.NodeSets, fldPath.Child("nodeSets"))...)
 	default:
-		allErrs = append(allErrs,
+		allErrs = append(
+			allErrs,
 			field.Invalid(fldPath, "", ".controlPlane.Hosts or .controlPlane.NodeSets is a required field. There must be at least one control plane instance in the cluster."),
 		)
 	}
@@ -262,8 +267,14 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 			allErrs = append(allErrs, field.Forbidden(kubevirtFld, "only one provider can be used at the same time"))
 		}
 		providerFound = true
-		if providerSpec.Kubevirt.InfraNamespace == "" {
-			allErrs = append(allErrs, field.Required(kubevirtFld.Child("infraNamespace"), "is required for kubevirt provider"))
+		allErrs = append(allErrs, validateKubevirtSpec(providerSpec.Kubevirt, kubevirtFld)...)
+
+		// When KubeVirt managed control plane is used without a load balancer
+		// (cloudProvider.kubevirt.controlPlane is nil), the user must provide
+		// apiEndpoint.host explicitly because there's no LB to provide one.
+		if len(cluster.ControlPlane.NodeSets) > 0 && providerSpec.Kubevirt.ControlPlane == nil && len(cluster.APIEndpoint.Host) == 0 {
+			allErrs = append(allErrs, field.Required(field.NewPath("apiEndpoint", "host"),
+				".apiEndpoint.host is required when using KubeVirt managed control plane without .cloudProvider.kubevirt.controlPlane"))
 		}
 	}
 	if providerSpec.Nutanix != nil {
@@ -358,6 +369,16 @@ func validateOpenstackSpec(openstackSpec *kubeoneapi.OpenstackSpec, fldPath *fie
 		if openstackSpec.ControlPlane.LoadBalancer.Name == "" {
 			allErrs = append(allErrs, field.Required(lbFld.Child("name"), "loadBalancer name is required when controlPlane is specified"))
 		}
+	}
+
+	return allErrs
+}
+
+func validateKubevirtSpec(kubevirtSpec *kubeoneapi.KubevirtSpec, fldPath *field.Path) field.ErrorList {
+	var allErrs field.ErrorList
+
+	if kubevirtSpec.InfraNamespace == "" {
+		allErrs = append(allErrs, field.Required(fldPath.Child("infraNamespace"), "is required for kubevirt provider"))
 	}
 
 	return allErrs
@@ -659,7 +680,8 @@ func ValidateStaticWorkersConfig(staticWorkers kubeoneapi.StaticWorkersConfig, c
 	for idx, worker := range staticWorkers.Hosts {
 		for _, cp := range controlPlane.Hosts {
 			if cp.Hostname != "" && worker.Hostname != "" && cp.Hostname == worker.Hostname {
-				allErrs = append(allErrs,
+				allErrs = append(
+					allErrs,
 					field.Invalid(
 						fldPath.Child("hosts").Index(idx),
 						"Hostname",
@@ -669,7 +691,8 @@ func ValidateStaticWorkersConfig(staticWorkers kubeoneapi.StaticWorkersConfig, c
 			}
 
 			if cp.PrivateAddress == worker.PrivateAddress {
-				allErrs = append(allErrs,
+				allErrs = append(
+					allErrs,
 					field.Invalid(
 						fldPath.Child("hosts").Index(idx),
 						"PrivateAddress",
@@ -679,7 +702,8 @@ func ValidateStaticWorkersConfig(staticWorkers kubeoneapi.StaticWorkersConfig, c
 			}
 
 			if cp.PublicAddress == worker.PublicAddress {
-				allErrs = append(allErrs,
+				allErrs = append(
+					allErrs,
 					field.Invalid(
 						fldPath.Child("hosts").Index(idx),
 						"PublicAddress",
@@ -882,7 +906,8 @@ func validateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.
 					return err
 				}()
 				if err != nil {
-					allErrs = append(allErrs,
+					allErrs = append(
+						allErrs,
 						field.Invalid(fldIdentity.Child("valuesFile"), hr.Values[idx].ValuesFile, fmt.Sprintf("file is invalid: %v", err)),
 					)
 				}
@@ -892,7 +917,8 @@ func validateHelmReleases(helmReleases []kubeoneapi.HelmRelease, fldPath *field.
 				obj := map[string]any{}
 				err := yaml.Unmarshal(helmValues.Inline, &obj)
 				if err != nil {
-					allErrs = append(allErrs,
+					allErrs = append(
+						allErrs,
 						field.Invalid(fldIdentity.Child("inline"), hr.Values[idx].Inline, fmt.Sprintf("inline is not a valid YAML: %v", err)),
 					)
 				}

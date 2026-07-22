@@ -603,10 +603,33 @@ type KubevirtSpec struct {
 	// InfraNamespace is the namespace that KubeVirt provider will use to create and manage resources in the infra cluster,
 	// such as VirtualMachines, VirtualMachineInstances, etc...
 	InfraNamespace string `json:"infraNamespace"`
+
 	// ZoneAndRegionEnabled indicates if need to get Region and zone labels from the cloud provider
 	ZoneAndRegionEnabled bool `json:"zoneAndRegionEnabled,omitempty"`
+
 	// LoadBalancerEnabled indicates if the ccm should create and manage the clusters load balancers.
 	LoadBalancerEnabled bool `json:"loadBalancerEnabled,omitempty"`
+
+	// ControlPlane configures control plane provisioning on KubeVirt
+	ControlPlane *KubevirtControlPlane `json:"controlPlane,omitempty"`
+}
+
+// KubevirtControlPlane control plane config on KubeVirt
+type KubevirtControlPlane struct {
+	// LoadBalancer config of a Kubernetes Service to create in the infra cluster as the kube-apiserver endpoint
+	LoadBalancer KubevirtLoadBalancer `json:"loadBalancer"`
+}
+
+// KubevirtLoadBalancer defines a Kubernetes Service to create in the infra cluster for the kube-apiserver endpoint
+type KubevirtLoadBalancer struct {
+	// Name of the Service to create. Default: "<CLUSTER_NAME>-kubeapi"
+	Name string `json:"name,omitempty"`
+
+	// ServiceType of the Service to create, if given
+	ServiceType corev1.ServiceType `json:"serviceType,omitempty"`
+
+	// Annotations to be applied to the Service
+	Annotations map[string]string `json:"annotations,omitempty"`
 }
 
 // NutanixSpec defines the Nutanix provider

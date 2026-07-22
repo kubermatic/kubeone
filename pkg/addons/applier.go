@@ -190,7 +190,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 			pauseImage: s.PauseImage,
 			resolver:   s.Images.Get,
 		},
-		Resources: resources.All(),
+		Resources: resources.All(s.Cluster.ClusterNetwork.NthServiceSubnetIP(10)),
 		Params:    map[string]string{},
 	}
 
@@ -204,7 +204,8 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 
 	// Certs for operating-system-manager-webhook
 	if s.Cluster.OperatingSystemManager.Deploy {
-		if err := webhookCerts(data.Certificates,
+		if err := webhookCerts(
+			data.Certificates,
 			"OSM",
 			resources.OperatingSystemManagerWebhookName,
 			resources.OperatingSystemManagerNamespace,
