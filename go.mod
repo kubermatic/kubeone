@@ -35,7 +35,7 @@ require (
 	golang.org/x/term v0.44.0
 	golang.org/x/text v0.40.0
 	golang.org/x/tools v0.47.0
-	google.golang.org/grpc v1.82.0
+	google.golang.org/grpc v1.82.1
 	gopkg.in/yaml.v2 v2.4.0
 	helm.sh/helm/v4 v4.2.2
 	k8c.io/machine-controller v1.66.0
