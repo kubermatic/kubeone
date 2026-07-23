@@ -5,7 +5,7 @@ namespace: kube-system
 helmCharts:
 - name: hcloud-cloud-controller-manager
   repo: https://charts.hetzner.cloud
-  version: 1.31.1
+  version: 1.34.0
   releaseName: hccm
   namespace: kube-system
   valuesFile: generate-values-ccm
@@ -23,6 +23,11 @@ patches:
             annotations:
               kubeone.k8c.io/credentials-hash: '{{ .CredentialsCCMHash }}'
           spec:
+            # hostNetwork so DNS lookups (e.g. api.hetzner.cloud) go out over
+            # the node's real interfaces instead of the CNI pod network, which
+            # may be IPv4-only while the node's resolv.conf only has IPv6
+            # resolvers.
+            hostNetwork: true
             containers:
               - name: hcloud-cloud-controller-manager
                 image: '{{ .InternalImages.Get "HetznerCCM" }}'

@@ -147,8 +147,21 @@ spec:
             requests:
               cpu: 100m
               memory: 50Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
       dnsPolicy: Default
+      hostNetwork: true
       priorityClassName: system-cluster-critical
+      securityContext:
+        runAsGroup: 65532
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile:
+          type: RuntimeDefault
       serviceAccountName: hcloud-cloud-controller-manager
       tolerations:
         - effect: NoSchedule
