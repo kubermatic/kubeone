@@ -147,8 +147,24 @@ spec:
             requests:
               cpu: 100m
               memory: 50Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+      # hostNetwork so DNS lookups (e.g. api.hetzner.cloud) go out over the
+      # node's real interfaces instead of the CNI pod network, which may be
+      # IPv4-only while the node's resolv.conf only has IPv6 resolvers.
+      hostNetwork: true
       dnsPolicy: Default
       priorityClassName: system-cluster-critical
+      securityContext:
+        runAsGroup: 65532
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile:
+          type: RuntimeDefault
       serviceAccountName: hcloud-cloud-controller-manager
       tolerations:
         - effect: NoSchedule
