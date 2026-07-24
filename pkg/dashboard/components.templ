@@ -1,0 +1,221 @@
+package dashboard
+
+import "fmt"
+
+templ Layout(data *dashboardData) {
+	<!DOCTYPE html>
+	<html lang="en" class="h-100">
+		<head>
+			<meta charset="UTF-8"/>
+			<link rel="icon" type="image/svg+xml" href="/assets/favicon.png"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta http-equiv="refresh" content="10"/>
+			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"/>
+			<title>KubeOne Dashboard</title>
+		</head>
+		<body class="d-flex flex-column h-100">
+			<header class="navbar navbar-expand-lg sticky-top bd-navbar border-bottom py-3 bg-body px-4 shadow-sm">
+				<nav class="container-l bd-gutter d-flex flex-wrap flex-lg-nowrap align-items-center">
+					<img src="/assets/kubeone-logo.png" alt="logo" style="height: 30px;"/>
+					<h4 class="mx-3 my-0">Dashboard</h4>
+				</nav>
+			</header>
+			<main class="flex-shrink-0 p-4 bg-body-tertiary flex-grow-1">
+				<div class="container-l d-flex flex-column h-100 gap-4">
+					<div class="card shadow-sm">
+						<div class="card-body">
+							<h4 class="card-title pb-2">Control-Plane Nodes</h4>
+							@NodesTable(data.ControlPlaneNodes)
+						</div>
+						if len(data.WorkerNodes) > 0 {
+							<div class="card-body">
+								<h4 class="card-title pb-2">Worker Nodes</h4>
+								@NodesTable(data.WorkerNodes)
+							</div>
+						}
+					</div>
+					<div class="card shadow-sm">
+						<div class="card-body">
+							<h4 class="card-title pb-2">Machine Deployments</h4>
+							@MachineDeploymentsTable(data.MachineDeployments)
+						</div>
+					</div>
+				</div>
+			</main>
+			<footer class="footer mt-auto py-3 border-top">
+				<div class="container-l px-4">
+					<span class="text-body-secondary">Powered by Kubermatic</span>
+				</div>
+			</footer>
+			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+			<script>
+				const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+				const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+			</script>
+		</body>
+	</html>
+}
+
+templ StatusPill(status string) {
+	<span
+		role="button"
+		class={ fmt.Sprintf("text-bg-%s rounded-circle", pillClass(status)) }
+		style="width:20px; height: 20px"
+		data-bs-toggle="tooltip"
+		title={ pillTitle(status) }
+	></span>
+}
+
+templ StatusBadge(status string) {
+	<span class={ fmt.Sprintf("badge text-bg-%s rounded-pill", badgeClass(status)) }>{ status }</span>
+}
+
+templ NodesTable(nodes []node) {
+	<div class="row row-cols-1 row-cols-md-4 g-3">
+		for _, n := range nodes {
+			<div class="col">
+				<div class="card">
+					<div class="card-header d-flex align-items-center gap-2">
+						@StatusPill(n.Status)
+						{ n.Name }
+					</div>
+					<div class="card-body">
+						<div class="row row-cols-2 g-2">
+							<div class="col-4"><strong>Version</strong></div>
+							<div class="col">{ n.Version }</div>
+							<div class="col-4"><strong>Seen</strong></div>
+							<div class="col">{ n.LastHeartbeatTime.String() }</div>
+							if n.IsControlPlane {
+								<div class="col-4"><strong>etcd</strong></div>
+								<div class="col">
+									<div class="d-flex">
+										if n.EtcdOK {
+											@StatusBadge("Ready")
+										} else {
+											@StatusBadge("Not Ready")
+										}
+									</div>
+								</div>
+								<div class="col-4"><strong>apiserver</strong></div>
+								<div class="col">
+									<div class="d-flex">
+										if n.APIServerOK {
+											@StatusBadge("Ready")
+										} else {
+											@StatusBadge("Not Ready")
+										}
+									</div>
+								</div>
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+}
+
+templ MachineDeploymentsTable(machineDeployments []machineDeployment) {
+	<div class="mt-2">
+		<table class="table">
+			<thead>
+				<tr>
+					<th scope="col">Status</th>
+					<th scope="col">Name</th>
+					<th scope="col">Namespace</th>
+					<th scope="col">Replicas</th>
+					<th scope="col">Kubelet</th>
+					<th scope="col">Age</th>
+				</tr>
+			</thead>
+			<tbody>
+				for _, md := range machineDeployments {
+					<tr class="table-light shadow-sm">
+						<td>
+							<div class="d-flex">
+								@StatusPill("Ready")
+							</div>
+						</td>
+						<td><strong>{ md.Name }</strong></td>
+						<td>{ md.Namespace }</td>
+						<td>{ fmt.Sprintf("%d / %d", md.AvailableReplicas, md.Replicas) }</td>
+						<td>{ md.Kubelet }</td>
+						<td>{ md.Age.String() }</td>
+					</tr>
+					<tr>
+						<td colspan="7" class="p-0">
+							<h5 class="p-2 m-0">Machines</h5>
+							@MachinesTable(md.Machines)
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+templ MachinesTable(machines *[]machine) {
+	<table class="table">
+		<thead>
+			<tr>
+				<th scope="col">Status</th>
+				<th scope="col">Name</th>
+				<th scope="col">Namespace</th>
+				<th scope="col">Node</th>
+				<th scope="col">Kubelet</th>
+				<th scope="col">Address</th>
+				<th scope="col">Age</th>
+			</tr>
+		</thead>
+		<tbody>
+			if machines != nil {
+				for _, m := range *machines {
+					<tr class={ templ.KV("table-danger", m.Deleted) }>
+						<td>
+							<div class="d-flex">
+								if !m.Deleted {
+									@StatusPill("Ready")
+								} else {
+									@StatusPill("Deleting")
+								}
+							</div>
+						</td>
+						<td>{ m.Namespace }</td>
+						<td>{ m.Name }</td>
+						<td>{ m.Node }</td>
+						<td>{ m.Kubelet }</td>
+						<td>{ m.Address }</td>
+						<td>{ m.Age.String() }</td>
+					</tr>
+				}
+			}
+		</tbody>
+	</table>
+}
+
+func pillClass(status string) string {
+	if status == "" {
+		return "secondary"
+	}
+	if status == "Ready" {
+		return "success"
+	}
+	return "danger"
+}
+
+func pillTitle(status string) string {
+	if status == "" {
+		return "Unknown"
+	}
+	return status
+}
+
+func badgeClass(status string) string {
+	if status == "" {
+		return "secondary"
+	}
+	if status == "Ready" {
+		return "success"
+	}
+	return "danger"
+}
