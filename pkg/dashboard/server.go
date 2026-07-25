@@ -111,10 +111,11 @@ func Serve(st *state.State, port int) error {
 
 	http.Handle("/", dashboardHandler(st))
 	http.Handle("/assets/", http.FileServerFS(assetsFS))
-	http.Handle("/scale", scaleHandler(st))
-	http.Handle("/delete-machine", deleteMachineHandler(st))
+	http.Handle("POST /scale", scaleHandler(st))
+	http.Handle("POST /rollout", rolloutHandler(st))
+	http.Handle("POST /delete-machine", deleteMachineHandler(st))
 	http.Handle("/pods", podsHandler(st))
-	http.Handle("/delete-pod", deletePodHandler(st))
+	http.Handle("POST /delete-pod", deletePodHandler(st))
 
 	st.Logger.Infoln(fmt.Sprintf("Visit http://localhost:%d to access UI", port))
 	server := &http.Server{
@@ -322,13 +323,6 @@ type scaleForm struct {
 
 func scaleHandler(st *state.State) http.Handler {
 	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
-		if req.Method != http.MethodPost {
-			return &uiError{
-				Message: "method not allowed",
-				Code:    http.StatusMethodNotAllowed,
-			}
-		}
-
 		if err := req.ParseForm(); err != nil {
 			return err
 		}
@@ -393,6 +387,61 @@ func scaleHandler(st *state.State) http.Handler {
 	})
 }
 
+type rolloutForm struct {
+	Namespace string
+	Name      string
+}
+
+func rolloutHandler(st *state.State) http.Handler {
+	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
+		if err := req.ParseForm(); err != nil {
+			return err
+		}
+
+		form := rolloutForm{
+			Namespace: req.FormValue("namespace"),
+			Name:      req.FormValue("name"),
+		}
+
+		if form.Namespace == "" || form.Name == "" {
+			return &uiError{
+				Message: "namespace and name are required",
+				Code:    http.StatusBadRequest,
+			}
+		}
+
+		md := clusterv1alpha1.MachineDeployment{}
+		key := dynclient.ObjectKey{Namespace: form.Namespace, Name: form.Name}
+		if err := st.DynamicClient.Get(req.Context(), key, &md); err != nil {
+			return fail.KubeClient(err, "getting MachineDeployment")
+		}
+
+		patch := dynclient.MergeFrom(md.DeepCopy())
+
+		if md.Spec.Template.Labels == nil {
+			md.Spec.Template.Labels = make(map[string]string)
+		}
+		md.Spec.Template.Labels["forced-restart"] = time.Now().UTC().Format("2006-01-02T15.04.05Z")
+
+		if err := st.DynamicClient.Patch(req.Context(), &md, patch); err != nil {
+			return fail.KubeClient(err, "patching MachineDeployment")
+		}
+
+		if htmx.IsHTMX(req) {
+			data, err := getDashboardData(st)
+			if err != nil {
+				return err
+			}
+
+			return Layout(data).Render(req.Context(), wr)
+		}
+
+		http.Redirect(wr, req, "/", http.StatusSeeOther)
+
+		return nil
+	})
+}
+
 type deleteMachineForm struct {
 	Namespace string
 	Name      string
@@ -400,13 +449,6 @@ type deleteMachineForm struct {
 
 func deleteMachineHandler(st *state.State) http.Handler {
 	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
-		if req.Method != http.MethodPost {
-			return &uiError{
-				Message: "method not allowed",
-				Code:    http.StatusMethodNotAllowed,
-			}
-		}
-
 		if err := req.ParseForm(); err != nil {
 			return err
 		}
@@ -510,10 +552,6 @@ type deletePodForm struct {
 
 func deletePodHandler(st *state.State) http.Handler {
 	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
-		if req.Method != http.MethodPost {
-			return &uiError{Message: "method not allowed", Code: http.StatusMethodNotAllowed}
-		}
-
 		if err := req.ParseForm(); err != nil {
 			return err
 		}

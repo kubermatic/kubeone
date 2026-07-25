@@ -130,6 +130,16 @@ templ NodesTable(nodes []node) {
 	</div>
 }
 
+templ RolloutButton(md machineDeployment) {
+	<form method="POST" action="/rollout" hx-post="/rollout" hx-target="body" hx-swap="outerHTML">
+		<input type="hidden" name="namespace" value={ md.Namespace }/>
+		<input type="hidden" name="name" value={ md.Name }/>
+		<button type="submit" class="btn btn-outline-warning btn-sm" title="Force rollout">
+			<i class="bi bi-arrow-repeat me-1"></i>Rollout
+		</button>
+	</form>
+}
+
 templ ScaleButtons(md machineDeployment) {
 	<div class="d-flex align-items-center gap-2">
 		<form method="POST" action="/scale" hx-post="/scale" hx-target="body" hx-swap="outerHTML">
@@ -163,8 +173,7 @@ templ MachineDeploymentsTable(machineDeployments []machineDeployment) {
 					<th scope="col">Namespace</th>
 					<th scope="col">Replicas</th>
 					<th scope="col">Available</th>
-					<th scope="col">Scale</th>
-					<th scope="col">Kubelet</th>
+					<th scope="col">Scale</th>				<th scope="col">Rollout</th>					<th scope="col">Kubelet</th>
 					<th scope="col">Age</th>
 				</tr>
 			</thead>
@@ -182,11 +191,12 @@ templ MachineDeploymentsTable(machineDeployments []machineDeployment) {
 						<td>{ fmt.Sprintf("%d", md.AvailableReplicas) }</td>
 						<td>@ScaleButtons(md)
 </td>
+						<td>@RolloutButton(md)</td>
 						<td>{ md.Kubelet }</td>
 						<td>{ md.Age.String() }</td>
 					</tr>
 					<tr>
-						<td colspan="7" class="p-0">
+						<td colspan="9" class="p-0">
 							<h5 class="p-2 m-0">Machines</h5>
 							@MachinesTable(md.Machines)
 						</td>
