@@ -19,6 +19,7 @@ limitations under the License.
 package dashboard
 
 import (
+	"context"
 	"embed"
 	"errors"
 	"fmt"
@@ -36,6 +37,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/fields"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -79,6 +81,15 @@ type machine struct {
 	Deleted   bool
 }
 
+type pod struct {
+	Name      string
+	Namespace string
+	Status    string
+	Ready     string
+	Restarts  int32
+	Age       time.Duration
+}
+
 type nodesResult struct {
 	ControlPlaneNodes []node
 	WorkerNodes       []node
@@ -102,6 +113,8 @@ func Serve(st *state.State, port int) error {
 	http.Handle("/assets/", http.FileServerFS(assetsFS))
 	http.Handle("/scale", scaleHandler(st))
 	http.Handle("/delete-machine", deleteMachineHandler(st))
+	http.Handle("/pods", podsHandler(st))
+	http.Handle("/delete-pod", deletePodHandler(st))
 
 	st.Logger.Infoln(fmt.Sprintf("Visit http://localhost:%d to access UI", port))
 	server := &http.Server{
@@ -432,6 +445,105 @@ func deleteMachineHandler(st *state.State) http.Handler {
 		http.Redirect(wr, req, "/", http.StatusSeeOther)
 
 		return nil
+	})
+}
+
+func getPodsForNode(ctx context.Context, dynClient dynclient.Client, nodeName string) ([]pod, error) {
+	podList := corev1.PodList{}
+	listOpts := dynclient.ListOptions{
+		FieldSelector: fields.OneTermEqualSelector("spec.nodeName", nodeName),
+	}
+	if err := dynClient.List(ctx, &podList, &listOpts); err != nil {
+		return nil, fail.KubeClient(err, "listing pods")
+	}
+
+	pods := make([]pod, 0, len(podList.Items))
+	for i := range podList.Items {
+		p := &podList.Items[i]
+		readyContainers := 0
+		totalRestarts := int32(0)
+		for _, cs := range p.Status.ContainerStatuses {
+			if cs.Ready {
+				readyContainers++
+			}
+			totalRestarts += cs.RestartCount
+		}
+
+		pods = append(pods, pod{
+			Name:      p.Name,
+			Namespace: p.Namespace,
+			Status:    string(p.Status.Phase),
+			Ready:     fmt.Sprintf("%d/%d", readyContainers, len(p.Spec.Containers)),
+			Restarts:  totalRestarts,
+			Age:       time.Since(p.CreationTimestamp.Time).Truncate(time.Second),
+		})
+	}
+
+	return pods, nil
+}
+
+func podsHandler(st *state.State) http.Handler {
+	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
+		if req.Method != http.MethodGet {
+			return &uiError{Message: "method not allowed", Code: http.StatusMethodNotAllowed}
+		}
+
+		nodeName := req.URL.Query().Get("node")
+		if nodeName == "" {
+			return &uiError{Message: "node is required", Code: http.StatusBadRequest}
+		}
+
+		pods, err := getPodsForNode(req.Context(), st.DynamicClient, nodeName)
+		if err != nil {
+			return err
+		}
+
+		return NodePodsTable(nodeName, pods).Render(req.Context(), wr)
+	})
+}
+
+type deletePodForm struct {
+	Namespace string
+	Name      string
+	Node      string
+}
+
+func deletePodHandler(st *state.State) http.Handler {
+	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
+		if req.Method != http.MethodPost {
+			return &uiError{Message: "method not allowed", Code: http.StatusMethodNotAllowed}
+		}
+
+		if err := req.ParseForm(); err != nil {
+			return err
+		}
+
+		form := deletePodForm{
+			Namespace: req.FormValue("namespace"),
+			Name:      req.FormValue("name"),
+			Node:      req.FormValue("node"),
+		}
+
+		if form.Namespace == "" || form.Name == "" || form.Node == "" {
+			return &uiError{Message: "namespace, name, and node are required", Code: http.StatusBadRequest}
+		}
+
+		p := corev1.Pod{}
+		key := dynclient.ObjectKey{Namespace: form.Namespace, Name: form.Name}
+		if err := st.DynamicClient.Get(req.Context(), key, &p); err != nil {
+			return fail.KubeClient(err, "getting Pod")
+		}
+
+		if err := st.DynamicClient.Delete(req.Context(), &p); err != nil {
+			return fail.KubeClient(err, "deleting Pod")
+		}
+
+		pods, err := getPodsForNode(req.Context(), st.DynamicClient, form.Node)
+		if err != nil {
+			return err
+		}
+
+		return NodePodsTable(form.Node, pods).Render(req.Context(), wr)
 	})
 }
 

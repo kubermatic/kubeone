@@ -113,6 +113,17 @@ templ NodesTable(nodes []node) {
 							}
 						</div>
 					</div>
+					if !n.IsControlPlane {
+						<div class="card-footer p-1">
+							<button
+								class="btn btn-sm btn-outline-secondary w-100"
+								hx-get={ fmt.Sprintf("/pods?node=%s", n.Name) }
+								hx-target={ fmt.Sprintf("[id='pods-%s']", n.Name) }
+								hx-swap="innerHTML"
+							><i class="bi bi-list-ul me-1"></i>Pods</button>
+						</div>
+						<div id={ fmt.Sprintf("pods-%s", n.Name) }></div>
+					}
 				</div>
 			</div>
 		}
@@ -236,6 +247,61 @@ templ MachinesTable(machines []machine) {
 	</table>
 }
 
+templ NodePodsTable(nodeName string, pods []pod) {
+	<table class="table table-sm mb-0" style="font-size: 0.875em;">
+		<thead class="table-secondary">
+			<tr>
+				<th scope="col">Status</th>
+				<th scope="col">Name</th>
+				<th scope="col">Namespace</th>
+				<th scope="col">Ready</th>
+				<th scope="col">Restarts</th>
+				<th scope="col">Age</th>
+				<th scope="col"></th>
+			</tr>
+		</thead>
+		<tbody>
+			if len(pods) == 0 {
+				<tr>
+					<td colspan="7" class="text-center text-muted fst-italic">No pods</td>
+				</tr>
+			}
+			for _, p := range pods {
+				<tr>
+					<td>@PodStatusBadge(p.Status)</td>
+					<td>{ p.Name }</td>
+					<td>{ p.Namespace }</td>
+					<td>{ p.Ready }</td>
+					<td>{ fmt.Sprintf("%d", p.Restarts) }</td>
+					<td>{ p.Age.String() }</td>
+					<td>
+						<form
+							method="POST"
+							action="/delete-pod"
+							hx-post="/delete-pod"
+							hx-target={ fmt.Sprintf("[id='pods-%s']", nodeName) }
+							hx-swap="innerHTML"
+						>
+							<input type="hidden" name="node" value={ nodeName }/>
+							<input type="hidden" name="namespace" value={ p.Namespace }/>
+							<input type="hidden" name="name" value={ p.Name }/>
+							<button
+								type="submit"
+								class="btn btn-outline-danger btn-sm"
+								title="Delete pod"
+							><i class="bi bi-trash"></i></button>
+						</form>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+templ PodStatusBadge(phase string) {
+	<span class={ fmt.Sprintf("badge text-bg-%s rounded-pill", podBadgeClass(phase)) }>{ phase }</span>
+}
+
 func pillClass(status string) string {
 	if status == "" {
 		return "secondary"
@@ -261,4 +327,19 @@ func badgeClass(status string) string {
 		return "success"
 	}
 	return "danger"
+}
+
+func podBadgeClass(phase string) string {
+	switch phase {
+	case "Running":
+		return "success"
+	case "Pending":
+		return "warning"
+	case "Succeeded":
+		return "secondary"
+	case "Failed", "Unknown":
+		return "danger"
+	default:
+		return "secondary"
+	}
 }
