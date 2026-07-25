@@ -26,6 +26,8 @@ import (
 	"slices"
 	"time"
 
+	"github.com/angelofallars/htmx-go"
+
 	"k8c.io/kubeone/pkg/clusterstatus"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
@@ -358,6 +360,15 @@ func scaleHandler(st *state.State) http.Handler {
 		md.Spec.Replicas = &current
 		if err := st.DynamicClient.Patch(req.Context(), &md, patch); err != nil {
 			return fail.KubeClient(err, "patching MachineDeployment")
+		}
+
+		if htmx.IsHTMX(req) {
+			data, err := getDashboardData(st)
+			if err != nil {
+				return err
+			}
+
+			return Layout(data).Render(req.Context(), wr)
 		}
 
 		http.Redirect(wr, req, "/", http.StatusSeeOther)

@@ -10,6 +10,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.5.0
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/a-h/templ v0.3.1020
+	github.com/angelofallars/htmx-go v0.5.0
 	github.com/aws/aws-sdk-go-v2/config v1.32.27
 	github.com/bombsimon/logrusr/v4 v4.1.0
 	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be

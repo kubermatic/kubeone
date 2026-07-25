@@ -31,7 +31,7 @@ func Layout(data *dashboardData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" class=\"h-100\"><head><meta charset=\"UTF-8\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/assets/favicon.png\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><meta http-equiv=\"refresh\" content=\"10\"><link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH\" crossorigin=\"anonymous\"><title>KubeOne Dashboard</title></head><body class=\"d-flex flex-column h-100\"><header class=\"navbar navbar-expand-lg sticky-top bd-navbar border-bottom py-3 bg-body px-4 shadow-sm\"><nav class=\"container-l bd-gutter d-flex flex-wrap flex-lg-nowrap align-items-center\"><img src=\"/assets/kubeone-logo.png\" alt=\"logo\" style=\"height: 30px;\"><h4 class=\"mx-3 my-0\">Dashboard</h4></nav></header><main class=\"flex-shrink-0 p-4 bg-body-tertiary flex-grow-1\"><div class=\"container-l d-flex flex-column h-100 gap-4\"><div class=\"card shadow-sm\"><div class=\"card-body\"><h4 class=\"card-title pb-2\">Control-Plane Nodes</h4>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" class=\"h-100\"><head><meta charset=\"UTF-8\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/assets/favicon.png\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH\" crossorigin=\"anonymous\"><script src=\"https://unpkg.com/htmx.org@2.0.4\" integrity=\"sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+\" crossorigin=\"anonymous\"></script><title>KubeOne Dashboard</title></head><body class=\"d-flex flex-column h-100\" hx-get=\"/\" hx-trigger=\"every 10s\" hx-target=\"body\" hx-swap=\"outerHTML\"><header class=\"navbar navbar-expand-lg sticky-top bd-navbar border-bottom py-3 bg-body px-4 shadow-sm\"><nav class=\"container-l bd-gutter d-flex flex-wrap flex-lg-nowrap align-items-center\"><img src=\"/assets/kubeone-logo.png\" alt=\"logo\" style=\"height: 30px;\"><h4 class=\"mx-3 my-0\">Dashboard</h4></nav></header><main class=\"flex-shrink-0 p-4 bg-body-tertiary flex-grow-1\"><div class=\"container-l d-flex flex-column h-100 gap-4\"><div class=\"card shadow-sm\"><div class=\"card-body\"><h4 class=\"card-title pb-2\">Control-Plane Nodes</h4>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -336,7 +336,7 @@ func ScaleButtons(md machineDeployment) templ.Component {
 			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<div class=\"d-flex align-items-center gap-2\"><form method=\"POST\" action=\"/scale\"><input type=\"hidden\" name=\"namespace\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<div class=\"d-flex align-items-center gap-2\"><form method=\"POST\" action=\"/scale\" hx-post=\"/scale\" hx-target=\"body\" hx-swap=\"outerHTML\"><input type=\"hidden\" name=\"namespace\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -385,7 +385,7 @@ func ScaleButtons(md machineDeployment) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</span><form method=\"POST\" action=\"/scale\"><input type=\"hidden\" name=\"namespace\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</span><form method=\"POST\" action=\"/scale\" hx-post=\"/scale\" hx-target=\"body\" hx-swap=\"outerHTML\"><input type=\"hidden\" name=\"namespace\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
