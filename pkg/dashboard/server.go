@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-//go:generate go run github.com/a-h/templ/cmd/templ@v0.3.977 generate
+//go:generate go tool github.com/a-h/templ/cmd/templ generate
 
 package dashboard
 
