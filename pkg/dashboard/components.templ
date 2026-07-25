@@ -132,8 +132,8 @@ templ NodesTable(nodes []node) {
 
 templ RolloutButton(md machineDeployment) {
 	<form method="POST" action="/rollout" hx-post="/rollout" hx-target="body" hx-swap="outerHTML">
-		<input type="hidden" name="namespace" value={ md.Namespace }/>
-		<input type="hidden" name="name" value={ md.Name }/>
+		<input type="hidden" name="Namespace" value={ md.Namespace }/>
+		<input type="hidden" name="Name" value={ md.Name }/>
 		<button type="submit" class="btn btn-outline-warning btn-sm" title="Force rollout">
 			<i class="bi bi-arrow-repeat me-1"></i>Rollout
 		</button>
@@ -143,9 +143,9 @@ templ RolloutButton(md machineDeployment) {
 templ ScaleButtons(md machineDeployment) {
 	<div class="d-flex align-items-center gap-2">
 		<form method="POST" action="/scale" hx-post="/scale" hx-target="body" hx-swap="outerHTML">
-			<input type="hidden" name="namespace" value={ md.Namespace }/>
-			<input type="hidden" name="name" value={ md.Name }/>
-			<input type="hidden" name="direction" value="down"/>
+			<input type="hidden" name="Namespace" value={ md.Namespace }/>
+			<input type="hidden" name="Name" value={ md.Name }/>
+			<input type="hidden" name="Direction" value="down"/>
 			<button
 				type="submit"
 				class="btn btn-outline-secondary btn-sm"
@@ -155,9 +155,9 @@ templ ScaleButtons(md machineDeployment) {
 		</form>
 		<span class="fw-semibold">{ fmt.Sprintf("%d", md.Replicas) }</span>
 		<form method="POST" action="/scale" hx-post="/scale" hx-target="body" hx-swap="outerHTML">
-			<input type="hidden" name="namespace" value={ md.Namespace }/>
-			<input type="hidden" name="name" value={ md.Name }/>
-			<input type="hidden" name="direction" value="up"/>
+			<input type="hidden" name="Namespace" value={ md.Namespace }/>
+			<input type="hidden" name="Name" value={ md.Name }/>
+			<input type="hidden" name="Direction" value="up"/>
 			<button type="submit" class="btn btn-outline-primary btn-sm" title="Scale up">+</button>
 		</form>
 	</div>
@@ -241,8 +241,8 @@ templ MachinesTable(machines []machine) {
 					<td>{ m.Age.String() }</td>
 					<td>
 						<form method="POST" action="/delete-machine" hx-post="/delete-machine" hx-target="body" hx-swap="outerHTML">
-							<input type="hidden" name="namespace" value={ m.Namespace }/>
-							<input type="hidden" name="name" value={ m.Name }/>
+							<input type="hidden" name="Namespace" value={ m.Namespace }/>
+							<input type="hidden" name="Name" value={ m.Name }/>
 							<button
 								type="submit"
 								class="btn btn-outline-danger btn-sm"
@@ -292,9 +292,9 @@ templ NodePodsTable(nodeName string, pods []pod) {
 							hx-target={ fmt.Sprintf("[id='pods-%s']", nodeName) }
 							hx-swap="innerHTML"
 						>
-							<input type="hidden" name="node" value={ nodeName }/>
-							<input type="hidden" name="namespace" value={ p.Namespace }/>
-							<input type="hidden" name="name" value={ p.Name }/>
+							<input type="hidden" name="Node" value={ nodeName }/>
+							<input type="hidden" name="Namespace" value={ p.Namespace }/>
+							<input type="hidden" name="Name" value={ p.Name }/>
 							<button
 								type="submit"
 								class="btn btn-outline-danger btn-sm"
