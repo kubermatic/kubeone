@@ -20,6 +20,7 @@ package dashboard
 
 import (
 	"embed"
+	"errors"
 	"fmt"
 	"net/http"
 	"slices"
@@ -80,6 +81,15 @@ type nodesResult struct {
 	WorkerNodes       []node
 }
 
+type uiError struct {
+	Message string
+	Code    int
+}
+
+func (e *uiError) Error() string {
+	return e.Message
+}
+
 func Serve(st *state.State, port int) error {
 	if err := kubeconfig.BuildKubernetesClientset(st); err != nil {
 		return err
@@ -87,6 +97,7 @@ func Serve(st *state.State, port int) error {
 
 	http.Handle("/", dashboardHandler(st))
 	http.Handle("/assets/", http.FileServerFS(assetsFS))
+	http.Handle("/scale", scaleHandler(st))
 
 	st.Logger.Infoln(fmt.Sprintf("Visit http://localhost:%d to access UI", port))
 	server := &http.Server{
@@ -103,7 +114,11 @@ func Serve(st *state.State, port int) error {
 func httpHandleError(handler func(http.ResponseWriter, *http.Request) error) http.Handler {
 	return http.HandlerFunc(func(wr http.ResponseWriter, req *http.Request) {
 		if err := handler(wr, req); err != nil {
-			http.Error(wr, err.Error(), 500)
+			if uiErr, ok := errors.AsType[*uiError](err); ok {
+				http.Error(wr, uiErr.Message, uiErr.Code)
+			} else {
+				http.Error(wr, err.Error(), http.StatusInternalServerError)
+			}
 		}
 	})
 }
@@ -208,15 +223,16 @@ func getMachineDeployments(state *state.State) ([]machineDeployment, error) {
 			return nil, err
 		}
 
-		result = append(result, machineDeployment{
-			Namespace:         currMachineDeployment.Namespace,
-			Name:              currMachineDeployment.Name,
-			Replicas:          int(*currMachineDeployment.Spec.Replicas),
-			AvailableReplicas: int(currMachineDeployment.Status.AvailableReplicas),
-			Kubelet:           currMachineDeployment.Spec.Template.Spec.Versions.Kubelet,
-			Age:               time.Since(currMachineDeployment.CreationTimestamp.Time).Truncate(time.Second),
-			Machines:          &machines,
-		},
+		result = append(
+			result, machineDeployment{
+				Namespace:         currMachineDeployment.Namespace,
+				Name:              currMachineDeployment.Name,
+				Replicas:          int(*currMachineDeployment.Spec.Replicas),
+				AvailableReplicas: int(currMachineDeployment.Status.AvailableReplicas),
+				Kubelet:           currMachineDeployment.Spec.Template.Spec.Versions.Kubelet,
+				Age:               time.Since(currMachineDeployment.CreationTimestamp.Time).Truncate(time.Second),
+				Machines:          &machines,
+			},
 		)
 	}
 
@@ -278,6 +294,76 @@ func getMachines(state *state.State, md *clusterv1alpha1.MachineDeployment) ([]m
 	}
 
 	return result, nil
+}
+
+type scaleForm struct {
+	Namespace string
+	Name      string
+	Direction string
+}
+
+func scaleHandler(st *state.State) http.Handler {
+	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
+		if req.Method != http.MethodPost {
+			return &uiError{
+				Message: "method not allowed",
+				Code:    http.StatusMethodNotAllowed,
+			}
+		}
+
+		if err := req.ParseForm(); err != nil {
+			return err
+		}
+
+		form := scaleForm{
+			Namespace: req.FormValue("namespace"),
+			Name:      req.FormValue("name"),
+			Direction: req.FormValue("direction"),
+		}
+
+		if form.Namespace == "" || form.Name == "" {
+			return &uiError{
+				Message: "namespace and name are required",
+				Code:    http.StatusBadRequest,
+			}
+		}
+
+		md := clusterv1alpha1.MachineDeployment{}
+		key := dynclient.ObjectKey{Namespace: form.Namespace, Name: form.Name}
+		if err := st.DynamicClient.Get(req.Context(), key, &md); err != nil {
+			return fail.KubeClient(err, "getting MachineDeployment")
+		}
+
+		current := int32(0)
+		if md.Spec.Replicas != nil {
+			current = *md.Spec.Replicas
+		}
+
+		patch := dynclient.MergeFrom(md.DeepCopy())
+
+		switch form.Direction {
+		case "up":
+			current++
+		case "down":
+			if current > 0 {
+				current--
+			}
+		default:
+			return &uiError{
+				Message: "direction must be 'up' or 'down'",
+				Code:    http.StatusBadRequest,
+			}
+		}
+
+		md.Spec.Replicas = &current
+		if err := st.DynamicClient.Patch(req.Context(), &md, patch); err != nil {
+			return fail.KubeClient(err, "patching MachineDeployment")
+		}
+
+		http.Redirect(wr, req, "/", http.StatusSeeOther)
+
+		return nil
+	})
 }
 
 func findNodeEtcd(nodes []clusterstatus.NodeStatus, search string) bool {

@@ -115,6 +115,29 @@ templ NodesTable(nodes []node) {
 	</div>
 }
 
+templ ScaleButtons(md machineDeployment) {
+	<div class="d-flex align-items-center gap-2">
+		<form method="POST" action="/scale">
+			<input type="hidden" name="namespace" value={ md.Namespace }/>
+			<input type="hidden" name="name" value={ md.Name }/>
+			<input type="hidden" name="direction" value="down"/>
+			<button
+				type="submit"
+				class="btn btn-outline-secondary btn-sm"
+				disabled?={ md.Replicas == 0 }
+				title="Scale down"
+			>−</button>
+		</form>
+		<span class="fw-semibold">{ fmt.Sprintf("%d", md.Replicas) }</span>
+		<form method="POST" action="/scale">
+			<input type="hidden" name="namespace" value={ md.Namespace }/>
+			<input type="hidden" name="name" value={ md.Name }/>
+			<input type="hidden" name="direction" value="up"/>
+			<button type="submit" class="btn btn-outline-primary btn-sm" title="Scale up">+</button>
+		</form>
+	</div>
+}
+
 templ MachineDeploymentsTable(machineDeployments []machineDeployment) {
 	<div class="mt-2">
 		<table class="table">
@@ -124,6 +147,8 @@ templ MachineDeploymentsTable(machineDeployments []machineDeployment) {
 					<th scope="col">Name</th>
 					<th scope="col">Namespace</th>
 					<th scope="col">Replicas</th>
+					<th scope="col">Available</th>
+					<th scope="col">Scale</th>
 					<th scope="col">Kubelet</th>
 					<th scope="col">Age</th>
 				</tr>
@@ -138,7 +163,9 @@ templ MachineDeploymentsTable(machineDeployments []machineDeployment) {
 						</td>
 						<td><strong>{ md.Name }</strong></td>
 						<td>{ md.Namespace }</td>
-						<td>{ fmt.Sprintf("%d / %d", md.AvailableReplicas, md.Replicas) }</td>
+						<td>{ fmt.Sprintf("%d", md.Replicas) }</td>
+						<td>{ fmt.Sprintf("%d", md.AvailableReplicas) }</td>
+						<td>@ScaleButtons(md)</td>
 						<td>{ md.Kubelet }</td>
 						<td>{ md.Age.String() }</td>
 					</tr>
