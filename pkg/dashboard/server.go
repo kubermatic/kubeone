@@ -52,6 +52,7 @@ type node struct {
 	Name              string
 	Status            string
 	IsControlPlane    bool
+	Unschedulable     bool
 	LastHeartbeatTime time.Duration
 	Version           string
 	EtcdOK            bool
@@ -65,7 +66,7 @@ type machineDeployment struct {
 	AvailableReplicas int
 	Kubelet           string
 	Age               time.Duration
-	Machines          *[]machine
+	Machines          []machine
 }
 
 type machine struct {
@@ -100,6 +101,7 @@ func Serve(st *state.State, port int) error {
 	http.Handle("/", dashboardHandler(st))
 	http.Handle("/assets/", http.FileServerFS(assetsFS))
 	http.Handle("/scale", scaleHandler(st))
+	http.Handle("/delete-machine", deleteMachineHandler(st))
 
 	st.Logger.Infoln(fmt.Sprintf("Visit http://localhost:%d to access UI", port))
 	server := &http.Server{
@@ -182,6 +184,7 @@ func getNodes(s *state.State) (*nodesResult, error) {
 			Name:              currNode.Name,
 			IsControlPlane:    isControlPlane,
 			Status:            string(lastCondition.Type),
+			Unschedulable:     currNode.Spec.Unschedulable,
 			LastHeartbeatTime: time.Since(lastCondition.LastHeartbeatTime.Time).Truncate(time.Second),
 			Version:           currNode.Status.NodeInfo.KubeletVersion,
 			EtcdOK:            findNodeEtcd(controlPlaneStatus, currNode.Name),
@@ -233,7 +236,7 @@ func getMachineDeployments(state *state.State) ([]machineDeployment, error) {
 				AvailableReplicas: int(currMachineDeployment.Status.AvailableReplicas),
 				Kubelet:           currMachineDeployment.Spec.Template.Spec.Versions.Kubelet,
 				Age:               time.Since(currMachineDeployment.CreationTimestamp.Time).Truncate(time.Second),
-				Machines:          &machines,
+				Machines:          machines,
 			},
 		)
 	}
@@ -360,6 +363,61 @@ func scaleHandler(st *state.State) http.Handler {
 		md.Spec.Replicas = &current
 		if err := st.DynamicClient.Patch(req.Context(), &md, patch); err != nil {
 			return fail.KubeClient(err, "patching MachineDeployment")
+		}
+
+		if htmx.IsHTMX(req) {
+			data, err := getDashboardData(st)
+			if err != nil {
+				return err
+			}
+
+			return Layout(data).Render(req.Context(), wr)
+		}
+
+		http.Redirect(wr, req, "/", http.StatusSeeOther)
+
+		return nil
+	})
+}
+
+type deleteMachineForm struct {
+	Namespace string
+	Name      string
+}
+
+func deleteMachineHandler(st *state.State) http.Handler {
+	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
+		if req.Method != http.MethodPost {
+			return &uiError{
+				Message: "method not allowed",
+				Code:    http.StatusMethodNotAllowed,
+			}
+		}
+
+		if err := req.ParseForm(); err != nil {
+			return err
+		}
+
+		form := deleteMachineForm{
+			Namespace: req.FormValue("namespace"),
+			Name:      req.FormValue("name"),
+		}
+
+		if form.Namespace == "" || form.Name == "" {
+			return &uiError{
+				Message: "namespace and name are required",
+				Code:    http.StatusBadRequest,
+			}
+		}
+
+		m := clusterv1alpha1.Machine{}
+		key := dynclient.ObjectKey{Namespace: form.Namespace, Name: form.Name}
+		if err := st.DynamicClient.Get(req.Context(), key, &m); err != nil {
+			return fail.KubeClient(err, "getting Machine")
+		}
+
+		if err := st.DynamicClient.Delete(req.Context(), &m); err != nil {
+			return fail.KubeClient(err, "deleting Machine")
 		}
 
 		if htmx.IsHTMX(req) {
