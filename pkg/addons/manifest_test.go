@@ -628,3 +628,49 @@ func TestDisableTemplateForLoadManifests(t *testing.T) {
 		})
 	}
 }
+
+func TestCustomCredentialsInAddonTemplate(t *testing.T) {
+	t.Parallel()
+
+	const customAddonManifest = `kind: Secret
+apiVersion: v1
+metadata:
+  name: custom-addon-secret
+  namespace: kube-system
+stringData:
+  token: "{{ .CustomCredentials.MY_APP_TOKEN }}"
+`
+
+	addonsDir := t.TempDir()
+
+	if writeErr := os.WriteFile(path.Join(addonsDir, "secret.yaml"), []byte(customAddonManifest), 0o600); writeErr != nil {
+		t.Fatalf("unable to create temporary addon manifest: %v", writeErr)
+	}
+
+	td := templateData{
+		Config: &kubeoneapi.KubeOneCluster{
+			Name: "kubeone-test",
+		},
+		CustomCredentials: map[string]string{
+			"MY_APP_TOKEN": "supersecret-value",
+		},
+	}
+
+	applier := &applier{
+		TemplateData: td,
+		LocalFS:      os.DirFS(addonsDir),
+	}
+
+	manifests, err := applier.loadAddonsManifests(applier.LocalFS, ".", nil, nil, false, &kubeoneapi.KubeOneCluster{}, false)
+	if err != nil {
+		t.Fatalf("unable to load manifests: %v", err)
+	}
+
+	if len(manifests) != 1 {
+		t.Fatalf("expected to load 1 manifest, got %d", len(manifests))
+	}
+
+	if !strings.Contains(string(manifests[0].Raw), "supersecret-value") {
+		t.Fatalf("expected rendered manifest to contain custom credential value, got:\n%s", string(manifests[0].Raw))
+	}
+}
