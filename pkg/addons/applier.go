@@ -72,6 +72,7 @@ type templateData struct {
 	Config                                   *kubeoneapi.KubeOneCluster
 	Certificates                             map[string]string
 	Credentials                              map[string]string
+	CustomCredentials                        map[string]string
 	CredentialsCCM                           map[string]string
 	CredentialsCCMHash                       string
 	CCMClusterName                           string
@@ -101,6 +102,11 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	}
 
 	creds, err := credentials.Any(s.CredentialsFilePath)
+	if err != nil {
+		return nil, err
+	}
+
+	customCreds, err := credentials.Custom(s.CredentialsFilePath)
 	if err != nil {
 		return nil, err
 	}
@@ -176,6 +182,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 			"KubernetesCA":                 mcCertsMap[resources.KubernetesCACertName],
 		},
 		Credentials:                         creds,
+		CustomCredentials:                   customCreds,
 		CredentialsCCM:                      credsCCM,
 		CredentialsCCMHash:                  credsCCMHash,
 		CCMClusterName:                      s.LiveCluster.CCMClusterName,

@@ -146,6 +146,39 @@ type ProviderEnvironmentVariable struct {
 	MachineControllerName string
 }
 
+// CustomSecretsKey is the reserved top-level key in the credentials file
+// under which users can provide arbitrary, addon-specific secrets that are
+// not known/interpreted by KubeOne itself. Its value is expected to be a
+// YAML mapping of string keys to string values, encoded as a block string,
+// following the same convention as the "registriesAuth" key.
+const CustomSecretsKey = "customSecrets"
+
+// Custom returns user-defined, addon-specific secrets from the
+// "customSecrets" section of the credentials file. Unlike Any(), which only
+// returns the fixed set of provider credential keys known to KubeOne, Custom
+// returns whatever the user has put under the reserved "customSecrets" key,
+// letting custom (and built-in) addon templates consume arbitrary secret
+// values via ".CustomCredentials.MY_KEY" without KubeOne needing to know
+// about them in advance.
+func Custom(credentialsFilePath string) (map[string]string, error) {
+	credentialsFinder, err := newCredentialsFinder(withYAMLFile(credentialsFilePath))
+	if err != nil {
+		return nil, err
+	}
+
+	raw, ok := credentialsFinder.static[CustomSecretsKey]
+	if !ok || raw == "" {
+		return map[string]string{}, nil
+	}
+
+	custom := map[string]string{}
+	if err := yaml.Unmarshal([]byte(raw), &custom); err != nil {
+		return nil, fail.Runtime(err, "unmarshalling customSecrets from credentials file")
+	}
+
+	return custom, nil
+}
+
 func Any(credentialsFilePath string) (map[string]string, error) {
 	credentialsFinder, err := newCredentialsFinder(withYAMLFile(credentialsFilePath))
 	if err != nil {

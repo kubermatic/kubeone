@@ -18,6 +18,10 @@ package credentials
 
 import (
 	"errors"
+	"os"
+	"path/filepath"
+	"reflect"
+	"strings"
 	"testing"
 
 	"k8c.io/kubeone/pkg/fail"
@@ -334,6 +338,83 @@ func TestCredentialsFinder(t *testing.T) {
 
 			if result := finder.get(tcase.key); result != tcase.want {
 				t.Errorf("get(%q)=%q, want %q", tcase.key, result, tcase.want)
+			}
+		})
+	}
+}
+
+func TestCustom(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name             string
+		credentialsFile  string
+		want             map[string]string
+		wantErrSubstring string
+	}{
+		{
+			name: "customSecrets present",
+			credentialsFile: `
+AWS_ACCESS_KEY_ID: "AAAA"
+AWS_SECRET_ACCESS_KEY: "BBBB"
+customSecrets: |
+  MY_APP_TOKEN: supersecret
+  ANOTHER_KEY: value
+`,
+			want: map[string]string{
+				"MY_APP_TOKEN": "supersecret",
+				"ANOTHER_KEY":  "value",
+			},
+		},
+		{
+			name: "customSecrets absent",
+			credentialsFile: `
+AWS_ACCESS_KEY_ID: "AAAA"
+AWS_SECRET_ACCESS_KEY: "BBBB"
+`,
+			want: map[string]string{},
+		},
+		{
+			name:            "empty credentials file",
+			credentialsFile: ``,
+			want:            map[string]string{},
+		},
+		{
+			name: "customSecrets is not a valid YAML mapping",
+			credentialsFile: `
+customSecrets: |
+  - not
+  - a
+  - mapping
+`,
+			wantErrSubstring: "unmarshalling customSecrets",
+		},
+	}
+
+	for _, tcase := range tests {
+		t.Run(tcase.name, func(t *testing.T) {
+			t.Parallel()
+
+			credentialsFilePath := filepath.Join(t.TempDir(), "credentials.yaml")
+			if err := os.WriteFile(credentialsFilePath, []byte(tcase.credentialsFile), 0o600); err != nil {
+				t.Fatalf("unable to write temporary credentials file: %v", err)
+			}
+
+			got, err := Custom(credentialsFilePath)
+			if tcase.wantErrSubstring != "" {
+				if err == nil || !strings.Contains(err.Error(), tcase.wantErrSubstring) {
+					t.Fatalf("Custom() error = %v, want substring %q", err, tcase.wantErrSubstring)
+				}
+
+				return
+			}
+
+			if err != nil {
+				t.Fatalf("Custom() unexpected error: %v", err)
+			}
+
+			if !reflect.DeepEqual(got, tcase.want) {
+				t.Errorf("Custom() = %#v, want %#v", got, tcase.want)
 			}
 		})
 	}
