@@ -60,6 +60,7 @@ const (
 	AddonNodeLocalDNSCilium     = "nodelocaldns-cilium"
 	AddonOperatingSystemManager = "operating-system-manager"
 	AddonBackupsRestic          = "backups-restic"
+	AddonEtcdDefrag             = "etcd-defrag"
 )
 
 func CloudAddons() []string {

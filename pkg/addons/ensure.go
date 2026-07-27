@@ -66,11 +66,9 @@ var embeddedAddons = map[string]string{
 	resources.AddonCSIOpenStackCinder:     "",
 	resources.AddonCSIVMwareCloudDirector: "",
 	resources.AddonCSIVsphere:             "",
-	resources.AddonMachineController:      "",
 	resources.AddonMetricsServer:          "",
 	resources.AddonNodeLocalDNS:           "",
 	resources.AddonNodeLocalDNSCilium:     "",
-	resources.AddonOperatingSystemManager: "",
 }
 
 type addonAction struct {
@@ -382,7 +380,8 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 
 	switch {
 	case s.Cluster.CloudProvider.AWS != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIAwsEBS,
 				supportFn: func() error {
@@ -391,7 +390,8 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 			},
 		)
 	case s.Cluster.CloudProvider.Azure != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIAzureDisk,
 				supportFn: func() error {
@@ -406,19 +406,22 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 			},
 		)
 	case s.Cluster.CloudProvider.GCE != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIGCPComputePD,
 			},
 		)
 	case s.Cluster.CloudProvider.DigitalOcean != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIDigitalOcean,
 			},
 		)
 	case s.Cluster.CloudProvider.Hetzner != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIHetzner,
 				supportFn: func() error {
@@ -427,19 +430,22 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 			},
 		)
 	case s.Cluster.CloudProvider.Kubevirt != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIKubeVirt,
 			},
 		)
 	case s.Cluster.CloudProvider.Nutanix != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSINutanix,
 			},
 		)
 	case s.Cluster.CloudProvider.Openstack != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIOpenStackCinder,
 				supportFn: func() error {
@@ -448,13 +454,15 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 			},
 		)
 	case s.Cluster.CloudProvider.VMwareCloudDirector != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIVMwareCloudDirector,
 			},
 		)
 	case s.Cluster.CloudProvider.Vsphere != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIVsphere,
 			},
@@ -476,31 +484,36 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 func ensureCCMAddons(s *state.State, addonsToDeploy []addonAction) []addonAction {
 	switch {
 	case s.Cluster.CloudProvider.AWS != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCCMAws,
 			},
 		)
 	case s.Cluster.CloudProvider.Azure != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCCMAzure,
 			},
 		)
 	case s.Cluster.CloudProvider.DigitalOcean != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCCMDigitalOcean,
 			},
 		)
 	case s.Cluster.CloudProvider.GCE != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCCMGCP,
 			},
 		)
 	case s.Cluster.CloudProvider.Hetzner != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCCMHetzner,
 				supportFn: func() error {
@@ -509,19 +522,22 @@ func ensureCCMAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 			},
 		)
 	case s.Cluster.CloudProvider.Kubevirt != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCCMKubeVirt,
 			},
 		)
 	case s.Cluster.CloudProvider.Nutanix != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCCMNutanix,
 			},
 		)
 	case s.Cluster.CloudProvider.Openstack != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCCMOpenStack,
 				supportFn: func() error {
@@ -530,7 +546,8 @@ func ensureCCMAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 			},
 		)
 	case s.Cluster.CloudProvider.Vsphere != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCCMVsphere,
 				supportFn: func() error {
@@ -539,7 +556,8 @@ func ensureCCMAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 			},
 		)
 	case s.Cluster.CloudProvider.EquinixMetal != nil:
-		addonsToDeploy = append(addonsToDeploy,
+		addonsToDeploy = append(
+			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCCMEquinixMetal,
 				supportFn: func() error {
