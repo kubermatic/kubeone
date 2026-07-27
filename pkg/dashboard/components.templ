@@ -1,0 +1,369 @@
+// Copyright 2026 The KubeOne Authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package dashboard
+
+import "fmt"
+
+templ Layout(data *dashboardData) {
+	<!DOCTYPE html>
+	<html lang="en" class="h-100">
+		<head>
+			<meta charset="UTF-8"/>
+			<link rel="icon" type="image/svg+xml" href="/assets/favicon.png"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"/>
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+			<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+			<title>KubeOne Dashboard</title>
+		</head>
+		<body class="d-flex flex-column h-100" hx-get="/" hx-trigger="every 10s" hx-target="body" hx-swap="outerHTML">
+			<header class="navbar navbar-expand-lg sticky-top bd-navbar border-bottom py-3 bg-body px-4 shadow-sm">
+				<nav class="container-l bd-gutter d-flex flex-wrap flex-lg-nowrap align-items-center">
+					<img src="/assets/kubeone-logo.png" alt="logo" style="height: 30px;"/>
+					<h4 class="mx-3 my-0">Dashboard</h4>
+				</nav>
+			</header>
+			<main class="flex-shrink-0 p-4 bg-body-tertiary flex-grow-1">
+				<div class="container-l d-flex flex-column h-100 gap-4">
+					<div class="card shadow-sm">
+						<div class="card-body">
+							<h4 class="card-title pb-2">Control-Plane Nodes</h4>
+							@NodesTable(data.ControlPlaneNodes)
+						</div>
+						if len(data.WorkerNodes) > 0 {
+							<div class="card-body">
+								<h4 class="card-title pb-2">Worker Nodes</h4>
+								@NodesTable(data.WorkerNodes)
+							</div>
+						}
+					</div>
+					<div class="card shadow-sm">
+						<div class="card-body">
+							<h4 class="card-title pb-2">Machine Deployments</h4>
+							@MachineDeploymentsTable(data.MachineDeployments)
+						</div>
+					</div>
+				</div>
+			</main>
+			<footer class="footer mt-auto py-3 border-top">
+				<div class="container-l px-4">
+					<span class="text-body-secondary">Powered by Kubermatic</span>
+				</div>
+			</footer>
+			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+			<script>
+				const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+				const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+			</script>
+		</body>
+	</html>
+}
+
+templ StatusPill(status string) {
+	<span
+		role="button"
+		class={ fmt.Sprintf("text-bg-%s rounded-circle", pillClass(status)) }
+		style="width:20px; height: 20px"
+		data-bs-toggle="tooltip"
+		title={ pillTitle(status) }
+	></span>
+}
+
+templ StatusBadge(status string) {
+	<span class={ fmt.Sprintf("badge text-bg-%s rounded-pill", badgeClass(status)) }>{ status }</span>
+}
+
+templ NodesTable(nodes []node) {
+	<div class="row row-cols-1 row-cols-md-4 g-3">
+		for _, n := range nodes {
+			<div class="col">
+				<div class={ templ.KV("card border-warning", n.Unschedulable) }>
+					<div class="card-header d-flex align-items-center gap-2">
+						@StatusPill(n.Status)
+						{ n.Name }
+						if n.Unschedulable {
+							<span class="badge text-bg-warning ms-auto">Scheduling Disabled</span>
+						}
+					</div>
+					<div class="card-body">
+						<div class="row row-cols-2 g-2">
+							<div class="col-4"><strong>Version</strong></div>
+							<div class="col">{ n.Version }</div>
+							<div class="col-4"><strong>Seen</strong></div>
+							<div class="col">{ n.LastHeartbeatTime.String() }</div>
+							if n.IsControlPlane {
+								<div class="col-4"><strong>etcd</strong></div>
+								<div class="col">
+									<div class="d-flex">
+										if n.EtcdOK {
+											@StatusBadge("Ready")
+										} else {
+											@StatusBadge("Not Ready")
+										}
+									</div>
+								</div>
+								<div class="col-4"><strong>apiserver</strong></div>
+								<div class="col">
+									<div class="d-flex">
+										if n.APIServerOK {
+											@StatusBadge("Ready")
+										} else {
+											@StatusBadge("Not Ready")
+										}
+									</div>
+								</div>
+							}
+						</div>
+					</div>
+					if !n.IsControlPlane {
+						<div class="card-footer p-1">
+							<button
+								class="btn btn-sm btn-outline-secondary w-100"
+								hx-get={ fmt.Sprintf("/pods?node=%s", n.Name) }
+								hx-target={ fmt.Sprintf("[id='pods-%s']", n.Name) }
+								hx-swap="innerHTML"
+							><i class="bi bi-list-ul me-1"></i>Pods</button>
+						</div>
+						<div id={ fmt.Sprintf("pods-%s", n.Name) }></div>
+					}
+				</div>
+			</div>
+		}
+	</div>
+}
+
+templ RolloutButton(md machineDeployment) {
+	<form method="POST" action="/rollout" hx-post="/rollout" hx-target="body" hx-swap="outerHTML">
+		<input type="hidden" name="Namespace" value={ md.Namespace }/>
+		<input type="hidden" name="Name" value={ md.Name }/>
+		<button type="submit" class="btn btn-outline-warning btn-sm" title="Force rollout">
+			<i class="bi bi-arrow-repeat me-1"></i>Rollout
+		</button>
+	</form>
+}
+
+templ ScaleButtons(md machineDeployment) {
+	<div class="d-flex align-items-center gap-2">
+		<form method="POST" action="/scale" hx-post="/scale" hx-target="body" hx-swap="outerHTML">
+			<input type="hidden" name="Namespace" value={ md.Namespace }/>
+			<input type="hidden" name="Name" value={ md.Name }/>
+			<input type="hidden" name="Direction" value="down"/>
+			<button
+				type="submit"
+				class="btn btn-outline-secondary btn-sm"
+				disabled?={ md.Replicas == 0 }
+				title="Scale down"
+			>−</button>
+		</form>
+		<span class="fw-semibold">{ fmt.Sprintf("%d", md.Replicas) }</span>
+		<form method="POST" action="/scale" hx-post="/scale" hx-target="body" hx-swap="outerHTML">
+			<input type="hidden" name="Namespace" value={ md.Namespace }/>
+			<input type="hidden" name="Name" value={ md.Name }/>
+			<input type="hidden" name="Direction" value="up"/>
+			<button type="submit" class="btn btn-outline-primary btn-sm" title="Scale up">+</button>
+		</form>
+	</div>
+}
+
+templ MachineDeploymentsTable(machineDeployments []machineDeployment) {
+	<div class="mt-2">
+		<table class="table">
+			<thead>
+				<tr>
+					<th scope="col">Status</th>
+					<th scope="col">Name</th>
+					<th scope="col">Namespace</th>
+					<th scope="col">Replicas</th>
+					<th scope="col">Available</th>
+					<th scope="col">Scale</th>				<th scope="col">Rollout</th>					<th scope="col">Kubelet</th>
+					<th scope="col">Age</th>
+				</tr>
+			</thead>
+			<tbody>
+				for _, md := range machineDeployments {
+					<tr class="table-light shadow-sm">
+						<td>
+							<div class="d-flex">
+								@StatusPill("Ready")
+							</div>
+						</td>
+						<td><strong>{ md.Name }</strong></td>
+						<td>{ md.Namespace }</td>
+						<td>{ fmt.Sprintf("%d", md.Replicas) }</td>
+						<td>{ fmt.Sprintf("%d", md.AvailableReplicas) }</td>
+						<td>@ScaleButtons(md)
+</td>
+						<td>@RolloutButton(md)</td>
+						<td>{ md.Kubelet }</td>
+						<td>{ md.Age.String() }</td>
+					</tr>
+					<tr>
+						<td colspan="9" class="p-0">
+							<h5 class="p-2 m-0">Machines</h5>
+							@MachinesTable(md.Machines)
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+templ MachinesTable(machines []machine) {
+	<table class="table" style="font-size: 0.85em;">
+		<thead>
+			<tr>
+				<th scope="col">Status</th>
+				<th scope="col">Name</th>
+				<th scope="col">Namespace</th>
+				<th scope="col">Node</th>
+				<th scope="col">Kubelet</th>
+				<th scope="col">Address</th>
+				<th scope="col">Age</th>
+				<th scope="col"></th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, m := range machines {
+				<tr class={ templ.KV("table-danger", m.Deleted) }>
+					<td>
+						<div class="d-flex">
+							if !m.Deleted {
+								@StatusPill("Ready")
+							} else {
+								@StatusPill("Deleting")
+							}
+						</div>
+					</td>
+					<td>{ m.Name }</td>
+					<td>{ m.Namespace }</td>
+					<td>{ m.Node }</td>
+					<td>{ m.Kubelet }</td>
+					<td>{ m.Address }</td>
+					<td>{ m.Age.String() }</td>
+					<td>
+						<form method="POST" action="/delete-machine" hx-post="/delete-machine" hx-target="body" hx-swap="outerHTML">
+							<input type="hidden" name="Namespace" value={ m.Namespace }/>
+							<input type="hidden" name="Name" value={ m.Name }/>
+							<button
+								type="submit"
+								class="btn btn-outline-danger btn-sm"
+								disabled?={ m.Deleted }
+								title="Delete machine"
+							><i class="bi bi-trash"></i></button>
+						</form>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+templ NodePodsTable(nodeName string, pods []pod) {
+	<table class="table table-sm mb-0" style="font-size: 0.875em;">
+		<thead class="table-secondary">
+			<tr>
+				<th scope="col">Status</th>
+				<th scope="col">Name</th>
+				<th scope="col">Namespace</th>
+				<th scope="col">Ready</th>
+				<th scope="col">Restarts</th>
+				<th scope="col">Age</th>
+				<th scope="col"></th>
+			</tr>
+		</thead>
+		<tbody>
+			if len(pods) == 0 {
+				<tr>
+					<td colspan="7" class="text-center text-muted fst-italic">No pods</td>
+				</tr>
+			}
+			for _, p := range pods {
+				<tr>
+					<td>@PodStatusBadge(p.Status)</td>
+					<td>{ p.Name }</td>
+					<td>{ p.Namespace }</td>
+					<td>{ p.Ready }</td>
+					<td>{ fmt.Sprintf("%d", p.Restarts) }</td>
+					<td>{ p.Age.String() }</td>
+					<td>
+						<form
+							method="POST"
+							action="/delete-pod"
+							hx-post="/delete-pod"
+							hx-target={ fmt.Sprintf("[id='pods-%s']", nodeName) }
+							hx-swap="innerHTML"
+						>
+							<input type="hidden" name="Node" value={ nodeName }/>
+							<input type="hidden" name="Namespace" value={ p.Namespace }/>
+							<input type="hidden" name="Name" value={ p.Name }/>
+							<button
+								type="submit"
+								class="btn btn-outline-danger btn-sm"
+								title="Delete pod"
+							><i class="bi bi-trash"></i></button>
+						</form>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+templ PodStatusBadge(phase string) {
+	<span class={ fmt.Sprintf("badge text-bg-%s rounded-pill", podBadgeClass(phase)) }>{ phase }</span>
+}
+
+func pillClass(status string) string {
+	if status == "" {
+		return "secondary"
+	}
+	if status == "Ready" {
+		return "success"
+	}
+	return "danger"
+}
+
+func pillTitle(status string) string {
+	if status == "" {
+		return "Unknown"
+	}
+	return status
+}
+
+func badgeClass(status string) string {
+	if status == "" {
+		return "secondary"
+	}
+	if status == "Ready" {
+		return "success"
+	}
+	return "danger"
+}
+
+func podBadgeClass(phase string) string {
+	switch phase {
+	case "Running":
+		return "success"
+	case "Pending":
+		return "warning"
+	case "Succeeded":
+		return "secondary"
+	case "Failed", "Unknown":
+		return "danger"
+	default:
+		return "secondary"
+	}
+}

@@ -9,12 +9,16 @@ require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/Masterminds/semver/v3 v3.5.0
 	github.com/Masterminds/sprig/v3 v3.3.0
+	github.com/a-h/templ v0.3.1020
+	github.com/angelofallars/htmx-go v0.5.0
 	github.com/aws/aws-sdk-go-v2/config v1.32.27
 	github.com/bombsimon/logrusr/v4 v4.1.0
 	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be
 	github.com/distribution/reference v0.6.0
 	github.com/dominodatalab/os-release v0.0.0-20190522011736-bcdb4a3e3c2f
 	github.com/go-logr/logr v1.4.3
+	github.com/go-playground/form/v4 v4.3.0
+	github.com/go-playground/validator/v10 v10.30.3
 	github.com/google/go-cmp v0.7.0
 	github.com/google/go-containerregistry v0.21.7
 	github.com/google/go-github/v65 v65.0.0
@@ -85,7 +89,9 @@ require (
 	github.com/PaesslerAG/gval v1.2.2 // indirect
 	github.com/PaesslerAG/jsonpath v0.1.1 // indirect
 	github.com/ProtonMail/go-crypto v1.4.1 // indirect
+	github.com/a-h/parse v0.0.0-20250122154542-74294addb73e // indirect
 	github.com/aliyun/alibaba-cloud-sdk-go v1.63.15 // indirect
+	github.com/andybalholm/brotli v1.1.0 // indirect
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.42.1 // indirect
@@ -104,8 +110,10 @@ require (
 	github.com/aws/smithy-go v1.27.3 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/blang/semver/v4 v4.0.0 // indirect
+	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chai2010/gettext-go v1.0.2 // indirect
+	github.com/cli/browser v1.3.0 // indirect
 	github.com/cloudflare/circl v1.6.3 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/coreos/go-systemd/v22 v22.7.0 // indirect
@@ -125,7 +133,9 @@ require (
 	github.com/fatih/color v1.19.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/fluxcd/cli-utils v1.2.1 // indirect
+	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.13 // indirect
 	github.com/go-errors/errors v1.5.1 // indirect
 	github.com/go-gorp/gorp/v3 v3.1.0 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
@@ -139,6 +149,8 @@ require (
 	github.com/go-openapi/strfmt v0.23.0 // indirect
 	github.com/go-openapi/swag v0.23.1 // indirect
 	github.com/go-openapi/validate v0.24.0 // indirect
+	github.com/go-playground/locales v0.14.1 // indirect
+	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-resty/resty/v2 v2.14.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gofrs/flock v0.13.0 // indirect
@@ -172,6 +184,7 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
+	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/lib/pq v1.12.3 // indirect
 	github.com/linode/linodego v1.40.0 // indirect
 	github.com/mailru/easyjson v0.9.0 // indirect
@@ -189,6 +202,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
 	github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+	github.com/natefinch/atomic v1.0.1 // indirect
 	github.com/nutanix-cloud-native/prism-go-client v0.5.1 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
@@ -271,3 +285,5 @@ require (
 	sigs.k8s.io/randfill v1.0.0 // indirect
 	sigs.k8s.io/structured-merge-diff/v6 v6.3.2 // indirect
 )
+
+tool github.com/a-h/templ/cmd/templ

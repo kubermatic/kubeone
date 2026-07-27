@@ -141,6 +141,7 @@ skipped_names = [
     "zz_generated.conversion.go",
     "templates/images/resource_string.go",
     "test/e2e/tests_test.go",
+    "components_templ.go"
 ]
 
 
