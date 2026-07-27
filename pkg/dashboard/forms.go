@@ -42,19 +42,17 @@ func parseAndValidateForm[T any](req *http.Request) (T, error) {
 	return val, validator.New().Struct(val)
 }
 
-type scaleForm struct {
-	Namespace string `validate:"required"`
-	Name      string `validate:"required"`
-	Direction string `validate:"required,oneof=up down"`
-}
-
 type namespaceNameForm struct {
 	Namespace string `validate:"required"`
 	Name      string `validate:"required"`
 }
 
+type scaleForm struct {
+	namespaceNameForm
+	Direction string `validate:"required,oneof=up down"`
+}
+
 type deletePodForm struct {
-	Namespace string `validate:"required"`
-	Name      string `validate:"required"`
-	Node      string `validate:"required"`
+	namespaceNameForm
+	Node string `validate:"required"`
 }
