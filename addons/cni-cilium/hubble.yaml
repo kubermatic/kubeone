@@ -353,12 +353,15 @@ spec:
               port: 4222
             timeoutSeconds: 3
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
             runAsGroup: 65532
             runAsNonRoot: true
             runAsUser: 65532
+            seccompProfile:
+              type: RuntimeDefault
           startupProbe:
             failureThreshold: 20
             grpc:
@@ -379,6 +382,8 @@ spec:
       restartPolicy: Always
       securityContext:
         fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
       serviceAccountName: hubble-relay
       terminationGracePeriodSeconds: 1
       volumes:
@@ -435,7 +440,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /healthz
-              port: 8081
+              port: http
           name: frontend
           ports:
             - containerPort: 8081
@@ -443,7 +448,9 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: 8081
+              port: http
+          securityContext:
+            allowPrivilegeEscalation: false
           terminationMessagePolicy: FallbackToLogsOnError
           volumeMounts:
             - mountPath: /etc/nginx/conf.d/default.conf
@@ -462,6 +469,8 @@ spec:
           ports:
             - containerPort: 8090
               name: grpc
+          securityContext:
+            allowPrivilegeEscalation: false
           terminationMessagePolicy: FallbackToLogsOnError
           volumeMounts: null
       nodeSelector:
@@ -491,6 +500,7 @@ metadata:
   namespace: kube-system
 spec:
   concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 1
   jobTemplate:
     spec:
       template:
@@ -498,7 +508,6 @@ spec:
           labels:
             k8s-app: hubble-generate-certs
         spec:
-          affinity: null
           automountServiceAccountToken: true
           containers:
             - args:
@@ -547,16 +556,13 @@ spec:
           securityContext:
             seccompProfile:
               type: RuntimeDefault
-          serviceAccount: hubble-generate-certs
           serviceAccountName: hubble-generate-certs
-      ttlSecondsAfterFinished: 1800
   schedule: 0 0 1 */4 *
+  successfulJobsHistoryLimit: 3
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  annotations:
-    helm.sh/hook: post-install,post-upgrade
   labels:
     app.kubernetes.io/name: hubble-generate-certs
     app.kubernetes.io/part-of: cilium
@@ -569,7 +575,6 @@ spec:
       labels:
         k8s-app: hubble-generate-certs
     spec:
-      affinity: null
       automountServiceAccountToken: true
       containers:
         - args:
@@ -618,7 +623,5 @@ spec:
       securityContext:
         seccompProfile:
           type: RuntimeDefault
-      serviceAccount: hubble-generate-certs
       serviceAccountName: hubble-generate-certs
-  ttlSecondsAfterFinished: 1800
 {{ end }}
