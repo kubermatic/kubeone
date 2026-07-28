@@ -392,15 +392,15 @@ func optionalResources() map[Resource]map[string]string {
 		WeaveNetCNINPC:  {"*": "docker.io/weaveworks/weave-npc:2.8.1"},
 
 		// Cilium
-		Cilium:         {"*": "quay.io/cilium/cilium:v1.19.2@sha256:7bc7e0be845cae0a70241e622cd03c3b169001c9383dd84329c59ca86a8b1341"},
-		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.19.2@sha256:e363f4f634c2a66a36e01618734ea17e7b541b949b9a5632f9c180ab16de23f0"},
-		CiliumEnvoy:    {"*": "quay.io/cilium/cilium-envoy:v1.35.9-1773656288-7b052e66eb2cfc5ac130ce0a5be66202a10d83be@sha256:60031f39669542b21aedf05a3317d14e8d3ea48255790af039b315a1c9637361"},
+		Cilium:         {"*": "quay.io/cilium/cilium:v1.19.6@sha256:0df5b2750b64c49843aba1d649e9eaf61467cb0645ad3171db6f6962c095ac92"},
+		CiliumOperator: {"*": "quay.io/cilium/operator-generic:v1.19.6@sha256:0db4ca4e06969d8904ee036617795d0e9c3228cf7b8d902ba74fc2bb98d2d665"},
+		CiliumEnvoy:    {"*": "quay.io/cilium/cilium-envoy:v1.36.9-1782267392-edeb3f2af56c37c407efa1f63f0b32f595399bbc@sha256:767101fb8a5e38f055778cb43b7aa8eed80450b37f8121effac3d9de9e06dc99"},
 
 		// Hubble
-		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.19.2@sha256:9987c73bad48c987fd065185535fd15a6717cbe8a8caf7fc7ef0413532cf490e"},
-		HubbleUI:        {"*": "quay.io/cilium/hubble-ui:v0.13.3@sha256:661d5de7050182d495c6497ff0b007a7a1e379648e60830dd68c4d78ae21761d"},
-		HubbleUIBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.13.3@sha256:db1454e45dc39ca41fbf7cad31eec95d99e5b9949c39daaad0fa81ef29d56953"},
-		CiliumCertGen:   {"*": "quay.io/cilium/certgen:v0.4.1@sha256:f0c656830e856d26b24b0e144df1f8b327d3b46748d76a630514111fc365b697"},
+		HubbleRelay:     {"*": "quay.io/cilium/hubble-relay:v1.19.6@sha256:6782a49e3f28eba015701c4410a5ec7fa096fe9a562f879b4372dbecd827ea44"},
+		HubbleUI:        {"*": "quay.io/cilium/hubble-ui:v0.13.5@sha256:f7d514fc54d784ed6df9d58cf0e97648b143f92b766dd1780ed3fc845bd4c516"},
+		HubbleUIBackend: {"*": "quay.io/cilium/hubble-ui-backend:v0.13.5@sha256:fac0c300ae119274edca11fd89b1ad23c788792d8bc4ea2ba631c709e8d3c688"},
+		CiliumCertGen:   {"*": "quay.io/cilium/certgen:v0.4.6@sha256:511cedee817713fdf72db7e32fffb4b90da7747661b95180064f18198877626c"},
 
 		// Cluster-autoscaler addon
 		ClusterAutoscaler: {
