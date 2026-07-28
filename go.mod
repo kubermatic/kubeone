@@ -17,7 +17,7 @@ require (
 	github.com/go-logr/logr v1.4.3
 	github.com/google/go-containerregistry v0.20.3
 	github.com/google/go-github/v65 v65.0.0
-	github.com/hetznercloud/hcloud-go/v2 v2.36.0
+	github.com/hetznercloud/hcloud-go/v2 v2.44.0
 	github.com/iancoleman/orderedmap v0.3.0
 	github.com/koron-go/prefixw v1.0.0
 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
@@ -35,8 +35,8 @@ require (
 	google.golang.org/grpc v1.82.1
 	gopkg.in/yaml.v2 v2.4.0
 	helm.sh/helm/v4 v4.2.3
-	k8c.io/machine-controller v1.65.0
-	k8c.io/machine-controller/sdk v1.65.0
+	k8c.io/machine-controller v1.65.5
+	k8c.io/machine-controller/sdk v1.65.5
 	k8s.io/api v0.36.1
 	k8s.io/apiextensions-apiserver v0.36.1
 	k8s.io/apimachinery v0.36.1
@@ -256,7 +256,7 @@ require (
 	k8s.io/klog v1.0.0 // indirect
 	k8s.io/klog/v2 v2.140.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20260317180543-43fb72c5454a // indirect
-	kubevirt.io/api v1.3.1 // indirect
+	kubevirt.io/api v1.4.0 // indirect
 	kubevirt.io/containerized-data-importer-api v1.60.3 // indirect
 	kubevirt.io/controller-lifecycle-operator-sdk/api v0.2.4 // indirect
 	oras.land/oras-go/v2 v2.6.1 // indirect
