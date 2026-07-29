@@ -1221,6 +1221,10 @@ spec:
             timeoutSeconds: 5
           name: cilium-agent
           ports:
+            - containerPort: 4244
+              hostPort: 4244
+              name: peer-service
+              protocol: TCP
             - containerPort: 9879
               hostPort: 9879
               name: health
