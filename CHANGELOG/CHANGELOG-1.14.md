@@ -2,6 +2,13 @@
 
 ## Changelog since v1.13.0
 
+## Urgent and BREAKING Upgrade Notes
+
+### (No, really, you MUST read this before you upgrade)
+
+- Support for Kubernetes **1.33** has been removed. KubeOne v1.14 supports Kubernetes versions **1.34, 1.35, and 1.36**. Before upgrading KubeOne, ensure your clusters are running Kubernetes v1.34 or newer. ([#4096](https://github.com/kubermatic/kubeone/pull/4096), [@kron4eg](https://github.com/kron4eg))
+- All CCM/CSI migration tooling has been removed. The `kubeone migrate to-ccm-csi` command is now a no-op (kept only for backward compatibility) since Kubernetes has fully moved on from in-tree cloud providers and CSI migration. If any of your clusters are still running with the in-tree cloud provider (`.cloudProvider.external: false`) and haven't completed the CCM/CSI migration, complete it using KubeOne v1.13 or earlier **before** upgrading to v1.14. ([#4096](https://github.com/kubermatic/kubeone/pull/4096), [@kron4eg](https://github.com/kron4eg))
+
 ## Changes by Kind
 
 ### Feature
