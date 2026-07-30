@@ -16,7 +16,7 @@ package dashboard
 
 import "fmt"
 
-templ Layout(data *dashboardData) {
+templ Layout() {
 	<!DOCTYPE html>
 	<html lang="en" class="h-100">
 		<head>
@@ -31,7 +31,7 @@ templ Layout(data *dashboardData) {
 			</style>
 			<title>KubeOne Dashboard</title>
 		</head>
-		<body class="d-flex flex-column h-100" hx-get="/" hx-trigger="every 10s" hx-target="body" hx-swap="outerHTML">
+		<body class="d-flex flex-column h-100">
 			<header class="navbar navbar-expand-lg sticky-top bd-navbar border-bottom py-3 bg-body px-4 shadow-sm">
 				<nav class="container-l bd-gutter d-flex flex-wrap flex-lg-nowrap align-items-center">
 					<img src="/assets/kubeone-logo.png" alt="logo" style="height: 30px;"/>
@@ -43,19 +43,35 @@ templ Layout(data *dashboardData) {
 					<div class="card shadow-sm">
 						<div class="card-body">
 							<h4 class="card-title pb-2">Control-Plane Nodes</h4>
-							@NodesTable(data.ControlPlaneNodes)
+							<div hx-get="/nodes/control-plane" hx-trigger="load, every 30s">
+								<div class="text-center py-3">
+									<div class="spinner-border text-secondary" role="status">
+										<span class="visually-hidden">Loading...</span>
+									</div>
+								</div>
+							</div>
 						</div>
-						if len(data.WorkerNodes) > 0 {
+						<div id="worker-section" hx-get="/nodes/worker" hx-trigger="load, every 30s" hx-swap="outerHTML">
 							<div class="card-body">
 								<h4 class="card-title pb-2">Worker Nodes</h4>
-								@NodesTable(data.WorkerNodes)
+								<div class="text-center py-3">
+									<div class="spinner-border text-secondary" role="status">
+										<span class="visually-hidden">Loading...</span>
+									</div>
+								</div>
 							</div>
-						}
+						</div>
 					</div>
 					<div class="card shadow-sm">
 						<div class="card-body">
 							<h4 class="card-title pb-2">Machine Deployments</h4>
-							@MachineDeploymentsTable(data.MachineDeployments)
+							<div id="machine-deployments" hx-get="/machine-deployments" hx-trigger="load, every 30s">
+								<div class="text-center py-3">
+									<div class="spinner-border text-secondary" role="status">
+										<span class="visually-hidden">Loading...</span>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -66,10 +82,6 @@ templ Layout(data *dashboardData) {
 				</div>
 			</footer>
 			<script src="/assets/bootstrap.bundle.min.js"></script>
-			<script>
-				const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-				const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
-			</script>
 		</body>
 	</html>
 }
@@ -86,6 +98,17 @@ templ StatusPill(status string) {
 
 templ StatusBadge(status string) {
 	<span class={ fmt.Sprintf("badge text-bg-%s rounded-pill", badgeClass(status)) }>{ status }</span>
+}
+
+templ WorkerNodesSection(nodes []node) {
+	if len(nodes) > 0 {
+		<div id="worker-section" class="card-body" hx-get="/nodes/worker" hx-trigger="every 30s" hx-swap="outerHTML">
+			<h4 class="card-title pb-2">Worker Nodes</h4>
+			@NodesTable(nodes)
+		</div>
+	} else {
+		<div id="worker-section" hx-get="/nodes/worker" hx-trigger="every 30s" hx-swap="outerHTML" style="display:none"></div>
+	}
 }
 
 templ NodesTable(nodes []node) {
@@ -148,7 +171,13 @@ templ NodesTable(nodes []node) {
 }
 
 templ RolloutButton(md machineDeployment) {
-	<form method="POST" action="/rollout" hx-post="/rollout" hx-target="body" hx-swap="outerHTML">
+	<form
+		method="POST"
+		action="/rollout"
+		hx-post="/rollout"
+		hx-target="#machine-deployments"
+		hx-swap="innerHTML"
+	>
 		<input type="hidden" name="Namespace" value={ md.Namespace }/>
 		<input type="hidden" name="Name" value={ md.Name }/>
 		<button type="submit" class="btn btn-outline-warning btn-sm" title="Force rollout">
@@ -159,7 +188,13 @@ templ RolloutButton(md machineDeployment) {
 
 templ ScaleButtons(md machineDeployment) {
 	<div class="d-flex align-items-center gap-2">
-		<form method="POST" action="/scale" hx-post="/scale" hx-target="body" hx-swap="outerHTML">
+		<form
+			method="POST"
+			action="/scale"
+			hx-post="/scale"
+			hx-target="#machine-deployments"
+			hx-swap="innerHTML"
+		>
 			<input type="hidden" name="Namespace" value={ md.Namespace }/>
 			<input type="hidden" name="Name" value={ md.Name }/>
 			<input type="hidden" name="Direction" value="down"/>
@@ -171,7 +206,13 @@ templ ScaleButtons(md machineDeployment) {
 			>−</button>
 		</form>
 		<span class="fw-semibold">{ fmt.Sprintf("%d", md.Replicas) }</span>
-		<form method="POST" action="/scale" hx-post="/scale" hx-target="body" hx-swap="outerHTML">
+		<form
+			method="POST"
+			action="/scale"
+			hx-post="/scale"
+			hx-target="#machine-deployments"
+			hx-swap="innerHTML"
+		>
 			<input type="hidden" name="Namespace" value={ md.Namespace }/>
 			<input type="hidden" name="Name" value={ md.Name }/>
 			<input type="hidden" name="Direction" value="up"/>
@@ -190,7 +231,9 @@ templ MachineDeploymentsTable(machineDeployments []machineDeployment) {
 					<th scope="col">Namespace</th>
 					<th scope="col">Replicas</th>
 					<th scope="col">Available</th>
-					<th scope="col">Scale</th>				<th scope="col">Rollout</th>					<th scope="col">Kubelet</th>
+					<th scope="col">Scale</th>
+					<th scope="col">Rollout</th>
+					<th scope="col">Kubelet</th>
 					<th scope="col">Age</th>
 				</tr>
 			</thead>
@@ -206,9 +249,12 @@ templ MachineDeploymentsTable(machineDeployments []machineDeployment) {
 						<td>{ md.Namespace }</td>
 						<td>{ fmt.Sprintf("%d", md.Replicas) }</td>
 						<td>{ fmt.Sprintf("%d", md.AvailableReplicas) }</td>
-						<td>@ScaleButtons(md)
-</td>
-						<td>@RolloutButton(md)</td>
+						<td>
+							@ScaleButtons(md)
+						</td>
+						<td>
+							@RolloutButton(md)
+						</td>
 						<td>{ md.Kubelet }</td>
 						<td>{ md.Age.String() }</td>
 					</tr>
@@ -257,7 +303,13 @@ templ MachinesTable(machines []machine) {
 					<td>{ m.Address }</td>
 					<td>{ m.Age.String() }</td>
 					<td>
-						<form method="POST" action="/delete-machine" hx-post="/delete-machine" hx-target="body" hx-swap="outerHTML">
+						<form
+							method="POST"
+							action="/delete-machine"
+							hx-post="/delete-machine"
+							hx-target="#machine-deployments"
+							hx-swap="innerHTML"
+						>
 							<input type="hidden" name="Namespace" value={ m.Namespace }/>
 							<input type="hidden" name="Name" value={ m.Name }/>
 							<button
@@ -295,7 +347,9 @@ templ NodePodsTable(nodeName string, pods []pod) {
 			}
 			for _, p := range pods {
 				<tr>
-					<td>@PodStatusBadge(p.Status)</td>
+					<td>
+						@PodStatusBadge(p.Status)
+					</td>
 					<td>{ p.Name }</td>
 					<td>{ p.Namespace }</td>
 					<td>{ p.Ready }</td>
