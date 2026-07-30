@@ -42,12 +42,15 @@ func Serve(st *state.State, port int) error {
 		return err
 	}
 
-	http.Handle("/", dashboardHandler(st))
+	http.Handle("/", dashboardHandler())
 	http.Handle("/assets/", http.FileServerFS(assetsFS))
+	http.Handle("GET /nodes/control-plane", controlPlaneNodesHandler(st))
+	http.Handle("GET /nodes/worker", workerNodesHandler(st))
+	http.Handle("GET /machine-deployments", machineDeploymentsHandler(st))
 	http.Handle("POST /scale", scaleHandler(st))
 	http.Handle("POST /rollout", rolloutHandler(st))
 	http.Handle("POST /delete-machine", deleteMachineHandler(st))
-	http.Handle("POST /pods", podsHandler(st))
+	http.Handle("GET /pods", podsHandler(st))
 	http.Handle("POST /delete-pod", deletePodHandler(st))
 
 	st.Logger.Infoln(fmt.Sprintf("Visit http://localhost:%d to access UI", port))

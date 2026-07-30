@@ -42,18 +42,42 @@ func httpHandleError(handler func(http.ResponseWriter, *http.Request) error) htt
 	})
 }
 
-func dashboardHandler(st *state.State) http.Handler {
+func dashboardHandler() http.Handler {
 	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
-		dashboardData, err := getDashboardData(st)
+		return Layout().Render(req.Context(), wr)
+	})
+}
+
+func controlPlaneNodesHandler(st *state.State) http.Handler {
+	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
+		nodes, err := getNodes(st)
 		if err != nil {
 			return err
 		}
 
-		if err = Layout(dashboardData).Render(req.Context(), wr); err != nil {
+		return NodesTable(nodes.ControlPlaneNodes).Render(req.Context(), wr)
+	})
+}
+
+func workerNodesHandler(st *state.State) http.Handler {
+	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
+		nodes, err := getNodes(st)
+		if err != nil {
 			return err
 		}
 
-		return nil
+		return WorkerNodesSection(nodes.WorkerNodes).Render(req.Context(), wr)
+	})
+}
+
+func machineDeploymentsHandler(st *state.State) http.Handler {
+	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
+		mds, err := getMachineDeployments(st)
+		if err != nil {
+			return err
+		}
+
+		return MachineDeploymentsTable(mds).Render(req.Context(), wr)
 	})
 }
 
@@ -97,12 +121,12 @@ func scaleHandler(st *state.State) http.Handler {
 		}
 
 		if htmx.IsHTMX(req) {
-			data, err := getDashboardData(st)
+			mds, err := getMachineDeployments(st)
 			if err != nil {
 				return err
 			}
 
-			return Layout(data).Render(req.Context(), wr)
+			return MachineDeploymentsTable(mds).Render(req.Context(), wr)
 		}
 
 		http.Redirect(wr, req, "/", http.StatusSeeOther)
@@ -136,12 +160,12 @@ func rolloutHandler(st *state.State) http.Handler {
 		}
 
 		if htmx.IsHTMX(req) {
-			data, err := getDashboardData(st)
+			mds, err := getMachineDeployments(st)
 			if err != nil {
 				return err
 			}
 
-			return Layout(data).Render(req.Context(), wr)
+			return MachineDeploymentsTable(mds).Render(req.Context(), wr)
 		}
 
 		http.Redirect(wr, req, "/", http.StatusSeeOther)
@@ -168,12 +192,12 @@ func deleteMachineHandler(st *state.State) http.Handler {
 		}
 
 		if htmx.IsHTMX(req) {
-			data, err := getDashboardData(st)
+			mds, err := getMachineDeployments(st)
 			if err != nil {
 				return err
 			}
 
-			return Layout(data).Render(req.Context(), wr)
+			return MachineDeploymentsTable(mds).Render(req.Context(), wr)
 		}
 
 		http.Redirect(wr, req, "/", http.StatusSeeOther)

@@ -30,12 +30,6 @@ import (
 	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
 )
 
-type dashboardData struct {
-	ControlPlaneNodes  []node
-	WorkerNodes        []node
-	MachineDeployments []machineDeployment
-}
-
 type node struct {
 	Name              string
 	Status            string
@@ -88,26 +82,6 @@ type uiError struct {
 
 func (e *uiError) Error() string {
 	return e.Message
-}
-
-func getDashboardData(state *state.State) (*dashboardData, error) {
-	nodes, err := getNodes(state)
-	if err != nil {
-		return nil, err
-	}
-
-	machineDeployments, err := getMachineDeployments(state)
-	if err != nil {
-		return nil, err
-	}
-
-	result := dashboardData{
-		ControlPlaneNodes:  nodes.ControlPlaneNodes,
-		WorkerNodes:        nodes.WorkerNodes,
-		MachineDeployments: machineDeployments,
-	}
-
-	return &result, nil
 }
 
 func getNodes(s *state.State) (*nodesResult, error) {
