@@ -94,13 +94,15 @@ func mirrorImagesCmd(*pflag.FlagSet) *cobra.Command {
 		&opts.Filter,
 		longFlagName(opts, "Filter"),
 		"none",
-		"images list filter, one of the [none|base|optional|control-plane]")
+		"images list filter, one of the [none|base|optional|control-plane]",
+	)
 
 	cmd.Flags().StringVar(
 		&opts.KubernetesVersions,
 		longFlagName(opts, "KubernetesVersions"),
 		"",
-		"Kubernetes versions (comma-separated, format: vX.Y[.Z])")
+		"Kubernetes versions (comma-separated, format: vX.Y[.Z])",
+	)
 
 	cmd.Flags().BoolVar(
 		&opts.DryRun,

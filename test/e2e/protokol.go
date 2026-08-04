@@ -31,7 +31,7 @@ type protokolBin struct {
 	outputDir  string
 }
 
-func (p *protokolBin) Start(ctx context.Context, kubeconfigPath string, proxyURL string) (func(), error) {
+func (p *protokolBin) Start(ctx context.Context, kubeconfigPath, proxyURL string) (func(), error) {
 	if err := ctx.Err(); err != nil {
 		return nil, fmt.Errorf("starting protokol: %w", err)
 	}

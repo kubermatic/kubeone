@@ -22,8 +22,7 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 )
 
-var (
-	ccmMigrationRegenerateControlPlaneConfigs = heredoc.Doc(`
+var ccmMigrationRegenerateControlPlaneConfigs = heredoc.Doc(`
 		sudo kubeadm {{ .VERBOSE }} init phase control-plane apiserver \
 			--config={{ .WORK_DIR }}/cfg/control_plane_{{ .NODE_ID }}.yaml
 
@@ -33,7 +32,6 @@ var (
 		sudo kubeadm {{ .VERBOSE }} init phase kubelet-start \
 			--config={{ .WORK_DIR }}/cfg/control_plane_{{ .NODE_ID }}.yaml
 	`)
-)
 
 func CCMMigrationRegenerateControlPlaneConfigs(workdir string, nodeID int, verboseFlag string) (string, error) {
 	result, err := Render(ccmMigrationRegenerateControlPlaneConfigs, Data{

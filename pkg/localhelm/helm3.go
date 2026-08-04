@@ -531,7 +531,7 @@ func getChart(
 	return newChart(chartPath, chartName, providers, helmSettings)
 }
 
-func newChart(chartPath string, chartName string, providers getter.Providers, helmSettings *helmcli.EnvSettings) (*helmchartv2.Chart, error) {
+func newChart(chartPath, chartName string, providers getter.Providers, helmSettings *helmcli.EnvSettings) (*helmchartv2.Chart, error) {
 	chartRequested, err := loader.Load(chartPath)
 	if err != nil {
 		return nil, fail.Runtime(err, "loading helm chart")

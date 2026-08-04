@@ -69,7 +69,8 @@ func addonsListCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		longFlagName(opts, "OutputFormat"),
 		shortFlagName(opts, "OutputFormat"),
 		"table",
-		"output format (table|json).")
+		"output format (table|json).",
+	)
 
 	return cmd
 }

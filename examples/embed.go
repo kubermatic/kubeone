@@ -42,7 +42,7 @@ func CopyTo(dst, src string) error {
 
 		dstFullPath := filepath.Join(dst, dstPartPath)
 		if de.IsDir() {
-			return os.MkdirAll(dstFullPath, 0755)
+			return os.MkdirAll(dstFullPath, 0o755)
 		}
 
 		fh, err := os.Create(dstFullPath)

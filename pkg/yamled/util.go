@@ -48,7 +48,7 @@ func makeMapSlice(m map[string]any) yaml.MapSlice {
 	return result
 }
 
-func setValueInMapSlice(m yaml.MapSlice, key any, value any) yaml.MapSlice {
+func setValueInMapSlice(m yaml.MapSlice, key, value any) yaml.MapSlice {
 	for idx, item := range m {
 		if item.Key == key {
 			m[idx].Value = value

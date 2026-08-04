@@ -106,7 +106,7 @@ func fetchCert(virtfs fs.FS, filename string) (*x509.Certificate, error) {
 	return cert, nil
 }
 
-func timeBefore(t1 time.Time, t2 time.Time) bool {
+func timeBefore(t1, t2 time.Time) bool {
 	if t2.IsZero() {
 		return true
 	}

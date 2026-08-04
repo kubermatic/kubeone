@@ -67,6 +67,7 @@ func TestEtcdVersionCorruptCheckExtraArgs(t *testing.T) {
 		})
 	}
 }
+
 func TestMergeFeatureGates(t *testing.T) {
 	tests := []struct {
 		name                   string

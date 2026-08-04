@@ -130,28 +130,32 @@ func configPrintCmd() *cobra.Command {
 		longFlagName(opts, "FullConfig"),
 		shortFlagName(opts, "FullConfig"),
 		false,
-		"show full manifest")
+		"show full manifest",
+	)
 
 	cmd.Flags().StringVarP(
 		&opts.ClusterName,
 		longFlagName(opts, "ClusterName"),
 		shortFlagName(opts, "ClusterName"),
 		"demo-cluster",
-		"cluster name")
+		"cluster name",
+	)
 
 	cmd.Flags().StringVarP(
 		&opts.KubernetesVersion,
 		longFlagName(opts, "KubernetesVersion"),
 		shortFlagName(opts, "KubernetesVersion"),
 		defaultKubeVersion,
-		"Kubernetes version")
+		"Kubernetes version",
+	)
 
 	cmd.Flags().StringVarP(
 		&opts.CloudProviderName,
 		longFlagName(opts, "CloudProviderName"),
 		shortFlagName(opts, "CloudProviderName"),
 		defaultCloudProviderName,
-		"cloud provider name (aws, digitalocean, gce, hetzner, equinixmetal, openstack, vsphere, none)")
+		"cloud provider name (aws, digitalocean, gce, hetzner, equinixmetal, openstack, vsphere, none)",
+	)
 
 	// Hosts
 	cmd.Flags().StringVar(&opts.ControlPlaneHosts, longFlagName(opts, "ControlPlaneHosts"), "", "control plane hosts in format of comma-separated key:value list, example: publicAddress:192.168.0.100,privateAddress:192.168.1.100,sshUsername:ubuntu,sshPort:22. Use quoted string of space separated values for multiple hosts")
@@ -191,13 +195,15 @@ func configPrintCmd() *cobra.Command {
 		&opts.ContainerLogMaxSize,
 		longFlagName(opts, "ContainerLogMaxSize"),
 		containerruntime.DefaultContainerLogMaxSize,
-		"ContainerLogMaxSize")
+		"ContainerLogMaxSize",
+	)
 
 	cmd.Flags().Int32Var(
 		&opts.ContainerLogMaxFiles,
 		longFlagName(opts, "ContainerLogMaxFiles"),
 		containerruntime.DefaultContainerLogMaxFiles,
-		"ContainerLogMaxFiles")
+		"ContainerLogMaxFiles",
+	)
 
 	return cmd
 }

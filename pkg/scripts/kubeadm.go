@@ -107,7 +107,7 @@ func KubeadmCertsAll(workdir string, nodeID int, verboseFlag string) (string, er
 	return result, fail.Runtime(err, "rendering kubeadmCertsAllScriptTemplate script")
 }
 
-func KubeadmInit(workdir string, nodeID int, verboseFlag, token, tokenTTL string, skipPhases string) (string, error) {
+func KubeadmInit(workdir string, nodeID int, verboseFlag, token, tokenTTL, skipPhases string) (string, error) {
 	result, err := Render(kubeadmInitScriptTemplate, Data{
 		"WORK_DIR":       workdir,
 		"NODE_ID":        nodeID,

@@ -265,7 +265,7 @@ func waitForNodesReady(ctx context.Context, t *testing.T, client ctrlruntimeclie
 	})
 }
 
-func verifyVersion(ctx context.Context, client ctrlruntimeclient.Client, namespace string, targetVersion string) error {
+func verifyVersion(ctx context.Context, client ctrlruntimeclient.Client, namespace, targetVersion string) error {
 	reqVer, err := semver.NewVersion(targetVersion)
 	if err != nil {
 		return fmt.Errorf("desired version is invalid: %w", err)

@@ -84,31 +84,36 @@ func resetCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		longFlagName(opts, "AutoApprove"),
 		shortFlagName(opts, "AutoApprove"),
 		false,
-		"auto approve reset")
+		"auto approve reset",
+	)
 
 	cmd.Flags().BoolVar(
 		&opts.DestroyWorkers,
 		longFlagName(opts, "DestroyWorkers"),
 		true,
-		"destroy all worker machines before resetting the cluster")
+		"destroy all worker machines before resetting the cluster",
+	)
 
 	cmd.Flags().BoolVar(
 		&opts.RemoveBinaries,
 		longFlagName(opts, "RemoveBinaries"),
 		false,
-		"remove kubernetes binaries after resetting the cluster")
+		"remove kubernetes binaries after resetting the cluster",
+	)
 
 	cmd.Flags().BoolVar(
 		&opts.RemoveVolumes,
 		longFlagName(opts, "RemoveVolumes"),
 		true,
-		"remove all dynamically provisioned and unretained volumes before resetting the cluster")
+		"remove all dynamically provisioned and unretained volumes before resetting the cluster",
+	)
 
 	cmd.Flags().BoolVar(
 		&opts.RemoveLBServices,
 		longFlagName(opts, "RemoveLBServices"),
 		true,
-		"remove all load balancers services before resetting the cluster")
+		"remove all load balancers services before resetting the cluster",
+	)
 
 	return cmd
 }

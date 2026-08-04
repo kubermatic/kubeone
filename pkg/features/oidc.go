@@ -47,7 +47,7 @@ func activateKubeadmOIDC(feature *kubeoneapi.OpenIDConnect, args *kubeadmargs.Ar
 	optionalMapSet(args.APIServer.ExtraArgs, "oidc-ca-file", feature.Config.CAFile)
 }
 
-func optionalMapSet(m map[string]string, key string, val string) {
+func optionalMapSet(m map[string]string, key, val string) {
 	if val == "" {
 		return
 	}

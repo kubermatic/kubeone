@@ -94,6 +94,7 @@ func TestEtcdVersionCorruptCheckExtraArgs(t *testing.T) {
 		})
 	}
 }
+
 func TestMergeFeatureGates(t *testing.T) {
 	tests := []struct {
 		name                   string
@@ -203,7 +204,8 @@ func TestAddControlPlaneComponentsAdditionalArgs(t *testing.T) {
 		"existing-flag": "existing-value",
 		"flag5":         "value5",
 		"flag6":         "value6",
-		"feature-gates": "feature5=true,feature6=false"}
+		"feature-gates": "feature5=true,feature6=false",
+	}
 
 	expectedControllerManagerFeatureGates := "feature1=true,feature2=false"
 	expectedSchedulerFeatureGates := "feature3=true,feature4=false"
