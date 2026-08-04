@@ -109,7 +109,7 @@ func kuredObjects() []crclient.Object {
 	return cleanupObjects
 }
 
-func newUnstructured(apiVersion string, kind string, identity crclient.ObjectKey, opts ...func(*metav1unstructured.Unstructured)) crclient.Object {
+func newUnstructured(apiVersion, kind string, identity crclient.ObjectKey, opts ...func(*metav1unstructured.Unstructured)) crclient.Object {
 	obj := &metav1unstructured.Unstructured{}
 	obj.SetAPIVersion(apiVersion)
 	obj.SetKind(kind)

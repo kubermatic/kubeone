@@ -142,44 +142,51 @@ func localCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		longFlagName(opts, "AutoApprove"),
 		shortFlagName(opts, "AutoApprove"),
 		false,
-		"auto approve plan")
+		"auto approve plan",
+	)
 
 	cmd.Flags().StringVarP(
 		&opts.BackupFile,
 		longFlagName(opts, "BackupFile"),
 		shortFlagName(opts, "BackupFile"),
 		"",
-		"path to where the PKI backup .tar.gz file should be placed (default: location of cluster config file)")
+		"path to where the PKI backup .tar.gz file should be placed (default: location of cluster config file)",
+	)
 
 	cmd.Flags().StringVar(
 		&opts.KubernetesVersion,
 		longFlagName(opts, "KubernetesVersion"),
 		defaultKubeVersion,
-		"kubernetes version to install when there is no manifest")
+		"kubernetes version to install when there is no manifest",
+	)
 
 	cmd.Flags().StringVar(
 		&opts.APIEndpoint,
 		longFlagName(opts, "ApiEndpoint"),
 		"",
-		"kube-apiserver endpoint to init, default to autodetect")
+		"kube-apiserver endpoint to init, default to autodetect",
+	)
 
 	cmd.Flags().BoolVar(
 		&opts.NoInit,
 		longFlagName(opts, "NoInit"),
 		false,
-		"don't initialize the cluster (only install binaries)")
+		"don't initialize the cluster (only install binaries)",
+	)
 
 	cmd.Flags().BoolVar(
 		&opts.ForceInstall,
 		longFlagName(opts, "ForceInstall"),
 		false,
-		"use force to install new binary versions (!dangerous!)")
+		"use force to install new binary versions (!dangerous!)",
+	)
 
 	cmd.Flags().BoolVar(
 		&opts.ForceUpgrade,
 		longFlagName(opts, "ForceUpgrade"),
 		false,
-		"force start upgrade process")
+		"force start upgrade process",
+	)
 
 	return cmd
 }

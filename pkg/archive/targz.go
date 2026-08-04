@@ -34,7 +34,7 @@ type tarGzip struct {
 
 // NewTarGzip returns a new tar.gz archive.
 func NewTarGzip(filename string) (Archive, error) {
-	f, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0600)
+	f, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o600)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func NewTarGzip(filename string) (Archive, error) {
 	}, nil
 }
 
-func (tgz tarGzip) Add(file string, content string) error {
+func (tgz tarGzip) Add(file, content string) error {
 	if tgz.arch == nil {
 		return fail.RuntimeError{
 			Op:  "adding file to archive",
@@ -59,7 +59,7 @@ func (tgz tarGzip) Add(file string, content string) error {
 
 	hdr := &tar.Header{
 		Name: file,
-		Mode: 0600,
+		Mode: 0o600,
 		Size: int64(len(content)),
 	}
 

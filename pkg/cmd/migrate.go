@@ -113,14 +113,16 @@ func migrateToCCMCSICmd() *cobra.Command {
 		"auto-approve",
 		"y",
 		false,
-		"auto approve plan")
+		"auto approve plan",
+	)
 
 	cmd.Flags().BoolVarP(
 		&completeMigration,
 		"complete",
 		"",
 		false,
-		"complete ccm/csi migration")
+		"complete ccm/csi migration",
+	)
 
 	return cmd
 }

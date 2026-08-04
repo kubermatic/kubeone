@@ -114,26 +114,30 @@ func kubeconfigGenerateCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		&opts.CommonName,
 		longFlagName(opts, "CommonName"),
 		"",
-		"CommonName (CN) for the generated client certificate.")
+		"CommonName (CN) for the generated client certificate.",
+	)
 
 	cmd.Flags().StringArrayVar(
 		&opts.OrganizationNames,
 		longFlagName(opts, "OrganizationNames"),
 		[]string{},
-		"OrganizationName (ON) for the generated client certificate.")
+		"OrganizationName (ON) for the generated client certificate.",
+	)
 
 	cmd.Flags().BoolVarP(
 		&opts.SuperAdmin,
 		longFlagName(opts, "SuperAdmin"),
 		shortFlagName(opts, "SuperAdmin"),
 		false,
-		"Generate superadmin kubeconfig, shorthand for --cn <USER>@<HOSTNAME> --on system:masters")
+		"Generate superadmin kubeconfig, shorthand for --cn <USER>@<HOSTNAME> --on system:masters",
+	)
 
 	cmd.Flags().DurationVar(
 		&opts.TTL,
 		longFlagName(opts, "TTL"),
 		1*time.Hour,
-		"Time To Live for the generated certificate.")
+		"Time To Live for the generated certificate.",
+	)
 
 	return cmd
 }

@@ -171,7 +171,8 @@ func etcdMembersCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		longFlagName(opts, "OutputFormat"),
 		shortFlagName(opts, "OutputFormat"),
 		"table",
-		"output format (table|json)")
+		"output format (table|json)",
+	)
 
 	return cmd
 }
@@ -292,7 +293,8 @@ func etcdDisarmCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		&opts.All,
 		longFlagName(opts, "All"),
 		false,
-		"disarm alarms on all etcd members")
+		"disarm alarms on all etcd members",
+	)
 
 	return cmd
 }

@@ -36,7 +36,7 @@ import (
 func determinePauseImage(s *state.State) error {
 	s.Logger.Infoln("Determining Kubernetes pause image...")
 
-	return s.RunTaskOnLeaderWithMutator(determinePauseImageExecutor, func(original *state.State, tmp *state.State) {
+	return s.RunTaskOnLeaderWithMutator(determinePauseImageExecutor, func(original, tmp *state.State) {
 		original.PauseImage = tmp.PauseImage
 	})
 }

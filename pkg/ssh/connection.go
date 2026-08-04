@@ -371,7 +371,7 @@ func (c *connection) Close() error {
 	return c.sshclient.Close()
 }
 
-func (c *connection) POpen(cmd string, stdin io.Reader, stdout io.Writer, stderr io.Writer) (int, error) {
+func (c *connection) POpen(cmd string, stdin io.Reader, stdout, stderr io.Writer) (int, error) {
 	sess, err := c.session()
 	if err != nil {
 		c.Close()

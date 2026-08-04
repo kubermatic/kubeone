@@ -71,7 +71,6 @@ func (r *Runner) RunRaw(cmd string) (string, string, error) {
 
 	// run the command
 	_, err := r.Executor.POpen(cmd, nil, stdout, stderr)
-
 	if err != nil {
 		r.Executor.Close()
 		r.Executor = nil

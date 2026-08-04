@@ -555,7 +555,8 @@ func WithRewriteSecrets(t Tasks) Tasks {
 			Fn:          rewriteClusterSecrets,
 			Operation:   "rewriting cluster secrets",
 			Description: "rewrite all cluster secrets",
-		})
+		},
+	)
 }
 
 func WithCustomEncryptionConfigUpdated(t Tasks) Tasks {

@@ -75,7 +75,8 @@ func prePullImages(s *state.State) error {
 			`), runner.TemplateVariables{
 				"NODE_ID":  node.ID,
 				"WORK_DIR": s.WorkDir,
-			})
+			},
+		)
 
 		return fail.SSH(err, "pre-pull kubeadm images")
 	}, state.RunParallel)

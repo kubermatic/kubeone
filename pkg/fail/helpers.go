@@ -27,7 +27,7 @@ func ConfigValidation(err error) error {
 	return Config(err, "validation")
 }
 
-func NewConfigError(op string, format string, args ...any) error {
+func NewConfigError(op, format string, args ...any) error {
 	return ConfigError{
 		Op:  op,
 		Err: errors.Errorf(format, args...),
@@ -113,7 +113,7 @@ func Runtime(err error, op string, args ...any) error {
 	}
 }
 
-func NewRuntimeError(op string, format string, args ...any) error {
+func NewRuntimeError(op, format string, args ...any) error {
 	return RuntimeError{
 		Op:  op,
 		Err: errors.Errorf(format, args...),
@@ -132,7 +132,7 @@ func MachineController(err error, op string, args ...any) error {
 	}
 }
 
-func Cloud(err error, provider string, op string, args ...any) error {
+func Cloud(err error, provider, op string, args ...any) error {
 	if err == nil {
 		return nil
 	}

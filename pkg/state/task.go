@@ -54,7 +54,7 @@ func (s *State) runTask(node *kubeoneapi.HostConfig, task NodeTask) error {
 	return fail.Runtime(task(s, node, conn), "")
 }
 
-type stateMutatorFn func(original *State, tmp *State)
+type stateMutatorFn func(original, tmp *State)
 
 // RunTaskOnNodes runs the given task on the given selection of hosts.
 func (s *State) RunTaskOnNodes(nodes []kubeoneapi.HostConfig, task NodeTask, parallel RunModeEnum, stateMutator stateMutatorFn) error {

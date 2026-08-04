@@ -73,7 +73,7 @@ func (le *localExec) Exec(cmd string) (string, string, int, error) {
 	return stdout.String(), stderr.String(), exitcode, returnErr
 }
 
-func (le *localExec) POpen(cmd string, stdin io.Reader, stdout io.Writer, stderr io.Writer) (int, error) {
+func (le *localExec) POpen(cmd string, stdin io.Reader, stdout, stderr io.Writer) (int, error) {
 	command := exec.CommandContext(le.ctx, "bash", "-c", cmd)
 	command.Stdin = stdin
 	command.Stdout = stdout

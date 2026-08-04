@@ -94,7 +94,7 @@ func pruneImages(s *state.State, _ *kubeoneapi.HostConfig, _ executor.Interface)
 
 type syncHostToNodeFn func(host *kubeoneapi.HostConfig, node *corev1.Node)
 
-func addRemoveKeyValues(src map[string]string, dst map[string]string) {
+func addRemoveKeyValues(src, dst map[string]string) {
 	for key, value := range src {
 		if strings.HasSuffix(key, "-") {
 			// drop minus from the suffix

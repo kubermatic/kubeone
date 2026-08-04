@@ -69,7 +69,8 @@ func uiCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		longFlagName(opts, "port"),
 		shortFlagName(opts, "port"),
 		8080,
-		"port on which webserver is running")
+		"port on which webserver is running",
+	)
 
 	return cmd
 }

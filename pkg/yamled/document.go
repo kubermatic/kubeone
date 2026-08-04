@@ -313,7 +313,7 @@ func (d *Document) Fill(path Path, newValue any) bool {
 	return d.setInternal(path, node)
 }
 
-func (d *Document) fillMap(source yaml.MapSlice, newMap yaml.MapSlice) yaml.MapSlice {
+func (d *Document) fillMap(source, newMap yaml.MapSlice) yaml.MapSlice {
 	for _, newItem := range newMap {
 		key := newItem.Key
 		newValue := newItem.Value

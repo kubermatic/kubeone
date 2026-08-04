@@ -439,7 +439,7 @@ func (a *applier) loadAndDeleteAddon(s *state.State, fsys fs.FS, addonName strin
 }
 
 // runKubectlApply runs kubectl apply command
-func runKubectlApply(s *state.State, manifest string, addonName string) error {
+func runKubectlApply(s *state.State, manifest, addonName string) error {
 	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
 		var (
 			cmd            = fmt.Sprintf(kubectlApplyScript, addonLabel, addonName)
@@ -459,7 +459,7 @@ func runKubectlApply(s *state.State, manifest string, addonName string) error {
 }
 
 // runKubectlDelete runs kubectl delete command
-func runKubectlDelete(s *state.State, manifest string, addonName string) error {
+func runKubectlDelete(s *state.State, manifest, addonName string) error {
 	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
 		var (
 			cmd            = fmt.Sprintf(kubectlDeleteScript, addonLabel, addonName)

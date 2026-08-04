@@ -45,7 +45,7 @@ func NewConfiguration() *Configuration {
 }
 
 // AddFile save file contents for future references
-func (c *Configuration) AddFile(filename string, content string) {
+func (c *Configuration) AddFile(filename, content string) {
 	c.files[filename] = strings.TrimSpace(content) + "\n"
 }
 

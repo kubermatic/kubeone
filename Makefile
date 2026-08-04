@@ -134,7 +134,12 @@ prowfmt:
 tffmt:
 	terraform fmt -write=true -recursive .
 
-fmt: shfmt prowfmt tffmt
+.PHONY: gofmt
+gofmt:
+	gofumpt -l -w -extra .
+	git checkout pkg/apis/kubeadm
+
+fmt: shfmt prowfmt tffmt gofmt
 
 gogenerate:
 	go generate ./pkg/...

@@ -86,13 +86,15 @@ func listImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		&opts.Filter,
 		longFlagName(opts, "Filter"),
 		"none",
-		"images list filter, one of the [none|base|optional]")
+		"images list filter, one of the [none|base|optional]",
+	)
 
 	cmd.Flags().StringVar(
 		&opts.KubernetesVersion,
 		longFlagName(opts, "KubernetesVersion"),
 		"",
-		"filter images for a provided kubernetes version")
+		"filter images for a provided kubernetes version",
+	)
 
 	cmd.Flags().BoolVar(
 		&opts.AllImages,

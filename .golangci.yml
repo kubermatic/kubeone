@@ -97,9 +97,12 @@ linters:
       - examples$
 formatters:
   enable:
-    - gofmt
+    - gofumpt
     - goimports
   settings:
+    gofumpt:
+      module-path: k8c.io/kubeone
+      extra-rules: true
     goimports:
       local-prefixes:
         - k8c.io

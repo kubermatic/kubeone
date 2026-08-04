@@ -26,8 +26,8 @@ import (
 )
 
 type Interface interface {
-	Exec(cmd string) (stdout string, stderr string, exitCode int, err error)
-	POpen(cmd string, stdin io.Reader, stdout io.Writer, stderr io.Writer) (exitCode int, err error)
+	Exec(cmd string) (stdout, stderr string, exitCode int, err error)
+	POpen(cmd string, stdin io.Reader, stdout, stderr io.Writer) (exitCode int, err error)
 	io.Closer
 }
 

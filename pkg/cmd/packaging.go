@@ -53,7 +53,7 @@ func completionCmd(rootCmd *cobra.Command) *cobra.Command {
 				err = rootCmd.GenFishCompletion(os.Stdout, true)
 			}
 
-			return
+			return err
 		},
 	}
 
@@ -87,7 +87,7 @@ func documentCmd(rootCmd *cobra.Command) *cobra.Command {
 				err = doc.GenYamlTree(rootCmd, path)
 			}
 
-			return
+			return err
 		},
 	}
 	cmd.Flags().StringVarP(&path, "output-dir", "o", "/tmp/", "Directory to populate with documentation")
