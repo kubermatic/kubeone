@@ -1,3 +1,21 @@
+# [v1.13.6](https://github.com/kubermatic/kubeone/releases/tag/v1.13.6) - 2026-08-05
+
+## Changelog since v1.13.5
+
+## Changes by Kind
+
+### Fixes of Bugs or Regressions
+
+- Prevent Gateway controllers from recreating LoadBalancer Services during reset [#4086](https://github.com/kubermatic/kubeone/pull/4086)
+- Fix Helm dry run strategy on release upgrade [#4169](https://github.com/kubermatic/kubeone/pull/4169)
+
+### Updates
+
+- Upgrade golang.org/x/crypto v0.52.0 [#4093](https://github.com/kubermatic/kubeone/pull/4093)
+- Update Machine-controller to [v1.65.5] (https://github.com/kubermatic/machine-controller/releases/tag/v1.65.5) [#4158](https://github.com/kubermatic/kubeone/pull/4158)
+- Update cilium to v1.19.6 [4160](https://github.com/kubermatic/kubeone/pull/4160)
+- Upgrade to helm4 [#4159](https://github.com/kubermatic/kubeone/pull/4159)
+
 # [v1.13.5](https://github.com/kubermatic/kubeone/releases/tag/v1.13.5) - 2026-05-13
 
 ## Changelog since v1.13.4

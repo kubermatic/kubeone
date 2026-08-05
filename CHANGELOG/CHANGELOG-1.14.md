@@ -1,3 +1,18 @@
+# [v1.14.1](https://github.com/kubermatic/kubeone/releases/tag/v1.14.1) - 2026-08-05
+
+## Changelog since v1.14.0
+
+## Changes by Kind
+
+### Updates
+
+- Update Machine-controller to [v1.66.1](https://github.com/kubermatic/machine-controller/releases/tag/v1.66.1) by [@archups](https://github.com/archups) in [#4157](https://github.com/kubermatic/kubeone/pull/4157)
+- Update cilium to v1.19.6 by [@kron4eg](https://github.com/kron4eg) in [#4163](https://github.com/kubermatic/kubeone/pull/4163)
+
+### Bug or Regression
+
+- Update Helm dry run strategy on release upgrade by [@kron4eg](https://github.com/kron4eg) in [#4168](https://github.com/kubermatic/kubeone/pull/4168)
+
 # [v1.14.0](https://github.com/kubermatic/kubeone/releases/tag/v1.14.0) - 2026-07-27
 
 ## Changelog since v1.13.0
