@@ -479,6 +479,7 @@ func uninstallReleases(
 		}
 
 		helmUninstall := helmaction.NewUninstall(helmCfg)
+		helmUninstall.WaitStrategy = kube.HookOnlyStrategy
 		resp, err := helmUninstall.Run(releaseAcc.Name())
 		if err != nil {
 			return fail.Runtime(err, "uninstalling helm release %s/%s", releaseAcc.Namespace(), releaseAcc.Name())
