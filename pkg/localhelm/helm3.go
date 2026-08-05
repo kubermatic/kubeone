@@ -329,7 +329,7 @@ func upgradeRelease(
 	logger logrus.FieldLogger,
 ) error {
 	helmInstall := newHelmInstallClient(cfg, release)
-	helmInstall.DryRunStrategy = helmaction.DryRunClient
+	helmInstall.DryRunStrategy = helmaction.DryRunServer
 	dryRunHelmRelease, err := runInstallRelease(ctx, release, helmInstall, helmSettings, providers, vals)
 	if err != nil {
 		return err
@@ -344,7 +344,7 @@ func upgradeRelease(
 	helmUpgrade := helmaction.NewUpgrade(cfg)
 	helmUpgrade.Install = true
 	helmUpgrade.DependencyUpdate = true
-	helmUpgrade.ResetValues = true
+	helmUpgrade.ResetThenReuseValues = true
 	helmUpgrade.MaxHistory = 5
 	helmUpgrade.Namespace = release.Namespace
 	helmUpgrade.RepoURL = release.RepoURL
