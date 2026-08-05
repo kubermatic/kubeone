@@ -60,9 +60,13 @@ install: buildenv
 .PHONY: build
 build: dist/kubeone
 
+.PHONY: snapshot
+snapshot:
+	go build -ldflags='$(GOLDFLAGS)' -v -o dist/kubeone-$(GITTAG) .
+
 .PHONY: clean
 clean:
-	rm -f dist/kubeone
+	rm -f dist/
 
 .PHONY: vendor
 vendor: buildenv
