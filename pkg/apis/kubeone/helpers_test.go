@@ -120,6 +120,22 @@ func TestContainerRuntimeConfig_MachineControllerFlags(t *testing.T) {
 				"-node-insecure-registries=registry.k8s.io",
 			},
 		},
+		{
+			name: "overridePath",
+			fields: fields{
+				Containerd: &ContainerRuntimeContainerd{
+					Registries: map[string]ContainerdRegistry{
+						"docker.io": {
+							Mirrors:      []string{"https://internal/v2/repo"},
+							OverridePath: true,
+						},
+					},
+				},
+			},
+			want: []string{
+				"-node-containerd-registry-mirrors=docker.io=https://internal/v2/repo?kubermatic=override_path%3Dtrue",
+			},
+		},
 	}
 
 	for _, tt := range tests {
