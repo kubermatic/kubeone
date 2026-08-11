@@ -158,7 +158,7 @@ func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 				kubermaticValues := url.Values{}
 				kubermaticValues.Add("override_path", "true")
 				mirrorQS.Add("kubermatic", kubermaticValues.Encode())
-				mirrorURL.RawPath = mirrorQS.Encode()
+				mirrorURL.RawQuery = mirrorQS.Encode()
 				mirror = mirrorURL.String()
 			}
 
