@@ -1,6 +1,6 @@
 # Operating-system-manager addon
 
-Operating system manager can be used to create and manage worker node configurations in a kubernetes cluster. It is responsibile for managing user-data for worker machines in the cluster.
+Operating system manager can be used to create and manage worker node configurations in a kubernetes cluster. It is responsible for managing user-data for worker machines in the cluster.
 
 **Note:** Existing worker machines will not be migrated to use OSM automatically. User needs to update the `MachineDeployments` manually or **simply delete the machines** to ensure that the machines are consuming configurations created by OSM.
 
@@ -12,7 +12,7 @@ OSM is enabled by default starting from KubeOne `v1.5.0`. To fallback to, the no
 apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
 versions:
-  kubernetes: 1.26.0
+  kubernetes: 1.36.0
 addons:
   enable: true
 operatingSystemManager:
