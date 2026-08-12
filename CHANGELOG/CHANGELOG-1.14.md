@@ -1,3 +1,13 @@
+# [v1.14.2](https://github.com/kubermatic/kubeone/releases/tag/v1.14.2) - 2026-08-12
+
+## Changelog since v1.14.1
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Fixed overridePath handling by [@kron4eg](https://github.com/kron4eg) in [#4174](https://github.com/kubermatic/kubeone/pull/4174)
+
 # [v1.14.1](https://github.com/kubermatic/kubeone/releases/tag/v1.14.1) - 2026-08-05
 
 ## Changelog since v1.14.0
