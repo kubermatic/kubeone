@@ -66,7 +66,7 @@ snapshot:
 
 .PHONY: clean
 clean:
-	rm -f dist/
+	rm -f dist/*
 
 .PHONY: vendor
 vendor: buildenv
