@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package tasks
+package hetzner
 
 import (
 	"context"
@@ -27,6 +27,7 @@ import (
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/cloudprovider"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/provisioner"
@@ -42,29 +43,67 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-func generateHetznerControlPlaneTasks(capimachines []clusterv1alpha1.Machine) Tasks {
-	tasks := Tasks{}
+var (
+	_ cloudprovider.ControlPlaneCloudProvider = &Provider{}
+	_ cloudprovider.LoadBalancerProvider      = &Provider{}
+)
 
-	for _, machine := range capimachines {
-		tasks = append(tasks,
-			Task{
-				Description: fmt.Sprintf("Ensure Hetzner control-plane %q VM", machine.Name),
-				Predicate:   isHetznerControlPlaneEnabled,
-				Fn: func(s *state.State) error {
-					return ensureHetznerControlPlaneVM(s, machine)
-				},
-			},
-		)
-	}
-
-	return tasks
+func init() {
+	cloudprovider.Register(&Provider{})
 }
 
-func isHetznerControlPlaneEnabled(s *state.State) bool {
+type Provider struct{}
+
+func (p *Provider) Name() string { return "Hetzner" }
+
+func (p *Provider) Enabled(s *state.State) bool {
 	return s.Cluster.CloudProvider.Hetzner != nil && len(s.Cluster.ControlPlane.NodeSets) > 0
 }
 
-func ensureHetznerLoadBalancer(s *state.State) error {
+func (p *Provider) MatchesConfig(cluster *kubeoneapi.KubeOneCluster) bool {
+	return cluster.CloudProvider.Hetzner != nil
+}
+
+func (p *Provider) HasLoadBalancer(s *state.State) bool {
+	return p.Enabled(s)
+}
+
+func (p *Provider) GenerateMachines(clusterName string, nodeSet []kubeoneapi.NodeSet, kubeletVersion string) ([]clusterv1alpha1.Machine, error) {
+	return generateHetznerControlPlaneMachines(clusterName, nodeSet, kubeletVersion)
+}
+
+func (p *Provider) EnsureVM(s *state.State, capimachine clusterv1alpha1.Machine) error {
+	provMachines, err := provisioner.FindOrCreateMachines(s.Context, []clusterv1alpha1.Machine{capimachine}, s.Logger)
+	if err != nil {
+		return err
+	}
+
+	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, cloudprovider.HostConfigsFromMachines(provMachines, s.Cluster.ControlPlane.NodeSets)...)
+
+	return nil
+}
+
+func (p *Provider) LookupVMs(s *state.State) error {
+	capimachines, err := p.GenerateMachines(
+		s.Cluster.Name,
+		s.Cluster.ControlPlane.NodeSets,
+		s.Cluster.Versions.Kubernetes,
+	)
+	if err != nil {
+		return err
+	}
+
+	provMachines, err := provisioner.FindMachines(s.Context, capimachines, s.Logger)
+	if err != nil {
+		return err
+	}
+
+	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, cloudprovider.HostConfigsFromMachines(provMachines, s.Cluster.ControlPlane.NodeSets)...)
+
+	return nil
+}
+
+func (p *Provider) EnsureLoadBalancer(s *state.State) error {
 	if s.Cluster.APIEndpoint.Host != "" {
 		return nil
 	}
@@ -126,6 +165,37 @@ func ensureHetznerLoadBalancer(s *state.State) error {
 	return nil
 }
 
+func (p *Provider) LookupLoadBalancer(s *state.State) error {
+	if s.Cluster.APIEndpoint.Host != "" {
+		return nil
+	}
+
+	providerCreds, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeUniversal)
+	if err != nil {
+		return err
+	}
+
+	hzclient := hcloud.NewClient(hcloud.WithToken(providerCreds[credentials.HetznerTokenKeyMC]))
+	ctx := context.Background()
+
+	clusterLBName := s.Cluster.CloudProvider.Hetzner.ControlPlane.LoadBalancer.Name
+	lbs, _, err := hzclient.LoadBalancer.List(ctx, hcloud.LoadBalancerListOpts{
+		Name: clusterLBName,
+	})
+	if err != nil {
+		return fail.Cloud(err, "hetzner", "listing loadbalancers")
+	}
+
+	if len(lbs) == 0 {
+		return fail.Cloud(fmt.Errorf("no load balancer found with name: %s", clusterLBName), "hetzner", "looking up loadbalancer")
+	}
+
+	s.Logger.Debugf("found loadbalancer %q with id: %d", clusterLBName, lbs[0].ID)
+	s.Cluster.APIEndpoint.Host = lbs[0].PublicNet.IPv4.IP.String()
+
+	return nil
+}
+
 func createHetznerLoadBalancer(
 	ctx context.Context,
 	client hcloud.ILoadBalancerClient,
@@ -174,17 +244,6 @@ func createHetznerLoadBalancer(
 	}
 
 	return result.LoadBalancer, nil
-}
-
-func ensureHetznerControlPlaneVM(s *state.State, capimachine clusterv1alpha1.Machine) error {
-	provMachines, err := provisioner.FindOrCreateMachines(s.Context, []clusterv1alpha1.Machine{capimachine}, s.Logger)
-	if err != nil {
-		return err
-	}
-
-	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, hostConfigsFromMachines(provMachines, s.Cluster.ControlPlane.NodeSets)...)
-
-	return nil
 }
 
 func hetznerLabels(clusterName string) map[string]string {
@@ -276,55 +335,4 @@ func generateHetznerControlPlaneMachines(clusterName string, nodeSet []kubeoneap
 	}
 
 	return machines, nil
-}
-
-func lookupHetznerVMs(s *state.State) error {
-	capimachines, err := generateHetznerControlPlaneMachines(
-		s.Cluster.Name,
-		s.Cluster.ControlPlane.NodeSets,
-		s.Cluster.Versions.Kubernetes,
-	)
-	if err != nil {
-		return err
-	}
-
-	provMachines, err := provisioner.FindMachines(s.Context, capimachines, s.Logger)
-	if err != nil {
-		return err
-	}
-
-	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, hostConfigsFromMachines(provMachines, s.Cluster.ControlPlane.NodeSets)...)
-
-	return nil
-}
-
-func lookupHetznerLoadBalancer(s *state.State) error {
-	if s.Cluster.APIEndpoint.Host != "" {
-		return nil
-	}
-
-	providerCreds, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeUniversal)
-	if err != nil {
-		return err
-	}
-
-	hzclient := hcloud.NewClient(hcloud.WithToken(providerCreds[credentials.HetznerTokenKeyMC]))
-	ctx := context.Background()
-
-	clusterLBName := s.Cluster.CloudProvider.Hetzner.ControlPlane.LoadBalancer.Name
-	lbs, _, err := hzclient.LoadBalancer.List(ctx, hcloud.LoadBalancerListOpts{
-		Name: clusterLBName,
-	})
-	if err != nil {
-		return fail.Cloud(err, "hetzner", "listing loadbalancers")
-	}
-
-	if len(lbs) == 0 {
-		return fail.Cloud(fmt.Errorf("no load balancer found with name: %s", clusterLBName), "hetzner", "looking up loadbalancer")
-	}
-
-	s.Logger.Debugf("found loadbalancer %q with id: %d", clusterLBName, lbs[0].ID)
-	s.Cluster.APIEndpoint.Host = lbs[0].PublicNet.IPv4.IP.String()
-
-	return nil
 }
