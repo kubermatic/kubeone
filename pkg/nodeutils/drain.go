@@ -18,6 +18,7 @@ package nodeutils
 
 import (
 	"context"
+	"time"
 
 	"github.com/sirupsen/logrus"
 
@@ -86,12 +87,13 @@ func (dr *drainer) drainHelper(ctx context.Context) (*drain.Helper, error) {
 		Client: kubeClinet,
 		// Force is used to force deleting standalone pods (i.e. not managed by
 		// ReplicaSet)
-		Force:               true,
-		GracePeriodSeconds:  -1,
-		IgnoreAllDaemonSets: true,
-		DeleteEmptyDirData:  true,
-		Out:                 loggerIoWriter(dr.logger.Infof),
-		ErrOut:              loggerIoWriter(dr.logger.Errorf),
+		Force:                true,
+		GracePeriodSeconds:   -1,
+		IgnoreAllDaemonSets:  true,
+		DeleteEmptyDirData:   true,
+		EvictErrorRetryDelay: 5 * time.Second,
+		Out:                  loggerIoWriter(dr.logger.Infof),
+		ErrOut:               loggerIoWriter(dr.logger.Errorf),
 		OnPodDeletedOrEvicted: func(pod *corev1.Pod, usingEviction bool) {
 			evicted := "evicted"
 			if !usingEviction {
