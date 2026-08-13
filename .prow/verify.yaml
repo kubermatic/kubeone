@@ -22,7 +22,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.26-node-22-1
+        - image: quay.io/kubermatic/build:go-1.26-node-22-9
           command:
             - make
           args:
@@ -43,7 +43,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.26-node-22-1
+        - image: quay.io/kubermatic/build:go-1.26-node-22-9
           command:
             - make
           args:
@@ -63,7 +63,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.26-node-22-1
+        - image: quay.io/kubermatic/build:go-1.26-node-22-9
           command:
             - make
           args:
@@ -83,7 +83,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.26-node-22-1
+        - image: quay.io/kubermatic/build:go-1.26-node-22-9
           command:
             - make
           args:
@@ -103,7 +103,7 @@ presubmits:
       preset-goproxy: "true"
     spec:
       containers:
-        - image: quay.io/kubermatic/build:go-1.26-node-22-1
+        - image: quay.io/kubermatic/build:go-1.26-node-22-9
           command:
             - make
           args:
