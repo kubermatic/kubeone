@@ -1,4 +1,4 @@
-# [v1.13.7](https://github.com/kubermatic/kubeone/releases/tag/v1.13.7) - 2026-08-12
+# [v1.13.7](https://github.com/kubermatic/kubeone/releases/tag/v1.13.7) - 2026-08-13
 
 ## Changelog since v1.13.7
 
@@ -7,6 +7,7 @@
 ### Bug or Regression
 
 - Fixed overridePath handling by [@kron4eg](https://github.com/kron4eg) in [#4174](https://github.com/kubermatic/kubeone/pull/4174)
+- Fix busy loop when pod eviction is blocked during node drain by [@taaahaaa](https://github.com/taaahaaa) in [#4181](https://github.com/kubermatic/kubeone/pull/4181)
 
 # [v1.13.6](https://github.com/kubermatic/kubeone/releases/tag/v1.13.6) - 2026-08-05
 
