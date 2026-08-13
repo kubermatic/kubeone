@@ -17,6 +17,7 @@ limitations under the License.
 package tasks
 
 import (
+	"fmt"
 	"time"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -26,9 +27,21 @@ import (
 	"k8c.io/kubeone/pkg/state"
 )
 
-func upgradeStaticWorkers(s *state.State) error {
+func generateUpgradeStaticWorkersTasks(staticWorkers []kubeoneapi.HostConfig) []Task {
+	var upgradeStaticWorkersTasks []Task
+
 	// we upgrade seqentially to minimize cluster disruption
-	return s.RunTaskOnStaticWorkers(upgradeStaticWorkersExecutor, state.RunSequentially)
+	for _, staticWorker := range staticWorkers {
+		upgradeStaticWorkersTasks = append(upgradeStaticWorkersTasks, Task{
+			Fn: func(s *state.State) error {
+				return s.RunTaskOnNodes([]kubeoneapi.HostConfig{staticWorker}, upgradeStaticWorkersExecutor, state.RunSequentially, nil)
+			},
+			Description: fmt.Sprintf("upgrading %s static worker node", staticWorker.PrivateAddress),
+			Operation:   "upgrading static worker nodes",
+		})
+	}
+
+	return upgradeStaticWorkersTasks
 }
 
 func upgradeStaticWorkersExecutor(s *state.State, node *kubeoneapi.HostConfig, conn executor.Interface) error {

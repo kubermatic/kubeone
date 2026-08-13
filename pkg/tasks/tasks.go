@@ -361,7 +361,7 @@ func WithResources(t Tasks) Tasks {
 	)
 }
 
-func WithUpgrade(t Tasks, followers ...kubeoneapi.HostConfig) Tasks {
+func WithUpgrade(t Tasks, followers, staticWorkers []kubeoneapi.HostConfig) Tasks {
 	return WithHostnameOSAndProbes(t).
 		append(KubernetesConfigFiles()...). // this, in the upgrade process where config rails are handled
 		append(
@@ -382,7 +382,9 @@ func WithUpgrade(t Tasks, followers ...kubeoneapi.HostConfig) Tasks {
 		append(WithResources(nil)...).
 		append(
 			Task{Fn: restartKubeAPIServer, Operation: "restarting unhealthy kube-apiserver"},
-			Task{Fn: upgradeStaticWorkers, Operation: "upgrading static worker nodes"},
+		).
+		append(generateUpgradeStaticWorkersTasks(staticWorkers)...).
+		append(
 			Task{Fn: updateAllKubelets, Operation: "upgrading kubelets"},
 			Task{
 				Fn:          migratePVCAllocatedResourceStatus,
