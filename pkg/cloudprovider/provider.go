@@ -1,5 +1,5 @@
 /*
-Copyright 2025 The KubeOne Authors.
+Copyright 2026 The KubeOne Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,22 +17,85 @@ limitations under the License.
 package cloudprovider
 
 import (
-	mccloudprovidertypes "k8c.io/machine-controller/pkg/cloudprovider/types"
-	mcproviderconfigtypes "k8c.io/machine-controller/sdk/providerconfig"
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/provisioner"
+	"k8c.io/kubeone/pkg/state"
+
+	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
 )
 
-type (
-	CloudProvider = mcproviderconfigtypes.CloudProvider
-	Provider      = mccloudprovidertypes.Provider
-)
+var controlPlaneProviders []ControlPlaneCloudProvider
 
-const (
-	CloudProviderAWS          = mcproviderconfigtypes.CloudProviderAWS
-	CloudProviderAzure        = mcproviderconfigtypes.CloudProviderAzure
-	CloudProviderDigitalocean = mcproviderconfigtypes.CloudProviderDigitalocean
-	CloudProviderGCE          = mcproviderconfigtypes.CloudProviderGoogle
-	CloudProviderHetzner      = mcproviderconfigtypes.CloudProviderHetzner
-	CloudProviderKubeVirt     = mcproviderconfigtypes.CloudProviderKubeVirt
-	CloudProviderOpenstack    = mcproviderconfigtypes.CloudProviderOpenstack
-	CloudProviderVsphere      = mcproviderconfigtypes.CloudProviderVsphere
-)
+func ControlPlaneProviders() []ControlPlaneCloudProvider {
+	return controlPlaneProviders
+}
+
+func Register(p ControlPlaneCloudProvider) {
+	controlPlaneProviders = append(controlPlaneProviders, p)
+}
+
+type ControlPlaneCloudProvider interface {
+	Name() string
+
+	Enabled(*state.State) bool
+
+	MatchesConfig(*kubeoneapi.KubeOneCluster) bool
+
+	GenerateMachines(clusterName string, nodes []kubeoneapi.NodeSet, kubeletVersion string) ([]clusterv1alpha1.Machine, error)
+
+	EnsureVM(*state.State, clusterv1alpha1.Machine) error
+
+	LookupVMs(*state.State) error
+}
+
+type LoadBalancerProvider interface {
+	HasLoadBalancer(*state.State) bool
+
+	EnsureLoadBalancer(*state.State) error
+
+	LookupLoadBalancer(*state.State) error
+}
+
+func HostConfigsFromMachines(machines []provisioner.Machine, nodeSets []kubeoneapi.NodeSet) []kubeoneapi.HostConfig {
+	var hosts []kubeoneapi.HostConfig
+	idx := 0
+
+	for _, nodeSet := range nodeSets {
+		sshUsername := nodeSet.SSH.Username
+		if sshUsername == "" {
+			sshUsername = "root"
+		}
+
+		for range nodeSet.Replicas {
+			if idx >= len(machines) {
+				break
+			}
+
+			m := machines[idx]
+			host := kubeoneapi.HostConfig{
+				PublicAddress:        m.PublicAddress,
+				PrivateAddress:       m.PrivateAddress,
+				Hostname:             m.Hostname,
+				SSHUsername:          sshUsername,
+				SSHPort:              nodeSet.SSH.Port,
+				SSHPrivateKeyFile:    nodeSet.SSH.PrivateKeyFile,
+				SSHCertFile:          nodeSet.SSH.CertFile,
+				SSHHostPublicKey:     nodeSet.SSH.HostPublicKey,
+				SSHAgentSocket:       nodeSet.SSH.AgentSocket,
+				Bastion:              nodeSet.SSH.Bastion,
+				BastionPort:          nodeSet.SSH.BastionPort,
+				BastionUser:          nodeSet.SSH.BastionUser,
+				BastionHostPublicKey: nodeSet.SSH.BastionHostPublicKey,
+				OperatingSystem:      nodeSet.OperatingSystem,
+				Labels:               nodeSet.NodeSettings.Labels,
+				Annotations:          nodeSet.NodeSettings.Annotations,
+				Taints:               nodeSet.NodeSettings.Taints,
+			}
+
+			hosts = append(hosts, host)
+			idx++
+		}
+	}
+
+	return hosts
+}

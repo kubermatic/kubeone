@@ -22,43 +22,33 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	kubeonescheme "k8c.io/kubeone/pkg/apis/kubeone/scheme"
 	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
+	"k8c.io/kubeone/pkg/cloudprovider"
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/provisioner"
 	"k8c.io/kubeone/pkg/state"
+
+	// register cloud providers for control plane provisioning
+	_ "k8c.io/kubeone/pkg/cloudprovider/hetzner"
+	_ "k8c.io/kubeone/pkg/cloudprovider/kubevirt"
+	_ "k8c.io/kubeone/pkg/cloudprovider/openstack"
 )
 
 func WithFindControlPlane(t Tasks) Tasks {
+	for _, p := range cloudprovider.ControlPlaneProviders() {
+		if lb, ok := p.(cloudprovider.LoadBalancerProvider); ok {
+			t = t.append(Task{
+				Description: fmt.Sprintf("Find %s load balancer", p.Name()),
+				Predicate:   lb.HasLoadBalancer,
+				Fn:          lb.LookupLoadBalancer,
+			})
+		}
+		t = t.append(Task{
+			Description: fmt.Sprintf("Find %s VMs", p.Name()),
+			Predicate:   p.Enabled,
+			Fn:          p.LookupVMs,
+		})
+	}
+
 	return t.append(
-		Task{
-			Description: "Find Hetzner load balancer",
-			Predicate:   isHetznerControlPlaneEnabled,
-			Fn:          lookupHetznerLoadBalancer,
-		},
-		Task{
-			Description: "Find Hetzner VMs",
-			Predicate:   isHetznerControlPlaneEnabled,
-			Fn:          lookupHetznerVMs,
-		},
-		Task{
-			Description: "Find OpenStack load balancer",
-			Predicate:   isOpenstackControlPlaneEnabled,
-			Fn:          lookupOpenstackLoadBalancer,
-		},
-		Task{
-			Description: "Find OpenStack VMs",
-			Predicate:   isOpenstackControlPlaneEnabled,
-			Fn:          lookupOpenstackVMs,
-		},
-		Task{
-			Description: "Find KubeVirt load balancer",
-			Predicate:   isKubevirtLoadBalancerEnabled,
-			Fn:          lookupKubevirtLoadBalancer,
-		},
-		Task{
-			Description: "Find KubeVirt VMs",
-			Predicate:   isKubevirtControlPlaneEnabled,
-			Fn:          lookupKubevirtVMs,
-		},
 		Task{
 			Operation: "defaulting cluster hosts",
 			Predicate: func(s *state.State) bool { return len(s.Cluster.ControlPlane.NodeSets) != 0 },
@@ -70,65 +60,43 @@ func WithFindControlPlane(t Tasks) Tasks {
 }
 
 func WithEnsureControlPlane(steps Tasks, cluster *kubeoneapi.KubeOneCluster) (Tasks, error) {
-	clusterName := cluster.Name
-	nodeSet := cluster.ControlPlane.NodeSets
-	kubeletVersion := cluster.Versions.Kubernetes
+	for _, p := range cloudprovider.ControlPlaneProviders() {
+		if !p.MatchesConfig(cluster) {
+			continue
+		}
 
-	switch {
-	case cluster.CloudProvider.Hetzner != nil:
-		hetznerCAPIMachines, err := generateHetznerControlPlaneMachines(clusterName, nodeSet, kubeletVersion)
+		machines, err := p.GenerateMachines(cluster.Name, cluster.ControlPlane.NodeSets, cluster.Versions.Kubernetes)
 		if err != nil {
 			return nil, err
 		}
 
-		steps = steps.
-			append(Task{
-				Description: "Ensure Hetzner load balancer",
-				Predicate:   isHetznerControlPlaneEnabled,
-				Fn:          ensureHetznerLoadBalancer,
-			}).
-			append(generateHetznerControlPlaneTasks(hetznerCAPIMachines)...)
-	case cluster.CloudProvider.Openstack != nil:
-		openstackCAPIMachines, err := generateOpenstackControlPlaneMachines(clusterName, nodeSet, kubeletVersion)
-		if err != nil {
-			return nil, err
-		}
-
-		steps = steps.
-			append(generateOpenstackControlPlaneTasks(openstackCAPIMachines)...).
-			append(
-				Task{
-					Description: "Find OpenStack load balancer",
-					Predicate:   isOpenstackControlPlaneEnabled,
-					Fn:          lookupOpenstackLoadBalancer,
-				},
-			).
-			append(Task{
-				Description: "Register OpenStack LB members",
-				Predicate:   isOpenstackControlPlaneEnabled,
-				Fn:          ensureOpenstackLBMembers,
+		if lb, ok := p.(cloudprovider.LoadBalancerProvider); ok {
+			steps = steps.append(Task{
+				Description: fmt.Sprintf("Ensure %s load balancer", p.Name()),
+				Predicate:   lb.HasLoadBalancer,
+				Fn:          lb.EnsureLoadBalancer,
 			})
-	case cluster.CloudProvider.Kubevirt != nil:
-		kubevirtCAPIMachines, err := generateKubevirtControlPlaneMachines(clusterName, nodeSet, kubeletVersion)
-		if err != nil {
-			return nil, err
 		}
 
-		steps = steps.
-			append(Task{
-				Description: "Ensure KubeVirt load balancer",
-				Predicate:   isKubevirtLoadBalancerEnabled,
-				Fn:          ensureKubevirtLoadBalancer,
-			}).
-			append(generateKubevirtControlPlaneTasks(kubevirtCAPIMachines)...)
+		for _, machine := range machines {
+			m := machine
+			steps = steps.append(Task{
+				Description: fmt.Sprintf("Ensure %s control-plane %q VM", p.Name(), m.Name),
+				Predicate:   p.Enabled,
+				Fn: func(s *state.State) error {
+					return p.EnsureVM(s, m)
+				},
+			})
+		}
+
+		break
 	}
 
-	return steps.
-		append(Task{
-			Operation: "defaulting cluster hosts",
-			Predicate: func(s *state.State) bool { return len(s.Cluster.ControlPlane.NodeSets) != 0 },
-			Fn:        defaultCluster,
-		}), nil
+	return steps.append(Task{
+		Operation: "defaulting cluster hosts",
+		Predicate: func(s *state.State) bool { return len(s.Cluster.ControlPlane.NodeSets) != 0 },
+		Fn:        defaultCluster,
+	}), nil
 }
 
 func defaultCluster(st *state.State) error {
@@ -137,7 +105,6 @@ func defaultCluster(st *state.State) error {
 		return fail.Config(err, fmt.Sprintf("converting internal to %s object", v1beta3Cluster.GroupVersionKind()))
 	}
 
-	// run defauling again, to populate Hosts
 	kubeonescheme.Scheme.Default(v1beta3Cluster)
 
 	if err := kubeonescheme.Scheme.Convert(v1beta3Cluster, st.Cluster, nil); err != nil {
@@ -145,48 +112,4 @@ func defaultCluster(st *state.State) error {
 	}
 
 	return nil
-}
-
-func hostConfigsFromMachines(machines []provisioner.Machine, nodeSets []kubeoneapi.NodeSet) []kubeoneapi.HostConfig {
-	var hosts []kubeoneapi.HostConfig
-	idx := 0
-
-	for _, nodeSet := range nodeSets {
-		sshUsername := nodeSet.SSH.Username
-		if sshUsername == "" {
-			sshUsername = "root"
-		}
-
-		for range nodeSet.Replicas {
-			if idx >= len(machines) {
-				break
-			}
-
-			m := machines[idx]
-			host := kubeoneapi.HostConfig{
-				PublicAddress:        m.PublicAddress,
-				PrivateAddress:       m.PrivateAddress,
-				Hostname:             m.Hostname,
-				SSHUsername:          sshUsername,
-				SSHPort:              nodeSet.SSH.Port,
-				SSHPrivateKeyFile:    nodeSet.SSH.PrivateKeyFile,
-				SSHCertFile:          nodeSet.SSH.CertFile,
-				SSHHostPublicKey:     nodeSet.SSH.HostPublicKey,
-				SSHAgentSocket:       nodeSet.SSH.AgentSocket,
-				Bastion:              nodeSet.SSH.Bastion,
-				BastionPort:          nodeSet.SSH.BastionPort,
-				BastionUser:          nodeSet.SSH.BastionUser,
-				BastionHostPublicKey: nodeSet.SSH.BastionHostPublicKey,
-				OperatingSystem:      nodeSet.OperatingSystem,
-				Labels:               nodeSet.NodeSettings.Labels,
-				Annotations:          nodeSet.NodeSettings.Annotations,
-				Taints:               nodeSet.NodeSettings.Taints,
-			}
-
-			hosts = append(hosts, host)
-			idx++
-		}
-	}
-
-	return hosts
 }

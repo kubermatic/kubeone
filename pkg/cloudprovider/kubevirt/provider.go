@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package tasks
+package kubevirt
 
 import (
 	"context"
@@ -27,6 +27,7 @@ import (
 	"time"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/cloudprovider"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/provisioner"
@@ -50,100 +51,75 @@ import (
 
 const kubevirtAPIServerPort = 6443
 
-func generateKubevirtControlPlaneTasks(capimachines []clusterv1alpha1.Machine) Tasks {
-	tasks := Tasks{}
+var (
+	_ cloudprovider.ControlPlaneCloudProvider = &Provider{}
+	_ cloudprovider.LoadBalancerProvider      = &Provider{}
+)
 
-	for _, machine := range capimachines {
-		tasks = append(
-			tasks,
-			Task{
-				Description: fmt.Sprintf("Ensure KubeVirt control-plane %q VM", machine.Name),
-				Predicate:   isKubevirtControlPlaneEnabled,
-				Fn: func(s *state.State) error {
-					return ensureKubevirtControlPlaneVM(s, machine)
-				},
-			},
-		)
-	}
-
-	return tasks
+func init() {
+	cloudprovider.Register(&Provider{})
 }
 
-func isKubevirtControlPlaneEnabled(s *state.State) bool {
+type Provider struct{}
+
+func (p *Provider) Name() string { return "KubeVirt" }
+
+func (p *Provider) Enabled(s *state.State) bool {
 	return s.Cluster.CloudProvider.Kubevirt != nil && len(s.Cluster.ControlPlane.NodeSets) > 0
 }
 
-func isKubevirtLoadBalancerEnabled(s *state.State) bool {
-	return isKubevirtControlPlaneEnabled(s) && s.Cluster.CloudProvider.Kubevirt.ControlPlane != nil
+func (p *Provider) MatchesConfig(cluster *kubeoneapi.KubeOneCluster) bool {
+	return cluster.CloudProvider.Kubevirt != nil
 }
 
-func kubevirtLabels(clusterName string) map[string]string {
-	return map[string]string{
-		"kubeone_cluster_name": clusterName,
-		"kubeone_role":         "api",
-	}
+func (p *Provider) HasLoadBalancer(s *state.State) bool {
+	return p.Enabled(s) && s.Cluster.CloudProvider.Kubevirt.ControlPlane != nil
 }
 
-// prepareKubevirtEnv ensures the environment variables consumed by the KubeVirt
-// cloud provider are populated. The provider reads the infra cluster kubeconfig
-// from KUBEVIRT_KUBECONFIG and creates resources in the namespace referenced by
-// POD_NAMESPACE.
-func prepareKubevirtEnv(s *state.State) error {
-	if ns := s.Cluster.CloudProvider.Kubevirt.InfraNamespace; ns != "" {
-		if err := os.Setenv("POD_NAMESPACE", ns); err != nil {
-			return fail.Runtime(err, "setting POD_NAMESPACE")
-		}
+func (p *Provider) GenerateMachines(clusterName string, nodeSet []kubeoneapi.NodeSet, kubeletVersion string) ([]clusterv1alpha1.Machine, error) {
+	return generateKubevirtControlPlaneMachines(clusterName, nodeSet, kubeletVersion)
+}
+
+func (p *Provider) EnsureVM(st *state.State, capimachine clusterv1alpha1.Machine) error {
+	if err := prepareKubevirtEnv(st); err != nil {
+		return err
 	}
 
-	if os.Getenv("KUBEVIRT_KUBECONFIG") == "" {
-		kubeconfig, err := kubevirtKubeconfig(s)
-		if err != nil {
-			return err
-		}
-
-		if err := os.Setenv("KUBEVIRT_KUBECONFIG", base64.StdEncoding.EncodeToString(kubeconfig)); err != nil {
-			return fail.Runtime(err, "setting KUBEVIRT_KUBECONFIG")
-		}
+	provMachines, err := provisioner.FindOrCreateMachines(st.Context, []clusterv1alpha1.Machine{capimachine}, st.Logger)
+	if err != nil {
+		return err
 	}
+
+	st.Cluster.ControlPlane.Hosts = append(st.Cluster.ControlPlane.Hosts, hostConfigsFromKubevirtMachines(provMachines, st.Cluster.ControlPlane.NodeSets)...)
 
 	return nil
 }
 
-func kubevirtKubeconfig(s *state.State) ([]byte, error) {
-	providerCreds, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeUniversal)
+func (p *Provider) LookupVMs(st *state.State) error {
+	if err := prepareKubevirtEnv(st); err != nil {
+		return err
+	}
+
+	capimachines, err := p.GenerateMachines(
+		st.Cluster.Name,
+		st.Cluster.ControlPlane.NodeSets,
+		st.Cluster.Versions.Kubernetes,
+	)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	raw := providerCreds[credentials.KubevirtKubeconfigKey]
-	if raw == "" {
-		return nil, fail.Config(fmt.Errorf("kubevirt kubeconfig is empty"), "reading kubevirt kubeconfig")
+	provMachines, err := provisioner.FindMachines(st.Context, capimachines, st.Logger)
+	if err != nil {
+		return err
 	}
 
-	// The value can be either a base64-encoded kubeconfig or a plain one.
-	if decoded, decErr := base64.StdEncoding.DecodeString(raw); decErr == nil {
-		return decoded, nil
-	}
+	st.Cluster.ControlPlane.Hosts = append(st.Cluster.ControlPlane.Hosts, hostConfigsFromKubevirtMachines(provMachines, st.Cluster.ControlPlane.NodeSets)...)
 
-	return []byte(raw), nil
+	return nil
 }
 
-func kubevirtInfraClient(st *state.State) (ctrlrt.Client, string, error) {
-	kubeconfig, err := kubevirtKubeconfig(st)
-	if err != nil {
-		return nil, "", err
-	}
-
-	restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeconfig)
-	if err != nil {
-		return nil, "", fail.Config(err, "parsing kubevirt kubeconfig")
-	}
-	infraClient, err := ctrlrt.New(restConfig, ctrlrt.Options{})
-
-	return infraClient, st.Cluster.CloudProvider.Kubevirt.InfraNamespace, fail.Runtime(err, "creating kubevirt infra cluster client")
-}
-
-func ensureKubevirtLoadBalancer(st *state.State) error {
+func (p *Provider) EnsureLoadBalancer(st *state.State) error {
 	if st.Cluster.APIEndpoint.Host != "" {
 		return nil
 	}
@@ -180,6 +156,94 @@ func ensureKubevirtLoadBalancer(st *state.State) error {
 	st.Cluster.APIEndpoint.Port = port
 
 	return nil
+}
+
+func (p *Provider) LookupLoadBalancer(st *state.State) error {
+	if st.Cluster.APIEndpoint.Host != "" {
+		return nil
+	}
+
+	infraClient, ns, err := kubevirtInfraClient(st)
+	if err != nil {
+		return err
+	}
+
+	lbName := st.Cluster.CloudProvider.Kubevirt.ControlPlane.LoadBalancer.Name
+	svc := &corev1.Service{}
+	if geterr := infraClient.Get(st.Context, types.NamespacedName{Name: lbName, Namespace: ns}, svc); geterr != nil {
+		return fail.KubeClient(geterr, "getting kubevirt apiserver service")
+	}
+
+	host, port, err := kubevirtServiceEndpoint(st.Context, infraClient, svc, ns)
+	if err != nil {
+		return err
+	}
+
+	st.Cluster.APIEndpoint.Host = host
+	st.Cluster.APIEndpoint.Port = port
+
+	return nil
+}
+
+func kubevirtLabels(clusterName string) map[string]string {
+	return map[string]string{
+		"kubeone_cluster_name": clusterName,
+		"kubeone_role":         "api",
+	}
+}
+
+func prepareKubevirtEnv(s *state.State) error {
+	if ns := s.Cluster.CloudProvider.Kubevirt.InfraNamespace; ns != "" {
+		if err := os.Setenv("POD_NAMESPACE", ns); err != nil {
+			return fail.Runtime(err, "setting POD_NAMESPACE")
+		}
+	}
+
+	if os.Getenv("KUBEVIRT_KUBECONFIG") == "" {
+		kubeconfig, err := kubevirtKubeconfig(s)
+		if err != nil {
+			return err
+		}
+
+		if err := os.Setenv("KUBEVIRT_KUBECONFIG", base64.StdEncoding.EncodeToString(kubeconfig)); err != nil {
+			return fail.Runtime(err, "setting KUBEVIRT_KUBECONFIG")
+		}
+	}
+
+	return nil
+}
+
+func kubevirtKubeconfig(s *state.State) ([]byte, error) {
+	providerCreds, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeUniversal)
+	if err != nil {
+		return nil, err
+	}
+
+	raw := providerCreds[credentials.KubevirtKubeconfigKey]
+	if raw == "" {
+		return nil, fail.Config(fmt.Errorf("kubevirt kubeconfig is empty"), "reading kubevirt kubeconfig")
+	}
+
+	if decoded, decErr := base64.StdEncoding.DecodeString(raw); decErr == nil {
+		return decoded, nil
+	}
+
+	return []byte(raw), nil
+}
+
+func kubevirtInfraClient(st *state.State) (ctrlrt.Client, string, error) {
+	kubeconfig, err := kubevirtKubeconfig(st)
+	if err != nil {
+		return nil, "", err
+	}
+
+	restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeconfig)
+	if err != nil {
+		return nil, "", fail.Config(err, "parsing kubevirt kubeconfig")
+	}
+	infraClient, err := ctrlrt.New(restConfig, ctrlrt.Options{})
+
+	return infraClient, st.Cluster.CloudProvider.Kubevirt.InfraNamespace, fail.Runtime(err, "creating kubevirt infra cluster client")
 }
 
 func createKubevirtLoadBalancer(
@@ -219,10 +283,6 @@ func createKubevirtLoadBalancer(
 	return service, infraClient.Create(ctx, service)
 }
 
-// kubevirtServiceEndpoint resolves the externally reachable host and port of the
-// apiserver service. For LoadBalancer services it waits for the load balancer
-// ingress to be assigned, for NodePort services it returns an infra cluster node
-// address combined with the allocated node port.
 func kubevirtServiceEndpoint(
 	ctx context.Context,
 	infraClient ctrlrt.Client,
@@ -298,10 +358,6 @@ func generateKubevirtControlPlaneMachines(clusterName string, nodeSet []kubeonea
 				return nil, fail.Config(err, "decode kubevirt config")
 			}
 
-			// ClusterName is required by the provider and is used to label the
-			// created resources. The infra cluster kubeconfig is intentionally
-			// left empty here so the provider resolves it from the
-			// KUBEVIRT_KUBECONFIG environment variable.
 			kubevirtConfig.ClusterName = providerconfig.ConfigVarString{Value: clusterName}
 
 			kubevirtSpec, err := json.Marshal(kubevirtConfig)
@@ -356,76 +412,6 @@ func generateKubevirtControlPlaneMachines(clusterName string, nodeSet []kubeonea
 	return machines, nil
 }
 
-func ensureKubevirtControlPlaneVM(st *state.State, capimachine clusterv1alpha1.Machine) error {
-	if err := prepareKubevirtEnv(st); err != nil {
-		return err
-	}
-
-	provMachines, err := provisioner.FindOrCreateMachines(st.Context, []clusterv1alpha1.Machine{capimachine}, st.Logger)
-	if err != nil {
-		return err
-	}
-
-	st.Cluster.ControlPlane.Hosts = append(st.Cluster.ControlPlane.Hosts, hostConfigsFromKubevirtMachines(provMachines, st.Cluster.ControlPlane.NodeSets)...)
-
-	return nil
-}
-
-func lookupKubevirtVMs(st *state.State) error {
-	if err := prepareKubevirtEnv(st); err != nil {
-		return err
-	}
-
-	capimachines, err := generateKubevirtControlPlaneMachines(
-		st.Cluster.Name,
-		st.Cluster.ControlPlane.NodeSets,
-		st.Cluster.Versions.Kubernetes,
-	)
-	if err != nil {
-		return err
-	}
-
-	provMachines, err := provisioner.FindMachines(st.Context, capimachines, st.Logger)
-	if err != nil {
-		return err
-	}
-
-	st.Cluster.ControlPlane.Hosts = append(st.Cluster.ControlPlane.Hosts, hostConfigsFromKubevirtMachines(provMachines, st.Cluster.ControlPlane.NodeSets)...)
-
-	return nil
-}
-
-func lookupKubevirtLoadBalancer(st *state.State) error {
-	if st.Cluster.APIEndpoint.Host != "" {
-		return nil
-	}
-
-	infraClient, ns, err := kubevirtInfraClient(st)
-	if err != nil {
-		return err
-	}
-
-	lbName := st.Cluster.CloudProvider.Kubevirt.ControlPlane.LoadBalancer.Name
-	svc := &corev1.Service{}
-	if geterr := infraClient.Get(st.Context, types.NamespacedName{Name: lbName, Namespace: ns}, svc); geterr != nil {
-		return fail.KubeClient(geterr, "getting kubevirt apiserver service")
-	}
-
-	host, port, err := kubevirtServiceEndpoint(st.Context, infraClient, svc, ns)
-	if err != nil {
-		return err
-	}
-
-	st.Cluster.APIEndpoint.Host = host
-	st.Cluster.APIEndpoint.Port = port
-
-	return nil
-}
-
-// hostConfigsFromKubevirtMachines builds the control-plane host configs for
-// KubeVirt machines. The KubeVirt cloud provider only ever reports the VM's
-// in-cluster (internal) IP, so it is used as both the public and private address
-// to make sure SSH (which connects to the public address) can reach the VM.
 func hostConfigsFromKubevirtMachines(machines []provisioner.Machine, nodeSets []kubeoneapi.NodeSet) []kubeoneapi.HostConfig {
 	var hosts []kubeoneapi.HostConfig
 	idx := 0
