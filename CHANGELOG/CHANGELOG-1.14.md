@@ -1,4 +1,4 @@
-# [v1.14.2](https://github.com/kubermatic/kubeone/releases/tag/v1.14.2) - 2026-08-12
+# [v1.14.2](https://github.com/kubermatic/kubeone/releases/tag/v1.14.2) - 2026-08-13
 
 ## Changelog since v1.14.1
 
@@ -7,6 +7,11 @@
 ### Bug or Regression
 
 - Fixed overridePath handling by [@kron4eg](https://github.com/kron4eg) in [#4174](https://github.com/kubermatic/kubeone/pull/4174)
+- Fix busy loop when pod eviction is blocked during node drain by [@taaahaaa](https://github.com/taaahaaa) in [#4181](https://github.com/kubermatic/kubeone/pull/4181)
+
+### Updates
+
+- Update OSM version to v1.11.1 by [@archups](https://github.com/archups) in [#4180](https://github.com/kubermatic/kubeone/pull/4180)
 
 # [v1.14.1](https://github.com/kubermatic/kubeone/releases/tag/v1.14.1) - 2026-08-05
 
