@@ -1,0 +1,32 @@
+name: verify
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+
+      - name: Verify boilerplate
+        run: ./hack/verify-boilerplate.sh
+
+      - name: Verify codegen
+        run: make verify-codegen
+
+      - name: Verify apidocs
+        run: make verify-apidocs
+
+      - name: Verify license
+        run: go run github.com/frapposelli/wwhrd@v0.4.0 check
+
+      - name: Test
+        run: make test
