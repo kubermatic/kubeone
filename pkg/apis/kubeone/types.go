@@ -552,7 +552,37 @@ type CloudProviderSpec struct {
 type AWSSpec struct{}
 
 // AzureSpec defines the Azure cloud provider
-type AzureSpec struct{}
+type AzureSpec struct {
+	// ControlPlane configures control plane provisioning on Azure
+	ControlPlane *AzureControlPlane `json:"controlPlane,omitempty"`
+}
+
+// AzureControlPlane defines control plane config on Azure
+type AzureControlPlane struct {
+	// LoadBalancer config of a loadbalancer to create for the kubeapi-server endpoint
+	LoadBalancer AzureLoadBalancer `json:"loadBalancer"`
+}
+
+// AzureLoadBalancer loadbalancer definition to create for kubeapi-server endpoint
+type AzureLoadBalancer struct {
+	// Name of the loadbalancer to create. Default: "<CLUSTER_NAME>-kubeapi"
+	Name string `json:"name,omitempty"`
+
+	// ResourceGroup is the name of the Azure resource group where the loadbalancer
+	// is created. Default: the resourceGroup of the first control plane NodeSet.
+	ResourceGroup string `json:"resourceGroup,omitempty"`
+
+	// Location is the Azure region where the loadbalancer is created.
+	// Default: the location of the first control plane NodeSet.
+	Location string `json:"location,omitempty"`
+
+	// Sku of the loadbalancer to create. Default: "Standard"
+	Sku string `json:"sku,omitempty"`
+
+	// PublicIPName is the name of the public IP address attached to the loadbalancer.
+	// Default: "<NAME>-pubip"
+	PublicIPName string `json:"publicIPName,omitempty"`
+}
 
 // DigitalOceanSpec defines the DigitalOcean cloud provider
 type DigitalOceanSpec struct{}

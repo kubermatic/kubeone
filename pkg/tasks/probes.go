@@ -105,7 +105,7 @@ func safeguard(s *state.State) error {
 			continue
 		}
 
-		nodesContainerRuntime := strings.Split(node.Status.NodeInfo.ContainerRuntimeVersion, ":")[0]
+		nodesContainerRuntime, _, _ := strings.Cut(node.Status.NodeInfo.ContainerRuntimeVersion, ":")
 
 		if nodesContainerRuntime != configuredClusterContainerRuntime {
 			errMsg := "Migration is not supported yet"
@@ -447,7 +447,7 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn executor.
 }
 
 func kernelSemver(krelease string) (*semver.Version, error) {
-	kver := strings.SplitN(krelease, "-", 2)[0]
+	kver, _, _ := strings.Cut(krelease, "-")
 	kver = strings.SplitN(kver, "+", 2)[0]
 
 	return semver.NewVersion(kver)
