@@ -136,7 +136,8 @@ func makeBin(args ...string) *testexec.Exec {
 }
 
 func makeBinWithPath(path string, args ...string) *testexec.Exec {
-	return testexec.NewExec("make",
+	return testexec.NewExec(
+		"make",
 		testexec.WithArgs(args...),
 		testexec.WithEnv(os.Environ()),
 		testexec.InDir(path),
