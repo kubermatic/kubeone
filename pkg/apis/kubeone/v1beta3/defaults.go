@@ -205,6 +205,11 @@ func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
 	switch {
 	case obj.CloudProvider.AWS != nil:
 		defaultCanal.MTU = defaults(defaultCanal.MTU, 8951) // 9001 AWS Jumbo Frame - 50 VXLAN bytes
+		if obj.ControlPlane.NodeSets != nil {
+			if obj.CloudProvider.AWS.ControlPlane == nil {
+				obj.CloudProvider.AWS.ControlPlane = &AWSControlPlane{}
+			}
+		}
 	case obj.CloudProvider.GCE != nil:
 		defaultCanal.MTU = defaults(defaultCanal.MTU, 1410) // GCE specific 1460 bytes - 50 VXLAN bytes
 	case obj.CloudProvider.Hetzner != nil:
