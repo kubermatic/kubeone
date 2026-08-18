@@ -465,6 +465,9 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCSIVsphere,
+				supportFn: func() error {
+					return migrateVsphereCSIDriver(s)
+				},
 			},
 		)
 	default:
