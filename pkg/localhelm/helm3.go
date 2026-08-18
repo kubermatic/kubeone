@@ -328,6 +328,10 @@ func upgradeRelease(
 	existingHelmReleases []helmrelease.Releaser,
 	logger logrus.FieldLogger,
 ) error {
+	if err := loginOCIRegistry(cfg, release); err != nil {
+		return err
+	}
+
 	helmInstall := newHelmInstallClient(cfg, release)
 	helmInstall.DryRunStrategy = helmaction.DryRunServer
 	dryRunHelmRelease, err := runInstallRelease(ctx, release, helmInstall, helmSettings, providers, vals)
@@ -385,6 +389,46 @@ func upgradeRelease(
 	return addReleaseSecretLabels(ctx, secretObjectKey, dynclient)
 }
 
+// loginOCIRegistry authenticates the shared Helm registry client with a release's
+// Auth for a private OCI chart. Helm's OCI getter ignores the basic-auth on
+// ChartPathOptions (Username/Password) and reads credentials only from the
+// registry client's own credential store, so setting them on the install/upgrade
+// client is not enough to pull an `oci://` chart from a private registry — the
+// registry client must be logged in. Classic HTTP chart repos (RepoURL) already
+// authenticate via Username/Password and are unaffected. No-op when there is no
+// Auth or the chart is not OCI.
+func loginOCIRegistry(cfg *helmaction.Configuration, release kubeoneapi.HelmRelease) error {
+	if cfg.RegistryClient == nil || release.Auth == nil {
+		return nil
+	}
+	if release.Auth.Username == "" || release.Auth.Password == "" {
+		return nil
+	}
+	if !registry.IsOCI(release.ChartURL) {
+		return nil
+	}
+
+	// Log in against the registry host (everything up to the first path segment).
+	ref := strings.TrimPrefix(release.ChartURL, "oci://")
+	host := ref
+	if idx := strings.IndexByte(ref, '/'); idx >= 0 {
+		host = ref[:idx]
+	}
+
+	loginOpts := []registry.LoginOption{
+		registry.LoginOptBasicAuth(release.Auth.Username, release.Auth.Password),
+	}
+	if release.Insecure {
+		loginOpts = append(loginOpts, registry.LoginOptInsecure(true))
+	}
+
+	if err := cfg.RegistryClient.Login(host, loginOpts...); err != nil {
+		return fail.Runtime(err, "logging in to OCI registry %q for chart %q", host, release.Chart)
+	}
+
+	return nil
+}
+
 func newHelmInstallClient(cfg *helmaction.Configuration, release kubeoneapi.HelmRelease) *helmaction.Install {
 	helmInstall := helmaction.NewInstall(cfg)
 	helmInstall.DependencyUpdate = true
@@ -420,6 +464,10 @@ func installRelease(
 	logger logrus.FieldLogger,
 ) error {
 	logger.Infof("Deploying helm chart %s as release %s", release.Chart, release.ReleaseName)
+	if err := loginOCIRegistry(cfg, release); err != nil {
+		return err
+	}
+
 	helmInstall := newHelmInstallClient(cfg, release)
 	rel, err := runInstallRelease(ctx, release, helmInstall, helmSettings, providers, vals)
 	if err != nil {
