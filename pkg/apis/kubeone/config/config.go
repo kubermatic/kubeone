@@ -128,39 +128,50 @@ func TFOutput(tfOutputPath string) ([]byte, error) {
 	return tfOutput, nil
 }
 
-// BytesToKubeOneCluster parses the bytes of the versioned KubeOneCluster manifests
-func BytesToKubeOneCluster(cluster, tfOutput []byte, credentialsFilePath string, logger logrus.FieldLogger, baseDir string) (*kubeoneapi.KubeOneCluster, error) {
-	// Get the GVK from the given KubeOneCluster manifest
+// KubeOneClusterAPIVersion parses the TypeMeta from the raw KubeOneCluster
+// manifest, validates that kind and apiVersion are present and supported, and
+// returns the apiVersion string.  The caller is responsible for acting on
+// deprecated API versions.
+func KubeOneClusterAPIVersion(cluster []byte) (string, error) {
 	typeMeta := runtime.TypeMeta{}
 	if err := yaml.Unmarshal(cluster, &typeMeta); err != nil {
-		return nil, fail.Config(err, "unmarshal cluster typeMeta")
+		return "", fail.Config(err, "unmarshal cluster typeMeta")
 	}
 	if len(typeMeta.APIVersion) == 0 || len(typeMeta.Kind) == 0 {
-		return nil, fail.ConfigValidation(fmt.Errorf("apiVersion and kind must be present in the manifest"))
+		return "", fail.ConfigValidation(fmt.Errorf("apiVersion and kind must be present in the manifest"))
 	}
 	if typeMeta.Kind != KubeOneClusterKind {
-		return nil, fail.ConfigValidation(fmt.Errorf("provided object %q is not KubeOneCluster object", typeMeta.Kind))
+		return "", fail.ConfigValidation(fmt.Errorf("provided object %q is not KubeOneCluster object", typeMeta.Kind))
 	}
 	if _, ok := AllowedAPIs[typeMeta.APIVersion]; !ok {
-		return nil, fail.ConfigValidation(fmt.Errorf("provided apiVersion %q is not supported", typeMeta.APIVersion))
-	}
-	if _, ok := DeprecatedAPIs[typeMeta.APIVersion]; ok {
-		logger.Warningf(`The provided APIVersion %q is deprecated. Please use "kubeone config migrate" command to migrate to the latest version.`, typeMeta.APIVersion)
+		return "", fail.ConfigValidation(fmt.Errorf("provided apiVersion %q is not supported", typeMeta.APIVersion))
 	}
 
-	var (
-		internalCluster *kubeoneapi.KubeOneCluster
-		err             error
-	)
+	return typeMeta.APIVersion, nil
+}
+
+// BytesToKubeOneCluster parses the bytes of the versioned KubeOneCluster manifests
+func BytesToKubeOneCluster(cluster, tfOutput []byte, credentialsFilePath string, logger logrus.FieldLogger, baseDir string) (*kubeoneapi.KubeOneCluster, error) {
+	apiVersion, err := KubeOneClusterAPIVersion(cluster)
+	if err != nil {
+		return nil, err
+	}
+
+	if _, ok := DeprecatedAPIs[apiVersion]; ok {
+		logger.Warningf(`The provided APIVersion %q is deprecated. Please use "kubeone config migrate" command to migrate to the latest version.`, apiVersion)
+	}
+
+	var internalCluster *kubeoneapi.KubeOneCluster
 
 	// Parse the cluster bytes depending on the GVK
-	switch typeMeta.APIVersion {
+	switch apiVersion {
 	case kubeonev1beta2.SchemeGroupVersion.String():
 		v1beta2Cluster := kubeonev1beta2.NewKubeOneCluster()
-		if err = runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, v1beta2Cluster); err != nil {
+		if err := runtime.DecodeInto(kubeonescheme.Codecs.UniversalDecoder(), cluster, v1beta2Cluster); err != nil {
 			return nil, fail.Config(err, fmt.Sprintf("decoding %s", v1beta2Cluster.GroupVersionKind()))
 		}
 
+		var err error
 		internalCluster, err = DefaultedV1Beta2KubeOneCluster(v1beta2Cluster, tfOutput)
 		if err != nil {
 			return nil, err
@@ -176,7 +187,7 @@ func BytesToKubeOneCluster(cluster, tfOutput []byte, credentialsFilePath string,
 	// 		return nil, err
 	// 	}
 	default:
-		return nil, fail.Config(fmt.Errorf("invalid api version %q", typeMeta.APIVersion), "api version")
+		return nil, fail.Config(fmt.Errorf("invalid api version %q", apiVersion), "api version")
 	}
 
 	if len(internalCluster.ControlPlane.NodeSets) > 0 {
