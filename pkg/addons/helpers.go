@@ -27,6 +27,7 @@ import (
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
 
+	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -50,6 +51,13 @@ const (
 	openstackCinderCSIControllerPluginName = "openstack-cinder-csi-controllerplugin"
 	openstackCinderCSINodePluginName       = "openstack-cinder-csi-nodeplugin"
 	vSphereDeploymentName                  = "vsphere-cloud-controller-manager"
+	// vsphereCSIValidatingWebhookConfigurationName is the name of the
+	// ValidatingWebhookConfiguration that older csi-vsphere addon versions
+	// used to deploy alongside a "vsphere-webhook-svc" Service. Both were
+	// removed from the addon (see addons/csi-vsphere/2-validatingwebhook.yaml),
+	// so the webhook configuration must be pruned on upgrade, otherwise it's
+	// left dangling and blocks all StorageClass/PV/PVC admission requests.
+	vsphereCSIValidatingWebhookConfigurationName = "validation.csi.vsphere.vmware.com"
 )
 
 var (
@@ -293,6 +301,14 @@ func migrateVsphereAddon(s *state.State) error {
 		s.Context,
 		s.DynamicClient,
 		genNamedObject[corev1.Service](vSphereDeploymentName, metav1.NamespaceSystem),
+	)
+}
+
+func migrateVsphereCSIDriver(s *state.State) error {
+	return clientutil.DeleteIfExists(
+		s.Context,
+		s.DynamicClient,
+		genNamedObject[admissionregistrationv1.ValidatingWebhookConfiguration](vsphereCSIValidatingWebhookConfigurationName),
 	)
 }
 
