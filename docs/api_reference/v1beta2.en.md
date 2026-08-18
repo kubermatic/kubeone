@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2026-07-20T15:06:24+03:00
+date = 2026-08-14T09:03:58+03:00
 weight = 11
 +++
 ## v1beta2
@@ -10,6 +10,8 @@ weight = 11
 * [Addon](#addon)
 * [Addons](#addons)
 * [AlwaysPullImages](#alwayspullimages)
+* [AzureControlPlane](#azurecontrolplane)
+* [AzureLoadBalancer](#azureloadbalancer)
 * [AzureSpec](#azurespec)
 * [CNI](#cni)
 * [CanalSpec](#canalspec)
@@ -145,12 +147,37 @@ every new pod to have its image pull policy set to Always.
 
 [Back to Group](#v1beta2)
 
+### AzureControlPlane
+
+AzureControlPlane defines control plane config on Azure
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| loadBalancer | LoadBalancer config of a loadbalancer to create for the kubeapi-server endpoint | [AzureLoadBalancer](#azureloadbalancer) | true |
+
+[Back to Group](#v1beta2)
+
+### AzureLoadBalancer
+
+AzureLoadBalancer loadbalancer definition to create for kubeapi-server endpoint
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| name | Name of the loadbalancer to create. Default: \"<CLUSTER_NAME>-kubeapi\" | string | false |
+| resourceGroup | ResourceGroup is the name of the Azure resource group where the loadbalancer is created. Default: the resourceGroup of the first control plane NodeSet. | string | false |
+| location | Location is the Azure region where the loadbalancer is created. Default: the location of the first control plane NodeSet. | string | false |
+| sku | Sku of the loadbalancer to create. Default: \"Standard\" | string | false |
+| publicIPName | PublicIPName is the name of the public IP address attached to the loadbalancer. Default: \"<NAME>-pubip\" | string | false |
+
+[Back to Group](#v1beta2)
+
 ### AzureSpec
 
 AzureSpec defines the Azure cloud provider
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+| controlPlane | ControlPlane configures control plane provisioning on Azure | *[AzureControlPlane](#azurecontrolplane) | false |
 
 [Back to Group](#v1beta2)
 

@@ -327,6 +327,8 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 			if cluster.CloudProvider.Kubevirt.ControlPlane != nil {
 				setDefaultKubevirtControlPlane(cluster.Name, cluster.CloudProvider.Kubevirt.ControlPlane)
 			}
+		case cluster.CloudProvider.Azure != nil:
+			setDefaultAzureControlPlane(cluster.Name, cluster.CloudProvider.Azure.ControlPlane)
 		default:
 			return fail.ConfigError{
 				Op:  "cloud provider checking",
@@ -378,6 +380,21 @@ func setDefaultKubevirtControlPlane(clusterName string, kvCP *kubeoneapi.Kubevir
 	kvCP.LoadBalancer.Name = defaults(
 		kvCP.LoadBalancer.Name,
 		clusterName+"-kubeapi",
+	)
+}
+
+func setDefaultAzureControlPlane(clusterName string, azCP *kubeoneapi.AzureControlPlane) {
+	azCP.LoadBalancer.Name = defaults(
+		azCP.LoadBalancer.Name,
+		clusterName+"-kubeapi",
+	)
+	azCP.LoadBalancer.Sku = defaults(
+		azCP.LoadBalancer.Sku,
+		"Standard",
+	)
+	azCP.LoadBalancer.PublicIPName = defaults(
+		azCP.LoadBalancer.PublicIPName,
+		azCP.LoadBalancer.Name+"-pubip",
 	)
 }
 

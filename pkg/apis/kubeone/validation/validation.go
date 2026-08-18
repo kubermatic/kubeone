@@ -233,13 +233,15 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 		providerFound = true
 	}
 	if providerSpec.Azure != nil {
+		azureFld := fldPath.Child("azure")
 		if providerFound {
-			allErrs = append(allErrs, field.Forbidden(fldPath.Child("azure"), "only one provider can be used at the same time"))
+			allErrs = append(allErrs, field.Forbidden(azureFld, "only one provider can be used at the same time"))
 		}
 		if len(providerSpec.CloudConfig) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), ".cloudProvider.cloudConfig is required for azure provider"))
 		}
 		providerFound = true
+		allErrs = append(allErrs, validateAzureSpec(providerSpec.Azure, azureFld)...)
 	}
 	if providerSpec.DigitalOcean != nil {
 		if providerFound {
@@ -368,6 +370,20 @@ func validateOpenstackSpec(openstackSpec *kubeoneapi.OpenstackSpec, fldPath *fie
 		lbFld := fldPath.Child("controlPlane").Child("loadBalancer")
 		if openstackSpec.ControlPlane.LoadBalancer.Name == "" {
 			allErrs = append(allErrs, field.Required(lbFld.Child("name"), "loadBalancer name is required when controlPlane is specified"))
+		}
+	}
+
+	return allErrs
+}
+
+func validateAzureSpec(azureSpec *kubeoneapi.AzureSpec, fldPath *field.Path) field.ErrorList {
+	var allErrs field.ErrorList
+
+	if azureSpec.ControlPlane != nil {
+		lbFld := fldPath.Child("controlPlane").Child("loadBalancer")
+		sku := azureSpec.ControlPlane.LoadBalancer.Sku
+		if sku != "" && sku != "Basic" && sku != "Standard" {
+			allErrs = append(allErrs, field.NotSupported(lbFld.Child("sku"), sku, []string{"Basic", "Standard"}))
 		}
 	}
 
