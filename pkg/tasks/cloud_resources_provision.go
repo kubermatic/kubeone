@@ -26,9 +26,10 @@ import (
 	_ "k8c.io/kubeone/pkg/cloudprovider/aws"          // register control plane provider
 	_ "k8c.io/kubeone/pkg/cloudprovider/azure"        // register control plane provider
 	_ "k8c.io/kubeone/pkg/cloudprovider/digitalocean" // register control plane provider
-	_ "k8c.io/kubeone/pkg/cloudprovider/hetzner"      // register control plane provider
-	_ "k8c.io/kubeone/pkg/cloudprovider/kubevirt"     // register control plane provider
-	_ "k8c.io/kubeone/pkg/cloudprovider/openstack"    // register control plane provider
+	_ "k8c.io/kubeone/pkg/cloudprovider/gce"
+	_ "k8c.io/kubeone/pkg/cloudprovider/hetzner"   // register control plane provider
+	_ "k8c.io/kubeone/pkg/cloudprovider/kubevirt"  // register control plane provider
+	_ "k8c.io/kubeone/pkg/cloudprovider/openstack" // register control plane provider
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 )
