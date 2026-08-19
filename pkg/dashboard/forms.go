@@ -51,8 +51,3 @@ type scaleForm struct {
 	namespaceNameForm
 	Direction string `validate:"required,oneof=up down"`
 }
-
-type deletePodForm struct {
-	namespaceNameForm
-	Node string `validate:"required"`
-}

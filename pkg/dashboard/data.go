@@ -61,15 +61,6 @@ type machine struct {
 	Deleted   bool
 }
 
-type pod struct {
-	Name      string
-	Namespace string
-	Status    string
-	Ready     string
-	Restarts  int32
-	Age       time.Duration
-}
-
 type nodesResult struct {
 	ControlPlaneNodes []node
 	WorkerNodes       []node
