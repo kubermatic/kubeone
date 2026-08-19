@@ -674,3 +674,96 @@ stringData:
 		t.Fatalf("expected rendered manifest to contain custom credential value, got:\n%s", string(manifests[0].Raw))
 	}
 }
+
+func TestAddonParamsFromCredentialsInAddonTemplate(t *testing.T) {
+	t.Parallel()
+
+	const addonManifest = `kind: Secret
+apiVersion: v1
+metadata:
+  name: backups-restic
+  namespace: kube-system
+stringData:
+  password: "{{ .Params.resticPassword }}"
+`
+
+	addonsDir := t.TempDir()
+
+	if mkdirErr := os.Mkdir(path.Join(addonsDir, "backups-restic"), 0o700); mkdirErr != nil {
+		t.Fatalf("unable to create temporary addon directory: %v", mkdirErr)
+	}
+
+	if writeErr := os.WriteFile(path.Join(addonsDir, "backups-restic", "secret.yaml"), []byte(addonManifest), 0o600); writeErr != nil {
+		t.Fatalf("unable to create temporary addon manifest: %v", writeErr)
+	}
+
+	applier := &applier{
+		TemplateData: templateData{
+			Config: &kubeoneapi.KubeOneCluster{Name: "kubeone-test"},
+		},
+		LocalFS: os.DirFS(addonsDir),
+		AddonParams: map[string]map[string]string{
+			"backups-restic": {"resticPassword": "from-credentials"},
+		},
+	}
+
+	manifests, err := applier.loadAddonsManifests(applier.LocalFS, "backups-restic", nil, nil, false, &kubeoneapi.KubeOneCluster{}, false)
+	if err != nil {
+		t.Fatalf("unable to load manifests: %v", err)
+	}
+
+	if len(manifests) != 1 {
+		t.Fatalf("expected to load 1 manifest, got %d", len(manifests))
+	}
+
+	if !strings.Contains(string(manifests[0].Raw), "from-credentials") {
+		t.Fatalf("expected rendered manifest to contain addon param from credentials file, got:\n%s", string(manifests[0].Raw))
+	}
+}
+
+func TestAddonParamsConflictBetweenCredentialsAndManifest(t *testing.T) {
+	t.Parallel()
+
+	const addonManifest = `kind: Secret
+apiVersion: v1
+metadata:
+  name: backups-restic
+  namespace: kube-system
+stringData:
+  password: "{{ .Params.resticPassword }}"
+`
+
+	addonsDir := t.TempDir()
+
+	if mkdirErr := os.Mkdir(path.Join(addonsDir, "backups-restic"), 0o700); mkdirErr != nil {
+		t.Fatalf("unable to create temporary addon directory: %v", mkdirErr)
+	}
+
+	if writeErr := os.WriteFile(path.Join(addonsDir, "backups-restic", "secret.yaml"), []byte(addonManifest), 0o600); writeErr != nil {
+		t.Fatalf("unable to create temporary addon manifest: %v", writeErr)
+	}
+
+	applier := &applier{
+		TemplateData: templateData{
+			Config: &kubeoneapi.KubeOneCluster{Name: "kubeone-test"},
+		},
+		LocalFS: os.DirFS(addonsDir),
+		AddonParams: map[string]map[string]string{
+			"backups-restic": {"resticPassword": "from-credentials"},
+		},
+	}
+
+	// Same key ("resticPassword") also set via the KubeOneCluster manifest's
+	// addon params - this must be rejected rather than silently resolved
+	// either way.
+	manifestAddonParams := map[string]string{"resticPassword": "from-manifest"}
+
+	_, err := applier.loadAddonsManifests(applier.LocalFS, "backups-restic", manifestAddonParams, nil, false, &kubeoneapi.KubeOneCluster{}, false)
+	if err == nil {
+		t.Fatal("expected an error due to conflicting resticPassword definitions, got nil")
+	}
+
+	if !strings.Contains(err.Error(), "resticPassword") || !strings.Contains(err.Error(), "backups-restic") {
+		t.Fatalf("expected error to mention the conflicting key and addon name, got: %v", err)
+	}
+}

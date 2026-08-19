@@ -179,6 +179,39 @@ func Custom(credentialsFilePath string) (map[string]string, error) {
 	return custom, nil
 }
 
+// AddonParamsKey is the reserved top-level key in the credentials file under
+// which users can provide secret parameters for specific addons (built-in or
+// custom), keyed by addon name. Its value is expected to be a YAML mapping
+// of addon name to a mapping of string keys to string values, encoded as a
+// block string, following the same convention as the "customSecrets" key.
+const AddonParamsKey = "addonParams"
+
+// AddonParams returns user-defined, per-addon secret parameters from the
+// "addonParams" section of the credentials file, keyed by addon name. This
+// lets operators keep addon secrets (e.g. a restic password for the
+// built-in backups-restic addon) out of the KubeOneCluster manifest and in
+// the credentials file instead, without requiring the addon's template to
+// know about ".CustomCredentials" - the values are merged into that addon's
+// regular ".Params" at render time.
+func AddonParams(credentialsFilePath string) (map[string]map[string]string, error) {
+	credentialsFinder, err := newCredentialsFinder(withYAMLFile(credentialsFilePath))
+	if err != nil {
+		return nil, err
+	}
+
+	raw, ok := credentialsFinder.static[AddonParamsKey]
+	if !ok || raw == "" {
+		return map[string]map[string]string{}, nil
+	}
+
+	addonParams := map[string]map[string]string{}
+	if err := yaml.Unmarshal([]byte(raw), &addonParams); err != nil {
+		return nil, fail.Runtime(err, "unmarshalling addonParams from credentials file")
+	}
+
+	return addonParams, nil
+}
+
 func Any(credentialsFilePath string) (map[string]string, error) {
 	credentialsFinder, err := newCredentialsFinder(withYAMLFile(credentialsFilePath))
 	if err != nil {
