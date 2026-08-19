@@ -25,7 +25,7 @@ metadata:
 spec:
   concurrencyPolicy: Forbid
   failedJobsHistoryLimit: 1
-  schedule: '@every 30m'
+  schedule: {{ default "@every 30m" .Params.schedule }}
   successfulJobsHistoryLimit: {{ default 1 .Params.successfulJobsHistoryLimit }}
   suspend: false
   jobTemplate:
@@ -102,21 +102,21 @@ spec:
               cp -a /etc/kubernetes/pki/sa.pub /backup/pki/kubernetes
               restic snapshots {{- with .Params.commonFlags }} {{.}}{{ end }} -q || restic init {{- with .Params.commonFlags }} {{.}}{{ end }} -q
               restic backup {{- with .Params.commonFlags }} {{.}}{{ end }} --tag=etcd --host=${ETCD_HOSTNAME} /backup
-              restic forget {{- with .Params.commonFlags }} {{.}}{{ end }} --prune --keep-last 48
+              restic forget {{- with .Params.commonFlags }} {{.}}{{ end }} --prune {{ default "--keep-last 336" .Params.forgetFlags }}
             env:
             - name: ETCD_HOSTNAME
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
             - name: RESTIC_REPOSITORY
-              value: "{{ required "Please provide s3Bucket" .Params.s3Bucket }}"
+              value: '{{ required "Please provide s3Bucket" .Params.s3Bucket }}'
             - name: RESTIC_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: restic-config
                   key: password
             - name: AWS_DEFAULT_REGION
-              value: "{{ required "Please provide awsDefaultRegion" .Params.awsDefaultRegion }}"
+              value: '{{ required "Please provide awsDefaultRegion" .Params.awsDefaultRegion }}'
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
