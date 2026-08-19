@@ -65,6 +65,10 @@ type applier struct {
 	TemplateData templateData
 	LocalFS      fs.FS
 	EmbeddedFS   fs.FS
+	// AddonParams holds per-addon secret parameters from the credentials
+	// file's "addonParams" section, keyed by addon name. See
+	// credentials.AddonParams for details.
+	AddonParams map[string]map[string]string
 }
 
 // TemplateData is data available in the addons render template
@@ -107,6 +111,11 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 	}
 
 	customCreds, err := credentials.Custom(s.CredentialsFilePath)
+	if err != nil {
+		return nil, err
+	}
+
+	addonParams, err := credentials.AddonParams(s.CredentialsFilePath)
 	if err != nil {
 		return nil, err
 	}
@@ -247,6 +256,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		TemplateData: data,
 		LocalFS:      localFS,
 		EmbeddedFS:   embeddedaddons.FS,
+		AddonParams:  addonParams,
 	}, nil
 }
 

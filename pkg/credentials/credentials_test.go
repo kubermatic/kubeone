@@ -419,3 +419,84 @@ customSecrets: |
 		})
 	}
 }
+
+func TestAddonParams(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name             string
+		credentialsFile  string
+		want             map[string]map[string]string
+		wantErrSubstring string
+	}{
+		{
+			name: "addonParams present, multiple addons",
+			credentialsFile: `
+AWS_ACCESS_KEY_ID: "AAAA"
+AWS_SECRET_ACCESS_KEY: "BBBB"
+addonParams: |
+  backups-restic:
+    resticPassword: supersecret
+  prometheus-auth-proxy:
+    prometheusHtpasswd: "monitorprom:hash"
+`,
+			want: map[string]map[string]string{
+				"backups-restic": {
+					"resticPassword": "supersecret",
+				},
+				"prometheus-auth-proxy": {
+					"prometheusHtpasswd": "monitorprom:hash",
+				},
+			},
+		},
+		{
+			name: "addonParams absent",
+			credentialsFile: `
+AWS_ACCESS_KEY_ID: "AAAA"
+AWS_SECRET_ACCESS_KEY: "BBBB"
+`,
+			want: map[string]map[string]string{},
+		},
+		{
+			name:            "empty credentials file",
+			credentialsFile: ``,
+			want:            map[string]map[string]string{},
+		},
+		{
+			name: "addonParams is not a valid YAML mapping of mappings",
+			credentialsFile: `
+addonParams: |
+  backups-restic: not-a-mapping
+`,
+			wantErrSubstring: "unmarshalling addonParams",
+		},
+	}
+
+	for _, tcase := range tests {
+		t.Run(tcase.name, func(t *testing.T) {
+			t.Parallel()
+
+			credentialsFilePath := filepath.Join(t.TempDir(), "credentials.yaml")
+			if err := os.WriteFile(credentialsFilePath, []byte(tcase.credentialsFile), 0o600); err != nil {
+				t.Fatalf("unable to write temporary credentials file: %v", err)
+			}
+
+			got, err := AddonParams(credentialsFilePath)
+			if tcase.wantErrSubstring != "" {
+				if err == nil || !strings.Contains(err.Error(), tcase.wantErrSubstring) {
+					t.Fatalf("AddonParams() error = %v, want substring %q", err, tcase.wantErrSubstring)
+				}
+
+				return
+			}
+
+			if err != nil {
+				t.Fatalf("AddonParams() unexpected error: %v", err)
+			}
+
+			if !reflect.DeepEqual(got, tcase.want) {
+				t.Errorf("AddonParams() = %#v, want %#v", got, tcase.want)
+			}
+		})
+	}
+}

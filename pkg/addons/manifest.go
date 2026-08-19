@@ -204,6 +204,24 @@ func (a *applier) loadAddonsManifests(
 			// Make a copy and merge Params
 			tplDataParams := map[string]string{}
 			maps.Copy(tplDataParams, a.TemplateData.Params)
+
+			if credAddonParams := a.AddonParams[addonName]; len(credAddonParams) > 0 {
+				for k, v := range credAddonParams {
+					if _, exists := addonParams[k]; exists {
+						return nil, fail.RuntimeError{
+							Op: "merging addon params",
+							Err: fmt.Errorf(
+								"param %q for addon %q is set both in the KubeOneCluster manifest and in "+
+									"the credentials file's addonParams section - remove it from one of them",
+								k, addonName,
+							),
+						}
+					}
+
+					tplDataParams[k] = v
+				}
+			}
+
 			maps.Copy(tplDataParams, addonParams)
 
 			defaultAddonParams(k1cluster, addonName, tplDataParams)
