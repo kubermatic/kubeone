@@ -75,13 +75,13 @@ git_branch="$(git rev-parse --abbrev-ref HEAD)"
 branch=${CHANGELOG_BRANCH:-"$git_branch"}
 
 release-notes generate \
-    --org="$org" \
-    --repo="$repo" \
-    --start-rev="$CHANGELOG_START_REV" \
-    --end-sha="$CHANGELOG_END_SHA" \
-    --branch="$branch" \
-    --go-template="go-template:$tpl" \
-    --output="$output" \
-    --required-author "" \
-    --markdown-links \
-    --dependencies=false
+  --org="$org" \
+  --repo="$repo" \
+  --start-rev="$CHANGELOG_START_REV" \
+  --end-sha="$CHANGELOG_END_SHA" \
+  --branch="$branch" \
+  --go-template="go-template:$tpl" \
+  --output="$output" \
+  --required-author "" \
+  --markdown-links \
+  --dependencies=false

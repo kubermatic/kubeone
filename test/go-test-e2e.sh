@@ -31,6 +31,31 @@ SSH_PRIVATE_KEY_FILE=${SSH_PRIVATE_KEY_FILE:-"${BUILD_DIR}/ssh_key_kubeone_e2e"}
 PATH=$PATH:$(go env GOPATH)/bin
 SSH_PUBLIC_KEY_FILE="${SSH_PRIVATE_KEY_FILE}.pub"
 CREDENTIALS_FILE_PATH=""
+TERRAFORM_VERSION=${TERRAFORM_VERSION:-"1.13.3"}
+SONOBUOY_VERSION=${SONOBUOY_VERSION:-"0.57.3"}
+PROTOKOL_VERSION=${PROTOKOL_VERSION:-"0.7.5"}
+TOOLS_CACHE_DIR=${TOOLS_CACHE_DIR:-"${HOME}/.cache/kubeone-e2e/tools"}
+OS_NAME=$(uname -s | tr '[:upper:]' '[:lower:]')
+
+case $(uname -m) in
+x86_64) ARCH_NAME=amd64 ;;
+aarch64 | arm64) ARCH_NAME=arm64 ;;
+*) ARCH_NAME=$(uname -m) ;;
+esac
+
+# tool name -> version, used to keep ensure_tool() cache dirs version-scoped
+declare -A TOOL_VERSIONS=(
+  [terraform]="${TERRAFORM_VERSION}"
+  [sonobuoy]="${SONOBUOY_VERSION}"
+  [protokol]="${PROTOKOL_VERSION}"
+)
+
+# tool name -> release download URL, used by ensure_tool()
+declare -A TOOL_DOWNLOAD_URLS=(
+  [terraform]="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${OS_NAME}_${ARCH_NAME}.zip"
+  [sonobuoy]="https://github.com/vmware-tanzu/sonobuoy/releases/download/v${SONOBUOY_VERSION}/sonobuoy_${SONOBUOY_VERSION}_${OS_NAME}_${ARCH_NAME}.tar.gz"
+  [protokol]="https://codeberg.org/xrstf/protokol/releases/download/v${PROTOKOL_VERSION}/protokol_${PROTOKOL_VERSION}_${OS_NAME}_${ARCH_NAME}.tar.gz"
+)
 
 export PATH
 export TF_VAR_cluster_name=k1-${BUILD_ID}
@@ -45,6 +70,54 @@ trap cleanup EXIT
 function fatal() {
   echo "$1"
   exit 1
+}
+
+# ensure_tool downloads $1 into a versioned cache dir and prepends it to PATH unless already on PATH
+function ensure_tool() {
+  local tool=$1
+
+  if command -v "${tool}" > /dev/null 2>&1; then
+    return
+  fi
+
+  local url=${TOOL_DOWNLOAD_URLS[${tool}]:-}
+  if [ -z "${url}" ]; then
+    fatal "no download URL configured for ${tool}"
+  fi
+
+  local archive_name
+  archive_name=$(basename "${url}")
+  local install_dir="${TOOLS_CACHE_DIR}/${tool}/${TOOL_VERSIONS[${tool}]}"
+
+  if [ ! -x "${install_dir}/${tool}" ]; then
+    echo "Downloading ${tool} from ${url}"
+    mkdir -p "${install_dir}"
+
+    local archive_path="${BUILD_DIR}/${archive_name}"
+    curl --fail --location --output "${archive_path}" "${url}"
+
+    # extract to a scratch dir first, some archives nest the binary in a subdirectory
+    local extract_dir="${BUILD_DIR}/${tool}-extracted"
+    mkdir -p "${extract_dir}"
+    case "${archive_name}" in
+    *.zip) unzip -o -q "${archive_path}" -d "${extract_dir}" ;;
+    *.tar.gz) tar -xzf "${archive_path}" -C "${extract_dir}" ;;
+    *) fatal "unsupported archive format for ${tool}: ${archive_name}" ;;
+    esac
+
+    local extracted_bin
+    extracted_bin=$(find "${extract_dir}" -type f -name "${tool}" | head -n 1)
+    if [ -z "${extracted_bin}" ]; then
+      fatal "could not find ${tool} binary inside ${archive_name}"
+    fi
+
+    mv "${extracted_bin}" "${install_dir}/${tool}"
+    rm -rf "${extract_dir}"
+    chmod +x "${install_dir}/${tool}"
+  fi
+
+  PATH="${install_dir}:${PATH}"
+  export PATH
 }
 
 function generate_ssh_key() {
@@ -191,6 +264,15 @@ EOL
     ;;
   esac
 }
+
+if ! command -v unzip > /dev/null 2>&1; then
+  # assume debian like
+  apt update && apt install unzip -y
+fi
+
+ensure_tool "terraform"
+ensure_tool "sonobuoy"
+ensure_tool "protokol"
 
 generate_ssh_key "${SSH_PRIVATE_KEY_FILE}"
 ssh_agent "${SSH_PRIVATE_KEY_FILE}"

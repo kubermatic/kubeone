@@ -17,7 +17,10 @@
 set -eu -o pipefail
 
 SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")/..
-CODEGEN_PKG=${CODEGEN_PKG:-$(cd "${SCRIPT_ROOT}"; ls -d -1 ./vendor/k8s.io/code-generator 2>/dev/null || echo ../code-generator)}
+CODEGEN_PKG=${CODEGEN_PKG:-$(
+  cd "${SCRIPT_ROOT}"
+  ls -d -1 ./vendor/k8s.io/code-generator 2> /dev/null || echo ../code-generator
+)}
 TERRAFORM_DOCS="go run github.com/terraform-docs/terraform-docs@v0.16.0"
 
 source "${SCRIPT_ROOT}/hack/lib.sh"
@@ -35,8 +38,8 @@ done
 
 echodate "Generating Kubernetes helpers..."
 kube::codegen::gen_helpers \
-    --boilerplate "${SCRIPT_ROOT}/hack/boilerplate/boilerplate.go.txt" \
-    "${SCRIPT_ROOT}/pkg/apis/kubeone"
+  --boilerplate "${SCRIPT_ROOT}/hack/boilerplate/boilerplate.go.txt" \
+  "${SCRIPT_ROOT}/pkg/apis/kubeone"
 
 echodate "Generating Go code..."
 make gogenerate

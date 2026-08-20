@@ -123,7 +123,8 @@ func (sbb *sonobuoyBin) run(ctx context.Context, args ...string) error {
 }
 
 func (sbb *sonobuoyBin) build(args ...string) *testexec.Exec {
-	exe := testexec.NewExec("sonobuoy",
+	exe := testexec.NewExec(
+		"sonobuoy",
 		testexec.WithArgs(args...),
 		testexec.WithEnv(os.Environ()),
 		testexec.InDir(sbb.dir),

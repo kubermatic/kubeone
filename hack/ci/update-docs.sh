@@ -38,7 +38,7 @@ ensure_github_host_pubkey
 git clone git@github.com:kubermatic/docs.git $TARGET_DIR
 cd $TARGET_DIR
 
-find ../docs/api_reference -name '*.en.md' -print0 | while IFS= read -r -d '' docsPath; do 
+find ../docs/api_reference -name '*.en.md' -print0 | while IFS= read -r -d '' docsPath; do
   # Convert ../docs/api_reference/v1beta2.en.md -> v1beta2
   apiVersion=$(basename ${docsPath} | awk -F. '{print $1}')
   echodate "Copying ${apiVersion} docs..."

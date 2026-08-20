@@ -110,7 +110,7 @@ optionalimages=$(kubeone config images list --filter=optional --kubernetes-versi
 
 for IMAGE in $k8simages; do
   # The CoreDNS image has a different override semantics than other images.
-  # If you provide a custom registry, kubeadm will override the CoreDNS image 
+  # If you provide a custom registry, kubeadm will override the CoreDNS image
   # in the following way:
   #   <default-registry>/coredns/coredns -> <custom-registry>/coredns
   # We have an issue because we enforce `registry.k8s.io` for all Kubernetes versions:

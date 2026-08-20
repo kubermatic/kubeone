@@ -1,6 +1,6 @@
 module k8c.io/kubeone
 
-go 1.26.0
+go 1.27
 
 require (
 	dario.cat/mergo v1.0.2

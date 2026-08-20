@@ -22,7 +22,7 @@ limitations under the License.
 package v1beta3
 
 import (
-	json "encoding/json"
+	jsontext "encoding/json/jsontext"
 	unsafe "unsafe"
 
 	kubeone "k8c.io/kubeone/pkg/apis/kubeone"
@@ -1797,7 +1797,7 @@ func Convert_kubeone_HelmRelease_To_v1beta3_HelmRelease(in *kubeone.HelmRelease,
 
 func autoConvert_v1beta3_HelmValues_To_kubeone_HelmValues(in *HelmValues, out *kubeone.HelmValues, s conversion.Scope) error {
 	out.ValuesFile = in.ValuesFile
-	out.Inline = *(*json.RawMessage)(unsafe.Pointer(&in.Inline))
+	out.Inline = *(*jsontext.Value)(unsafe.Pointer(&in.Inline))
 	return nil
 }
 
@@ -1808,7 +1808,7 @@ func Convert_v1beta3_HelmValues_To_kubeone_HelmValues(in *HelmValues, out *kubeo
 
 func autoConvert_kubeone_HelmValues_To_v1beta3_HelmValues(in *kubeone.HelmValues, out *HelmValues, s conversion.Scope) error {
 	out.ValuesFile = in.ValuesFile
-	out.Inline = *(*json.RawMessage)(unsafe.Pointer(&in.Inline))
+	out.Inline = *(*jsontext.Value)(unsafe.Pointer(&in.Inline))
 	return nil
 }
 
@@ -2345,7 +2345,7 @@ func autoConvert_v1beta3_NodeSet_To_kubeone_NodeSet(in *NodeSet, out *kubeone.No
 	if err := Convert_v1beta3_SSHSpec_To_kubeone_SSHSpec(&in.SSH, &out.SSH, s); err != nil {
 		return err
 	}
-	out.CloudProviderSpec = *(*json.RawMessage)(unsafe.Pointer(&in.CloudProviderSpec))
+	out.CloudProviderSpec = *(*jsontext.Value)(unsafe.Pointer(&in.CloudProviderSpec))
 	return nil
 }
 
@@ -2368,7 +2368,7 @@ func autoConvert_kubeone_NodeSet_To_v1beta3_NodeSet(in *kubeone.NodeSet, out *No
 	if err := Convert_kubeone_SSHSpec_To_v1beta3_SSHSpec(&in.SSH, &out.SSH, s); err != nil {
 		return err
 	}
-	out.CloudProviderSpec = *(*json.RawMessage)(unsafe.Pointer(&in.CloudProviderSpec))
+	out.CloudProviderSpec = *(*jsontext.Value)(unsafe.Pointer(&in.CloudProviderSpec))
 	return nil
 }
 
@@ -2654,7 +2654,7 @@ func Convert_kubeone_PodNodeSelectorConfig_To_v1beta3_PodNodeSelectorConfig(in *
 }
 
 func autoConvert_v1beta3_ProviderSpec_To_kubeone_ProviderSpec(in *ProviderSpec, out *kubeone.ProviderSpec, s conversion.Scope) error {
-	out.CloudProviderSpec = *(*json.RawMessage)(unsafe.Pointer(&in.CloudProviderSpec))
+	out.CloudProviderSpec = *(*jsontext.Value)(unsafe.Pointer(&in.CloudProviderSpec))
 	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
 	out.NodeAnnotations = *(*map[string]string)(unsafe.Pointer(&in.NodeAnnotations))
 	out.MachineObjectAnnotations = *(*map[string]string)(unsafe.Pointer(&in.MachineObjectAnnotations))
@@ -2662,7 +2662,7 @@ func autoConvert_v1beta3_ProviderSpec_To_kubeone_ProviderSpec(in *ProviderSpec, 
 	out.Taints = *(*[]corev1.Taint)(unsafe.Pointer(&in.Taints))
 	out.SSHPublicKeys = *(*[]string)(unsafe.Pointer(&in.SSHPublicKeys))
 	out.OperatingSystem = in.OperatingSystem
-	out.OperatingSystemSpec = *(*json.RawMessage)(unsafe.Pointer(&in.OperatingSystemSpec))
+	out.OperatingSystemSpec = *(*jsontext.Value)(unsafe.Pointer(&in.OperatingSystemSpec))
 	out.Network = (*kubeone.ProviderStaticNetworkConfig)(unsafe.Pointer(in.Network))
 	out.OverwriteCloudConfig = (*string)(unsafe.Pointer(in.OverwriteCloudConfig))
 	return nil
@@ -2674,7 +2674,7 @@ func Convert_v1beta3_ProviderSpec_To_kubeone_ProviderSpec(in *ProviderSpec, out 
 }
 
 func autoConvert_kubeone_ProviderSpec_To_v1beta3_ProviderSpec(in *kubeone.ProviderSpec, out *ProviderSpec, s conversion.Scope) error {
-	out.CloudProviderSpec = *(*json.RawMessage)(unsafe.Pointer(&in.CloudProviderSpec))
+	out.CloudProviderSpec = *(*jsontext.Value)(unsafe.Pointer(&in.CloudProviderSpec))
 	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
 	out.NodeAnnotations = *(*map[string]string)(unsafe.Pointer(&in.NodeAnnotations))
 	out.MachineObjectAnnotations = *(*map[string]string)(unsafe.Pointer(&in.MachineObjectAnnotations))
@@ -2682,7 +2682,7 @@ func autoConvert_kubeone_ProviderSpec_To_v1beta3_ProviderSpec(in *kubeone.Provid
 	out.Taints = *(*[]corev1.Taint)(unsafe.Pointer(&in.Taints))
 	out.SSHPublicKeys = *(*[]string)(unsafe.Pointer(&in.SSHPublicKeys))
 	out.OperatingSystem = in.OperatingSystem
-	out.OperatingSystemSpec = *(*json.RawMessage)(unsafe.Pointer(&in.OperatingSystemSpec))
+	out.OperatingSystemSpec = *(*jsontext.Value)(unsafe.Pointer(&in.OperatingSystemSpec))
 	out.Network = (*ProviderStaticNetworkConfig)(unsafe.Pointer(in.Network))
 	out.OverwriteCloudConfig = (*string)(unsafe.Pointer(in.OverwriteCloudConfig))
 	return nil

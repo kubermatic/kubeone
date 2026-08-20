@@ -22,7 +22,7 @@ limitations under the License.
 package v1beta3
 
 import (
-	json "encoding/json"
+	jsontext "encoding/json/jsontext"
 
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -919,7 +919,7 @@ func (in *HelmValues) DeepCopyInto(out *HelmValues) {
 	*out = *in
 	if in.Inline != nil {
 		in, out := &in.Inline, &out.Inline
-		*out = make(json.RawMessage, len(*in))
+		*out = make(jsontext.Value, len(*in))
 		copy(*out, *in)
 	}
 	return
@@ -1387,7 +1387,7 @@ func (in *NodeSet) DeepCopyInto(out *NodeSet) {
 	in.SSH.DeepCopyInto(&out.SSH)
 	if in.CloudProviderSpec != nil {
 		in, out := &in.CloudProviderSpec, &out.CloudProviderSpec
-		*out = make(json.RawMessage, len(*in))
+		*out = make(jsontext.Value, len(*in))
 		copy(*out, *in)
 	}
 	return
@@ -1629,7 +1629,7 @@ func (in *ProviderSpec) DeepCopyInto(out *ProviderSpec) {
 	*out = *in
 	if in.CloudProviderSpec != nil {
 		in, out := &in.CloudProviderSpec, &out.CloudProviderSpec
-		*out = make(json.RawMessage, len(*in))
+		*out = make(jsontext.Value, len(*in))
 		copy(*out, *in)
 	}
 	if in.Annotations != nil {
@@ -1674,7 +1674,7 @@ func (in *ProviderSpec) DeepCopyInto(out *ProviderSpec) {
 	}
 	if in.OperatingSystemSpec != nil {
 		in, out := &in.OperatingSystemSpec, &out.OperatingSystemSpec
-		*out = make(json.RawMessage, len(*in))
+		*out = make(jsontext.Value, len(*in))
 		copy(*out, *in)
 	}
 	if in.Network != nil {
