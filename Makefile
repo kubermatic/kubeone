@@ -128,7 +128,8 @@ verify-apidocs: vendor
 
 .PHONY: shfmt
 shfmt:
-	shfmt -w -sr -i 2 hack
+	shfmt -w -sr -i 2 hack/
+	shfmt -w -sr -i 2 test/
 
 .PHONY: prowfmt
 prowfmt:

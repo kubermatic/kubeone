@@ -23,7 +23,7 @@ boiler="${boilerDir}/boilerplate.py"
 
 files_need_boilerplate=()
 while IFS=$'\n' read -r line; do
-  files_need_boilerplate+=( "$line" )
+  files_need_boilerplate+=("$line")
 done < <("${boiler}" "$@")
 
 # Run boilerplate check

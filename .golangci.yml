@@ -102,7 +102,10 @@ formatters:
   settings:
     gofumpt:
       module-path: k8c.io/kubeone
-      extra-rules: true
+      extra:
+        group-params: true
+        clothe-returns: true
+        balance-calls: true
     goimports:
       local-prefixes:
         - k8c.io

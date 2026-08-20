@@ -61,13 +61,15 @@ func (p *protokolBin) build(proxyURL string, args ...string) *testexec.Exec {
 	env := os.Environ()
 
 	if proxyURL != "" {
-		env = append(env,
+		env = append(
+			env,
 			fmt.Sprintf("HTTPS_PROXY=%s", proxyURL),
 			fmt.Sprintf("HTTP_PROXY=%s", proxyURL),
 		)
 	}
 
-	return testexec.NewExec("protokol",
+	return testexec.NewExec(
+		"protokol",
 		testexec.WithArgs(args...),
 		testexec.WithEnv(env),
 		testexec.StderrTo(io.Discard),

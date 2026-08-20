@@ -38,7 +38,7 @@ gocaches="./gocaches"
 for ARCH in ${ARCHITECTURES}; do
   cacheDir="$gocaches/$ARCH"
   mkdir -p "$cacheDir"
- 
+
   # try to get a gocache for this arch; this can "fail" but still exit with 0
   echodate "Attempting to fetch gocache for ${ARCH}..."
   TARGET_DIRECTORY="$cacheDir" GOARCH="${ARCH}" ./hack/ci/download-gocache.sh
