@@ -22,7 +22,6 @@ import (
 	"time"
 
 	"github.com/angelofallars/htmx-go"
-	corev1 "k8s.io/api/core/v1"
 	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 
 	"k8c.io/kubeone/pkg/fail"
@@ -42,18 +41,42 @@ func httpHandleError(handler func(http.ResponseWriter, *http.Request) error) htt
 	})
 }
 
-func dashboardHandler(st *state.State) http.Handler {
+func dashboardHandler() http.Handler {
 	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
-		dashboardData, err := getDashboardData(st)
+		return Layout().Render(req.Context(), wr)
+	})
+}
+
+func controlPlaneNodesHandler(st *state.State) http.Handler {
+	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
+		nodes, err := getNodes(st)
 		if err != nil {
 			return err
 		}
 
-		if err = Layout(dashboardData).Render(req.Context(), wr); err != nil {
+		return NodesTable(nodes.ControlPlaneNodes).Render(req.Context(), wr)
+	})
+}
+
+func workerNodesHandler(st *state.State) http.Handler {
+	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
+		nodes, err := getNodes(st)
+		if err != nil {
 			return err
 		}
 
-		return nil
+		return WorkerNodesSection(nodes.WorkerNodes).Render(req.Context(), wr)
+	})
+}
+
+func machineDeploymentsHandler(st *state.State) http.Handler {
+	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
+		mds, err := getMachineDeployments(st)
+		if err != nil {
+			return err
+		}
+
+		return MachineDeploymentsTable(mds).Render(req.Context(), wr)
 	})
 }
 
@@ -97,12 +120,12 @@ func scaleHandler(st *state.State) http.Handler {
 		}
 
 		if htmx.IsHTMX(req) {
-			data, err := getDashboardData(st)
+			mds, err := getMachineDeployments(st)
 			if err != nil {
 				return err
 			}
 
-			return Layout(data).Render(req.Context(), wr)
+			return MachineDeploymentsTable(mds).Render(req.Context(), wr)
 		}
 
 		http.Redirect(wr, req, "/", http.StatusSeeOther)
@@ -136,12 +159,12 @@ func rolloutHandler(st *state.State) http.Handler {
 		}
 
 		if htmx.IsHTMX(req) {
-			data, err := getDashboardData(st)
+			mds, err := getMachineDeployments(st)
 			if err != nil {
 				return err
 			}
 
-			return Layout(data).Render(req.Context(), wr)
+			return MachineDeploymentsTable(mds).Render(req.Context(), wr)
 		}
 
 		http.Redirect(wr, req, "/", http.StatusSeeOther)
@@ -168,58 +191,16 @@ func deleteMachineHandler(st *state.State) http.Handler {
 		}
 
 		if htmx.IsHTMX(req) {
-			data, err := getDashboardData(st)
+			mds, err := getMachineDeployments(st)
 			if err != nil {
 				return err
 			}
 
-			return Layout(data).Render(req.Context(), wr)
+			return MachineDeploymentsTable(mds).Render(req.Context(), wr)
 		}
 
 		http.Redirect(wr, req, "/", http.StatusSeeOther)
 
 		return nil
-	})
-}
-
-func deletePodHandler(st *state.State) http.Handler {
-	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
-		form, err := parseAndValidateForm[deletePodForm](req)
-		if err != nil {
-			return err
-		}
-
-		p := corev1.Pod{}
-		key := dynclient.ObjectKey{Namespace: form.Namespace, Name: form.Name}
-		if err = st.DynamicClient.Get(req.Context(), key, &p); err != nil {
-			return fail.KubeClient(err, "getting Pod")
-		}
-
-		if err = st.DynamicClient.Delete(req.Context(), &p); err != nil {
-			return fail.KubeClient(err, "deleting Pod")
-		}
-
-		pods, err := getPodsForNode(req.Context(), st.DynamicClient, form.Node)
-		if err != nil {
-			return err
-		}
-
-		return NodePodsTable(form.Node, pods).Render(req.Context(), wr)
-	})
-}
-
-func podsHandler(st *state.State) http.Handler {
-	return httpHandleError(func(wr http.ResponseWriter, req *http.Request) error {
-		nodeName := req.URL.Query().Get("node")
-		if nodeName == "" {
-			return &uiError{Message: "node is required", Code: http.StatusBadRequest}
-		}
-
-		pods, err := getPodsForNode(req.Context(), st.DynamicClient, nodeName)
-		if err != nil {
-			return err
-		}
-
-		return NodePodsTable(nodeName, pods).Render(req.Context(), wr)
 	})
 }
