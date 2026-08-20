@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2026-07-20T15:06:24+03:00
+date = 2026-08-18T17:50:21+03:00
 weight = 11
 +++
 ## v1beta3
@@ -38,6 +38,8 @@ weight = 11
 * [EventRateLimitConfig](#eventratelimitconfig)
 * [ExternalCNISpec](#externalcnispec)
 * [Features](#features)
+* [GCEControlPlane](#gcecontrolplane)
+* [GCELoadBalancer](#gceloadbalancer)
 * [GCESpec](#gcespec)
 * [HelmAuth](#helmauth)
 * [HelmRelease](#helmrelease)
@@ -493,12 +495,36 @@ Features controls what features will be enabled on the cluster
 
 [Back to Group](#v1beta3)
 
+### GCEControlPlane
+
+GCEControlPlane control plane config on GCE
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| loadBalancer | LoadBalancer config of a network load balancer to create for the kube-apiserver endpoint | [GCELoadBalancer](#gceloadbalancer) | true |
+
+[Back to Group](#v1beta3)
+
+### GCELoadBalancer
+
+GCELoadBalancer defines a GCE Target Pool + Forwarding Rule for the kube-apiserver endpoint
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| projectID | ProjectID of the GCE project to create the load balancer resources in | string | true |
+| region | Region to create the load balancer resources in | string | true |
+| network | Network self-link or name to attach the firewall rule and forwarding rule to. Default: \"default\" | string | false |
+| name | Name of the target pool/forwarding rule/firewall rule to create. Default: \"<CLUSTER_NAME>-kubeapi\" | string | false |
+
+[Back to Group](#v1beta3)
+
 ### GCESpec
 
 GCESpec defines the GCE cloud provider
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+| controlPlane | ControlPlane configures control plane provisioning on GCE | *[GCEControlPlane](#gcecontrolplane) | false |
 
 [Back to Group](#v1beta3)
 
