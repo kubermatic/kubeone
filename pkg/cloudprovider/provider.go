@@ -20,7 +20,6 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/provisioner"
 	"k8c.io/kubeone/pkg/state"
-
 	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
 )
 

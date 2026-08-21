@@ -1,11 +1,13 @@
 +++
 title = "v1beta2 API Reference"
-date = 2026-07-20T15:06:24+03:00
+date = 2026-08-18T14:55:05+03:00
 weight = 11
 +++
 ## v1beta2
 
 * [APIEndpoint](#apiendpoint)
+* [AWSControlPlane](#awscontrolplane)
+* [AWSLoadBalancer](#awsloadbalancer)
 * [AWSSpec](#awsspec)
 * [Addon](#addon)
 * [Addons](#addons)
@@ -99,12 +101,37 @@ APIEndpoint is the endpoint used to communicate with the Kubernetes API
 
 [Back to Group](#v1beta2)
 
+### AWSControlPlane
+
+AWSControlPlane control plane config on AWS
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| loadBalancer | LoadBalancer config of a Network Load Balancer to create for the kube-apiserver endpoint | [AWSLoadBalancer](#awsloadbalancer) | true |
+
+[Back to Group](#v1beta2)
+
+### AWSLoadBalancer
+
+AWSLoadBalancer defines a Network Load Balancer to create for the kube-apiserver endpoint
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| name | Name of the load balancer to create. Default: \"<CLUSTER_NAME>-kubeapi\" | string | false |
+| internal | Internal indicates whether the load balancer should be internal (no public IP). Default: false | *bool | false |
+| securityGroupIDs | SecurityGroupIDs to attach to the load balancer | []string | false |
+| tags | Tags to apply to the load balancer and target group | map[string]string | false |
+
+[Back to Group](#v1beta2)
+
 ### AWSSpec
 
 AWSSpec defines the AWS cloud provider
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+| region | Region for the AWS resources (VPC, load balancer, EC2 instances). Required when controlPlane is set. | string | false |
+| controlPlane | ControlPlane configures control plane provisioning on AWS | *[AWSControlPlane](#awscontrolplane) | false |
 
 [Back to Group](#v1beta2)
 

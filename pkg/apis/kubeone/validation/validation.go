@@ -227,10 +227,12 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 
 	providerFound := false
 	if providerSpec.AWS != nil {
+		awsFld := fldPath.Child("aws")
 		if networkConfig.IPFamily.IsDualstack() && providerSpec.External && len(providerSpec.CloudConfig) == 0 {
 			allErrs = append(allErrs, field.Required(fldPath.Child("cloudConfig"), "cloudConfig is required for dualstack clusters for aws provider"))
 		}
 		providerFound = true
+		allErrs = append(allErrs, validateAWSSpec(providerSpec.AWS, awsFld)...)
 	}
 	if providerSpec.Azure != nil {
 		if providerFound {
@@ -344,6 +346,26 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 
 	if providerSpec.Vsphere == nil && len(providerSpec.CSIConfig) > 0 {
 		allErrs = append(allErrs, field.Forbidden(fldPath.Child("csiConfig"), ".cloudProvider.csiConfig is currently supported only for vsphere clusters"))
+	}
+
+	return allErrs
+}
+
+// awsResourceNameMaxLength is the max length AWS accepts for NLB/Target Group names.
+const awsResourceNameMaxLength = 32
+
+func validateAWSSpec(awsSpec *kubeoneapi.AWSSpec, fldPath *field.Path) field.ErrorList {
+	var allErrs field.ErrorList
+
+	if awsSpec.ControlPlane != nil {
+		if awsSpec.Region == "" {
+			allErrs = append(allErrs, field.Required(fldPath.Child("region"), "region is required when controlPlane is specified"))
+		}
+
+		lbNameFld := fldPath.Child("controlPlane").Child("loadBalancer").Child("name")
+		if name := awsSpec.ControlPlane.LoadBalancer.Name; len(name) > awsResourceNameMaxLength {
+			allErrs = append(allErrs, field.Invalid(lbNameFld, name, fmt.Sprintf("loadBalancer name must not exceed %d characters", awsResourceNameMaxLength)))
+		}
 	}
 
 	return allErrs
