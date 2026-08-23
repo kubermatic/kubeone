@@ -48,6 +48,31 @@ type ControlPlaneCloudProvider interface {
 	LookupVMs(*state.State) error
 }
 
+// CleanupVMs generates the control plane machines for the given provider and
+// destroys their instances at the cloud provider.
+func CleanupVMs(p ControlPlaneCloudProvider, s *state.State) error {
+	if prep, ok := p.(CleanupPreparer); ok {
+		if err := prep.PrepareCleanup(s); err != nil {
+			return err
+		}
+	}
+
+	machines, err := p.GenerateMachines(
+		s.Cluster.Name,
+		s.Cluster.ControlPlane.NodeSets,
+		s.Cluster.Versions.Kubernetes,
+	)
+	if err != nil {
+		return err
+	}
+
+	return provisioner.CleanupMachines(s.Context, machines, s.Logger)
+}
+
+type CleanupPreparer interface {
+	PrepareCleanup(*state.State) error
+}
+
 type LoadBalancerProvider interface {
 	HasLoadBalancer(*state.State) bool
 

@@ -80,6 +80,10 @@ func (p *Provider) GenerateMachines(clusterName string, nodeSet []kubeoneapi.Nod
 	return generateKubevirtControlPlaneMachines(clusterName, nodeSet, kubeletVersion)
 }
 
+func (p *Provider) PrepareCleanup(s *state.State) error {
+	return prepareKubevirtEnv(s)
+}
+
 func (p *Provider) EnsureVM(st *state.State, capimachine clusterv1alpha1.Machine) error {
 	if err := prepareKubevirtEnv(st); err != nil {
 		return err

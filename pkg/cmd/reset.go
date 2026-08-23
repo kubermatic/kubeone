@@ -32,11 +32,12 @@ import (
 
 type resetOpts struct {
 	globalOptions
-	AutoApprove      bool `longflag:"auto-approve" shortflag:"y"`
-	DestroyWorkers   bool `longflag:"destroy-workers"`
-	RemoveVolumes    bool `longflag:"remove-volumes"`
-	RemoveLBServices bool `longflag:"remove-lb-services"`
-	RemoveBinaries   bool `longflag:"remove-binaries"`
+	AutoApprove                 bool `longflag:"auto-approve" shortflag:"y"`
+	DestroyWorkers              bool `longflag:"destroy-workers"`
+	DestroyControlPlaneMachines bool `longflag:"destroy-control-plane"`
+	RemoveVolumes               bool `longflag:"remove-volumes"`
+	RemoveLBServices            bool `longflag:"remove-lb-services"`
+	RemoveBinaries              bool `longflag:"remove-binaries"`
 }
 
 func (opts *resetOpts) BuildState() (*state.State, error) {
@@ -46,6 +47,7 @@ func (opts *resetOpts) BuildState() (*state.State, error) {
 	}
 
 	s.DestroyWorkers = opts.DestroyWorkers
+	s.DestroyControlPlaneMachines = opts.DestroyControlPlaneMachines
 	s.RemoveVolumes = opts.RemoveVolumes
 	s.RemoveLBServices = opts.RemoveLBServices
 	s.RemoveBinaries = opts.RemoveBinaries
@@ -92,6 +94,13 @@ func resetCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		longFlagName(opts, "DestroyWorkers"),
 		true,
 		"destroy all worker machines before resetting the cluster",
+	)
+
+	cmd.Flags().BoolVar(
+		&opts.DestroyControlPlaneMachines,
+		longFlagName(opts, "DestroyControlPlaneMachines"),
+		false,
+		"destroy the control plane machines instead of resetting them",
 	)
 
 	cmd.Flags().BoolVar(
@@ -182,8 +191,13 @@ func runReset(opts *resetOpts) error {
 		s.Logger.Warnln("If there are worker nodes in the cluster, you might have to delete them manually.")
 	}
 
-	for _, node := range s.Cluster.ControlPlane.Hosts {
-		fmt.Printf("\t- reset control plane node %q (%s)\n", node.Hostname, node.PrivateAddress)
+	if opts.DestroyControlPlaneMachines {
+		s.Logger.Warnln("destroy-control-plane command will PERMANENTLY destroy the control plane machines on the cloud provider.")
+		s.Logger.Warnln("KubeOne will NOT reset the control plane nodes; they will be destroyed instead.")
+	} else {
+		for _, node := range s.Cluster.ControlPlane.Hosts {
+			fmt.Printf("\t- reset control plane node %q (%s)\n", node.Hostname, node.PrivateAddress)
+		}
 	}
 	for _, node := range s.Cluster.StaticWorkers.Hosts {
 		fmt.Printf("\t- reset static worker nodes %q (%s)\n", node.Hostname, node.PrivateAddress)

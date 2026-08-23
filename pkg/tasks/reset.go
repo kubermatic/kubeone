@@ -21,6 +21,7 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clientutil"
+	"k8c.io/kubeone/pkg/cloudprovider"
 	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
@@ -158,7 +159,33 @@ func destroyWorkers(s *state.State) error {
 	return nil
 }
 
+func destroyControlPlaneMachines(s *state.State) error {
+	if !s.DestroyControlPlaneMachines {
+		return nil
+	}
+
+	s.Logger.Infoln("Destroying control plane machines...")
+
+	for _, p := range cloudprovider.ControlPlaneProviders() {
+		if !p.Enabled(s) {
+			continue
+		}
+
+		if err := cloudprovider.CleanupVMs(p, s); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func resetAllNodes(s *state.State) error {
+	if s.DestroyControlPlaneMachines {
+		s.Logger.Infoln("Resetting static worker nodes...")
+
+		return s.RunTaskOnStaticWorkers(resetNode, state.RunSequentially)
+	}
+
 	s.Logger.Infoln("Resettings all the nodes...")
 
 	return s.RunTaskOnAllNodes(resetNode, state.RunSequentially)
@@ -183,6 +210,10 @@ func removeBinariesAllNodes(s *state.State) error {
 	}
 
 	s.Logger.Infoln("Removing binaries from nodes...")
+
+	if s.DestroyControlPlaneMachines {
+		return s.RunTaskOnStaticWorkers(removeBinaries, state.RunParallel)
+	}
 
 	return s.RunTaskOnAllNodes(removeBinaries, state.RunParallel)
 }

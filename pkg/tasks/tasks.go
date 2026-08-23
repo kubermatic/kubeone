@@ -439,6 +439,7 @@ func WithReset(t Tasks) Tasks {
 			},
 		},
 		{Fn: destroyWorkers, Operation: "destroying workers"},
+		{Fn: destroyControlPlaneMachines, Operation: "destroying control plane machines"},
 		{Fn: resetAllNodes, Operation: "resetting all nodes"},
 		{Fn: removeBinariesAllNodes, Operation: "removing kubernetes binaries from nodes"},
 	}...)

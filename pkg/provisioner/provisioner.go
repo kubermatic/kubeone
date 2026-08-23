@@ -36,6 +36,8 @@ import (
 	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
 	"k8c.io/machine-controller/sdk/providerconfig"
 	"k8c.io/machine-controller/sdk/providerconfig/configvar"
+
+	"k8s.io/apimachinery/pkg/util/wait"
 )
 
 const (
@@ -117,6 +119,44 @@ func FindMachines(ctx context.Context, machines []clusterv1alpha1.Machine, logge
 	}
 
 	return getMachineProvisionerOutput(instances), nil
+}
+
+// CleanupMachines deletes the instances associated with the given machines at
+// the cloud provider and waits for them to be fully cleaned up.
+func CleanupMachines(ctx context.Context, machines []clusterv1alpha1.Machine, logger logrus.FieldLogger) error {
+	providerData := &cloudprovidertypes.ProviderData{
+		Ctx: ctx,
+	}
+
+	rawLog := machinecontrollerlog.New(false, machinecontrollerlog.FormatConsole)
+	log := rawLog.Sugar()
+
+	for _, machine := range machines {
+		prov, err := getProvider(ctx, machine)
+		if err != nil {
+			return err
+		}
+
+		logger.Debugf("cleaning up control-plane %q VM", machine.Name)
+
+		err = wait.PollUntilContextTimeout(ctx, 5*time.Second, 10*time.Minute, false, func(ctx context.Context) (bool, error) {
+			done, cleanupErr := prov.Cleanup(ctx, log, &machine, providerData)
+			if cleanupErr != nil {
+				if errors.Is(cleanupErr, cloudprovidererrors.ErrInstanceNotFound) {
+					return true, nil
+				}
+
+				return false, fail.MachineController(cleanupErr, "cleaning up machine at cloudprovider")
+			}
+
+			return done, nil
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func FindOrCreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine, logger logrus.FieldLogger) ([]Machine, error) {
