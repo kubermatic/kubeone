@@ -69,14 +69,12 @@ echodate "Building tests"
   go test -run thisTestDoesNotExist -tags e2e ./pkg/... ./test/...
 )
 
-TEST_NAME="Creating gocache archive"
 echodate "Creating gocache archive"
 
 ARCHIVE_FILE="/tmp/${GIT_HEAD_HASH}.tar"
 # No compression because that needs quite a bit of CPU
 retry 2 tar -C "$GOCACHE" -cf "$ARCHIVE_FILE" .
 
-TEST_NAME="Uploading gocache archive"
 echodate "Uploading gocache archive"
 
 # Passing the Headers as space-separated literals doesn't seem to work
