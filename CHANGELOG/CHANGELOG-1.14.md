@@ -1,3 +1,18 @@
+# [v1.14.3](https://github.com/kubermatic/kubeone/releases/tag/v1.14.3) - 2026-08-24
+
+## Changelog since v1.14.2
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Fix the Cilium LRP by [@kron4eg](https://github.com/kron4eg) in [#4189](https://github.com/kubermatic/kubeone/pull/4189)
+- Fixed a bug where upgrading a vSphere cluster from an older KubeOne version left behind a stale `validation.csi.vsphere.vmware.com` ValidatingWebhookConfiguration, blocking StorageClass changes and all new dynamic volume provisioning/PVC deletion by [@steled](https://github.com/steled) in [#4195](https://github.com/kubermatic/kubeone/pull/4195)
+
+### Updates
+
+- Update Cilium version to v1.19.7 by [@archups](https://github.com/archups) in [#4209](https://github.com/kubermatic/kubeone/pull/4209)
+
 # [v1.14.2](https://github.com/kubermatic/kubeone/releases/tag/v1.14.2) - 2026-08-13
 
 ## Changelog since v1.14.1
