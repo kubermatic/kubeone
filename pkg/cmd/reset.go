@@ -32,12 +32,13 @@ import (
 
 type resetOpts struct {
 	globalOptions
-	AutoApprove                 bool `longflag:"auto-approve" shortflag:"y"`
-	DestroyWorkers              bool `longflag:"destroy-workers"`
-	DestroyControlPlaneMachines bool `longflag:"destroy-control-plane"`
-	RemoveVolumes               bool `longflag:"remove-volumes"`
-	RemoveLBServices            bool `longflag:"remove-lb-services"`
-	RemoveBinaries              bool `longflag:"remove-binaries"`
+	AutoApprove                     bool `longflag:"auto-approve" shortflag:"y"`
+	DestroyWorkers                  bool `longflag:"destroy-workers"`
+	DestroyControlPlaneMachines     bool `longflag:"destroy-control-plane"`
+	DestroyControlPlaneLoadBalancer bool `longflag:"destroy-control-plane-load-balancer"`
+	RemoveVolumes                   bool `longflag:"remove-volumes"`
+	RemoveLBServices                bool `longflag:"remove-lb-services"`
+	RemoveBinaries                  bool `longflag:"remove-binaries"`
 }
 
 func (opts *resetOpts) BuildState() (*state.State, error) {
@@ -48,6 +49,7 @@ func (opts *resetOpts) BuildState() (*state.State, error) {
 
 	s.DestroyWorkers = opts.DestroyWorkers
 	s.DestroyControlPlaneMachines = opts.DestroyControlPlaneMachines
+	s.DestroyControlPlaneLoadBalancer = opts.DestroyControlPlaneLoadBalancer
 	s.RemoveVolumes = opts.RemoveVolumes
 	s.RemoveLBServices = opts.RemoveLBServices
 	s.RemoveBinaries = opts.RemoveBinaries
@@ -101,6 +103,13 @@ func resetCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		longFlagName(opts, "DestroyControlPlaneMachines"),
 		false,
 		"destroy the control plane machines instead of resetting them",
+	)
+
+	cmd.Flags().BoolVar(
+		&opts.DestroyControlPlaneLoadBalancer,
+		longFlagName(opts, "DestroyControlPlaneLoadBalancer"),
+		false,
+		"destroy the control plane load balancer on the cloud provider (requires --destroy-control-plane)",
 	)
 
 	cmd.Flags().BoolVar(
@@ -194,6 +203,10 @@ func runReset(opts *resetOpts) error {
 	if opts.DestroyControlPlaneMachines {
 		s.Logger.Warnln("destroy-control-plane command will PERMANENTLY destroy the control plane machines on the cloud provider.")
 		s.Logger.Warnln("KubeOne will NOT reset the control plane nodes; they will be destroyed instead.")
+
+		if opts.DestroyControlPlaneLoadBalancer {
+			s.Logger.Warnln("destroy-control-plane-load-balancer command will PERMANENTLY destroy the control plane load balancer on the cloud provider.")
+		}
 	} else {
 		for _, node := range s.Cluster.ControlPlane.Hosts {
 			fmt.Printf("\t- reset control plane node %q (%s)\n", node.Hostname, node.PrivateAddress)

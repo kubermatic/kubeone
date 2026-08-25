@@ -79,6 +79,8 @@ type LoadBalancerProvider interface {
 	EnsureLoadBalancer(*state.State) error
 
 	LookupLoadBalancer(*state.State) error
+
+	CleanupLoadBalancer(*state.State) error
 }
 
 func HostConfigsFromMachines(machines []provisioner.Machine, nodeSets []kubeoneapi.NodeSet) []kubeoneapi.HostConfig {

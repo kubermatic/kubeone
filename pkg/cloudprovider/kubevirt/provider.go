@@ -189,6 +189,33 @@ func (p *Provider) LookupLoadBalancer(st *state.State) error {
 	return nil
 }
 
+func (p *Provider) CleanupLoadBalancer(st *state.State) error {
+	infraClient, ns, err := kubevirtInfraClient(st)
+	if err != nil {
+		return err
+	}
+
+	lbName := st.Cluster.CloudProvider.Kubevirt.ControlPlane.LoadBalancer.Name
+	svc := &corev1.Service{}
+	if err := infraClient.Get(st.Context, types.NamespacedName{Name: lbName, Namespace: ns}, svc); err != nil {
+		if apierrors.IsNotFound(err) {
+			st.Logger.Debugf("no apiserver service %q found, skipping deletion", lbName)
+
+			return nil
+		}
+
+		return fail.KubeClient(err, "getting kubevirt apiserver service")
+	}
+
+	st.Logger.Debugf("deleting apiserver service %q", lbName)
+
+	if err := infraClient.Delete(st.Context, svc); err != nil {
+		return fail.KubeClient(err, "deleting kubevirt apiserver service")
+	}
+
+	return nil
+}
+
 func kubevirtLabels(clusterName string) map[string]string {
 	return map[string]string{
 		"kubeone_cluster_name": clusterName,

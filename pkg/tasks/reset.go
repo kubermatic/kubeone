@@ -179,6 +179,31 @@ func destroyControlPlaneMachines(s *state.State) error {
 	return nil
 }
 
+func destroyControlPlaneLoadBalancer(s *state.State) error {
+	if !s.DestroyControlPlaneLoadBalancer || !s.DestroyControlPlaneMachines {
+		return nil
+	}
+
+	s.Logger.Infoln("Destroying control plane load balancer...")
+
+	for _, p := range cloudprovider.ControlPlaneProviders() {
+		if !p.Enabled(s) {
+			continue
+		}
+
+		lb, ok := p.(cloudprovider.LoadBalancerProvider)
+		if !ok || !lb.HasLoadBalancer(s) {
+			continue
+		}
+
+		if err := lb.CleanupLoadBalancer(s); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func resetAllNodes(s *state.State) error {
 	if s.DestroyControlPlaneMachines {
 		s.Logger.Infoln("Resetting static worker nodes...")

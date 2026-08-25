@@ -91,34 +91,35 @@ func New(ctx context.Context, opts ...Option) (*State, error) {
 // State holds together currently test flags and parsed info, along with
 // utilities like logger
 type State struct {
-	Cluster                     *kubeoneapi.KubeOneCluster
-	LiveCluster                 *Cluster
-	Logger                      logrus.FieldLogger
-	Executor                    executor.Adapter
-	Configuration               *configupload.Configuration
-	Images                      *images.Resolver
-	Runner                      *runner.Runner
-	Context                     context.Context
-	WorkDir                     string
-	JoinCommand                 string
-	JoinToken                   string
-	RESTConfig                  *rest.Config
-	DynamicClient               dynclient.Client
-	Verbose                     bool
-	BackupFile                  string
-	DestroyWorkers              bool
-	DestroyControlPlaneMachines bool
-	RemoveVolumes               bool
-	RemoveLBServices            bool
-	RemoveBinaries              bool
-	ForceUpgrade                bool
-	ForceInstall                bool
-	PruneImages                 bool
-	UpgradeMachineDeployments   bool
-	CreateMachineDeployments    bool
-	CredentialsFilePath         string
-	ManifestFilePath            string
-	PauseImage                  string
+	Cluster                         *kubeoneapi.KubeOneCluster
+	LiveCluster                     *Cluster
+	Logger                          logrus.FieldLogger
+	Executor                        executor.Adapter
+	Configuration                   *configupload.Configuration
+	Images                          *images.Resolver
+	Runner                          *runner.Runner
+	Context                         context.Context
+	WorkDir                         string
+	JoinCommand                     string
+	JoinToken                       string
+	RESTConfig                      *rest.Config
+	DynamicClient                   dynclient.Client
+	Verbose                         bool
+	BackupFile                      string
+	DestroyWorkers                  bool
+	DestroyControlPlaneMachines     bool
+	DestroyControlPlaneLoadBalancer bool
+	RemoveVolumes                   bool
+	RemoveLBServices                bool
+	RemoveBinaries                  bool
+	ForceUpgrade                    bool
+	ForceInstall                    bool
+	PruneImages                     bool
+	UpgradeMachineDeployments       bool
+	CreateMachineDeployments        bool
+	CredentialsFilePath             string
+	ManifestFilePath                string
+	PauseImage                      string
 }
 
 func (s *State) KubeadmVerboseFlag() string {

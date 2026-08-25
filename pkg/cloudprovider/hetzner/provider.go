@@ -196,6 +196,37 @@ func (p *Provider) LookupLoadBalancer(s *state.State) error {
 	return nil
 }
 
+func (p *Provider) CleanupLoadBalancer(s *state.State) error {
+	providerCreds, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeUniversal)
+	if err != nil {
+		return err
+	}
+
+	hzclient := hcloud.NewClient(hcloud.WithToken(providerCreds[credentials.HetznerTokenKeyMC]))
+
+	clusterLBName := s.Cluster.CloudProvider.Hetzner.ControlPlane.LoadBalancer.Name
+	lbs, _, err := hzclient.LoadBalancer.List(s.Context, hcloud.LoadBalancerListOpts{
+		Name: clusterLBName,
+	})
+	if err != nil {
+		return fail.Cloud(err, "hetzner", "listing loadbalancers")
+	}
+
+	if len(lbs) == 0 {
+		s.Logger.Debugf("no loadbalancer %q found, skipping deletion", clusterLBName)
+
+		return nil
+	}
+
+	s.Logger.Debugf("deleting loadbalancer %q with id: %d", clusterLBName, lbs[0].ID)
+
+	if _, err := hzclient.LoadBalancer.Delete(s.Context, lbs[0]); err != nil {
+		return fail.Cloud(err, "hetzner", "deleting loadbalancer")
+	}
+
+	return nil
+}
+
 func createHetznerLoadBalancer(
 	ctx context.Context,
 	client hcloud.ILoadBalancerClient,

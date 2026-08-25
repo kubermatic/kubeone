@@ -156,6 +156,49 @@ func (p *Provider) LookupLoadBalancer(s *state.State) error {
 	return nil
 }
 
+func (p *Provider) CleanupLoadBalancer(s *state.State) error {
+	lbClient, err := openstackLBClient(s)
+	if err != nil {
+		return err
+	}
+
+	lbName := s.Cluster.CloudProvider.Openstack.ControlPlane.LoadBalancer.Name
+	if lbName == "" {
+		lbName = fmt.Sprintf("%s-kube-apiserver", s.Cluster.Name)
+	}
+
+	var lbID string
+	err = loadbalancers.List(lbClient, loadbalancers.ListOpts{Name: lbName}).EachPage(func(page pagination.Page) (bool, error) {
+		lbs, oserr := loadbalancers.ExtractLoadBalancers(page)
+		if oserr != nil {
+			return false, oserr
+		}
+		if len(lbs) > 0 {
+			lbID = lbs[0].ID
+			s.Logger.Debugf("found loadbalancer %q with id: %s", lbName, lbID)
+		}
+
+		return true, nil
+	})
+	if err != nil {
+		return fail.Cloud(err, "openstack", "listing load balancers")
+	}
+
+	if lbID == "" {
+		s.Logger.Debugf("no load balancer %q found, skipping deletion", lbName)
+
+		return nil
+	}
+
+	s.Logger.Debugf("deleting loadbalancer %q with id: %s", lbName, lbID)
+
+	if err := loadbalancers.Delete(lbClient, lbID, loadbalancers.DeleteOpts{}).ExtractErr(); err != nil {
+		return fail.Cloud(err, "openstack", "deleting load balancer")
+	}
+
+	return nil
+}
+
 func ensureOpenstackLBMembers(s *state.State) error {
 	osCP := s.Cluster.CloudProvider.Openstack.ControlPlane
 
