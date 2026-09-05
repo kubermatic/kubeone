@@ -53,10 +53,10 @@ data:
               {{ end }}
           },
           "policy": {
-              "type": "k8s"
+            "type": "k8s"
           },
           "kubernetes": {
-              "kubeconfig": "__KUBECONFIG_FILEPATH__"
+            "kubeconfig": "__KUBECONFIG_FILEPATH__"
           }
         },
         {
