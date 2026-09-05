@@ -248,10 +248,19 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 		providerFound = true
 	}
 	if providerSpec.GCE != nil {
+		gceFld := fldPath.Child("gce")
 		if providerFound {
-			allErrs = append(allErrs, field.Forbidden(fldPath.Child("gce"), "only one provider can be used at the same time"))
+			allErrs = append(allErrs, field.Forbidden(gceFld, "only one provider can be used at the same time"))
 		}
 		providerFound = true
+		allErrs = append(allErrs, validateGCESpec(providerSpec.GCE, gceFld)...)
+
+		// GCE control plane provisioning requires an explicit load balancer
+		// config since ProjectID/Region can't be sensibly defaulted.
+		if len(cluster.ControlPlane.NodeSets) > 0 && providerSpec.GCE.ControlPlane == nil {
+			allErrs = append(allErrs, field.Required(gceFld.Child("controlPlane"),
+				".cloudProvider.gce.controlPlane is required when using .controlPlane.nodeSets with GCE"))
+		}
 	}
 	if providerSpec.Hetzner != nil {
 		hetznerFld := fldPath.Child("hetzner")
@@ -355,6 +364,22 @@ func validateHetznerSpec(hetznerSpec *kubeoneapi.HetznerSpec, fldPath *field.Pat
 	if hetznerSpec.ControlPlane != nil {
 		if hetznerSpec.NetworkID == "" {
 			allErrs = append(allErrs, field.Required(fldPath.Child("networkID"), "networkID is required controlPlane is specified"))
+		}
+	}
+
+	return allErrs
+}
+
+func validateGCESpec(gceSpec *kubeoneapi.GCESpec, fldPath *field.Path) field.ErrorList {
+	var allErrs field.ErrorList
+
+	if gceSpec.ControlPlane != nil {
+		lbFld := fldPath.Child("controlPlane").Child("loadBalancer")
+		if gceSpec.ControlPlane.LoadBalancer.ProjectID == "" {
+			allErrs = append(allErrs, field.Required(lbFld.Child("projectID"), "loadBalancer projectID is required when controlPlane is specified"))
+		}
+		if gceSpec.ControlPlane.LoadBalancer.Region == "" {
+			allErrs = append(allErrs, field.Required(lbFld.Child("region"), "loadBalancer region is required when controlPlane is specified"))
 		}
 	}
 

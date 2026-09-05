@@ -27,6 +27,7 @@ import (
 	"k8c.io/kubeone/pkg/state"
 
 	// register cloud providers for control plane provisioning
+	_ "k8c.io/kubeone/pkg/cloudprovider/gce"
 	_ "k8c.io/kubeone/pkg/cloudprovider/hetzner"
 	_ "k8c.io/kubeone/pkg/cloudprovider/kubevirt"
 	_ "k8c.io/kubeone/pkg/cloudprovider/openstack"

@@ -555,7 +555,31 @@ type AzureSpec struct{}
 type DigitalOceanSpec struct{}
 
 // GCESpec defines the GCE cloud provider
-type GCESpec struct{}
+type GCESpec struct {
+	// ControlPlane configures control plane provisioning on GCE
+	ControlPlane *GCEControlPlane `json:"controlPlane,omitempty"`
+}
+
+// GCEControlPlane control plane config on GCE
+type GCEControlPlane struct {
+	// LoadBalancer config of a network load balancer to create for the kube-apiserver endpoint
+	LoadBalancer GCELoadBalancer `json:"loadBalancer"`
+}
+
+// GCELoadBalancer defines a GCE Target Pool + Forwarding Rule for the kube-apiserver endpoint
+type GCELoadBalancer struct {
+	// ProjectID of the GCE project to create the load balancer resources in
+	ProjectID string `json:"projectID"`
+
+	// Region to create the load balancer resources in
+	Region string `json:"region"`
+
+	// Network self-link or name to attach the firewall rule and forwarding rule to. Default: "default"
+	Network string `json:"network,omitempty"`
+
+	// Name of the target pool/forwarding rule/firewall rule to create. Default: "<CLUSTER_NAME>-kubeapi"
+	Name string `json:"name,omitempty"`
+}
 
 // HetznerSpec defines the Hetzner cloud provider
 type HetznerSpec struct {
