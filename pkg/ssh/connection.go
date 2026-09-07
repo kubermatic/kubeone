@@ -47,6 +47,7 @@ type Opts struct {
 	Username              string
 	Password              string
 	Hostname              string
+	PrivateAddress        string
 	Port                  int
 	PrivateKey            []byte
 	KeyFile               string
@@ -299,8 +300,12 @@ func NewConnection(connector *Connector, opts Opts) (executor.Interface, error) 
 		return nil, fail.SSH(fail.Connection(err, bastionEndpoint), "dialing")
 	}
 
+	dialAddr := opts.PrivateAddress
+	if dialAddr == "" {
+		dialAddr = opts.Hostname
+	}
 	// Dial a connection to the service host, from the bastion
-	endpointBehindBastion := net.JoinHostPort(opts.Hostname, strconv.Itoa(opts.Port))
+	endpointBehindBastion := net.JoinHostPort(dialAddr, strconv.Itoa(opts.Port))
 
 	conn, err := bastionClient.Dial("tcp", endpointBehindBastion)
 	if err != nil {

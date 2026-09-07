@@ -39,6 +39,7 @@ type resetOpts struct {
 	RemoveVolumes                   bool `longflag:"remove-volumes"`
 	RemoveLBServices                bool `longflag:"remove-lb-services"`
 	RemoveBinaries                  bool `longflag:"remove-binaries"`
+	Force                           bool `longflag:"force" shortflag:"f"`
 }
 
 func (opts *resetOpts) BuildState() (*state.State, error) {
@@ -133,6 +134,14 @@ func resetCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		"remove all load balancers services before resetting the cluster",
 	)
 
+	cmd.Flags().BoolVarP(
+		&opts.Force,
+		longFlagName(opts, "Force"),
+		shortFlagName(opts, "Force"),
+		false,
+		"force reset without confirmation",
+	)
+
 	return cmd
 }
 
@@ -167,20 +176,27 @@ func runReset(opts *resetOpts) error {
 				s.Logger.Warnln("If there are worker nodes in the cluster, you might have to delete them manually.")
 			}
 
-			return cErr
+			// yeah, at this point all those are not important, user wants to kill everything
+			if s.DestroyControlPlaneMachines && opts.Force {
+				s.DestroyWorkers = false
+				s.RemoveVolumes = false
+				s.RemoveLBServices = false
+			} else {
+				return cErr
+			}
 		}
 	}
 
-	if opts.RemoveLBServices {
-		s.Logger.Warnln("remove-lb-services command will PERMANENTLY delete the load balancers from the cluster.")
+	if s.RemoveLBServices {
+		s.Logger.Warnln("remove-lb-services flag will PERMANENTLY delete the load balancers from the cluster.")
 	}
 
-	if opts.RemoveVolumes {
-		s.Logger.Warnln("remove-volumes command will PERMANENTLY delete the unretained volumes from the cluster.")
+	if s.RemoveVolumes {
+		s.Logger.Warnln("remove-volumes flag will PERMANENTLY delete the unretained volumes from the cluster.")
 	}
 
-	if opts.DestroyWorkers {
-		s.Logger.Warnln("destroy-workers command will PERMANENTLY destroy the Kubernetes cluster running on the following nodes:")
+	if s.DestroyWorkers {
+		s.Logger.Warnln("destroy-workers flag will PERMANENTLY destroy the Kubernetes cluster running on the following nodes:")
 
 		// Gather information about machine-controller managed nodes
 		machines := clusterv1alpha1.MachineList{}
@@ -195,23 +211,24 @@ func runReset(opts *resetOpts) error {
 				fmt.Printf("\t- %s/%s\n", machine.Namespace, machine.Name)
 			}
 		}
-	} else {
+	} else if !s.DestroyWorkers {
 		s.Logger.Warnln("KubeOne will NOT remove machine-controller managed Machines.")
 		s.Logger.Warnln("If there are worker nodes in the cluster, you might have to delete them manually.")
 	}
 
-	if opts.DestroyControlPlaneMachines {
-		s.Logger.Warnln("destroy-control-plane command will PERMANENTLY destroy the control plane machines on the cloud provider.")
+	if s.DestroyControlPlaneMachines {
+		s.Logger.Warnln("destroy-control-plane flag will PERMANENTLY destroy the control plane machines on the cloud provider.")
 		s.Logger.Warnln("KubeOne will NOT reset the control plane nodes; they will be destroyed instead.")
 
-		if opts.DestroyControlPlaneLoadBalancer {
-			s.Logger.Warnln("destroy-control-plane-load-balancer command will PERMANENTLY destroy the control plane load balancer on the cloud provider.")
+		if s.DestroyControlPlaneLoadBalancer {
+			s.Logger.Warnln("destroy-control-plane-load-balancer flag will PERMANENTLY destroy the control plane load balancer on the cloud provider.")
 		}
 	} else {
 		for _, node := range s.Cluster.ControlPlane.Hosts {
 			fmt.Printf("\t- reset control plane node %q (%s)\n", node.Hostname, node.PrivateAddress)
 		}
 	}
+
 	for _, node := range s.Cluster.StaticWorkers.Hosts {
 		fmt.Printf("\t- reset static worker nodes %q (%s)\n", node.Hostname, node.PrivateAddress)
 	}

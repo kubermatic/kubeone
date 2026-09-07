@@ -103,6 +103,7 @@ func sshOpts(host kubeoneapi.HostConfig) Opts {
 		Username:              host.SSHUsername,
 		Port:                  host.SSHPort,
 		Hostname:              host.PublicAddress,
+		PrivateAddress:        host.PrivateAddress,
 		KeyFile:               resolveHomeDir(host.SSHPrivateKeyFile),
 		SSHCertFile:           resolveHomeDir(host.SSHCertFile),
 		HostPublicKey:         host.SSHHostPublicKey,

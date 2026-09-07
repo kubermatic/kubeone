@@ -22,11 +22,12 @@ import (
 	"time"
 
 	"github.com/angelofallars/htmx-go"
-	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
+
+	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 func httpHandleError(handler func(http.ResponseWriter, *http.Request) error) http.Handler {

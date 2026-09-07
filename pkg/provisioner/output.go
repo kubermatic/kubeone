@@ -70,10 +70,12 @@ func GetMachineInfo(instance cloud.Instance) Machine {
 					privateAddressIPv6 = address
 				}
 			}
-		case corev1.NodeHostName, corev1.NodeInternalDNS, corev1.NodeExternalDNS:
+		case corev1.NodeHostName, corev1.NodeExternalDNS:
 			if hostname == "" {
 				hostname = address
 			}
+		case corev1.NodeInternalDNS:
+			hostname = address
 		case "":
 			// we will try to guess the type
 			if ip == nil {

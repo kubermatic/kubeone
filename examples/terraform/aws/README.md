@@ -7,6 +7,25 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 
 [docs-infrastructure]: https://docs.kubermatic.com/kubeone/main/guides/using-terraform-configs/
 
+## Managed Control Plane
+
+Instead of provisioning control-plane instances with `aws_instance.control_plane`,
+you can let KubeOne provision and manage them directly via
+`controlPlane.nodeSets` in `kubeone.yaml`. See
+[docs/aws_control_plane.md](../../../docs/aws_control_plane.md) for details.
+
+When using managed control plane:
+
+- Set `cloudProvider.aws.region` and `cloudProvider.aws.controlPlane.loadBalancer`
+  in `kubeone.yaml` instead of relying on the `kubeone_api`/`kubeone_hosts`
+  Terraform outputs for the control plane.
+- The VPC, subnet, and security group resources created by this Terraform
+  config (`data.aws_vpc.selected`, `aws_subnet.public`, `aws_security_group.common`)
+  are still needed and can be referenced in each `nodeSets[].cloudProviderSpec`
+  (`vpcId`, `subnetId`, `securityGroupIDs`).
+- `aws_instance.control_plane` and `aws_elb.control_plane` become unnecessary
+  and can be removed from `main.tf`; KubeOne creates its own Network Load
+  Balancer instead.
 ## Requirements
 
 | Name | Version |

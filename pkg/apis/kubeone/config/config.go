@@ -317,6 +317,8 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 
 	if cluster.ControlPlane.NodeSets != nil {
 		switch {
+		case cluster.CloudProvider.AWS != nil:
+			setDefaultAWSControlPlane(cluster.Name, cluster.CloudProvider.AWS.ControlPlane)
 		case cluster.CloudProvider.Hetzner != nil:
 			setDefaultHetznerControlPlane(cluster.Name, cluster.CloudProvider.Hetzner.ControlPlane)
 		case cluster.CloudProvider.Openstack != nil:
@@ -336,6 +338,27 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 	}
 
 	return nil
+}
+
+func setDefaultAWSControlPlane(clusterName string, awsCP *kubeoneapi.AWSControlPlane) {
+	awsCP.LoadBalancer.Name = defaults(
+		awsCP.LoadBalancer.Name,
+		clusterName+"-kubeapi",
+	)
+	awsCP.LoadBalancer.Internal = defaults(
+		awsCP.LoadBalancer.Internal,
+		new(false),
+	)
+	if awsCP.LoadBalancer.Tags == nil {
+		awsCP.LoadBalancer.Tags = map[string]string{}
+	}
+	maps.Copy(
+		awsCP.LoadBalancer.Tags,
+		map[string]string{
+			"kubeone_cluster_name": clusterName,
+			"kubeone_role":         "api",
+		},
+	)
 }
 
 func setDefaultHetznerControlPlane(clusterName string, hzCP *kubeoneapi.HetznerControlPlane) {

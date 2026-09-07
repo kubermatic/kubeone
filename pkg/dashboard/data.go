@@ -20,14 +20,14 @@ import (
 	"slices"
 	"time"
 
-	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
-
 	"k8c.io/kubeone/pkg/clusterstatus"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
+
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	dynclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 type node struct {

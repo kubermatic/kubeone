@@ -554,7 +554,34 @@ type CloudProviderSpec struct {
 }
 
 // AWSSpec defines the AWS cloud provider
-type AWSSpec struct{}
+type AWSSpec struct {
+	// Region for the AWS resources (VPC, load balancer, EC2 instances). Required when controlPlane is set.
+	Region string `json:"region,omitempty"`
+
+	// ControlPlane configures control plane provisioning on AWS
+	ControlPlane *AWSControlPlane `json:"controlPlane,omitempty"`
+}
+
+// AWSControlPlane control plane config on AWS
+type AWSControlPlane struct {
+	// LoadBalancer config of a Network Load Balancer to create for the kube-apiserver endpoint
+	LoadBalancer AWSLoadBalancer `json:"loadBalancer"`
+}
+
+// AWSLoadBalancer defines a Network Load Balancer to create for the kube-apiserver endpoint
+type AWSLoadBalancer struct {
+	// Name of the load balancer to create. Default: "<CLUSTER_NAME>-kubeapi"
+	Name string `json:"name,omitempty"`
+
+	// Internal indicates whether the load balancer should be internal (no public IP). Default: false
+	Internal *bool `json:"internal,omitempty"`
+
+	// SecurityGroupIDs to attach to the load balancer
+	SecurityGroupIDs []string `json:"securityGroupIDs,omitempty"`
+
+	// Tags to apply to the load balancer and target group
+	Tags map[string]string `json:"tags,omitempty"`
+}
 
 // AzureSpec defines the Azure cloud provider
 type AzureSpec struct{}

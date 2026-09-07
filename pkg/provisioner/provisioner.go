@@ -36,8 +36,6 @@ import (
 	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
 	"k8c.io/machine-controller/sdk/providerconfig"
 	"k8c.io/machine-controller/sdk/providerconfig/configvar"
-
-	"k8s.io/apimachinery/pkg/util/wait"
 )
 
 const (
@@ -138,21 +136,9 @@ func CleanupMachines(ctx context.Context, machines []clusterv1alpha1.Machine, lo
 		}
 
 		logger.Debugf("cleaning up control-plane %q VM", machine.Name)
-
-		err = wait.PollUntilContextTimeout(ctx, 5*time.Second, 10*time.Minute, false, func(ctx context.Context) (bool, error) {
-			done, cleanupErr := prov.Cleanup(ctx, log, &machine, providerData)
-			if cleanupErr != nil {
-				if errors.Is(cleanupErr, cloudprovidererrors.ErrInstanceNotFound) {
-					return true, nil
-				}
-
-				return false, fail.MachineController(cleanupErr, "cleaning up machine at cloudprovider")
-			}
-
-			return done, nil
-		})
-		if err != nil {
-			return err
+		_, cleanupErr := prov.Cleanup(ctx, log, &machine, providerData)
+		if cleanupErr != nil && !errors.Is(cleanupErr, cloudprovidererrors.ErrInstanceNotFound) {
+			return fail.MachineController(cleanupErr, "cleaning up machine at cloudprovider")
 		}
 	}
 
