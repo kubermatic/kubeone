@@ -192,6 +192,28 @@ func (p *Provider) LookupLoadBalancer(s *state.State) error {
 	return nil
 }
 
+func (p *Provider) CleanupLoadBalancer(s *state.State) error {
+	cfg, err := resolveAzureLB(s)
+	if err != nil {
+		return err
+	}
+
+	lbClient, ipClient, _, err := azureNetworkClients(s)
+	if err != nil {
+		return err
+	}
+
+	if err := deleteAzureLoadBalancer(s.Context, lbClient, cfg, s.Logger); err != nil {
+		return err
+	}
+
+	if err := deleteAzurePublicIP(s.Context, ipClient, cfg, s.Logger); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (p *Provider) registerNICToBackendPool(s *state.State, machineName string) error {
 	cfg, err := resolveAzureLB(s)
 	if err != nil {
@@ -438,6 +460,70 @@ func ensureAzureLoadBalancer(ctx context.Context, lbClient *network.LoadBalancer
 	}
 	if _, err := future.Result(*lbClient); err != nil {
 		return fail.Cloud(err, "azure", "creating load balancer %q", cfg.Name)
+	}
+
+	return nil
+}
+
+func deleteAzureLoadBalancer(
+	ctx context.Context,
+	lbClient *network.LoadBalancersClient,
+	cfg *azureLBConfig,
+	logger logrus.FieldLogger,
+) error {
+	if _, err := lbClient.Get(ctx, cfg.ResourceGroup, cfg.Name, ""); err != nil {
+		if azureErrorNotFound(err) {
+			logger.Debugf("no load balancer %q found, skipping deletion", cfg.Name)
+
+			return nil
+		}
+
+		return fail.Cloud(err, "azure", "getting load balancer %q", cfg.Name)
+	}
+
+	logger.Debugf("deleting load balancer %q", cfg.Name)
+
+	future, err := lbClient.Delete(ctx, cfg.ResourceGroup, cfg.Name)
+	if err != nil {
+		return fail.Cloud(err, "azure", "deleting load balancer %q", cfg.Name)
+	}
+	if err := future.WaitForCompletionRef(ctx, lbClient.Client); err != nil {
+		return fail.Cloud(err, "azure", "waiting for load balancer %q deletion", cfg.Name)
+	}
+	if _, err := future.Result(*lbClient); err != nil {
+		return fail.Cloud(err, "azure", "deleting load balancer %q", cfg.Name)
+	}
+
+	return nil
+}
+
+func deleteAzurePublicIP(
+	ctx context.Context,
+	ipClient *network.PublicIPAddressesClient,
+	cfg *azureLBConfig,
+	logger logrus.FieldLogger,
+) error {
+	if _, err := ipClient.Get(ctx, cfg.ResourceGroup, cfg.PublicIPName, ""); err != nil {
+		if azureErrorNotFound(err) {
+			logger.Debugf("no public IP %q found, skipping deletion", cfg.PublicIPName)
+
+			return nil
+		}
+
+		return fail.Cloud(err, "azure", "getting public IP %q", cfg.PublicIPName)
+	}
+
+	logger.Debugf("deleting public IP %q", cfg.PublicIPName)
+
+	future, err := ipClient.Delete(ctx, cfg.ResourceGroup, cfg.PublicIPName)
+	if err != nil {
+		return fail.Cloud(err, "azure", "deleting public IP %q", cfg.PublicIPName)
+	}
+	if err := future.WaitForCompletionRef(ctx, ipClient.Client); err != nil {
+		return fail.Cloud(err, "azure", "waiting for public IP %q deletion", cfg.PublicIPName)
+	}
+	if _, err := future.Result(*ipClient); err != nil {
+		return fail.Cloud(err, "azure", "deleting public IP %q", cfg.PublicIPName)
 	}
 
 	return nil
