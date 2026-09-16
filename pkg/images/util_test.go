@@ -21,6 +21,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/sirupsen/logrus"
 )
 
@@ -51,6 +52,24 @@ func TestRetagImage(t *testing.T) {
 			want:     []string{"myregistry/api-server:tag"},
 		},
 		{
+			// Identifier() returns the digest for a digest-pinned reference. Joined with
+			// ":" it produces "<registry>/<repo>:sha256:..." which is not a parseable
+			// reference, so the copy fails before any bytes move.
+			name:     "digest-pinned image keeps the @ separator",
+			source:   "quay.io/operator-framework/olm@sha256:e74b2ac57963c7f3ba19122a8c31c9f2a0deb3c0c5cac9e5323ccffd0ca198ed",
+			registry: "myregistry",
+			want:     []string{"myregistry/operator-framework/olm@sha256:e74b2ac57963c7f3ba19122a8c31c9f2a0deb3c0c5cac9e5323ccffd0ca198ed"},
+		},
+		{
+			name:     "coredns pinned by digest",
+			source:   "registry.k8s.io/coredns/coredns@sha256:e74b2ac57963c7f3ba19122a8c31c9f2a0deb3c0c5cac9e5323ccffd0ca198ed",
+			registry: "myregistry",
+			want: []string{
+				"myregistry/coredns/coredns@sha256:e74b2ac57963c7f3ba19122a8c31c9f2a0deb3c0c5cac9e5323ccffd0ca198ed",
+				"myregistry/coredns@sha256:e74b2ac57963c7f3ba19122a8c31c9f2a0deb3c0c5cac9e5323ccffd0ca198ed",
+			},
+		},
+		{
 			name:     "invalid image",
 			source:   "invalid_image%%%_ref",
 			registry: "myregistry",
@@ -73,6 +92,14 @@ func TestRetagImage(t *testing.T) {
 
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("retagImage() got = %v, want %v", got, tt.want)
+			}
+
+			// A destination that does not parse fails the copy before it starts, which
+			// is how digest-pinned sources used to break.
+			for _, dest := range got {
+				if _, err := name.ParseReference(dest); err != nil {
+					t.Errorf("retagImage() produced unparseable reference %q: %v", dest, err)
+				}
 			}
 		})
 	}
