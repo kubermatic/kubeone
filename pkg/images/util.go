@@ -201,6 +201,17 @@ func retagImage(log logrus.FieldLogger, source, registry string) ([]string, erro
 	repo := ref.Context().RepositoryStr()
 	tag := ref.Identifier()
 
+	// Identifier() returns the digest ("sha256:...") for a digest-pinned reference, which
+	// has to be rejoined with "@" -- a tag cannot contain a colon, so building
+	// "<registry>/<repo>:sha256:..." yields a reference that does not parse and the copy
+	// fails before it starts. Pushing a manifest by digest is standard OCI and preserves
+	// the digest, which is also the only way a digest-pinned consumer can be satisfied:
+	// a re-tagged copy would not match what it asks for.
+	separator := ":"
+	if _, isDigest := ref.(name.Digest); isDigest {
+		separator = "@"
+	}
+
 	// Special Case: CoreDNS Requires Dual Retagging
 	//
 	// Background:
@@ -245,8 +256,8 @@ func retagImage(log logrus.FieldLogger, source, registry string) ([]string, erro
 	//   - legacy consumers still expecting nested paths
 	if repo == "coredns/coredns" {
 		targets := []string{
-			fmt.Sprintf("%s/coredns/coredns:%s", registry, tag),
-			fmt.Sprintf("%s/coredns:%s", registry, tag),
+			fmt.Sprintf("%s/coredns/coredns%s%s", registry, separator, tag),
+			fmt.Sprintf("%s/coredns%s%s", registry, separator, tag),
 		}
 
 		log.WithField("targets", targets).Debug("CoreDNS dual-image retagging")
@@ -255,7 +266,7 @@ func retagImage(log logrus.FieldLogger, source, registry string) ([]string, erro
 	}
 
 	// Default case
-	dest := fmt.Sprintf("%s/%s:%s", registry, repo, tag)
+	dest := fmt.Sprintf("%s/%s%s%s", registry, repo, separator, tag)
 
 	return []string{dest}, nil
 }
