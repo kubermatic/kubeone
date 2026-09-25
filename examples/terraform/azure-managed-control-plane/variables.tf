@@ -31,3 +31,93 @@ variable "location" {
   default     = "westeurope"
   type        = string
 }
+
+variable "os" {
+  description = "Operating System to use for finding the image reference used in controlPlane.nodeSets"
+
+  # valid choices are:
+  # * ubuntu
+  # * centos
+  # * rockylinux
+  # * rhel
+  # * flatcar
+  default = "ubuntu"
+  type    = string
+}
+
+variable "image_references" {
+  description = "map with image references used for control plane"
+  type = map(object({
+    image = object({
+      publisher = string
+      offer     = string
+      sku       = string
+      version   = string
+    })
+    plan = list(object({
+      name      = string
+      publisher = string
+      product   = string
+    }))
+    ssh_username = string
+    worker_os    = string
+  }))
+  default = {
+    ubuntu = {
+      # See https://documentation.ubuntu.com/azure/en/latest/azure-how-to/instances/find-ubuntu-images/
+      image = {
+        publisher = "Canonical"
+        offer     = "ubuntu-24_04-lts"
+        sku       = "server-gen1"
+        version   = "latest"
+      }
+      plan         = []
+      ssh_username = "ubuntu"
+      worker_os    = "ubuntu"
+    }
+
+    flatcar = {
+      image = {
+        publisher = "kinvolk"
+        offer     = "flatcar-container-linux-corevm-amd64"
+        sku       = "stable"
+        version   = "4593.2.2"
+      }
+      plan         = []
+      ssh_username = "core"
+      worker_os    = "flatcar"
+    }
+
+    rhel = {
+      image = {
+        publisher = "RedHat"
+        offer     = "rhel-byos"
+        sku       = "rhel-lvm95"
+        version   = "9.5.2024112215"
+      }
+      plan = [{
+        name      = "rhel-lvm95"
+        publisher = "redhat"
+        product   = "rhel-byos"
+      }]
+      ssh_username = "rhel-user"
+      worker_os    = "rhel"
+    }
+
+    rockylinux = {
+      image = {
+        publisher = "resf"
+        offer     = "rockylinux-x86_64"
+        sku       = "9-base"
+        version   = "9.6.20250531"
+      }
+      plan = [{
+        name      = "9-base"
+        publisher = "resf"
+        product   = "rockylinux-x86_64"
+      }]
+      ssh_username = "rocky"
+      worker_os    = "rockylinux"
+    }
+  }
+}

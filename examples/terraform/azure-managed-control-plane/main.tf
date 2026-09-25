@@ -15,10 +15,14 @@ limitations under the License.
 */
 
 provider "azurerm" {
-  features {}
-}
+  # Starting with azurerm 5.0 resource providers are no longer registered
+  # automatically, so register the ones this configuration needs.
+  resource_providers_to_register = [
+    "Microsoft.Compute",
+    "Microsoft.Network",
+  ]
 
-provider "time" {
+  features {}
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -46,9 +50,9 @@ resource "azurerm_availability_set" "avset" {
 }
 
 resource "azurerm_route_table" "rt" {
-  name                          = "${var.cluster_name}-rt"
-  location                      = azurerm_resource_group.rg.location
-  resource_group_name           = azurerm_resource_group.rg.name
+  name                = "${var.cluster_name}-rt"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
 
   tags = {
     environment = "kubeone"
