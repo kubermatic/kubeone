@@ -25,7 +25,7 @@ metadata:
 spec:
   concurrencyPolicy: Forbid
   failedJobsHistoryLimit: 1
-  schedule: {{ default "@every 30m" .Params.schedule }}
+  schedule: '{{ default "@every 30m" .Params.schedule }}'
   successfulJobsHistoryLimit: {{ default 1 .Params.successfulJobsHistoryLimit }}
   suspend: false
   jobTemplate:
