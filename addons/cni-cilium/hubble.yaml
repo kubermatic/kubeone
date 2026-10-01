@@ -516,6 +516,7 @@ spec:
                 - --ca-secret-namespace=kube-system
                 - --ca-secret-name=cilium-ca
                 - --ca-common-name=Cilium CA
+                - --ca-enforce-validity-throughout-leaves-duration=true
               command:
                 - /usr/bin/cilium-certgen
               env:
@@ -583,6 +584,7 @@ spec:
             - --ca-secret-namespace=kube-system
             - --ca-secret-name=cilium-ca
             - --ca-common-name=Cilium CA
+            - --ca-enforce-validity-throughout-leaves-duration=true
           command:
             - /usr/bin/cilium-certgen
           env:
