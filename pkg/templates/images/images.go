@@ -434,7 +434,7 @@ func optionalResources() map[Resource]map[string]string {
 
 		// Unattended upgrades
 		UUApline: {"*": "docker.io/library/alpine:3.23"},
-		UUFluo:   {"*": "ghcr.io/flatcar/flatcar-linux-update-operator:v0.10.0-rc1"},
+		UUFluo:   {"*": "ghcr.io/flatcar/flatcar-linux-update-operator:v0.10.0"},
 	}
 }
 
