@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: reboot-coordinator
 
 resources:
-  - https://github.com/flatcar/flatcar-linux-update-operator/examples/deploy?ref=v0.10.0-rc1
+  - https://github.com/flatcar/flatcar-linux-update-operator/examples/deploy?ref=v0.10.0
 
 patches:
   - target:
