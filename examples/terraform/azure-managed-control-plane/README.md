@@ -33,7 +33,7 @@ When using the managed control plane:
   control-plane machines.
 
 ```yaml
-apiVersion: kubeone.k8c.io/v1beta3
+apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
 name: my-cluster
 
