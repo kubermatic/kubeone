@@ -218,3 +218,25 @@ func Test_containerdRegistryCredentials(t *testing.T) {
 		})
 	}
 }
+
+func Test_csiWebhookCerts(t *testing.T) {
+	certs := map[string]string{
+		"MachineControllerWebhookCert": "mc-cert",
+	}
+	data := &templateData{
+		DeployCSIAddon: false,
+		Certificates:   certs,
+	}
+
+	// A false flag must return before state or CA inputs are dereferenced.
+	if err := csiWebhookCerts(nil, data, nil, nil); err != nil {
+		t.Fatalf("csiWebhookCerts() error = %v", err)
+	}
+
+	expected := map[string]string{
+		"MachineControllerWebhookCert": "mc-cert",
+	}
+	if !reflect.DeepEqual(data.Certificates, expected) {
+		t.Errorf("csiWebhookCerts() certificates =\n  %#v\nwant:\n  %#v", data.Certificates, expected)
+	}
+}
