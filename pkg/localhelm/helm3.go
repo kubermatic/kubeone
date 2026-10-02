@@ -143,6 +143,14 @@ func Deploy(st *state.State) error {
 			return fail.Runtime(errMerge, "merging helm values")
 		}
 
+		// Auth is per release, so the registry client is rebuilt for each one rather
+		// than shared across releases that may target different registries.
+		registryClient, errRegistry := newRegistryClient(helmSettings.Debug, release.Auth)
+		if errRegistry != nil {
+			return errRegistry
+		}
+		helmCfg.RegistryClient = registryClient
+
 		restClientGetter := newRestClientGetter(tmpKubeConf.Name(), release.Namespace, st)
 		if err = helmCfg.Init(restClientGetter, release.Namespace, helmStorageDriver); err != nil {
 			return fail.Runtime(err, "initializing helm action configuration")
@@ -583,19 +591,45 @@ func dependencyUpdate(chartPath string, helmSettings *helmcli.EnvSettings, provi
 }
 
 func newActionConfiguration(debug bool) (*helmaction.Configuration, error) {
+	registryClient, err := newRegistryClient(debug, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return &helmaction.Configuration{
+		RegistryClient: registryClient,
+	}, nil
+}
+
+// newRegistryClient builds the client Helm uses to resolve oci:// chart URLs, carrying
+// the release's credentials when it has any.
+//
+// installRelease and upgradeRelease also copy HelmRelease.Auth onto
+// ChartPathOptions.Username/Password, but Helm only consults those for HTTP chart
+// repositories. LocateChart branches on registry.IsOCI() and hands an oci:// reference
+// to the registry client instead, and the OCI getter reads only that client -- it never
+// looks at the username and password. So without them here, a private OCI registry
+// answers the Basic challenge, the credential store comes back empty, and the pull fails
+// with "basic credential not found" even though auth was configured on the release.
+func newRegistryClient(debug bool, auth *kubeoneapi.HelmAuth) (*registry.Client, error) {
 	registryWriter := io.Discard
 	if debug {
 		registryWriter = os.Stdout
 	}
-	registryClient, err := registry.NewClient(
+
+	opts := []registry.ClientOption{
 		registry.ClientOptDebug(debug),
 		registry.ClientOptEnableCache(true),
 		registry.ClientOptWriter(registryWriter),
-	)
+	}
 
-	return &helmaction.Configuration{
-		RegistryClient: registryClient,
-	}, fail.Runtime(err, "initializing new helm registry client")
+	if auth != nil && (auth.Username != "" || auth.Password != "") {
+		opts = append(opts, registry.ClientOptBasicAuth(auth.Username, auth.Password))
+	}
+
+	registryClient, err := registry.NewClient(opts...)
+
+	return registryClient, fail.Runtime(err, "initializing new helm registry client")
 }
 
 func makeKey(rlsname string, version int) string {
