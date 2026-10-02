@@ -261,6 +261,11 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 }
 
 func csiWebhookCerts(s *state.State, data *templateData, kubeCAPrivateKey crypto.Signer, kubeCACert *x509.Certificate) error {
+	// Providers that select no CSI addon, including none, do not deploy the snapshot webhook.
+	if !data.DeployCSIAddon {
+		return nil
+	}
+
 	return webhookCerts(
 		data.Certificates,
 		webhookCertsCSI,
