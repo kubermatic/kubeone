@@ -23,6 +23,7 @@ import (
 	"maps"
 	"slices"
 	"sort"
+	"strings"
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/distribution/reference"
@@ -446,6 +447,144 @@ func allResources() map[Resource]map[string]string {
 	return ret
 }
 
+// providerToResources maps a cloud provider name (as returned by
+// CloudProviderSpec.Name()) to the set of optional Resource constants that are
+// deployed for that provider.  Shared infrastructure images such as the CSI
+// snapshot controller are included in every provider that relies on them.
+func providerToResources() map[string][]Resource {
+	return map[string][]Resource{
+		"aws": {
+			AwsCCM,
+			CSISnapshotController,
+			CSISnapshotWebhook,
+			AwsEbsCSI,
+			AwsEbsCSIAttacher,
+			AwsEbsCSILivenessProbe,
+			AwsEbsCSINodeDriverRegistrar,
+			AwsEbsCSIProvisioner,
+			AwsEbsCSIResizer,
+			AwsEbsCSISnapshotter,
+		},
+		"azure": {
+			AzureCCM,
+			AzureCNM,
+			CSISnapshotController,
+			CSISnapshotWebhook,
+			AzureFileCSI,
+			AzureFileCSIAttacher,
+			AzureFileCSILivenessProbe,
+			AzureFileCSINodeDriverRegistar,
+			AzureFileCSIProvisioner,
+			AzureFileCSIResizer,
+			AzureFileCSISnapshotter,
+			AzureDiskCSI,
+			AzureDiskCSIAttacher,
+			AzureDiskCSILivenessProbe,
+			AzureDiskCSINodeDriverRegistar,
+			AzureDiskCSIProvisioner,
+			AzureDiskCSIResizer,
+			AzureDiskCSISnapshotter,
+		},
+		"digitalocean": {
+			DigitaloceanCCM,
+			CSISnapshotController,
+			CSISnapshotWebhook,
+			DigitalOceanCSI,
+			DigitalOceanCSIAlpine,
+			DigitalOceanCSIAttacher,
+			DigitalOceanCSINodeDriverRegistar,
+			DigitalOceanCSIProvisioner,
+			DigitalOceanCSIResizer,
+			DigitalOceanCSISnapshotter,
+		},
+		"gce": {
+			GCPCCM,
+			CSISnapshotController,
+			CSISnapshotWebhook,
+			GCPComputeCSIDriver,
+			GCPComputeCSIProvisioner,
+			GCPComputeCSIAttacher,
+			GCPComputeCSIResizer,
+			GCPComputeCSISnapshotter,
+			GCPComputeCSINodeDriverRegistrar,
+		},
+		"hetzner": {
+			HetznerCCM,
+			HetznerCSI,
+			HetznerCSIAttacher,
+			HetznerCSIResizer,
+			HetznerCSIProvisioner,
+			HetznerCSILivenessProbe,
+			HetznerCSINodeDriverRegistar,
+		},
+		"kubevirt": {
+			KubeVirtCCM,
+			KubeVirtCSI,
+			KubeVirtCSINodeDriverRegistrar,
+			KubeVirtCSILivenessProbe,
+			KubeVirtCSIProvisioner,
+			KubeVirtCSIAttacher,
+		},
+		"nutanix": {
+			NutanixCCM,
+			NutanixCSI,
+			NutanixCSILivenessProbe,
+			NutanixCSIExternalHealthMonitor,
+			NutanixCSIAttacher,
+			NutanixCSIPrecheck,
+			NutanixCSIProvisioner,
+			NutanixCSIRegistrar,
+			NutanixCSIResizer,
+			NutanixCSISnapshotter,
+		},
+		"openstack": {
+			OpenstackCCM,
+			CSISnapshotController,
+			CSISnapshotWebhook,
+			OpenstackCSI,
+			OpenstackCSINodeDriverRegistar,
+			OpenstackCSILivenessProbe,
+			OpenstackCSIAttacher,
+			OpenstackCSIProvisioner,
+			OpenstackCSIResizer,
+			OpenstackCSISnapshotter,
+		},
+		"equinixmetal": {
+			EquinixMetalCCM,
+		},
+		"vmwareCloudDirector": {
+			VMwareCloudDirectorCSI,
+			VMwareCloudDirectorCSIAttacher,
+			VMwareCloudDirectorCSIProvisioner,
+			VMwareCloudDirectorCSIResizer,
+			VMwareCloudDirectorCSINodeDriverRegistrar,
+		},
+		"vsphere": {
+			VsphereCCM,
+			CSISnapshotController,
+			CSISnapshotWebhook,
+			VsphereCSIDriver,
+			VsphereCSISyncer,
+			VsphereCSIAttacher,
+			VsphereCSILivenessProbe,
+			VsphereCSINodeDriverRegistar,
+			VsphereCSIProvisioner,
+			VsphereCSIResizer,
+			VsphereCSISnapshotter,
+		},
+		"none": {},
+	}
+}
+
+// SupportedProviders returns the sorted list of cloud provider names that can
+// be used with --provider.
+func SupportedProviders() []string {
+	providers := slices.Collect(maps.Keys(providerToResources()))
+	sort.Strings(providers)
+
+	return providers
+}
+
 type Opt func(*Resolver)
 
 func WithOverwriteRegistryGetter(getter func() string) Opt {
@@ -530,6 +669,36 @@ func (r *Resolver) ListAll() []string {
 	sort.Strings(list)
 
 	return list
+}
+
+// ListForProvider returns the sorted list of images required by the given cloud
+// provider.  The provider name must match one of the values returned by
+// SupportedProviders() (i.e. the string returned by CloudProviderSpec.Name()).
+// Shared infra images (e.g. CSISnapshotController) are included for every
+// provider that uses them.
+func (r *Resolver) ListForProvider(provider string) ([]string, error) {
+	resources, ok := providerToResources()[provider]
+	if !ok {
+		return nil, fmt.Errorf("unknown provider %q, must be one of: %s",
+			provider, strings.Join(SupportedProviders(), ", "))
+	}
+
+	// deduplicate with a map (multiple resources can resolve to the same image)
+	listMap := make(map[string]bool)
+	for _, res := range resources {
+		img := r.Get(res)
+		if img != "" {
+			listMap[img] = true
+		}
+	}
+
+	list := slices.Collect(maps.Keys(listMap))
+	if list == nil {
+		list = []string{}
+	}
+	sort.Strings(list)
+
+	return list, nil
 }
 
 func (r *Resolver) Tag(res Resource) string {
