@@ -169,6 +169,7 @@ type AzureSpec struct {
 	ImageID               string               `json:"imageID"`
 	OSDiskSize            int                  `json:"osDiskSize"`
 	OSDiskSKU             *string              `json:"osDiskSKU,omitempty"`
+	DiskControllerType    *string              `json:"diskControllerType,omitempty"`
 	DataDiskSize          int                  `json:"dataDiskSize"`
 	DataDiskSKU           *string              `json:"dataDiskSKU,omitempty"`
 	AssignPublicIP        bool                 `json:"assignPublicIP"`
