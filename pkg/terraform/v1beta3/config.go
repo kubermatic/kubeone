@@ -18,7 +18,6 @@ package v1beta3
 
 import (
 	"encoding/json"
-	"fmt"
 	"sort"
 	"strings"
 
@@ -26,7 +25,6 @@ import (
 
 	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/templates/machinecontroller"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -189,11 +187,6 @@ func (hs *hostsSpec) toHostConfigs(opts ...hostConfigsOpts) []kubeonev1beta3.Hos
 	return hosts
 }
 
-type cloudProviderFlags struct {
-	key   string
-	value any
-}
-
 // NewConfigFromJSON creates a new config object from json
 func NewConfigFromJSON(buf []byte) (*Config, error) {
 	wholeTFOutput := struct {
@@ -315,36 +308,14 @@ func (output *Config) Apply(cluster *kubeonev1beta3.KubeOneCluster) error {
 			continue
 		}
 
-		var err error
-
 		// If we found a workerset defined in the cluster object,
 		// merge values from the object and the terraform output
-		switch {
-		case cluster.CloudProvider.AWS != nil:
-			err = updateAWSWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
-		case cluster.CloudProvider.Azure != nil:
-			err = updateAzureWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
-		case cluster.CloudProvider.DigitalOcean != nil:
-			err = updateDigitalOceanWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
-		case cluster.CloudProvider.GCE != nil:
-			err = updateGCEWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
-		case cluster.CloudProvider.Hetzner != nil:
-			err = updateHetznerWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
-		case cluster.CloudProvider.Nutanix != nil:
-			err = updateNutanixWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
-		case cluster.CloudProvider.Openstack != nil:
-			err = updateOpenStackWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
-		case cluster.CloudProvider.EquinixMetal != nil:
-			err = updateEquinixMetalWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
-		case cluster.CloudProvider.VMwareCloudDirector != nil:
-			err = updateVMwareCloudDirectorWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
-		case cluster.CloudProvider.Vsphere != nil:
-			err = updateVSphereWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec)
-		default:
-			err = fail.Runtime(fmt.Errorf("unknown"), "checking provider")
+		upstreamSpec, err := upstreamCloudProviderSpec(cluster.CloudProvider)
+		if err != nil {
+			return err
 		}
 
-		if err != nil {
+		if err = updateWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec, upstreamSpec); err != nil {
 			return err
 		}
 	}
@@ -389,73 +360,6 @@ func newHostConfig(publicIP, privateIP string, ipv6addr []string, idx int, spec 
 	parseKubeletResourceParams(spec.Kubelet, &hostConfig.Kubelet)
 
 	return hostConfig
-}
-
-func setWorkersetFlag(w *kubeonev1beta3.DynamicWorkerConfig, name string, value any) error {
-	// ignore empty values (i.e. not set in terraform output)
-	switch s := value.(type) {
-	case int:
-		if s == 0 {
-			return nil
-		}
-	case *int:
-		if s == nil {
-			return nil
-		}
-	case *uint:
-		if s == nil {
-			return nil
-		}
-	case string:
-		if s == "" {
-			return nil
-		}
-	case *string:
-		if s == nil {
-			return nil
-		}
-	case []string:
-		if len(s) == 0 {
-			return nil
-		}
-	case map[string]string:
-		if s == nil {
-			return nil
-		}
-	case bool:
-	case *bool:
-		if s == nil {
-			return nil
-		}
-	case machinecontroller.AzureImagePlan:
-	case *machinecontroller.AzureImagePlan:
-		if s == nil {
-			return nil
-		}
-	default:
-		return fail.Runtime(fmt.Errorf("unsupported type %T %v", value, value), "reading terraform values")
-	}
-
-	// update CloudProviderSpec ONLY IF given terraform output is absent in
-	// original CloudProviderSpec
-	jsonSpec := make(map[string]any)
-	if w.Config.CloudProviderSpec != nil {
-		if err := json.Unmarshal(w.Config.CloudProviderSpec, &jsonSpec); err != nil {
-			return fail.Config(err, "reading CloudProviderSpec")
-		}
-	}
-
-	if _, exists := jsonSpec[name]; !exists {
-		jsonSpec[name] = value
-	}
-
-	var err error
-	w.Config.CloudProviderSpec, err = json.Marshal(jsonSpec)
-	if err != nil {
-		return fail.Config(err, "updating cloud provider spec")
-	}
-
-	return nil
 }
 
 func parseKubeletResourceParams(ks kubeletSpec, kc *kubeonev1beta3.KubeletConfig) {

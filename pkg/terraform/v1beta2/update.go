@@ -19,10 +19,20 @@ package v1beta2
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/templates/machinecontroller"
+	"k8c.io/machine-controller/sdk/cloudprovider/aws"
+	"k8c.io/machine-controller/sdk/cloudprovider/azure"
+	"k8c.io/machine-controller/sdk/cloudprovider/digitalocean"
+	"k8c.io/machine-controller/sdk/cloudprovider/equinixmetal"
+	"k8c.io/machine-controller/sdk/cloudprovider/gce"
+	"k8c.io/machine-controller/sdk/cloudprovider/hetzner"
+	"k8c.io/machine-controller/sdk/cloudprovider/nutanix"
+	"k8c.io/machine-controller/sdk/cloudprovider/openstack"
+	"k8c.io/machine-controller/sdk/cloudprovider/vmwareclouddirector"
+	"k8c.io/machine-controller/sdk/cloudprovider/vsphere"
 )
 
 func unmarshalStrict(buf []byte, obj any) error {
@@ -32,313 +42,95 @@ func unmarshalStrict(buf []byte, obj any) error {
 	return fail.Runtime(dec.Decode(obj), "strict unmarshal of %T", obj)
 }
 
-func updateAWSWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage) error {
-	var awsCloudConfig machinecontroller.AWSSpec
+// upstreamCloudProviderSpec returns an empty machine-controller cloud provider
+// spec for the cloud provider configured in the given cluster, used to
+// validate CloudProviderSpecs coming from the terraform output.
+func upstreamCloudProviderSpec(cloudProvider kubeonev1beta2.CloudProviderSpec) (any, error) {
+	switch {
+	case cloudProvider.AWS != nil:
+		return &aws.RawConfig{}, nil
+	case cloudProvider.Azure != nil:
+		return &azure.RawConfig{}, nil
+	case cloudProvider.DigitalOcean != nil:
+		return &digitalocean.RawConfig{}, nil
+	case cloudProvider.GCE != nil:
+		return &gce.CloudProviderSpec{}, nil
+	case cloudProvider.Hetzner != nil:
+		return &hetzner.RawConfig{}, nil
+	case cloudProvider.Nutanix != nil:
+		return &nutanix.RawConfig{}, nil
+	case cloudProvider.Openstack != nil:
+		return &openstack.RawConfig{}, nil
+	case cloudProvider.EquinixMetal != nil:
+		return &equinixmetal.RawConfig{}, nil
+	case cloudProvider.VMwareCloudDirector != nil:
+		return &vmwareclouddirector.RawConfig{}, nil
+	case cloudProvider.Vsphere != nil:
+		return &vsphere.RawConfig{}, nil
+	default:
+		return nil, fail.Runtime(fmt.Errorf("unknown"), "checking provider")
+	}
+}
 
-	if err := unmarshalStrict(cfg, &awsCloudConfig); err != nil {
-		return fail.Config(err, "unmarshalling DynamicWorkerConfig AWS spec")
+// updateWorkerset copies values from the terraform output CloudProviderSpec
+// into the CloudProviderSpec of the existing workerset. Values already set in
+// the existing workerset take precedence, and empty terraform values are
+// ignored. The terraform output is validated against the given upstream
+// machine-controller spec type.
+func updateWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage, upstreamSpec any) error {
+	if err := unmarshalStrict(cfg, upstreamSpec); err != nil {
+		return fail.Config(err, "unmarshalling DynamicWorkerConfig cloud provider spec")
 	}
 
-	flags := []cloudProviderFlags{
-		{key: "ami", value: awsCloudConfig.AMI},
-		{key: "assignPublicIP", value: awsCloudConfig.AssignPublicIP},
-		{key: "availabilityZone", value: awsCloudConfig.AvailabilityZone},
-		{key: "diskIops", value: awsCloudConfig.DiskIops},
-		{key: "diskSize", value: awsCloudConfig.DiskSize},
-		{key: "diskType", value: awsCloudConfig.DiskType},
-		{key: "ebsVolumeEncrypted", value: awsCloudConfig.EBSVolumeEncrypted},
-		{key: "instanceProfile", value: awsCloudConfig.InstanceProfile},
-		{key: "instanceType", value: awsCloudConfig.InstanceType},
-		{key: "isSpotInstance", value: awsCloudConfig.IsSpotInstance},
-		{key: "region", value: awsCloudConfig.Region},
-		{key: "securityGroupIDs", value: awsCloudConfig.SecurityGroupIDs},
-		{key: "subnetId", value: awsCloudConfig.SubnetID},
-		{key: "tags", value: awsCloudConfig.Tags},
-		{key: "vpcId", value: awsCloudConfig.VPCID},
+	var tfSpec map[string]json.RawMessage
+	if err := json.Unmarshal(cfg, &tfSpec); err != nil {
+		return fail.Config(err, "reading terraform CloudProviderSpec")
 	}
 
-	for _, flag := range flags {
-		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return err
+	spec := make(map[string]json.RawMessage)
+	if existingWorkerSet.Config.CloudProviderSpec != nil {
+		if err := json.Unmarshal(existingWorkerSet.Config.CloudProviderSpec, &spec); err != nil {
+			return fail.Config(err, "reading CloudProviderSpec")
 		}
+	}
+
+	for key, value := range tfSpec {
+		if _, ok := spec[key]; ok || isEmptyJSON(value) {
+			continue
+		}
+		spec[key] = value
+	}
+
+	var err error
+	existingWorkerSet.Config.CloudProviderSpec, err = json.Marshal(spec)
+	if err != nil {
+		return fail.Config(err, "updating cloud provider spec")
 	}
 
 	return nil
 }
 
-func updateAzureWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage) error {
-	var azureCloudConfig machinecontroller.AzureSpec
-
-	if err := unmarshalStrict(cfg, &azureCloudConfig); err != nil {
-		return fail.Config(err, "unmarshalling DynamicWorkerConfig Azure spec")
+// isEmptyJSON reports whether the given JSON value is null or a zero value
+// (empty string, zero number, empty array or empty object), i.e. not set in
+// the terraform output. Booleans are never considered empty.
+func isEmptyJSON(value json.RawMessage) bool {
+	var v any
+	if err := json.Unmarshal(value, &v); err != nil {
+		return false
 	}
 
-	flags := []cloudProviderFlags{
-		{key: "location", value: azureCloudConfig.Location},
-		{key: "resourceGroup", value: azureCloudConfig.ResourceGroup},
-		{key: "vnetResourceGroup", value: azureCloudConfig.VNetResourceGroup},
-		{key: "vmSize", value: azureCloudConfig.VMSize},
-		{key: "vnetName", value: azureCloudConfig.VNetName},
-		{key: "subnetName", value: azureCloudConfig.SubnetName},
-		{key: "loadBalancerSku", value: azureCloudConfig.LoadBalancerSku},
-		{key: "routeTableName", value: azureCloudConfig.RouteTableName},
-		{key: "availabilitySet", value: azureCloudConfig.AvailabilitySet},
-		{key: "assignAvailabilitySet", value: azureCloudConfig.AssignAvailabilitySet},
-		{key: "securityGroupName", value: azureCloudConfig.SecurityGroupName},
-		{key: "zones", value: azureCloudConfig.Zones},
-		{key: "imagePlan", value: azureCloudConfig.ImagePlan},
-		{key: "imageReference", value: azureCloudConfig.ImageReference},
-		{key: "imageID", value: azureCloudConfig.ImageID},
-		{key: "osDiskSize", value: azureCloudConfig.OSDiskSize},
-		{key: "osDiskSKU", value: azureCloudConfig.OSDiskSKU},
-		{key: "dataDiskSize", value: azureCloudConfig.DataDiskSize},
-		{key: "dataDiskSKU", value: azureCloudConfig.DataDiskSKU},
-		{key: "assignPublicIP", value: azureCloudConfig.AssignPublicIP},
-		{key: "publicIPSKU", value: azureCloudConfig.PublicIPSKU},
-		{key: "tags", value: azureCloudConfig.Tags},
+	switch s := v.(type) {
+	case nil:
+		return true
+	case string:
+		return s == ""
+	case float64:
+		return s == 0
+	case []any:
+		return len(s) == 0
+	case map[string]any:
+		return len(s) == 0
+	default:
+		return false
 	}
-
-	for _, flag := range flags {
-		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func updateGCEWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage) error {
-	var gceCloudConfig machinecontroller.GCESpec
-
-	if err := unmarshalStrict(cfg, &gceCloudConfig); err != nil {
-		return fail.Config(err, "unmarshalling DynamicWorkerConfig GCE spec")
-	}
-
-	flags := []cloudProviderFlags{
-		{key: "diskSize", value: gceCloudConfig.DiskSize},
-		{key: "diskType", value: gceCloudConfig.DiskType},
-		{key: "machineType", value: gceCloudConfig.MachineType},
-		{key: "network", value: gceCloudConfig.Network},
-		{key: "subnetwork", value: gceCloudConfig.Subnetwork},
-		{key: "zone", value: gceCloudConfig.Zone},
-		{key: "preemptible", value: gceCloudConfig.Preemptible},
-		{key: "assignPublicIPAddress", value: gceCloudConfig.AssignPublicIPAddress},
-		{key: "labels", value: gceCloudConfig.Labels},
-		{key: "tags", value: gceCloudConfig.Tags},
-		{key: "multizone", value: gceCloudConfig.MultiZone},
-		{key: "regional", value: gceCloudConfig.Regional},
-		{key: "customImage", value: gceCloudConfig.CustomImage},
-	}
-
-	for _, flag := range flags {
-		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func updateDigitalOceanWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage) error {
-	var doCloudConfig machinecontroller.DigitalOceanSpec
-
-	if err := unmarshalStrict(cfg, &doCloudConfig); err != nil {
-		return fail.Config(err, "unmarshalling DynamicWorkerConfig DigitalOcean spec")
-	}
-
-	flags := []cloudProviderFlags{
-		{key: "region", value: doCloudConfig.Region},
-		{key: "size", value: doCloudConfig.Size},
-		{key: "backups", value: doCloudConfig.Backups},
-		{key: "ipv6", value: doCloudConfig.IPv6},
-		{key: "private_networking", value: doCloudConfig.PrivateNetworking},
-		{key: "monitoring", value: doCloudConfig.Monitoring},
-		{key: "tags", value: doCloudConfig.Tags},
-	}
-
-	for _, flag := range flags {
-		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func updateHetznerWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage) error {
-	var hetznerConfig machinecontroller.HetznerSpec
-
-	if err := unmarshalStrict(cfg, &hetznerConfig); err != nil {
-		return fail.Config(err, "unmarshalling DynamicWorkerConfig Hetzner spec")
-	}
-
-	flags := []cloudProviderFlags{
-		{key: "serverType", value: hetznerConfig.ServerType},
-		{key: "datacenter", value: hetznerConfig.Datacenter},
-		{key: "location", value: hetznerConfig.Location},
-		{key: "image", value: hetznerConfig.Image},
-		{key: "networks", value: hetznerConfig.Networks},
-		{key: "labels", value: hetznerConfig.Labels},
-	}
-
-	for _, flag := range flags {
-		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func updateNutanixWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage) error {
-	var nutanixConfig machinecontroller.NutanixSpec
-
-	if err := unmarshalStrict(cfg, &nutanixConfig); err != nil {
-		return fail.Config(err, "unmarshalling DynamicWorkerConfig Nutanix spec")
-	}
-
-	flags := []cloudProviderFlags{
-		{key: "clusterName", value: nutanixConfig.ClusterName},
-		{key: "projectName", value: nutanixConfig.ProjectName},
-		{key: "subnetName", value: nutanixConfig.SubnetName},
-		{key: "imageName", value: nutanixConfig.ImageName},
-		{key: "cpus", value: nutanixConfig.CPUs},
-		{key: "cpuCores", value: nutanixConfig.CPUCores},
-		{key: "cpuPassthrough", value: nutanixConfig.CPUPassthrough},
-		{key: "memoryMB", value: nutanixConfig.MemoryMB},
-		{key: "diskSize", value: nutanixConfig.DiskSize},
-		{key: "categories", value: nutanixConfig.Categories},
-	}
-
-	for _, flag := range flags {
-		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func updateOpenStackWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage) error {
-	var openstackConfig machinecontroller.OpenStackSpec
-
-	if err := unmarshalStrict(cfg, &openstackConfig); err != nil {
-		return fail.Config(err, "unmarshalling DynamicWorkerConfig OpenStack spec")
-	}
-
-	flags := []cloudProviderFlags{
-		{key: "floatingIPPool", value: openstackConfig.FloatingIPPool},
-		{key: "image", value: openstackConfig.Image},
-		{key: "flavor", value: openstackConfig.Flavor},
-		{key: "securityGroups", value: openstackConfig.SecurityGroups},
-		{key: "availabilityZone", value: openstackConfig.AvailabilityZone},
-		{key: "network", value: openstackConfig.Network},
-		{key: "subnet", value: openstackConfig.Subnet},
-		{key: "rootDiskSizeGB", value: openstackConfig.RootDiskSizeGB},
-		{key: "nodeVolumeAttachLimit", value: openstackConfig.NodeVolumeAttachLimit},
-		{key: "tags", value: openstackConfig.Tags},
-		{key: "trustDevicePath", value: openstackConfig.TrustDevicePath},
-		{key: "configDrive", value: openstackConfig.ConfigDrive},
-	}
-
-	for _, flag := range flags {
-		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func updateEquinixMetalWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage) error {
-	var metalConfig machinecontroller.EquinixMetalSpec
-
-	if err := unmarshalStrict(cfg, &metalConfig); err != nil {
-		return fail.Config(err, "unmarshalling DynamicWorkerConfig EquinixMetal spec")
-	}
-
-	flags := []cloudProviderFlags{
-		{key: "projectID", value: metalConfig.ProjectID},
-		{key: "metro", value: metalConfig.Metro},
-		{key: "facilities", value: metalConfig.Facilities},
-		{key: "instanceType", value: metalConfig.InstanceType},
-		{key: "billingCycle", value: metalConfig.BillingCycle},
-		{key: "tags", value: metalConfig.Tags},
-	}
-
-	for _, flag := range flags {
-		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func updateVMwareCloudDirectorWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage) error {
-	var config machinecontroller.VMWareCloudDirectorSpec
-
-	if err := unmarshalStrict(cfg, &config); err != nil {
-		return fail.Config(err, "unmarshalling DynamicWorkerConfig VMware Cloud Director spec")
-	}
-
-	flags := []cloudProviderFlags{
-		{key: "organization", value: config.Organization},
-		{key: "vdc", value: config.VDC},
-		{key: "allowInsecure", value: config.AllowInsecure},
-		{key: "vapp", value: config.CPUs},
-		{key: "catalog", value: config.Catalog},
-		{key: "template", value: config.Template},
-		{key: "network", value: config.Network},
-		{key: "cpus", value: config.CPUs},
-		{key: "cpuCores", value: config.CPUCores},
-		{key: "memoryMB", value: config.MemoryMB},
-		{key: "diskSizeGB", value: config.DiskSizeGB},
-		{key: "storageProfile", value: config.StorageProfile},
-		{key: "ipAllocationMode", value: config.IPAllocationMode},
-		{key: "metadata", value: config.Metadata},
-		{key: "placementPolicy", value: config.PlacementPolicy},
-		{key: "sizingPolicy", value: config.SizingPolicy},
-		{key: "diskIOPS", value: config.DiskIOPS},
-		{key: "diskBusType", value: config.DiskBusType},
-	}
-
-	for _, flag := range flags {
-		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func updateVSphereWorkerset(existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig, cfg json.RawMessage) error {
-	var vsphereConfig machinecontroller.VSphereSpec
-
-	if err := unmarshalStrict(cfg, &vsphereConfig); err != nil {
-		return fail.Config(err, "unmarshalling DynamicWorkerConfig vSphere spec")
-	}
-
-	flags := []cloudProviderFlags{
-		{key: "allowInsecure", value: vsphereConfig.AllowInsecure},
-		{key: "cluster", value: vsphereConfig.Cluster},
-		{key: "cpus", value: vsphereConfig.CPUs},
-		{key: "datacenter", value: vsphereConfig.Datacenter},
-		{key: "datastore", value: vsphereConfig.Datastore},
-		{key: "datastoreCluster", value: vsphereConfig.DatastoreCluster},
-		{key: "diskSizeGB", value: vsphereConfig.DiskSizeGB},
-		{key: "folder", value: vsphereConfig.Folder},
-		{key: "resourcePool", value: vsphereConfig.ResourcePool},
-		{key: "memoryMB", value: vsphereConfig.MemoryMB},
-		{key: "templateVMName", value: vsphereConfig.TemplateVMName},
-		{key: "vmNetName", value: vsphereConfig.VMNetName},
-	}
-
-	for _, flag := range flags {
-		if err := setWorkersetFlag(existingWorkerSet, flag.key, flag.value); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }

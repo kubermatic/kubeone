@@ -198,39 +198,26 @@ func getKubeletConfigurationAnnotations(cluster *kubeoneapi.KubeOneCluster) map[
 }
 
 func machineSpec(cluster *kubeoneapi.KubeOneCluster, workerset kubeoneapi.DynamicWorkerConfig, provider kubeoneapi.CloudProviderSpec) (map[string]any, error) {
-	var err error
-
 	specRaw := workerset.Config.CloudProviderSpec
 	if specRaw == nil {
 		return nil, fail.Config(errors.New("couldn't find cloudProviderSpec"), "sanity check")
 	}
 
-	if provider.AWS != nil {
-		var awsSpec AWSSpec
-
-		err = json.Unmarshal(specRaw, &awsSpec)
-		if err != nil {
-			return nil, fail.Runtime(err, "marshalling AWSSpec")
-		}
-
-		tagName := fmt.Sprintf("kubernetes.io/cluster/%s", cluster.Name)
-		tagValue := "shared"
-		if awsSpec.Tags == nil {
-			awsSpec.Tags = make(map[string]string)
-		}
-		awsSpec.Tags[tagName] = tagValue
-
-		// effectively overwrite specRaw retrieved earlier
-		specRaw, err = json.Marshal(awsSpec)
-		if err != nil {
-			return nil, fail.Runtime(err, "marshalling AWSSpec")
-		}
+	spec := make(map[string]any)
+	if err := json.Unmarshal(specRaw, &spec); err != nil {
+		return nil, fail.Runtime(err, "unmarshalling machineSpec")
 	}
 
-	spec := make(map[string]any)
-	err = json.Unmarshal(specRaw, &spec)
-	if err != nil {
-		return nil, fail.Runtime(err, "unmarshalling machineSpec")
+	if provider.AWS != nil {
+		tags, ok := spec["tags"].(map[string]any)
+		if !ok {
+			if spec["tags"] != nil {
+				return nil, fail.Config(fmt.Errorf("tags must be a map, got %T", spec["tags"]), "reading AWS cloudProviderSpec")
+			}
+			tags = make(map[string]any)
+		}
+		tags[fmt.Sprintf("kubernetes.io/cluster/%s", cluster.Name)] = "shared"
+		spec["tags"] = tags
 	}
 
 	return spec, nil
