@@ -144,6 +144,8 @@ output "kubeone_workers" {
             maxPrice = format("%f", var.initial_machinedeployment_spotinstances_max_price)
           }
           ebsVolumeEncrypted = false
+          ## Enable EBS optimization (optional, AWS default is used if unset)
+          # ebsOptimized = true
           tags = {
             "${var.cluster_name}-workers" = ""
           }
@@ -209,6 +211,8 @@ output "kubeone_workers" {
             maxPrice = format("%f", var.initial_machinedeployment_spotinstances_max_price)
           }
           ebsVolumeEncrypted = false
+          ## Enable EBS optimization (optional, AWS default is used if unset)
+          # ebsOptimized = true
           tags = {
             "${var.cluster_name}-workers" = ""
           }
@@ -274,6 +278,8 @@ output "kubeone_workers" {
             maxPrice = format("%f", var.initial_machinedeployment_spotinstances_max_price)
           }
           ebsVolumeEncrypted = false
+          ## Enable EBS optimization (optional, AWS default is used if unset)
+          # ebsOptimized = true
           tags = {
             "${var.cluster_name}-workers" = ""
           }

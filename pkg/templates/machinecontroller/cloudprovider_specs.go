@@ -25,6 +25,7 @@ type AWSSpec struct {
 	DiskSize           *int                   `json:"diskSize"`
 	DiskType           string                 `json:"diskType"`
 	EBSVolumeEncrypted bool                   `json:"ebsVolumeEncrypted"`
+	EBSOptimized       *bool                  `json:"ebsOptimized,omitempty"`
 	InstanceProfile    string                 `json:"instanceProfile"`
 	InstanceType       *string                `json:"instanceType"`
 	IsSpotInstance     *bool                  `json:"isSpotInstance,omitempty"`
@@ -169,6 +170,7 @@ type AzureSpec struct {
 	ImageID               string               `json:"imageID"`
 	OSDiskSize            int                  `json:"osDiskSize"`
 	OSDiskSKU             *string              `json:"osDiskSKU,omitempty"`
+	DiskControllerType    *string              `json:"diskControllerType,omitempty"`
 	DataDiskSize          int                  `json:"dataDiskSize"`
 	DataDiskSKU           *string              `json:"dataDiskSKU,omitempty"`
 	AssignPublicIP        bool                 `json:"assignPublicIP"`
