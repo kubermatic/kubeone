@@ -99,8 +99,8 @@ variable "bastion_host_key" {
 
 variable "bastion_private_key_file" {
   description = "SSH private key file used to access bastion"
-  default = ""
-  type = string
+  default     = ""
+  type        = string
 }
 
 variable "control_plane_labels" {

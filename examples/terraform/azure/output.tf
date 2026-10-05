@@ -123,6 +123,8 @@ output "kubeone_workers" {
           # Size of the operating system disk (optional)
           # osDiskSize = 100
           # osDiskSKU  = "Standard_LRS"
+          # Disk controller type, one of "SCSI" or "NVMe" (optional)
+          # diskControllerType = "SCSI"
           # Size of the data disk (optional)
           # dataDiskSize = 100
           # dataDiskSKU  = "Standard_LRS"
