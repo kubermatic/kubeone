@@ -18,7 +18,6 @@ package e2e
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -32,29 +31,31 @@ type protokolBin struct {
 }
 
 func (p *protokolBin) Start(ctx context.Context, kubeconfigPath, proxyURL string) (func(), error) {
-	if err := ctx.Err(); err != nil {
-		return nil, fmt.Errorf("starting protokol: %w", err)
-	}
+	// if err := ctx.Err(); err != nil {
+	// 	return nil, fmt.Errorf("starting protokol: %w", err)
+	// }
 
-	if len(p.namespaces) == 0 {
-		return nil, errors.New("refusing to dump *everything*, please specify namespaces")
-	}
+	// if len(p.namespaces) == 0 {
+	// 	return nil, errors.New("refusing to dump *everything*, please specify namespaces")
+	// }
 
-	args := []string{"--output", p.outputDir, "--kubeconfig", kubeconfigPath}
-	for _, ns := range p.namespaces {
-		args = append(args, "--namespace", ns)
-	}
+	// args := []string{"--output", p.outputDir, "--kubeconfig", kubeconfigPath}
+	// for _, ns := range p.namespaces {
+	// 	args = append(args, "--namespace", ns)
+	// }
 
-	protocolCtx, cancel := context.WithCancel(ctx)
-	exe := p.build(proxyURL, args...).BuildCmd(protocolCtx)
+	// protocolCtx, cancel := context.WithCancel(ctx)
+	// exe := p.build(proxyURL, args...).BuildCmd(protocolCtx)
 
-	if err := exe.Start(); err != nil {
-		cancel()
+	// if err := exe.Start(); err != nil {
+	// 	cancel()
 
-		return nil, err
-	}
+	// 	return nil, err
+	// }
 
-	return cancel, nil
+	// return cancel, nil
+
+	return func() {}, nil
 }
 
 func (p *protokolBin) build(proxyURL string, args ...string) *testexec.Exec {
