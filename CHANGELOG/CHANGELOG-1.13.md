@@ -1,6 +1,23 @@
-# [v1.13.7](https://github.com/kubermatic/kubeone/releases/tag/v1.13.7) - 2026-08-13
+# [v1.13.8](https://github.com/kubermatic/kubeone/releases/tag/v1.13.8) - 2026-10-06
 
 ## Changelog since v1.13.7
+
+## Changes by Kind
+
+### Bugfixes or Regression
+
+- Update machine-controller to v1.65.7 ([#4244](https://github.com/kubermatic/kubeone/pull/4244))
+- Update flatcar-linux-update-operator to v0.10.0 ([#4236](https://github.com/kubermatic/kubeone/pull/4236))
+  - Fixes the update agent crashing on Flatcar >= 4757 due to quoted /etc/os-release values
+- Fix OCI registry auth for helm charts ([#4235](https://github.com/kubermatic/kubeone/pull/4235))
+  - Fixed OCI Helm chart authentication so `HelmRelease.Auth` credentials are correctly passed to private OCI registries.
+  - Fixed `mirror-images` failing to retag digest-pinned images by preserving the source digest instead of incorrectly using it as a tag.
+- Update oras-go dependency to v2.6.2 ([#4237](https://github.com/kubermatic/kubeone/pull/4237))
+- Upgrade golang.org/x/crypto to v0.56.0 ([#4219](https://github.com/kubermatic/kubeone/pull/4219))
+
+# [v1.13.7](https://github.com/kubermatic/kubeone/releases/tag/v1.13.7) - 2026-08-13
+
+## Changelog since v1.13.6
 
 ## Changes by Kind
 
