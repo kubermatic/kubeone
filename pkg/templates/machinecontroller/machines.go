@@ -20,7 +20,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"maps"
+	"slices"
 	"strconv"
+	"strings"
 
 	"github.com/pkg/errors"
 
@@ -32,6 +35,8 @@ import (
 	"k8c.io/kubeone/pkg/templates"
 	clustercommon "k8c.io/machine-controller/sdk/apis/cluster/common"
 	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
+	"k8c.io/machine-controller/sdk/cloudprovider/aws"
+	"k8c.io/machine-controller/sdk/jsonutil"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
@@ -198,39 +203,38 @@ func getKubeletConfigurationAnnotations(cluster *kubeoneapi.KubeOneCluster) map[
 }
 
 func machineSpec(cluster *kubeoneapi.KubeOneCluster, workerset kubeoneapi.DynamicWorkerConfig, provider kubeoneapi.CloudProviderSpec) (map[string]any, error) {
-	var err error
-
 	specRaw := workerset.Config.CloudProviderSpec
 	if specRaw == nil {
 		return nil, fail.Config(errors.New("couldn't find cloudProviderSpec"), "sanity check")
 	}
 
-	if provider.AWS != nil {
-		var awsSpec AWSSpec
-
-		err = json.Unmarshal(specRaw, &awsSpec)
-		if err != nil {
-			return nil, fail.Runtime(err, "marshalling AWSSpec")
-		}
-
-		tagName := fmt.Sprintf("kubernetes.io/cluster/%s", cluster.Name)
-		tagValue := "shared"
-		if awsSpec.Tags == nil {
-			awsSpec.Tags = make(map[string]string)
-		}
-		awsSpec.Tags[tagName] = tagValue
-
-		// effectively overwrite specRaw retrieved earlier
-		specRaw, err = json.Marshal(awsSpec)
-		if err != nil {
-			return nil, fail.Runtime(err, "marshalling AWSSpec")
-		}
+	spec := make(map[string]any)
+	if err := json.Unmarshal(specRaw, &spec); err != nil {
+		return nil, fail.Runtime(err, "unmarshalling machineSpec")
 	}
 
-	spec := make(map[string]any)
-	err = json.Unmarshal(specRaw, &spec)
-	if err != nil {
-		return nil, fail.Runtime(err, "unmarshalling machineSpec")
+	if provider.AWS != nil {
+		// Validate the spec against the upstream type, which machine-controller
+		// decodes it into, to fail early on mistyped or unknown values. Strict
+		// unmarshalling is used to match machine-controller's own decoding.
+		if err := jsonutil.StrictUnmarshal(specRaw, &aws.RawConfig{}); err != nil {
+			return nil, fail.Config(err, "reading AWS cloudProviderSpec")
+		}
+
+		// encoding/json matches keys case-insensitively, so merge the tags of
+		// all keys matching "tags" (e.g. "Tags") into a single "tags" key.
+		tags := make(map[string]any)
+		for _, key := range slices.Sorted(maps.Keys(spec)) {
+			if !strings.EqualFold(key, "tags") {
+				continue
+			}
+			if existing, ok := spec[key].(map[string]any); ok {
+				maps.Copy(tags, existing)
+			}
+			delete(spec, key)
+		}
+		tags[fmt.Sprintf("kubernetes.io/cluster/%s", cluster.Name)] = "shared"
+		spec["tags"] = tags
 	}
 
 	return spec, nil

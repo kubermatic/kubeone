@@ -33,7 +33,6 @@ SSH_PUBLIC_KEY_FILE="${SSH_PRIVATE_KEY_FILE}.pub"
 CREDENTIALS_FILE_PATH=""
 TERRAFORM_VERSION=${TERRAFORM_VERSION:-"1.13.3"}
 SONOBUOY_VERSION=${SONOBUOY_VERSION:-"0.57.3"}
-PROTOKOL_VERSION=${PROTOKOL_VERSION:-"0.7.5"}
 TOOLS_CACHE_DIR=${TOOLS_CACHE_DIR:-"${HOME}/.cache/kubeone-e2e/tools"}
 OS_NAME=$(uname -s | tr '[:upper:]' '[:lower:]')
 
@@ -47,14 +46,12 @@ esac
 declare -A TOOL_VERSIONS=(
   [terraform]="${TERRAFORM_VERSION}"
   [sonobuoy]="${SONOBUOY_VERSION}"
-  [protokol]="${PROTOKOL_VERSION}"
 )
 
 # tool name -> release download URL, used by ensure_tool()
 declare -A TOOL_DOWNLOAD_URLS=(
   [terraform]="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${OS_NAME}_${ARCH_NAME}.zip"
   [sonobuoy]="https://github.com/vmware-tanzu/sonobuoy/releases/download/v${SONOBUOY_VERSION}/sonobuoy_${SONOBUOY_VERSION}_${OS_NAME}_${ARCH_NAME}.tar.gz"
-  [protokol]="https://codeberg.org/xrstf/protokol/releases/download/v${PROTOKOL_VERSION}/protokol_${PROTOKOL_VERSION}_${OS_NAME}_${ARCH_NAME}.tar.gz"
 )
 
 export PATH
@@ -272,7 +269,6 @@ fi
 
 ensure_tool "terraform"
 ensure_tool "sonobuoy"
-ensure_tool "protokol"
 
 generate_ssh_key "${SSH_PRIVATE_KEY_FILE}"
 ssh_agent "${SSH_PRIVATE_KEY_FILE}"

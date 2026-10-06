@@ -68,9 +68,14 @@ func (p *protokolBin) build(proxyURL string, args ...string) *testexec.Exec {
 		)
 	}
 
+	runargs := append(
+		[]string{"tool", "protokol"},
+		args...,
+	)
+
 	return testexec.NewExec(
-		"protokol",
-		testexec.WithArgs(args...),
+		"go",
+		testexec.WithArgs(runargs...),
 		testexec.WithEnv(env),
 		testexec.StderrTo(io.Discard),
 	)
