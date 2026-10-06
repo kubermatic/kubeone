@@ -95,7 +95,6 @@ linters:
       - third_party$
       - builtin$
       - examples$
-      - test/e2e/protokol.go$
 formatters:
   enable:
     - gofumpt
