@@ -51,6 +51,30 @@ func TestMachineSpec(t *testing.T) {
 			wantErr:  true,
 		},
 		{
+			name:     "aws tags under a differently cased key are merged into tags",
+			provider: kubeoneapi.CloudProviderSpec{AWS: &kubeoneapi.AWSSpec{}},
+			spec:     `{"Tags":{"team":"a"}}`,
+			want:     `{"tags":{"team":"a","kubernetes.io/cluster/test":"shared"}}`,
+		},
+		{
+			name:     "aws tags with non-string values are rejected",
+			provider: kubeoneapi.CloudProviderSpec{AWS: &kubeoneapi.AWSSpec{}},
+			spec:     `{"tags":{"team":1}}`,
+			wantErr:  true,
+		},
+		{
+			name:     "aws mistyped values are rejected",
+			provider: kubeoneapi.CloudProviderSpec{AWS: &kubeoneapi.AWSSpec{}},
+			spec:     `{"diskSize":"large"}`,
+			wantErr:  true,
+		},
+		{
+			name:     "aws unknown fields are rejected",
+			provider: kubeoneapi.CloudProviderSpec{AWS: &kubeoneapi.AWSSpec{}},
+			spec:     `{"diskSiz":50}`,
+			wantErr:  true,
+		},
+		{
 			name:     "non-aws spec is passed through",
 			provider: kubeoneapi.CloudProviderSpec{Hetzner: &kubeoneapi.HetznerSpec{}},
 			spec:     `{"serverType":"cx22","tags":{"team":"a"}}`,

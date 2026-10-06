@@ -25,6 +25,7 @@ import (
 
 	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
 	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/terraform/cloudspec"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -287,6 +288,10 @@ func (output *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error { //no
 
 	// Walk through all configured workersets from terraform and apply their config
 	// by either merging it into an existing workerSet or creating a new one
+	// The merger depends only on the cloud provider, so it's created once, when
+	// the first existing workerset needs merging
+	var merger *cloudspec.Merger
+
 	for workersetName, workersetValue := range output.KubeOneWorkers.Value {
 		var existingWorkerSet *kubeonev1beta2.DynamicWorkerConfig
 
@@ -312,14 +317,22 @@ func (output *Config) Apply(cluster *kubeonev1beta2.KubeOneCluster) error { //no
 
 		// If we found a workerset defined in the cluster object,
 		// merge values from the object and the terraform output
-		upstreamSpec, err := upstreamCloudProviderSpec(cluster.CloudProvider)
+		if merger == nil {
+			upstreamSpec, err := upstreamCloudProviderSpec(cluster.CloudProvider)
+			if err != nil {
+				return err
+			}
+
+			if merger, err = cloudspec.NewMerger(upstreamSpec); err != nil {
+				return err
+			}
+		}
+
+		spec, err := merger.Merge(existingWorkerSet.Config.CloudProviderSpec, workersetValue.Config.CloudProviderSpec)
 		if err != nil {
 			return err
 		}
-
-		if err = updateWorkerset(existingWorkerSet, workersetValue.Config.CloudProviderSpec, upstreamSpec); err != nil {
-			return err
-		}
+		existingWorkerSet.Config.CloudProviderSpec = spec
 	}
 
 	return nil

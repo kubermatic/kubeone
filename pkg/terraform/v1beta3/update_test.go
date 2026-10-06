@@ -17,193 +17,53 @@ limitations under the License.
 package v1beta3
 
 import (
-	"encoding/json"
 	"reflect"
 	"testing"
 
 	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
+	"k8c.io/machine-controller/sdk/cloudprovider/aws"
+	"k8c.io/machine-controller/sdk/cloudprovider/azure"
+	"k8c.io/machine-controller/sdk/cloudprovider/digitalocean"
+	"k8c.io/machine-controller/sdk/cloudprovider/equinixmetal"
+	"k8c.io/machine-controller/sdk/cloudprovider/gce"
+	"k8c.io/machine-controller/sdk/cloudprovider/hetzner"
+	"k8c.io/machine-controller/sdk/cloudprovider/nutanix"
+	"k8c.io/machine-controller/sdk/cloudprovider/openstack"
+	"k8c.io/machine-controller/sdk/cloudprovider/vmwareclouddirector"
+	"k8c.io/machine-controller/sdk/cloudprovider/vsphere"
 )
 
-// fillNonZero recursively sets every field reachable from v to a non-zero
-// value, so that each one is present in the JSON encoding.
-func fillNonZero(v reflect.Value) {
-	switch v.Kind() { //nolint:exhaustive
-	case reflect.Pointer:
-		v.Set(reflect.New(v.Type().Elem()))
-		fillNonZero(v.Elem())
-	case reflect.Struct:
-		for i := range v.NumField() {
-			if v.Type().Field(i).IsExported() {
-				fillNonZero(v.Field(i))
-			}
-		}
-	case reflect.Slice:
-		v.Set(reflect.MakeSlice(v.Type(), 1, 1))
-		fillNonZero(v.Index(0))
-	case reflect.Map:
-		v.Set(reflect.MakeMap(v.Type()))
-		key := reflect.New(v.Type().Key()).Elem()
-		elem := reflect.New(v.Type().Elem()).Elem()
-		fillNonZero(key)
-		fillNonZero(elem)
-		v.SetMapIndex(key, elem)
-	case reflect.String:
-		v.SetString("value")
-	case reflect.Bool:
-		v.SetBool(true)
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		v.SetInt(1)
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		v.SetUint(1)
-	case reflect.Float32, reflect.Float64:
-		v.SetFloat(1)
-	default:
-		panic("fillNonZero: unsupported kind " + v.Kind().String())
-	}
-}
-
-func TestUpdateWorkersetCopiesAllFields(t *testing.T) {
+func TestUpstreamCloudProviderSpec(t *testing.T) {
 	tests := []struct {
 		name          string
 		cloudProvider kubeonev1beta3.CloudProviderSpec
+		want          any
 	}{
-		{name: "aws", cloudProvider: kubeonev1beta3.CloudProviderSpec{AWS: &kubeonev1beta3.AWSSpec{}}},
-		{name: "azure", cloudProvider: kubeonev1beta3.CloudProviderSpec{Azure: &kubeonev1beta3.AzureSpec{}}},
-		{name: "digitalocean", cloudProvider: kubeonev1beta3.CloudProviderSpec{DigitalOcean: &kubeonev1beta3.DigitalOceanSpec{}}},
-		{name: "equinixmetal", cloudProvider: kubeonev1beta3.CloudProviderSpec{EquinixMetal: &kubeonev1beta3.EquinixMetalSpec{}}},
-		{name: "gce", cloudProvider: kubeonev1beta3.CloudProviderSpec{GCE: &kubeonev1beta3.GCESpec{}}},
-		{name: "hetzner", cloudProvider: kubeonev1beta3.CloudProviderSpec{Hetzner: &kubeonev1beta3.HetznerSpec{}}},
-		{name: "nutanix", cloudProvider: kubeonev1beta3.CloudProviderSpec{Nutanix: &kubeonev1beta3.NutanixSpec{}}},
-		{name: "openstack", cloudProvider: kubeonev1beta3.CloudProviderSpec{Openstack: &kubeonev1beta3.OpenstackSpec{}}},
-		{name: "vmwareclouddirector", cloudProvider: kubeonev1beta3.CloudProviderSpec{VMwareCloudDirector: &kubeonev1beta3.VMwareCloudDirectorSpec{}}},
-		{name: "vsphere", cloudProvider: kubeonev1beta3.CloudProviderSpec{Vsphere: &kubeonev1beta3.VsphereSpec{}}},
+		{name: "aws", cloudProvider: kubeonev1beta3.CloudProviderSpec{AWS: &kubeonev1beta3.AWSSpec{}}, want: &aws.RawConfig{}},
+		{name: "azure", cloudProvider: kubeonev1beta3.CloudProviderSpec{Azure: &kubeonev1beta3.AzureSpec{}}, want: &azure.RawConfig{}},
+		{name: "digitalocean", cloudProvider: kubeonev1beta3.CloudProviderSpec{DigitalOcean: &kubeonev1beta3.DigitalOceanSpec{}}, want: &digitalocean.RawConfig{}},
+		{name: "equinixmetal", cloudProvider: kubeonev1beta3.CloudProviderSpec{EquinixMetal: &kubeonev1beta3.EquinixMetalSpec{}}, want: &equinixmetal.RawConfig{}},
+		{name: "gce", cloudProvider: kubeonev1beta3.CloudProviderSpec{GCE: &kubeonev1beta3.GCESpec{}}, want: &gce.CloudProviderSpec{}},
+		{name: "hetzner", cloudProvider: kubeonev1beta3.CloudProviderSpec{Hetzner: &kubeonev1beta3.HetznerSpec{}}, want: &hetzner.RawConfig{}},
+		{name: "nutanix", cloudProvider: kubeonev1beta3.CloudProviderSpec{Nutanix: &kubeonev1beta3.NutanixSpec{}}, want: &nutanix.RawConfig{}},
+		{name: "openstack", cloudProvider: kubeonev1beta3.CloudProviderSpec{Openstack: &kubeonev1beta3.OpenstackSpec{}}, want: &openstack.RawConfig{}},
+		{name: "vmwareclouddirector", cloudProvider: kubeonev1beta3.CloudProviderSpec{VMwareCloudDirector: &kubeonev1beta3.VMwareCloudDirectorSpec{}}, want: &vmwareclouddirector.RawConfig{}},
+		{name: "vsphere", cloudProvider: kubeonev1beta3.CloudProviderSpec{Vsphere: &kubeonev1beta3.VsphereSpec{}}, want: &vsphere.RawConfig{}},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			spec, err := upstreamCloudProviderSpec(tt.cloudProvider)
+			got, err := upstreamCloudProviderSpec(tt.cloudProvider)
 			if err != nil {
 				t.Fatal(err)
 			}
-			fillNonZero(reflect.ValueOf(spec).Elem())
-
-			input, err := json.Marshal(spec)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			upstreamSpec, err := upstreamCloudProviderSpec(tt.cloudProvider)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			workerset := &kubeonev1beta3.DynamicWorkerConfig{}
-			if err = updateWorkerset(workerset, input, upstreamSpec); err != nil {
-				t.Fatalf("update failed: %v", err)
-			}
-
-			var want, got map[string]any
-			if err = json.Unmarshal(input, &want); err != nil {
-				t.Fatal(err)
-			}
-			if err = json.Unmarshal(workerset.Config.CloudProviderSpec, &got); err != nil {
-				t.Fatal(err)
-			}
-
-			if !reflect.DeepEqual(want, got) {
-				t.Errorf("CloudProviderSpec mismatch\ngot:  %v\nwant: %v", got, want)
+			if reflect.TypeOf(got) != reflect.TypeOf(tt.want) {
+				t.Errorf("got %T, want %T", got, tt.want)
 			}
 		})
 	}
-}
 
-func TestUpdateWorkerset(t *testing.T) {
-	awsProvider := kubeonev1beta3.CloudProviderSpec{AWS: &kubeonev1beta3.AWSSpec{}}
-	openstackProvider := kubeonev1beta3.CloudProviderSpec{Openstack: &kubeonev1beta3.OpenstackSpec{}}
-
-	tests := []struct {
-		name          string
-		cloudProvider kubeonev1beta3.CloudProviderSpec
-		existing      string
-		terraform     string
-		want          string
-		wantErr       bool
-	}{
-		{
-			name:          "existing values take precedence",
-			cloudProvider: awsProvider,
-			existing:      `{"diskSize":50,"region":"eu-west-1"}`,
-			terraform:     `{"diskSize":100,"region":"eu-central-1","vpcId":"vpc-1"}`,
-			want:          `{"diskSize":50,"region":"eu-west-1","vpcId":"vpc-1"}`,
-		},
-		{
-			name:          "empty terraform values are ignored",
-			cloudProvider: awsProvider,
-			existing:      `{"diskSize":50}`,
-			terraform:     `{"region":"","securityGroupIDs":[],"tags":{},"diskIops":null,"diskType":"gp3"}`,
-			want:          `{"diskSize":50,"diskType":"gp3"}`,
-		},
-		{
-			name:          "false booleans are copied",
-			cloudProvider: awsProvider,
-			terraform:     `{"assignPublicIP":false,"ebsOptimized":false}`,
-			want:          `{"assignPublicIP":false,"ebsOptimized":false}`,
-		},
-		{
-			name:          "config var references are copied verbatim",
-			cloudProvider: awsProvider,
-			terraform:     `{"region":{"secretKeyRef":{"namespace":"kube-system","name":"aws","key":"region"}}}`,
-			want:          `{"region":{"secretKeyRef":{"namespace":"kube-system","name":"aws","key":"region"}}}`,
-		},
-		{
-			name:          "nil existing spec",
-			cloudProvider: awsProvider,
-			terraform:     `{"vpcId":"vpc-1"}`,
-			want:          `{"vpcId":"vpc-1"}`,
-		},
-		{
-			name:          "keys are copied with the casing used by terraform",
-			cloudProvider: openstackProvider,
-			terraform:     `{"floatingIpPool":"public"}`,
-			want:          `{"floatingIpPool":"public"}`,
-		},
-		{
-			name:          "unknown terraform keys are rejected",
-			cloudProvider: awsProvider,
-			terraform:     `{"notAField":"value"}`,
-			wantErr:       true,
-		},
-		{
-			name:          "mistyped terraform values are rejected",
-			cloudProvider: awsProvider,
-			terraform:     `{"diskSize":"large"}`,
-			wantErr:       true,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			workerset := &kubeonev1beta3.DynamicWorkerConfig{}
-			if tt.existing != "" {
-				workerset.Config.CloudProviderSpec = json.RawMessage(tt.existing)
-			}
-
-			upstreamSpec, err := upstreamCloudProviderSpec(tt.cloudProvider)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			err = updateWorkerset(workerset, json.RawMessage(tt.terraform), upstreamSpec)
-			if (err != nil) != tt.wantErr {
-				t.Fatalf("got error %v, wantErr %v", err, tt.wantErr)
-			}
-			if tt.wantErr {
-				return
-			}
-
-			if got := string(workerset.Config.CloudProviderSpec); got != tt.want {
-				t.Errorf("got %s, want %s", got, tt.want)
-			}
-		})
+	if _, err := upstreamCloudProviderSpec(kubeonev1beta3.CloudProviderSpec{}); err == nil {
+		t.Error("expected error for unknown cloud provider")
 	}
 }

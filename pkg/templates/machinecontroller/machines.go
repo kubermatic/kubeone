@@ -20,7 +20,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"maps"
+	"slices"
 	"strconv"
+	"strings"
 
 	"github.com/pkg/errors"
 
@@ -32,6 +35,8 @@ import (
 	"k8c.io/kubeone/pkg/templates"
 	clustercommon "k8c.io/machine-controller/sdk/apis/cluster/common"
 	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
+	"k8c.io/machine-controller/sdk/cloudprovider/aws"
+	"k8c.io/machine-controller/sdk/jsonutil"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
@@ -209,12 +214,24 @@ func machineSpec(cluster *kubeoneapi.KubeOneCluster, workerset kubeoneapi.Dynami
 	}
 
 	if provider.AWS != nil {
-		tags, ok := spec["tags"].(map[string]any)
-		if !ok {
-			if spec["tags"] != nil {
-				return nil, fail.Config(fmt.Errorf("tags must be a map, got %T", spec["tags"]), "reading AWS cloudProviderSpec")
+		// Validate the spec against the upstream type, which machine-controller
+		// decodes it into, to fail early on mistyped or unknown values. Strict
+		// unmarshalling is used to match machine-controller's own decoding.
+		if err := jsonutil.StrictUnmarshal(specRaw, &aws.RawConfig{}); err != nil {
+			return nil, fail.Config(err, "reading AWS cloudProviderSpec")
+		}
+
+		// encoding/json matches keys case-insensitively, so merge the tags of
+		// all keys matching "tags" (e.g. "Tags") into a single "tags" key.
+		tags := make(map[string]any)
+		for _, key := range slices.Sorted(maps.Keys(spec)) {
+			if !strings.EqualFold(key, "tags") {
+				continue
 			}
-			tags = make(map[string]any)
+			if existing, ok := spec[key].(map[string]any); ok {
+				maps.Copy(tags, existing)
+			}
+			delete(spec, key)
 		}
 		tags[fmt.Sprintf("kubernetes.io/cluster/%s", cluster.Name)] = "shared"
 		spec["tags"] = tags
