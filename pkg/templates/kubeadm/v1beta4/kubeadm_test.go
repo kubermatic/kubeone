@@ -18,14 +18,17 @@ package v1beta4
 
 import (
 	"reflect"
+	"slices"
 	"testing"
+
+	"github.com/Masterminds/semver/v3"
 
 	kubeadmv1beta4 "k8c.io/kubeone/pkg/apis/kubeadm/v1beta4"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 )
 
 func TestEtcdVersionCorruptCheckExtraArgs(t *testing.T) {
-	etcdExtraArgs := []kubeadmv1beta4.Arg{
+	legacyEtcdExtraArgs := []kubeadmv1beta4.Arg{
 		{
 			Name:  "experimental-compact-hash-check-enabled",
 			Value: "true",
@@ -36,31 +39,60 @@ func TestEtcdVersionCorruptCheckExtraArgs(t *testing.T) {
 		},
 	}
 
+	etcdExtraArgs := []kubeadmv1beta4.Arg{
+		{
+			Name:  "feature-gates",
+			Value: "CompactHashCheck=true",
+		},
+		{
+			Name:  "corrupt-check-time",
+			Value: "240m",
+		},
+	}
+
+	cipherSuitesArg := kubeadmv1beta4.Arg{
+		Name:  "cipher-suites",
+		Value: "cipher1,cipher2",
+	}
+
 	tests := []struct {
 		name             string
-		etcdImageTag     string
+		kubeVersion      string
 		cipherSuites     []string
 		expectedEtcdArgs []kubeadmv1beta4.Arg
 	}{
 		{
-			name:             "tag is overwritten",
-			etcdImageTag:     "9.9.9-0",
+			name:             "legacy flags before 1.37",
+			kubeVersion:      "1.36.4",
+			expectedEtcdArgs: legacyEtcdExtraArgs,
+		},
+		{
+			name:             "legacy flags before 1.37 with tls cipher suites",
+			kubeVersion:      "1.36.4",
+			cipherSuites:     []string{"cipher1", "cipher2"},
+			expectedEtcdArgs: append(slices.Clone(legacyEtcdExtraArgs), cipherSuitesArg),
+		},
+		{
+			name:             "new flags since 1.37",
+			kubeVersion:      "1.37.0",
 			expectedEtcdArgs: etcdExtraArgs,
 		},
 		{
-			name:         "tls cipher suites",
-			etcdImageTag: "9.9.9-0",
-			cipherSuites: []string{"cipher1", "cipher2"},
-			expectedEtcdArgs: append(etcdExtraArgs, kubeadmv1beta4.Arg{
-				Name:  "cipher-suites",
-				Value: "cipher1,cipher2",
-			}),
+			name:             "new flags for 1.37 pre-release",
+			kubeVersion:      "1.37.0-rc.0",
+			expectedEtcdArgs: etcdExtraArgs,
+		},
+		{
+			name:             "new flags since 1.37 with tls cipher suites",
+			kubeVersion:      "1.37.0",
+			cipherSuites:     []string{"cipher1", "cipher2"},
+			expectedEtcdArgs: append(slices.Clone(etcdExtraArgs), cipherSuitesArg),
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			args := etcdVersionCorruptCheckExtraArgs(tt.cipherSuites)
+			args := etcdVersionCorruptCheckExtraArgs(semver.MustParse(tt.kubeVersion), tt.cipherSuites)
 			if !reflect.DeepEqual(args, tt.expectedEtcdArgs) {
 				t.Errorf("got etcd tags %q, but expected %q", args, tt.expectedEtcdArgs)
 			}

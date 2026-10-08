@@ -34,6 +34,7 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeflags"
+	"k8c.io/kubeone/pkg/semverutil"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/kubeadm/kubeadmargs"
 	"k8c.io/kubeone/pkg/templates/kubernetesconfigs"
@@ -47,6 +48,10 @@ import (
 const (
 	bootstrapTokenTTL = 60 * time.Minute
 )
+
+// preV137Constraint matches Kubernetes versions whose default etcd (3.6 and older) still accepts
+// the deprecated --experimental-* flags. etcd 3.7, the default since Kubernetes 1.37, removed them.
+var preV137Constraint = semverutil.MustParseConstraint("< 1.37")
 
 type Config struct {
 	InitConfiguration    *kubeadmv1beta4.InitConfiguration
@@ -95,13 +100,11 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 	}
 
 	etcdArgs := etcdOptionalFlags(s.Cluster.ControlPlaneComponents)
-	etcdArgs = append(etcdArgs, etcdVersionCorruptCheckExtraArgs(cluster.TLSCipherSuites.Etcd)...)
+	etcdArgs = append(etcdArgs, etcdVersionCorruptCheckExtraArgs(kubeSemVer, cluster.TLSCipherSuites.Etcd)...)
 
 	clusterConfig := &kubeadmv1beta4.ClusterConfiguration{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "kubeadm.k8s.io/v1beta4",
-			Kind:       "ClusterConfiguration",
-		},
+		APIVersion:                  "kubeadm.k8s.io/v1beta4",
+		Kind:                        "ClusterConfiguration",
 		ClusterName:                 cluster.Name,
 		CertificateValidityPeriod:   cluster.CertificateAuthority.CertificateValidityPeriod,
 		CACertificateValidityPeriod: cluster.CertificateAuthority.CACertificateValidityPeriod,
@@ -177,34 +180,24 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 		},
 		Etcd: kubeadmv1beta4.Etcd{
 			Local: &kubeadmv1beta4.LocalEtcd{
-				ImageMeta: kubeadmv1beta4.ImageMeta{
-					ImageRepository: overwriteRegistry,
-				},
-				ExtraArgs: etcdArgs,
+				ImageRepository: overwriteRegistry,
+				ExtraArgs:       etcdArgs,
 				ExtraEnvs: []kubeadmv1beta4.EnvVar{
 					{
-						EnvVar: corev1.EnvVar{
-							Name:  "ETCDCTL_CACERT",
-							Value: "/etc/kubernetes/pki/etcd/ca.crt",
-						},
+						Name:  "ETCDCTL_CACERT",
+						Value: "/etc/kubernetes/pki/etcd/ca.crt",
 					},
 					{
-						EnvVar: corev1.EnvVar{
-							Name:  "ETCDCTL_CERT",
-							Value: "/etc/kubernetes/pki/etcd/healthcheck-client.crt",
-						},
+						Name:  "ETCDCTL_CERT",
+						Value: "/etc/kubernetes/pki/etcd/healthcheck-client.crt",
 					},
 					{
-						EnvVar: corev1.EnvVar{
-							Name:  "ETCDCTL_KEY",
-							Value: "/etc/kubernetes/pki/etcd/healthcheck-client.key",
-						},
+						Name:  "ETCDCTL_KEY",
+						Value: "/etc/kubernetes/pki/etcd/healthcheck-client.key",
 					},
 					{
-						EnvVar: corev1.EnvVar{
-							Name:  "ETCDCTL_ENDPOINTS",
-							Value: "https://127.0.0.1:2379",
-						},
+						Name:  "ETCDCTL_ENDPOINTS",
+						Value: "https://127.0.0.1:2379",
 					},
 				},
 			},
@@ -305,16 +298,32 @@ func etcdOptionalFlags(cpc *kubeoneapi.ControlPlaneComponents) []kubeadmv1beta4.
 //     https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ
 //   - etcd v3.5.[0-4] has a durability issue affecting single-node (non-HA) etcd clusters
 //     https://groups.google.com/a/kubernetes.io/g/dev/c/7q4tB_Vp3Uc/m/MrHalhCIBAAJ
-func etcdVersionCorruptCheckExtraArgs(cipherSuites []string) []kubeadmv1beta4.Arg {
+//
+// etcd 3.7 (default since Kubernetes 1.37) removed the deprecated --experimental-* flags, so newer
+// Kubernetes versions get their replacements: the CompactHashCheck feature gate and --corrupt-check-time.
+func etcdVersionCorruptCheckExtraArgs(kubeVersion *semver.Version, cipherSuites []string) []kubeadmv1beta4.Arg {
 	etcdExtraArgs := []kubeadmv1beta4.Arg{
 		{
-			Name:  "experimental-compact-hash-check-enabled",
-			Value: "true",
+			Name:  "feature-gates",
+			Value: "CompactHashCheck=true",
 		},
 		{
-			Name:  "experimental-corrupt-check-time",
+			Name:  "corrupt-check-time",
 			Value: "240m",
 		},
+	}
+
+	if preV137Constraint.Check(kubeVersion) {
+		etcdExtraArgs = []kubeadmv1beta4.Arg{
+			{
+				Name:  "experimental-compact-hash-check-enabled",
+				Value: "true",
+			},
+			{
+				Name:  "experimental-corrupt-check-time",
+				Value: "240m",
+			},
+		}
 	}
 
 	if len(cipherSuites) > 0 {
@@ -472,10 +481,8 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) (*Config, error
 	controlPlaneEndpoint := net.JoinHostPort(cluster.APIEndpoint.Host, strconv.Itoa(cluster.APIEndpoint.Port))
 
 	joinConfig := &kubeadmv1beta4.JoinConfiguration{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "kubeadm.k8s.io/v1beta4",
-			Kind:       "JoinConfiguration",
-		},
+		APIVersion: "kubeadm.k8s.io/v1beta4",
+		Kind:       "JoinConfiguration",
 		Discovery: kubeadmv1beta4.Discovery{
 			BootstrapToken: &kubeadmv1beta4.BootstrapTokenDiscovery{
 				Token:                    s.JoinToken,
@@ -498,10 +505,8 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) (*Config, error
 
 func newInitConfiguration(bootstrapToken *bootstraptokenv1.BootstrapTokenString, advertiseAddress string) *kubeadmv1beta4.InitConfiguration {
 	return &kubeadmv1beta4.InitConfiguration{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "kubeadm.k8s.io/v1beta4",
-			Kind:       "InitConfiguration",
-		},
+		APIVersion: "kubeadm.k8s.io/v1beta4",
+		Kind:       "InitConfiguration",
 		BootstrapTokens: []bootstraptokenv1.BootstrapToken{
 			{
 				Token: bootstrapToken,
@@ -525,10 +530,8 @@ func newInitConfiguration(bootstrapToken *bootstraptokenv1.BootstrapTokenString,
 
 func newJoinConfiguration(advertiseAddress, joinToken, controlPlaneEndpoint string) *kubeadmv1beta4.JoinConfiguration {
 	return &kubeadmv1beta4.JoinConfiguration{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "kubeadm.k8s.io/v1beta4",
-			Kind:       "JoinConfiguration",
-		},
+		APIVersion: "kubeadm.k8s.io/v1beta4",
+		Kind:       "JoinConfiguration",
 		ControlPlane: &kubeadmv1beta4.JoinControlPlane{
 			LocalAPIEndpoint: kubeadmv1beta4.APIEndpoint{
 				AdvertiseAddress: advertiseAddress,
