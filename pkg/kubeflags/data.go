@@ -67,30 +67,4 @@ var (
 		"ValidatingAdmissionPolicy",
 		"ValidatingAdmissionWebhook",
 	}
-
-	defaultAdmissionControllersPreV135 = []string{
-		"NamespaceLifecycle",
-		"LimitRanger",
-		"ServiceAccount",
-		"TaintNodesByCondition",
-		"NodeRestriction", // CIS 1.2.16
-		"PodSecurity",
-		"Priority",
-		"DefaultTolerationSeconds",
-		"DefaultStorageClass",
-		"StorageObjectInUseProtection",
-		"PersistentVolumeClaimResize",
-		"RuntimeClass",
-		"CertificateApproval",
-		"CertificateSigning",
-		"ClusterTrustBundleAttest",
-		"CertificateSubjectRestriction",
-		"DefaultIngressClass",
-		"PodTopologyLabels",
-		"MutatingAdmissionPolicy",
-		"MutatingAdmissionWebhook",
-		"ValidatingAdmissionPolicy",
-		"ValidatingAdmissionWebhook",
-		"ResourceQuota",
-	}
 )

@@ -63,7 +63,7 @@ func TestValidateKubeOneCluster(t *testing.T) {
 					External: true,
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "1.34.0",
+					Kubernetes: "1.35.0",
 				},
 				MachineController: &kubeoneapi.MachineControllerConfig{
 					Deploy: true,
@@ -116,7 +116,7 @@ func TestValidateKubeOneCluster(t *testing.T) {
 					AWS: &kubeoneapi.AWSSpec{},
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "1.34.0",
+					Kubernetes: "1.35.0",
 				},
 				MachineController: &kubeoneapi.MachineControllerConfig{
 					Deploy: false,
@@ -169,7 +169,7 @@ func TestValidateKubeOneCluster(t *testing.T) {
 					AWS: &kubeoneapi.AWSSpec{},
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "1.34.0",
+					Kubernetes: "1.35.0",
 				},
 				MachineController: &kubeoneapi.MachineControllerConfig{
 					Deploy: true,
@@ -222,7 +222,7 @@ func TestValidateKubeOneCluster(t *testing.T) {
 					Vsphere: &kubeoneapi.VsphereSpec{},
 				},
 				Versions: kubeoneapi.VersionConfig{
-					Kubernetes: "1.34.0",
+					Kubernetes: "1.35.0",
 				},
 				MachineController: &kubeoneapi.MachineControllerConfig{
 					Deploy: true,
@@ -975,18 +975,32 @@ func TestValidateVersionConfig(t *testing.T) {
 		expectedError bool
 	}{
 		{
-			name: "valid version config (1.34.0)",
+			name: "valid version config (1.35.0)",
 			versionConfig: kubeoneapi.VersionConfig{
-				Kubernetes: "1.34.0",
+				Kubernetes: "1.35.0",
 			},
 			expectedError: false,
 		},
 		{
-			name: "valid version config (1.36.0)",
+			name: "valid version config (1.37.0)",
 			versionConfig: kubeoneapi.VersionConfig{
-				Kubernetes: "1.36.0",
+				Kubernetes: "1.37.0",
 			},
 			expectedError: false,
+		},
+		{
+			name: "invalid version config (1.38.0)",
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.38.0",
+			},
+			expectedError: true,
+		},
+		{
+			name: "invalid version config (1.34.0)",
+			versionConfig: kubeoneapi.VersionConfig{
+				Kubernetes: "1.34.0",
+			},
+			expectedError: true,
 		},
 		{
 			name: "invalid version config (1.33.0)",
