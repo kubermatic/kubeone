@@ -29,10 +29,11 @@ import (
 )
 
 type listImagesOpts struct {
-	ManifestFile      string `longflag:"manifest" shortflag:"m"`
-	Filter            string `longflag:"filter"`
-	KubernetesVersion string `longflag:"kubernetes-version" shortflag:"k"`
-	AllImages         bool   `longflag:"all" shortflag:"a"`
+	ManifestFile      string   `longflag:"manifest" shortflag:"m"`
+	Filter            string   `longflag:"filter"`
+	KubernetesVersion string   `longflag:"kubernetes-version" shortflag:"k"`
+	Providers         []string `longflag:"provider"`
+	AllImages         bool     `longflag:"all" shortflag:"a"`
 }
 
 func configImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
@@ -63,6 +64,10 @@ func listImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 
 			# To see optional images list
 			kubeone config images list --filter optional
+
+			# To see images list including CCM/CSI images only for the given cloud provider(s)
+			kubeone config images list --provider aws
+			kubeone config images list --filter optional --provider hetzner,openstack
 
 			# To see images for a specific Kubernetes version
 			kubeone config images list --kubernetes-version=1.26.0
@@ -96,6 +101,13 @@ func listImagesCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		"filter images for a provided kubernetes version",
 	)
 
+	cmd.Flags().StringSliceVar(
+		&opts.Providers,
+		longFlagName(opts, "Providers"),
+		[]string{images.ProviderNone},
+		fmt.Sprintf("list CCM/CSI images only for the given cloud providers, %q or any of %v", images.ProviderNone, images.Providers()),
+	)
+
 	cmd.Flags().BoolVar(
 		&opts.AllImages,
 		longFlagName(opts, "AllImages"),
@@ -122,19 +134,23 @@ func listImages(opts *listImagesOpts) error {
 		}
 	}
 
+	if err := images.ValidateProviders(opts.Providers); err != nil {
+		return err
+	}
+
 	imgResolver, err := newImageResolver(opts.KubernetesVersion, opts.ManifestFile)
 	if err != nil {
 		return err
 	}
 
-	var images []string
+	var imageList []string
 	if opts.AllImages {
-		images = imgResolver.ListAll()
+		imageList = imgResolver.ListAll(images.WithProviders(opts.Providers...))
 	} else {
-		images = imgResolver.List(listFilter)
+		imageList = imgResolver.List(listFilter, images.WithProviders(opts.Providers...))
 	}
 
-	for _, img := range images {
+	for _, img := range imageList {
 		fmt.Println(img)
 	}
 

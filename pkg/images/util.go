@@ -327,7 +327,7 @@ func FetchLatestPatchForKubernetesVersion(version string) (string, error) {
 	return string(body), nil
 }
 
-func GetKubeoneImages(ctx context.Context, filter string, versions []string) ([]string, error) {
+func GetKubeoneImages(ctx context.Context, filter string, providers, versions []string) ([]string, error) {
 	var (
 		err              error
 		cpImages         []string
@@ -351,6 +351,10 @@ func GetKubeoneImages(ctx context.Context, filter string, versions []string) ([]
 		}
 	}
 
+	if err = images.ValidateProviders(providers); err != nil {
+		return nil, err
+	}
+
 	imageSet := sets.New[string]()
 	for _, ver := range versions {
 		version := fmt.Sprintf("v%s", ver)
@@ -362,7 +366,7 @@ func GetKubeoneImages(ctx context.Context, filter string, versions []string) ([]
 		imageSet.Insert(cpImages...)
 		if !controlPlaneOnly {
 			resolver := newImageResolver(version)
-			images := resolver.List(listFilter)
+			images := resolver.List(listFilter, images.WithProviders(providers...))
 			imageSet.Insert(images...)
 		}
 	}

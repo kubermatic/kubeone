@@ -446,6 +446,197 @@ func allResources() map[Resource]map[string]string {
 	return ret
 }
 
+// ProviderNone is a special provider value that disables filtering images by
+// the cloud provider.
+const ProviderNone = "none"
+
+// providerResources maps cloud provider names (as returned by
+// kubeoneapi.CloudProviderSpec.CloudProviderName) to the provider-specific
+// resources (CCM/CSI). Resources not listed here are provider-neutral.
+func providerResources() map[string][]Resource {
+	return map[string][]Resource{
+		"aws": {
+			AwsCCM,
+			AwsEbsCSI,
+			AwsEbsCSIAttacher,
+			AwsEbsCSILivenessProbe,
+			AwsEbsCSINodeDriverRegistrar,
+			AwsEbsCSIProvisioner,
+			AwsEbsCSIResizer,
+			AwsEbsCSISnapshotter,
+		},
+		"azure": {
+			AzureCCM,
+			AzureCNM,
+			AzureFileCSI,
+			AzureFileCSILivenessProbe,
+			AzureFileCSINodeDriverRegistar,
+			AzureFileCSIProvisioner,
+			AzureFileCSIResizer,
+			AzureFileCSISnapshotter,
+			AzureDiskCSI,
+			AzureDiskCSIAttacher,
+			AzureDiskCSILivenessProbe,
+			AzureDiskCSINodeDriverRegistar,
+			AzureDiskCSIProvisioner,
+			AzureDiskCSIResizer,
+			AzureDiskCSISnapshotter,
+		},
+		"digitalocean": {
+			DigitaloceanCCM,
+			DigitalOceanCSI,
+			DigitalOceanCSIAlpine,
+			DigitalOceanCSIAttacher,
+			DigitalOceanCSINodeDriverRegistar,
+			DigitalOceanCSIProvisioner,
+			DigitalOceanCSIResizer,
+			DigitalOceanCSISnapshotter,
+		},
+		"equinixmetal": {
+			EquinixMetalCCM,
+		},
+		"gce": {
+			GCPCCM,
+			GCPComputeCSIDriver,
+			GCPComputeCSIProvisioner,
+			GCPComputeCSIAttacher,
+			GCPComputeCSIResizer,
+			GCPComputeCSISnapshotter,
+			GCPComputeCSINodeDriverRegistrar,
+		},
+		"hetzner": {
+			HetznerCCM,
+			HetznerCSI,
+			HetznerCSIAttacher,
+			HetznerCSIResizer,
+			HetznerCSIProvisioner,
+			HetznerCSILivenessProbe,
+			HetznerCSINodeDriverRegistar,
+		},
+		"kubevirt": {
+			KubeVirtCCM,
+			KubeVirtCSI,
+			KubeVirtCSINodeDriverRegistrar,
+			KubeVirtCSILivenessProbe,
+			KubeVirtCSIProvisioner,
+			KubeVirtCSIAttacher,
+		},
+		"nutanix": {
+			NutanixCCM,
+			NutanixCSILivenessProbe,
+			NutanixCSIExternalHealthMonitor,
+			NutanixCSIAttacher,
+			NutanixCSIPrecheck,
+			NutanixCSI,
+			NutanixCSIProvisioner,
+			NutanixCSIRegistrar,
+			NutanixCSIResizer,
+			NutanixCSISnapshotter,
+		},
+		"openstack": {
+			OpenstackCCM,
+			OpenstackCSI,
+			OpenstackCSINodeDriverRegistar,
+			OpenstackCSILivenessProbe,
+			OpenstackCSIAttacher,
+			OpenstackCSIProvisioner,
+			OpenstackCSIResizer,
+			OpenstackCSISnapshotter,
+		},
+		"vmwareCloudDirector": {
+			VMwareCloudDirectorCSI,
+			VMwareCloudDirectorCSIAttacher,
+			VMwareCloudDirectorCSIProvisioner,
+			VMwareCloudDirectorCSIResizer,
+			VMwareCloudDirectorCSINodeDriverRegistrar,
+		},
+		"vsphere": {
+			VsphereCCM,
+			VsphereCSIDriver,
+			VsphereCSISyncer,
+			VsphereCSIAttacher,
+			VsphereCSILivenessProbe,
+			VsphereCSINodeDriverRegistar,
+			VsphereCSIProvisioner,
+			VsphereCSIResizer,
+			VsphereCSISnapshotter,
+		},
+	}
+}
+
+// Providers returns sorted list of cloud provider names that can be used to
+// filter images.
+func Providers() []string {
+	return slices.Sorted(maps.Keys(providerResources()))
+}
+
+// ValidateProviders checks that given providers are known. Empty list or
+// a single ProviderNone value means no filtering.
+func ValidateProviders(providers []string) error {
+	valid := Providers()
+
+	for _, provider := range providers {
+		if provider == ProviderNone {
+			if len(providers) > 1 {
+				return fail.RuntimeError{
+					Op:  "checking provider flag",
+					Err: fmt.Errorf("--provider %q can't be combined with other providers", ProviderNone),
+				}
+			}
+
+			continue
+		}
+
+		if !slices.Contains(valid, provider) {
+			return fail.RuntimeError{
+				Op:  "checking provider flag",
+				Err: fmt.Errorf("unknown provider %q, --provider can be only %q or any of %v", provider, ProviderNone, valid),
+			}
+		}
+	}
+
+	return nil
+}
+
+type listOptions struct {
+	providers []string
+}
+
+// skip reports whether the resource belongs to a cloud provider that was not
+// selected.
+func (lo listOptions) skip(res Resource) bool {
+	if len(lo.providers) == 0 || slices.Contains(lo.providers, ProviderNone) {
+		return false
+	}
+
+	for provider, resources := range providerResources() {
+		if slices.Contains(resources, res) {
+			return !slices.Contains(lo.providers, provider)
+		}
+	}
+
+	return false
+}
+
+type ListOpt func(*listOptions)
+
+// WithProviders limits the provider-specific images (CCM/CSI) to the given
+// cloud providers. Provider-neutral images are always listed.
+func WithProviders(providers ...string) ListOpt {
+	return func(lo *listOptions) {
+		lo.providers = providers
+	}
+}
+
+func newListOptions(opts []ListOpt) listOptions {
+	var lo listOptions
+	for _, opt := range opts {
+		opt(&lo)
+	}
+
+	return lo
+}
+
 type Opt func(*Resolver)
 
 func WithOverwriteRegistryGetter(getter func() string) Opt {
@@ -490,8 +681,10 @@ const (
 	ListFilterOptional
 )
 
-func (r *Resolver) List(lf ListFilter) []string {
+func (r *Resolver) List(lf ListFilter, opts ...ListOpt) []string {
 	var list []string
+
+	lo := newListOptions(opts)
 
 	fn := allResources
 	switch lf {
@@ -503,6 +696,10 @@ func (r *Resolver) List(lf ListFilter) []string {
 	}
 
 	for res := range fn() {
+		if lo.skip(res) {
+			continue
+		}
+
 		img := r.Get(res)
 		if img != "" {
 			list = append(list, img)
@@ -514,12 +711,17 @@ func (r *Resolver) List(lf ListFilter) []string {
 	return list
 }
 
-func (r *Resolver) ListAll() []string {
+func (r *Resolver) ListAll(opts ...ListOpt) []string {
 	resources := allResources()
+	lo := newListOptions(opts)
 
 	// create a bool map, to deduplicate the images
 	listMap := make(map[string]bool)
 	for res := range resources {
+		if lo.skip(res) {
+			continue
+		}
+
 		for _, img := range resources[res] {
 			listMap[img] = true
 		}

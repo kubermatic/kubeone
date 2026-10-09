@@ -32,15 +32,17 @@ import (
 	kubeonevalidation "k8c.io/kubeone/pkg/apis/kubeone/validation"
 	"k8c.io/kubeone/pkg/images"
 	"k8c.io/kubeone/pkg/semverutil"
+	templatesimages "k8c.io/kubeone/pkg/templates/images"
 )
 
 type mirrorImagesOpts struct {
 	globalOptions
-	Filter                 string `longflag:"filter"`
-	KubernetesVersions     string `longflag:"kubernetes-versions" shortflag:"k"`
-	Insecure               bool   `longflag:"insecure"`
-	DryRun                 bool   `longflag:"dry-run"`
-	ParallelImageCopyLimit int    `longflag:"parallel-image-copy-limit" shortflag:"p"`
+	Filter                 string   `longflag:"filter"`
+	Providers              []string `longflag:"provider"`
+	KubernetesVersions     string   `longflag:"kubernetes-versions" shortflag:"k"`
+	Insecure               bool     `longflag:"insecure"`
+	DryRun                 bool     `longflag:"dry-run"`
+	ParallelImageCopyLimit int      `longflag:"parallel-image-copy-limit" shortflag:"p"`
 
 	Registry string
 }
@@ -61,6 +63,9 @@ func mirrorImagesCmd(*pflag.FlagSet) *cobra.Command {
 
             # Mirror images for a specific Kubernetes versions
             kubeone mirror-images --kubernetes-versions=v1.26.0,v1.29.0 --filter=control-plane myregistry.com
+
+            # Mirror images including CCM/CSI images only for the given cloud provider(s)
+            kubeone mirror-images --provider=aws,azure myregistry.com
         `),
 		SilenceErrors: true,
 		RunE: func(_ *cobra.Command, args []string) error {
@@ -95,6 +100,13 @@ func mirrorImagesCmd(*pflag.FlagSet) *cobra.Command {
 		longFlagName(opts, "Filter"),
 		"none",
 		"images list filter, one of the [none|base|optional|control-plane]",
+	)
+
+	cmd.Flags().StringSliceVar(
+		&opts.Providers,
+		longFlagName(opts, "Providers"),
+		[]string{templatesimages.ProviderNone},
+		fmt.Sprintf("mirror CCM/CSI images only for the given cloud providers, %q or any of %v", templatesimages.ProviderNone, templatesimages.Providers()),
 	)
 
 	cmd.Flags().StringVar(
@@ -197,7 +209,7 @@ func mirrorImages(logger *logrus.Logger, opts *mirrorImagesOpts, versions []stri
 
 	logger.Info("🚀 Collecting images used by kubeone ...")
 
-	imageList, err := images.GetKubeoneImages(ctx, opts.Filter, versions)
+	imageList, err := images.GetKubeoneImages(ctx, opts.Filter, opts.Providers, versions)
 	if err != nil {
 		return fmt.Errorf("failed to get KubeOne images: %w", err)
 	}
