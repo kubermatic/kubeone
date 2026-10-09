@@ -45,6 +45,8 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
+const protocolPort = 6443
+
 var (
 	_ cloudprovider.ControlPlaneCloudProvider = &Provider{}
 	_ cloudprovider.LoadBalancerProvider      = &Provider{}
@@ -216,6 +218,11 @@ func ensureOpenstackLBMembers(s *state.State) error {
 		poolID = discoveredPoolID
 	}
 
+	subnetID, err := controlPlaneSubnet(s.Cluster.ControlPlane.NodeSets)
+	if err != nil {
+		return err
+	}
+
 	existingMembers := map[string]bool{}
 	err = pools.ListMembers(lbClient, poolID, pools.ListMembersOpts{}).EachPage(func(page pagination.Page) (bool, error) {
 		members, oserr := pools.ExtractMembers(page)
@@ -242,11 +249,12 @@ func ensureOpenstackLBMembers(s *state.State) error {
 		}
 
 		s.Logger.Infof("Adding control plane node %s (%s) to LB pool", host.Hostname, addr)
-		protocolPort := 6443
-		_, err := pools.CreateMember(lbClient, poolID, pools.CreateMemberOpts{
+
+		_, err = pools.CreateMember(lbClient, poolID, pools.CreateMemberOpts{
 			Address:      addr,
 			ProtocolPort: protocolPort,
 			Name:         host.Hostname,
+			SubnetID:     subnetID,
 		}).Extract()
 		if err != nil {
 			return fail.Cloud(err, "openstack", "adding member %s to LB pool", addr)
@@ -254,6 +262,30 @@ func ensureOpenstackLBMembers(s *state.State) error {
 	}
 
 	return nil
+}
+
+// controlPlaneSubnet returns the subnet configured in the control plane NodeSets' cloudProviderSpec. An empty
+// result means no subnet is set, in which case Octavia places the member on the load balancer's VIP subnet.
+func controlPlaneSubnet(nodeSets []kubeoneapi.NodeSet) (string, error) {
+	var subnet string
+
+	for _, nodeSet := range nodeSets {
+		var osConfig openstacktypes.RawConfig
+		if err := jsonutil.StrictUnmarshal(nodeSet.CloudProviderSpec, &osConfig); err != nil {
+			return "", fail.Config(err, "decode openstack config")
+		}
+
+		nodeSetSubnet := osConfig.Subnet.Value
+		if nodeSetSubnet == "" {
+			continue
+		}
+		if subnet != "" && subnet != nodeSetSubnet {
+			return "", fail.ConfigValidation(fmt.Errorf("control plane NodeSets use different subnets (%q and %q)", subnet, nodeSetSubnet))
+		}
+		subnet = nodeSetSubnet
+	}
+
+	return subnet, nil
 }
 
 func openstackLBClient(s *state.State) (*gophercloud.ServiceClient, error) {
