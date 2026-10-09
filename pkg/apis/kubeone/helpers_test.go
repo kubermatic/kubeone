@@ -316,10 +316,10 @@ func TestSandboxImage(t *testing.T) {
 			want:     "my.registry/pause:3.10.2",
 		},
 		{
-			name:     "version >= 1.33 returns pause:3.10.1",
-			version:  "v1.34.0",
+			name:     "version 1.37 returns pause:3.10.2",
+			version:  "v1.37.0",
 			registry: "my.registry",
-			want:     "my.registry/pause:3.10.1",
+			want:     "my.registry/pause:3.10.2",
 		},
 		{
 			name:     "version 1.35 returns pause:3.10.1",

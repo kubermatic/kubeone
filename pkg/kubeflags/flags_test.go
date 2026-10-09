@@ -25,40 +25,35 @@ import (
 )
 
 func TestDefaultAdmissionControllers(t *testing.T) {
+	v136 := []string{
+		"CertificateApproval",
+		"CertificateSigning",
+		"CertificateSubjectRestriction",
+		"DefaultIngressClass",
+		"DefaultStorageClass",
+		"DefaultTolerationSeconds",
+		"LimitRanger",
+		"MutatingAdmissionWebhook",
+		"NamespaceLifecycle",
+		"NodeRestriction",
+		"PersistentVolumeClaimResize",
+		"PodGroupProtection",
+		"PodSecurity",
+		"Priority",
+		"ResourceQuota",
+		"RuntimeClass",
+		"ServiceAccount",
+		"StorageObjectInUseProtection",
+		"TaintNodesByCondition",
+		"ValidatingAdmissionPolicy",
+		"ValidatingAdmissionWebhook",
+	}
+
 	tests := []struct {
 		name     string
 		version  *semver.Version
 		expected []string
 	}{
-		{
-			name:    "pre v135 includes NodeRestriction",
-			version: semver.MustParse("1.34.0"),
-			expected: []string{
-				"NamespaceLifecycle",
-				"LimitRanger",
-				"ServiceAccount",
-				"TaintNodesByCondition",
-				"NodeRestriction",
-				"PodSecurity",
-				"Priority",
-				"DefaultTolerationSeconds",
-				"DefaultStorageClass",
-				"StorageObjectInUseProtection",
-				"PersistentVolumeClaimResize",
-				"RuntimeClass",
-				"CertificateApproval",
-				"CertificateSigning",
-				"ClusterTrustBundleAttest",
-				"CertificateSubjectRestriction",
-				"DefaultIngressClass",
-				"PodTopologyLabels",
-				"MutatingAdmissionPolicy",
-				"MutatingAdmissionWebhook",
-				"ValidatingAdmissionPolicy",
-				"ValidatingAdmissionWebhook",
-				"ResourceQuota",
-			},
-		},
 		{
 			name:    "v135 includes NodeRestriction",
 			version: semver.MustParse("1.35.0"),
@@ -84,6 +79,16 @@ func TestDefaultAdmissionControllers(t *testing.T) {
 				"ValidatingAdmissionPolicy",
 				"ValidatingAdmissionWebhook",
 			},
+		},
+		{
+			name:     "v136 includes NodeRestriction",
+			version:  semver.MustParse("1.36.0"),
+			expected: v136,
+		},
+		{
+			name:     "v137 uses v136 list",
+			version:  semver.MustParse("1.37.0"),
+			expected: v136,
 		},
 	}
 

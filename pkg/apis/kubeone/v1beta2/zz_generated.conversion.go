@@ -26,8 +26,7 @@ import (
 	unsafe "unsafe"
 
 	kubeone "k8c.io/kubeone/pkg/apis/kubeone"
-	corev1 "k8s.io/api/core/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/api/core/v1"
 	conversion "k8s.io/apimachinery/pkg/conversion"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )
@@ -863,9 +862,7 @@ func RegisterConversions(s *runtime.Scheme) error {
 }
 
 func autoConvert_v1beta2_APIEndpoint_To_kubeone_APIEndpoint(in *APIEndpoint, out *kubeone.APIEndpoint, s conversion.Scope) error {
-	out.Host = in.Host
-	out.Port = in.Port
-	out.AlternativeNames = *(*[]string)(unsafe.Pointer(&in.AlternativeNames))
+	*out = *(*kubeone.APIEndpoint)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -875,9 +872,7 @@ func Convert_v1beta2_APIEndpoint_To_kubeone_APIEndpoint(in *APIEndpoint, out *ku
 }
 
 func autoConvert_kubeone_APIEndpoint_To_v1beta2_APIEndpoint(in *kubeone.APIEndpoint, out *APIEndpoint, s conversion.Scope) error {
-	out.Host = in.Host
-	out.Port = in.Port
-	out.AlternativeNames = *(*[]string)(unsafe.Pointer(&in.AlternativeNames))
+	*out = *(*APIEndpoint)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -887,9 +882,7 @@ func Convert_kubeone_APIEndpoint_To_v1beta2_APIEndpoint(in *kubeone.APIEndpoint,
 }
 
 func autoConvert_v1beta2_AWSControlPlane_To_kubeone_AWSControlPlane(in *AWSControlPlane, out *kubeone.AWSControlPlane, s conversion.Scope) error {
-	if err := Convert_v1beta2_AWSLoadBalancer_To_kubeone_AWSLoadBalancer(&in.LoadBalancer, &out.LoadBalancer, s); err != nil {
-		return err
-	}
+	*out = *(*kubeone.AWSControlPlane)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -899,9 +892,7 @@ func Convert_v1beta2_AWSControlPlane_To_kubeone_AWSControlPlane(in *AWSControlPl
 }
 
 func autoConvert_kubeone_AWSControlPlane_To_v1beta2_AWSControlPlane(in *kubeone.AWSControlPlane, out *AWSControlPlane, s conversion.Scope) error {
-	if err := Convert_kubeone_AWSLoadBalancer_To_v1beta2_AWSLoadBalancer(&in.LoadBalancer, &out.LoadBalancer, s); err != nil {
-		return err
-	}
+	*out = *(*AWSControlPlane)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -911,10 +902,7 @@ func Convert_kubeone_AWSControlPlane_To_v1beta2_AWSControlPlane(in *kubeone.AWSC
 }
 
 func autoConvert_v1beta2_AWSLoadBalancer_To_kubeone_AWSLoadBalancer(in *AWSLoadBalancer, out *kubeone.AWSLoadBalancer, s conversion.Scope) error {
-	out.Name = in.Name
-	out.Internal = (*bool)(unsafe.Pointer(in.Internal))
-	out.SecurityGroupIDs = *(*[]string)(unsafe.Pointer(&in.SecurityGroupIDs))
-	out.Tags = *(*map[string]string)(unsafe.Pointer(&in.Tags))
+	*out = *(*kubeone.AWSLoadBalancer)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -924,10 +912,7 @@ func Convert_v1beta2_AWSLoadBalancer_To_kubeone_AWSLoadBalancer(in *AWSLoadBalan
 }
 
 func autoConvert_kubeone_AWSLoadBalancer_To_v1beta2_AWSLoadBalancer(in *kubeone.AWSLoadBalancer, out *AWSLoadBalancer, s conversion.Scope) error {
-	out.Name = in.Name
-	out.Internal = (*bool)(unsafe.Pointer(in.Internal))
-	out.SecurityGroupIDs = *(*[]string)(unsafe.Pointer(&in.SecurityGroupIDs))
-	out.Tags = *(*map[string]string)(unsafe.Pointer(&in.Tags))
+	*out = *(*AWSLoadBalancer)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -937,8 +922,7 @@ func Convert_kubeone_AWSLoadBalancer_To_v1beta2_AWSLoadBalancer(in *kubeone.AWSL
 }
 
 func autoConvert_v1beta2_AWSSpec_To_kubeone_AWSSpec(in *AWSSpec, out *kubeone.AWSSpec, s conversion.Scope) error {
-	out.Region = in.Region
-	out.ControlPlane = (*kubeone.AWSControlPlane)(unsafe.Pointer(in.ControlPlane))
+	*out = *(*kubeone.AWSSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -948,8 +932,7 @@ func Convert_v1beta2_AWSSpec_To_kubeone_AWSSpec(in *AWSSpec, out *kubeone.AWSSpe
 }
 
 func autoConvert_kubeone_AWSSpec_To_v1beta2_AWSSpec(in *kubeone.AWSSpec, out *AWSSpec, s conversion.Scope) error {
-	out.Region = in.Region
-	out.ControlPlane = (*AWSControlPlane)(unsafe.Pointer(in.ControlPlane))
+	*out = *(*AWSSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -959,10 +942,7 @@ func Convert_kubeone_AWSSpec_To_v1beta2_AWSSpec(in *kubeone.AWSSpec, out *AWSSpe
 }
 
 func autoConvert_v1beta2_Addon_To_kubeone_Addon(in *Addon, out *kubeone.Addon, s conversion.Scope) error {
-	out.Name = in.Name
-	out.Params = *(*map[string]string)(unsafe.Pointer(&in.Params))
-	out.DisableTemplating = in.DisableTemplating
-	out.Delete = in.Delete
+	*out = *(*kubeone.Addon)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -972,10 +952,7 @@ func Convert_v1beta2_Addon_To_kubeone_Addon(in *Addon, out *kubeone.Addon, s con
 }
 
 func autoConvert_kubeone_Addon_To_v1beta2_Addon(in *kubeone.Addon, out *Addon, s conversion.Scope) error {
-	out.Name = in.Name
-	out.Params = *(*map[string]string)(unsafe.Pointer(&in.Params))
-	out.DisableTemplating = in.DisableTemplating
-	out.Delete = in.Delete
+	*out = *(*Addon)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1024,7 +1001,7 @@ func Convert_kubeone_Addons_To_v1beta2_Addons(in *kubeone.Addons, out *Addons, s
 }
 
 func autoConvert_v1beta2_AlwaysPullImages_To_kubeone_AlwaysPullImages(in *AlwaysPullImages, out *kubeone.AlwaysPullImages, s conversion.Scope) error {
-	out.Enable = in.Enable
+	*out = *(*kubeone.AlwaysPullImages)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1034,7 +1011,7 @@ func Convert_v1beta2_AlwaysPullImages_To_kubeone_AlwaysPullImages(in *AlwaysPull
 }
 
 func autoConvert_kubeone_AlwaysPullImages_To_v1beta2_AlwaysPullImages(in *kubeone.AlwaysPullImages, out *AlwaysPullImages, s conversion.Scope) error {
-	out.Enable = in.Enable
+	*out = *(*AlwaysPullImages)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1044,6 +1021,7 @@ func Convert_kubeone_AlwaysPullImages_To_v1beta2_AlwaysPullImages(in *kubeone.Al
 }
 
 func autoConvert_v1beta2_AzureSpec_To_kubeone_AzureSpec(in *AzureSpec, out *kubeone.AzureSpec, s conversion.Scope) error {
+	*out = *(*kubeone.AzureSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1053,6 +1031,7 @@ func Convert_v1beta2_AzureSpec_To_kubeone_AzureSpec(in *AzureSpec, out *kubeone.
 }
 
 func autoConvert_kubeone_AzureSpec_To_v1beta2_AzureSpec(in *kubeone.AzureSpec, out *AzureSpec, s conversion.Scope) error {
+	*out = *(*AzureSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1104,7 +1083,7 @@ func Convert_kubeone_CNI_To_v1beta2_CNI(in *kubeone.CNI, out *CNI, s conversion.
 }
 
 func autoConvert_v1beta2_CanalSpec_To_kubeone_CanalSpec(in *CanalSpec, out *kubeone.CanalSpec, s conversion.Scope) error {
-	out.MTU = in.MTU
+	*out = *(*kubeone.CanalSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1114,7 +1093,7 @@ func Convert_v1beta2_CanalSpec_To_kubeone_CanalSpec(in *CanalSpec, out *kubeone.
 }
 
 func autoConvert_kubeone_CanalSpec_To_v1beta2_CanalSpec(in *kubeone.CanalSpec, out *CanalSpec, s conversion.Scope) error {
-	out.MTU = in.MTU
+	*out = *(*CanalSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1124,10 +1103,7 @@ func Convert_kubeone_CanalSpec_To_v1beta2_CanalSpec(in *kubeone.CanalSpec, out *
 }
 
 func autoConvert_v1beta2_CertificateAuthorithyConfig_To_kubeone_CertificateAuthorithyConfig(in *CertificateAuthorithyConfig, out *kubeone.CertificateAuthorithyConfig, s conversion.Scope) error {
-	out.Bundle = in.Bundle
-	out.File = in.File
-	out.CertificateValidityPeriod = (*v1.Duration)(unsafe.Pointer(in.CertificateValidityPeriod))
-	out.CACertificateValidityPeriod = (*v1.Duration)(unsafe.Pointer(in.CACertificateValidityPeriod))
+	*out = *(*kubeone.CertificateAuthorithyConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1137,10 +1113,7 @@ func Convert_v1beta2_CertificateAuthorithyConfig_To_kubeone_CertificateAuthorith
 }
 
 func autoConvert_kubeone_CertificateAuthorithyConfig_To_v1beta2_CertificateAuthorithyConfig(in *kubeone.CertificateAuthorithyConfig, out *CertificateAuthorithyConfig, s conversion.Scope) error {
-	out.Bundle = in.Bundle
-	out.File = in.File
-	out.CertificateValidityPeriod = (*v1.Duration)(unsafe.Pointer(in.CertificateValidityPeriod))
-	out.CACertificateValidityPeriod = (*v1.Duration)(unsafe.Pointer(in.CACertificateValidityPeriod))
+	*out = *(*CertificateAuthorithyConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1168,23 +1141,7 @@ func autoConvert_kubeone_CiliumSpec_To_v1beta2_CiliumSpec(in *kubeone.CiliumSpec
 }
 
 func autoConvert_v1beta2_CloudProviderSpec_To_kubeone_CloudProviderSpec(in *CloudProviderSpec, out *kubeone.CloudProviderSpec, s conversion.Scope) error {
-	out.External = in.External
-	out.DisableBundledCSIDrivers = in.DisableBundledCSIDrivers
-	out.CloudConfig = in.CloudConfig
-	out.CSIConfig = in.CSIConfig
-	out.SecretProviderClassName = in.SecretProviderClassName
-	out.AWS = (*kubeone.AWSSpec)(unsafe.Pointer(in.AWS))
-	out.Azure = (*kubeone.AzureSpec)(unsafe.Pointer(in.Azure))
-	out.DigitalOcean = (*kubeone.DigitalOceanSpec)(unsafe.Pointer(in.DigitalOcean))
-	out.GCE = (*kubeone.GCESpec)(unsafe.Pointer(in.GCE))
-	out.Hetzner = (*kubeone.HetznerSpec)(unsafe.Pointer(in.Hetzner))
-	out.Kubevirt = (*kubeone.KubevirtSpec)(unsafe.Pointer(in.Kubevirt))
-	out.Nutanix = (*kubeone.NutanixSpec)(unsafe.Pointer(in.Nutanix))
-	out.Openstack = (*kubeone.OpenstackSpec)(unsafe.Pointer(in.Openstack))
-	out.EquinixMetal = (*kubeone.EquinixMetalSpec)(unsafe.Pointer(in.EquinixMetal))
-	out.VMwareCloudDirector = (*kubeone.VMwareCloudDirectorSpec)(unsafe.Pointer(in.VMwareCloudDirector))
-	out.Vsphere = (*kubeone.VsphereSpec)(unsafe.Pointer(in.Vsphere))
-	out.None = (*kubeone.NoneSpec)(unsafe.Pointer(in.None))
+	*out = *(*kubeone.CloudProviderSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1194,23 +1151,7 @@ func Convert_v1beta2_CloudProviderSpec_To_kubeone_CloudProviderSpec(in *CloudPro
 }
 
 func autoConvert_kubeone_CloudProviderSpec_To_v1beta2_CloudProviderSpec(in *kubeone.CloudProviderSpec, out *CloudProviderSpec, s conversion.Scope) error {
-	out.External = in.External
-	out.DisableBundledCSIDrivers = in.DisableBundledCSIDrivers
-	out.CloudConfig = in.CloudConfig
-	out.CSIConfig = in.CSIConfig
-	out.SecretProviderClassName = in.SecretProviderClassName
-	out.AWS = (*AWSSpec)(unsafe.Pointer(in.AWS))
-	out.Azure = (*AzureSpec)(unsafe.Pointer(in.Azure))
-	out.DigitalOcean = (*DigitalOceanSpec)(unsafe.Pointer(in.DigitalOcean))
-	out.GCE = (*GCESpec)(unsafe.Pointer(in.GCE))
-	out.Hetzner = (*HetznerSpec)(unsafe.Pointer(in.Hetzner))
-	out.Kubevirt = (*KubevirtSpec)(unsafe.Pointer(in.Kubevirt))
-	out.Nutanix = (*NutanixSpec)(unsafe.Pointer(in.Nutanix))
-	out.Openstack = (*OpenstackSpec)(unsafe.Pointer(in.Openstack))
-	out.EquinixMetal = (*EquinixMetalSpec)(unsafe.Pointer(in.EquinixMetal))
-	out.VMwareCloudDirector = (*VMwareCloudDirectorSpec)(unsafe.Pointer(in.VMwareCloudDirector))
-	out.Vsphere = (*VsphereSpec)(unsafe.Pointer(in.Vsphere))
-	out.None = (*NoneSpec)(unsafe.Pointer(in.None))
+	*out = *(*CloudProviderSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1327,10 +1268,7 @@ func autoConvert_kubeone_ContainerRuntimeContainerd_To_v1beta2_ContainerRuntimeC
 }
 
 func autoConvert_v1beta2_ContainerdRegistry_To_kubeone_ContainerdRegistry(in *ContainerdRegistry, out *kubeone.ContainerdRegistry, s conversion.Scope) error {
-	out.Mirrors = *(*[]string)(unsafe.Pointer(&in.Mirrors))
-	out.OverridePath = in.OverridePath
-	out.TLSConfig = (*kubeone.ContainerdTLSConfig)(unsafe.Pointer(in.TLSConfig))
-	out.Auth = (*kubeone.ContainerdRegistryAuthConfig)(unsafe.Pointer(in.Auth))
+	*out = *(*kubeone.ContainerdRegistry)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1340,10 +1278,7 @@ func Convert_v1beta2_ContainerdRegistry_To_kubeone_ContainerdRegistry(in *Contai
 }
 
 func autoConvert_kubeone_ContainerdRegistry_To_v1beta2_ContainerdRegistry(in *kubeone.ContainerdRegistry, out *ContainerdRegistry, s conversion.Scope) error {
-	out.Mirrors = *(*[]string)(unsafe.Pointer(&in.Mirrors))
-	out.OverridePath = in.OverridePath
-	out.TLSConfig = (*ContainerdTLSConfig)(unsafe.Pointer(in.TLSConfig))
-	out.Auth = (*ContainerdRegistryAuthConfig)(unsafe.Pointer(in.Auth))
+	*out = *(*ContainerdRegistry)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1353,10 +1288,7 @@ func Convert_kubeone_ContainerdRegistry_To_v1beta2_ContainerdRegistry(in *kubeon
 }
 
 func autoConvert_v1beta2_ContainerdRegistryAuthConfig_To_kubeone_ContainerdRegistryAuthConfig(in *ContainerdRegistryAuthConfig, out *kubeone.ContainerdRegistryAuthConfig, s conversion.Scope) error {
-	out.Username = in.Username
-	out.Password = in.Password
-	out.Auth = in.Auth
-	out.IdentityToken = in.IdentityToken
+	*out = *(*kubeone.ContainerdRegistryAuthConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1366,10 +1298,7 @@ func Convert_v1beta2_ContainerdRegistryAuthConfig_To_kubeone_ContainerdRegistryA
 }
 
 func autoConvert_kubeone_ContainerdRegistryAuthConfig_To_v1beta2_ContainerdRegistryAuthConfig(in *kubeone.ContainerdRegistryAuthConfig, out *ContainerdRegistryAuthConfig, s conversion.Scope) error {
-	out.Username = in.Username
-	out.Password = in.Password
-	out.Auth = in.Auth
-	out.IdentityToken = in.IdentityToken
+	*out = *(*ContainerdRegistryAuthConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1379,7 +1308,7 @@ func Convert_kubeone_ContainerdRegistryAuthConfig_To_v1beta2_ContainerdRegistryA
 }
 
 func autoConvert_v1beta2_ContainerdTLSConfig_To_kubeone_ContainerdTLSConfig(in *ContainerdTLSConfig, out *kubeone.ContainerdTLSConfig, s conversion.Scope) error {
-	out.InsecureSkipVerify = in.InsecureSkipVerify
+	*out = *(*kubeone.ContainerdTLSConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1389,7 +1318,7 @@ func Convert_v1beta2_ContainerdTLSConfig_To_kubeone_ContainerdTLSConfig(in *Cont
 }
 
 func autoConvert_kubeone_ContainerdTLSConfig_To_v1beta2_ContainerdTLSConfig(in *kubeone.ContainerdTLSConfig, out *ContainerdTLSConfig, s conversion.Scope) error {
-	out.InsecureSkipVerify = in.InsecureSkipVerify
+	*out = *(*ContainerdTLSConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1399,8 +1328,7 @@ func Convert_kubeone_ContainerdTLSConfig_To_v1beta2_ContainerdTLSConfig(in *kube
 }
 
 func autoConvert_v1beta2_ControlPlaneComponentConfig_To_kubeone_ControlPlaneComponentConfig(in *ControlPlaneComponentConfig, out *kubeone.ControlPlaneComponentConfig, s conversion.Scope) error {
-	out.Flags = *(*map[string]string)(unsafe.Pointer(&in.Flags))
-	out.FeatureGates = *(*map[string]bool)(unsafe.Pointer(&in.FeatureGates))
+	*out = *(*kubeone.ControlPlaneComponentConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1410,8 +1338,7 @@ func Convert_v1beta2_ControlPlaneComponentConfig_To_kubeone_ControlPlaneComponen
 }
 
 func autoConvert_kubeone_ControlPlaneComponentConfig_To_v1beta2_ControlPlaneComponentConfig(in *kubeone.ControlPlaneComponentConfig, out *ControlPlaneComponentConfig, s conversion.Scope) error {
-	out.Flags = *(*map[string]string)(unsafe.Pointer(&in.Flags))
-	out.FeatureGates = *(*map[string]bool)(unsafe.Pointer(&in.FeatureGates))
+	*out = *(*ControlPlaneComponentConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1421,10 +1348,7 @@ func Convert_kubeone_ControlPlaneComponentConfig_To_v1beta2_ControlPlaneComponen
 }
 
 func autoConvert_v1beta2_ControlPlaneComponents_To_kubeone_ControlPlaneComponents(in *ControlPlaneComponents, out *kubeone.ControlPlaneComponents, s conversion.Scope) error {
-	out.ControllerManager = (*kubeone.ControlPlaneComponentConfig)(unsafe.Pointer(in.ControllerManager))
-	out.Scheduler = (*kubeone.ControlPlaneComponentConfig)(unsafe.Pointer(in.Scheduler))
-	out.APIServer = (*kubeone.ControlPlaneComponentConfig)(unsafe.Pointer(in.APIServer))
-	out.Etcd = (*kubeone.EtcdConfig)(unsafe.Pointer(in.Etcd))
+	*out = *(*kubeone.ControlPlaneComponents)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1434,10 +1358,7 @@ func Convert_v1beta2_ControlPlaneComponents_To_kubeone_ControlPlaneComponents(in
 }
 
 func autoConvert_kubeone_ControlPlaneComponents_To_v1beta2_ControlPlaneComponents(in *kubeone.ControlPlaneComponents, out *ControlPlaneComponents, s conversion.Scope) error {
-	out.ControllerManager = (*ControlPlaneComponentConfig)(unsafe.Pointer(in.ControllerManager))
-	out.Scheduler = (*ControlPlaneComponentConfig)(unsafe.Pointer(in.Scheduler))
-	out.APIServer = (*ControlPlaneComponentConfig)(unsafe.Pointer(in.APIServer))
-	out.Etcd = (*EtcdConfig)(unsafe.Pointer(in.Etcd))
+	*out = *(*ControlPlaneComponents)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1489,9 +1410,7 @@ func Convert_kubeone_ControlPlaneConfig_To_v1beta2_ControlPlaneConfig(in *kubeon
 }
 
 func autoConvert_v1beta2_CoreDNS_To_kubeone_CoreDNS(in *CoreDNS, out *kubeone.CoreDNS, s conversion.Scope) error {
-	out.Replicas = (*int32)(unsafe.Pointer(in.Replicas))
-	out.DeployPodDisruptionBudget = (*bool)(unsafe.Pointer(in.DeployPodDisruptionBudget))
-	out.ImageRepository = in.ImageRepository
+	*out = *(*kubeone.CoreDNS)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1501,9 +1420,7 @@ func Convert_v1beta2_CoreDNS_To_kubeone_CoreDNS(in *CoreDNS, out *kubeone.CoreDN
 }
 
 func autoConvert_kubeone_CoreDNS_To_v1beta2_CoreDNS(in *kubeone.CoreDNS, out *CoreDNS, s conversion.Scope) error {
-	out.Replicas = (*int32)(unsafe.Pointer(in.Replicas))
-	out.DeployPodDisruptionBudget = (*bool)(unsafe.Pointer(in.DeployPodDisruptionBudget))
-	out.ImageRepository = in.ImageRepository
+	*out = *(*CoreDNS)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1513,7 +1430,7 @@ func Convert_kubeone_CoreDNS_To_v1beta2_CoreDNS(in *kubeone.CoreDNS, out *CoreDN
 }
 
 func autoConvert_v1beta2_DNSConfig_To_kubeone_DNSConfig(in *DNSConfig, out *kubeone.DNSConfig, s conversion.Scope) error {
-	out.Servers = *(*[]string)(unsafe.Pointer(&in.Servers))
+	*out = *(*kubeone.DNSConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1523,7 +1440,7 @@ func Convert_v1beta2_DNSConfig_To_kubeone_DNSConfig(in *DNSConfig, out *kubeone.
 }
 
 func autoConvert_kubeone_DNSConfig_To_v1beta2_DNSConfig(in *kubeone.DNSConfig, out *DNSConfig, s conversion.Scope) error {
-	out.Servers = *(*[]string)(unsafe.Pointer(&in.Servers))
+	*out = *(*DNSConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1533,6 +1450,7 @@ func Convert_kubeone_DNSConfig_To_v1beta2_DNSConfig(in *kubeone.DNSConfig, out *
 }
 
 func autoConvert_v1beta2_DigitalOceanSpec_To_kubeone_DigitalOceanSpec(in *DigitalOceanSpec, out *kubeone.DigitalOceanSpec, s conversion.Scope) error {
+	*out = *(*kubeone.DigitalOceanSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1542,6 +1460,7 @@ func Convert_v1beta2_DigitalOceanSpec_To_kubeone_DigitalOceanSpec(in *DigitalOce
 }
 
 func autoConvert_kubeone_DigitalOceanSpec_To_v1beta2_DigitalOceanSpec(in *kubeone.DigitalOceanSpec, out *DigitalOceanSpec, s conversion.Scope) error {
+	*out = *(*DigitalOceanSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1551,7 +1470,7 @@ func Convert_kubeone_DigitalOceanSpec_To_v1beta2_DigitalOceanSpec(in *kubeone.Di
 }
 
 func autoConvert_v1beta2_DynamicAuditLog_To_kubeone_DynamicAuditLog(in *DynamicAuditLog, out *kubeone.DynamicAuditLog, s conversion.Scope) error {
-	out.Enable = in.Enable
+	*out = *(*kubeone.DynamicAuditLog)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1561,7 +1480,7 @@ func Convert_v1beta2_DynamicAuditLog_To_kubeone_DynamicAuditLog(in *DynamicAudit
 }
 
 func autoConvert_kubeone_DynamicAuditLog_To_v1beta2_DynamicAuditLog(in *kubeone.DynamicAuditLog, out *DynamicAuditLog, s conversion.Scope) error {
-	out.Enable = in.Enable
+	*out = *(*DynamicAuditLog)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1599,8 +1518,7 @@ func Convert_kubeone_DynamicWorkerConfig_To_v1beta2_DynamicWorkerConfig(in *kube
 }
 
 func autoConvert_v1beta2_EncryptionProviders_To_kubeone_EncryptionProviders(in *EncryptionProviders, out *kubeone.EncryptionProviders, s conversion.Scope) error {
-	out.Enable = in.Enable
-	out.CustomEncryptionConfiguration = in.CustomEncryptionConfiguration
+	*out = *(*kubeone.EncryptionProviders)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1610,8 +1528,7 @@ func Convert_v1beta2_EncryptionProviders_To_kubeone_EncryptionProviders(in *Encr
 }
 
 func autoConvert_kubeone_EncryptionProviders_To_v1beta2_EncryptionProviders(in *kubeone.EncryptionProviders, out *EncryptionProviders, s conversion.Scope) error {
-	out.Enable = in.Enable
-	out.CustomEncryptionConfiguration = in.CustomEncryptionConfiguration
+	*out = *(*EncryptionProviders)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1621,6 +1538,7 @@ func Convert_kubeone_EncryptionProviders_To_v1beta2_EncryptionProviders(in *kube
 }
 
 func autoConvert_v1beta2_EquinixMetalSpec_To_kubeone_EquinixMetalSpec(in *EquinixMetalSpec, out *kubeone.EquinixMetalSpec, s conversion.Scope) error {
+	*out = *(*kubeone.EquinixMetalSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1630,6 +1548,7 @@ func Convert_v1beta2_EquinixMetalSpec_To_kubeone_EquinixMetalSpec(in *EquinixMet
 }
 
 func autoConvert_kubeone_EquinixMetalSpec_To_v1beta2_EquinixMetalSpec(in *kubeone.EquinixMetalSpec, out *EquinixMetalSpec, s conversion.Scope) error {
+	*out = *(*EquinixMetalSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1639,9 +1558,7 @@ func Convert_kubeone_EquinixMetalSpec_To_v1beta2_EquinixMetalSpec(in *kubeone.Eq
 }
 
 func autoConvert_v1beta2_EtcdConfig_To_kubeone_EtcdConfig(in *EtcdConfig, out *kubeone.EtcdConfig, s conversion.Scope) error {
-	out.QuotaBackendBytes = in.QuotaBackendBytes
-	out.AutoCompactionRetention = in.AutoCompactionRetention
-	out.AutoCompactionMode = kubeone.EtcdAutoCompactionMode(in.AutoCompactionMode)
+	*out = *(*kubeone.EtcdConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1651,9 +1568,7 @@ func Convert_v1beta2_EtcdConfig_To_kubeone_EtcdConfig(in *EtcdConfig, out *kubeo
 }
 
 func autoConvert_kubeone_EtcdConfig_To_v1beta2_EtcdConfig(in *kubeone.EtcdConfig, out *EtcdConfig, s conversion.Scope) error {
-	out.QuotaBackendBytes = in.QuotaBackendBytes
-	out.AutoCompactionRetention = in.AutoCompactionRetention
-	out.AutoCompactionMode = EtcdAutoCompactionMode(in.AutoCompactionMode)
+	*out = *(*EtcdConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1663,10 +1578,7 @@ func Convert_kubeone_EtcdConfig_To_v1beta2_EtcdConfig(in *kubeone.EtcdConfig, ou
 }
 
 func autoConvert_v1beta2_EventRateLimit_To_kubeone_EventRateLimit(in *EventRateLimit, out *kubeone.EventRateLimit, s conversion.Scope) error {
-	out.Enable = in.Enable
-	if err := Convert_v1beta2_EventRateLimitConfig_To_kubeone_EventRateLimitConfig(&in.Config, &out.Config, s); err != nil {
-		return err
-	}
+	*out = *(*kubeone.EventRateLimit)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1676,10 +1588,7 @@ func Convert_v1beta2_EventRateLimit_To_kubeone_EventRateLimit(in *EventRateLimit
 }
 
 func autoConvert_kubeone_EventRateLimit_To_v1beta2_EventRateLimit(in *kubeone.EventRateLimit, out *EventRateLimit, s conversion.Scope) error {
-	out.Enable = in.Enable
-	if err := Convert_kubeone_EventRateLimitConfig_To_v1beta2_EventRateLimitConfig(&in.Config, &out.Config, s); err != nil {
-		return err
-	}
+	*out = *(*EventRateLimit)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1689,7 +1598,7 @@ func Convert_kubeone_EventRateLimit_To_v1beta2_EventRateLimit(in *kubeone.EventR
 }
 
 func autoConvert_v1beta2_EventRateLimitConfig_To_kubeone_EventRateLimitConfig(in *EventRateLimitConfig, out *kubeone.EventRateLimitConfig, s conversion.Scope) error {
-	out.ConfigFilePath = in.ConfigFilePath
+	*out = *(*kubeone.EventRateLimitConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1699,7 +1608,7 @@ func Convert_v1beta2_EventRateLimitConfig_To_kubeone_EventRateLimitConfig(in *Ev
 }
 
 func autoConvert_kubeone_EventRateLimitConfig_To_v1beta2_EventRateLimitConfig(in *kubeone.EventRateLimitConfig, out *EventRateLimitConfig, s conversion.Scope) error {
-	out.ConfigFilePath = in.ConfigFilePath
+	*out = *(*EventRateLimitConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1709,6 +1618,7 @@ func Convert_kubeone_EventRateLimitConfig_To_v1beta2_EventRateLimitConfig(in *ku
 }
 
 func autoConvert_v1beta2_ExternalCNISpec_To_kubeone_ExternalCNISpec(in *ExternalCNISpec, out *kubeone.ExternalCNISpec, s conversion.Scope) error {
+	*out = *(*kubeone.ExternalCNISpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1718,6 +1628,7 @@ func Convert_v1beta2_ExternalCNISpec_To_kubeone_ExternalCNISpec(in *ExternalCNIS
 }
 
 func autoConvert_kubeone_ExternalCNISpec_To_v1beta2_ExternalCNISpec(in *kubeone.ExternalCNISpec, out *ExternalCNISpec, s conversion.Scope) error {
+	*out = *(*ExternalCNISpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1757,6 +1668,7 @@ func autoConvert_kubeone_Features_To_v1beta2_Features(in *kubeone.Features, out 
 }
 
 func autoConvert_v1beta2_GCESpec_To_kubeone_GCESpec(in *GCESpec, out *kubeone.GCESpec, s conversion.Scope) error {
+	*out = *(*kubeone.GCESpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1766,6 +1678,7 @@ func Convert_v1beta2_GCESpec_To_kubeone_GCESpec(in *GCESpec, out *kubeone.GCESpe
 }
 
 func autoConvert_kubeone_GCESpec_To_v1beta2_GCESpec(in *kubeone.GCESpec, out *GCESpec, s conversion.Scope) error {
+	*out = *(*GCESpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1775,8 +1688,7 @@ func Convert_kubeone_GCESpec_To_v1beta2_GCESpec(in *kubeone.GCESpec, out *GCESpe
 }
 
 func autoConvert_v1beta2_HelmAuth_To_kubeone_HelmAuth(in *HelmAuth, out *kubeone.HelmAuth, s conversion.Scope) error {
-	out.Username = in.Username
-	out.Password = in.Password
+	*out = *(*kubeone.HelmAuth)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1786,8 +1698,7 @@ func Convert_v1beta2_HelmAuth_To_kubeone_HelmAuth(in *HelmAuth, out *kubeone.Hel
 }
 
 func autoConvert_kubeone_HelmAuth_To_v1beta2_HelmAuth(in *kubeone.HelmAuth, out *HelmAuth, s conversion.Scope) error {
-	out.Username = in.Username
-	out.Password = in.Password
+	*out = *(*HelmAuth)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1837,8 +1748,7 @@ func Convert_kubeone_HelmRelease_To_v1beta2_HelmRelease(in *kubeone.HelmRelease,
 }
 
 func autoConvert_v1beta2_HelmValues_To_kubeone_HelmValues(in *HelmValues, out *kubeone.HelmValues, s conversion.Scope) error {
-	out.ValuesFile = in.ValuesFile
-	out.Inline = *(*jsontext.Value)(unsafe.Pointer(&in.Inline))
+	*out = *(*kubeone.HelmValues)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1848,8 +1758,7 @@ func Convert_v1beta2_HelmValues_To_kubeone_HelmValues(in *HelmValues, out *kubeo
 }
 
 func autoConvert_kubeone_HelmValues_To_v1beta2_HelmValues(in *kubeone.HelmValues, out *HelmValues, s conversion.Scope) error {
-	out.ValuesFile = in.ValuesFile
-	out.Inline = *(*jsontext.Value)(unsafe.Pointer(&in.Inline))
+	*out = *(*HelmValues)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1859,9 +1768,7 @@ func Convert_kubeone_HelmValues_To_v1beta2_HelmValues(in *kubeone.HelmValues, ou
 }
 
 func autoConvert_v1beta2_HetznerControlPlane_To_kubeone_HetznerControlPlane(in *HetznerControlPlane, out *kubeone.HetznerControlPlane, s conversion.Scope) error {
-	if err := Convert_v1beta2_HetznerLoadBalancer_To_kubeone_HetznerLoadBalancer(&in.LoadBalancer, &out.LoadBalancer, s); err != nil {
-		return err
-	}
+	*out = *(*kubeone.HetznerControlPlane)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1871,9 +1778,7 @@ func Convert_v1beta2_HetznerControlPlane_To_kubeone_HetznerControlPlane(in *Hetz
 }
 
 func autoConvert_kubeone_HetznerControlPlane_To_v1beta2_HetznerControlPlane(in *kubeone.HetznerControlPlane, out *HetznerControlPlane, s conversion.Scope) error {
-	if err := Convert_kubeone_HetznerLoadBalancer_To_v1beta2_HetznerLoadBalancer(&in.LoadBalancer, &out.LoadBalancer, s); err != nil {
-		return err
-	}
+	*out = *(*HetznerControlPlane)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1883,11 +1788,7 @@ func Convert_kubeone_HetznerControlPlane_To_v1beta2_HetznerControlPlane(in *kube
 }
 
 func autoConvert_v1beta2_HetznerLoadBalancer_To_kubeone_HetznerLoadBalancer(in *HetznerLoadBalancer, out *kubeone.HetznerLoadBalancer, s conversion.Scope) error {
-	out.Name = in.Name
-	out.Type = in.Type
-	out.Location = in.Location
-	out.PublicIP = (*bool)(unsafe.Pointer(in.PublicIP))
-	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
+	*out = *(*kubeone.HetznerLoadBalancer)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1897,11 +1798,7 @@ func Convert_v1beta2_HetznerLoadBalancer_To_kubeone_HetznerLoadBalancer(in *Hetz
 }
 
 func autoConvert_kubeone_HetznerLoadBalancer_To_v1beta2_HetznerLoadBalancer(in *kubeone.HetznerLoadBalancer, out *HetznerLoadBalancer, s conversion.Scope) error {
-	out.Name = in.Name
-	out.Type = in.Type
-	out.Location = in.Location
-	out.PublicIP = (*bool)(unsafe.Pointer(in.PublicIP))
-	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
+	*out = *(*HetznerLoadBalancer)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1911,8 +1808,7 @@ func Convert_kubeone_HetznerLoadBalancer_To_v1beta2_HetznerLoadBalancer(in *kube
 }
 
 func autoConvert_v1beta2_HetznerSpec_To_kubeone_HetznerSpec(in *HetznerSpec, out *kubeone.HetznerSpec, s conversion.Scope) error {
-	out.NetworkID = in.NetworkID
-	out.ControlPlane = (*kubeone.HetznerControlPlane)(unsafe.Pointer(in.ControlPlane))
+	*out = *(*kubeone.HetznerSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1922,8 +1818,7 @@ func Convert_v1beta2_HetznerSpec_To_kubeone_HetznerSpec(in *HetznerSpec, out *ku
 }
 
 func autoConvert_kubeone_HetznerSpec_To_v1beta2_HetznerSpec(in *kubeone.HetznerSpec, out *HetznerSpec, s conversion.Scope) error {
-	out.NetworkID = in.NetworkID
-	out.ControlPlane = (*HetznerControlPlane)(unsafe.Pointer(in.ControlPlane))
+	*out = *(*HetznerSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -1950,7 +1845,7 @@ func autoConvert_v1beta2_HostConfig_To_kubeone_HostConfig(in *HostConfig, out *k
 	out.BastionPrivateKeyFile = in.BastionPrivateKeyFile
 	out.Hostname = in.Hostname
 	out.IsLeader = in.IsLeader
-	out.Taints = *(*[]corev1.Taint)(unsafe.Pointer(&in.Taints))
+	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
 	if err := Convert_v1beta2_KubeletConfig_To_kubeone_KubeletConfig(&in.Kubelet, &out.Kubelet, s); err != nil {
@@ -1983,7 +1878,7 @@ func autoConvert_kubeone_HostConfig_To_v1beta2_HostConfig(in *kubeone.HostConfig
 	out.BastionPrivateKeyFile = in.BastionPrivateKeyFile
 	out.Hostname = in.Hostname
 	out.IsLeader = in.IsLeader
-	out.Taints = *(*[]corev1.Taint)(unsafe.Pointer(&in.Taints))
+	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
 	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
 	if err := Convert_kubeone_KubeletConfig_To_v1beta2_KubeletConfig(&in.Kubelet, &out.Kubelet, s); err != nil {
@@ -1999,6 +1894,7 @@ func Convert_kubeone_HostConfig_To_v1beta2_HostConfig(in *kubeone.HostConfig, ou
 }
 
 func autoConvert_v1beta2_IPTables_To_kubeone_IPTables(in *IPTables, out *kubeone.IPTables, s conversion.Scope) error {
+	*out = *(*kubeone.IPTables)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2008,6 +1904,7 @@ func Convert_v1beta2_IPTables_To_kubeone_IPTables(in *IPTables, out *kubeone.IPT
 }
 
 func autoConvert_kubeone_IPTables_To_v1beta2_IPTables(in *kubeone.IPTables, out *IPTables, s conversion.Scope) error {
+	*out = *(*IPTables)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2017,12 +1914,7 @@ func Convert_kubeone_IPTables_To_v1beta2_IPTables(in *kubeone.IPTables, out *IPT
 }
 
 func autoConvert_v1beta2_IPVSConfig_To_kubeone_IPVSConfig(in *IPVSConfig, out *kubeone.IPVSConfig, s conversion.Scope) error {
-	out.Scheduler = in.Scheduler
-	out.ExcludeCIDRs = *(*[]string)(unsafe.Pointer(&in.ExcludeCIDRs))
-	out.StrictARP = in.StrictARP
-	out.TCPTimeout = in.TCPTimeout
-	out.TCPFinTimeout = in.TCPFinTimeout
-	out.UDPTimeout = in.UDPTimeout
+	*out = *(*kubeone.IPVSConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2032,12 +1924,7 @@ func Convert_v1beta2_IPVSConfig_To_kubeone_IPVSConfig(in *IPVSConfig, out *kubeo
 }
 
 func autoConvert_kubeone_IPVSConfig_To_v1beta2_IPVSConfig(in *kubeone.IPVSConfig, out *IPVSConfig, s conversion.Scope) error {
-	out.Scheduler = in.Scheduler
-	out.ExcludeCIDRs = *(*[]string)(unsafe.Pointer(&in.ExcludeCIDRs))
-	out.StrictARP = in.StrictARP
-	out.TCPTimeout = in.TCPTimeout
-	out.TCPFinTimeout = in.TCPFinTimeout
-	out.UDPTimeout = in.UDPTimeout
+	*out = *(*IPVSConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2189,9 +2076,7 @@ func autoConvert_kubeone_KubeOneCluster_To_v1beta2_KubeOneCluster(in *kubeone.Ku
 }
 
 func autoConvert_v1beta2_KubeProxyConfig_To_kubeone_KubeProxyConfig(in *KubeProxyConfig, out *kubeone.KubeProxyConfig, s conversion.Scope) error {
-	out.SkipInstallation = in.SkipInstallation
-	out.IPVS = (*kubeone.IPVSConfig)(unsafe.Pointer(in.IPVS))
-	out.IPTables = (*kubeone.IPTables)(unsafe.Pointer(in.IPTables))
+	*out = *(*kubeone.KubeProxyConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2201,9 +2086,7 @@ func Convert_v1beta2_KubeProxyConfig_To_kubeone_KubeProxyConfig(in *KubeProxyCon
 }
 
 func autoConvert_kubeone_KubeProxyConfig_To_v1beta2_KubeProxyConfig(in *kubeone.KubeProxyConfig, out *KubeProxyConfig, s conversion.Scope) error {
-	out.SkipInstallation = in.SkipInstallation
-	out.IPVS = (*IPVSConfig)(unsafe.Pointer(in.IPVS))
-	out.IPTables = (*IPTables)(unsafe.Pointer(in.IPTables))
+	*out = *(*KubeProxyConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2243,9 +2126,7 @@ func autoConvert_kubeone_KubeletConfig_To_v1beta2_KubeletConfig(in *kubeone.Kube
 }
 
 func autoConvert_v1beta2_KubevirtControlPlane_To_kubeone_KubevirtControlPlane(in *KubevirtControlPlane, out *kubeone.KubevirtControlPlane, s conversion.Scope) error {
-	if err := Convert_v1beta2_KubevirtLoadBalancer_To_kubeone_KubevirtLoadBalancer(&in.LoadBalancer, &out.LoadBalancer, s); err != nil {
-		return err
-	}
+	*out = *(*kubeone.KubevirtControlPlane)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2255,9 +2136,7 @@ func Convert_v1beta2_KubevirtControlPlane_To_kubeone_KubevirtControlPlane(in *Ku
 }
 
 func autoConvert_kubeone_KubevirtControlPlane_To_v1beta2_KubevirtControlPlane(in *kubeone.KubevirtControlPlane, out *KubevirtControlPlane, s conversion.Scope) error {
-	if err := Convert_kubeone_KubevirtLoadBalancer_To_v1beta2_KubevirtLoadBalancer(&in.LoadBalancer, &out.LoadBalancer, s); err != nil {
-		return err
-	}
+	*out = *(*KubevirtControlPlane)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2267,9 +2146,7 @@ func Convert_kubeone_KubevirtControlPlane_To_v1beta2_KubevirtControlPlane(in *ku
 }
 
 func autoConvert_v1beta2_KubevirtLoadBalancer_To_kubeone_KubevirtLoadBalancer(in *KubevirtLoadBalancer, out *kubeone.KubevirtLoadBalancer, s conversion.Scope) error {
-	out.Name = in.Name
-	out.ServiceType = corev1.ServiceType(in.ServiceType)
-	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
+	*out = *(*kubeone.KubevirtLoadBalancer)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2279,9 +2156,7 @@ func Convert_v1beta2_KubevirtLoadBalancer_To_kubeone_KubevirtLoadBalancer(in *Ku
 }
 
 func autoConvert_kubeone_KubevirtLoadBalancer_To_v1beta2_KubevirtLoadBalancer(in *kubeone.KubevirtLoadBalancer, out *KubevirtLoadBalancer, s conversion.Scope) error {
-	out.Name = in.Name
-	out.ServiceType = corev1.ServiceType(in.ServiceType)
-	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
+	*out = *(*KubevirtLoadBalancer)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2291,10 +2166,7 @@ func Convert_kubeone_KubevirtLoadBalancer_To_v1beta2_KubevirtLoadBalancer(in *ku
 }
 
 func autoConvert_v1beta2_KubevirtSpec_To_kubeone_KubevirtSpec(in *KubevirtSpec, out *kubeone.KubevirtSpec, s conversion.Scope) error {
-	out.InfraNamespace = in.InfraNamespace
-	out.ZoneAndRegionEnabled = in.ZoneAndRegionEnabled
-	out.LoadBalancerEnabled = in.LoadBalancerEnabled
-	out.ControlPlane = (*kubeone.KubevirtControlPlane)(unsafe.Pointer(in.ControlPlane))
+	*out = *(*kubeone.KubevirtSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2304,10 +2176,7 @@ func Convert_v1beta2_KubevirtSpec_To_kubeone_KubevirtSpec(in *KubevirtSpec, out 
 }
 
 func autoConvert_kubeone_KubevirtSpec_To_v1beta2_KubevirtSpec(in *kubeone.KubevirtSpec, out *KubevirtSpec, s conversion.Scope) error {
-	out.InfraNamespace = in.InfraNamespace
-	out.ZoneAndRegionEnabled = in.ZoneAndRegionEnabled
-	out.LoadBalancerEnabled = in.LoadBalancerEnabled
-	out.ControlPlane = (*KubevirtControlPlane)(unsafe.Pointer(in.ControlPlane))
+	*out = *(*KubevirtSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2317,8 +2186,7 @@ func Convert_kubeone_KubevirtSpec_To_v1beta2_KubevirtSpec(in *kubeone.KubevirtSp
 }
 
 func autoConvert_v1beta2_LoggingConfig_To_kubeone_LoggingConfig(in *LoggingConfig, out *kubeone.LoggingConfig, s conversion.Scope) error {
-	out.ContainerLogMaxSize = in.ContainerLogMaxSize
-	out.ContainerLogMaxFiles = in.ContainerLogMaxFiles
+	*out = *(*kubeone.LoggingConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2328,8 +2196,7 @@ func Convert_v1beta2_LoggingConfig_To_kubeone_LoggingConfig(in *LoggingConfig, o
 }
 
 func autoConvert_kubeone_LoggingConfig_To_v1beta2_LoggingConfig(in *kubeone.LoggingConfig, out *LoggingConfig, s conversion.Scope) error {
-	out.ContainerLogMaxSize = in.ContainerLogMaxSize
-	out.ContainerLogMaxFiles = in.ContainerLogMaxFiles
+	*out = *(*LoggingConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2339,7 +2206,7 @@ func Convert_kubeone_LoggingConfig_To_v1beta2_LoggingConfig(in *kubeone.LoggingC
 }
 
 func autoConvert_v1beta2_MachineControllerConfig_To_kubeone_MachineControllerConfig(in *MachineControllerConfig, out *kubeone.MachineControllerConfig, s conversion.Scope) error {
-	out.Deploy = in.Deploy
+	*out = *(*kubeone.MachineControllerConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2349,7 +2216,7 @@ func Convert_v1beta2_MachineControllerConfig_To_kubeone_MachineControllerConfig(
 }
 
 func autoConvert_kubeone_MachineControllerConfig_To_v1beta2_MachineControllerConfig(in *kubeone.MachineControllerConfig, out *MachineControllerConfig, s conversion.Scope) error {
-	out.Deploy = in.Deploy
+	*out = *(*MachineControllerConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2359,7 +2226,7 @@ func Convert_kubeone_MachineControllerConfig_To_v1beta2_MachineControllerConfig(
 }
 
 func autoConvert_v1beta2_MetricsServer_To_kubeone_MetricsServer(in *MetricsServer, out *kubeone.MetricsServer, s conversion.Scope) error {
-	out.Enable = in.Enable
+	*out = *(*kubeone.MetricsServer)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2369,7 +2236,7 @@ func Convert_v1beta2_MetricsServer_To_kubeone_MetricsServer(in *MetricsServer, o
 }
 
 func autoConvert_kubeone_MetricsServer_To_v1beta2_MetricsServer(in *kubeone.MetricsServer, out *MetricsServer, s conversion.Scope) error {
-	out.Enable = in.Enable
+	*out = *(*MetricsServer)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2379,7 +2246,7 @@ func Convert_kubeone_MetricsServer_To_v1beta2_MetricsServer(in *kubeone.MetricsS
 }
 
 func autoConvert_v1beta2_NodeLocalDNS_To_kubeone_NodeLocalDNS(in *NodeLocalDNS, out *kubeone.NodeLocalDNS, s conversion.Scope) error {
-	out.Deploy = in.Deploy
+	*out = *(*kubeone.NodeLocalDNS)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2389,7 +2256,7 @@ func Convert_v1beta2_NodeLocalDNS_To_kubeone_NodeLocalDNS(in *NodeLocalDNS, out 
 }
 
 func autoConvert_kubeone_NodeLocalDNS_To_v1beta2_NodeLocalDNS(in *kubeone.NodeLocalDNS, out *NodeLocalDNS, s conversion.Scope) error {
-	out.Deploy = in.Deploy
+	*out = *(*NodeLocalDNS)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2399,20 +2266,7 @@ func Convert_kubeone_NodeLocalDNS_To_v1beta2_NodeLocalDNS(in *kubeone.NodeLocalD
 }
 
 func autoConvert_v1beta2_NodeSet_To_kubeone_NodeSet(in *NodeSet, out *kubeone.NodeSet, s conversion.Scope) error {
-	out.Name = in.Name
-	out.Replicas = in.Replicas
-	out.Generation = in.Generation
-	if err := Convert_v1beta2_NodeSettingsSpec_To_kubeone_NodeSettingsSpec(&in.NodeSettings, &out.NodeSettings, s); err != nil {
-		return err
-	}
-	out.OperatingSystem = kubeone.OperatingSystemName(in.OperatingSystem)
-	if err := Convert_v1beta2_OperatingSystemSpec_To_kubeone_OperatingSystemSpec(&in.OperatingSystemSpec, &out.OperatingSystemSpec, s); err != nil {
-		return err
-	}
-	if err := Convert_v1beta2_SSHSpec_To_kubeone_SSHSpec(&in.SSH, &out.SSH, s); err != nil {
-		return err
-	}
-	out.CloudProviderSpec = *(*jsontext.Value)(unsafe.Pointer(&in.CloudProviderSpec))
+	*out = *(*kubeone.NodeSet)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2422,20 +2276,7 @@ func Convert_v1beta2_NodeSet_To_kubeone_NodeSet(in *NodeSet, out *kubeone.NodeSe
 }
 
 func autoConvert_kubeone_NodeSet_To_v1beta2_NodeSet(in *kubeone.NodeSet, out *NodeSet, s conversion.Scope) error {
-	out.Name = in.Name
-	out.Replicas = in.Replicas
-	out.Generation = in.Generation
-	if err := Convert_kubeone_NodeSettingsSpec_To_v1beta2_NodeSettingsSpec(&in.NodeSettings, &out.NodeSettings, s); err != nil {
-		return err
-	}
-	out.OperatingSystem = OperatingSystemName(in.OperatingSystem)
-	if err := Convert_kubeone_OperatingSystemSpec_To_v1beta2_OperatingSystemSpec(&in.OperatingSystemSpec, &out.OperatingSystemSpec, s); err != nil {
-		return err
-	}
-	if err := Convert_kubeone_SSHSpec_To_v1beta2_SSHSpec(&in.SSH, &out.SSH, s); err != nil {
-		return err
-	}
-	out.CloudProviderSpec = *(*jsontext.Value)(unsafe.Pointer(&in.CloudProviderSpec))
+	*out = *(*NodeSet)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2445,9 +2286,7 @@ func Convert_kubeone_NodeSet_To_v1beta2_NodeSet(in *kubeone.NodeSet, out *NodeSe
 }
 
 func autoConvert_v1beta2_NodeSettingsSpec_To_kubeone_NodeSettingsSpec(in *NodeSettingsSpec, out *kubeone.NodeSettingsSpec, s conversion.Scope) error {
-	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
-	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
-	out.Taints = *(*[]corev1.Taint)(unsafe.Pointer(&in.Taints))
+	*out = *(*kubeone.NodeSettingsSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2457,9 +2296,7 @@ func Convert_v1beta2_NodeSettingsSpec_To_kubeone_NodeSettingsSpec(in *NodeSettin
 }
 
 func autoConvert_kubeone_NodeSettingsSpec_To_v1beta2_NodeSettingsSpec(in *kubeone.NodeSettingsSpec, out *NodeSettingsSpec, s conversion.Scope) error {
-	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
-	out.Annotations = *(*map[string]string)(unsafe.Pointer(&in.Annotations))
-	out.Taints = *(*[]corev1.Taint)(unsafe.Pointer(&in.Taints))
+	*out = *(*NodeSettingsSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2469,6 +2306,7 @@ func Convert_kubeone_NodeSettingsSpec_To_v1beta2_NodeSettingsSpec(in *kubeone.No
 }
 
 func autoConvert_v1beta2_NoneSpec_To_kubeone_NoneSpec(in *NoneSpec, out *kubeone.NoneSpec, s conversion.Scope) error {
+	*out = *(*kubeone.NoneSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2478,6 +2316,7 @@ func Convert_v1beta2_NoneSpec_To_kubeone_NoneSpec(in *NoneSpec, out *kubeone.Non
 }
 
 func autoConvert_kubeone_NoneSpec_To_v1beta2_NoneSpec(in *kubeone.NoneSpec, out *NoneSpec, s conversion.Scope) error {
+	*out = *(*NoneSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2487,6 +2326,7 @@ func Convert_kubeone_NoneSpec_To_v1beta2_NoneSpec(in *kubeone.NoneSpec, out *Non
 }
 
 func autoConvert_v1beta2_NutanixSpec_To_kubeone_NutanixSpec(in *NutanixSpec, out *kubeone.NutanixSpec, s conversion.Scope) error {
+	*out = *(*kubeone.NutanixSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2496,6 +2336,7 @@ func Convert_v1beta2_NutanixSpec_To_kubeone_NutanixSpec(in *NutanixSpec, out *ku
 }
 
 func autoConvert_kubeone_NutanixSpec_To_v1beta2_NutanixSpec(in *kubeone.NutanixSpec, out *NutanixSpec, s conversion.Scope) error {
+	*out = *(*NutanixSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2505,10 +2346,7 @@ func Convert_kubeone_NutanixSpec_To_v1beta2_NutanixSpec(in *kubeone.NutanixSpec,
 }
 
 func autoConvert_v1beta2_OpenIDConnect_To_kubeone_OpenIDConnect(in *OpenIDConnect, out *kubeone.OpenIDConnect, s conversion.Scope) error {
-	out.Enable = in.Enable
-	if err := Convert_v1beta2_OpenIDConnectConfig_To_kubeone_OpenIDConnectConfig(&in.Config, &out.Config, s); err != nil {
-		return err
-	}
+	*out = *(*kubeone.OpenIDConnect)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2518,10 +2356,7 @@ func Convert_v1beta2_OpenIDConnect_To_kubeone_OpenIDConnect(in *OpenIDConnect, o
 }
 
 func autoConvert_kubeone_OpenIDConnect_To_v1beta2_OpenIDConnect(in *kubeone.OpenIDConnect, out *OpenIDConnect, s conversion.Scope) error {
-	out.Enable = in.Enable
-	if err := Convert_kubeone_OpenIDConnectConfig_To_v1beta2_OpenIDConnectConfig(&in.Config, &out.Config, s); err != nil {
-		return err
-	}
+	*out = *(*OpenIDConnect)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2531,15 +2366,7 @@ func Convert_kubeone_OpenIDConnect_To_v1beta2_OpenIDConnect(in *kubeone.OpenIDCo
 }
 
 func autoConvert_v1beta2_OpenIDConnectConfig_To_kubeone_OpenIDConnectConfig(in *OpenIDConnectConfig, out *kubeone.OpenIDConnectConfig, s conversion.Scope) error {
-	out.IssuerURL = in.IssuerURL
-	out.ClientID = in.ClientID
-	out.UsernameClaim = in.UsernameClaim
-	out.UsernamePrefix = in.UsernamePrefix
-	out.GroupsClaim = in.GroupsClaim
-	out.GroupsPrefix = in.GroupsPrefix
-	out.RequiredClaim = in.RequiredClaim
-	out.SigningAlgs = in.SigningAlgs
-	out.CAFile = in.CAFile
+	*out = *(*kubeone.OpenIDConnectConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2549,15 +2376,7 @@ func Convert_v1beta2_OpenIDConnectConfig_To_kubeone_OpenIDConnectConfig(in *Open
 }
 
 func autoConvert_kubeone_OpenIDConnectConfig_To_v1beta2_OpenIDConnectConfig(in *kubeone.OpenIDConnectConfig, out *OpenIDConnectConfig, s conversion.Scope) error {
-	out.IssuerURL = in.IssuerURL
-	out.ClientID = in.ClientID
-	out.UsernameClaim = in.UsernameClaim
-	out.UsernamePrefix = in.UsernamePrefix
-	out.GroupsClaim = in.GroupsClaim
-	out.GroupsPrefix = in.GroupsPrefix
-	out.RequiredClaim = in.RequiredClaim
-	out.SigningAlgs = in.SigningAlgs
-	out.CAFile = in.CAFile
+	*out = *(*OpenIDConnectConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2567,9 +2386,7 @@ func Convert_kubeone_OpenIDConnectConfig_To_v1beta2_OpenIDConnectConfig(in *kube
 }
 
 func autoConvert_v1beta2_OpenstackControlPlane_To_kubeone_OpenstackControlPlane(in *OpenstackControlPlane, out *kubeone.OpenstackControlPlane, s conversion.Scope) error {
-	if err := Convert_v1beta2_OpenstackLoadBalancer_To_kubeone_OpenstackLoadBalancer(&in.LoadBalancer, &out.LoadBalancer, s); err != nil {
-		return err
-	}
+	*out = *(*kubeone.OpenstackControlPlane)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2579,9 +2396,7 @@ func Convert_v1beta2_OpenstackControlPlane_To_kubeone_OpenstackControlPlane(in *
 }
 
 func autoConvert_kubeone_OpenstackControlPlane_To_v1beta2_OpenstackControlPlane(in *kubeone.OpenstackControlPlane, out *OpenstackControlPlane, s conversion.Scope) error {
-	if err := Convert_kubeone_OpenstackLoadBalancer_To_v1beta2_OpenstackLoadBalancer(&in.LoadBalancer, &out.LoadBalancer, s); err != nil {
-		return err
-	}
+	*out = *(*OpenstackControlPlane)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2591,8 +2406,7 @@ func Convert_kubeone_OpenstackControlPlane_To_v1beta2_OpenstackControlPlane(in *
 }
 
 func autoConvert_v1beta2_OpenstackLoadBalancer_To_kubeone_OpenstackLoadBalancer(in *OpenstackLoadBalancer, out *kubeone.OpenstackLoadBalancer, s conversion.Scope) error {
-	out.Name = in.Name
-	out.PoolID = in.PoolID
+	*out = *(*kubeone.OpenstackLoadBalancer)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2602,8 +2416,7 @@ func Convert_v1beta2_OpenstackLoadBalancer_To_kubeone_OpenstackLoadBalancer(in *
 }
 
 func autoConvert_kubeone_OpenstackLoadBalancer_To_v1beta2_OpenstackLoadBalancer(in *kubeone.OpenstackLoadBalancer, out *OpenstackLoadBalancer, s conversion.Scope) error {
-	out.Name = in.Name
-	out.PoolID = in.PoolID
+	*out = *(*OpenstackLoadBalancer)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2613,7 +2426,7 @@ func Convert_kubeone_OpenstackLoadBalancer_To_v1beta2_OpenstackLoadBalancer(in *
 }
 
 func autoConvert_v1beta2_OpenstackSpec_To_kubeone_OpenstackSpec(in *OpenstackSpec, out *kubeone.OpenstackSpec, s conversion.Scope) error {
-	out.ControlPlane = (*kubeone.OpenstackControlPlane)(unsafe.Pointer(in.ControlPlane))
+	*out = *(*kubeone.OpenstackSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2623,7 +2436,7 @@ func Convert_v1beta2_OpenstackSpec_To_kubeone_OpenstackSpec(in *OpenstackSpec, o
 }
 
 func autoConvert_kubeone_OpenstackSpec_To_v1beta2_OpenstackSpec(in *kubeone.OpenstackSpec, out *OpenstackSpec, s conversion.Scope) error {
-	out.ControlPlane = (*OpenstackControlPlane)(unsafe.Pointer(in.ControlPlane))
+	*out = *(*OpenstackSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2633,8 +2446,7 @@ func Convert_kubeone_OpenstackSpec_To_v1beta2_OpenstackSpec(in *kubeone.Openstac
 }
 
 func autoConvert_v1beta2_OperatingSystemManagerConfig_To_kubeone_OperatingSystemManagerConfig(in *OperatingSystemManagerConfig, out *kubeone.OperatingSystemManagerConfig, s conversion.Scope) error {
-	out.Deploy = in.Deploy
-	out.EnableNonRootDeviceOwnership = in.EnableNonRootDeviceOwnership
+	*out = *(*kubeone.OperatingSystemManagerConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2644,8 +2456,7 @@ func Convert_v1beta2_OperatingSystemManagerConfig_To_kubeone_OperatingSystemMana
 }
 
 func autoConvert_kubeone_OperatingSystemManagerConfig_To_v1beta2_OperatingSystemManagerConfig(in *kubeone.OperatingSystemManagerConfig, out *OperatingSystemManagerConfig, s conversion.Scope) error {
-	out.Deploy = in.Deploy
-	out.EnableNonRootDeviceOwnership = in.EnableNonRootDeviceOwnership
+	*out = *(*OperatingSystemManagerConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2655,7 +2466,7 @@ func Convert_kubeone_OperatingSystemManagerConfig_To_v1beta2_OperatingSystemMana
 }
 
 func autoConvert_v1beta2_OperatingSystemSpec_To_kubeone_OperatingSystemSpec(in *OperatingSystemSpec, out *kubeone.OperatingSystemSpec, s conversion.Scope) error {
-	out.DistUpgradeOnBoot = in.DistUpgradeOnBoot
+	*out = *(*kubeone.OperatingSystemSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2665,7 +2476,7 @@ func Convert_v1beta2_OperatingSystemSpec_To_kubeone_OperatingSystemSpec(in *Oper
 }
 
 func autoConvert_kubeone_OperatingSystemSpec_To_v1beta2_OperatingSystemSpec(in *kubeone.OperatingSystemSpec, out *OperatingSystemSpec, s conversion.Scope) error {
-	out.DistUpgradeOnBoot = in.DistUpgradeOnBoot
+	*out = *(*OperatingSystemSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2675,10 +2486,7 @@ func Convert_kubeone_OperatingSystemSpec_To_v1beta2_OperatingSystemSpec(in *kube
 }
 
 func autoConvert_v1beta2_PodNodeSelector_To_kubeone_PodNodeSelector(in *PodNodeSelector, out *kubeone.PodNodeSelector, s conversion.Scope) error {
-	out.Enable = in.Enable
-	if err := Convert_v1beta2_PodNodeSelectorConfig_To_kubeone_PodNodeSelectorConfig(&in.Config, &out.Config, s); err != nil {
-		return err
-	}
+	*out = *(*kubeone.PodNodeSelector)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2688,10 +2496,7 @@ func Convert_v1beta2_PodNodeSelector_To_kubeone_PodNodeSelector(in *PodNodeSelec
 }
 
 func autoConvert_kubeone_PodNodeSelector_To_v1beta2_PodNodeSelector(in *kubeone.PodNodeSelector, out *PodNodeSelector, s conversion.Scope) error {
-	out.Enable = in.Enable
-	if err := Convert_kubeone_PodNodeSelectorConfig_To_v1beta2_PodNodeSelectorConfig(&in.Config, &out.Config, s); err != nil {
-		return err
-	}
+	*out = *(*PodNodeSelector)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2701,7 +2506,7 @@ func Convert_kubeone_PodNodeSelector_To_v1beta2_PodNodeSelector(in *kubeone.PodN
 }
 
 func autoConvert_v1beta2_PodNodeSelectorConfig_To_kubeone_PodNodeSelectorConfig(in *PodNodeSelectorConfig, out *kubeone.PodNodeSelectorConfig, s conversion.Scope) error {
-	out.ConfigFilePath = in.ConfigFilePath
+	*out = *(*kubeone.PodNodeSelectorConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2711,7 +2516,7 @@ func Convert_v1beta2_PodNodeSelectorConfig_To_kubeone_PodNodeSelectorConfig(in *
 }
 
 func autoConvert_kubeone_PodNodeSelectorConfig_To_v1beta2_PodNodeSelectorConfig(in *kubeone.PodNodeSelectorConfig, out *PodNodeSelectorConfig, s conversion.Scope) error {
-	out.ConfigFilePath = in.ConfigFilePath
+	*out = *(*PodNodeSelectorConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2727,7 +2532,7 @@ func autoConvert_v1beta2_ProviderSpec_To_kubeone_ProviderSpec(in *ProviderSpec, 
 	out.NodeAnnotations = *(*map[string]string)(unsafe.Pointer(&in.NodeAnnotations))
 	out.MachineObjectAnnotations = *(*map[string]string)(unsafe.Pointer(&in.MachineObjectAnnotations))
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
-	out.Taints = *(*[]corev1.Taint)(unsafe.Pointer(&in.Taints))
+	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))
 	out.SSHPublicKeys = *(*[]string)(unsafe.Pointer(&in.SSHPublicKeys))
 	out.OperatingSystem = in.OperatingSystem
 	out.OperatingSystemSpec = *(*jsontext.Value)(unsafe.Pointer(&in.OperatingSystemSpec))
@@ -2742,7 +2547,7 @@ func autoConvert_kubeone_ProviderSpec_To_v1beta2_ProviderSpec(in *kubeone.Provid
 	out.NodeAnnotations = *(*map[string]string)(unsafe.Pointer(&in.NodeAnnotations))
 	out.MachineObjectAnnotations = *(*map[string]string)(unsafe.Pointer(&in.MachineObjectAnnotations))
 	out.Labels = *(*map[string]string)(unsafe.Pointer(&in.Labels))
-	out.Taints = *(*[]corev1.Taint)(unsafe.Pointer(&in.Taints))
+	out.Taints = *(*[]v1.Taint)(unsafe.Pointer(&in.Taints))
 	out.SSHPublicKeys = *(*[]string)(unsafe.Pointer(&in.SSHPublicKeys))
 	out.OperatingSystem = in.OperatingSystem
 	out.OperatingSystemSpec = *(*jsontext.Value)(unsafe.Pointer(&in.OperatingSystemSpec))
@@ -2757,12 +2562,7 @@ func Convert_kubeone_ProviderSpec_To_v1beta2_ProviderSpec(in *kubeone.ProviderSp
 }
 
 func autoConvert_v1beta2_ProviderStaticNetworkConfig_To_kubeone_ProviderStaticNetworkConfig(in *ProviderStaticNetworkConfig, out *kubeone.ProviderStaticNetworkConfig, s conversion.Scope) error {
-	out.CIDR = in.CIDR
-	out.Gateway = in.Gateway
-	if err := Convert_v1beta2_DNSConfig_To_kubeone_DNSConfig(&in.DNS, &out.DNS, s); err != nil {
-		return err
-	}
-	out.IPFamily = kubeone.IPFamily(in.IPFamily)
+	*out = *(*kubeone.ProviderStaticNetworkConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2772,12 +2572,7 @@ func Convert_v1beta2_ProviderStaticNetworkConfig_To_kubeone_ProviderStaticNetwor
 }
 
 func autoConvert_kubeone_ProviderStaticNetworkConfig_To_v1beta2_ProviderStaticNetworkConfig(in *kubeone.ProviderStaticNetworkConfig, out *ProviderStaticNetworkConfig, s conversion.Scope) error {
-	out.CIDR = in.CIDR
-	out.Gateway = in.Gateway
-	if err := Convert_kubeone_DNSConfig_To_v1beta2_DNSConfig(&in.DNS, &out.DNS, s); err != nil {
-		return err
-	}
-	out.IPFamily = IPFamily(in.IPFamily)
+	*out = *(*ProviderStaticNetworkConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2787,9 +2582,7 @@ func Convert_kubeone_ProviderStaticNetworkConfig_To_v1beta2_ProviderStaticNetwor
 }
 
 func autoConvert_v1beta2_ProxyConfig_To_kubeone_ProxyConfig(in *ProxyConfig, out *kubeone.ProxyConfig, s conversion.Scope) error {
-	out.HTTP = in.HTTP
-	out.HTTPS = in.HTTPS
-	out.NoProxy = in.NoProxy
+	*out = *(*kubeone.ProxyConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2799,9 +2592,7 @@ func Convert_v1beta2_ProxyConfig_To_kubeone_ProxyConfig(in *ProxyConfig, out *ku
 }
 
 func autoConvert_kubeone_ProxyConfig_To_v1beta2_ProxyConfig(in *kubeone.ProxyConfig, out *ProxyConfig, s conversion.Scope) error {
-	out.HTTP = in.HTTP
-	out.HTTPS = in.HTTPS
-	out.NoProxy = in.NoProxy
+	*out = *(*ProxyConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2811,8 +2602,7 @@ func Convert_kubeone_ProxyConfig_To_v1beta2_ProxyConfig(in *kubeone.ProxyConfig,
 }
 
 func autoConvert_v1beta2_RegistryConfiguration_To_kubeone_RegistryConfiguration(in *RegistryConfiguration, out *kubeone.RegistryConfiguration, s conversion.Scope) error {
-	out.OverwriteRegistry = in.OverwriteRegistry
-	out.InsecureRegistry = in.InsecureRegistry
+	*out = *(*kubeone.RegistryConfiguration)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2822,8 +2612,7 @@ func Convert_v1beta2_RegistryConfiguration_To_kubeone_RegistryConfiguration(in *
 }
 
 func autoConvert_kubeone_RegistryConfiguration_To_v1beta2_RegistryConfiguration(in *kubeone.RegistryConfiguration, out *RegistryConfiguration, s conversion.Scope) error {
-	out.OverwriteRegistry = in.OverwriteRegistry
-	out.InsecureRegistry = in.InsecureRegistry
+	*out = *(*RegistryConfiguration)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2873,10 +2662,7 @@ func Convert_kubeone_SSHSpec_To_v1beta2_SSHSpec(in *kubeone.SSHSpec, out *SSHSpe
 }
 
 func autoConvert_v1beta2_StaticAuditLog_To_kubeone_StaticAuditLog(in *StaticAuditLog, out *kubeone.StaticAuditLog, s conversion.Scope) error {
-	out.Enable = in.Enable
-	if err := Convert_v1beta2_StaticAuditLogConfig_To_kubeone_StaticAuditLogConfig(&in.Config, &out.Config, s); err != nil {
-		return err
-	}
+	*out = *(*kubeone.StaticAuditLog)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2886,10 +2672,7 @@ func Convert_v1beta2_StaticAuditLog_To_kubeone_StaticAuditLog(in *StaticAuditLog
 }
 
 func autoConvert_kubeone_StaticAuditLog_To_v1beta2_StaticAuditLog(in *kubeone.StaticAuditLog, out *StaticAuditLog, s conversion.Scope) error {
-	out.Enable = in.Enable
-	if err := Convert_kubeone_StaticAuditLogConfig_To_v1beta2_StaticAuditLogConfig(&in.Config, &out.Config, s); err != nil {
-		return err
-	}
+	*out = *(*StaticAuditLog)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2899,11 +2682,7 @@ func Convert_kubeone_StaticAuditLog_To_v1beta2_StaticAuditLog(in *kubeone.Static
 }
 
 func autoConvert_v1beta2_StaticAuditLogConfig_To_kubeone_StaticAuditLogConfig(in *StaticAuditLogConfig, out *kubeone.StaticAuditLogConfig, s conversion.Scope) error {
-	out.PolicyFilePath = in.PolicyFilePath
-	out.LogPath = in.LogPath
-	out.LogMaxAge = in.LogMaxAge
-	out.LogMaxBackup = in.LogMaxBackup
-	out.LogMaxSize = in.LogMaxSize
+	*out = *(*kubeone.StaticAuditLogConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2913,11 +2692,7 @@ func Convert_v1beta2_StaticAuditLogConfig_To_kubeone_StaticAuditLogConfig(in *St
 }
 
 func autoConvert_kubeone_StaticAuditLogConfig_To_v1beta2_StaticAuditLogConfig(in *kubeone.StaticAuditLogConfig, out *StaticAuditLogConfig, s conversion.Scope) error {
-	out.PolicyFilePath = in.PolicyFilePath
-	out.LogPath = in.LogPath
-	out.LogMaxAge = in.LogMaxAge
-	out.LogMaxBackup = in.LogMaxBackup
-	out.LogMaxSize = in.LogMaxSize
+	*out = *(*StaticAuditLogConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2967,7 +2742,7 @@ func Convert_kubeone_StaticWorkersConfig_To_v1beta2_StaticWorkersConfig(in *kube
 }
 
 func autoConvert_v1beta2_SystemPackages_To_kubeone_SystemPackages(in *SystemPackages, out *kubeone.SystemPackages, s conversion.Scope) error {
-	out.ConfigureRepositories = in.ConfigureRepositories
+	*out = *(*kubeone.SystemPackages)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2977,7 +2752,7 @@ func Convert_v1beta2_SystemPackages_To_kubeone_SystemPackages(in *SystemPackages
 }
 
 func autoConvert_kubeone_SystemPackages_To_v1beta2_SystemPackages(in *kubeone.SystemPackages, out *SystemPackages, s conversion.Scope) error {
-	out.ConfigureRepositories = in.ConfigureRepositories
+	*out = *(*SystemPackages)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2987,9 +2762,7 @@ func Convert_kubeone_SystemPackages_To_v1beta2_SystemPackages(in *kubeone.System
 }
 
 func autoConvert_v1beta2_TLSCipherSuites_To_kubeone_TLSCipherSuites(in *TLSCipherSuites, out *kubeone.TLSCipherSuites, s conversion.Scope) error {
-	out.APIServer = *(*[]string)(unsafe.Pointer(&in.APIServer))
-	out.Etcd = *(*[]string)(unsafe.Pointer(&in.Etcd))
-	out.Kubelet = *(*[]string)(unsafe.Pointer(&in.Kubelet))
+	*out = *(*kubeone.TLSCipherSuites)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -2999,9 +2772,7 @@ func Convert_v1beta2_TLSCipherSuites_To_kubeone_TLSCipherSuites(in *TLSCipherSui
 }
 
 func autoConvert_kubeone_TLSCipherSuites_To_v1beta2_TLSCipherSuites(in *kubeone.TLSCipherSuites, out *TLSCipherSuites, s conversion.Scope) error {
-	out.APIServer = *(*[]string)(unsafe.Pointer(&in.APIServer))
-	out.Etcd = *(*[]string)(unsafe.Pointer(&in.Etcd))
-	out.Kubelet = *(*[]string)(unsafe.Pointer(&in.Kubelet))
+	*out = *(*TLSCipherSuites)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -3011,8 +2782,7 @@ func Convert_kubeone_TLSCipherSuites_To_v1beta2_TLSCipherSuites(in *kubeone.TLSC
 }
 
 func autoConvert_v1beta2_VMwareCloudDirectorSpec_To_kubeone_VMwareCloudDirectorSpec(in *VMwareCloudDirectorSpec, out *kubeone.VMwareCloudDirectorSpec, s conversion.Scope) error {
-	out.VApp = in.VApp
-	out.StorageProfile = in.StorageProfile
+	*out = *(*kubeone.VMwareCloudDirectorSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -3022,8 +2792,7 @@ func Convert_v1beta2_VMwareCloudDirectorSpec_To_kubeone_VMwareCloudDirectorSpec(
 }
 
 func autoConvert_kubeone_VMwareCloudDirectorSpec_To_v1beta2_VMwareCloudDirectorSpec(in *kubeone.VMwareCloudDirectorSpec, out *VMwareCloudDirectorSpec, s conversion.Scope) error {
-	out.VApp = in.VApp
-	out.StorageProfile = in.StorageProfile
+	*out = *(*VMwareCloudDirectorSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -3033,7 +2802,7 @@ func Convert_kubeone_VMwareCloudDirectorSpec_To_v1beta2_VMwareCloudDirectorSpec(
 }
 
 func autoConvert_v1beta2_VersionConfig_To_kubeone_VersionConfig(in *VersionConfig, out *kubeone.VersionConfig, s conversion.Scope) error {
-	out.Kubernetes = in.Kubernetes
+	*out = *(*kubeone.VersionConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -3043,7 +2812,7 @@ func Convert_v1beta2_VersionConfig_To_kubeone_VersionConfig(in *VersionConfig, o
 }
 
 func autoConvert_kubeone_VersionConfig_To_v1beta2_VersionConfig(in *kubeone.VersionConfig, out *VersionConfig, s conversion.Scope) error {
-	out.Kubernetes = in.Kubernetes
+	*out = *(*VersionConfig)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -3053,6 +2822,7 @@ func Convert_kubeone_VersionConfig_To_v1beta2_VersionConfig(in *kubeone.VersionC
 }
 
 func autoConvert_v1beta2_VsphereSpec_To_kubeone_VsphereSpec(in *VsphereSpec, out *kubeone.VsphereSpec, s conversion.Scope) error {
+	*out = *(*kubeone.VsphereSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -3062,6 +2832,7 @@ func Convert_v1beta2_VsphereSpec_To_kubeone_VsphereSpec(in *VsphereSpec, out *ku
 }
 
 func autoConvert_kubeone_VsphereSpec_To_v1beta2_VsphereSpec(in *kubeone.VsphereSpec, out *VsphereSpec, s conversion.Scope) error {
+	*out = *(*VsphereSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -3071,7 +2842,7 @@ func Convert_kubeone_VsphereSpec_To_v1beta2_VsphereSpec(in *kubeone.VsphereSpec,
 }
 
 func autoConvert_v1beta2_WeaveNetSpec_To_kubeone_WeaveNetSpec(in *WeaveNetSpec, out *kubeone.WeaveNetSpec, s conversion.Scope) error {
-	out.Encrypted = in.Encrypted
+	*out = *(*kubeone.WeaveNetSpec)(unsafe.Pointer(in))
 	return nil
 }
 
@@ -3081,7 +2852,7 @@ func Convert_v1beta2_WeaveNetSpec_To_kubeone_WeaveNetSpec(in *WeaveNetSpec, out 
 }
 
 func autoConvert_kubeone_WeaveNetSpec_To_v1beta2_WeaveNetSpec(in *kubeone.WeaveNetSpec, out *WeaveNetSpec, s conversion.Scope) error {
-	out.Encrypted = in.Encrypted
+	*out = *(*WeaveNetSpec)(unsafe.Pointer(in))
 	return nil
 }
 
