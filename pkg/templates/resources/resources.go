@@ -19,6 +19,7 @@ package resources
 import (
 	"fmt"
 
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate/cabundle"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -123,7 +124,26 @@ const (
 	KubeletImageRepository = "quay.io/kubermatic/kubelet"
 )
 
-func All(dnsServiceIP string) map[string]string {
+// ClusterDNS returns a comma-separated list of DNS server IP addresses that
+// kubelets should configure for pods.
+func ClusterDNS(cluster *kubeoneapi.KubeOneCluster) string {
+	dnsServiceIP := cluster.ClusterNetwork.NthServiceSubnetIP(10)
+
+	switch {
+	case cluster.Features.NodeLocalDNS != nil && cluster.Features.NodeLocalDNS.Deploy:
+		return NodeLocalDNSVirtualIP
+	case cluster.ClusterNetwork.CNI.Cilium != nil && cluster.ClusterNetwork.CNI.Cilium.EnableLocalRedirectPolicy:
+		return ciliumNodeLocalDNSVirtualIP(dnsServiceIP)
+	default:
+		return dnsServiceIP
+	}
+}
+
+func ciliumNodeLocalDNSVirtualIP(dnsServiceIP string) string {
+	return fmt.Sprintf("%s,%s", NodeLocalDNSVirtualIP, dnsServiceIP)
+}
+
+func All(dnsServiceIP, clusterDNS string) map[string]string {
 	return map[string]string{
 		"MachineControllerName":             MachineControllerName,
 		"MachineControllerNameSpace":        MachineControllerNameSpace,
@@ -133,8 +153,8 @@ func All(dnsServiceIP string) map[string]string {
 		"OperatingSystemManagerWebhookName": OperatingSystemManagerWebhookName,
 		"KubeletImageRepository":            KubeletImageRepository,
 		"NodeLocalDNSVirtualIP":             NodeLocalDNSVirtualIP,
-		"DNSServiceIP":                      dnsServiceIP,
-		"CiliumNodeLocalDNSVirtualIP":       fmt.Sprintf("%s,%s", NodeLocalDNSVirtualIP, dnsServiceIP),
+		"ClusterDNS":                        clusterDNS,
+		"CiliumNodeLocalDNSVirtualIP":       ciliumNodeLocalDNSVirtualIP(dnsServiceIP),
 		"CABundleSSLCertFilePath":           cabundle.SSLCertFilePath,
 	}
 }

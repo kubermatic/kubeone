@@ -45,6 +45,7 @@ func TestOperatingSystemManagerClusterDNS(t *testing.T) {
 	tests := []struct {
 		name               string
 		nodeLocalDNS       bool
+		ciliumLRP          bool
 		serviceSubnet      string
 		expectedClusterDNS string
 	}{
@@ -66,6 +67,13 @@ func TestOperatingSystemManagerClusterDNS(t *testing.T) {
 			serviceSubnet:      "10.224.0.0/12",
 			expectedClusterDNS: "10.224.0.10",
 		},
+		{
+			name:               "cilium local redirect policy enabled",
+			nodeLocalDNS:       false,
+			ciliumLRP:          true,
+			serviceSubnet:      "10.96.0.0/12",
+			expectedClusterDNS: resources.NodeLocalDNSVirtualIP + ",10.96.0.10",
+		},
 	}
 
 	for _, tc := range tests {
@@ -76,6 +84,7 @@ func TestOperatingSystemManagerClusterDNS(t *testing.T) {
 				Name: "kubeone-test",
 				ClusterNetwork: kubeoneapi.ClusterNetworkConfig{
 					ServiceSubnet: tc.serviceSubnet,
+					CNI:           &kubeoneapi.CNI{},
 				},
 				ContainerRuntime: kubeoneapi.ContainerRuntimeConfig{
 					Containerd: &kubeoneapi.ContainerRuntimeContainerd{},
@@ -87,6 +96,10 @@ func TestOperatingSystemManagerClusterDNS(t *testing.T) {
 				RegistryConfiguration:  &kubeoneapi.RegistryConfiguration{},
 			}
 
+			if tc.ciliumLRP {
+				cluster.ClusterNetwork.CNI.Cilium = &kubeoneapi.CiliumSpec{EnableLocalRedirectPolicy: true}
+			}
+
 			applier := &applier{
 				TemplateData: templateData{
 					Config: cluster,
@@ -96,7 +109,7 @@ func TestOperatingSystemManagerClusterDNS(t *testing.T) {
 							return "quay.io/kubermatic/operating-system-manager:test"
 						},
 					},
-					Resources: resources.All(cluster.ClusterNetwork.NthServiceSubnetIP(10)),
+					Resources: resources.All(cluster.ClusterNetwork.NthServiceSubnetIP(10), resources.ClusterDNS(cluster)),
 				},
 			}
 
