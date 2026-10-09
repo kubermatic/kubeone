@@ -46,11 +46,7 @@ spec:
             - -log-format=json # json or console
             - -health-probe-address=0.0.0.0:8085
             - -metrics-address=0.0.0.0:8080
-            {{ if .Config.Features.NodeLocalDNS.Deploy -}}
-            - -cluster-dns={{ .Resources.NodeLocalDNSVirtualIP }}
-            {{ else -}}
-            - -cluster-dns={{ .Resources.DNSServiceIP }}
-            {{ end -}}
+            - -cluster-dns={{ .Resources.ClusterDNS }}
             - -namespace=kube-system
             - -container-runtime={{ .Config.ContainerRuntime }}
             - -pause-image={{ .InternalImages.Get "PauseImage" }}
