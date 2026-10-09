@@ -48,6 +48,8 @@ spec:
             - -metrics-address=0.0.0.0:8080
             {{ if .Config.Features.NodeLocalDNS.Deploy -}}
             - -cluster-dns={{ .Resources.NodeLocalDNSVirtualIP }}
+            {{ else -}}
+            - -cluster-dns={{ .Resources.DNSServiceIP }}
             {{ end -}}
             - -namespace=kube-system
             - -container-runtime={{ .Config.ContainerRuntime }}

@@ -133,6 +133,7 @@ func All(dnsServiceIP string) map[string]string {
 		"OperatingSystemManagerWebhookName": OperatingSystemManagerWebhookName,
 		"KubeletImageRepository":            KubeletImageRepository,
 		"NodeLocalDNSVirtualIP":             NodeLocalDNSVirtualIP,
+		"DNSServiceIP":                      dnsServiceIP,
 		"CiliumNodeLocalDNSVirtualIP":       fmt.Sprintf("%s,%s", NodeLocalDNSVirtualIP, dnsServiceIP),
 		"CABundleSSLCertFilePath":           cabundle.SSLCertFilePath,
 	}
