@@ -81,10 +81,25 @@ func getUserData(pconfig *providerconfig.Config) (string, error) {
 	return cleanupTemplateOutput(buf.String())
 }
 
-func FindMachines(ctx context.Context, machines []clusterv1alpha1.Machine, logger logrus.FieldLogger) ([]Machine, error) {
-	providerData := &cloudprovidertypes.ProviderData{
+// newProviderData returns ProviderData with an in-memory machine updater.
+// KubeOne doesn't persist Machine objects, but some machine-controller
+// providers (e.g. Azure) unconditionally call data.Update to manage
+// finalizers, which panics if Update is nil.
+func newProviderData(ctx context.Context) *cloudprovidertypes.ProviderData {
+	return &cloudprovidertypes.ProviderData{
 		Ctx: ctx,
+		Update: func(machine *clusterv1alpha1.Machine, modifiers ...cloudprovidertypes.MachineModifier) error {
+			for _, modify := range modifiers {
+				modify(machine)
+			}
+
+			return nil
+		},
 	}
+}
+
+func FindMachines(ctx context.Context, machines []clusterv1alpha1.Machine, logger logrus.FieldLogger) ([]Machine, error) {
+	providerData := newProviderData(ctx)
 
 	rawLog := machinecontrollerlog.New(false, machinecontrollerlog.FormatConsole)
 	log := rawLog.Sugar()
@@ -122,9 +137,7 @@ func FindMachines(ctx context.Context, machines []clusterv1alpha1.Machine, logge
 // CleanupMachines deletes the instances associated with the given machines at
 // the cloud provider and waits for them to be fully cleaned up.
 func CleanupMachines(ctx context.Context, machines []clusterv1alpha1.Machine, logger logrus.FieldLogger) error {
-	providerData := &cloudprovidertypes.ProviderData{
-		Ctx: ctx,
-	}
+	providerData := newProviderData(ctx)
 
 	rawLog := machinecontrollerlog.New(false, machinecontrollerlog.FormatConsole)
 	log := rawLog.Sugar()
@@ -146,9 +159,7 @@ func CleanupMachines(ctx context.Context, machines []clusterv1alpha1.Machine, lo
 }
 
 func FindOrCreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine, logger logrus.FieldLogger) ([]Machine, error) {
-	providerData := &cloudprovidertypes.ProviderData{
-		Ctx: ctx,
-	}
+	providerData := newProviderData(ctx)
 
 	rawLog := machinecontrollerlog.New(false, machinecontrollerlog.FormatConsole)
 	log := rawLog.Sugar()
