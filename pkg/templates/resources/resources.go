@@ -18,6 +18,7 @@ package resources
 
 import (
 	"fmt"
+	"strings"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate/cabundle"
@@ -124,19 +125,25 @@ const (
 	KubeletImageRepository = "quay.io/kubermatic/kubelet"
 )
 
-// ClusterDNS returns a comma-separated list of DNS server IP addresses that
-// kubelets should configure for pods.
-func ClusterDNS(cluster *kubeoneapi.KubeOneCluster) string {
+// ClusterDNSIPs returns the DNS server IP addresses that kubelets should
+// configure for pods. It's the single source of truth for both kubeadm-managed
+// nodes and nodes provisioned by machine-controller/OSM.
+func ClusterDNSIPs(cluster *kubeoneapi.KubeOneCluster) []string {
 	dnsServiceIP := cluster.ClusterNetwork.NthServiceSubnetIP(10)
 
 	switch {
 	case cluster.Features.NodeLocalDNS != nil && cluster.Features.NodeLocalDNS.Deploy:
-		return NodeLocalDNSVirtualIP
-	case cluster.ClusterNetwork.CNI.Cilium != nil && cluster.ClusterNetwork.CNI.Cilium.EnableLocalRedirectPolicy:
-		return ciliumNodeLocalDNSVirtualIP(dnsServiceIP)
+		return []string{NodeLocalDNSVirtualIP}
+	case cluster.ClusterNetwork.CNI != nil && cluster.ClusterNetwork.CNI.Cilium != nil && cluster.ClusterNetwork.CNI.Cilium.EnableLocalRedirectPolicy:
+		return []string{NodeLocalDNSVirtualIP, dnsServiceIP}
 	default:
-		return dnsServiceIP
+		return []string{dnsServiceIP}
 	}
+}
+
+// ClusterDNS returns ClusterDNSIPs as a comma-separated list.
+func ClusterDNS(cluster *kubeoneapi.KubeOneCluster) string {
+	return strings.Join(ClusterDNSIPs(cluster), ",")
 }
 
 func ciliumNodeLocalDNSVirtualIP(dnsServiceIP string) string {
