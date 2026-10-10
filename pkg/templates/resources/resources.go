@@ -18,7 +18,9 @@ package resources
 
 import (
 	"fmt"
+	"strings"
 
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate/cabundle"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -123,7 +125,36 @@ const (
 	KubeletImageRepository = "quay.io/kubermatic/kubelet"
 )
 
-func All(dnsServiceIP string) map[string]string {
+// ClusterDNSIPs returns the DNS server IP addresses that kubelets should
+// configure for pods. It's the single source of truth for both kubeadm-managed
+// nodes and nodes provisioned by machine-controller/OSM.
+func ClusterDNSIPs(cluster *kubeoneapi.KubeOneCluster) []string {
+	if len(cluster.ClusterNetwork.ClusterDNS) > 0 {
+		return cluster.ClusterNetwork.ClusterDNS
+	}
+
+	dnsServiceIP := cluster.ClusterNetwork.NthServiceSubnetIP(10)
+
+	switch {
+	case cluster.Features.NodeLocalDNS != nil && cluster.Features.NodeLocalDNS.Deploy:
+		return []string{NodeLocalDNSVirtualIP}
+	case cluster.ClusterNetwork.CNI != nil && cluster.ClusterNetwork.CNI.Cilium != nil && cluster.ClusterNetwork.CNI.Cilium.EnableLocalRedirectPolicy:
+		return []string{NodeLocalDNSVirtualIP, dnsServiceIP}
+	default:
+		return []string{dnsServiceIP}
+	}
+}
+
+// ClusterDNS returns ClusterDNSIPs as a comma-separated list.
+func ClusterDNS(cluster *kubeoneapi.KubeOneCluster) string {
+	return strings.Join(ClusterDNSIPs(cluster), ",")
+}
+
+func ciliumNodeLocalDNSVirtualIP(dnsServiceIP string) string {
+	return fmt.Sprintf("%s,%s", NodeLocalDNSVirtualIP, dnsServiceIP)
+}
+
+func All(dnsServiceIP, clusterDNS string) map[string]string {
 	return map[string]string{
 		"MachineControllerName":             MachineControllerName,
 		"MachineControllerNameSpace":        MachineControllerNameSpace,
@@ -133,7 +164,8 @@ func All(dnsServiceIP string) map[string]string {
 		"OperatingSystemManagerWebhookName": OperatingSystemManagerWebhookName,
 		"KubeletImageRepository":            KubeletImageRepository,
 		"NodeLocalDNSVirtualIP":             NodeLocalDNSVirtualIP,
-		"CiliumNodeLocalDNSVirtualIP":       fmt.Sprintf("%s,%s", NodeLocalDNSVirtualIP, dnsServiceIP),
+		"ClusterDNS":                        clusterDNS,
+		"CiliumNodeLocalDNSVirtualIP":       ciliumNodeLocalDNSVirtualIP(dnsServiceIP),
 		"CABundleSSLCertFilePath":           cabundle.SSLCertFilePath,
 	}
 }

@@ -452,11 +452,22 @@ func (v VersionConfig) KubernetesMajorMinorVersion() string {
 	return fmt.Sprintf("v%d.%d", kubeSemVer.Major(), kubeSemVer.Minor())
 }
 
-// NthServiceSubnetIP returns the n-th IP address within the ServiceSubnet CIDR,
-// where n=0 is the network address, n=1 is the first host address, etc.
+// NthServiceSubnetIP returns the n-th IP address within the primary service
+// subnet CIDR, where n=0 is the network address, n=1 is the first host address,
+// etc. The primary service subnet is ServiceSubnetIPv6 for IPv6-only and
+// IPv6-primary dual-stack clusters, and ServiceSubnet otherwise, mirroring the
+// subnet order KubeOne passes to kubeadm.
 func (c ClusterNetworkConfig) NthServiceSubnetIP(n int) string {
-	// ignore error as we validate and default ServiceSubnet field
-	_, ipNet, _ := net.ParseCIDR(c.ServiceSubnet)
+	serviceSubnet := c.ServiceSubnet
+	if c.IPFamily.IsIPv6Primary() {
+		serviceSubnet = c.ServiceSubnetIPv6
+	}
+
+	_, ipNet, err := net.ParseCIDR(serviceSubnet)
+	if err != nil {
+		// unreachable for validated and defaulted configs
+		return ""
+	}
 
 	ip := ipNet.IP
 	if v4 := ip.To4(); v4 != nil {
