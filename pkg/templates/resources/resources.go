@@ -129,6 +129,10 @@ const (
 // configure for pods. It's the single source of truth for both kubeadm-managed
 // nodes and nodes provisioned by machine-controller/OSM.
 func ClusterDNSIPs(cluster *kubeoneapi.KubeOneCluster) []string {
+	if len(cluster.ClusterNetwork.ClusterDNS) > 0 {
+		return cluster.ClusterNetwork.ClusterDNS
+	}
+
 	dnsServiceIP := cluster.ClusterNetwork.NthServiceSubnetIP(10)
 
 	switch {

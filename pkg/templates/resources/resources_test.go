@@ -52,6 +52,24 @@ func TestClusterDNSIPs(t *testing.T) {
 			expected: []string{NodeLocalDNSVirtualIP, "10.96.0.10"},
 		},
 		{
+			name: "clusterDNS override",
+			network: kubeoneapi.ClusterNetworkConfig{
+				ServiceSubnet: "10.96.0.0/12",
+				ClusterDNS:    []string{NodeLocalDNSVirtualIP, "10.96.0.10"},
+				CNI:           &kubeoneapi.CNI{},
+			},
+			expected: []string{NodeLocalDNSVirtualIP, "10.96.0.10"},
+		},
+		{
+			name: "clusterDNS override takes precedence over cilium local redirect policy",
+			network: kubeoneapi.ClusterNetworkConfig{
+				ServiceSubnet: "10.96.0.0/12",
+				ClusterDNS:    []string{"10.0.0.53"},
+				CNI:           &kubeoneapi.CNI{Cilium: &kubeoneapi.CiliumSpec{EnableLocalRedirectPolicy: true}},
+			},
+			expected: []string{"10.0.0.53"},
+		},
+		{
 			name: "IPv6-only",
 			network: kubeoneapi.ClusterNetworkConfig{
 				IPFamily:          kubeoneapi.IPFamilyIPv6,

@@ -46,6 +46,7 @@ func TestOperatingSystemManagerClusterDNS(t *testing.T) {
 		name               string
 		nodeLocalDNS       bool
 		ciliumLRP          bool
+		clusterDNS         []string
 		serviceSubnet      string
 		expectedClusterDNS string
 	}{
@@ -74,6 +75,12 @@ func TestOperatingSystemManagerClusterDNS(t *testing.T) {
 			serviceSubnet:      "10.96.0.0/12",
 			expectedClusterDNS: resources.NodeLocalDNSVirtualIP + ",10.96.0.10",
 		},
+		{
+			name:               "BYO cilium with local redirect policy enabled",
+			clusterDNS:         []string{resources.NodeLocalDNSVirtualIP, "10.96.0.10"},
+			serviceSubnet:      "10.96.0.0/12",
+			expectedClusterDNS: resources.NodeLocalDNSVirtualIP + ",10.96.0.10",
+		},
 	}
 
 	for _, tc := range tests {
@@ -84,6 +91,7 @@ func TestOperatingSystemManagerClusterDNS(t *testing.T) {
 				Name: "kubeone-test",
 				ClusterNetwork: kubeoneapi.ClusterNetworkConfig{
 					ServiceSubnet: tc.serviceSubnet,
+					ClusterDNS:    tc.clusterDNS,
 					CNI:           &kubeoneapi.CNI{},
 				},
 				ContainerRuntime: kubeoneapi.ContainerRuntimeConfig{

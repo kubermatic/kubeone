@@ -3237,6 +3237,68 @@ func TestValidateCilium(t *testing.T) {
 	}
 }
 
+func TestValidateClusterDNS(t *testing.T) {
+	fldPath := field.NewPath("clusterNetwork", "clusterDNS")
+
+	tests := []struct {
+		name    string
+		cluster kubeoneapi.KubeOneCluster
+		want    error
+	}{
+		{
+			name:    "not set",
+			cluster: getCluster(),
+			want:    field.ErrorList{}.ToAggregate(),
+		},
+		{
+			name:    "valid IPv4 and IPv6 addresses",
+			cluster: getCluster(withoutNodeLocalDNS, withClusterDNS("169.254.20.10", "10.96.0.10", "fd02::a")),
+			want:    field.ErrorList{}.ToAggregate(),
+		},
+		{
+			name:    "invalid IP address",
+			cluster: getCluster(withoutNodeLocalDNS, withClusterDNS("10.96.0.10", "10.96.0.0/12")),
+			want: field.ErrorList{
+				field.Invalid(fldPath.Index(1), "10.96.0.0/12", "must be a valid IP address"),
+			}.ToAggregate(),
+		},
+		{
+			name:    "too many addresses",
+			cluster: getCluster(withoutNodeLocalDNS, withClusterDNS("10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4")),
+			want: field.ErrorList{
+				field.TooMany(fldPath, 4, 3),
+			}.ToAggregate(),
+		},
+		{
+			name:    "conflicts with nodeLocalDNS",
+			cluster: getCluster(withClusterDNS("10.96.0.10")),
+			want: field.ErrorList{
+				field.Invalid(fldPath, []string{"10.96.0.10"}, "cannot be used together with features.nodeLocalDNS.deploy; disable nodeLocalDNS when overriding clusterDNS"),
+			}.ToAggregate(),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := ValidateClusterDNS(tt.cluster, fldPath).ToAggregate()
+
+			if !cmp.Equal(got, tt.want) {
+				t.Errorf("ValidateClusterDNS() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func withoutNodeLocalDNS(cls *kubeoneapi.KubeOneCluster) {
+	cls.Features.NodeLocalDNS.Deploy = false
+}
+
+func withClusterDNS(ips ...string) func(*kubeoneapi.KubeOneCluster) {
+	return func(cls *kubeoneapi.KubeOneCluster) {
+		cls.ClusterNetwork.ClusterDNS = ips
+	}
+}
+
 func getCluster(opts ...func(*kubeoneapi.KubeOneCluster)) kubeoneapi.KubeOneCluster {
 	cls := kubeoneapi.KubeOneCluster{
 		ClusterNetwork: kubeoneapi.ClusterNetworkConfig{

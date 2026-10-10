@@ -66,6 +66,7 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateKubernetesSupport(c, field.NewPath(""))...)
 	allErrs = append(allErrs, ValidateContainerRuntimeConfig(c.ContainerRuntime, c.Versions, field.NewPath("containerRuntime"))...)
 	allErrs = append(allErrs, ValidateClusterNetworkConfig(c.ClusterNetwork, c.CloudProvider, field.NewPath("clusterNetwork"))...)
+	allErrs = append(allErrs, ValidateClusterDNS(c, field.NewPath("clusterNetwork", "clusterDNS"))...)
 	if c.ClusterNetwork.CNI != nil && c.ClusterNetwork.CNI.Cilium != nil {
 		allErrs = append(allErrs, ValidateCilium(c.ClusterNetwork.CNI.Cilium, field.NewPath("clusterNetwork", "cni", "cilium"), c)...)
 	}
@@ -87,6 +88,36 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
 	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
 	allErrs = append(allErrs, ValidateControlPlaneComponents(c.ControlPlaneComponents, field.NewPath("controlPlaneComponents"))...)
+
+	return allErrs
+}
+
+// maxClusterDNSServers is the maximum number of nameservers glibc resolver
+// honors in resolv.conf (MAXNS); kubelet truncates anything beyond that.
+const maxClusterDNSServers = 3
+
+// ValidateClusterDNS validates the clusterNetwork.clusterDNS override
+func ValidateClusterDNS(cluster kubeoneapi.KubeOneCluster, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	clusterDNS := cluster.ClusterNetwork.ClusterDNS
+	if len(clusterDNS) == 0 {
+		return allErrs
+	}
+
+	if len(clusterDNS) > maxClusterDNSServers {
+		allErrs = append(allErrs, field.TooMany(fldPath, len(clusterDNS), maxClusterDNSServers))
+	}
+
+	for i, ip := range clusterDNS {
+		if net.ParseIP(ip) == nil {
+			allErrs = append(allErrs, field.Invalid(fldPath.Index(i), ip, "must be a valid IP address"))
+		}
+	}
+
+	if cluster.Features.NodeLocalDNS != nil && cluster.Features.NodeLocalDNS.Deploy {
+		allErrs = append(allErrs, field.Invalid(fldPath, clusterDNS, "cannot be used together with features.nodeLocalDNS.deploy; disable nodeLocalDNS when overriding clusterDNS"))
+	}
 
 	return allErrs
 }
