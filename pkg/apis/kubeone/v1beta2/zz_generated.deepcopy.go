@@ -399,6 +399,11 @@ func (in *ClusterNetworkConfig) DeepCopyInto(out *ClusterNetworkConfig) {
 		*out = new(int)
 		**out = **in
 	}
+	if in.ClusterDNS != nil {
+		in, out := &in.ClusterDNS, &out.ClusterDNS
+		*out = make([]string, len(*in))
+		copy(*out, *in)
+	}
 	return
 }
 

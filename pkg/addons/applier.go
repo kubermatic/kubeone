@@ -206,7 +206,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 			pauseImage: s.PauseImage,
 			resolver:   s.Images.Get,
 		},
-		Resources: resources.All(s.Cluster.ClusterNetwork.NthServiceSubnetIP(10)),
+		Resources: resources.All(s.Cluster.ClusterNetwork.NthServiceSubnetIP(10), resources.ClusterDNS(s.Cluster)),
 		Params:    map[string]string{},
 	}
 

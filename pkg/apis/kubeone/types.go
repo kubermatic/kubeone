@@ -743,6 +743,17 @@ type ClusterNetworkConfig struct {
 
 	// NodeCIDRMaskSizeIPv6 is the mask size used to address the nodes within provided IPv6 Pods CIDR. It has to be larger than the provided IPv6 Pods CIDR. Defaults to 64.
 	NodeCIDRMaskSizeIPv6 *int `json:"nodeCIDRMaskSizeIPv6,omitempty"`
+
+	// ClusterDNS overrides the list of DNS server IP addresses that kubelets
+	// configure for pods, on both control plane/static worker nodes and nodes
+	// provisioned by machine-controller. Use it when DNS is provided by
+	// components not managed by KubeOne, e.g. a user-deployed Cilium with
+	// Local Redirect Policy and node-local DNS cache.
+	// Cannot be used together with features.nodeLocalDNS.deploy.
+	// By default, it's derived from features.nodeLocalDNS,
+	// clusterNetwork.cni.cilium.enableLocalRedirectPolicy and the CoreDNS
+	// service IP (the 10th IP of the primary service subnet).
+	ClusterDNS []string `json:"clusterDNS,omitempty"`
 }
 
 // IPFamily allows specifying IP family of a cluster.
