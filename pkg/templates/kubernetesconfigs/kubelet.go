@@ -20,6 +20,7 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/templates/resources"
 
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	kubeletconfigv1beta1 "k8s.io/kubelet/config/v1beta1"
 )
@@ -31,8 +32,10 @@ func NewKubeletConfiguration(cluster *kubeoneapi.KubeOneCluster, featureGates ma
 	}
 
 	kubeletConfig := &kubeletconfigv1beta1.KubeletConfiguration{
-		APIVersion: "kubelet.config.k8s.io/v1beta1",
-		Kind:       "KubeletConfiguration",
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "kubelet.config.k8s.io/v1beta1",
+			Kind:       "KubeletConfiguration",
+		},
 		Authentication: kubeletconfigv1beta1.KubeletAuthentication{
 			Anonymous: kubeletconfigv1beta1.KubeletAnonymousAuthentication{
 				Enabled: new(false),
