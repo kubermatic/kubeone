@@ -237,7 +237,7 @@ func baseResources() map[Resource]map[string]string {
 		DNSNodeCache:           {"*": "registry.k8s.io/dns/k8s-dns-node-cache:1.26.7"},
 		Flannel:                {"*": "docker.io/flannel/flannel:v0.24.4"},
 		MachineController:      {"*": "quay.io/kubermatic/machine-controller:86813a09db8bb425ad6b2124147c2e78280e68cb"},
-		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.8.1"},
+		MetricsServer:          {"*": "registry.k8s.io/metrics-server/metrics-server:v0.9.0"},
 		OperatingSystemManager: {"*": "quay.io/kubermatic/operating-system-manager:7f2bf34da9bae3f5c6d90170df355680ba8c9321"},
 	}
 }
