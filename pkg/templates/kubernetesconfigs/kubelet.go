@@ -57,13 +57,11 @@ func NewKubeletConfiguration(cluster *kubeoneapi.KubeOneCluster, featureGates ma
 		ImageGCLowThresholdPercent:  cluster.KubeletConfig.ImageGCLowThresholdPercent,
 		ImageMinimumGCAge:           cluster.KubeletConfig.ImageMinimumGCAge,
 		ImageMaximumGCAge:           cluster.KubeletConfig.ImageMaximumGCAge,
+		ClusterDNS:                  resources.ClusterDNSIPs(cluster),
 	}
 
-	if cluster.Features.NodeLocalDNS.Deploy {
-		kubeletConfig.ClusterDNS = []string{resources.NodeLocalDNSVirtualIP}
-	}
-
-	return dropFields(kubeletConfig,
+	return dropFields(
+		kubeletConfig,
 		[]string{"containerRuntimeEndpoint"},
 		[]string{"imageMaximumGCAge"},
 		[]string{"logging"},
