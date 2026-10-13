@@ -31,3 +31,6 @@ hubble:
       method: cronJob
   ui:
     enabled: false
+
+l2announcements:
+  enabled: true
