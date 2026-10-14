@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: kube-system
 
 resources:
-  - https://raw.githubusercontent.com/projectcalico/calico/v3.32.0/manifests/canal.yaml
+  - https://raw.githubusercontent.com/projectcalico/calico/v3.33.0/manifests/canal.yaml
 
 patches:
   - patch: |-
@@ -100,3 +100,5 @@ patches:
                 image: '{{ .InternalImages.Get "CalicoCNI" }}'
               - name: ebpf-bootstrap
                 image: '{{ .InternalImages.Get "CalicoNode" }}'
+              - name: cni-plugins
+                image: '{{ .InternalImages.Get "CalicoThirdPartyPlugins" }}'
