@@ -594,8 +594,8 @@ func validateIPFamily(ipFamily kubeoneapi.IPFamily, prov kubeoneapi.CloudProvide
 		allErrs = append(allErrs, field.Forbidden(fldPath, "ipv6 and ipv6+ipv4 ip families are currently not supported"))
 	}
 
-	if ipFamily == kubeoneapi.IPFamilyIPv4IPv6 && prov.AWS == nil && prov.None == nil && prov.Vsphere == nil {
-		allErrs = append(allErrs, field.Forbidden(fldPath, "dualstack is currently supported only on AWS, vSphere and baremetal (none)"))
+	if ipFamily == kubeoneapi.IPFamilyIPv4IPv6 && prov.AWS == nil && prov.None == nil && prov.Vsphere == nil && prov.Openstack == nil {
+		allErrs = append(allErrs, field.Forbidden(fldPath, "dualstack is currently supported only on AWS, vSphere, Openstack and baremetal (none)"))
 	}
 
 	return allErrs
