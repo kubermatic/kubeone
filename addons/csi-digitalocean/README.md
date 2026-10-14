@@ -4,5 +4,5 @@
 
 ### Generate manifest YAML
 ```shell
-kubectl kustomize . > driver.yaml
+make update
 ```

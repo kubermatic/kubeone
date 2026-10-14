@@ -115,7 +115,7 @@ kubectl annotate machinedeployment -n kube-system <machinedeployment-name> capac
 ## Development
 
 ```shell
-kubectl kustomize --enable-helm . | yq > cluster-autoscaler.yaml
+make update
 ```
 
 ## Using The Addon

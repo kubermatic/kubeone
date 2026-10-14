@@ -3,5 +3,5 @@
 ## Development
 
 ```shell
-kubectl kustomize --enable-helm . | yq > ccm-aws.yaml
+make update
 ```

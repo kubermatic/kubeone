@@ -16,5 +16,5 @@ This section what [addon parameters][params] can be used with this addon.
 ## Development
 
 ```shell
-kubectl kustomize --enable-helm . | yq > cilium.yaml
+make update
 ```

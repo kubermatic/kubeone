@@ -4,5 +4,5 @@
 
 ### Generate manifest YAML
 ```shell
-kubectl kustomize . | yq > ccm-digitalocean.yaml
+make update
 ```
