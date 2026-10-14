@@ -1,0 +1,47 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+helmCharts:
+- name: vsphere-cpi
+  repo: https://kubernetes.github.io/cloud-provider-vsphere
+  version: 1.36.0
+  releaseName: vsphere-cpi
+  namespace: kube-system
+  valuesFile: generate-values-ccm
+
+patches:
+  - target:
+      group: apps
+      kind: DaemonSet
+      namespace: kube-system
+      name: vsphere-cpi
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value:
+          scheduler.alpha.kubernetes.io/critical-pod: ""
+      - op: add
+        path: /spec/template/metadata/annotations
+        value:
+          "kubeone.k8c.io/cabundle-hash": '{{ CABundle | sha256sum }}'
+          "kubeone.k8c.io/cloudconfig-hash": '{{ .Config.CloudProvider.CloudConfig | sha256sum }}'
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: '{{ .InternalImages.Get "VsphereCCM" }}'
+      - op: replace
+        path: /spec/template/spec/containers/0/args/2
+        value: --cloud-config=/etc/cloud/cloud-config
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --concurrent-service-syncs={{ default 1 .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
+      - op: add
+        path: /spec/template/spec/containers/0/env
+        value:
+          - name: ENABLE_ALPHA_DUAL_STACK
+            value: '{{ .Config.ClusterNetwork.IPFamily.IsDualstack }}'
+      - op: replace
+        path: /spec/template/spec/volumes/0
+        value:
+          name: vsphere-config-volume
+          secret:
+            secretName: cloud-config
