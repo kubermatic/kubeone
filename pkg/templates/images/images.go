@@ -364,7 +364,7 @@ func optionalResources() map[Resource]map[string]string {
 		VsphereCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.2.0"},
 
 		// Nutanix CCM
-		NutanixCCM: {"*": "ghcr.io/nutanix-cloud-native/cloud-provider-nutanix/controller:v0.5.2"},
+		NutanixCCM: {"*": "ghcr.io/nutanix-cloud-native/cloud-provider-nutanix/controller:v0.6.3"},
 
 		// Nutanix CSI
 		NutanixCSI:                      {"*": "docker.io/nutanix/ntnx-csi:3.3.4"},
