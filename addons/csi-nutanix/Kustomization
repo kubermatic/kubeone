@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
 - name: nutanix-csi-storage
   repo: https://nutanix.github.io/helm-releases/
-  version: 3.3.4
+  version: 3.9.0
   releaseName: nutanix-csi-storage
   namespace: kube-system
   valuesFile: generate-values-csi-storage
@@ -78,3 +78,5 @@ patches:
                 image: '{{ .InternalImages.Get "NutanixCSILivenessProbe" }}'
               - name: csi-external-health-monitor-controller
                 image: '{{ .InternalImages.Get "NutanixCSIExternalHealthMonitor" }}'
+              - name: authagent
+                image: '{{ .InternalImages.Get "NutanixCSIAuthAgent" }}'

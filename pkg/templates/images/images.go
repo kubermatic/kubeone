@@ -126,6 +126,7 @@ const (
 	NutanixCSIRegistrar
 	NutanixCSIResizer
 	NutanixCSISnapshotter
+	NutanixCSIAuthAgent
 
 	// DigitalOcean CSI
 	DigitalOceanCSI
@@ -367,15 +368,16 @@ func optionalResources() map[Resource]map[string]string {
 		NutanixCCM: {"*": "ghcr.io/nutanix-cloud-native/cloud-provider-nutanix/controller:v0.6.3"},
 
 		// Nutanix CSI
-		NutanixCSI:                      {"*": "docker.io/nutanix/ntnx-csi:3.3.4"},
-		NutanixCSILivenessProbe:         {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.15.0"},
-		NutanixCSIExternalHealthMonitor: {"*": "registry.k8s.io/sig-storage/csi-external-health-monitor-controller:v0.14.0"},
-		NutanixCSIAttacher:              {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.8.1"},
-		NutanixCSIProvisioner:           {"*": "registry.k8s.io/sig-storage/csi-provisioner:v5.2.0"},
-		NutanixCSIRegistrar:             {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.13.0"},
-		NutanixCSIPrecheck:              {"*": "docker.io/nutanix/ntnx-csi-precheck:3.3.4"},
-		NutanixCSIResizer:               {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.13.2"},
-		NutanixCSISnapshotter:           {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v3.0.3"},
+		NutanixCSI:                      {"*": "docker.io/nutanix/ntnx-csi:3.9.0"},
+		NutanixCSILivenessProbe:         {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.19.0"},
+		NutanixCSIExternalHealthMonitor: {"*": "registry.k8s.io/sig-storage/csi-external-health-monitor-controller:v0.18.0"},
+		NutanixCSIAttacher:              {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.12.0"},
+		NutanixCSIProvisioner:           {"*": "registry.k8s.io/sig-storage/csi-provisioner:v5.3.0"},
+		NutanixCSIRegistrar:             {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.17.0"},
+		NutanixCSIPrecheck:              {"*": "docker.io/nutanix/ntnx-csi-precheck:3.9.0"},
+		NutanixCSIResizer:               {"*": "registry.k8s.io/sig-storage/csi-resizer:v2.2.1"},
+		NutanixCSISnapshotter:           {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.6.0"},
+		NutanixCSIAuthAgent:             {"*": "docker.io/nutanix/ntnx-csi-authagent:3.9.0"},
 
 		// GCP CCM
 		GCPCCM: {"*": "registry.k8s.io/cloud-provider-gcp/cloud-controller-manager:v37.0.1"},
@@ -534,6 +536,7 @@ func providerResources() map[string][]Resource {
 			NutanixCSIRegistrar,
 			NutanixCSIResizer,
 			NutanixCSISnapshotter,
+			NutanixCSIAuthAgent,
 		},
 		"openstack": {
 			OpenstackCCM,
