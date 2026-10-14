@@ -355,14 +355,14 @@ func optionalResources() map[Resource]map[string]string {
 		},
 
 		// vSphere CSI
-		VsphereCSIDriver:             {"*": "registry.k8s.io/csi-vsphere/driver:v3.7.1"},
-		VsphereCSISyncer:             {"*": "registry.k8s.io/csi-vsphere/syncer:v3.7.1"},
-		VsphereCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.9.0"},
-		VsphereCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.15.0"},
-		VsphereCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.13.0"},
+		VsphereCSIDriver:             {"*": "registry.k8s.io/csi-vsphere/driver:v3.8.0"},
+		VsphereCSISyncer:             {"*": "registry.k8s.io/csi-vsphere/syncer:v3.8.0"},
+		VsphereCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.10.0"},
+		VsphereCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.17.0"},
+		VsphereCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.14.0"},
 		VsphereCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v4.0.1"},
-		VsphereCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.12.0"},
-		VsphereCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.2.0"},
+		VsphereCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v2.0.0"},
+		VsphereCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.4.0"},
 
 		// Nutanix CCM
 		NutanixCCM: {"*": "ghcr.io/nutanix-cloud-native/cloud-provider-nutanix/controller:v0.6.3"},
