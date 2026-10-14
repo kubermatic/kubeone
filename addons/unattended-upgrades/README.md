@@ -40,5 +40,5 @@ machine.
 
 ### Generate Flatcar Linux Update Operator YAML
 ```shell
-kubectl kustomize ./fluo > fluo.yaml
+make update
 ```
