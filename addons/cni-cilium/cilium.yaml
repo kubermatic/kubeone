@@ -1,4 +1,3 @@
----
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -22,6 +21,7 @@ kind: Role
 metadata:
   labels:
     app.kubernetes.io/part-of: cilium
+    helm.sh/chart: cilium-1.20.2
   name: cilium-config-agent
   namespace: kube-system
 rules:
@@ -39,6 +39,7 @@ kind: Role
 metadata:
   labels:
     app.kubernetes.io/part-of: cilium
+    helm.sh/chart: cilium-1.20.2
   name: cilium-operator-tlsinterception-secrets
   namespace: kube-system
 rules:
@@ -57,6 +58,7 @@ kind: Role
 metadata:
   labels:
     app.kubernetes.io/part-of: cilium
+    helm.sh/chart: cilium-1.20.2
   name: cilium-operator-ztunnel
   namespace: kube-system
 rules:
@@ -70,12 +72,21 @@ rules:
       - get
       - list
       - watch
+  - apiGroups:
+      - ""
+    resources:
+      - serviceaccounts
+    verbs:
+      - get
+      - list
+      - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   labels:
     app.kubernetes.io/part-of: cilium
+    helm.sh/chart: cilium-1.20.2
   name: cilium-tlsinterception-secrets
   namespace: kube-system
 rules:
@@ -93,6 +104,7 @@ kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/part-of: cilium
+    helm.sh/chart: cilium-1.20.2
   name: cilium
 rules:
   - apiGroups:
@@ -117,7 +129,6 @@ rules:
       - namespaces
       - services
       - pods
-      - endpoints
       - nodes
     verbs:
       - get
@@ -145,7 +156,6 @@ rules:
       - cilium.io
     resources:
       - ciliumloadbalancerippools
-      - ciliumbgppeeringpolicies
       - ciliumbgpnodeconfigs
       - ciliumbgpadvertisements
       - ciliumbgppeerconfigs
@@ -163,6 +173,7 @@ rules:
       - ciliumcidrgroups
       - ciliuml2announcementpolicies
       - ciliumpodippools
+      - ciliumdatapathplugins
     verbs:
       - list
       - watch
@@ -210,6 +221,7 @@ kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/part-of: cilium
+    helm.sh/chart: cilium-1.20.2
   name: cilium-operator
 rules:
   - apiGroups:
@@ -263,6 +275,7 @@ rules:
     resources:
       - namespaces
       - secrets
+      - serviceaccounts
     verbs:
       - get
       - list
@@ -271,7 +284,6 @@ rules:
       - ""
     resources:
       - services
-      - endpoints
     verbs:
       - get
       - list
@@ -334,9 +346,12 @@ rules:
     resources:
       - ciliumendpointslices
       - ciliumenvoyconfigs
+      - ciliumbgpclusterconfigs
+      - ciliumbgpnodeconfigoverrides
       - ciliumbgppeerconfigs
       - ciliumbgpadvertisements
       - ciliumbgpnodeconfigs
+      - ciliumcidrgroups
     verbs:
       - create
       - update
@@ -385,8 +400,21 @@ rules:
       - ciliuml2announcementpolicies.cilium.io
       - ciliumpodippools.cilium.io
       - ciliumgatewayclassconfigs.cilium.io
+      - ciliumdatapathplugins.cilium.io
     resources:
       - customresourcedefinitions
+    verbs:
+      - update
+  - apiGroups:
+      - apiextensions.k8s.io
+    resourceNames:
+      - ciliumbgpclusterconfigs.cilium.io
+      - ciliumbgppeerconfigs.cilium.io
+      - ciliumbgpadvertisements.cilium.io
+      - ciliumbgpnodeconfigs.cilium.io
+      - ciliumbgpnodeconfigoverrides.cilium.io
+    resources:
+      - customresourcedefinitions/status
     verbs:
       - update
   - apiGroups:
@@ -394,10 +422,8 @@ rules:
     resources:
       - ciliumloadbalancerippools
       - ciliumpodippools
-      - ciliumbgppeeringpolicies
-      - ciliumbgpclusterconfigs
-      - ciliumbgpnodeconfigoverrides
       - ciliumbgppeerconfigs
+      - ciliumdatapathplugins
     verbs:
       - get
       - list
@@ -434,6 +460,7 @@ kind: RoleBinding
 metadata:
   labels:
     app.kubernetes.io/part-of: cilium
+    helm.sh/chart: cilium-1.20.2
   name: cilium-config-agent
   namespace: kube-system
 roleRef:
@@ -450,6 +477,7 @@ kind: RoleBinding
 metadata:
   labels:
     app.kubernetes.io/part-of: cilium
+    helm.sh/chart: cilium-1.20.2
   name: cilium-operator-tlsinterception-secrets
   namespace: kube-system
 roleRef:
@@ -466,6 +494,7 @@ kind: RoleBinding
 metadata:
   labels:
     app.kubernetes.io/part-of: cilium
+    helm.sh/chart: cilium-1.20.2
   name: cilium-operator-ztunnel
   namespace: kube-system
 roleRef:
@@ -482,6 +511,7 @@ kind: RoleBinding
 metadata:
   labels:
     app.kubernetes.io/part-of: cilium
+    helm.sh/chart: cilium-1.20.2
   name: cilium-tlsinterception-secrets
   namespace: kube-system
 roleRef:
@@ -498,6 +528,7 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app.kubernetes.io/part-of: cilium
+    helm.sh/chart: cilium-1.20.2
   name: cilium
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -513,6 +544,7 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app.kubernetes.io/part-of: cilium
+    helm.sh/chart: cilium-1.20.2
   name: cilium-operator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -549,35 +581,25 @@ data:
             }
         ],
         "dynamicResources": {
-            "cdsConfig": {
-                "apiConfigSource": {
-                    "apiType": "GRPC",
-                    "grpcServices": [
-                        {
-                            "envoyGrpc": {
-                                "clusterName": "xds-grpc-cilium"
-                            }
+            "adsConfig": {
+                "apiType": "GRPC",
+                "grpcServices": [
+                    {
+                        "envoyGrpc": {
+                            "clusterName": "xds-grpc-cilium"
                         }
-                    ],
-                    "setNodeOnFirstMessageOnly": true,
-                    "transportApiVersion": "V3"
-                },
+                    }
+                ],
+                "setNodeOnFirstMessageOnly": true,
+                "transportApiVersion": "V3"
+            },
+            "cdsConfig": {
+                "ads": {},
                 "initialFetchTimeout": "30s",
                 "resourceApiVersion": "V3"
             },
             "ldsConfig": {
-                "apiConfigSource": {
-                    "apiType": "GRPC",
-                    "grpcServices": [
-                        {
-                            "envoyGrpc": {
-                                "clusterName": "xds-grpc-cilium"
-                            }
-                        }
-                    ],
-                    "setNodeOnFirstMessageOnly": true,
-                    "transportApiVersion": "V3"
-                },
+                "ads": {},
                 "initialFetchTimeout": "30s",
                 "resourceApiVersion": "V3"
             }
@@ -722,6 +744,15 @@ data:
                     }
                 },
                 {
+                    "circuitBreakers": {
+                        "thresholds": [
+                            {
+                                "maxConnections": 1024,
+                                "maxRequests": 1024,
+                                "maxRetries": 128
+                            }
+                        ]
+                    },
                     "connectTimeout": "2s",
                     "loadAssignment": {
                         "clusterName": "xds-grpc-cilium",
@@ -941,6 +972,7 @@ metadata:
   labels:
     app.kubernetes.io/name: cilium-envoy
     app.kubernetes.io/part-of: cilium
+    helm.sh/chart: cilium-1.20.2
     io.cilium/app: proxy
     k8s-app: cilium-envoy
   name: cilium-envoy
@@ -962,6 +994,7 @@ metadata:
   labels:
     app.kubernetes.io/name: cilium-operator
     app.kubernetes.io/part-of: cilium
+    helm.sh/chart: cilium-1.20.2
     io.cilium/app: operator
     name: cilium-operator
   name: cilium-operator
@@ -985,6 +1018,7 @@ spec:
       labels:
         app.kubernetes.io/name: cilium-operator
         app.kubernetes.io/part-of: cilium
+        helm.sh/chart: cilium-1.20.2
         io.cilium/app: operator
         name: cilium-operator
     spec:
@@ -1072,6 +1106,7 @@ spec:
               name: cilium-config-path
               readOnly: true
       hostNetwork: true
+      hostUsers: true
       nodeSelector:
         kubernetes.io/os: linux
       priorityClassName: system-cluster-critical
@@ -1102,6 +1137,7 @@ metadata:
   labels:
     app.kubernetes.io/name: cilium-operator
     app.kubernetes.io/part-of: cilium
+    helm.sh/chart: cilium-1.20.2
     io.cilium/app: operator
     name: cilium-operator
   name: cilium-operator
@@ -1119,6 +1155,7 @@ metadata:
   labels:
     app.kubernetes.io/name: cilium-agent
     app.kubernetes.io/part-of: cilium
+    helm.sh/chart: cilium-1.20.2
     k8s-app: cilium
   name: cilium
   namespace: kube-system
@@ -1133,6 +1170,7 @@ spec:
       labels:
         app.kubernetes.io/name: cilium-agent
         app.kubernetes.io/part-of: cilium
+        helm.sh/chart: cilium-1.20.2
         k8s-app: cilium
     spec:
       affinity:
@@ -1319,10 +1357,12 @@ spec:
             - mountPath: /tmp
               name: tmp
       hostNetwork: true
+      hostUsers: true
       initContainers:
         - command:
             - cilium-dbg
             - build-config
+            - --k8s-api-server-urls=
           env:
             - name: KUBERNETES_SERVICE_HOST
               valueFrom:
@@ -1632,6 +1672,7 @@ metadata:
   labels:
     app.kubernetes.io/name: cilium-envoy
     app.kubernetes.io/part-of: cilium
+    helm.sh/chart: cilium-1.20.2
     k8s-app: cilium-envoy
     name: cilium-envoy
   name: cilium-envoy
@@ -1645,6 +1686,7 @@ spec:
       labels:
         app.kubernetes.io/name: cilium-envoy
         app.kubernetes.io/part-of: cilium
+        helm.sh/chart: cilium-1.20.2
         k8s-app: cilium-envoy
         name: cilium-envoy
     spec:
@@ -1710,6 +1752,7 @@ spec:
               path: /healthz
               port: 9878
               scheme: HTTP
+            initialDelaySeconds: 0
             periodSeconds: 30
             successThreshold: 1
             timeoutSeconds: 5
@@ -1726,6 +1769,7 @@ spec:
               path: /healthz
               port: 9878
               scheme: HTTP
+            initialDelaySeconds: 0
             periodSeconds: 30
             successThreshold: 1
             timeoutSeconds: 5
@@ -1749,6 +1793,7 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 2
             successThreshold: 1
+            timeoutSeconds: 5
           terminationMessagePolicy: FallbackToLogsOnError
           volumeMounts:
             - mountPath: /var/run/cilium/envoy/sockets
@@ -1764,6 +1809,7 @@ spec:
               mountPropagation: HostToContainer
               name: bpf-maps
       hostNetwork: true
+      hostUsers: true
       nodeSelector:
         kubernetes.io/os: linux
       priorityClassName: system-node-critical
