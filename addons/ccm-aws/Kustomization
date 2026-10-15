@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
 - name: aws-cloud-controller-manager
   repo: https://kubernetes.github.io/cloud-provider-aws
-  version: 0.0.11
+  version: 0.0.12
   releaseName: aws-cloud-controller-manager
   namespace: kube-system
   valuesFile: generated-values-ccm
@@ -22,3 +22,10 @@ patches:
             containers:
               - name: aws-cloud-controller-manager
                 image: '{{ .InternalImages.Get "AwsCCM" }}'
+  - target:
+      kind: DaemonSet
+      name: aws-cloud-controller-manager
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: '--concurrent-service-syncs={{ default 1 .Params.CCM_CONCURRENT_SERVICE_SYNCS }}'
