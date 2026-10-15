@@ -2,15 +2,48 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
-    helm.sh/chart: aws-cloud-controller-manager-0.0.11
+    helm.sh/chart: aws-cloud-controller-manager-0.0.12
   name: cloud-controller-manager
   namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    helm.sh/chart: aws-cloud-controller-manager-0.0.12
+  name: system:cloud-controller-manager:controller-credentials
+  namespace: kube-system
+rules:
+  - apiGroups:
+      - ""
+    resourceNames:
+      - node-controller
+      - service-controller
+      - route-controller
+      - aws-cloud-provider
+      - tagging-controller
+    resources:
+      - serviceaccounts
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resourceNames:
+      - node-controller
+      - service-controller
+      - route-controller
+      - aws-cloud-provider
+      - tagging-controller
+    resources:
+      - serviceaccounts/token
+    verbs:
+      - create
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    helm.sh/chart: aws-cloud-controller-manager-0.0.11
+    helm.sh/chart: aws-cloud-controller-manager-0.0.12
   name: system:cloud-controller-manager
 rules:
   - apiGroups:
@@ -87,12 +120,6 @@ rules:
       - watch
       - update
   - apiGroups:
-      - ""
-    resources:
-      - serviceaccounts/token
-    verbs:
-      - create
-  - apiGroups:
       - authentication.k8s.io
     resources:
       - tokenreviews
@@ -109,7 +136,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    helm.sh/chart: aws-cloud-controller-manager-0.0.11
+    helm.sh/chart: aws-cloud-controller-manager-0.0.12
   name: cloud-controller-manager:apiserver-authentication-reader
   namespace: kube-system
 roleRef:
@@ -123,10 +150,26 @@ subjects:
     namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    helm.sh/chart: aws-cloud-controller-manager-0.0.12
+  name: system:cloud-controller-manager:controller-credentials
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: system:cloud-controller-manager:controller-credentials
+subjects:
+  - kind: ServiceAccount
+    name: cloud-controller-manager
+    namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    helm.sh/chart: aws-cloud-controller-manager-0.0.11
+    helm.sh/chart: aws-cloud-controller-manager-0.0.12
   name: system:cloud-controller-manager
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -142,7 +185,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
-    helm.sh/chart: aws-cloud-controller-manager-0.0.11
+    helm.sh/chart: aws-cloud-controller-manager-0.0.12
     k8s-app: aws-cloud-controller-manager
   name: aws-cloud-controller-manager
   namespace: kube-system
@@ -164,9 +207,7 @@ spec:
             - --configure-cloud-routes=false
             - --cloud-config=/etc/kubernetes/cloud/cloud-config
             - --v=2
-            {{- with .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
-            - --concurrent-service-syncs={{ . }}
-            {{- end }}
+            - --concurrent-service-syncs={{ default 1 .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
           env: []
           image: '{{ .InternalImages.Get "AwsCCM" }}'
           name: aws-cloud-controller-manager
