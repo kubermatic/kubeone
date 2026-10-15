@@ -23,6 +23,7 @@ import (
 	"net"
 	"os"
 	"reflect"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -51,6 +52,8 @@ var (
 	minVersionConstraint = semverutil.MustParseConstraint(fmt.Sprintf(">= %s", MinimumSupportedVersion))
 	// maxVersionConstraint defines the maximum Kubernetes version supported by KubeOne
 	maxVersionConstraint = semverutil.MustParseConstraint(fmt.Sprintf("<= %s", MaximumSupportedVersion))
+	// dualstackProviders defines the cloud providers that support dualstack networking.
+	dualstackProviders = []string{"aws", "openstack", "vsphere", "none"}
 )
 
 // ValidateKubeOneCluster validates the KubeOneCluster object
@@ -590,8 +593,14 @@ func ValidateClusterNetworkConfig(netConf kubeoneapi.ClusterNetworkConfig, prov 
 func validateIPFamily(ipFamily kubeoneapi.IPFamily, prov kubeoneapi.CloudProviderSpec, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	if ipFamily == kubeoneapi.IPFamilyIPv6 || ipFamily == kubeoneapi.IPFamilyIPv6IPv4 {
+	switch ipFamily {
+	case kubeoneapi.IPFamilyIPv6, kubeoneapi.IPFamilyIPv6IPv4:
 		allErrs = append(allErrs, field.Forbidden(fldPath, "ipv6 and ipv6+ipv4 ip families are currently not supported"))
+	case kubeoneapi.IPFamilyIPv4IPv6:
+		if !slices.Contains(dualstackProviders, prov.CloudProviderName()) {
+			allErrs = append(allErrs, field.Forbidden(fldPath, fmt.Sprintf("dualstack is currently supported only on: %v", dualstackProviders)))
+		}
+	default:
 	}
 
 	if ipFamily == kubeoneapi.IPFamilyIPv4IPv6 && prov.AWS == nil && prov.None == nil && prov.Vsphere == nil && prov.Openstack == nil {
