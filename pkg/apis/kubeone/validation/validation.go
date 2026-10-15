@@ -603,10 +603,6 @@ func validateIPFamily(ipFamily kubeoneapi.IPFamily, prov kubeoneapi.CloudProvide
 	default:
 	}
 
-	if ipFamily == kubeoneapi.IPFamilyIPv4IPv6 && prov.AWS == nil && prov.None == nil && prov.Vsphere == nil && prov.Openstack == nil {
-		allErrs = append(allErrs, field.Forbidden(fldPath, "dualstack is currently supported only on AWS, vSphere, Openstack and baremetal (none)"))
-	}
-
 	return allErrs
 }
 
