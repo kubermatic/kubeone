@@ -18,10 +18,4 @@ HELM ?= $(shell command -v helm3 >/dev/null 2>&1 && echo helm3 || echo helm)
 
 .PHONY: update
 update:
-	$(HELM) template aws-ebs-csi-driver aws-ebs-csi-driver \
-		--repo=https://kubernetes-sigs.github.io/aws-ebs-csi-driver \
-		--namespace=kube-system \
-		--values=generated-values-csi \
-		--skip-tests \
-		--version=2.61.1 \
-		> aws-csi.yaml
+	kubectl kustomize --enable-helm --helm-command=$(HELM) . | yq > aws-csi.yaml
