@@ -600,7 +600,7 @@ func validateIPFamily(ipFamily kubeoneapi.IPFamily, prov kubeoneapi.CloudProvide
 		if !slices.Contains(dualstackProviders, prov.CloudProviderName()) {
 			allErrs = append(allErrs, field.Forbidden(fldPath, fmt.Sprintf("dualstack is currently supported only on: %v", dualstackProviders)))
 		}
-	case kubeone.IPFamilyIPv4:
+	case kubeoneapi.IPFamilyIPv4:
 	}
 
 	return allErrs
