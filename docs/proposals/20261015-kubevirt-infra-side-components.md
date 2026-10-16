@@ -149,8 +149,8 @@ not go through the addon pipeline.
   by the operator and are not used.
 - The `Tenant` CR named `tenant`, rendered from the new API fields (see [API changes](#api-changes)).
 - ServiceAccount `kubevirt-csi-controller` in `kube-system`, with:
-  - a ClusterRole based on today's `kubevirt-csi-controller-cr`, extended with
-    the permissions the resizer and snapshotter need;
+  - a ClusterRole based on today's `kubevirt-csi-controller-cr`, extended with the permissions the resizer and
+    snapshotter need;
   - a token Secret.
 
 Snapshot CRDs and the snapshot controller are already deployed by `csi-external-snapshotter` for KubeVirt and are not
@@ -255,7 +255,7 @@ The CCM no longer depends on a schedulable tenant control-plane node. This remov
 ### operating-system-manager
 
 OSM stays in the tenant cluster. It does not use the KubeVirt credentials, so the OSM credentials Secret is no longer
-created for KubeVirt. This needs to be confirmed during implementation.
+created for KubeVirt.
 
 ### Credentials Secrets
 
@@ -337,8 +337,8 @@ New entries in `pkg/templates/images/images.go`:
 | Name                        | Image |
 |-----------------------------|-------|
 | `KubeVirtCSIDriverOperator` | `quay.io/kubermatic/kubevirt-csi-driver-operator:v0.5.3` |
-| `KubeVirtCSISnapshotter`    | `registry.k8s.io/sig-storage/csi-snapshotter` |
-| `KubeVirtCSIResizer`        | `registry.k8s.io/sig-storage/csi-resizer` |
+| `KubeVirtCSISnapshotter`    | `registry.k8s.io/sig-storage/csi-snapshotter:v8.7.0` |
+| `KubeVirtCSIResizer`        | `registry.k8s.io/sig-storage/csi-resizer:v2.3.0` |
 
 ## Tasks & Efforts
 

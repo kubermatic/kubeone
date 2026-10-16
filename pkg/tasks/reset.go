@@ -22,6 +22,7 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/cloudprovider"
+	kubevirtinfra "k8c.io/kubeone/pkg/cloudprovider/kubevirt/infra"
 	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/kubeconfig"
@@ -157,6 +158,20 @@ func destroyWorkers(s *state.State) error {
 	}
 
 	return nil
+}
+
+// destroyKubevirtInfraComponents deletes the components KubeOne runs in the
+// KubeVirt infra cluster. It must run after destroyWorkers, because workers are
+// destroyed by the machine-controller running there.
+func destroyKubevirtInfraComponents(s *state.State) error {
+	s.Logger.Infoln("Destroying KubeVirt infra cluster components...")
+
+	infraClient, ns, err := kubevirtinfra.Client(s)
+	if err != nil {
+		return err
+	}
+
+	return kubevirtinfra.Cleanup(s.Context, infraClient, s.Cluster.Name, ns)
 }
 
 func destroyControlPlaneMachines(s *state.State) error {
