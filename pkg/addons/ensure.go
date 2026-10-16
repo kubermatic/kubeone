@@ -247,9 +247,16 @@ func EnsureUserAddons(s *state.State) error {
 		}
 
 		if embeddedAddon.Delete {
-			if err := applier.loadAndDeleteAddon(s, applier.EmbeddedFS, embeddedAddon.Name); err != nil {
+			// DeleteAddonByName looks into the local addons directory first,
+			// which is where user addons are located.
+			if err := DeleteAddonByName(s, embeddedAddon.Name); err != nil {
 				return err
 			}
+
+			// the manifests must be kept to be able to delete the addon, so the
+			// addon can also be found in the local addons directory, make sure
+			// it's not applied again right after it was deleted
+			delete(combinedAddons, embeddedAddon.Name)
 
 			continue
 		}
