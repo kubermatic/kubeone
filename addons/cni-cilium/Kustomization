@@ -5,7 +5,7 @@ namespace: kube-system
 helmCharts:
   - name: cilium
     repo: https://helm.cilium.io/
-    version: 1.19.7
+    version: 1.20.2
     releaseName: cilium
     namespace: kube-system
     valuesFile: helm-values
@@ -17,6 +17,18 @@ patches:
       metadata:
         name: cilium-config
         namespace: kube-system
+      $patch: delete
+
+  # The chart templates the cilium-secrets Namespace, which the namespace
+  # transformer above renames to kube-system. Never ship it with the addon.
+  - target:
+      version: v1
+      kind: Namespace
+    patch: |-
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: not-used
       $patch: delete
 
   # A hack, to compensate for the lack of ability to set .Capabilities when using helmCharts API.

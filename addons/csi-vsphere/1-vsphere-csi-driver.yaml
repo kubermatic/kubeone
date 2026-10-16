@@ -336,9 +336,6 @@ spec:
               - matchExpressions:
                   - key: node-role.kubernetes.io/controlplane
                     operator: Exists
-              - matchExpressions:
-                  - key: node-role.kubernetes.io/master
-                    operator: Exists
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
@@ -379,6 +376,7 @@ spec:
             - --leader-election-lease-duration=120s
             - --leader-election-renew-deadline=60s
             - --leader-election-retry-period=30s
+            - --feature-gates=RecoverVolumeExpansionFailure=false
           env:
             - name: ADDRESS
               value: /csi/csi.sock
@@ -476,7 +474,7 @@ spec:
           name: vsphere-syncer
           ports:
             - containerPort: 2113
-              name: prometheus
+              name: prometheus-sync
               protocol: TCP
           securityContext:
             runAsGroup: 65532

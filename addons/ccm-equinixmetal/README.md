@@ -4,7 +4,7 @@
 
 ### Generate manifest YAML
 ```shell
-kubectl kustomize . | yq > ccm-equinixmetal.yaml
+make update
 ```
 
 Please note the `yq`, its usage is necessary.

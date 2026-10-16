@@ -23,6 +23,15 @@ data:
   cilium-endpoint-gc-interval: "5m0s"
   cluster-id: "0"
   cluster-name: default
+  clustermesh-default-global-namespace: "true"
+  datapath-plugins-state-dir: "/var/run/cilium/plugins"
+  devices: ""
+  enable-datapath-plugins: "false"
+  enable-dynamic-source-lookup-nodeport: "false"
+  envoy-access-log-enabled: "true"
+  envoy-node-locality-enabled: "false"
+  envoy-xds-mode: "ads"
+  proxy-cluster-max-pending-requests: "1024"
 {{ if .Config.ClusterNetwork.HasIPv4 }}
   cluster-pool-ipv4-cidr: "{{ .Config.ClusterNetwork.PodSubnet }}"
   cluster-pool-ipv4-mask-size: "{{ .Config.ClusterNetwork.NodeCIDRMaskSizeIPv4 }}"

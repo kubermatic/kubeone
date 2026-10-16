@@ -4,9 +4,6 @@ Upstream: https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dn
 
 ## Development
 
-```
-kubectl kustomize . |
-yq |
-sed 's/__PILLAR__DNS__DOMAIN__/{{ .Config.ClusterNetwork.ServiceDomainName }}/' \
-> nodelocaldns.yaml
+```shell
+make update
 ```
