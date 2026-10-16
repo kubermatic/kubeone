@@ -24,6 +24,7 @@ import (
 	"io"
 	"os"
 	"path"
+	"slices"
 	"sort"
 	"strings"
 
@@ -61,7 +62,27 @@ const (
 	releasedByKubeone = "kubeone.k8c.io/released-by-kubeone"
 )
 
+// Deploy installs, upgrades and uninstalls the helm releases to match the ones
+// declared in the KubeOne manifest.
 func Deploy(st *state.State) error {
+	return deploy(st, nil)
+}
+
+// DeployByName returns a task that reconciles only the helm releases with the
+// given release names. If no names are given, all releases are reconciled.
+func DeployByName(releaseNames ...string) func(st *state.State) error {
+	return func(st *state.State) error {
+		return deploy(st, releaseNames)
+	}
+}
+
+// deploy reconciles the helm releases. If onlyNames is not empty, only the
+// releases with the given names are installed, upgraded or uninstalled.
+func deploy(st *state.State, onlyNames []string) error {
+	selected := func(name string) bool {
+		return len(onlyNames) == 0 || slices.Contains(onlyNames, name)
+	}
+
 	konfigBuf, err := kubeconfig.Download(st)
 	if err != nil {
 		return err
@@ -106,6 +127,10 @@ func Deploy(st *state.State) error {
 	}
 
 	for _, release := range st.Cluster.Addons.OnlyHelmReleases() {
+		if !selected(release.ReleaseName) {
+			continue
+		}
+
 		var valueFiles []string
 		for _, value := range release.Values {
 			if value.ValuesFile != "" {
@@ -173,6 +198,24 @@ func Deploy(st *state.State) error {
 			return fail.Runtime(err, "helm releases history")
 		}
 	}
+
+	// The list contains every revision of a release, but uninstalling removes
+	// all of them at once, so each release must be uninstalled only once.
+	seen := map[string]struct{}{}
+	releasesToUninstall = slices.DeleteFunc(releasesToUninstall, func(rel helmrelease.Releaser) bool {
+		acc, accErr := helmrelease.NewAccessor(rel)
+		if accErr != nil || !selected(acc.Name()) {
+			return true
+		}
+
+		key := acc.Namespace() + "/" + acc.Name()
+		if _, ok := seen[key]; ok {
+			return true
+		}
+		seen[key] = struct{}{}
+
+		return false
+	})
 
 	return uninstallReleases(releasesToUninstall, helmCfg, tmpKubeConf.Name(), st)
 }
