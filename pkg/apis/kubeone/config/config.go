@@ -40,6 +40,8 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 	terraformv1beta2 "k8c.io/kubeone/pkg/terraform/v1beta2"
 	terraformv1beta3 "k8c.io/kubeone/pkg/terraform/v1beta3"
+	digitaloceantypes "k8c.io/machine-controller/sdk/cloudprovider/digitalocean"
+	"k8c.io/machine-controller/sdk/jsonutil"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/yaml"
@@ -331,6 +333,11 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 			}
 		case cluster.CloudProvider.Azure != nil:
 			setDefaultAzureControlPlane(cluster.Name, cluster.CloudProvider.Azure.ControlPlane)
+		case cluster.CloudProvider.DigitalOcean != nil:
+			if cluster.CloudProvider.DigitalOcean.ControlPlane == nil {
+				cluster.CloudProvider.DigitalOcean.ControlPlane = &kubeoneapi.DigitalOceanControlPlane{}
+			}
+			setDefaultDigitalOceanControlPlane(cluster.Name, cluster.ControlPlane.NodeSets, cluster.CloudProvider.DigitalOcean.ControlPlane)
 		default:
 			return fail.ConfigError{
 				Op:  "cloud provider checking",
@@ -403,6 +410,30 @@ func setDefaultKubevirtControlPlane(clusterName string, kvCP *kubeoneapi.Kubevir
 	kvCP.LoadBalancer.Name = defaults(
 		kvCP.LoadBalancer.Name,
 		clusterName+"-kubeapi",
+	)
+}
+
+func setDefaultDigitalOceanControlPlane(clusterName string, nodeSets []kubeoneapi.NodeSet, doCP *kubeoneapi.DigitalOceanControlPlane) {
+	if doCP.LoadBalancer.Region == "" && len(nodeSets) > 0 {
+		// Errors are ignored on purpose, malformed specs are reported by the validation
+		var spec digitaloceantypes.RawConfig
+		if err := jsonutil.StrictUnmarshal(nodeSets[0].CloudProviderSpec, &spec); err == nil {
+			doCP.LoadBalancer.Region = spec.Region.Value
+		}
+	}
+
+	// A load balancer referenced by ID is used as-is
+	if doCP.LoadBalancer.ID != "" {
+		return
+	}
+
+	doCP.LoadBalancer.Name = defaults(
+		doCP.LoadBalancer.Name,
+		clusterName+"-kubeapi",
+	)
+	doCP.LoadBalancer.SizeUnit = defaults(
+		doCP.LoadBalancer.SizeUnit,
+		1,
 	)
 }
 

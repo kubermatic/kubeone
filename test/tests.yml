@@ -334,6 +334,28 @@
   infrastructures:
     - name: aws_default
 
+#########################
+# MANAGED CONTROL PLANE #
+#########################
+
+- scenario: install_managed_cp
+  initVersion: v1.35
+  infrastructures:
+    - name: digitalocean
+      runIfChanged: "(pkg/cloudprovider/(digitalocean/|provider\\.go)|pkg/provisioner/|pkg/tasks/cloud_resources_provision\\.go|pkg/tasks/reset\\.go|test/e2e/(scenario_managed_cp|managed_cp_cloud)\\.go|test/e2e/testdata/managed_cp_digitalocean)"
+
+- scenario: install_managed_cp
+  initVersion: v1.36
+  infrastructures:
+    - name: digitalocean
+      runIfChanged: "(pkg/cloudprovider/(digitalocean/|provider\\.go)|pkg/provisioner/|pkg/tasks/cloud_resources_provision\\.go|pkg/tasks/reset\\.go|test/e2e/(scenario_managed_cp|managed_cp_cloud)\\.go|test/e2e/testdata/managed_cp_digitalocean)"
+
+- scenario: install_managed_cp
+  initVersion: v1.37
+  infrastructures:
+    - name: digitalocean
+      runIfChanged: "(pkg/cloudprovider/(digitalocean/|provider\\.go)|pkg/provisioner/|pkg/tasks/cloud_resources_provision\\.go|pkg/tasks/reset\\.go|test/e2e/(scenario_managed_cp|managed_cp_cloud)\\.go|test/e2e/testdata/managed_cp_digitalocean)"
+
 ####################
 # CONFORMANCE TEST #
 ####################
