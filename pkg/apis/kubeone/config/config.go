@@ -331,6 +331,11 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 			}
 		case cluster.CloudProvider.Azure != nil:
 			setDefaultAzureControlPlane(cluster.Name, cluster.CloudProvider.Azure.ControlPlane)
+		case cluster.CloudProvider.DigitalOcean != nil:
+			if cluster.CloudProvider.DigitalOcean.ControlPlane == nil {
+				cluster.CloudProvider.DigitalOcean.ControlPlane = &kubeoneapi.DigitalOceanControlPlane{}
+			}
+			setDefaultDigitalOceanControlPlane(cluster.Name, cluster.ControlPlane.NodeSets, cluster.CloudProvider.DigitalOcean.ControlPlane)
 		default:
 			return fail.ConfigError{
 				Op:  "cloud provider checking",
@@ -404,6 +409,31 @@ func setDefaultKubevirtControlPlane(clusterName string, kvCP *kubeoneapi.Kubevir
 		kvCP.LoadBalancer.Name,
 		clusterName+"-kubeapi",
 	)
+}
+
+func setDefaultDigitalOceanControlPlane(clusterName string, nodeSets []kubeoneapi.NodeSet, doCP *kubeoneapi.DigitalOceanControlPlane) {
+	if doCP.LoadBalancer.ID != "" {
+		return
+	}
+
+	doCP.LoadBalancer.Name = defaults(
+		doCP.LoadBalancer.Name,
+		clusterName+"-kubeapi",
+	)
+	doCP.LoadBalancer.SizeUnit = defaults(
+		doCP.LoadBalancer.SizeUnit,
+		1,
+	)
+
+	if doCP.LoadBalancer.Region == "" && len(nodeSets) > 0 {
+		// Errors are ignored on purpose, malformed specs are reported by the validation
+		var spec struct {
+			Region string `json:"region"`
+		}
+		if err := json.Unmarshal(nodeSets[0].CloudProviderSpec, &spec); err == nil {
+			doCP.LoadBalancer.Region = spec.Region
+		}
+	}
 }
 
 func setDefaultAzureControlPlane(clusterName string, azCP *kubeoneapi.AzureControlPlane) {

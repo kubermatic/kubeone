@@ -3070,6 +3070,18 @@ func TestAwsDefaultKubeProxyIpvsExternalV1_37(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestDigitaloceanManagedCpInstallManagedCpV1_36(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["digitalocean_managed_cp"]
+	scenario := Scenarios["install_managed_cp"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.36")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
 func TestAwsLongTimeoutDefaultConformanceContainerdExternalV1_35(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws_long_timeout_default"]

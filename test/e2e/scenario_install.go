@@ -151,8 +151,12 @@ func (scenario *scenarioInstall) kubeone(t *testing.T) *kubeoneBin {
 }
 
 func (scenario *scenarioInstall) test(ctx context.Context, t *testing.T) {
-	k1 := scenario.kubeone(t)
+	runClusterTests(ctx, t, scenario.kubeone(t), scenario.infra)
+}
 
+// runClusterTests waits for the cluster nodes to be ready and runs the cloud
+// provider and conformance-lite tests against the cluster.
+func runClusterTests(ctx context.Context, t *testing.T, k1 *kubeoneBin, infra Infra) {
 	// launch kubeone proxy, to have a HTTPS proxy through the SSH tunnel
 	// to open access to the kubeapi behind the bastion host
 	proxyCtx, killProxy := context.WithCancel(ctx)
@@ -177,7 +181,7 @@ func (scenario *scenarioInstall) test(ctx context.Context, t *testing.T) {
 		t.Fatalf("fetching kubeconfig: %v", err)
 	}
 
-	stopProtokol, err := scenario.infra.protokol.Start(ctx, kubeconfigPath, proxyURL)
+	stopProtokol, err := infra.protokol.Start(ctx, kubeconfigPath, proxyURL)
 	if err != nil {
 		t.Fatalf("starting protokol: %v", err)
 	}
@@ -186,7 +190,7 @@ func (scenario *scenarioInstall) test(ctx context.Context, t *testing.T) {
 	waitKubeOneNodesReady(ctx, t, k1)
 
 	client := dynamicClientRetriable(t, k1)
-	cpTests := newCloudProviderTests(client, scenario.infra.Provider())
+	cpTests := newCloudProviderTests(client, infra.Provider())
 	cpTests.runWithCleanup(t)
 
 	sonobuoyRun(ctx, t, k1, sonobuoyConformanceLite, proxyURL)

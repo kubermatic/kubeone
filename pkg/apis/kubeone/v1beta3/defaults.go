@@ -226,6 +226,12 @@ func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
 				obj.CloudProvider.Openstack.ControlPlane = &OpenstackControlPlane{}
 			}
 		}
+	case obj.CloudProvider.DigitalOcean != nil:
+		if obj.ControlPlane.NodeSets != nil {
+			if obj.CloudProvider.DigitalOcean.ControlPlane == nil {
+				obj.CloudProvider.DigitalOcean.ControlPlane = &DigitalOceanControlPlane{}
+			}
+		}
 	}
 
 	if obj.ClusterNetwork.CNI == nil {

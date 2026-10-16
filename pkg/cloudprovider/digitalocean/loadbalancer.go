@@ -1,0 +1,393 @@
+/*
+Copyright 2026 The KubeOne Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+package digitalocean
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"net/http"
+	"time"
+
+	"github.com/digitalocean/godo"
+	"github.com/sirupsen/logrus"
+
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/state"
+
+	"k8s.io/apimachinery/pkg/util/wait"
+)
+
+const (
+	kubeAPIPort = 6443
+	lbStatusUp  = "active"
+	lbPageSize  = 200
+)
+
+var (
+	// lbPollInterval and lbPollTimeout control how long to wait for a
+	// load balancer to become active. Variables to allow overriding in tests.
+	lbPollInterval = 10 * time.Second
+	lbPollTimeout  = 10 * time.Minute
+
+	// newLBClient builds the load balancers client. Variable to allow
+	// injecting a fake in tests.
+	newLBClient = func(token string) godo.LoadBalancersService {
+		return godo.NewFromToken(token).LoadBalancers
+	}
+
+	errLBNotFound = errors.New("load balancer not found")
+)
+
+func lbSpec(cluster *kubeoneapi.KubeOneCluster) kubeoneapi.DigitalOceanLoadBalancer {
+	if cluster.CloudProvider.DigitalOcean == nil || cluster.CloudProvider.DigitalOcean.ControlPlane == nil {
+		return kubeoneapi.DigitalOceanLoadBalancer{}
+	}
+
+	return cluster.CloudProvider.DigitalOcean.ControlPlane.LoadBalancer
+}
+
+func (p *Provider) HasLoadBalancer(s *state.State) bool {
+	return p.Enabled(s)
+}
+
+func (p *Provider) EnsureLoadBalancer(s *state.State) error {
+	if s.Cluster.APIEndpoint.Host != "" {
+		return nil
+	}
+
+	client, err := lbClient(s)
+	if err != nil {
+		return err
+	}
+
+	lb, err := ensureLoadBalancer(s.Context, client, s.Cluster, s.Logger)
+	if err != nil {
+		return err
+	}
+
+	s.Cluster.APIEndpoint.Host = lb.IP
+	s.Cluster.APIEndpoint.Port = kubeAPIPort
+
+	return nil
+}
+
+func (p *Provider) LookupLoadBalancer(s *state.State) error {
+	if s.Cluster.APIEndpoint.Host != "" {
+		return nil
+	}
+
+	client, err := lbClient(s)
+	if err != nil {
+		return err
+	}
+
+	lb, err := lookupLoadBalancer(s.Context, client, s.Cluster)
+	if err != nil {
+		return err
+	}
+
+	if lb.IP == "" {
+		return fail.Cloud(fmt.Errorf("load balancer %q has no IP address assigned yet", lb.Name), "digitalocean", "looking up loadbalancer")
+	}
+
+	s.Logger.Debugf("found loadbalancer %q with id: %s", lb.Name, lb.ID)
+	if lbSpec(s.Cluster).ID == "" && !ownedByKubeOne(lb, s.Cluster.Name) {
+		s.Logger.Warnf("loadbalancer %q targets %s instead of droplets tagged %q, kube-apiserver traffic might not reach the control plane", lb.Name, describeBackends(lb), ClusterTag(s.Cluster.Name))
+	}
+	s.Cluster.APIEndpoint.Host = lb.IP
+
+	return nil
+}
+
+func (p *Provider) CleanupLoadBalancer(s *state.State) error {
+	spec := lbSpec(s.Cluster)
+	if spec.ID != "" {
+		s.Logger.Infof("loadbalancer %q is not managed by KubeOne, skipping deletion", spec.ID)
+
+		return nil
+	}
+
+	client, err := lbClient(s)
+	if err != nil {
+		return err
+	}
+
+	return cleanupLoadBalancer(s.Context, client, s.Cluster, s.Logger)
+}
+
+func lbClient(s *state.State) (godo.LoadBalancersService, error) {
+	token, err := apiToken(s)
+	if err != nil {
+		return nil, err
+	}
+
+	return newLBClient(token), nil
+}
+
+func ensureLoadBalancer(ctx context.Context, client godo.LoadBalancersService, cluster *kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) (*godo.LoadBalancer, error) {
+	spec := lbSpec(cluster)
+
+	if spec.ID != "" {
+		return ensureExistingLoadBalancer(ctx, client, cluster, logger)
+	}
+
+	lb, err := findLoadBalancerByName(ctx, client, spec.Name)
+	switch {
+	case err == nil:
+		logger.Debugf("loadbalancer %q already exists with id: %s", lb.Name, lb.ID)
+		if !ownedByKubeOne(lb, cluster.Name) {
+			return nil, fail.Cloud(
+				fmt.Errorf(
+					"loadbalancer %q (id: %s) already exists but targets %s instead of droplets tagged %q, "+
+						"it was not created by KubeOne for this cluster or was modified; "+
+						"set .cloudProvider.digitalocean.controlPlane.loadBalancer.name to a different name, "+
+						"or restore the load balancer to target droplets tagged %q",
+					lb.Name, lb.ID, describeBackends(lb), ClusterTag(cluster.Name), ClusterTag(cluster.Name),
+				),
+				"digitalocean",
+				"ensuring loadbalancer",
+			)
+		}
+	case errors.Is(err, errLBNotFound):
+		logger.Infof("creating loadbalancer %q", spec.Name)
+		lb, _, err = client.Create(ctx, createRequest(cluster))
+		if err != nil {
+			return nil, fail.Cloud(err, "digitalocean", "creating loadbalancer")
+		}
+	default:
+		return nil, err
+	}
+
+	return waitForLoadBalancer(ctx, client, lb, logger)
+}
+
+func ensureExistingLoadBalancer(ctx context.Context, client godo.LoadBalancersService, cluster *kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) (*godo.LoadBalancer, error) {
+	spec := lbSpec(cluster)
+	backendTag := ClusterTag(cluster.Name)
+
+	lb, err := getLoadBalancer(ctx, client, spec.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	switch {
+	case lb.Tag == backendTag:
+	case lb.Tag == "" && len(lb.DropletIDs) == 0:
+		logger.Infof("configuring loadbalancer %q to target droplets tagged %q", lb.Name, backendTag)
+		req := lb.AsRequest()
+		req.Tag = backendTag
+		req.DropletIDs = nil
+		lb, _, err = client.Update(ctx, lb.ID, req)
+		if err != nil {
+			return nil, fail.Cloud(err, "digitalocean", "updating loadbalancer %q", spec.ID)
+		}
+	default:
+		return nil, fail.Cloud(
+			fmt.Errorf("loadbalancer %q already has backends (tag %q, %d droplets), it must target droplets tagged %q or have no backends", lb.Name, lb.Tag, len(lb.DropletIDs), backendTag),
+			"digitalocean",
+			"configuring loadbalancer %q", spec.ID,
+		)
+	}
+
+	if !hasKubeAPIForwardingRule(lb) {
+		logger.Infof("adding kube-apiserver forwarding rule to loadbalancer %q", lb.Name)
+		if _, err = client.AddForwardingRules(ctx, lb.ID, kubeAPIForwardingRule()); err != nil {
+			return nil, fail.Cloud(err, "digitalocean", "adding forwarding rule to loadbalancer %q", spec.ID)
+		}
+	}
+
+	return waitForLoadBalancer(ctx, client, lb, logger)
+}
+
+func lookupLoadBalancer(ctx context.Context, client godo.LoadBalancersService, cluster *kubeoneapi.KubeOneCluster) (*godo.LoadBalancer, error) {
+	spec := lbSpec(cluster)
+	if spec.ID != "" {
+		return getLoadBalancer(ctx, client, spec.ID)
+	}
+
+	lb, err := findLoadBalancerByName(ctx, client, spec.Name)
+	if errors.Is(err, errLBNotFound) {
+		return nil, fail.Cloud(fmt.Errorf("no load balancer found with name: %s", spec.Name), "digitalocean", "looking up loadbalancer")
+	}
+
+	return lb, err
+}
+
+func cleanupLoadBalancer(ctx context.Context, client godo.LoadBalancersService, cluster *kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) error {
+	name := lbSpec(cluster).Name
+
+	lb, err := findLoadBalancerByName(ctx, client, name)
+	if errors.Is(err, errLBNotFound) {
+		logger.Debugf("no loadbalancer %q found, skipping deletion", name)
+
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+
+	if !ownedByKubeOne(lb, cluster.Name) {
+		logger.Warnf("loadbalancer %q doesn't target droplets tagged %q, it's not owned by KubeOne, skipping deletion", name, ClusterTag(cluster.Name))
+
+		return nil
+	}
+
+	logger.Debugf("deleting loadbalancer %q with id: %s", name, lb.ID)
+
+	resp, err := client.Delete(ctx, lb.ID)
+	if err != nil && !isNotFound(resp) {
+		return fail.Cloud(err, "digitalocean", "deleting loadbalancer")
+	}
+
+	return nil
+}
+
+func createRequest(cluster *kubeoneapi.KubeOneCluster) *godo.LoadBalancerRequest {
+	spec := lbSpec(cluster)
+
+	return &godo.LoadBalancerRequest{
+		Name:            spec.Name,
+		Region:          spec.Region,
+		SizeUnit:        spec.SizeUnit,
+		VPCUUID:         spec.VPCUUID,
+		Tag:             ClusterTag(cluster.Name),
+		ForwardingRules: []godo.ForwardingRule{kubeAPIForwardingRule()},
+		HealthCheck: &godo.HealthCheck{
+			Protocol:               "tcp",
+			Port:                   kubeAPIPort,
+			CheckIntervalSeconds:   3,
+			ResponseTimeoutSeconds: 3,
+			HealthyThreshold:       2,
+			UnhealthyThreshold:     3,
+		},
+	}
+}
+
+func kubeAPIForwardingRule() godo.ForwardingRule {
+	return godo.ForwardingRule{
+		EntryProtocol:  "tcp",
+		EntryPort:      kubeAPIPort,
+		TargetProtocol: "tcp",
+		TargetPort:     kubeAPIPort,
+	}
+}
+
+func hasKubeAPIForwardingRule(lb *godo.LoadBalancer) bool {
+	for _, rule := range lb.ForwardingRules {
+		if rule.EntryPort == kubeAPIPort {
+			return true
+		}
+	}
+
+	return false
+}
+
+// waitForLoadBalancer waits until the load balancer is active and has an IP
+// address assigned, DigitalOcean assigns it only after provisioning.
+func waitForLoadBalancer(ctx context.Context, client godo.LoadBalancersService, lb *godo.LoadBalancer, logger logrus.FieldLogger) (*godo.LoadBalancer, error) {
+	if lb.Status == lbStatusUp && lb.IP != "" {
+		return lb, nil
+	}
+
+	logger.Infof("waiting for loadbalancer %q to become active...", lb.Name)
+
+	var current *godo.LoadBalancer
+	err := wait.PollUntilContextTimeout(ctx, lbPollInterval, lbPollTimeout, true, func(ctx context.Context) (bool, error) {
+		got, _, err := client.Get(ctx, lb.ID)
+		if err != nil {
+			logger.Debugf("failed to get loadbalancer %q: %v", lb.ID, err)
+
+			return false, nil
+		}
+		current = got
+
+		return got.Status == lbStatusUp && got.IP != "", nil
+	})
+	if err != nil {
+		return nil, fail.Cloud(fmt.Errorf("loadbalancer %q did not become active: %w", lb.Name, err), "digitalocean", "waiting for loadbalancer")
+	}
+
+	return current, nil
+}
+
+func getLoadBalancer(ctx context.Context, client godo.LoadBalancersService, id string) (*godo.LoadBalancer, error) {
+	lb, resp, err := client.Get(ctx, id)
+	if err != nil {
+		if isNotFound(resp) {
+			return nil, fail.Cloud(fmt.Errorf("no load balancer found with id: %s", id), "digitalocean", "looking up loadbalancer")
+		}
+
+		return nil, fail.Cloud(err, "digitalocean", "getting loadbalancer %q", id)
+	}
+
+	return lb, nil
+}
+
+// findLoadBalancerByName lists all load balancers and returns the one with the
+// given name. The DigitalOcean API doesn't support filtering by name.
+func findLoadBalancerByName(ctx context.Context, client godo.LoadBalancersService, name string) (*godo.LoadBalancer, error) {
+	opts := &godo.ListOptions{Page: 1, PerPage: lbPageSize}
+
+	for {
+		lbs, resp, err := client.List(ctx, opts)
+		if err != nil {
+			return nil, fail.Cloud(err, "digitalocean", "listing loadbalancers")
+		}
+
+		for i := range lbs {
+			if lbs[i].Name == name {
+				return &lbs[i], nil
+			}
+		}
+
+		if resp == nil || resp.Links == nil || resp.Links.IsLastPage() {
+			return nil, errLBNotFound
+		}
+
+		page, err := resp.Links.CurrentPage()
+		if err != nil {
+			return nil, fail.Cloud(err, "digitalocean", "paginating loadbalancers")
+		}
+		opts.Page = page + 1
+	}
+}
+
+func isNotFound(resp *godo.Response) bool {
+	return resp != nil && resp.Response != nil && resp.StatusCode == http.StatusNotFound
+}
+
+// describeBackends describes how the load balancer selects its backends.
+func describeBackends(lb *godo.LoadBalancer) string {
+	switch {
+	case lb.Tag != "":
+		return fmt.Sprintf("droplets tagged %q", lb.Tag)
+	case len(lb.DropletIDs) > 0:
+		return fmt.Sprintf("%d droplets by ID", len(lb.DropletIDs))
+	default:
+		return "no droplets"
+	}
+}
+
+// ownedByKubeOne reports whether the load balancer was created by KubeOne.
+// DigitalOcean doesn't persist tags on load balancers, so ownership is derived
+// from the backend selector tag, which KubeOne only sets on load balancers it
+// creates (load balancers referenced by ID are never deleted).
+func ownedByKubeOne(lb *godo.LoadBalancer, clusterName string) bool {
+	return lb.Tag == ClusterTag(clusterName)
+}

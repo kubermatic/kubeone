@@ -1,0 +1,48 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+name: "{{ required ".ClusterName is required" .ClusterName }}"
+
+versions:
+  kubernetes: "{{ required ".VERSION is required" .VERSION }}"
+
+cloudProvider:
+  external: true
+  digitalocean:
+    controlPlane:
+      loadBalancer: {}
+
+controlPlane:
+  nodeSets:
+  - name: cp
+    replicas: 3
+    operatingSystem: ubuntu
+    ssh:
+      publicKeys:
+      - "{{ required ".SSHPublicKey is required" .SSHPublicKey }}"
+      username: root
+    cloudProviderSpec:
+      region: fra1
+      size: s-2vcpu-4gb
+      private_networking: true
+
+dynamicWorkers:
+- name: "{{ .ClusterName }}-pool1"
+  replicas: 1
+  providerSpec:
+    sshPublicKeys:
+    - "{{ .SSHPublicKey }}"
+    operatingSystem: ubuntu
+    cloudProviderSpec:
+      region: fra1
+      size: s-2vcpu-4gb
+      private_networking: true
+      tags:
+      - "kubeone-workers:{{ .ClusterName }}"
+
+containerRuntime:
+  containerd: {}
+
+addons:
+  enable: true
+  addons:
+  - name: default-storage-class
