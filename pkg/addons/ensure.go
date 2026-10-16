@@ -212,18 +212,35 @@ func Ensure(s *state.State) error {
 // EnsureUserAddons deploys addons that are provided by the user and that are
 // not embedded.
 func EnsureUserAddons(s *state.State) error {
-	applier, err := newAddonsApplier(s)
+	return ensureUserAddons(s, nil)
+}
+
+// EnsureUserAddonsByName returns a task that deploys only the named user
+// addons, names that don't match a user addon are ignored (see
+// ValidateAddonNames). Addons located in the root of the addons directory are
+// not applied.
+func EnsureUserAddonsByName(names ...string) func(s *state.State) error {
+	return func(s *state.State) error {
+		return ensureUserAddons(s, names)
+	}
+}
+
+// userAddons returns the names of the user addons that are to be deployed
+// (as keys of the map) and the names of those that are to be deleted. Embedded
+// addons are not included.
+func userAddons(s *state.State) (map[string]string, map[string]struct{}, error) {
+	localFS, err := addonsLocalFS(s.Cluster.Addons, s.ManifestFilePath)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
-	s.Logger.Infof("Applying user provided addons...")
-	combinedAddons := map[string]string{}
+	deployed := map[string]string{}
+	deleted := map[string]struct{}{}
 
-	if applier.LocalFS != nil {
-		customAddons, err := fs.ReadDir(applier.LocalFS, ".")
+	if localFS != nil {
+		customAddons, err := fs.ReadDir(localFS, ".")
 		if err != nil {
-			return fail.Runtime(err, "reading local addons directory")
+			return nil, nil, fail.Runtime(err, "reading local addons directory")
 		}
 
 		for _, useraddon := range customAddons {
@@ -235,38 +252,83 @@ func EnsureUserAddons(s *state.State) error {
 				continue
 			}
 
-			if _, ok := combinedAddons[useraddon.Name()]; !ok {
-				combinedAddons[useraddon.Name()] = ""
-			}
+			deployed[useraddon.Name()] = ""
 		}
 	}
 
-	for _, embeddedAddon := range s.Cluster.Addons.DeclaredAddonsOnly() {
-		if _, ok := embeddedAddons[embeddedAddon.Name]; ok {
+	for _, declaredAddon := range s.Cluster.Addons.DeclaredAddonsOnly() {
+		if _, ok := embeddedAddons[declaredAddon.Name]; ok {
 			continue
 		}
 
-		if embeddedAddon.Delete {
-			// DeleteAddonByName looks into the local addons directory first,
-			// which is where user addons are located.
-			if err := DeleteAddonByName(s, embeddedAddon.Name); err != nil {
-				return err
-			}
-
+		if declaredAddon.Delete {
+			deleted[declaredAddon.Name] = struct{}{}
 			// the manifests must be kept to be able to delete the addon, so the
-			// addon can also be found in the local addons directory, make sure
-			// it's not applied again right after it was deleted
-			delete(combinedAddons, embeddedAddon.Name)
+			// addon can also be found in the local addons directory
+			delete(deployed, declaredAddon.Name)
 
 			continue
 		}
 
-		if _, ok := combinedAddons[embeddedAddon.Name]; !ok {
-			combinedAddons[embeddedAddon.Name] = ""
+		deployed[declaredAddon.Name] = ""
+	}
+
+	return deployed, deleted, nil
+}
+
+// ValidateAddonNames checks that every given name is either a user addon
+// (defined in the manifest or in the addons directory) or a helm release
+// declared in the manifest. It doesn't need access to the cluster, so it can
+// be used to fail early.
+func ValidateAddonNames(s *state.State, names []string) error {
+	deployed, deleted, err := userAddons(s)
+	if err != nil {
+		return err
+	}
+
+	for _, release := range s.Cluster.Addons.OnlyHelmReleases() {
+		deployed[release.ReleaseName] = ""
+	}
+
+	return validateUserAddonNames(names, deployed, deleted)
+}
+
+// ensureUserAddons deploys the user addons. If onlyNames is not empty, only
+// the addons with the given names are processed.
+func ensureUserAddons(s *state.State, onlyNames []string) error {
+	applier, err := newAddonsApplier(s)
+	if err != nil {
+		return err
+	}
+
+	s.Logger.Infof("Applying user provided addons...")
+
+	combinedAddons, deletedAddons, err := userAddons(s)
+	if err != nil {
+		return err
+	}
+
+	selected := func(name string) bool {
+		return len(onlyNames) == 0 || slices.Contains(onlyNames, name)
+	}
+
+	for addonName := range deletedAddons {
+		if !selected(addonName) {
+			continue
+		}
+
+		// DeleteAddonByName looks into the local addons directory first, which
+		// is where user addons are located.
+		if err = DeleteAddonByName(s, addonName); err != nil {
+			return err
 		}
 	}
 
 	for addonName := range combinedAddons {
+		if !selected(addonName) {
+			continue
+		}
+
 		// NB: We can't migrate StorageClass when applying the CSI driver because
 		// CSI driver is deployed only for Kubernetes 1.23+ clusters, but this
 		// issue affects older clusters as well.
@@ -280,10 +342,27 @@ func EnsureUserAddons(s *state.State) error {
 		}
 	}
 
-	if applier.LocalFS != nil {
+	if applier.LocalFS != nil && len(onlyNames) == 0 {
 		s.Logger.Info("Applying addons from the root directory...")
 		if err := applier.loadAndApplyAddon(s, applier.LocalFS, ""); err != nil {
 			return err
+		}
+	}
+
+	return nil
+}
+
+// validateUserAddonNames checks that every requested addon name is a known
+// user addon, either to be deployed or to be deleted.
+func validateUserAddonNames(names []string, deployed map[string]string, deleted map[string]struct{}) error {
+	for _, name := range names {
+		_, isDeployed := deployed[name]
+		_, isDeleted := deleted[name]
+		if !isDeployed && !isDeleted {
+			return fail.RuntimeError{
+				Op:  fmt.Sprintf("applying %q addon", name),
+				Err: errors.New("user addon does not exist"),
+			}
 		}
 	}
 
