@@ -112,15 +112,15 @@ Each component moved to the infra cluster gets two credentials.
 - KubeOne creates, in `InfraNamespace`:
   - a ServiceAccount `<cluster>-<component>`;
   - a Role and RoleBinding with only the permissions that component needs.
-- The CSI controller uses this ServiceAccount directly through in-cluster configuration: the driver falls back to it
-  when `--infra-cluster-kubeconfig` is empty.
-- machine-controller and the CCM need a kubeconfig. The KubeVirt provider of machine-controller has no in-cluster
-  fallback, and the CCM `cloud-config` expects a kubeconfig path. For these two, KubeOne also:
+- The CSI controller and the CCM use this ServiceAccount directly through in-cluster configuration: the CSI driver falls
+  back to it when `--infra-cluster-kubeconfig` is empty, the CCM when the `kubeconfig` key of its `cloud-config` is
+  empty.
+- machine-controller needs a kubeconfig: its KubeVirt provider has no in-cluster fallback. For it, KubeOne also:
   1. creates a `kubernetes.io/service-account-token` Secret;
   2. generates a kubeconfig from it, with server
      `https://kubernetes.default.svc` and the token's `ca.crt` as the CA;
   3. stores the kubeconfig in a Secret in the same namespace.
-- These kubeconfigs only work from inside the infra cluster.
+- This kubeconfig only works from inside the infra cluster.
 
 **Access to the tenant cluster.**
 - The component's tenant ServiceAccount stays in tenant `kube-system`: `machine-controller`, `cloud-controller-manager`,
@@ -208,22 +208,36 @@ Infra Role:
 
 ### CCM
 
-**Tenant side** (`addons/ccm-kubevirt`):
-- Keep the `cloud-controller-manager` ServiceAccount and its RBAC, and add a token Secret.
-- Remove the Deployment, the `cloud-config` ConfigMap and the `kubeone-ccm-credentials` mount.
+This follows the upstream `config/isolated` overlay of `cloud-provider-kubevirt`.
+
+**Tenant side** (`addons/ccm-kubevirt`, now hand-maintained; the kustomize generation is removed):
+- The `cloud-controller-manager` ServiceAccount and a token Secret.
+- ClusterRole `kccm`: nodes, `nodes/status`, services and `services/status`, events, endpointslices (read), leases.
+  The previous ClusterRole only covered nodes and leases.
+- RoleBinding to `extension-apiserver-authentication-reader` and ClusterRoleBinding to `system:auth-delegator`, for
+  delegated authentication of the CCM secure port.
+- Removed: the Deployment, the `cloud-config` ConfigMap, the `kubeone-ccm-credentials` mount, and the `kccm` Role, which
+  granted KubeVirt permissions in the tenant cluster and had no effect.
 
 **Infra side:**
 - Deployment `<cluster>-kubevirt-ccm` with `--kubeconfig`, `--authentication-kubeconfig` and
-  `--authorization-kubeconfig` all pointing at the tenant. Leader election stays on the tenant lease.
+  `--authorization-kubeconfig` all pointing at the tenant. Leader election stays on the tenant lease. It no longer runs
+  privileged. A hash of the `cloud-config` on the pod template rolls the Deployment when the config changes.
 - ConfigMap `<cluster>-kubevirt-ccm-cloud-config` containing:
   - `namespace: <InfraNamespace>`;
-  - `instancesV2.zoneAndRegionEnabled`;
-  - `loadBalancer.enabled`;
-  - `kubeconfig` pointing at the mounted infra SA kubeconfig.
-- The infra Role allows:
-  - read access to `virtualmachines` and `virtualmachineinstances`;
-  - create, read, update and delete on `services` and `discovery.k8s.io/endpointslices`, only when `loadBalancerEnabled`
-    is set.
+  - `instancesV2.enabled: true` and `instancesV2.zoneAndRegionEnabled`;
+  - `loadBalancer.enabled`, always explicit, because the CCM defaults it to true;
+  - `infraLabels: {kubeone_cluster_name: <cluster>}`, set on the LoadBalancer Services the CCM creates. They do not get
+    `kubeone_component`, so the infra cleanup leaves them alone;
+  - no `kubeconfig`, so the CCM uses in-cluster configuration.
+- The infra Role follows upstream `isolated`: VMs read, VMIs read and update, pods read, and create, read, update and
+  delete on `services` only when `loadBalancerEnabled` is set. The EPS controller is disabled by default, so no
+  `endpointslices` permissions are needed in the infra cluster.
+
+**Migration:** a `postFn` deploys the infra side, then deletes the old tenant Deployment, `cloud-config` ConfigMap,
+`kccm` Role and `kccm-sa` RoleBinding. `kubectl apply --prune` removes the Deployment and ConfigMap already, when the
+addon is applied, so the CCM is down for a short time between the addon apply and the `postFn`. Node initialization and
+LoadBalancer updates are delayed by that much.
 
 The CCM no longer depends on a schedulable tenant control-plane node. This removes the bootstrap dependency on the
 `node.cloudprovider.kubernetes.io/uninitialized` toleration.

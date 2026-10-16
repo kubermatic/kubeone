@@ -316,6 +316,27 @@ func migrateKubeVirtCSI(s *state.State) error {
 	return nil
 }
 
+// migrateKubeVirtCCM deletes the tenant cluster objects of the KubeVirt CCM
+// from when it ran in the tenant cluster with the infra kubeconfig. It runs
+// after the CCM is deployed in the infra cluster. kubectl prune removes the
+// Deployment and the ConfigMap already, but not RBAC objects.
+func migrateKubeVirtCCM(s *state.State) error {
+	objs := []client.Object{
+		genNamedObject[appsv1.Deployment]("kubevirt-cloud-controller-manager", metav1.NamespaceSystem),
+		genNamedObject[corev1.ConfigMap]("cloud-config", metav1.NamespaceSystem),
+		genNamedObject[rbacv1.RoleBinding]("kccm-sa", metav1.NamespaceSystem),
+		genNamedObject[rbacv1.Role]("kccm", metav1.NamespaceSystem),
+	}
+
+	for _, obj := range objs {
+		if err := clientutil.DeleteIfExists(s.Context, s.DynamicClient, obj); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func migrateHetznerCCM(s *state.State) error {
 	key := client.ObjectKey{
 		Name:      "hcloud-cloud-controller-manager",
