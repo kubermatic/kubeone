@@ -25,6 +25,31 @@ preserved — you must supply `apiEndpoint` and control-plane host IPs yourself.
   environment variable or base64-encoded in the credentials file.
 - An `infraNamespace` where KubeOne will create resources (VMs, services, etc.).
 
+### Infra kubeconfig permissions
+
+KubeOne creates least-privilege identities in `infraNamespace` for the
+components that talk to the infra cluster (machine-controller, CCM, CSI
+controller); see the
+[proposal](proposals/20261015-kubevirt-infra-side-components.md).
+
+The infra kubeconfig must therefore be allowed to create, update, list and
+delete the following objects in `infraNamespace`:
+
+- `ServiceAccounts`, `Secrets` and `ConfigMaps`
+- `Roles` and `RoleBindings`
+- `Deployments`
+- `Services`
+
+Kubernetes RBAC only lets a user grant permissions they hold themselves, so the
+infra kubeconfig must also hold every permission granted to the components'
+Roles (KubeVirt `VirtualMachines`, `VirtualMachineInstances` and their
+subresources, CDI `DataVolumes`, `PersistentVolumeClaims`, `VolumeSnapshots`),
+or be granted the `escalate` and `bind` verbs on `roles` in `infraNamespace`.
+
+Several KubeOne clusters can share one `infraNamespace`. Every object KubeOne
+creates there is prefixed with the cluster name and labelled
+`kubeone_cluster_name=<cluster name>`.
+
 ## Configuration
 
 ```yaml

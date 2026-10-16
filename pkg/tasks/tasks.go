@@ -451,6 +451,11 @@ func WithReset(t Tasks) Tasks {
 			},
 		},
 		{Fn: destroyWorkers, Operation: "destroying workers"},
+		{
+			Fn:        destroyKubevirtInfraComponents,
+			Operation: "destroying KubeVirt infra cluster components",
+			Predicate: func(s *state.State) bool { return s.Cluster.CloudProvider.Kubevirt != nil },
+		},
 		{Fn: destroyControlPlaneMachines, Operation: "destroying control plane machines"},
 		{Fn: destroyControlPlaneLoadBalancer, Operation: "destroying control plane load balancer"},
 		{Fn: resetAllNodes, Operation: "resetting all nodes"},
