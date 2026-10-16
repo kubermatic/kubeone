@@ -174,7 +174,26 @@ func Deploy(st *state.State) error {
 		}
 	}
 
-	return uninstallReleases(releasesToUninstall, helmCfg, tmpKubeConf.Name(), st)
+	// The list contains every revision of a release, but uninstalling removes
+	// all of them at once, so each release must be uninstalled only once.
+	seen := map[string]struct{}{}
+	uniqueReleases := make([]helmrelease.Releaser, 0, len(releasesToUninstall))
+	for _, rel := range releasesToUninstall {
+		acc, accErr := helmrelease.NewAccessor(rel)
+		if accErr != nil {
+			return fail.Runtime(accErr, "creating helm release accessor")
+		}
+
+		key := acc.Namespace() + "/" + acc.Name()
+		if _, ok := seen[key]; ok {
+			continue
+		}
+		seen[key] = struct{}{}
+
+		uniqueReleases = append(uniqueReleases, rel)
+	}
+
+	return uninstallReleases(uniqueReleases, helmCfg, tmpKubeConf.Name(), st)
 }
 
 func releasesFilterFn(helmReleases []kubeoneapi.HelmRelease, logger logrus.FieldLogger) func(rel helmrelease.Releaser) bool {
