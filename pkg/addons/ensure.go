@@ -24,6 +24,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	kubevirtccm "k8c.io/kubeone/pkg/cloudprovider/kubevirt/ccm"
 	kubevirtcsi "k8c.io/kubeone/pkg/cloudprovider/kubevirt/csi"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
@@ -544,6 +545,13 @@ func ensureCCMAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCCMKubeVirt,
+				postFn: func() error {
+					if err := kubevirtccm.Ensure(s); err != nil {
+						return err
+					}
+
+					return migrateKubeVirtCCM(s)
+				},
 			},
 		)
 	case s.Cluster.CloudProvider.Nutanix != nil:
