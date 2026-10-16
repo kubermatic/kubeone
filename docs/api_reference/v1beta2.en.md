@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2026-10-22T17:37:33+03:00
+date = 2026-10-23T14:29:43+03:00
 weight = 11
 +++
 ## v1beta2
@@ -58,6 +58,8 @@ weight = 11
 * [KubeProxyConfig](#kubeproxyconfig)
 * [KubeletConfig](#kubeletconfig)
 * [KubevirtControlPlane](#kubevirtcontrolplane)
+* [KubevirtInfraStorageClass](#kubevirtinfrastorageclass)
+* [KubevirtInfraVolumeSnapshotClass](#kubevirtinfravolumesnapshotclass)
 * [KubevirtLoadBalancer](#kubevirtloadbalancer)
 * [KubevirtSpec](#kubevirtspec)
 * [LoggingConfig](#loggingconfig)
@@ -789,6 +791,36 @@ KubevirtControlPlane control plane config on KubeVirt
 
 [Back to Group](#v1beta2)
 
+### KubevirtInfraStorageClass
+
+KubevirtInfraStorageClass defines an infra cluster StorageClass exposed in the tenant cluster
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| infraStorageClassName | InfraStorageClassName is the name of the StorageClass in the infra cluster | string | true |
+| isDefaultClass | IsDefaultClass marks the tenant StorageClass as the default StorageClass | bool | false |
+| volumeBindingMode | VolumeBindingMode of the tenant StorageClass | *storagev1.VolumeBindingMode | false |
+| allowVolumeExpansion | AllowVolumeExpansion of the tenant StorageClass | bool | false |
+| reclaimPolicy | ReclaimPolicy of the tenant StorageClass. Default: Delete | corev1.PersistentVolumeReclaimPolicy | false |
+| bus | Bus is the disk bus used to attach volumes to the VMs. Default: scsi | string | false |
+| zones | Zones restricts the tenant StorageClass topology to the given zones | []string | false |
+| regions | Regions restricts the tenant StorageClass topology to the given regions | []string | false |
+| labels | Labels to be applied to the tenant StorageClass | map[string]string | false |
+
+[Back to Group](#v1beta2)
+
+### KubevirtInfraVolumeSnapshotClass
+
+KubevirtInfraVolumeSnapshotClass defines an infra cluster VolumeSnapshotClass exposed in the tenant cluster
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| infraVolumeSnapshotClass | InfraVolumeSnapshotClass is the name of the VolumeSnapshotClass in the infra cluster | string | true |
+| isDefaultClass | IsDefaultClass marks the tenant VolumeSnapshotClass as the default VolumeSnapshotClass | bool | false |
+| deletionPolicy | DeletionPolicy of the tenant VolumeSnapshotClass, either Delete or Retain. Default: Delete | string | false |
+
+[Back to Group](#v1beta2)
+
 ### KubevirtLoadBalancer
 
 KubevirtLoadBalancer defines a Kubernetes Service to create in the infra cluster for the kube-apiserver endpoint
@@ -811,6 +843,8 @@ KubevirtSpec defines the Kubevirt provider
 | zoneAndRegionEnabled | ZoneAndRegionEnabled indicates if need to get Region and zone labels from the cloud provider | bool | false |
 | loadBalancerEnabled | LoadBalancerEnabled indicates if the ccm should create and manage the clusters load balancers. | bool | false |
 | controlPlane | ControlPlane configures control plane provisioning on KubeVirt | *[KubevirtControlPlane](#kubevirtcontrolplane) | false |
+| storageClasses | StorageClasses are infra cluster StorageClasses exposed in the tenant cluster by the KubeVirt CSI driver. For each entry, a tenant StorageClass named \"kubevirt-<infraStorageClassName>\" is created. | [][KubevirtInfraStorageClass](#kubevirtinfrastorageclass) | false |
+| volumeSnapshotClasses | VolumeSnapshotClasses are infra cluster VolumeSnapshotClasses exposed in the tenant cluster by the KubeVirt CSI driver. For each entry, a tenant VolumeSnapshotClass named \"kubevirt-<infraVolumeSnapshotClass>\" is created. | [][KubevirtInfraVolumeSnapshotClass](#kubevirtinfravolumesnapshotclass) | false |
 
 [Back to Group](#v1beta2)
 
