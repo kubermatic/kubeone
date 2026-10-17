@@ -24,6 +24,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"slices"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -69,10 +70,10 @@ func (f *fakeLBService) List(_ context.Context, opts *godo.ListOptions) ([]godo.
 
 	pages := &godo.Pages{}
 	if page > 1 {
-		pages.Prev = "https://api.digitalocean.com/v2/load_balancers?page=" + itoa(page-1)
+		pages.Prev = "https://api.digitalocean.com/v2/load_balancers?page=" + strconv.Itoa(page-1)
 	}
 	if page < len(f.pages) {
-		pages.Next = "https://api.digitalocean.com/v2/load_balancers?page=" + itoa(page+1)
+		pages.Next = "https://api.digitalocean.com/v2/load_balancers?page=" + strconv.Itoa(page+1)
 	}
 
 	return f.pages[page-1], &godo.Response{Links: &godo.Links{Pages: pages}}, nil
@@ -114,10 +115,28 @@ func (f *fakeLBService) AddForwardingRules(_ context.Context, _ string, rules ..
 	return &godo.Response{}, nil
 }
 
-func itoa(i int) string {
-	b, _ := json.Marshal(i)
+// fakeVPCService returns the scripted VPCs by ID.
+type fakeVPCService struct {
+	vpcs     map[string]*godo.VPC
+	getCalls int
+}
 
-	return string(b)
+func (f *fakeVPCService) Get(_ context.Context, id string) (*godo.VPC, *godo.Response, error) {
+	f.getCalls++
+
+	vpc, ok := f.vpcs[id]
+	if !ok {
+		return nil, &godo.Response{Response: &http.Response{StatusCode: http.StatusNotFound}}, errors.New("not found")
+	}
+
+	return vpc, &godo.Response{}, nil
+}
+
+func testVPCs() *fakeVPCService {
+	return &fakeVPCService{vpcs: map[string]*godo.VPC{
+		"vpc-default": {ID: "vpc-default", Name: "default-fra1", RegionSlug: "fra1", Default: true},
+		"vpc-custom":  {ID: "vpc-custom", Name: "custom", RegionSlug: "fra1"},
+	}}
 }
 
 func fastPolling(t *testing.T, timeout time.Duration) {
@@ -162,7 +181,8 @@ func TestEnsureLoadBalancerCreates(t *testing.T) {
 		},
 	}
 
-	lb, err := ensureLoadBalancer(context.Background(), fake, testCluster(createModeLB()), testLogger())
+	vpcs := testVPCs()
+	lb, err := ensureLoadBalancer(context.Background(), fake, vpcs, testCluster(createModeLB()), testLogger())
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -172,6 +192,9 @@ func TestEnsureLoadBalancerCreates(t *testing.T) {
 	}
 	if len(fake.created) != 1 {
 		t.Fatalf("expected one Create call, got %d", len(fake.created))
+	}
+	if vpcs.getCalls != 0 {
+		t.Errorf("create mode must not check VPCs, got %d calls", vpcs.getCalls)
 	}
 	if fake.getCalls != 3 {
 		t.Errorf("expected polling until active with an IP (3 Get calls), got %d", fake.getCalls)
@@ -200,7 +223,8 @@ func TestEnsureLoadBalancerIdempotent(t *testing.T) {
 		},
 	}
 
-	lb, err := ensureLoadBalancer(context.Background(), fake, testCluster(createModeLB()), testLogger())
+	vpcs := testVPCs()
+	lb, err := ensureLoadBalancer(context.Background(), fake, vpcs, testCluster(createModeLB()), testLogger())
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -245,7 +269,8 @@ func TestEnsureLoadBalancerRejectsForeignSelector(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			fake := &fakeLBService{pages: [][]godo.LoadBalancer{{tc.lb}}}
 
-			_, err := ensureLoadBalancer(context.Background(), fake, testCluster(createModeLB()), testLogger())
+			vpcs := testVPCs()
+			_, err := ensureLoadBalancer(context.Background(), fake, vpcs, testCluster(createModeLB()), testLogger())
 			if err == nil {
 				t.Fatal("expected an error")
 			}
@@ -264,7 +289,8 @@ func TestEnsureLoadBalancerRejectsForeignSelector(t *testing.T) {
 func TestEnsureLoadBalancerRejectsOtherRegion(t *testing.T) {
 	fake := &fakeLBService{pages: [][]godo.LoadBalancer{{{ID: "lb-1", Name: "demo-kubeapi", Tag: "kubeone-cluster:demo", Region: &godo.Region{Slug: "nyc1"}, Status: lbStatusUp, IP: "203.0.113.10"}}}}
 
-	_, err := ensureLoadBalancer(context.Background(), fake, testCluster(createModeLB()), testLogger())
+	vpcs := testVPCs()
+	_, err := ensureLoadBalancer(context.Background(), fake, vpcs, testCluster(createModeLB()), testLogger())
 	if err == nil || !strings.Contains(err.Error(), `region "nyc1"`) {
 		t.Fatalf("expected region mismatch error, got: %v", err)
 	}
@@ -291,7 +317,8 @@ func TestEnsureLoadBalancerTimeout(t *testing.T) {
 		getResponses: []*godo.LoadBalancer{{ID: "lb-1", Name: "demo-kubeapi", Status: "new"}},
 	}
 
-	if _, err := ensureLoadBalancer(context.Background(), fake, testCluster(createModeLB()), testLogger()); err == nil {
+	vpcs := testVPCs()
+	if _, err := ensureLoadBalancer(context.Background(), fake, vpcs, testCluster(createModeLB()), testLogger()); err == nil {
 		t.Fatal("expected a timeout error")
 	}
 }
@@ -341,6 +368,15 @@ func TestEnsureExistingLoadBalancer(t *testing.T) {
 			wantErr:  "kube-apiserver requires tcp/6443 to tcp/6443",
 		},
 		{
+			name:     "default VPC",
+			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, VPCUUID: "vpc-default", Tag: "kubeone-cluster:demo", ForwardingRules: kubeAPIRules, HealthCheck: kubeAPIHealthCheck(), Status: lbStatusUp, IP: "203.0.113.20"},
+		},
+		{
+			name:     "custom VPC",
+			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, VPCUUID: "vpc-custom", Status: lbStatusUp, IP: "203.0.113.20"},
+			wantErr:  "default VPC",
+		},
+		{
 			name:     "other region",
 			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: &godo.Region{Slug: "nyc1"}, Status: lbStatusUp, IP: "203.0.113.20"},
 			wantErr:  `region "nyc1"`,
@@ -351,7 +387,8 @@ func TestEnsureExistingLoadBalancer(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			fake := &fakeLBService{getResponses: []*godo.LoadBalancer{&tc.existing}}
 
-			lb, err := ensureLoadBalancer(context.Background(), fake, testCluster(kubeoneapi.DigitalOceanLoadBalancer{ID: "lb-x", Region: "fra1"}), testLogger())
+			vpcs := testVPCs()
+			lb, err := ensureLoadBalancer(context.Background(), fake, vpcs, testCluster(kubeoneapi.DigitalOceanLoadBalancer{ID: "lb-x", Region: "fra1"}), testLogger())
 			if tc.wantErr != "" {
 				if err == nil || !strings.Contains(err.Error(), tc.wantErr) {
 					t.Fatalf("expected error containing %q, got: %v", tc.wantErr, err)
@@ -368,6 +405,9 @@ func TestEnsureExistingLoadBalancer(t *testing.T) {
 
 			if len(fake.created) != 0 {
 				t.Error("must never create a load balancer in existing mode")
+			}
+			if tc.existing.VPCUUID == "" && vpcs.getCalls != 0 {
+				t.Error("must not look up a VPC for a load balancer without one")
 			}
 			wantUpdate := tc.wantTag || tc.wantHealthCheck || tc.wantAddRules
 			if got := len(fake.updated) == 1; got != wantUpdate {
@@ -433,8 +473,10 @@ func fakeClient(t *testing.T, fake *fakeLBService) {
 
 	t.Setenv("DIGITALOCEAN_TOKEN", "test-token")
 	old := newLBClient
+	oldVPC := newVPCClient
 	newLBClient = func(string) godo.LoadBalancersService { return fake }
-	t.Cleanup(func() { newLBClient = old })
+	newVPCClient = func(string) vpcGetter { return testVPCs() }
+	t.Cleanup(func() { newLBClient, newVPCClient = old, oldVPC })
 }
 
 // With .apiEndpoint.host set the load balancer is managed outside of KubeOne.

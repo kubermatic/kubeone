@@ -40,20 +40,19 @@ type managedControlPlaneCloud interface {
 }
 
 func newManagedControlPlaneCloud(provider, clusterName string) (managedControlPlaneCloud, error) {
-	switch provider {
-	case "digitalocean":
-		token := os.Getenv(credentials.DigitalOceanTokenKey)
-		if token == "" {
-			return nil, fmt.Errorf("%s is not set", credentials.DigitalOceanTokenKey)
-		}
-
-		return &digitaloceanCloud{
-			client:      godo.NewFromToken(token),
-			clusterName: clusterName,
-		}, nil
+	if provider != "digitalocean" {
+		return nil, fmt.Errorf("managed control plane is not supported for provider %q", provider)
 	}
 
-	return nil, fmt.Errorf("managed control plane is not supported for provider %q", provider)
+	token := os.Getenv(credentials.DigitalOceanTokenKey)
+	if token == "" {
+		return nil, fmt.Errorf("%s is not set", credentials.DigitalOceanTokenKey)
+	}
+
+	return &digitaloceanCloud{
+		client:      godo.NewFromToken(token),
+		clusterName: clusterName,
+	}, nil
 }
 
 // digitaloceanWorkersTag is the tag applied to worker droplets by the

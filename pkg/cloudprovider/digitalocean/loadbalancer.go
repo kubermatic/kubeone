@@ -52,8 +52,19 @@ var (
 		return godo.NewFromToken(token).LoadBalancers
 	}
 
+	// newVPCClient builds the VPCs client. Variable to allow injecting a fake
+	// in tests.
+	newVPCClient = func(token string) vpcGetter {
+		return godo.NewFromToken(token).VPCs
+	}
+
 	errLBNotFound = errors.New("load balancer not found")
 )
+
+// vpcGetter is the part of godo.VPCsService used to check load balancer VPCs.
+type vpcGetter interface {
+	Get(ctx context.Context, id string) (*godo.VPC, *godo.Response, error)
+}
 
 func lbSpec(cluster *kubeoneapi.KubeOneCluster) kubeoneapi.DigitalOceanLoadBalancer {
 	if cluster.CloudProvider.DigitalOcean == nil || cluster.CloudProvider.DigitalOcean.ControlPlane == nil {
@@ -72,12 +83,12 @@ func (p *Provider) EnsureLoadBalancer(s *state.State) error {
 		return nil
 	}
 
-	client, err := lbClient(s)
+	client, vpcs, err := lbClient(s)
 	if err != nil {
 		return err
 	}
 
-	lb, err := ensureLoadBalancer(s.Context, client, s.Cluster, s.Logger)
+	lb, err := ensureLoadBalancer(s.Context, client, vpcs, s.Cluster, s.Logger)
 	if err != nil {
 		return err
 	}
@@ -93,7 +104,7 @@ func (p *Provider) LookupLoadBalancer(s *state.State) error {
 		return nil
 	}
 
-	client, err := lbClient(s)
+	client, _, err := lbClient(s)
 	if err != nil {
 		return err
 	}
@@ -125,7 +136,7 @@ func (p *Provider) CleanupLoadBalancer(s *state.State) error {
 		return nil
 	}
 
-	client, err := lbClient(s)
+	client, _, err := lbClient(s)
 	if err != nil {
 		return err
 	}
@@ -133,20 +144,21 @@ func (p *Provider) CleanupLoadBalancer(s *state.State) error {
 	return cleanupLoadBalancer(s.Context, client, s.Cluster, s.Logger)
 }
 
-func lbClient(s *state.State) (godo.LoadBalancersService, error) {
+func lbClient(s *state.State) (godo.LoadBalancersService, vpcGetter, error) {
 	token, err := apiToken(s)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return newLBClient(token), nil
+	return newLBClient(token), newVPCClient(token), nil
 }
 
-func ensureLoadBalancer(ctx context.Context, client godo.LoadBalancersService, cluster *kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) (*godo.LoadBalancer, error) {
+func ensureLoadBalancer(ctx context.Context, client godo.LoadBalancersService, vpcs vpcGetter, cluster *kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) (*godo.LoadBalancer, error) {
 	spec := lbSpec(cluster)
 
+	// Load balancers created by KubeOne are always in the default VPC
 	if spec.ID != "" {
-		return ensureExistingLoadBalancer(ctx, client, cluster, logger)
+		return ensureExistingLoadBalancer(ctx, client, vpcs, cluster, logger)
 	}
 
 	lb, err := findLoadBalancerByName(ctx, client, spec.Name)
@@ -182,7 +194,7 @@ func ensureLoadBalancer(ctx context.Context, client godo.LoadBalancersService, c
 	return waitForLoadBalancer(ctx, client, lb, logger)
 }
 
-func ensureExistingLoadBalancer(ctx context.Context, client godo.LoadBalancersService, cluster *kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) (*godo.LoadBalancer, error) {
+func ensureExistingLoadBalancer(ctx context.Context, client godo.LoadBalancersService, vpcs vpcGetter, cluster *kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) (*godo.LoadBalancer, error) {
 	spec := lbSpec(cluster)
 	backendTag := ClusterTag(cluster.Name)
 
@@ -192,6 +204,9 @@ func ensureExistingLoadBalancer(ctx context.Context, client godo.LoadBalancersSe
 	}
 
 	if err = checkRegion(lb, spec.Region); err != nil {
+		return nil, fail.Cloud(err, "digitalocean", "configuring load balancer %q", spec.ID)
+	}
+	if err = checkDefaultVPC(ctx, vpcs, lb); err != nil {
 		return nil, fail.Cloud(err, "digitalocean", "configuring load balancer %q", spec.ID)
 	}
 
@@ -250,6 +265,28 @@ func checkRegion(lb *godo.LoadBalancer, region string) error {
 	}
 
 	return fmt.Errorf("load balancer %q is in region %q, but the control plane nodeSets use region %q", lb.Name, lb.Region.Slug, region)
+}
+
+// checkDefaultVPC fails if the load balancer isn't in the default VPC of its
+// region. machine-controller always creates droplets in the default VPC, and a
+// load balancer only reaches droplets in its own VPC.
+func checkDefaultVPC(ctx context.Context, vpcs vpcGetter, lb *godo.LoadBalancer) error {
+	// Load balancers created before VPCs existed use the default network
+	if lb.VPCUUID == "" {
+		return nil
+	}
+
+	vpc, _, err := vpcs.Get(ctx, lb.VPCUUID)
+	if err != nil {
+		return fmt.Errorf("getting VPC %q of load balancer %q: %w", lb.VPCUUID, lb.Name, err)
+	}
+
+	if !vpc.Default {
+		return fmt.Errorf("load balancer %q is in VPC %q (%s), but control plane droplets are created in the default VPC of region %q; use a load balancer in the default VPC",
+			lb.Name, vpc.Name, vpc.ID, vpc.RegionSlug)
+	}
+
+	return nil
 }
 
 func lookupLoadBalancer(ctx context.Context, client godo.LoadBalancersService, cluster *kubeoneapi.KubeOneCluster) (*godo.LoadBalancer, error) {

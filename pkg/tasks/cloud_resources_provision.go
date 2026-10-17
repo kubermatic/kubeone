@@ -23,16 +23,14 @@ import (
 	kubeonescheme "k8c.io/kubeone/pkg/apis/kubeone/scheme"
 	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
 	"k8c.io/kubeone/pkg/cloudprovider"
-	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/state"
-
-	// register cloud providers for control plane provisioning
 	_ "k8c.io/kubeone/pkg/cloudprovider/aws"
 	_ "k8c.io/kubeone/pkg/cloudprovider/azure"
 	_ "k8c.io/kubeone/pkg/cloudprovider/digitalocean"
 	_ "k8c.io/kubeone/pkg/cloudprovider/hetzner"
 	_ "k8c.io/kubeone/pkg/cloudprovider/kubevirt"
 	_ "k8c.io/kubeone/pkg/cloudprovider/openstack"
+	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/state"
 )
 
 func WithFindControlPlane(t Tasks) Tasks {
