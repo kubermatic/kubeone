@@ -33,7 +33,10 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	helm "k8c.io/kubeone/pkg/localhelm"
 	"k8c.io/kubeone/pkg/semverutil"
+	digitaloceantypes "k8c.io/machine-controller/sdk/cloudprovider/digitalocean"
+	"k8c.io/machine-controller/sdk/jsonutil"
 
+	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/validation"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 	netutils "k8s.io/utils/net"
@@ -284,6 +287,7 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("digitalocean"), "only one provider can be used at the same time"))
 		}
 		providerFound = true
+		allErrs = append(allErrs, validateDigitalOceanSpec(providerSpec.DigitalOcean, cluster.ControlPlane.NodeSets, fldPath.Child("digitalocean"))...)
 	}
 	if providerSpec.GCE != nil {
 		if providerFound {
@@ -390,6 +394,9 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 // awsResourceNameMaxLength is the max length AWS accepts for NLB/Target Group names.
 const awsResourceNameMaxLength = 32
 
+// digitalOceanResourceNameMaxLength is the max length DigitalOcean accepts for load balancer names.
+const digitalOceanResourceNameMaxLength = 255
+
 func validateAWSSpec(awsSpec *kubeoneapi.AWSSpec, fldPath *field.Path) field.ErrorList {
 	var allErrs field.ErrorList
 
@@ -441,6 +448,77 @@ func validateAzureSpec(azureSpec *kubeoneapi.AzureSpec, fldPath *field.Path) fie
 		if sku != "" && sku != "Basic" && sku != "Standard" {
 			allErrs = append(allErrs, field.NotSupported(lbFld.Child("sku"), sku, []string{"Basic", "Standard"}))
 		}
+	}
+
+	return allErrs
+}
+
+// digitalOceanSupportedOperatingSystems are the operating systems supported by
+// the machine-controller DigitalOcean driver
+var digitalOceanSupportedOperatingSystems = []string{
+	string(kubeoneapi.OperatingSystemNameUbuntu),
+	string(kubeoneapi.OperatingSystemNameRockyLinux),
+}
+
+func validateDigitalOceanSpec(doSpec *kubeoneapi.DigitalOceanSpec, nodeSets []kubeoneapi.NodeSet, fldPath *field.Path) field.ErrorList {
+	var allErrs field.ErrorList
+
+	if len(nodeSets) == 0 {
+		return allErrs
+	}
+
+	var lb kubeoneapi.DigitalOceanLoadBalancer
+	if doSpec.ControlPlane != nil {
+		lb = doSpec.ControlPlane.LoadBalancer
+	}
+	lbFld := fldPath.Child("controlPlane", "loadBalancer")
+
+	if len(lb.Name) > digitalOceanResourceNameMaxLength {
+		allErrs = append(allErrs, field.Invalid(lbFld.Child("name"), lb.Name, fmt.Sprintf("loadBalancer name must not exceed %d characters", digitalOceanResourceNameMaxLength)))
+	}
+	if lb.SizeUnit > 100 {
+		allErrs = append(allErrs, field.Invalid(lbFld.Child("sizeUnit"), lb.SizeUnit, "sizeUnit must be between 1 and 100"))
+	}
+
+	nodeSetsFld := field.NewPath("controlPlane", "nodeSets")
+	regions := sets.New[string]()
+
+	for i, ns := range nodeSets {
+		nsFld := nodeSetsFld.Index(i)
+
+		if !slices.Contains(digitalOceanSupportedOperatingSystems, string(ns.OperatingSystem)) {
+			allErrs = append(allErrs, field.NotSupported(nsFld.Child("operatingSystem"), ns.OperatingSystem, digitalOceanSupportedOperatingSystems))
+		}
+
+		var rawConfig digitaloceantypes.RawConfig
+		if err := jsonutil.StrictUnmarshal(ns.CloudProviderSpec, &rawConfig); err != nil {
+			allErrs = append(allErrs, field.Invalid(nsFld.Child("cloudProviderSpec"), string(ns.CloudProviderSpec), fmt.Sprintf("invalid digitalocean cloudProviderSpec: %v", err)))
+
+			continue
+		}
+
+		specFld := nsFld.Child("cloudProviderSpec")
+		if rawConfig.Token.Value != "" || rawConfig.Token.SecretKeyRef.Name != "" || rawConfig.Token.ConfigMapKeyRef.Name != "" {
+			allErrs = append(allErrs, field.Forbidden(specFld.Child("token"), "token must not be set in the config, use DIGITALOCEAN_TOKEN credentials instead"))
+		}
+		if rawConfig.Region.Value == "" {
+			allErrs = append(allErrs, field.Required(specFld.Child("region"), "region is required"))
+		} else {
+			regions.Insert(rawConfig.Region.Value)
+		}
+		if rawConfig.Size.Value == "" {
+			allErrs = append(allErrs, field.Required(specFld.Child("size"), "size is required"))
+		}
+		if v := rawConfig.PrivateNetworking.Value; v != nil && !*v {
+			allErrs = append(allErrs, field.Invalid(specFld.Child("private_networking"), *v, "private_networking must be enabled for control plane droplets"))
+		}
+	}
+
+	if regions.Len() > 1 {
+		allErrs = append(allErrs, field.Invalid(nodeSetsFld, sets.List(regions), "all control plane nodeSets must use the same region"))
+	}
+	if lb.Region != "" && regions.Len() == 1 && !regions.Has(lb.Region) {
+		allErrs = append(allErrs, field.Invalid(lbFld.Child("region"), lb.Region, "loadBalancer region must match the control plane nodeSets region"))
 	}
 
 	return allErrs

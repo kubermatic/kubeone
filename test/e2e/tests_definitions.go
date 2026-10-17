@@ -478,6 +478,22 @@ var (
 				outputDir:  "/logs/artifacts/logs",
 			},
 		},
+		"digitalocean_managed_cp": {
+			name:                "digitalocean_managed_cp",
+			osName:              "Ubuntu",
+			managedControlPlane: true,
+			labels: map[string]string{
+				"preset-goproxy":      "true",
+				"preset-digitalocean": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "digitalocean",
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
+		},
 		"digitalocean_default_stable": {
 			name:   "digitalocean_default_stable",
 			osName: "Ubuntu",
@@ -1014,6 +1030,15 @@ var (
 			HumanReadableName:    "Cluster Provisioning (External, Flannel via Helm)",
 			ManifestTemplatePath: "testdata/containerd_flannel_helm_external.yaml",
 		},
+
+		// Managed control plane, provisioned by KubeOne from .controlPlane.nodeSets
+		"install_managed_cp": &scenarioManagedControlPlane{
+			Name:              "install_managed_cp",
+			HumanReadableName: "Cluster Provisioning (Managed Control Plane)",
+			ManifestTemplatePaths: map[string]string{
+				"digitalocean": "testdata/managed_cp_digitalocean.yaml",
+			},
+		},
 	}
 )
 
@@ -1021,10 +1046,13 @@ type Infra struct {
 	name              string
 	osName            string
 	discludeFromIssue bool
-	environ           map[string]string
-	terraform         terraformBin
-	protokol          protokolBin
-	labels            map[string]string
+	// managedControlPlane infrastructures have no Terraform, KubeOne
+	// provisions the control plane itself from .controlPlane.nodeSets
+	managedControlPlane bool
+	environ             map[string]string
+	terraform           terraformBin
+	protokol            protokolBin
+	labels              map[string]string
 }
 
 func (i Infra) Provider() string {

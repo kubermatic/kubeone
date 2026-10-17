@@ -609,7 +609,42 @@ type AzureLoadBalancer struct {
 }
 
 // DigitalOceanSpec defines the DigitalOcean cloud provider
-type DigitalOceanSpec struct{}
+type DigitalOceanSpec struct {
+	// ControlPlane configures the managed control plane on DigitalOcean.
+	// Used only when .controlPlane.nodeSets is set.
+	ControlPlane *DigitalOceanControlPlane `json:"controlPlane,omitempty"`
+}
+
+// DigitalOceanControlPlane control plane config on DigitalOcean
+type DigitalOceanControlPlane struct {
+	// LoadBalancer config of the kube-apiserver load balancer
+	LoadBalancer DigitalOceanLoadBalancer `json:"loadBalancer"`
+}
+
+// DigitalOceanLoadBalancer defines the load balancer used as the kube-apiserver endpoint.
+//
+// Two modes are supported:
+//   - create (default): KubeOne creates and owns the load balancer, and deletes it on reset
+//   - existing: ID references a pre-existing load balancer that KubeOne uses but never deletes
+//
+// Load balancer management is skipped when .apiEndpoint.host is set.
+type DigitalOceanLoadBalancer struct {
+	// ID of a pre-existing load balancer to use.
+	// KubeOne never deletes a load balancer referenced by ID.
+	ID string `json:"id,omitempty"`
+
+	// Name of the load balancer to create. Default: "<CLUSTER_NAME>-kubeapi"
+	Name string `json:"name,omitempty"`
+
+	// Region of the load balancer to create. Default: region of the first control plane nodeSet
+	Region string `json:"region,omitempty"`
+
+	// SizeUnit is the number of nodes of the load balancer to create (1-100),
+	// each node adds connection capacity. 1 is enough for most clusters.
+	// Only used when creating the load balancer, changes aren't applied to an
+	// existing one. Default: 1
+	SizeUnit uint32 `json:"sizeUnit,omitempty"`
+}
 
 // GCESpec defines the GCE cloud provider
 type GCESpec struct{}

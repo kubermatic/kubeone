@@ -7027,6 +7027,32 @@ presubmits:
   decoration_config:
     timeout: 210m
   labels:
+    preset-digitalocean: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-digitalocean-managed-cp-install-managed-cp-v1.36
+  optional: false
+  path_alias: k8c.io/kubeone
+  run_if_changed: (pkg/cloudprovider/(digitalocean/|provider\.go)|pkg/provisioner/|pkg/tasks/cloud_resources_provision\.go|pkg/tasks/reset\.go|test/e2e/(scenario_managed_cp|managed_cp_cloud)\.go|test/e2e/testdata/managed_cp_digitalocean)
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestDigitaloceanManagedCpInstallManagedCpV1_36
+      env:
+      - name: PROVIDER
+        value: digitalocean
+      image: docker.io/golang:1.27
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-long-timeout-default-conformance-containerd-external-v1.35

@@ -80,6 +80,18 @@ func (k1 *kubeoneBin) Reset() error {
 	return k1.run("reset", "--auto-approve", "--destroy-workers", "--remove-binaries")
 }
 
+// ResetManagedControlPlane resets the cluster and destroys the control plane
+// machines and load balancer provisioned by KubeOne.
+func (k1 *kubeoneBin) ResetManagedControlPlane() error {
+	return k1.run(
+		"reset",
+		"--auto-approve",
+		"--destroy-workers",
+		"--destroy-control-plane",
+		"--destroy-control-plane-load-balancer",
+	)
+}
+
 func (k1 *kubeoneBin) DynamicClient() (ctrlruntimeclient.Client, error) {
 	restConfig, err := k1.RestConfig()
 	if err != nil {
@@ -157,7 +169,11 @@ func (k1 *kubeoneBin) ClusterManifest() (*kubeoneapi.KubeOneCluster, error) {
 }
 
 func (k1 *kubeoneBin) globalFlags() []string {
-	args := []string{"--tfjson", k1.tfjsonPath}
+	var args []string
+
+	if k1.tfjsonPath != "" {
+		args = append(args, "--tfjson", k1.tfjsonPath)
+	}
 
 	if k1.verbose {
 		args = append(args, "--verbose")

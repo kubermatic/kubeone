@@ -192,6 +192,11 @@ func newKubeoneBin(terraformPath, manifestPath string, opts ...kubeoneBinOpts) *
 type manifestData struct {
 	VERSION string
 	INFRA   string
+
+	// Used by managed control plane manifests, which don't use Terraform
+	// output for the cluster name and hosts
+	ClusterName  string
+	SSHPublicKey string
 }
 
 func renderManifest(t *testing.T, templatePath string, data manifestData) string {
