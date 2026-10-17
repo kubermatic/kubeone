@@ -84,9 +84,28 @@ func (p *Provider) EnsureVM(s *state.State, capimachine clusterv1alpha1.Machine)
 		return err
 	}
 
-	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, cloudprovider.HostConfigsFromMachines(provMachines, s.Cluster.ControlPlane.NodeSets)...)
+	nodeSet, err := nodeSetForMachine(s.Cluster.Name, s.Cluster.ControlPlane.NodeSets, capimachine.Name)
+	if err != nil {
+		return err
+	}
+
+	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, cloudprovider.HostConfigsFromMachines(provMachines, []kubeoneapi.NodeSet{nodeSet})...)
 
 	return nil
+}
+
+// nodeSetForMachine returns the nodeSet the machine was generated from, so
+// that its host gets the SSH settings, labels and taints of that nodeSet.
+func nodeSetForMachine(clusterName string, nodeSets []kubeoneapi.NodeSet, machineName string) (kubeoneapi.NodeSet, error) {
+	for _, nodeSet := range nodeSets {
+		for idx := range nodeSet.Replicas {
+			if machineName == fmt.Sprintf("%s-%s-%d", clusterName, nodeSet.Name, idx) {
+				return nodeSet, nil
+			}
+		}
+	}
+
+	return kubeoneapi.NodeSet{}, fail.Config(fmt.Errorf("machine %q doesn't belong to any control plane nodeSet", machineName), "finding nodeSet")
 }
 
 func (p *Provider) LookupVMs(s *state.State) error {
@@ -143,9 +162,11 @@ func apiToken(s *state.State) (string, error) {
 }
 
 // sanitizeTag replaces characters that are not allowed in DigitalOcean tags
-// and truncates the tag to the maximum allowed length.
+// with "_" and truncates the tag to the maximum allowed length. Cluster names
+// are DNS-1123 subdomains and never contain "_", so e.g. "a.b" and "a-b" map
+// to different tags.
 func sanitizeTag(tag string) string {
-	tag = invalidTagChars.ReplaceAllString(tag, "-")
+	tag = invalidTagChars.ReplaceAllString(tag, "_")
 	if len(tag) > maxTagLength {
 		tag = tag[:maxTagLength]
 	}

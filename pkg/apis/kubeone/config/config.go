@@ -40,6 +40,8 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 	terraformv1beta2 "k8c.io/kubeone/pkg/terraform/v1beta2"
 	terraformv1beta3 "k8c.io/kubeone/pkg/terraform/v1beta3"
+	digitaloceantypes "k8c.io/machine-controller/sdk/cloudprovider/digitalocean"
+	"k8c.io/machine-controller/sdk/jsonutil"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/yaml"
@@ -412,6 +414,15 @@ func setDefaultKubevirtControlPlane(clusterName string, kvCP *kubeoneapi.Kubevir
 }
 
 func setDefaultDigitalOceanControlPlane(clusterName string, nodeSets []kubeoneapi.NodeSet, doCP *kubeoneapi.DigitalOceanControlPlane) {
+	if doCP.LoadBalancer.Region == "" && len(nodeSets) > 0 {
+		// Errors are ignored on purpose, malformed specs are reported by the validation
+		var spec digitaloceantypes.RawConfig
+		if err := jsonutil.StrictUnmarshal(nodeSets[0].CloudProviderSpec, &spec); err == nil {
+			doCP.LoadBalancer.Region = spec.Region.Value
+		}
+	}
+
+	// A load balancer referenced by ID is used as-is
 	if doCP.LoadBalancer.ID != "" {
 		return
 	}
@@ -424,16 +435,6 @@ func setDefaultDigitalOceanControlPlane(clusterName string, nodeSets []kubeoneap
 		doCP.LoadBalancer.SizeUnit,
 		1,
 	)
-
-	if doCP.LoadBalancer.Region == "" && len(nodeSets) > 0 {
-		// Errors are ignored on purpose, malformed specs are reported by the validation
-		var spec struct {
-			Region string `json:"region"`
-		}
-		if err := json.Unmarshal(nodeSets[0].CloudProviderSpec, &spec); err == nil {
-			doCP.LoadBalancer.Region = spec.Region
-		}
-	}
 }
 
 func setDefaultAzureControlPlane(clusterName string, azCP *kubeoneapi.AzureControlPlane) {

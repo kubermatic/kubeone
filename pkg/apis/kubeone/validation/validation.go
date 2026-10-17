@@ -515,7 +515,7 @@ func validateDigitalOceanSpec(doSpec *kubeoneapi.DigitalOceanSpec, nodeSets []ku
 	if regions.Len() > 1 {
 		allErrs = append(allErrs, field.Invalid(nodeSetsFld, sets.List(regions), "all control plane nodeSets must use the same region"))
 	}
-	if lb.Region != "" && lb.ID == "" && regions.Len() == 1 && !regions.Has(lb.Region) {
+	if lb.Region != "" && regions.Len() == 1 && !regions.Has(lb.Region) {
 		allErrs = append(allErrs, field.Invalid(lbFld.Child("region"), lb.Region, "loadBalancer region must match the control plane nodeSets region"))
 	}
 

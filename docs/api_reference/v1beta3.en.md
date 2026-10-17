@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2026-10-16T15:47:51+05:30
+date = 2026-10-16T16:54:17+05:30
 weight = 11
 +++
 ## v1beta3
@@ -462,7 +462,6 @@ Load balancer management is skipped when .apiEndpoint.host is set.
 | name | Name of the load balancer to create. Default: \"<CLUSTER_NAME>-kubeapi\" | string | false |
 | region | Region of the load balancer to create. Default: region of the first control plane nodeSet | string | false |
 | sizeUnit | SizeUnit is the number of nodes of the load balancer to create (1-100), each node adds connection capacity. 1 is enough for most clusters. Only used when creating the load balancer, changes aren't applied to an existing one. Default: 1 | uint32 | false |
-| vpcUUID | VPCUUID of the VPC to create the load balancer in. Default: default VPC of the region | string | false |
 
 [Back to Group](#v1beta3)
 

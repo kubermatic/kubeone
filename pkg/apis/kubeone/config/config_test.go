@@ -173,9 +173,10 @@ func TestDigitalOceanControlPlaneDefaults(t *testing.T) {
 	}
 
 	tests := []struct {
-		name string
-		in   kubeoneapi.DigitalOceanLoadBalancer
-		want kubeoneapi.DigitalOceanLoadBalancer
+		name     string
+		in       kubeoneapi.DigitalOceanLoadBalancer
+		nodeSets []kubeoneapi.NodeSet
+		want     kubeoneapi.DigitalOceanLoadBalancer
 	}{
 		{
 			name: "create mode defaults",
@@ -188,16 +189,26 @@ func TestDigitalOceanControlPlaneDefaults(t *testing.T) {
 			want: kubeoneapi.DigitalOceanLoadBalancer{Name: "custom", Region: "ams3", SizeUnit: 2},
 		},
 		{
-			name: "existing mode is not defaulted",
+			name: "existing mode only gets the region",
 			in:   kubeoneapi.DigitalOceanLoadBalancer{ID: "lb-x"},
-			want: kubeoneapi.DigitalOceanLoadBalancer{ID: "lb-x"},
+			want: kubeoneapi.DigitalOceanLoadBalancer{ID: "lb-x", Region: "fra1"},
+		},
+		{
+			name:     "region given as ConfigVar object",
+			in:       kubeoneapi.DigitalOceanLoadBalancer{},
+			nodeSets: []kubeoneapi.NodeSet{{Name: "cp", Replicas: 1, CloudProviderSpec: []byte(`{"region":{"value":"ams3"},"size":"s-2vcpu-4gb"}`)}},
+			want:     kubeoneapi.DigitalOceanLoadBalancer{Name: "demo-kubeapi", Region: "ams3", SizeUnit: 1},
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			cp := &kubeoneapi.DigitalOceanControlPlane{LoadBalancer: tc.in}
-			setDefaultDigitalOceanControlPlane("demo", nodeSets, cp)
+			ns := nodeSets
+			if tc.nodeSets != nil {
+				ns = tc.nodeSets
+			}
+			setDefaultDigitalOceanControlPlane("demo", ns, cp)
 
 			if !reflect.DeepEqual(cp.LoadBalancer, tc.want) {
 				t.Errorf("got %+v, want %+v", cp.LoadBalancer, tc.want)

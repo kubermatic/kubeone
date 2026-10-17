@@ -99,7 +99,7 @@ func (f *fakeLBService) Create(_ context.Context, req *godo.LoadBalancerRequest)
 func (f *fakeLBService) Update(_ context.Context, id string, req *godo.LoadBalancerRequest) (*godo.LoadBalancer, *godo.Response, error) {
 	f.updated = append(f.updated, req)
 
-	return &godo.LoadBalancer{ID: id, Name: req.Name, Tag: req.Tag, ForwardingRules: req.ForwardingRules, Status: lbStatusUp, IP: "203.0.113.20"}, &godo.Response{}, nil
+	return &godo.LoadBalancer{ID: id, Name: req.Name, Tag: req.Tag, ForwardingRules: req.ForwardingRules, HealthCheck: req.HealthCheck, Status: lbStatusUp, IP: "203.0.113.20"}, &godo.Response{}, nil
 }
 
 func (f *fakeLBService) Delete(_ context.Context, id string) (*godo.Response, error) {
@@ -261,6 +261,28 @@ func TestEnsureLoadBalancerRejectsForeignSelector(t *testing.T) {
 	}
 }
 
+func TestEnsureLoadBalancerRejectsOtherRegion(t *testing.T) {
+	fake := &fakeLBService{pages: [][]godo.LoadBalancer{{{ID: "lb-1", Name: "demo-kubeapi", Tag: "kubeone-cluster:demo", Region: &godo.Region{Slug: "nyc1"}, Status: lbStatusUp, IP: "203.0.113.10"}}}}
+
+	_, err := ensureLoadBalancer(context.Background(), fake, testCluster(createModeLB()), testLogger())
+	if err == nil || !strings.Contains(err.Error(), `region "nyc1"`) {
+		t.Fatalf("expected region mismatch error, got: %v", err)
+	}
+}
+
+func TestWaitForLoadBalancerRetriesNotFound(t *testing.T) {
+	fastPolling(t, 20*time.Millisecond)
+
+	fake := &fakeLBService{getErr: errors.New("not found"), getStatus: http.StatusNotFound}
+	_, err := waitForLoadBalancer(context.Background(), fake, &godo.LoadBalancer{ID: "lb-1", Name: "demo-kubeapi", Status: "new"}, testLogger())
+	if err == nil {
+		t.Fatal("expected a timeout error")
+	}
+	if fake.getCalls < 2 {
+		t.Errorf("expected 404 to be retried, got %d Get calls", fake.getCalls)
+	}
+}
+
 func TestEnsureLoadBalancerTimeout(t *testing.T) {
 	fastPolling(t, 20*time.Millisecond)
 
@@ -275,32 +297,53 @@ func TestEnsureLoadBalancerTimeout(t *testing.T) {
 }
 
 func TestEnsureExistingLoadBalancer(t *testing.T) {
+	kubeAPIRules := []godo.ForwardingRule{kubeAPIForwardingRule()}
+	defaultHealthCheck := &godo.HealthCheck{Protocol: "http", Port: 80, Path: "/"}
+	fra1 := &godo.Region{Slug: "fra1"}
+
 	tests := []struct {
-		name         string
-		existing     godo.LoadBalancer
-		wantErr      bool
-		wantUpdate   bool
-		wantAddRules bool
+		name            string
+		existing        godo.LoadBalancer
+		wantErr         string
+		wantTag         bool
+		wantHealthCheck bool
+		wantAddRules    bool
 	}{
 		{
-			name:     "already targets cluster tag",
-			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", Tag: "kubeone-cluster:demo", ForwardingRules: []godo.ForwardingRule{kubeAPIForwardingRule()}, Status: lbStatusUp, IP: "203.0.113.20"},
+			name:     "already configured",
+			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, Tag: "kubeone-cluster:demo", ForwardingRules: kubeAPIRules, HealthCheck: kubeAPIHealthCheck(), Status: lbStatusUp, IP: "203.0.113.20"},
 		},
 		{
-			name:         "no backends and no rule",
-			existing:     godo.LoadBalancer{ID: "lb-x", Name: "byo", ForwardingRules: []godo.ForwardingRule{{EntryProtocol: "http", EntryPort: 80, TargetProtocol: "http", TargetPort: 80}}, Status: lbStatusUp, IP: "203.0.113.20"},
-			wantUpdate:   true,
-			wantAddRules: true,
+			name:            "no backends, no rule, default health check",
+			existing:        godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, ForwardingRules: []godo.ForwardingRule{{EntryProtocol: "http", EntryPort: 80, TargetProtocol: "http", TargetPort: 80}}, HealthCheck: defaultHealthCheck, Status: lbStatusUp, IP: "203.0.113.20"},
+			wantTag:         true,
+			wantHealthCheck: true,
+			wantAddRules:    true,
+		},
+		{
+			name:            "tagged but default health check",
+			existing:        godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, Tag: "kubeone-cluster:demo", ForwardingRules: kubeAPIRules, HealthCheck: defaultHealthCheck, Status: lbStatusUp, IP: "203.0.113.20"},
+			wantHealthCheck: true,
 		},
 		{
 			name:     "other backends",
-			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", Tag: "something-else", Status: lbStatusUp, IP: "203.0.113.20"},
-			wantErr:  true,
+			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, Tag: "something-else", Status: lbStatusUp, IP: "203.0.113.20"},
+			wantErr:  "already has backends",
 		},
 		{
 			name:     "droplet backends",
-			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", DropletIDs: []int{1}, Status: lbStatusUp, IP: "203.0.113.20"},
-			wantErr:  true,
+			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, DropletIDs: []int{1}, Status: lbStatusUp, IP: "203.0.113.20"},
+			wantErr:  "already has backends",
+		},
+		{
+			name:     "6443 forwarded to another port",
+			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, ForwardingRules: []godo.ForwardingRule{{EntryProtocol: "tcp", EntryPort: kubeAPIPort, TargetProtocol: "tcp", TargetPort: 443}}, Status: lbStatusUp, IP: "203.0.113.20"},
+			wantErr:  "kube-apiserver requires tcp/6443 to tcp/6443",
+		},
+		{
+			name:     "other region",
+			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: &godo.Region{Slug: "nyc1"}, Status: lbStatusUp, IP: "203.0.113.20"},
+			wantErr:  `region "nyc1"`,
 		},
 	}
 
@@ -308,10 +351,13 @@ func TestEnsureExistingLoadBalancer(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			fake := &fakeLBService{getResponses: []*godo.LoadBalancer{&tc.existing}}
 
-			lb, err := ensureLoadBalancer(context.Background(), fake, testCluster(kubeoneapi.DigitalOceanLoadBalancer{ID: "lb-x"}), testLogger())
-			if tc.wantErr {
-				if err == nil {
-					t.Fatal("expected an error")
+			lb, err := ensureLoadBalancer(context.Background(), fake, testCluster(kubeoneapi.DigitalOceanLoadBalancer{ID: "lb-x", Region: "fra1"}), testLogger())
+			if tc.wantErr != "" {
+				if err == nil || !strings.Contains(err.Error(), tc.wantErr) {
+					t.Fatalf("expected error containing %q, got: %v", tc.wantErr, err)
+				}
+				if len(fake.updated) != 0 || len(fake.addedRules) != 0 {
+					t.Error("must not modify the load balancer when failing")
 				}
 
 				return
@@ -323,19 +369,112 @@ func TestEnsureExistingLoadBalancer(t *testing.T) {
 			if len(fake.created) != 0 {
 				t.Error("must never create a load balancer in existing mode")
 			}
-			if got := len(fake.updated) == 1; got != tc.wantUpdate {
-				t.Errorf("update called = %v, want %v", got, tc.wantUpdate)
+			wantUpdate := tc.wantTag || tc.wantHealthCheck || tc.wantAddRules
+			if got := len(fake.updated) == 1; got != wantUpdate {
+				t.Fatalf("update called = %v, want %v", got, wantUpdate)
 			}
-			if tc.wantUpdate && fake.updated[0].Tag != "kubeone-cluster:demo" {
-				t.Errorf("expected update to set cluster tag, got %q", fake.updated[0].Tag)
+			if wantUpdate {
+				req := fake.updated[0]
+				if req.Tag != "kubeone-cluster:demo" {
+					t.Errorf("expected update to target the cluster tag, got %q", req.Tag)
+				}
+				if !isKubeAPIHealthCheck(req.HealthCheck) {
+					t.Errorf("expected update to health check tcp/6443, got %+v", req.HealthCheck)
+				}
 			}
-			if got := len(fake.addedRules) == 1; got != tc.wantAddRules {
-				t.Errorf("forwarding rule added = %v, want %v", got, tc.wantAddRules)
+			if len(fake.addedRules) != 0 {
+				t.Error("forwarding rule must be added in the same Update, not with AddForwardingRules")
+			}
+			if tc.wantAddRules && !slices.Contains(fake.updated[0].ForwardingRules, kubeAPIForwardingRule()) {
+				t.Errorf("expected update to add the kube-apiserver forwarding rule, got %+v", fake.updated[0].ForwardingRules)
 			}
 			if lb.IP != "203.0.113.20" {
 				t.Errorf("unexpected IP %q", lb.IP)
 			}
 		})
+	}
+}
+
+func TestWaitForLoadBalancerFailsFast(t *testing.T) {
+	fastPolling(t, time.Minute)
+
+	tests := []struct {
+		name string
+		fake *fakeLBService
+		want string
+	}{
+		{
+			name: "errored",
+			fake: &fakeLBService{getResponses: []*godo.LoadBalancer{{ID: "lb-1", Name: "demo-kubeapi", Status: lbStatusErr}}},
+			want: `"errored" state`,
+		},
+		{
+			name: "forbidden",
+			fake: &fakeLBService{getErr: errors.New("forbidden"), getStatus: http.StatusForbidden},
+			want: "forbidden",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := waitForLoadBalancer(context.Background(), tc.fake, &godo.LoadBalancer{ID: "lb-1", Name: "demo-kubeapi", Status: "new"}, testLogger())
+			if err == nil || !strings.Contains(err.Error(), tc.want) {
+				t.Fatalf("expected error containing %q, got: %v", tc.want, err)
+			}
+			if tc.fake.getCalls != 1 {
+				t.Errorf("expected to fail on the first Get, got %d calls", tc.fake.getCalls)
+			}
+		})
+	}
+}
+
+func fakeClient(t *testing.T, fake *fakeLBService) {
+	t.Helper()
+
+	t.Setenv("DIGITALOCEAN_TOKEN", "test-token")
+	old := newLBClient
+	newLBClient = func(string) godo.LoadBalancersService { return fake }
+	t.Cleanup(func() { newLBClient = old })
+}
+
+// With .apiEndpoint.host set the load balancer is managed outside of KubeOne.
+func TestAPIEndpointHostSkipsLoadBalancer(t *testing.T) {
+	p := &Provider{}
+	fake := &fakeLBService{}
+	fakeClient(t, fake)
+
+	s := testState(&kubeoneapi.DigitalOceanLoadBalancer{Name: "demo-kubeapi"}, testNodeSets(validSpec, 1))
+	s.Logger = testLogger()
+	s.Cluster.APIEndpoint.Host = "api.example.com"
+
+	if err := p.EnsureLoadBalancer(s); err != nil {
+		t.Fatalf("EnsureLoadBalancer: unexpected error: %v", err)
+	}
+	if err := p.LookupLoadBalancer(s); err != nil {
+		t.Fatalf("LookupLoadBalancer: unexpected error: %v", err)
+	}
+	if len(fake.listRequests) != 0 || fake.getCalls != 0 || len(fake.created) != 0 {
+		t.Error("expected no API calls")
+	}
+	if s.Cluster.APIEndpoint.Host != "api.example.com" {
+		t.Errorf("host must not change, got %q", s.Cluster.APIEndpoint.Host)
+	}
+}
+
+func TestLookupLoadBalancerSetsEndpoint(t *testing.T) {
+	p := &Provider{}
+	fake := &fakeLBService{pages: [][]godo.LoadBalancer{{{ID: "lb-1", Name: "demo-kubeapi", Tag: "kubeone-cluster:demo", IP: "203.0.113.10"}}}}
+	fakeClient(t, fake)
+
+	s := testState(&kubeoneapi.DigitalOceanLoadBalancer{Name: "demo-kubeapi"}, testNodeSets(validSpec, 1))
+	s.Logger = testLogger()
+	s.Cluster.APIEndpoint.Port = 443
+
+	if err := p.LookupLoadBalancer(s); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if s.Cluster.APIEndpoint.Host != "203.0.113.10" || s.Cluster.APIEndpoint.Port != kubeAPIPort {
+		t.Errorf("unexpected endpoint %s:%d", s.Cluster.APIEndpoint.Host, s.Cluster.APIEndpoint.Port)
 	}
 }
 
@@ -373,8 +512,20 @@ func TestCleanupLoadBalancer(t *testing.T) {
 	tests := []struct {
 		name        string
 		pages       [][]godo.LoadBalancer
+		host        string
 		wantDeleted []string
 	}{
+		{
+			name:        "host set by lookup to the load balancer IP",
+			pages:       [][]godo.LoadBalancer{{{ID: "lb-1", Name: "demo-kubeapi", Tag: "kubeone-cluster:demo", IP: "203.0.113.10"}}},
+			host:        "203.0.113.10",
+			wantDeleted: []string{"lb-1"},
+		},
+		{
+			name:  "user provided apiEndpoint.host",
+			pages: [][]godo.LoadBalancer{{{ID: "lb-1", Name: "demo-kubeapi", Tag: "kubeone-cluster:demo", IP: "203.0.113.10"}}},
+			host:  "api.example.com",
+		},
 		{
 			name:        "owned load balancer is deleted",
 			pages:       [][]godo.LoadBalancer{{{ID: "lb-1", Name: "demo-kubeapi", Tag: "kubeone-cluster:demo"}}},
@@ -399,8 +550,10 @@ func TestCleanupLoadBalancer(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			fake := &fakeLBService{pages: tc.pages}
+			cluster := testCluster(createModeLB())
+			cluster.APIEndpoint.Host = tc.host
 
-			if err := cleanupLoadBalancer(context.Background(), fake, testCluster(createModeLB()), testLogger()); err != nil {
+			if err := cleanupLoadBalancer(context.Background(), fake, cluster, testLogger()); err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
 			if !slices.Equal(fake.deleted, tc.wantDeleted) {
@@ -414,9 +567,7 @@ func TestCleanupLoadBalancerSkipsExistingMode(t *testing.T) {
 	p := &Provider{}
 
 	fake := &fakeLBService{}
-	old := newLBClient
-	newLBClient = func(string) godo.LoadBalancersService { return fake }
-	t.Cleanup(func() { newLBClient = old })
+	fakeClient(t, fake)
 
 	s := testState(&kubeoneapi.DigitalOceanLoadBalancer{ID: "lb-x"}, testNodeSets(validSpec, 1))
 	s.Logger = testLogger()

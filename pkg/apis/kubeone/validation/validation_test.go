@@ -3371,6 +3371,12 @@ func TestValidateDigitalOceanSpec(t *testing.T) {
 			expectedError: true,
 		},
 		{
+			name:          "existing mode lb region mismatch",
+			lb:            &kubeoneapi.DigitalOceanLoadBalancer{ID: "lb-x", Region: "ams3"},
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, validSpec)},
+			expectedError: true,
+		},
+		{
 			name:          "unsupported operating system",
 			nodeSets:      []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameFlatcar, validSpec)},
 			expectedError: true,

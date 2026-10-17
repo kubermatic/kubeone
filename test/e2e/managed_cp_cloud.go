@@ -25,6 +25,7 @@ import (
 	"github.com/digitalocean/godo"
 
 	"k8c.io/kubeone/pkg/cloudprovider/digitalocean"
+	"k8c.io/kubeone/pkg/credentials"
 )
 
 // managedControlPlaneCloud inspects and cleans up the cloud resources created
@@ -41,9 +42,9 @@ type managedControlPlaneCloud interface {
 func newManagedControlPlaneCloud(provider, clusterName string) (managedControlPlaneCloud, error) {
 	switch provider {
 	case "digitalocean":
-		token := os.Getenv("DIGITALOCEAN_TOKEN")
+		token := os.Getenv(credentials.DigitalOceanTokenKey)
 		if token == "" {
-			return nil, errors.New("DIGITALOCEAN_TOKEN is not set")
+			return nil, fmt.Errorf("%s is not set", credentials.DigitalOceanTokenKey)
 		}
 
 		return &digitaloceanCloud{

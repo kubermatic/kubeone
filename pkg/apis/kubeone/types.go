@@ -647,9 +647,6 @@ type DigitalOceanLoadBalancer struct {
 	// Only used when creating the load balancer, changes aren't applied to an
 	// existing one. Default: 1
 	SizeUnit uint32 `json:"sizeUnit,omitempty"`
-
-	// VPCUUID of the VPC to create the load balancer in. Default: default VPC of the region
-	VPCUUID string `json:"vpcUUID,omitempty"`
 }
 
 // GCESpec defines the GCE cloud provider

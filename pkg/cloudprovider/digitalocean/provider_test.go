@@ -187,8 +187,9 @@ func TestSanitizeTag(t *testing.T) {
 		want string
 	}{
 		{in: "kubeone-cluster:demo", want: "kubeone-cluster:demo"},
-		{in: "kubeone-cluster:my.cluster", want: "kubeone-cluster:my-cluster"},
-		{in: "Demo_Cluster 1", want: "Demo_Cluster-1"},
+		{in: "kubeone-cluster:my.cluster", want: "kubeone-cluster:my_cluster"},
+		{in: "kubeone-cluster:my-cluster", want: "kubeone-cluster:my-cluster"},
+		{in: "Demo_Cluster 1", want: "Demo_Cluster_1"},
 		{in: strings.Repeat("a", 300), want: strings.Repeat("a", maxTagLength)},
 	}
 
@@ -208,7 +209,7 @@ func TestGenerateMachinesSanitizesUID(t *testing.T) {
 	if machines[0].Name != "my.cluster-cp-0" {
 		t.Errorf("unexpected name %q", machines[0].Name)
 	}
-	if string(machines[0].UID) != "my-cluster-cp-0" {
+	if string(machines[0].UID) != "my_cluster-cp-0" {
 		t.Errorf("expected sanitized UID, got %q", machines[0].UID)
 	}
 }
@@ -254,5 +255,24 @@ func TestEnabledAndHasLoadBalancer(t *testing.T) {
 				t.Errorf("HasLoadBalancer() = %v, want %v", got, tc.wantLB)
 			}
 		})
+	}
+}
+
+func TestNodeSetForMachine(t *testing.T) {
+	nodeSets := []kubeoneapi.NodeSet{
+		{Name: "a", Replicas: 2, SSH: kubeoneapi.SSHSpec{Username: "root"}},
+		{Name: "b", Replicas: 1, SSH: kubeoneapi.SSHSpec{Username: "rocky"}},
+	}
+
+	got, err := nodeSetForMachine("demo", nodeSets, "demo-b-0")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got.Name != "b" || got.SSH.Username != "rocky" {
+		t.Errorf("expected nodeSet b, got %q", got.Name)
+	}
+
+	if _, err = nodeSetForMachine("demo", nodeSets, "demo-a-2"); err == nil {
+		t.Error("expected an error for a machine outside the nodeSet replicas")
 	}
 }
