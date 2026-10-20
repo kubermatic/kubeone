@@ -5,10 +5,33 @@ metadata:
     app.kubernetes.io/instance: openstack-ccm
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: openstack-cloud-controller-manager
-    app.kubernetes.io/version: v1.34.1
-    helm.sh/chart: openstack-cloud-controller-manager-2.34.1
+    app.kubernetes.io/version: v1.37.1
+    helm.sh/chart: openstack-cloud-controller-manager-2.37.1
   name: cloud-controller-manager
   namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/instance: openstack-ccm
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: openstack-cloud-controller-manager
+    app.kubernetes.io/version: v1.37.1
+    helm.sh/chart: openstack-cloud-controller-manager-2.37.1
+  name: system:cloud-controller-manager:secret-reader
+  namespace: kube-system
+rules:
+  - apiGroups:
+      - ""
+    resourceNames:
+      - cloud-config
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -17,8 +40,8 @@ metadata:
     app.kubernetes.io/instance: openstack-ccm
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: openstack-cloud-controller-manager
-    app.kubernetes.io/version: v1.34.1
-    helm.sh/chart: openstack-cloud-controller-manager-2.34.1
+    app.kubernetes.io/version: v1.37.1
+    helm.sh/chart: openstack-cloud-controller-manager-2.37.1
   name: system:cloud-controller-manager
 rules:
   - apiGroups:
@@ -42,7 +65,12 @@ rules:
     resources:
       - nodes
     verbs:
-      - '*'
+      - get
+      - list
+      - watch
+      - patch
+      - update
+      - delete
   - apiGroups:
       - ""
     resources:
@@ -80,12 +108,6 @@ rules:
   - apiGroups:
       - ""
     resources:
-      - persistentvolumes
-    verbs:
-      - '*'
-  - apiGroups:
-      - ""
-    resources:
       - endpoints
     verbs:
       - create
@@ -101,14 +123,26 @@ rules:
       - get
       - list
       - watch
-  - apiGroups:
-      - ""
-    resources:
-      - secrets
-    verbs:
-      - list
-      - get
-      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: openstack-ccm
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: openstack-cloud-controller-manager
+    app.kubernetes.io/version: v1.37.1
+    helm.sh/chart: openstack-cloud-controller-manager-2.37.1
+  name: system:cloud-controller-manager:secret-reader
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: system:cloud-controller-manager:secret-reader
+subjects:
+  - kind: ServiceAccount
+    name: cloud-controller-manager
+    namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -117,8 +151,8 @@ metadata:
     app.kubernetes.io/instance: openstack-ccm
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: openstack-cloud-controller-manager
-    app.kubernetes.io/version: v1.34.1
-    helm.sh/chart: openstack-cloud-controller-manager-2.34.1
+    app.kubernetes.io/version: v1.37.1
+    helm.sh/chart: openstack-cloud-controller-manager-2.37.1
   name: system:cloud-controller-manager
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -136,8 +170,8 @@ metadata:
     app.kubernetes.io/instance: openstack-ccm
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: openstack-cloud-controller-manager
-    app.kubernetes.io/version: v1.34.1
-    helm.sh/chart: openstack-cloud-controller-manager-2.34.1
+    app.kubernetes.io/version: v1.37.1
+    helm.sh/chart: openstack-cloud-controller-manager-2.37.1
   name: openstack-cloud-controller-manager
   namespace: kube-system
 spec:
@@ -153,7 +187,7 @@ spec:
         kubeone.k8c.io/cloudconfig-hash: '{{.Config.CloudProvider.CloudConfig | sha256sum}}'
       labels:
         app: openstack-cloud-controller-manager
-        chart: openstack-cloud-controller-manager-2.34.1
+        chart: openstack-cloud-controller-manager-2.37.1
         component: controllermanager
         heritage: Helm
         k8s-app: openstack-cloud-controller-manager
@@ -176,6 +210,15 @@ spec:
               value: '{{ default "kubernetes" .CCMClusterName }}'
           image: '{{ .InternalImages.Get "OpenstackCCM" }}'
           name: openstack-cloud-controller-manager
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
             - mountPath: /etc/config
               name: cloud-config-volume
@@ -192,13 +235,15 @@ spec:
             - mountPath: /usr/share/ca-certificates
               name: usr-ca-certs
               readOnly: true
-      dnsPolicy: ClusterFirst
+      dnsPolicy: ClusterFirstWithHostNet
       hostNetwork: true
       nodeSelector:
         node-role.kubernetes.io/control-plane: ""
       priorityClassName: system-cluster-critical
       securityContext:
         runAsUser: 1001
+        seccompProfile:
+          type: RuntimeDefault
       serviceAccountName: cloud-controller-manager
       tolerations:
         - effect: NoSchedule
