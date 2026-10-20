@@ -28,10 +28,12 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/clientcmd"
 	ctrlrt "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
+	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
 )
 
 const (
@@ -315,5 +317,93 @@ func TestCleanup(t *testing.T) {
 		if err := c.Get(ctx, ctrlrt.ObjectKeyFromObject(obj), obj); err != nil {
 			t.Errorf("%T %s: expected to be kept, got %v", obj, obj.GetName(), err)
 		}
+	}
+}
+
+func TestEnsureIdentityClusterRules(t *testing.T) {
+	ctx := context.Background()
+	c := newFakeClient(t)
+	comp := Component{
+		Name: "reader",
+		ClusterRules: []rbacv1.PolicyRule{
+			{APIGroups: []string{"storage.k8s.io"}, Resources: []string{"storageclasses"}, Verbs: []string{"get"}},
+		},
+	}
+
+	if err := comp.EnsureIdentity(ctx, c, testCluster, testNamespace); err != nil {
+		t.Fatal(err)
+	}
+
+	name := "kubeone:infra-ns:c1-reader"
+
+	crb := &rbacv1.ClusterRoleBinding{}
+	if err := c.Get(ctx, ctrlrt.ObjectKey{Name: name}, crb); err != nil {
+		t.Fatal(err)
+	}
+
+	if crb.RoleRef.Kind != "ClusterRole" || crb.RoleRef.Name != name ||
+		crb.Subjects[0].Name != "c1-reader" || crb.Subjects[0].Namespace != testNamespace {
+		t.Errorf("ClusterRoleBinding does not bind %s to the infra ServiceAccount: %+v", name, crb)
+	}
+
+	if crb.Labels[LabelInfraNamespace] != testNamespace {
+		t.Errorf("cluster-scoped objects must carry the infra namespace label: %v", crb.Labels)
+	}
+
+	if err := c.Get(ctx, ctrlrt.ObjectKey{Name: name}, &rbacv1.ClusterRole{}); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCleanupClusterScoped(t *testing.T) {
+	ctx := context.Background()
+	comp := Component{Name: "reader"}
+
+	own := comp.ClusterRole(testCluster, testNamespace)
+	sameClusterOtherNamespace := comp.ClusterRole(testCluster, "other-ns")
+	foreign := &rbacv1.ClusterRole{ObjectMeta: metav1.ObjectMeta{Name: "foreign", Labels: map[string]string{LabelClusterName: testCluster}}}
+
+	c := newFakeClient(t, own, comp.ClusterRoleBinding(testCluster, testNamespace), sameClusterOtherNamespace, foreign)
+
+	if err := Cleanup(ctx, c, testCluster, testNamespace); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := c.Get(ctx, ctrlrt.ObjectKeyFromObject(own), &rbacv1.ClusterRole{}); !apierrors.IsNotFound(err) {
+		t.Errorf("own ClusterRole: expected NotFound, got %v", err)
+	}
+
+	if err := c.Get(ctx, ctrlrt.ObjectKey{Name: own.Name}, &rbacv1.ClusterRoleBinding{}); !apierrors.IsNotFound(err) {
+		t.Errorf("own ClusterRoleBinding: expected NotFound, got %v", err)
+	}
+
+	for _, kept := range []ctrlrt.Object{sameClusterOtherNamespace, foreign} {
+		if err := c.Get(ctx, ctrlrt.ObjectKeyFromObject(kept), &rbacv1.ClusterRole{}); err != nil {
+			t.Errorf("%s must be kept: %v", kept.GetName(), err)
+		}
+	}
+}
+
+func TestCleanupForbiddenClusterScoped(t *testing.T) {
+	ctx := context.Background()
+
+	scheme := runtime.NewScheme()
+	if err := clientgoscheme.AddToScheme(scheme); err != nil {
+		t.Fatal(err)
+	}
+
+	c := fake.NewClientBuilder().WithScheme(scheme).WithInterceptorFuncs(interceptor.Funcs{
+		List: func(ctx context.Context, client ctrlrt.WithWatch, list ctrlrt.ObjectList, opts ...ctrlrt.ListOption) error {
+			switch list.(type) {
+			case *rbacv1.ClusterRoleList, *rbacv1.ClusterRoleBindingList:
+				return apierrors.NewForbidden(schema.GroupResource{Group: rbacv1.GroupName, Resource: "clusterroles"}, "", nil)
+			}
+
+			return client.List(ctx, list, opts...)
+		},
+	}).Build()
+
+	if err := Cleanup(ctx, c, testCluster, testNamespace); err != nil {
+		t.Errorf("a namespace-scoped infra kubeconfig must not fail the cleanup: %v", err)
 	}
 }

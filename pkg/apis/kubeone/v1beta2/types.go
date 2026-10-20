@@ -757,6 +757,27 @@ type KubevirtSpec struct {
 	// VolumeSnapshotClasses are infra cluster VolumeSnapshotClasses exposed in the tenant cluster by the KubeVirt CSI
 	// driver. For each entry, a tenant VolumeSnapshotClass named "kubevirt-<infraVolumeSnapshotClass>" is created.
 	VolumeSnapshotClasses []KubevirtInfraVolumeSnapshotClass `json:"volumeSnapshotClasses,omitempty"`
+
+	// MachineController configures machine-controller, which runs in the infra cluster's InfraNamespace.
+	MachineController *KubevirtMachineController `json:"machineController,omitempty"`
+}
+
+// KubevirtMachineController configures machine-controller running in the infra cluster
+type KubevirtMachineController struct {
+	// Webhook configures how the tenant cluster API server reaches the machine-controller webhook running in the
+	// infra cluster.
+	Webhook KubevirtMachineControllerWebhook `json:"webhook,omitempty"`
+}
+
+// KubevirtMachineControllerWebhook configures the infra cluster Service of the machine-controller webhook
+type KubevirtMachineControllerWebhook struct {
+	// ServiceType of the webhook Service, either ClusterIP or LoadBalancer. The tenant cluster API server must be able
+	// to reach it. Default: ClusterIP when controlPlane is set (the control plane runs as VMs in the infra cluster),
+	// LoadBalancer otherwise.
+	ServiceType corev1.ServiceType `json:"serviceType,omitempty"`
+
+	// Annotations to be applied to the webhook Service
+	Annotations map[string]string `json:"annotations,omitempty"`
 }
 
 // KubevirtInfraStorageClass defines an infra cluster StorageClass exposed in the tenant cluster

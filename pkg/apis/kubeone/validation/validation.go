@@ -695,6 +695,17 @@ func validateKubevirtSpec(kubevirtSpec *kubeoneapi.KubevirtSpec, fldPath *field.
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("volumeSnapshotClasses"), defaultSnapshotClasses, "at most one VolumeSnapshotClass can be the default"))
 	}
 
+	if mc := kubevirtSpec.MachineController; mc != nil {
+		switch mc.Webhook.ServiceType {
+		case "", corev1.ServiceTypeClusterIP, corev1.ServiceTypeLoadBalancer:
+		case corev1.ServiceTypeNodePort, corev1.ServiceTypeExternalName:
+			fallthrough
+		default:
+			allErrs = append(allErrs, field.NotSupported(fldPath.Child("machineController", "webhook", "serviceType"), mc.Webhook.ServiceType,
+				[]corev1.ServiceType{corev1.ServiceTypeClusterIP, corev1.ServiceTypeLoadBalancer}))
+		}
+	}
+
 	return allErrs
 }
 

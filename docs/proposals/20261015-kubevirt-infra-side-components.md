@@ -245,30 +245,53 @@ The CCM no longer depends on a schedulable tenant control-plane node. This remov
 ### machine-controller
 
 **Tenant side** (`addons/machinecontroller`, KubeVirt branch):
-- Keep the CRDs, the ServiceAccounts and the RBAC, and add token Secrets.
-- Remove both Deployments and the webhook Service.
-- In the `MutatingWebhookConfiguration`, replace `clientConfig.service` with `clientConfig.url`, which points at the
-  infra-side webhook Service.
+- Keep the CRDs, the ServiceAccounts and the RBAC, and add token Secrets (`addons/machinecontroller/kubevirt-tokens.yaml`).
+- Skip both Deployments, the webhook Service, the serving certificate Secret, the PodDisruptionBudgets and the
+  `MutatingWebhookConfiguration`. Other providers are unchanged.
+- The `MutatingWebhookConfiguration` is created from Go instead, with `clientConfig.url` pointing at the infra-side
+  webhook Service: its address is only known once that Service exists.
 
-**Infra side:**
+**Infra side** (`pkg/cloudprovider/kubevirt/machinecontroller`):
+- Two identities, `machine-controller` and `machine-controller-webhook`, each with an infra ServiceAccount, Role, token,
+  infra kubeconfig Secret and tenant kubeconfig Secret.
 - Deployment `<cluster>-machine-controller` with `-kubeconfig=<tenant>`. It reads `KUBEVIRT_KUBECONFIG` from the Secret
-  holding the infra SA kubeconfig. All other flags stay as today.
+  holding the infra SA kubeconfig, and `POD_NAMESPACE` is the `InfraNamespace`. The other flags stay as today, including
+  the `JOIN_TIMEOUT` addon param. Leader election stays on the tenant lease.
 - Deployment `<cluster>-machine-controller-webhook` with `-kubeconfig=<tenant>` and the same environment.
+- The tenant proxy settings (`HTTPS_PROXY`, `NO_PROXY`) are not passed: they are for the tenant network, and these pods
+  run in the infra cluster.
+- A custom CA bundle is put into a per-cluster infra ConfigMap `<cluster>-machine-controller-ca-bundle` and mounted the
+  same way as in the tenant cluster.
 - Service `<cluster>-machine-controller-webhook`. Its type is configurable (see [API changes](#api-changes)).
-- The webhook serving certificate is issued by the existing `webhookCerts` helper, with a SAN that matches the webhook
-  URL (the Service IP or hostname).
-- The infra Role covers:
-  - `virtualmachines`, `virtualmachineinstances`, `datavolumes`;
-  - Secrets and ConfigMaps used for cloud-init;
-  - read access to `instancetype.kubevirt.io` instancetypes and preferences;
-  - read access to `storage.k8s.io` StorageClasses, through a ClusterRole if `configureStorage` requires it.
+- The webhook serving certificate is signed by the tenant cluster CA, which KubeOne has locally, for the Service IP or
+  LoadBalancer hostname. It is stored in `<cluster>-machine-controller-webhook-serving-cert` and reused while it is valid
+  for at least 30 more days, matches the address and is signed by the current CA, so the webhook does not restart on
+  every apply. The `caBundle` of the `MutatingWebhookConfiguration` stays the tenant cluster CA.
+- The machine-controller infra Role covers VirtualMachines (read and write), VirtualMachineInstances (read),
+  DataVolumes (read, create, delete), `datavolumes/source` (create, for cloning a PVC in the same namespace), Secrets
+  (cloud-init user data) and namespaced instancetypes and preferences (read). The webhook Role is read-only.
+- **Both also need a read-only ClusterRole in the infra cluster.** The KubeVirt provider reads the primary disk
+  StorageClass on every machine create and in the webhook defaulting, the CDI StorageProfile when no access mode is set,
+  and cluster instancetypes and preferences. These are cluster-scoped, so a Role cannot grant them. The ClusterRole and
+  ClusterRoleBinding are named `kubeone:<InfraNamespace>:<cluster>-<component>` and labelled with
+  `kubeone_infra_namespace`, so the cleanup selects them per namespace. The user-provided `KUBEVIRT_KUBECONFIG` therefore
+  needs permission to create ClusterRoles and ClusterRoleBindings, and has to hold these read permissions itself.
+- Cloning a PVC from another namespace for the VM disk needs `datavolumes/source` permission in that namespace, which
+  KubeOne does not grant: the infra cluster admin has to.
 
-`machinecontroller.WaitReady` and the webhook readiness checks switch to the infra client when the provider is KubeVirt.
+`machinecontroller.WaitReady` waits for the infra Deployments when the provider is KubeVirt.
 
 **Webhook reachability.** The tenant kube-apiserver must reach the webhook Service in the infra cluster.
 - When the control plane runs on KubeVirt (`cloudProvider.kubevirt.controlPlane` is set), the control-plane VMs use
-  masquerade pod networking and can reach infra ClusterIPs. A ClusterIP Service, addressed by IP, works.
-- Otherwise the Service must be of type `LoadBalancer`.
+  masquerade pod networking and can reach infra ClusterIPs. A ClusterIP Service, addressed by IP, works. This is the
+  default then.
+- Otherwise the Service must be of type `LoadBalancer`, the default then.
+
+**Migration:** a `postFn` deploys the infra side, then deletes the old tenant Deployments, Service, serving certificate
+Secret and PodDisruptionBudgets. `kubectl apply --prune` removes all of them except the PodDisruptionBudgets when the
+addon is applied already, so machine-controller and its webhook are down between the addon apply and the `postFn`. The
+old service-based `MutatingWebhookConfiguration` stays in place during that time (it is not pruned), so Machine and
+MachineDeployment changes are rejected until the `postFn` replaces it.
 
 ### operating-system-manager
 
@@ -310,6 +333,7 @@ cloudProvider:
         deletionPolicy: Delete
     machineController:
       webhook:
+        # ClusterIP or LoadBalancer.
         # Default: ClusterIP when controlPlane is set, LoadBalancer otherwise.
         serviceType: ClusterIP
         annotations: {}
@@ -344,7 +368,8 @@ are therefore deleted only after the workers are gone. They are deleted by the l
 - Infra-side ServiceAccounts are scoped to `InfraNamespace` with Roles. The user-provided `KUBEVIRT_KUBECONFIG` never
   leaves the machine that runs KubeOne.
 - The user-provided `KUBEVIRT_KUBECONFIG` must allow creating ServiceAccounts, Roles, RoleBindings, Secrets, ConfigMaps,
-  Deployments and Services in `InfraNamespace`. This becomes a documented requirement.
+  Deployments and Services in `InfraNamespace`, and ClusterRoles and ClusterRoleBindings for machine-controller's
+  read-only access to StorageClasses, StorageProfiles and cluster instancetypes. This becomes a documented requirement.
 - Tokens are long-lived `service-account-token` Secrets. The legacy token cleanup controller does not remove manually
   created token Secrets. Every `kubeone apply` recreates missing tokens and refreshes the kubeconfig Secrets.
 

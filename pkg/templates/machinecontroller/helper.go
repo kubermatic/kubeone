@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"k8c.io/kubeone/pkg/clientutil"
+	kubevirtmc "k8c.io/kubeone/pkg/cloudprovider/kubevirt/machinecontroller"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
@@ -48,6 +49,15 @@ func WaitReady(s *state.State) error {
 
 	if err := cleanupStaleResources(s.Context, s.DynamicClient); err != nil {
 		return err
+	}
+
+	// On KubeVirt, machine-controller and its webhook run in the infra cluster
+	if s.Cluster.CloudProvider.Kubevirt != nil {
+		if err := kubevirtmc.WaitReady(s); err != nil {
+			return err
+		}
+
+		return waitForCRDs(s)
 	}
 
 	if err := waitForWebhook(s.Context, s.DynamicClient); err != nil {

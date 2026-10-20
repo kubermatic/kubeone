@@ -742,6 +742,30 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 			expectedError: true,
 		},
 		{
+			name: "valid Kubevirt machine-controller webhook service type",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Kubevirt: &kubeoneapi.KubevirtSpec{
+					InfraNamespace: "tenant-xyz",
+					MachineController: &kubeoneapi.KubevirtMachineController{
+						Webhook: kubeoneapi.KubevirtMachineControllerWebhook{ServiceType: corev1.ServiceTypeLoadBalancer},
+					},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "Kubevirt machine-controller webhook NodePort is not supported",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Kubevirt: &kubeoneapi.KubevirtSpec{
+					InfraNamespace: "tenant-xyz",
+					MachineController: &kubeoneapi.KubevirtMachineController{
+						Webhook: kubeoneapi.KubevirtMachineControllerWebhook{ServiceType: corev1.ServiceTypeNodePort},
+					},
+				},
+			},
+			expectedError: true,
+		},
+		{
 			name: "Kubevirt snapshot class invalid deletionPolicy",
 			providerConfig: kubeoneapi.CloudProviderSpec{
 				Kubevirt: &kubeoneapi.KubevirtSpec{
