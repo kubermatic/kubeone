@@ -115,11 +115,6 @@ func addonsApplyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 				return err
 			}
 
-			// fail early on typos instead of retrying the task against the cluster
-			if err = addons.ValidateAddonNames(s, opts.Names); err != nil {
-				return err
-			}
-
 			if err = tasks.WithFindControlPlane(nil).Run(s); err != nil {
 				return err
 			}

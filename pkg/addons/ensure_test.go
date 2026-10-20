@@ -91,3 +91,55 @@ func Test_userAddons(t *testing.T) {
 		t.Errorf("deleted = %v, want %v", deleted, wantDeleted)
 	}
 }
+
+func Test_ValidateAddonNames(t *testing.T) {
+	s := &state.State{
+		Cluster: &kubeoneapi.KubeOneCluster{
+			Addons: &kubeoneapi.Addons{
+				Addons: []kubeoneapi.AddonRef{
+					{Addon: &kubeoneapi.Addon{Name: "my-addon"}},
+					{Addon: &kubeoneapi.Addon{Name: "old-addon", Delete: true}},
+					{HelmRelease: &kubeoneapi.HelmRelease{ReleaseName: "declared-release"}},
+				},
+			},
+		},
+	}
+	installed := []string{"removed-release"}
+
+	tests := []struct {
+		name    string
+		names   []string
+		wantErr bool
+	}{
+		{name: "user addon", names: []string{"my-addon"}},
+		{name: "addon marked for deletion", names: []string{"old-addon"}},
+		{name: "declared helm release", names: []string{"declared-release"}},
+		{name: "installed helm release removed from the manifest", names: []string{"removed-release"}},
+		{name: "unknown name", names: []string{"unknown"}, wantErr: true},
+		{name: "embedded addon is not a user addon", names: []string{"machinecontroller"}, wantErr: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := ValidateAddonNames(s, tt.names, installed)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ValidateAddonNames() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func Test_embeddedAddonsAreNotUserAddons(t *testing.T) {
+	// addons deployed by collectAddons must not be managed as user addons
+	for _, name := range []string{
+		"ccm-kubevirt",
+		"ccm-nutanix",
+		"coredns-pdb",
+		"machinecontroller",
+		"operating-system-manager",
+	} {
+		if _, ok := embeddedAddons[name]; !ok {
+			t.Errorf("%q is missing in embeddedAddons", name)
+		}
+	}
+}

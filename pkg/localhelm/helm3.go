@@ -220,6 +220,43 @@ func deploy(st *state.State, onlyNames []string) error {
 	return uninstallReleases(releasesToUninstall, helmCfg, tmpKubeConf.Name(), st)
 }
 
+// InstalledReleaseNames returns the names of the helm releases that are
+// installed in the cluster by KubeOne.
+func InstalledReleaseNames(st *state.State) ([]string, error) {
+	kubeClient, err := kubernetes.NewForConfig(st.RESTConfig)
+	if err != nil {
+		return nil, fail.Config(err, "init new kubernetes client")
+	}
+
+	releases, err := driver.
+		NewSecrets(kubeClient.CoreV1().Secrets("")).
+		List(func(rel helmrelease.Releaser) bool {
+			acc, accErr := helmrelease.NewAccessor(rel)
+			if accErr != nil {
+				return false
+			}
+
+			_, found := acc.Labels()[releasedByKubeone]
+
+			return found
+		})
+	if err != nil {
+		return nil, fail.Runtime(err, "listing helm releases")
+	}
+
+	names := make([]string, 0, len(releases))
+	for _, rel := range releases {
+		acc, accErr := helmrelease.NewAccessor(rel)
+		if accErr != nil {
+			return nil, fail.Runtime(accErr, "creating helm release accessor")
+		}
+
+		names = append(names, acc.Name())
+	}
+
+	return names, nil
+}
+
 func releasesFilterFn(helmReleases []kubeoneapi.HelmRelease, logger logrus.FieldLogger) func(rel helmrelease.Releaser) bool {
 	return func(rel helmrelease.Releaser) bool {
 		release, err := helmrelease.NewAccessor(rel)

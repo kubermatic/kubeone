@@ -513,6 +513,21 @@ func WithUserAddons(t Tasks, names ...string) Tasks {
 			},
 			{Fn: kubeconfig.BuildKubernetesClientset, Operation: "building Kubernetes clientset"},
 			{
+				// Validate the names before anything is changed. The task must not
+				// be retried, a wrong name is not going to fix itself.
+				Fn: func(s *state.State) error {
+					installed, err := localhelm.InstalledReleaseNames(s)
+					if err != nil {
+						return err
+					}
+
+					return addons.ValidateAddonNames(s, names, installed)
+				},
+				Operation: "validating addon names",
+				Predicate: func(*state.State) bool { return len(names) > 0 },
+				Retries:   1,
+			},
+			{
 				Fn:          addons.EnsureUserAddonsByName(names...),
 				Operation:   "applying addons",
 				Description: "ensure custom addons",

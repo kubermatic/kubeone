@@ -69,6 +69,11 @@ var embeddedAddons = map[string]string{
 	resources.AddonMetricsServer:          "",
 	resources.AddonNodeLocalDNS:           "",
 	resources.AddonNodeLocalDNSCilium:     "",
+	resources.AddonCCMKubeVirt:            "",
+	resources.AddonCCMNutanix:             "",
+	resources.AddonCoreDNSPDB:             "",
+	resources.AddonMachineController:      "",
+	resources.AddonOperatingSystemManager: "",
 }
 
 type addonAction struct {
@@ -277,10 +282,11 @@ func userAddons(s *state.State) (map[string]string, map[string]struct{}, error) 
 }
 
 // ValidateAddonNames checks that every given name is either a user addon
-// (defined in the manifest or in the addons directory) or a helm release
-// declared in the manifest. It doesn't need access to the cluster, so it can
-// be used to fail early.
-func ValidateAddonNames(s *state.State, names []string) error {
+// (defined in the manifest or in the addons directory), a helm release
+// declared in the manifest, or one of the installedReleases, i.e. helm
+// releases installed by KubeOne that can be uninstalled after they were removed
+// from the manifest.
+func ValidateAddonNames(s *state.State, names, installedReleases []string) error {
 	deployed, deleted, err := userAddons(s)
 	if err != nil {
 		return err
@@ -288,6 +294,10 @@ func ValidateAddonNames(s *state.State, names []string) error {
 
 	for _, release := range s.Cluster.Addons.OnlyHelmReleases() {
 		deployed[release.ReleaseName] = ""
+	}
+
+	for _, release := range installedReleases {
+		deployed[release] = ""
 	}
 
 	return validateUserAddonNames(names, deployed, deleted)
