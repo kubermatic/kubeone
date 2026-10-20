@@ -328,14 +328,14 @@ func optionalResources() map[Resource]map[string]string {
 		OpenstackCSI: {
 			"1.35.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.35.0",
 			"1.36.x":    "registry.k8s.io/provider-os/cinder-csi-plugin:v1.36.0",
-			">= 1.37.x": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.36.0",
+			">= 1.37.x": "registry.k8s.io/provider-os/cinder-csi-plugin:v1.37.1",
 		},
 		OpenstackCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.15.0"},
 		OpenstackCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.17.0"},
 		OpenstackCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.10.0"},
 		OpenstackCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v5.3.0"},
 		OpenstackCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v1.14.0"},
-		OpenstackCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.3.0"},
+		OpenstackCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.4.0"},
 
 		// Equinix Metal CCM
 		EquinixMetalCCM: {"*": "quay.io/equinix-oss/cloud-provider-equinix-metal:v3.8.1"},

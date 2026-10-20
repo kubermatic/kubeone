@@ -343,7 +343,7 @@ kind: Deployment
 metadata:
   labels:
     app: openstack-cinder-csi
-    chart: openstack-cinder-csi-2.34.1
+    chart: openstack-cinder-csi-2.37.1
     component: controllerplugin
     heritage: Helm
     release: cinder-csi
@@ -365,7 +365,7 @@ spec:
     metadata:
       labels:
         app: openstack-cinder-csi
-        chart: openstack-cinder-csi-2.34.1
+        chart: openstack-cinder-csi-2.37.1
         component: controllerplugin
         heritage: Helm
         release: cinder-csi
@@ -385,7 +385,10 @@ spec:
           imagePullPolicy: IfNotPresent
           name: csi-attacher
           resources: {}
-          securityContext: {}
+          securityContext:
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
             - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
@@ -395,7 +398,6 @@ spec:
             - --timeout=3m
             - --leader-election=true
             - --default-fstype=ext4
-            - --feature-gates=Topology=true
             - --extra-create-metadata
           env:
             - name: ADDRESS
@@ -404,7 +406,10 @@ spec:
           imagePullPolicy: IfNotPresent
           name: csi-provisioner
           resources: {}
-          securityContext: {}
+          securityContext:
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
             - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
@@ -420,7 +425,10 @@ spec:
           imagePullPolicy: IfNotPresent
           name: csi-snapshotter
           resources: {}
-          securityContext: {}
+          securityContext:
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
             - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
@@ -437,7 +445,10 @@ spec:
           imagePullPolicy: IfNotPresent
           name: csi-resizer
           resources: {}
-          securityContext: {}
+          securityContext:
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
             - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
@@ -451,7 +462,10 @@ spec:
           imagePullPolicy: IfNotPresent
           name: liveness-probe
           resources: {}
-          securityContext: {}
+          securityContext:
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
             - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
@@ -462,6 +476,7 @@ spec:
             - --cloud-config=$(CLOUD_CONFIG)
             - --cluster=$(CLUSTER_NAME)
             - --provide-node-service=false
+            - --with-topology=true
           env:
             - name: CSI_ENDPOINT
               value: unix://csi/csi.sock
@@ -485,7 +500,10 @@ spec:
               name: healthz
               protocol: TCP
           resources: {}
-          securityContext: {}
+          securityContext:
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
             - mountPath: /csi
               name: socket-dir
@@ -519,7 +537,7 @@ kind: DaemonSet
 metadata:
   labels:
     app: openstack-cinder-csi
-    chart: openstack-cinder-csi-2.34.1
+    chart: openstack-cinder-csi-2.37.1
     component: nodeplugin
     heritage: Helm
     release: cinder-csi
@@ -535,7 +553,7 @@ spec:
     metadata:
       labels:
         app: openstack-cinder-csi
-        chart: openstack-cinder-csi-2.34.1
+        chart: openstack-cinder-csi-2.37.1
         component: nodeplugin
         heritage: Helm
         release: cinder-csi
@@ -559,7 +577,10 @@ spec:
           imagePullPolicy: IfNotPresent
           name: node-driver-registrar
           resources: {}
-          securityContext: {}
+          securityContext:
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
             - mountPath: /csi
               name: socket-dir
@@ -572,7 +593,10 @@ spec:
           imagePullPolicy: IfNotPresent
           name: liveness-probe
           resources: {}
-          securityContext: {}
+          securityContext:
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
             - mountPath: /csi
               name: socket-dir
@@ -582,6 +606,7 @@ spec:
             - --endpoint=$(CSI_ENDPOINT)
             - --provide-controller-service=false
             - --cloud-config=$(CLOUD_CONFIG)
+            - --with-topology=true
           env:
             - name: CSI_ENDPOINT
               value: unix://csi/csi.sock
@@ -605,9 +630,6 @@ spec:
           resources: {}
           securityContext:
             allowPrivilegeEscalation: true
-            capabilities:
-              add:
-                - SYS_ADMIN
             privileged: true
           volumeMounts:
             - mountPath: /csi
@@ -627,7 +649,8 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       hostNetwork: true
       nodeSelector: {}
-      priorityClassName: system-cluster-critical
+      priorityClassName: system-node-critical
+      securityContext: {}
       serviceAccount: csi-cinder-node-sa
       tolerations:
         - operator: Exists
