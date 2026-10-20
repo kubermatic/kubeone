@@ -26,6 +26,7 @@ import (
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	kubevirtccm "k8c.io/kubeone/pkg/cloudprovider/kubevirt/ccm"
 	kubevirtcsi "k8c.io/kubeone/pkg/cloudprovider/kubevirt/csi"
+	kubevirtmc "k8c.io/kubeone/pkg/cloudprovider/kubevirt/machinecontroller"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
@@ -142,9 +143,19 @@ func collectAddons(s *state.State) []addonAction {
 	}
 
 	if s.Cluster.MachineController.Deploy {
-		addonsToDeploy = append(addonsToDeploy, addonAction{
+		mc := addonAction{
 			name: resources.AddonMachineController,
-		})
+		}
+		if s.Cluster.CloudProvider.Kubevirt != nil {
+			mc.postFn = func() error {
+				if err := kubevirtmc.Ensure(s); err != nil {
+					return err
+				}
+
+				return migrateKubeVirtMachineController(s)
+			}
+		}
+		addonsToDeploy = append(addonsToDeploy, mc)
 	}
 
 	if s.Cluster.OperatingSystemManager.Deploy {
@@ -193,6 +204,12 @@ func cleanupAddons(s *state.State) error {
 
 	if s.Cluster.Features.NodeLocalDNS == nil || !s.Cluster.Features.NodeLocalDNS.Deploy {
 		if err := DeleteAddonByName(s, resources.AddonNodeLocalDNS); err != nil {
+			return err
+		}
+	}
+
+	if s.Cluster.CloudProvider.Kubevirt != nil {
+		if err := migrateKubeVirtCredentials(s); err != nil {
 			return err
 		}
 	}

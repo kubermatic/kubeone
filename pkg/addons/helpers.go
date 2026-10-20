@@ -26,6 +26,7 @@ import (
 	embeddedaddons "k8c.io/kubeone/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clientutil"
+	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
@@ -35,6 +36,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
+	policyv1 "k8s.io/api/policy/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	storagev1 "k8s.io/api/storage/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
@@ -330,6 +332,45 @@ func migrateKubeVirtCCM(s *state.State) error {
 
 	for _, obj := range objs {
 		if err := clientutil.DeleteIfExists(s.Context, s.DynamicClient, obj); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// migrateKubeVirtMachineController deletes the tenant cluster objects of
+// machine-controller and its webhook from when they ran in the tenant cluster
+// with the infra kubeconfig. It runs after they are deployed in the infra
+// cluster. kubectl prune removes the Deployments, the Service and the serving
+// certificate Secret already, but not PodDisruptionBudgets.
+func migrateKubeVirtMachineController(s *state.State) error {
+	objs := []client.Object{
+		genNamedObject[appsv1.Deployment](resources.MachineControllerName, resources.MachineControllerNameSpace),
+		genNamedObject[appsv1.Deployment](resources.MachineControllerWebhookName, resources.MachineControllerNameSpace),
+		genNamedObject[corev1.Service](resources.MachineControllerWebhookName, resources.MachineControllerNameSpace),
+		genNamedObject[corev1.Secret]("machinecontroller-webhook-serving-cert", resources.MachineControllerNameSpace),
+		genNamedObject[policyv1.PodDisruptionBudget](resources.MachineControllerName, resources.MachineControllerNameSpace),
+		genNamedObject[policyv1.PodDisruptionBudget](resources.MachineControllerWebhookName, resources.MachineControllerNameSpace),
+	}
+
+	for _, obj := range objs {
+		if err := clientutil.DeleteIfExists(s.Context, s.DynamicClient, obj); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// migrateKubeVirtCredentials deletes the credentials Secrets that held the
+// infra kubeconfig in the tenant cluster. It runs after all addons and their
+// infra components are deployed, so nothing in the tenant cluster uses them
+// anymore.
+func migrateKubeVirtCredentials(s *state.State) error {
+	for _, name := range []string{credentials.SecretNameCCM, credentials.SecretNameMC, credentials.SecretNameOSM} {
+		secret := genNamedObject[corev1.Secret](name, credentials.SecretNamespace)
+		if err := clientutil.DeleteIfExists(s.Context, s.DynamicClient, secret); err != nil {
 			return err
 		}
 	}

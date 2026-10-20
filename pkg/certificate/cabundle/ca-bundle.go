@@ -36,6 +36,12 @@ const (
 )
 
 func Inject(caBundle string, podTpl *corev1.PodTemplateSpec) {
+	InjectFromConfigMap(caBundle, ConfigMapName, podTpl)
+}
+
+// InjectFromConfigMap is Inject with the CA bundle mounted from the named
+// ConfigMap, for pods that cannot use the ConfigMapName ConfigMap.
+func InjectFromConfigMap(caBundle, configMapName string, podTpl *corev1.PodTemplateSpec) {
 	if caBundle == "" {
 		return
 	}
@@ -47,7 +53,9 @@ func Inject(caBundle string, podTpl *corev1.PodTemplateSpec) {
 	hsh := sha256.New()
 	hsh.Write([]byte(caBundle))
 	podTpl.Annotations["kubeone.k8c.io/cabundle-hash"] = fmt.Sprintf("%x", hsh.Sum(nil))
-	podTpl.Spec.Volumes = append(podTpl.Spec.Volumes, Volume())
+	volume := Volume()
+	volume.ConfigMap.Name = configMapName
+	podTpl.Spec.Volumes = append(podTpl.Spec.Volumes, volume)
 
 	for idx := range podTpl.Spec.Containers {
 		cont := podTpl.Spec.Containers[idx]

@@ -35,6 +35,8 @@ const (
 	LabelClusterName = "kubeone_cluster_name"
 	// LabelComponent is set on every infra-side object to the name of the component it belongs to.
 	LabelComponent = "kubeone_component"
+	// LabelInfraNamespace is set on cluster-scoped infra-side objects to the InfraNamespace they belong to.
+	LabelInfraNamespace = "kubeone_infra_namespace"
 
 	// KubeconfigSecretKey is the key in kubeconfig Secrets holding the kubeconfig.
 	KubeconfigSecretKey = "kubeconfig"
@@ -50,6 +52,10 @@ type Component struct {
 
 	// Rules granted to the component in the InfraNamespace.
 	Rules []rbacv1.PolicyRule
+
+	// ClusterRules are granted to the component cluster-wide, for reading
+	// cluster-scoped resources such as StorageClasses. Keep them read-only.
+	ClusterRules []rbacv1.PolicyRule
 
 	// NeedsKubeconfig is true for components that cannot use in-cluster
 	// configuration to access the infra cluster. For them, a ServiceAccount
@@ -133,6 +139,48 @@ func (c Component) RoleBinding(clusterName, namespace string) *rbacv1.RoleBindin
 	}
 }
 
+// ClusterRoleName returns the name of the component's ClusterRole and
+// ClusterRoleBinding. It includes the namespace, as cluster names are only
+// unique within an InfraNamespace.
+func (c Component) ClusterRoleName(clusterName, namespace string) string {
+	return "kubeone:" + namespace + ":" + ObjectName(clusterName, c.Name)
+}
+
+func (c Component) clusterObjectMeta(clusterName, namespace string) metav1.ObjectMeta {
+	labels := Labels(clusterName, c.Name)
+	labels[LabelInfraNamespace] = namespace
+
+	return metav1.ObjectMeta{
+		Name:   c.ClusterRoleName(clusterName, namespace),
+		Labels: labels,
+	}
+}
+
+func (c Component) ClusterRole(clusterName, namespace string) *rbacv1.ClusterRole {
+	return &rbacv1.ClusterRole{
+		ObjectMeta: c.clusterObjectMeta(clusterName, namespace),
+		Rules:      c.ClusterRules,
+	}
+}
+
+func (c Component) ClusterRoleBinding(clusterName, namespace string) *rbacv1.ClusterRoleBinding {
+	return &rbacv1.ClusterRoleBinding{
+		ObjectMeta: c.clusterObjectMeta(clusterName, namespace),
+		RoleRef: rbacv1.RoleRef{
+			APIGroup: rbacv1.GroupName,
+			Kind:     "ClusterRole",
+			Name:     c.ClusterRoleName(clusterName, namespace),
+		},
+		Subjects: []rbacv1.Subject{
+			{
+				Kind:      rbacv1.ServiceAccountKind,
+				Name:      c.ServiceAccountName(clusterName),
+				Namespace: namespace,
+			},
+		},
+	}
+}
+
 func (c Component) TokenSecret(clusterName, namespace string) *corev1.Secret {
 	meta := c.objectMeta(clusterName, namespace, c.TokenSecretName(clusterName))
 	meta.Annotations = map[string]string{
@@ -156,13 +204,18 @@ func (c Component) kubeconfigSecret(clusterName, namespace, name string, kubecon
 }
 
 // EnsureIdentity reconciles the component's infra ServiceAccount, Role and
-// RoleBinding. For components that need a kubeconfig, it also reconciles the
+// RoleBinding, and the ClusterRole and ClusterRoleBinding if the component has
+// ClusterRules. For components that need a kubeconfig, it also reconciles the
 // ServiceAccount token Secret and the infra kubeconfig Secret.
 func (c Component) EnsureIdentity(ctx context.Context, infraClient ctrlrt.Client, clusterName, namespace string) error {
 	objs := []ctrlrt.Object{
 		c.ServiceAccount(clusterName, namespace),
 		c.Role(clusterName, namespace),
 		c.RoleBinding(clusterName, namespace),
+	}
+
+	if len(c.ClusterRules) > 0 {
+		objs = append(objs, c.ClusterRole(clusterName, namespace), c.ClusterRoleBinding(clusterName, namespace))
 	}
 
 	for _, obj := range objs {

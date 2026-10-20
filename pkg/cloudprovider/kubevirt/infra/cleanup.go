@@ -25,6 +25,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/selection"
@@ -41,8 +42,17 @@ func CleanupSelector(clusterName string) labels.Selector {
 	return labels.NewSelector().Add(*clusterReq, *componentReq)
 }
 
+// clusterCleanupSelector selects every cluster-scoped infra-side component
+// object of the cluster in the namespace.
+func clusterCleanupSelector(clusterName, namespace string) labels.Selector {
+	nsReq, _ := labels.NewRequirement(LabelInfraNamespace, selection.Equals, []string{namespace})
+
+	return CleanupSelector(clusterName).Add(*nsReq)
+}
+
 // Cleanup deletes every infra-side component object of the cluster in the
-// namespace. Workloads are deleted before the identities they use.
+// namespace, and the cluster-scoped objects belonging to it. Workloads are
+// deleted before the identities they use.
 func Cleanup(ctx context.Context, infraClient ctrlrt.Client, clusterName, namespace string) error {
 	lists := []ctrlrt.ObjectList{
 		&appsv1.DeploymentList{},
@@ -59,6 +69,25 @@ func Cleanup(ctx context.Context, infraClient ctrlrt.Client, clusterName, namesp
 		ctrlrt.MatchingLabelsSelector{Selector: CleanupSelector(clusterName)},
 	}
 
+	if err := deleteListed(ctx, infraClient, lists, opts...); err != nil {
+		return err
+	}
+
+	clusterLists := []ctrlrt.ObjectList{
+		&rbacv1.ClusterRoleBindingList{},
+		&rbacv1.ClusterRoleList{},
+	}
+
+	err := deleteListed(ctx, infraClient, clusterLists, ctrlrt.MatchingLabelsSelector{Selector: clusterCleanupSelector(clusterName, namespace)})
+	// Without permission to list cluster-scoped RBAC, KubeOne could not have created any.
+	if apierrors.IsForbidden(err) {
+		return nil
+	}
+
+	return err
+}
+
+func deleteListed(ctx context.Context, infraClient ctrlrt.Client, lists []ctrlrt.ObjectList, opts ...ctrlrt.ListOption) error {
 	for _, list := range lists {
 		if err := infraClient.List(ctx, list, opts...); err != nil {
 			return fail.KubeClient(err, "listing %T", list)
