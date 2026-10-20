@@ -276,3 +276,20 @@ func TestNodeSetForMachine(t *testing.T) {
 		t.Error("expected an error for a machine outside the nodeSet replicas")
 	}
 }
+
+func TestGenerateMachinesKeepsNodeSetLabels(t *testing.T) {
+	nodeSets := testNodeSets(validSpec, 1)
+	nodeSets[0].NodeSettings.Labels = map[string]string{"team": "a"}
+
+	machines, err := generateControlPlaneMachines("demo", nodeSets, "v1.36.0")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if !reflect.DeepEqual(nodeSets[0].NodeSettings.Labels, map[string]string{"team": "a"}) {
+		t.Errorf("nodeSet labels must not change, got %v", nodeSets[0].NodeSettings.Labels)
+	}
+	if got := machines[0].Spec.Labels; got["team"] != "a" || got["kubeone_role"] != "control-plane" {
+		t.Errorf("unexpected machine labels %v", got)
+	}
+}

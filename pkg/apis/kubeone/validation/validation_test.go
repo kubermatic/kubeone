@@ -17,6 +17,7 @@ limitations under the License.
 package validation
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -3336,6 +3337,7 @@ func TestValidateDigitalOceanSpec(t *testing.T) {
 
 	tests := []struct {
 		name          string
+		clusterName   string
 		lb            *kubeoneapi.DigitalOceanLoadBalancer
 		nodeSets      []kubeoneapi.NodeSet
 		expectedError bool
@@ -3343,6 +3345,17 @@ func TestValidateDigitalOceanSpec(t *testing.T) {
 		{
 			name: "no nodeSets",
 			lb:   &kubeoneapi.DigitalOceanLoadBalancer{SizeUnit: 500},
+		},
+		{
+			name:          "cluster name too long for droplet tags",
+			clusterName:   strings.Repeat("a", 235),
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, validSpec)},
+			expectedError: true,
+		},
+		{
+			name:        "longest cluster name",
+			clusterName: strings.Repeat("a", 234),
+			nodeSets:    []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, validSpec)},
 		},
 		{
 			name:     "valid create mode",
@@ -3424,6 +3437,7 @@ func TestValidateDigitalOceanSpec(t *testing.T) {
 			}
 
 			cluster := kubeoneapi.KubeOneCluster{
+				Name:          tc.clusterName,
 				CloudProvider: kubeoneapi.CloudProviderSpec{DigitalOcean: spec},
 				ControlPlane:  kubeoneapi.ControlPlaneConfig{NodeSets: tc.nodeSets},
 			}

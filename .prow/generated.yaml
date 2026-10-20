@@ -7032,7 +7032,7 @@ presubmits:
   name: pull-kubeone-e2e-digitalocean-install-managed-cp-v1.35
   optional: false
   path_alias: k8c.io/kubeone
-  run_if_changed: (pkg/cloudprovider/(digitalocean/|provider\.go)|pkg/provisioner/|pkg/tasks/cloud_resources_provision\.go|pkg/tasks/reset\.go|test/e2e/(scenario_managed_cp|managed_cp_cloud)\.go|test/e2e/testdata/managed_cp_digitalocean)
+  run_if_changed: (pkg/cloudprovider/(digitalocean/|provider\.go)|pkg/provisioner/|pkg/tasks/cloud_resources_provision\.go|pkg/tasks/reset\.go|pkg/apis/kubeone/(config|validation)/|pkg/credentials/|test/e2e/(scenario_managed_cp|managed_cp_cloud)\.go|test/e2e/testdata/managed_cp_digitalocean)
   spec:
     containers:
     - command:
@@ -7058,7 +7058,7 @@ presubmits:
   name: pull-kubeone-e2e-digitalocean-install-managed-cp-v1.36
   optional: false
   path_alias: k8c.io/kubeone
-  run_if_changed: (pkg/cloudprovider/(digitalocean/|provider\.go)|pkg/provisioner/|pkg/tasks/cloud_resources_provision\.go|pkg/tasks/reset\.go|test/e2e/(scenario_managed_cp|managed_cp_cloud)\.go|test/e2e/testdata/managed_cp_digitalocean)
+  run_if_changed: (pkg/cloudprovider/(digitalocean/|provider\.go)|pkg/provisioner/|pkg/tasks/cloud_resources_provision\.go|pkg/tasks/reset\.go|pkg/apis/kubeone/(config|validation)/|pkg/credentials/|test/e2e/(scenario_managed_cp|managed_cp_cloud)\.go|test/e2e/testdata/managed_cp_digitalocean)
   spec:
     containers:
     - command:
@@ -7084,7 +7084,7 @@ presubmits:
   name: pull-kubeone-e2e-digitalocean-install-managed-cp-v1.37
   optional: false
   path_alias: k8c.io/kubeone
-  run_if_changed: (pkg/cloudprovider/(digitalocean/|provider\.go)|pkg/provisioner/|pkg/tasks/cloud_resources_provision\.go|pkg/tasks/reset\.go|test/e2e/(scenario_managed_cp|managed_cp_cloud)\.go|test/e2e/testdata/managed_cp_digitalocean)
+  run_if_changed: (pkg/cloudprovider/(digitalocean/|provider\.go)|pkg/provisioner/|pkg/tasks/cloud_resources_provision\.go|pkg/tasks/reset\.go|pkg/apis/kubeone/(config|validation)/|pkg/credentials/|test/e2e/(scenario_managed_cp|managed_cp_cloud)\.go|test/e2e/testdata/managed_cp_digitalocean)
   spec:
     containers:
     - command:

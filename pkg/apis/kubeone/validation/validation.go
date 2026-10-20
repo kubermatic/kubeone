@@ -285,7 +285,7 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("digitalocean"), "only one provider can be used at the same time"))
 		}
 		providerFound = true
-		allErrs = append(allErrs, validateDigitalOceanSpec(providerSpec.DigitalOcean, cluster.ControlPlane.NodeSets, fldPath.Child("digitalocean"))...)
+		allErrs = append(allErrs, validateDigitalOceanSpec(providerSpec.DigitalOcean, cluster.Name, cluster.ControlPlane.NodeSets, fldPath.Child("digitalocean"))...)
 	}
 	if providerSpec.GCE != nil {
 		if providerFound {
@@ -392,8 +392,13 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 // awsResourceNameMaxLength is the max length AWS accepts for NLB/Target Group names.
 const awsResourceNameMaxLength = 32
 
-// digitalOceanResourceNameMaxLength is the max length DigitalOcean accepts for load balancer names.
+// digitalOceanResourceNameMaxLength is the max length DigitalOcean accepts for load balancer and tag names.
 const digitalOceanResourceNameMaxLength = 255
+
+// digitalOceanClusterNameMaxLength is the longest cluster name that fits in
+// the droplet tags KubeOne adds (DigitalOcean tags are at most 255
+// characters), the longest one being "kubeone_cluster_name:<cluster>".
+const digitalOceanClusterNameMaxLength = digitalOceanResourceNameMaxLength - len("kubeone_cluster_name:")
 
 func validateAWSSpec(awsSpec *kubeoneapi.AWSSpec, fldPath *field.Path) field.ErrorList {
 	var allErrs field.ErrorList
@@ -458,11 +463,15 @@ var digitalOceanSupportedOperatingSystems = []string{
 	string(kubeoneapi.OperatingSystemNameRockyLinux),
 }
 
-func validateDigitalOceanSpec(doSpec *kubeoneapi.DigitalOceanSpec, nodeSets []kubeoneapi.NodeSet, fldPath *field.Path) field.ErrorList {
+func validateDigitalOceanSpec(doSpec *kubeoneapi.DigitalOceanSpec, clusterName string, nodeSets []kubeoneapi.NodeSet, fldPath *field.Path) field.ErrorList {
 	var allErrs field.ErrorList
 
 	if len(nodeSets) == 0 {
 		return allErrs
+	}
+
+	if len(clusterName) > digitalOceanClusterNameMaxLength {
+		allErrs = append(allErrs, field.Invalid(field.NewPath("name"), clusterName, fmt.Sprintf("cluster name must not exceed %d characters for a DigitalOcean managed control plane, it's used in droplet tags", digitalOceanClusterNameMaxLength)))
 	}
 
 	var lb kubeoneapi.DigitalOceanLoadBalancer

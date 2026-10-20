@@ -94,12 +94,19 @@ func (p *Provider) EnsureVM(s *state.State, capimachine clusterv1alpha1.Machine)
 	return nil
 }
 
+// controlPlaneMachineName is the deterministic machine (and droplet) name of
+// the idx-th replica of a nodeSet. CleanupVMs regenerates the machines to find
+// the droplets to delete, so it must not change between apply and reset.
+func controlPlaneMachineName(clusterName, nodeSetName string, idx int) string {
+	return fmt.Sprintf("%s-%s-%d", clusterName, nodeSetName, idx)
+}
+
 // nodeSetForMachine returns the nodeSet the machine was generated from, so
 // that its host gets the SSH settings, labels and taints of that nodeSet.
 func nodeSetForMachine(clusterName string, nodeSets []kubeoneapi.NodeSet, machineName string) (kubeoneapi.NodeSet, error) {
 	for _, nodeSet := range nodeSets {
 		for idx := range nodeSet.Replicas {
-			if machineName == fmt.Sprintf("%s-%s-%d", clusterName, nodeSet.Name, idx) {
+			if machineName == controlPlaneMachineName(clusterName, nodeSet.Name, idx) {
 				return nodeSet, nil
 			}
 		}
@@ -206,10 +213,13 @@ func generateControlPlaneMachines(clusterName string, nodeSets []kubeoneapi.Node
 			"kubeone_role":         "control-plane",
 		}
 
-		if node.NodeSettings.Labels == nil {
-			node.NodeSettings.Labels = map[string]string{}
+		// Copy, so the user's nodeSet labels (which become node labels) are
+		// left unchanged
+		machineLabels := maps.Clone(node.NodeSettings.Labels)
+		if machineLabels == nil {
+			machineLabels = map[string]string{}
 		}
-		maps.Copy(node.NodeSettings.Labels, labels)
+		maps.Copy(machineLabels, labels)
 
 		osSpecRaw, err := json.Marshal(node.OperatingSystemSpec)
 		if err != nil {
@@ -252,7 +262,7 @@ func generateControlPlaneMachines(clusterName string, nodeSets []kubeoneapi.Node
 				return nil, fail.Cloud(err, "digitalocean", "json marshaling provider config")
 			}
 
-			name := fmt.Sprintf("%s-%s-%d", clusterName, node.Name, idx)
+			name := controlPlaneMachineName(clusterName, node.Name, idx)
 			machines = append(machines, clusterv1alpha1.Machine{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: name,
@@ -263,7 +273,7 @@ func generateControlPlaneMachines(clusterName string, nodeSets []kubeoneapi.Node
 				Spec: clusterv1alpha1.MachineSpec{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:        name,
-						Labels:      node.NodeSettings.Labels,
+						Labels:      machineLabels,
 						Annotations: node.NodeSettings.Annotations,
 					},
 					Taints: node.NodeSettings.Taints,

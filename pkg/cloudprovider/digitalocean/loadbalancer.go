@@ -46,16 +46,12 @@ var (
 	lbPollInterval = 10 * time.Second
 	lbPollTimeout  = 10 * time.Minute
 
-	// newLBClient builds the load balancers client. Variable to allow
-	// injecting a fake in tests.
-	newLBClient = func(token string) godo.LoadBalancersService {
-		return godo.NewFromToken(token).LoadBalancers
-	}
+	// newClients builds the load balancers and VPCs clients from one godo
+	// client. Variable to allow injecting fakes in tests.
+	newClients = func(token string) (godo.LoadBalancersService, vpcGetter) {
+		client := godo.NewFromToken(token)
 
-	// newVPCClient builds the VPCs client. Variable to allow injecting a fake
-	// in tests.
-	newVPCClient = func(token string) vpcGetter {
-		return godo.NewFromToken(token).VPCs
+		return client.LoadBalancers, client.VPCs
 	}
 
 	errLBNotFound = errors.New("load balancer not found")
@@ -150,7 +146,9 @@ func lbClient(s *state.State) (godo.LoadBalancersService, vpcGetter, error) {
 		return nil, nil, err
 	}
 
-	return newLBClient(token), newVPCClient(token), nil
+	lbs, vpcs := newClients(token)
+
+	return lbs, vpcs, nil
 }
 
 func ensureLoadBalancer(ctx context.Context, client godo.LoadBalancersService, vpcs vpcGetter, cluster *kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) (*godo.LoadBalancer, error) {
@@ -161,7 +159,7 @@ func ensureLoadBalancer(ctx context.Context, client godo.LoadBalancersService, v
 		return ensureExistingLoadBalancer(ctx, client, vpcs, cluster, logger)
 	}
 
-	lb, err := findLoadBalancerByName(ctx, client, spec.Name)
+	lb, err := findLoadBalancerByName(ctx, client, spec.Name, spec.Region)
 	switch {
 	case err == nil:
 		logger.Debugf("load balancer %q already exists with id: %s", lb.Name, lb.ID)
@@ -178,9 +176,9 @@ func ensureLoadBalancer(ctx context.Context, client godo.LoadBalancersService, v
 				"ensuring load balancer",
 			)
 		}
-		if err = checkRegion(lb, spec.Region); err != nil {
-			return nil, fail.Cloud(err, "digitalocean", "ensuring load balancer")
-		}
+
+		// Restore the kube-apiserver rule and health check if they were changed
+		return reconcileLoadBalancer(ctx, client, lb, "", logger)
 	case errors.Is(err, errLBNotFound):
 		logger.Infof("creating load balancer %q", spec.Name)
 		lb, _, err = client.Create(ctx, createRequest(cluster))
@@ -203,6 +201,24 @@ func ensureExistingLoadBalancer(ctx context.Context, client godo.LoadBalancersSe
 		return nil, err
 	}
 
+	// DigitalOcean rejects updates while the load balancer is provisioning.
+	// Waiting first also means the checks below see its final configuration.
+	if lb.Status != lbStatusUp {
+		if lb, err = waitForLoadBalancer(ctx, client, lb, logger); err != nil {
+			return nil, err
+		}
+	}
+
+	// Global load balancers only forward HTTP/HTTPS on port 80 or 443 with a
+	// single rule, kube-apiserver needs TCP passthrough on 6443 so TLS and
+	// client certificate authentication end at the apiserver
+	if lb.Type == godo.LoadBalancerTypeGlobal {
+		return nil, fail.Cloud(
+			fmt.Errorf("load balancer %q is a global load balancer, which only forwards HTTP/HTTPS; kube-apiserver requires a regional load balancer forwarding TCP on port %d", lb.Name, kubeAPIPort),
+			"digitalocean",
+			"configuring load balancer %q", spec.ID,
+		)
+	}
 	if err = checkRegion(lb, spec.Region); err != nil {
 		return nil, fail.Cloud(err, "digitalocean", "configuring load balancer %q", spec.ID)
 	}
@@ -210,11 +226,11 @@ func ensureExistingLoadBalancer(ctx context.Context, client godo.LoadBalancersSe
 		return nil, fail.Cloud(err, "digitalocean", "configuring load balancer %q", spec.ID)
 	}
 
-	needsTag := false
+	setTag := ""
 	switch {
 	case lb.Tag == backendTag:
 	case lb.Tag == "" && len(lb.DropletIDs) == 0:
-		needsTag = true
+		setTag = backendTag
 	default:
 		return nil, fail.Cloud(
 			fmt.Errorf("load balancer %q already has backends (tag %q, %d droplets), it must target droplets tagged %q or have no backends", lb.Name, lb.Tag, len(lb.DropletIDs), backendTag),
@@ -223,34 +239,59 @@ func ensureExistingLoadBalancer(ctx context.Context, client godo.LoadBalancersSe
 		)
 	}
 
+	return reconcileLoadBalancer(ctx, client, lb, setTag, logger)
+}
+
+// reconcileLoadBalancer makes the load balancer forward TCP 6443 to the
+// control plane droplets and health check them on that port, setting setTag
+// as backend selector if it's not empty. All changes are applied in
+// a single Update, DigitalOcean rejects changes while a previous one is still
+// being applied.
+func reconcileLoadBalancer(ctx context.Context, client godo.LoadBalancersService, lb *godo.LoadBalancer, setTag string, logger logrus.FieldLogger) (*godo.LoadBalancer, error) {
+	var err error
+
+	// DigitalOcean rejects updates while the load balancer is provisioning
+	if lb.Status != lbStatusUp {
+		if lb, err = waitForLoadBalancer(ctx, client, lb, logger); err != nil {
+			return nil, err
+		}
+	}
+
 	hasRule, err := hasKubeAPIForwardingRule(lb)
 	if err != nil {
-		return nil, fail.Cloud(err, "digitalocean", "configuring load balancer %q", spec.ID)
+		return nil, fail.Cloud(err, "digitalocean", "configuring load balancer %q", lb.ID)
 	}
 
 	needsHealthCheck := !isKubeAPIHealthCheck(lb.HealthCheck)
 
-	// A single Update, DigitalOcean rejects changes while a previous one is
-	// still being applied
-	if needsTag || needsHealthCheck || !hasRule {
-		req := lb.AsRequest()
-		if needsTag {
-			logger.Infof("configuring load balancer %q to target droplets tagged %q", lb.Name, backendTag)
-			req.Tag = backendTag
-			req.DropletIDs = nil
-		}
-		if needsHealthCheck {
-			logger.Infof("configuring load balancer %q to health check kube-apiserver on port %d", lb.Name, kubeAPIPort)
-			req.HealthCheck = kubeAPIHealthCheck()
-		}
-		if !hasRule {
-			logger.Infof("adding kube-apiserver forwarding rule to load balancer %q", lb.Name)
-			req.ForwardingRules = append(req.ForwardingRules, kubeAPIForwardingRule())
-		}
-		lb, _, err = client.Update(ctx, lb.ID, req)
-		if err != nil {
-			return nil, fail.Cloud(err, "digitalocean", "updating load balancer %q", spec.ID)
-		}
+	if setTag == "" && !needsHealthCheck && hasRule {
+		return lb, nil
+	}
+
+	req := lb.AsRequest()
+	// AsRequest copies both size fields, but they're mutually exclusive
+	if req.SizeUnit > 0 {
+		req.SizeSlug = ""
+	}
+	if setTag != "" {
+		logger.Infof("configuring load balancer %q to target droplets tagged %q", lb.Name, setTag)
+		req.Tag = setTag
+	}
+	// AsRequest also copies the droplets DigitalOcean resolved from the tag,
+	// but tag and droplet_ids are mutually exclusive
+	req.DropletIDs = nil
+	if needsHealthCheck {
+		logger.Infof("configuring load balancer %q to health check kube-apiserver on port %d", lb.Name, kubeAPIPort)
+		req.HealthCheck = kubeAPIHealthCheck()
+	}
+	if !hasRule {
+		logger.Infof("adding kube-apiserver forwarding rule to load balancer %q", lb.Name)
+		req.ForwardingRules = append(req.ForwardingRules, kubeAPIForwardingRule())
+	}
+
+	lb, _, err = client.Update(ctx, lb.ID, req)
+	if err != nil {
+		return nil, fail.Cloud(err, "digitalocean", "updating load balancer %q", lb.ID)
 	}
 
 	return waitForLoadBalancer(ctx, client, lb, logger)
@@ -295,18 +336,19 @@ func lookupLoadBalancer(ctx context.Context, client godo.LoadBalancersService, c
 		return getLoadBalancer(ctx, client, spec.ID)
 	}
 
-	lb, err := findLoadBalancerByName(ctx, client, spec.Name)
+	lb, err := findLoadBalancerByName(ctx, client, spec.Name, spec.Region)
 	if errors.Is(err, errLBNotFound) {
-		return nil, fail.Cloud(fmt.Errorf("no load balancer found with name: %s", spec.Name), "digitalocean", "looking up load balancer")
+		return nil, fail.Cloud(fmt.Errorf("no load balancer found with name %q in region %q", spec.Name, spec.Region), "digitalocean", "looking up load balancer")
 	}
 
 	return lb, err
 }
 
 func cleanupLoadBalancer(ctx context.Context, client godo.LoadBalancersService, cluster *kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) error {
-	name := lbSpec(cluster).Name
+	spec := lbSpec(cluster)
+	name := spec.Name
 
-	lb, err := findLoadBalancerByName(ctx, client, name)
+	lb, err := findLoadBalancerByName(ctx, client, name, spec.Region)
 	if errors.Is(err, errLBNotFound) {
 		logger.Debugf("no load balancer %q found, skipping deletion", name)
 
@@ -449,8 +491,10 @@ func getLoadBalancer(ctx context.Context, client godo.LoadBalancersService, id s
 }
 
 // findLoadBalancerByName lists all load balancers and returns the one with the
-// given name. The DigitalOcean API doesn't support filtering by name.
-func findLoadBalancerByName(ctx context.Context, client godo.LoadBalancersService, name string) (*godo.LoadBalancer, error) {
+// given name in the given region (any region if empty). Names are only unique
+// per region, clusters with the same name can exist in different regions. The
+// DigitalOcean API doesn't support filtering by name.
+func findLoadBalancerByName(ctx context.Context, client godo.LoadBalancersService, name, region string) (*godo.LoadBalancer, error) {
 	opts := &godo.ListOptions{Page: 1, PerPage: lbPageSize}
 
 	for {
@@ -460,7 +504,7 @@ func findLoadBalancerByName(ctx context.Context, client godo.LoadBalancersServic
 		}
 
 		for i := range lbs {
-			if lbs[i].Name == name {
+			if lbs[i].Name == name && (region == "" || lbs[i].Region != nil && lbs[i].Region.Slug == region) {
 				return &lbs[i], nil
 			}
 		}

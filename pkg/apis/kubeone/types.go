@@ -639,7 +639,9 @@ type DigitalOceanLoadBalancer struct {
 	// Name of the load balancer to create. Default: "<CLUSTER_NAME>-kubeapi"
 	Name string `json:"name,omitempty"`
 
-	// Region of the load balancer to create. Default: region of the first control plane nodeSet
+	// Region of the load balancer, must match the control plane nodeSets region.
+	// Used to find the load balancer by name, and to check a load balancer
+	// referenced by ID. Default: region of the first control plane nodeSet
 	Region string `json:"region,omitempty"`
 
 	// SizeUnit is the number of nodes of the load balancer to create (1-100),
