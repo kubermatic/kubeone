@@ -19,6 +19,7 @@ package addons
 import (
 	"io/fs"
 	"reflect"
+	"slices"
 
 	embeddedaddons "k8c.io/kubeone/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -429,4 +430,44 @@ func genNamedObject[T any, PT interface {
 	}
 
 	return t
+}
+
+// flatcarNodesPresent returns true if at least one node of the cluster runs
+// Flatcar Linux. Besides the control plane and static worker hosts, the
+// operating system of dynamic workers (MachineDeployments) is considered.
+// Nodes that exist in the live cluster but are not part of the manifest are
+// considered as well, because HostConfig.OperatingSystem can be populated at
+// runtime.
+func flatcarNodesPresent(cluster *kubeoneapi.KubeOneCluster, live *state.Cluster) bool {
+	isFlatcar := func(hosts []kubeoneapi.HostConfig) bool {
+		for _, host := range hosts {
+			if host.OperatingSystem == kubeoneapi.OperatingSystemNameFlatcar {
+				return true
+			}
+		}
+
+		return false
+	}
+
+	if cluster != nil {
+		if isFlatcar(cluster.ControlPlane.Hosts) || isFlatcar(cluster.StaticWorkers.Hosts) {
+			return true
+		}
+
+		for _, dw := range cluster.DynamicWorkers {
+			if dw.Config.OperatingSystem == string(kubeoneapi.OperatingSystemNameFlatcar) {
+				return true
+			}
+		}
+	}
+
+	if live != nil {
+		for _, host := range append(slices.Clone(live.ControlPlane), live.StaticWorkers...) {
+			if host.Config != nil && host.Config.OperatingSystem == kubeoneapi.OperatingSystemNameFlatcar {
+				return true
+			}
+		}
+	}
+
+	return false
 }
