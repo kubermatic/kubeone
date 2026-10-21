@@ -46,35 +46,35 @@ const (
 )
 
 var (
-	_ cloudprovider.ControlPlaneCloudProvider = &Provider{}
-	_ cloudprovider.LoadBalancerProvider      = &Provider{}
-	_ cloudprovider.CleanupPreparer           = &Provider{}
+	_ cloudprovider.ControlPlaneCloudProvider = &provider{}
+	_ cloudprovider.LoadBalancerProvider      = &provider{}
+	_ cloudprovider.CleanupPreparer           = &provider{}
 
 	// invalidTagChars matches characters not allowed in DigitalOcean tag names
 	invalidTagChars = regexp.MustCompile(`[^a-zA-Z0-9:_-]`)
 )
 
 func init() {
-	cloudprovider.Register(&Provider{})
+	cloudprovider.Register(&provider{})
 }
 
-type Provider struct{}
+type provider struct{}
 
-func (p *Provider) Name() string { return "DigitalOcean" }
+func (p *provider) Name() string { return "DigitalOcean" }
 
-func (p *Provider) Enabled(s *state.State) bool {
+func (p *provider) Enabled(s *state.State) bool {
 	return s.Cluster.CloudProvider.DigitalOcean != nil && len(s.Cluster.ControlPlane.NodeSets) > 0
 }
 
-func (p *Provider) MatchesConfig(cluster *kubeoneapi.KubeOneCluster) bool {
+func (p *provider) MatchesConfig(cluster *kubeoneapi.KubeOneCluster) bool {
 	return cluster.CloudProvider.DigitalOcean != nil
 }
 
-func (p *Provider) GenerateMachines(clusterName string, nodeSets []kubeoneapi.NodeSet, kubeletVersion string) ([]clusterv1alpha1.Machine, error) {
+func (p *provider) GenerateMachines(clusterName string, nodeSets []kubeoneapi.NodeSet, kubeletVersion string) ([]clusterv1alpha1.Machine, error) {
 	return generateControlPlaneMachines(clusterName, nodeSets, kubeletVersion)
 }
 
-func (p *Provider) EnsureVM(s *state.State, capimachine clusterv1alpha1.Machine) error {
+func (p *provider) EnsureVM(s *state.State, capimachine clusterv1alpha1.Machine) error {
 	if err := exportCredentials(s); err != nil {
 		return err
 	}
@@ -101,6 +101,14 @@ func controlPlaneMachineName(clusterName, nodeSetName string, idx int) string {
 	return fmt.Sprintf("%s-%s-%d", clusterName, nodeSetName, idx)
 }
 
+// controlPlaneMachineUID is the machine UID, which machine-controller adds as
+// droplet tag and uses together with the name to find the droplet. Droplets of
+// all regions are searched, so the region is part of the UID to keep clusters
+// with the same name in different regions apart.
+func controlPlaneMachineUID(machineName, region string) types.UID {
+	return types.UID(sanitizeTag(machineName + "-" + region))
+}
+
 // nodeSetForMachine returns the nodeSet the machine was generated from, so
 // that its host gets the SSH settings, labels and taints of that nodeSet.
 func nodeSetForMachine(clusterName string, nodeSets []kubeoneapi.NodeSet, machineName string) (kubeoneapi.NodeSet, error) {
@@ -115,7 +123,7 @@ func nodeSetForMachine(clusterName string, nodeSets []kubeoneapi.NodeSet, machin
 	return kubeoneapi.NodeSet{}, fail.Config(fmt.Errorf("machine %q doesn't belong to any control plane nodeSet", machineName), "finding nodeSet")
 }
 
-func (p *Provider) LookupVMs(s *state.State) error {
+func (p *provider) LookupVMs(s *state.State) error {
 	if err := exportCredentials(s); err != nil {
 		return err
 	}
@@ -139,7 +147,7 @@ func (p *Provider) LookupVMs(s *state.State) error {
 	return nil
 }
 
-func (p *Provider) PrepareCleanup(s *state.State) error {
+func (p *provider) PrepareCleanup(s *state.State) error {
 	return exportCredentials(s)
 }
 
@@ -266,9 +274,7 @@ func generateControlPlaneMachines(clusterName string, nodeSets []kubeoneapi.Node
 			machines = append(machines, clusterv1alpha1.Machine{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: name,
-					// machine-controller tags the droplet with the UID, so it
-					// must be a valid DigitalOcean tag
-					UID: types.UID(sanitizeTag(name)),
+					UID:  controlPlaneMachineUID(name, doConfig.Region.Value),
 				},
 				Spec: clusterv1alpha1.MachineSpec{
 					ObjectMeta: metav1.ObjectMeta{

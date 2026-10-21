@@ -70,11 +70,11 @@ func lbSpec(cluster *kubeoneapi.KubeOneCluster) kubeoneapi.DigitalOceanLoadBalan
 	return cluster.CloudProvider.DigitalOcean.ControlPlane.LoadBalancer
 }
 
-func (p *Provider) HasLoadBalancer(s *state.State) bool {
+func (p *provider) HasLoadBalancer(s *state.State) bool {
 	return p.Enabled(s)
 }
 
-func (p *Provider) EnsureLoadBalancer(s *state.State) error {
+func (p *provider) EnsureLoadBalancer(s *state.State) error {
 	if s.Cluster.APIEndpoint.Host != "" {
 		return nil
 	}
@@ -95,7 +95,7 @@ func (p *Provider) EnsureLoadBalancer(s *state.State) error {
 	return nil
 }
 
-func (p *Provider) LookupLoadBalancer(s *state.State) error {
+func (p *provider) LookupLoadBalancer(s *state.State) error {
 	if s.Cluster.APIEndpoint.Host != "" {
 		return nil
 	}
@@ -124,7 +124,7 @@ func (p *Provider) LookupLoadBalancer(s *state.State) error {
 	return nil
 }
 
-func (p *Provider) CleanupLoadBalancer(s *state.State) error {
+func (p *provider) CleanupLoadBalancer(s *state.State) error {
 	spec := lbSpec(s.Cluster)
 	if spec.ID != "" {
 		s.Logger.Infof("load balancer %q is not managed by KubeOne, skipping deletion", spec.ID)
@@ -159,7 +159,7 @@ func ensureLoadBalancer(ctx context.Context, client godo.LoadBalancersService, v
 		return ensureExistingLoadBalancer(ctx, client, vpcs, cluster, logger)
 	}
 
-	lb, err := findLoadBalancerByName(ctx, client, spec.Name, spec.Region)
+	lb, err := findLoadBalancerByName(ctx, client, spec.Name, spec.Region, cluster.Name)
 	switch {
 	case err == nil:
 		logger.Debugf("load balancer %q already exists with id: %s", lb.Name, lb.ID)
@@ -177,7 +177,12 @@ func ensureLoadBalancer(ctx context.Context, client godo.LoadBalancersService, v
 			)
 		}
 
-		// Restore the kube-apiserver rule and health check if they were changed
+		// DigitalOcean rejects updates while the load balancer is provisioning
+		if lb, err = waitForLoadBalancer(ctx, client, lb, false, logger); err != nil {
+			return nil, err
+		}
+
+		// Restore a missing kube-apiserver rule and the health check
 		return reconcileLoadBalancer(ctx, client, lb, "", logger)
 	case errors.Is(err, errLBNotFound):
 		logger.Infof("creating load balancer %q", spec.Name)
@@ -185,11 +190,12 @@ func ensureLoadBalancer(ctx context.Context, client godo.LoadBalancersService, v
 		if err != nil {
 			return nil, fail.Cloud(err, "digitalocean", "creating load balancer")
 		}
+
+		// A new load balancer might not be visible right away
+		return waitForLoadBalancer(ctx, client, lb, true, logger)
 	default:
 		return nil, err
 	}
-
-	return waitForLoadBalancer(ctx, client, lb, logger)
 }
 
 func ensureExistingLoadBalancer(ctx context.Context, client godo.LoadBalancersService, vpcs vpcGetter, cluster *kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) (*godo.LoadBalancer, error) {
@@ -203,10 +209,8 @@ func ensureExistingLoadBalancer(ctx context.Context, client godo.LoadBalancersSe
 
 	// DigitalOcean rejects updates while the load balancer is provisioning.
 	// Waiting first also means the checks below see its final configuration.
-	if lb.Status != lbStatusUp {
-		if lb, err = waitForLoadBalancer(ctx, client, lb, logger); err != nil {
-			return nil, err
-		}
+	if lb, err = waitForLoadBalancer(ctx, client, lb, false, logger); err != nil {
+		return nil, err
 	}
 
 	// Global load balancers only forward HTTP/HTTPS on port 80 or 443 with a
@@ -242,21 +246,12 @@ func ensureExistingLoadBalancer(ctx context.Context, client godo.LoadBalancersSe
 	return reconcileLoadBalancer(ctx, client, lb, setTag, logger)
 }
 
-// reconcileLoadBalancer makes the load balancer forward TCP 6443 to the
+// reconcileLoadBalancer makes the active load balancer forward TCP 6443 to the
 // control plane droplets and health check them on that port, setting setTag
 // as backend selector if it's not empty. All changes are applied in
 // a single Update, DigitalOcean rejects changes while a previous one is still
 // being applied.
 func reconcileLoadBalancer(ctx context.Context, client godo.LoadBalancersService, lb *godo.LoadBalancer, setTag string, logger logrus.FieldLogger) (*godo.LoadBalancer, error) {
-	var err error
-
-	// DigitalOcean rejects updates while the load balancer is provisioning
-	if lb.Status != lbStatusUp {
-		if lb, err = waitForLoadBalancer(ctx, client, lb, logger); err != nil {
-			return nil, err
-		}
-	}
-
 	hasRule, err := hasKubeAPIForwardingRule(lb)
 	if err != nil {
 		return nil, fail.Cloud(err, "digitalocean", "configuring load balancer %q", lb.ID)
@@ -289,12 +284,13 @@ func reconcileLoadBalancer(ctx context.Context, client godo.LoadBalancersService
 		req.ForwardingRules = append(req.ForwardingRules, kubeAPIForwardingRule())
 	}
 
-	lb, _, err = client.Update(ctx, lb.ID, req)
+	// godo returns a nil load balancer on errors
+	updated, _, err := client.Update(ctx, lb.ID, req)
 	if err != nil {
 		return nil, fail.Cloud(err, "digitalocean", "updating load balancer %q", lb.ID)
 	}
 
-	return waitForLoadBalancer(ctx, client, lb, logger)
+	return waitForLoadBalancer(ctx, client, updated, false, logger)
 }
 
 // checkRegion fails if the load balancer isn't in the nodeSets region.
@@ -336,7 +332,7 @@ func lookupLoadBalancer(ctx context.Context, client godo.LoadBalancersService, c
 		return getLoadBalancer(ctx, client, spec.ID)
 	}
 
-	lb, err := findLoadBalancerByName(ctx, client, spec.Name, spec.Region)
+	lb, err := findLoadBalancerByName(ctx, client, spec.Name, spec.Region, cluster.Name)
 	if errors.Is(err, errLBNotFound) {
 		return nil, fail.Cloud(fmt.Errorf("no load balancer found with name %q in region %q", spec.Name, spec.Region), "digitalocean", "looking up load balancer")
 	}
@@ -348,7 +344,7 @@ func cleanupLoadBalancer(ctx context.Context, client godo.LoadBalancersService, 
 	spec := lbSpec(cluster)
 	name := spec.Name
 
-	lb, err := findLoadBalancerByName(ctx, client, name, spec.Region)
+	lb, err := findLoadBalancerByName(ctx, client, name, spec.Region, cluster.Name)
 	if errors.Is(err, errLBNotFound) {
 		logger.Debugf("no load balancer %q found, skipping deletion", name)
 
@@ -443,8 +439,10 @@ func hasKubeAPIForwardingRule(lb *godo.LoadBalancer) (bool, error) {
 }
 
 // waitForLoadBalancer waits until the load balancer is active and has an IP
-// address assigned, DigitalOcean assigns it only after provisioning.
-func waitForLoadBalancer(ctx context.Context, client godo.LoadBalancersService, lb *godo.LoadBalancer, logger logrus.FieldLogger) (*godo.LoadBalancer, error) {
+// address assigned, DigitalOcean assigns it only after provisioning. If
+// justCreated is true, the load balancer not being found is retried, as it
+// might not be visible yet.
+func waitForLoadBalancer(ctx context.Context, client godo.LoadBalancersService, lb *godo.LoadBalancer, justCreated bool, logger logrus.FieldLogger) (*godo.LoadBalancer, error) {
 	if lb.Status == lbStatusUp && lb.IP != "" {
 		return lb, nil
 	}
@@ -455,7 +453,7 @@ func waitForLoadBalancer(ctx context.Context, client godo.LoadBalancersService, 
 	err := wait.PollUntilContextTimeout(ctx, lbPollInterval, lbPollTimeout, true, func(ctx context.Context) (bool, error) {
 		got, resp, err := client.Get(ctx, lb.ID)
 		if err != nil {
-			if isPermanentError(resp) {
+			if isPermanentError(resp, justCreated) {
 				return false, err
 			}
 			logger.Debugf("failed to get load balancer %q: %v", lb.ID, err)
@@ -491,12 +489,15 @@ func getLoadBalancer(ctx context.Context, client godo.LoadBalancersService, id s
 }
 
 // findLoadBalancerByName lists all load balancers and returns the one with the
-// given name in the given region (any region if empty). Names are only unique
-// per region, clusters with the same name can exist in different regions. The
-// DigitalOcean API doesn't support filtering by name.
-func findLoadBalancerByName(ctx context.Context, client godo.LoadBalancersService, name, region string) (*godo.LoadBalancer, error) {
+// given name in the given region (any region if empty). The same name can be
+// used in different regions (e.g. by clusters with the same name), and
+// DigitalOcean doesn't enforce unique names, so if several load balancers
+// match, the one owned by the cluster is preferred. The DigitalOcean API
+// doesn't support filtering by name.
+func findLoadBalancerByName(ctx context.Context, client godo.LoadBalancersService, name, region, clusterName string) (*godo.LoadBalancer, error) {
 	opts := &godo.ListOptions{Page: 1, PerPage: lbPageSize}
 
+	var firstMatch *godo.LoadBalancer
 	for {
 		lbs, resp, err := client.List(ctx, opts)
 		if err != nil {
@@ -504,13 +505,23 @@ func findLoadBalancerByName(ctx context.Context, client godo.LoadBalancersServic
 		}
 
 		for i := range lbs {
-			if lbs[i].Name == name && (region == "" || lbs[i].Region != nil && lbs[i].Region.Slug == region) {
+			if lbs[i].Name != name || (region != "" && (lbs[i].Region == nil || lbs[i].Region.Slug != region)) {
+				continue
+			}
+			if ownedByKubeOne(&lbs[i], clusterName) {
 				return &lbs[i], nil
+			}
+			if firstMatch == nil {
+				firstMatch = &lbs[i]
 			}
 		}
 
 		if resp == nil || resp.Links == nil || resp.Links.IsLastPage() {
-			return nil, errLBNotFound
+			if firstMatch == nil {
+				return nil, errLBNotFound
+			}
+
+			return firstMatch, nil
 		}
 
 		page, err := resp.Links.CurrentPage()
@@ -525,19 +536,23 @@ func isNotFound(resp *godo.Response) bool {
 	return resp != nil && resp.Response != nil && resp.StatusCode == http.StatusNotFound
 }
 
-// isPermanentError reports whether retrying the request can't succeed. 404 is
-// retried, a load balancer might not be visible yet right after it's created.
-func isPermanentError(resp *godo.Response) bool {
+// isPermanentError reports whether retrying the request can't succeed: a bad
+// request, missing permissions, or the load balancer not existing (unless
+// retryNotFound is true, it might not be visible yet right after it's
+// created). Other errors (e.g. 408, 409, 429, 5xx) might be temporary.
+func isPermanentError(resp *godo.Response, retryNotFound bool) bool {
 	if resp == nil || resp.Response == nil {
 		return false
 	}
 
 	switch resp.StatusCode {
-	case http.StatusUnauthorized, http.StatusForbidden:
+	case http.StatusBadRequest, http.StatusUnauthorized, http.StatusForbidden:
 		return true
+	case http.StatusNotFound:
+		return !retryNotFound
+	default:
+		return false
 	}
-
-	return false
 }
 
 // describeBackends describes how the load balancer selects its backends.

@@ -81,15 +81,22 @@ func (k1 *kubeoneBin) Reset() error {
 }
 
 // ResetManagedControlPlane resets the cluster and destroys the control plane
-// machines and load balancer provisioned by KubeOne.
-func (k1 *kubeoneBin) ResetManagedControlPlane() error {
-	return k1.run(
+// machines and load balancer provisioned by KubeOne. With force, the control
+// plane is destroyed even if kube-apiserver is unreachable (e.g. apply failed),
+// skipping the workers.
+func (k1 *kubeoneBin) ResetManagedControlPlane(force bool) error {
+	args := []string{
 		"reset",
 		"--auto-approve",
 		"--destroy-workers",
 		"--destroy-control-plane",
 		"--destroy-control-plane-load-balancer",
-	)
+	}
+	if force {
+		args = append(args, "--force")
+	}
+
+	return k1.run(args...)
 }
 
 func (k1 *kubeoneBin) DynamicClient() (ctrlruntimeclient.Client, error) {

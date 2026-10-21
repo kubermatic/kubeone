@@ -46,13 +46,16 @@ type fakeLBService struct {
 	getResponses []*godo.LoadBalancer
 	getErr       error
 	getStatus    int
+	// notFoundGets is the number of Get calls that return 404 first, like a
+	// load balancer that isn't visible yet right after it's created
+	notFoundGets int
 
 	createResult *godo.LoadBalancer
+	updateErr    error
 
 	created      []*godo.LoadBalancerRequest
 	updated      []*godo.LoadBalancerRequest
 	deleted      []string
-	addedRules   []godo.ForwardingRule
 	getCalls     int
 	listRequests []int
 }
@@ -81,6 +84,9 @@ func (f *fakeLBService) List(_ context.Context, opts *godo.ListOptions) ([]godo.
 
 func (f *fakeLBService) Get(_ context.Context, _ string) (*godo.LoadBalancer, *godo.Response, error) {
 	f.getCalls++
+	if f.getCalls <= f.notFoundGets {
+		return nil, &godo.Response{Response: &http.Response{StatusCode: http.StatusNotFound}}, errors.New("not found")
+	}
 	if f.getErr != nil {
 		return nil, &godo.Response{Response: &http.Response{StatusCode: f.getStatus}}, f.getErr
 	}
@@ -99,18 +105,16 @@ func (f *fakeLBService) Create(_ context.Context, req *godo.LoadBalancerRequest)
 
 func (f *fakeLBService) Update(_ context.Context, id string, req *godo.LoadBalancerRequest) (*godo.LoadBalancer, *godo.Response, error) {
 	f.updated = append(f.updated, req)
+	if f.updateErr != nil {
+		// Like godo, return no load balancer on errors
+		return nil, &godo.Response{Response: &http.Response{StatusCode: http.StatusUnprocessableEntity}}, f.updateErr
+	}
 
 	return &godo.LoadBalancer{ID: id, Name: req.Name, Tag: req.Tag, ForwardingRules: req.ForwardingRules, HealthCheck: req.HealthCheck, Status: lbStatusUp, IP: "203.0.113.20"}, &godo.Response{}, nil
 }
 
 func (f *fakeLBService) Delete(_ context.Context, id string) (*godo.Response, error) {
 	f.deleted = append(f.deleted, id)
-
-	return &godo.Response{}, nil
-}
-
-func (f *fakeLBService) AddForwardingRules(_ context.Context, _ string, rules ...godo.ForwardingRule) (*godo.Response, error) {
-	f.addedRules = append(f.addedRules, rules...)
 
 	return &godo.Response{}, nil
 }
@@ -333,16 +337,125 @@ func TestEnsureLoadBalancerRepairsOwned(t *testing.T) {
 	}
 }
 
+// Right after Create, a load balancer might not be visible yet.
+func TestEnsureLoadBalancerCreateRetriesNotFound(t *testing.T) {
+	fastPolling(t, time.Second)
+
+	fake := &fakeLBService{
+		createResult: &godo.LoadBalancer{ID: "lb-1", Name: "demo-kubeapi", Status: "new"},
+		notFoundGets: 2,
+		getResponses: []*godo.LoadBalancer{{ID: "lb-1", Name: "demo-kubeapi", Status: lbStatusUp, IP: "203.0.113.10"}},
+	}
+
+	lb, err := ensureLoadBalancer(context.Background(), fake, testVPCs(), testCluster(createModeLB()), testLogger())
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if lb.IP != "203.0.113.10" || fake.getCalls != 3 {
+		t.Errorf("expected two 404s to be retried, got IP %q after %d Get calls", lb.IP, fake.getCalls)
+	}
+}
+
+// An owned load balancer found by name that's still provisioning is waited for
+// before it's updated.
+func TestEnsureLoadBalancerWaitsBeforeRepair(t *testing.T) {
+	fastPolling(t, time.Second)
+
+	fake := &fakeLBService{
+		pages: [][]godo.LoadBalancer{{{ID: "lb-1", Name: "demo-kubeapi", Region: fra1Region, Tag: "kubeone-cluster:demo", Status: "new"}}},
+		getResponses: []*godo.LoadBalancer{
+			{ID: "lb-1", Name: "demo-kubeapi", Region: fra1Region, Tag: "kubeone-cluster:demo", Status: lbStatusUp, IP: "203.0.113.10"},
+		},
+	}
+
+	if _, err := ensureLoadBalancer(context.Background(), fake, testVPCs(), testCluster(createModeLB()), testLogger()); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if fake.getCalls == 0 {
+		t.Error("expected to wait for the load balancer before updating it")
+	}
+	if len(fake.updated) != 1 {
+		t.Fatalf("expected the missing rule and health check to be restored in one Update, got %d", len(fake.updated))
+	}
+}
+
+// DigitalOcean allows only one rule per entry port, a 6443 rule forwarding
+// elsewhere isn't replaced.
+func TestEnsureLoadBalancerRejectsChangedRule(t *testing.T) {
+	fake := &fakeLBService{pages: [][]godo.LoadBalancer{{{
+		ID: "lb-1", Name: "demo-kubeapi", Region: fra1Region, Tag: "kubeone-cluster:demo", Status: lbStatusUp, IP: "203.0.113.10",
+		ForwardingRules: []godo.ForwardingRule{{EntryProtocol: "tcp", EntryPort: kubeAPIPort, TargetProtocol: "tcp", TargetPort: 8443}},
+	}}}}
+
+	_, err := ensureLoadBalancer(context.Background(), fake, testVPCs(), testCluster(createModeLB()), testLogger())
+	if err == nil || !strings.Contains(err.Error(), "kube-apiserver requires tcp/6443 to tcp/6443") {
+		t.Fatalf("expected an error about the 6443 rule, got: %v", err)
+	}
+	if len(fake.updated) != 0 {
+		t.Error("must not update the load balancer")
+	}
+}
+
+// Errors that might be temporary are retried until the timeout.
+func TestWaitForLoadBalancerRetriesTemporaryErrors(t *testing.T) {
+	fastPolling(t, 20*time.Millisecond)
+
+	for _, status := range []int{http.StatusRequestTimeout, http.StatusConflict, http.StatusTooManyRequests, http.StatusInternalServerError} {
+		t.Run(http.StatusText(status), func(t *testing.T) {
+			fake := &fakeLBService{getErr: errors.New(http.StatusText(status)), getStatus: status}
+			if _, err := waitForLoadBalancer(context.Background(), fake, &godo.LoadBalancer{ID: "lb-1", Name: "demo-kubeapi", Status: "new"}, false, testLogger()); err == nil {
+				t.Fatal("expected a timeout error")
+			}
+			if fake.getCalls < 2 {
+				t.Errorf("expected %d to be retried, got %d Get calls", status, fake.getCalls)
+			}
+		})
+	}
+}
+
+// godo returns a nil load balancer when Update fails, that must not panic.
+func TestReconcileLoadBalancerUpdateError(t *testing.T) {
+	fake := &fakeLBService{updateErr: errors.New("load balancer is being updated")}
+	lb := &godo.LoadBalancer{ID: "lb-1", Name: "demo-kubeapi", Region: fra1Region, Tag: "kubeone-cluster:demo", Status: lbStatusUp, IP: "203.0.113.10"}
+
+	_, err := reconcileLoadBalancer(context.Background(), fake, lb, "", testLogger())
+	if err == nil || !strings.Contains(err.Error(), "lb-1") || !strings.Contains(err.Error(), "being updated") {
+		t.Fatalf("expected update error for lb-1, got: %v", err)
+	}
+}
+
+// DigitalOcean doesn't enforce unique load balancer names, the one owned by
+// the cluster must win over a foreign one with the same name.
+func TestFindLoadBalancerByNamePrefersOwned(t *testing.T) {
+	fake := &fakeLBService{pages: [][]godo.LoadBalancer{
+		{{ID: "foreign", Name: "demo-kubeapi", Region: fra1Region, Tag: "my-app"}},
+		{{ID: "owned", Name: "demo-kubeapi", Region: fra1Region, Tag: "kubeone-cluster:demo"}},
+	}}
+
+	lb, err := findLoadBalancerByName(context.Background(), fake, "demo-kubeapi", "fra1", "demo")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if lb.ID != "owned" {
+		t.Errorf("expected the owned load balancer, got %q", lb.ID)
+	}
+
+	fake = &fakeLBService{pages: [][]godo.LoadBalancer{{{ID: "foreign", Name: "demo-kubeapi", Region: fra1Region, Tag: "my-app"}}}}
+	if lb, err = findLoadBalancerByName(context.Background(), fake, "demo-kubeapi", "fra1", "demo"); err != nil || lb.ID != "foreign" {
+		t.Errorf("expected the only match when none is owned, got %v, %v", lb, err)
+	}
+}
+
 func TestWaitForLoadBalancerRetriesNotFound(t *testing.T) {
 	fastPolling(t, 20*time.Millisecond)
 
 	fake := &fakeLBService{getErr: errors.New("not found"), getStatus: http.StatusNotFound}
-	_, err := waitForLoadBalancer(context.Background(), fake, &godo.LoadBalancer{ID: "lb-1", Name: "demo-kubeapi", Region: fra1Region, Status: "new"}, testLogger())
+	_, err := waitForLoadBalancer(context.Background(), fake, &godo.LoadBalancer{ID: "lb-1", Name: "demo-kubeapi", Region: fra1Region, Status: "new"}, true, testLogger())
 	if err == nil {
 		t.Fatal("expected a timeout error")
 	}
 	if fake.getCalls < 2 {
-		t.Errorf("expected 404 to be retried, got %d Get calls", fake.getCalls)
+		t.Errorf("expected 404 to be retried right after create, got %d Get calls", fake.getCalls)
 	}
 }
 
@@ -446,7 +559,7 @@ func TestEnsureExistingLoadBalancer(t *testing.T) {
 				if err == nil || !strings.Contains(err.Error(), tc.wantErr) {
 					t.Fatalf("expected error containing %q, got: %v", tc.wantErr, err)
 				}
-				if len(fake.updated) != 0 || len(fake.addedRules) != 0 {
+				if len(fake.updated) != 0 {
 					t.Error("must not modify the load balancer when failing")
 				}
 
@@ -474,9 +587,6 @@ func TestEnsureExistingLoadBalancer(t *testing.T) {
 				if !isKubeAPIHealthCheck(req.HealthCheck) {
 					t.Errorf("expected update to health check tcp/6443, got %+v", req.HealthCheck)
 				}
-			}
-			if len(fake.addedRules) != 0 {
-				t.Error("forwarding rule must be added in the same Update, not with AddForwardingRules")
 			}
 			for _, req := range fake.updated {
 				if req.SizeSlug != "" && req.SizeUnit != 0 {
@@ -534,11 +644,22 @@ func TestWaitForLoadBalancerFailsFast(t *testing.T) {
 			fake: &fakeLBService{getErr: errors.New("forbidden"), getStatus: http.StatusForbidden},
 			want: "forbidden",
 		},
+		{
+			name: "bad request",
+			fake: &fakeLBService{getErr: errors.New("bad request"), getStatus: http.StatusBadRequest},
+			want: "bad request",
+		},
+		{
+			// Only retried right after create
+			name: "not found",
+			fake: &fakeLBService{getErr: errors.New("not found"), getStatus: http.StatusNotFound},
+			want: "not found",
+		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			_, err := waitForLoadBalancer(context.Background(), tc.fake, &godo.LoadBalancer{ID: "lb-1", Name: "demo-kubeapi", Region: fra1Region, Status: "new"}, testLogger())
+			_, err := waitForLoadBalancer(context.Background(), tc.fake, &godo.LoadBalancer{ID: "lb-1", Name: "demo-kubeapi", Region: fra1Region, Status: "new"}, false, testLogger())
 			if err == nil || !strings.Contains(err.Error(), tc.want) {
 				t.Fatalf("expected error containing %q, got: %v", tc.want, err)
 			}
@@ -560,7 +681,7 @@ func fakeClient(t *testing.T, fake *fakeLBService) {
 
 // With .apiEndpoint.host set the load balancer is managed outside of KubeOne.
 func TestAPIEndpointHostSkipsLoadBalancer(t *testing.T) {
-	p := &Provider{}
+	p := &provider{}
 	fake := &fakeLBService{}
 	fakeClient(t, fake)
 
@@ -583,7 +704,7 @@ func TestAPIEndpointHostSkipsLoadBalancer(t *testing.T) {
 }
 
 func TestLookupLoadBalancerSetsEndpoint(t *testing.T) {
-	p := &Provider{}
+	p := &provider{}
 	fake := &fakeLBService{pages: [][]godo.LoadBalancer{{{ID: "lb-1", Name: "demo-kubeapi", Region: fra1Region, Tag: "kubeone-cluster:demo", IP: "203.0.113.10"}}}}
 	fakeClient(t, fake)
 
@@ -689,7 +810,7 @@ func TestCleanupLoadBalancer(t *testing.T) {
 }
 
 func TestCleanupLoadBalancerSkipsExistingMode(t *testing.T) {
-	p := &Provider{}
+	p := &provider{}
 
 	fake := &fakeLBService{}
 	fakeClient(t, fake)

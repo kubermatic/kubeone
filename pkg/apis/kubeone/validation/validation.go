@@ -395,10 +395,11 @@ const awsResourceNameMaxLength = 32
 // digitalOceanResourceNameMaxLength is the max length DigitalOcean accepts for load balancer and tag names.
 const digitalOceanResourceNameMaxLength = 255
 
-// digitalOceanClusterNameMaxLength is the longest cluster name that fits in
-// the droplet tags KubeOne adds (DigitalOcean tags are at most 255
-// characters), the longest one being "kubeone_cluster_name:<cluster>".
-const digitalOceanClusterNameMaxLength = digitalOceanResourceNameMaxLength - len("kubeone_cluster_name:")
+// digitalOceanDropletNameMaxLength is the max length of a control plane
+// droplet name "<cluster>-<nodeSet>-<idx>". It becomes the hostname and node
+// name, so it must fit in a DNS label. The droplet tags KubeOne derives from it
+// (at most 255 characters) then always fit as well.
+const digitalOceanDropletNameMaxLength = 63
 
 func validateAWSSpec(awsSpec *kubeoneapi.AWSSpec, fldPath *field.Path) field.ErrorList {
 	var allErrs field.ErrorList
@@ -470,10 +471,6 @@ func validateDigitalOceanSpec(doSpec *kubeoneapi.DigitalOceanSpec, clusterName s
 		return allErrs
 	}
 
-	if len(clusterName) > digitalOceanClusterNameMaxLength {
-		allErrs = append(allErrs, field.Invalid(field.NewPath("name"), clusterName, fmt.Sprintf("cluster name must not exceed %d characters for a DigitalOcean managed control plane, it's used in droplet tags", digitalOceanClusterNameMaxLength)))
-	}
-
 	var lb kubeoneapi.DigitalOceanLoadBalancer
 	if doSpec.ControlPlane != nil {
 		lb = doSpec.ControlPlane.LoadBalancer
@@ -492,6 +489,12 @@ func validateDigitalOceanSpec(doSpec *kubeoneapi.DigitalOceanSpec, clusterName s
 
 	for i, ns := range nodeSets {
 		nsFld := nodeSetsFld.Index(i)
+
+		// Same format as the droplet names the provider generates, for the
+		// highest replica index
+		if dropletName := fmt.Sprintf("%s-%s-%d", clusterName, ns.Name, max(ns.Replicas-1, 0)); len(dropletName) > digitalOceanDropletNameMaxLength {
+			allErrs = append(allErrs, field.Invalid(nsFld, dropletName, fmt.Sprintf("control plane droplet name \"<cluster name>-<nodeSet name>-<replica index>\" must not exceed %d characters, it's used as hostname; shorten the cluster or nodeSet name", digitalOceanDropletNameMaxLength)))
+		}
 
 		if !slices.Contains(digitalOceanSupportedOperatingSystems, string(ns.OperatingSystem)) {
 			allErrs = append(allErrs, field.NotSupported(nsFld.Child("operatingSystem"), ns.OperatingSystem, digitalOceanSupportedOperatingSystems))

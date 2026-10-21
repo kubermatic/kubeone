@@ -115,7 +115,11 @@ func (scenario *scenarioManagedControlPlane) Run(ctx context.Context, t *testing
 	})
 
 	t.Cleanup(func() {
-		if err := retryFn(k1.ResetManagedControlPlane); err != nil {
+		// Force only if the test already failed, kube-apiserver might be
+		// unreachable then (the janitor deletes the workers). Otherwise reset
+		// must work as users run it, so its failures fail the test.
+		force := t.Failed()
+		if err := retryFn(func() error { return k1.ResetManagedControlPlane(force) }); err != nil {
 			t.Errorf("kubeone reset failed: %v", err)
 		}
 	})

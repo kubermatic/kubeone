@@ -3347,15 +3347,30 @@ func TestValidateDigitalOceanSpec(t *testing.T) {
 			lb:   &kubeoneapi.DigitalOceanLoadBalancer{SizeUnit: 500},
 		},
 		{
-			name:          "cluster name too long for droplet tags",
-			clusterName:   strings.Repeat("a", 235),
+			// "<50>-cp-2" = 55
+			name:        "droplet name within the hostname limit",
+			clusterName: strings.Repeat("a", 50),
+			nodeSets:    []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, validSpec)},
+		},
+		{
+			// "<58>-cp-2" = 63
+			name:        "droplet name at the hostname limit",
+			clusterName: strings.Repeat("a", 58),
+			nodeSets:    []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, validSpec)},
+		},
+		{
+			// "<59>-cp-2" = 64
+			name:          "droplet name over the hostname limit",
+			clusterName:   strings.Repeat("a", 59),
 			nodeSets:      []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, validSpec)},
 			expectedError: true,
 		},
 		{
-			name:        "longest cluster name",
-			clusterName: strings.Repeat("a", 234),
-			nodeSets:    []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, validSpec)},
+			// The highest index of 11 replicas has two digits: "<58>-cp-10" = 64
+			name:          "droplet name over the hostname limit with a two digit index",
+			clusterName:   strings.Repeat("a", 58),
+			nodeSets:      []kubeoneapi.NodeSet{{Name: "cp", Replicas: 11, OperatingSystem: kubeoneapi.OperatingSystemNameUbuntu, CloudProviderSpec: []byte(validSpec)}},
+			expectedError: true,
 		},
 		{
 			name:     "valid create mode",

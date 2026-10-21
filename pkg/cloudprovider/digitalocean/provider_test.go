@@ -86,8 +86,8 @@ func TestGenerateMachines(t *testing.T) {
 		if m.Name != wantName || m.Spec.Name != wantName {
 			t.Errorf("machine %d: expected name %q, got %q/%q", i, wantName, m.Name, m.Spec.Name)
 		}
-		if string(m.UID) != wantName {
-			t.Errorf("machine %d: expected UID %q, got %q", i, wantName, m.UID)
+		if want := wantName + "-fra1"; string(m.UID) != want {
+			t.Errorf("machine %d: expected UID %q, got %q", i, want, m.UID)
 		}
 		if m.Spec.Versions.Kubelet != "v1.36.0" {
 			t.Errorf("machine %d: unexpected kubelet version %q", i, m.Spec.Versions.Kubelet)
@@ -209,7 +209,7 @@ func TestGenerateMachinesSanitizesUID(t *testing.T) {
 	if machines[0].Name != "my.cluster-cp-0" {
 		t.Errorf("unexpected name %q", machines[0].Name)
 	}
-	if string(machines[0].UID) != "my_cluster-cp-0" {
+	if string(machines[0].UID) != "my_cluster-cp-0-fra1" {
 		t.Errorf("expected sanitized UID, got %q", machines[0].UID)
 	}
 }
@@ -230,7 +230,7 @@ func testState(lb *kubeoneapi.DigitalOceanLoadBalancer, nodeSets []kubeoneapi.No
 }
 
 func TestEnabledAndHasLoadBalancer(t *testing.T) {
-	p := &Provider{}
+	p := &provider{}
 
 	tests := []struct {
 		name        string
@@ -291,5 +291,25 @@ func TestGenerateMachinesKeepsNodeSetLabels(t *testing.T) {
 	}
 	if got := machines[0].Spec.Labels; got["team"] != "a" || got["kubeone_role"] != "control-plane" {
 		t.Errorf("unexpected machine labels %v", got)
+	}
+}
+
+// machine-controller finds droplets by name and UID tag across all regions, so
+// clusters with the same name in different regions need different UIDs.
+func TestGenerateMachinesUIDDiffersByRegion(t *testing.T) {
+	fra1, err := generateControlPlaneMachines("demo", testNodeSets(`{"region":"fra1","size":"s-2vcpu-4gb"}`, 1), "v1.36.0")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	ams3, err := generateControlPlaneMachines("demo", testNodeSets(`{"region":"ams3","size":"s-2vcpu-4gb"}`, 1), "v1.36.0")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if fra1[0].Name != ams3[0].Name {
+		t.Errorf("expected the same machine name, got %q and %q", fra1[0].Name, ams3[0].Name)
+	}
+	if fra1[0].UID == ams3[0].UID {
+		t.Errorf("expected different UIDs per region, both are %q", fra1[0].UID)
 	}
 }
