@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"io/fs"
 	"reflect"
+	"slices"
 
 	embeddedaddons "k8c.io/kubeone/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -446,12 +447,12 @@ const paramFlatcarNodesPresent = "flatcarNodesPresent"
 // MachineDeployments that exist in the cluster (they can be changed after the
 // cluster has been created).
 func flatcarNodesPresent(ctx context.Context, cluster *kubeoneapi.KubeOneCluster, c client.Client) (bool, error) {
-	for _, hosts := range [][]kubeoneapi.HostConfig{cluster.ControlPlane.Hosts, cluster.StaticWorkers.Hosts} {
-		for _, host := range hosts {
-			if host.OperatingSystem == kubeoneapi.OperatingSystemNameFlatcar {
-				return true, nil
-			}
-		}
+	isFlatcar := func(host kubeoneapi.HostConfig) bool {
+		return host.OperatingSystem == kubeoneapi.OperatingSystemNameFlatcar
+	}
+
+	if slices.ContainsFunc(cluster.ControlPlane.Hosts, isFlatcar) || slices.ContainsFunc(cluster.StaticWorkers.Hosts, isFlatcar) {
+		return true, nil
 	}
 
 	for _, dw := range cluster.DynamicWorkers {
