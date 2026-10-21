@@ -18,12 +18,11 @@ control-plane host IPs yourself (e.g. via Terraform's `kubeone_hosts` and `kubeo
 
 ## Prerequisites
 
-- A DigitalOcean API token with read/write access to droplets, tags, and load balancers, and read access to VPCs (see
-  [Credentials](#credentials) below).
+- A DigitalOcean API token with full access, or with the custom scopes listed under [Credentials](#credentials) below.
 - No other infrastructure is required. Droplets and the load balancer are created in the default VPC of the region,
   with private networking enabled.
-- The cluster `name` must be at most 234 characters, so that the droplet tags (e.g.
-  `kubeone_cluster_name:<CLUSTER_NAME>`) fit in DigitalOcean's 255 character limit.
+- Control-plane droplets are named `<CLUSTER_NAME>-<NODESET>-<INDEX>`, which becomes their hostname, so it must be at
+  most 63 characters (e.g. a cluster name of up to 58 characters with a nodeSet `cp` of up to 10 replicas).
 
 ## Configuration
 
@@ -100,12 +99,14 @@ deleted if `apiEndpoint.host` is its IP address.
 During `kubeone apply`, KubeOne uses the DigitalOcean API to:
 
 1. Look up the named load balancer in the nodeSets region. Names are matched together with the region, so clusters with
-   the same name can run in different regions.
+   the same name can run in different regions. DigitalOcean doesn't enforce unique names; if several load balancers
+   match, the one targeting `kubeone-cluster:<CLUSTER_NAME>` is used.
 
 2. If the load balancer exists, it's reused only if it targets droplets tagged `kubeone-cluster:<CLUSTER_NAME>`.
    Otherwise `kubeone apply` fails, because the load balancer wasn't created by KubeOne for this cluster or was
    modified (e.g. switched to a list of droplets). Choose a different `name`, or restore the load balancer to target
-   the cluster tag. If its kube-apiserver forwarding rule or health check was changed, KubeOne restores them.
+   the cluster tag. A missing kube-apiserver forwarding rule (TCP 6443) and a changed health check are restored; if port
+   6443 was changed to forward elsewhere, `kubeone apply` fails, as DigitalOcean allows only one rule per entry port.
 
 3. If the load balancer does not exist, KubeOne creates one with:
    - A TCP forwarding rule on port 6443
@@ -157,8 +158,10 @@ Characters that DigitalOcean doesn't allow in tags (e.g. `.`) are replaced with 
 
 During `kubeone reset --destroy-control-plane --destroy-control-plane-load-balancer`, the load balancer is deleted only
 if it targets the cluster tag, isn't referenced by `id`, and `apiEndpoint.host` is unset or is the load balancer IP.
-Control-plane droplets are found by name and machine UID tag, so the `name` of the cluster and nodeSets must not change
-between `apply` and `reset`.
+Control-plane droplets are found by name (`<CLUSTER_NAME>-<NODESET>-<INDEX>`) and machine UID tag
+(`<CLUSTER_NAME>-<NODESET>-<INDEX>-<REGION>`), so the cluster `name`, the nodeSet names and the region must not change
+between `apply` and `reset`. machine-controller searches droplets in all regions; the region in the UID tag keeps
+clusters with the same name in different regions apart.
 
 KubeOne doesn't create a DigitalOcean cloud firewall. If you add one, the control-plane droplets must allow SSH (22)
 from the machine running KubeOne, kube-apiserver (6443) from the load balancer and nodes, and the ports required by
@@ -189,8 +192,17 @@ In this mode, `cloudProvider.digitalocean.controlPlane` is not used and `apiEndp
 
 ## Credentials
 
-KubeOne reads the DigitalOcean API token from the credentials file using the `DIGITALOCEAN_TOKEN` key. The token must
-have read/write access to droplets, tags, and load balancers, and read access to VPCs.
+KubeOne reads the DigitalOcean API token from the credentials file using the `DIGITALOCEAN_TOKEN` key. Use a token
+with full access, or a custom-scoped token with:
+
+| Resource | Scopes | Used for |
+|----------|--------|----------|
+| `droplet` | create, read, update, delete | Control-plane droplets |
+| `load_balancer` | create, read, update, delete | kube-apiserver load balancer |
+| `tag` | create, read, delete | Droplet tags, load balancer backend selection |
+| `ssh_key` | create, read, delete | machine-controller uploads a temporary SSH key for each droplet it creates |
+| `vpc` | read | Default VPC check for a load balancer referenced by `id` |
+| `regions`, `sizes`, `image` | read | Droplet creation |
 
 ```yaml
 DIGITALOCEAN_TOKEN: <your-api-token>
