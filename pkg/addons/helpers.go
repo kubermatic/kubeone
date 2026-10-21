@@ -17,8 +17,11 @@ limitations under the License.
 package addons
 
 import (
+	"context"
+	"encoding/json"
 	"io/fs"
 	"reflect"
+	"slices"
 
 	embeddedaddons "k8c.io/kubeone/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -26,6 +29,7 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
+	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
 
 	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
 	appsv1 "k8s.io/api/apps/v1"
@@ -34,6 +38,7 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 	storagev1 "k8s.io/api/storage/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -429,4 +434,64 @@ func genNamedObject[T any, PT interface {
 	}
 
 	return t
+}
+
+// paramFlatcarNodesPresent is the name of the addon parameter that tells the
+// unattended-upgrades addon whether the cluster has Flatcar Linux nodes.
+const paramFlatcarNodesPresent = "flatcarNodesPresent"
+
+// flatcarNodesPresent returns true if at least one node of the cluster runs
+// Flatcar Linux. It considers the control plane and static worker hosts from
+// the manifest, the dynamic workers from the manifest (the MachineDeployments
+// are not created yet when the addons are applied for the first time) and the
+// MachineDeployments that exist in the cluster (they can be changed after the
+// cluster has been created).
+func flatcarNodesPresent(ctx context.Context, cluster *kubeoneapi.KubeOneCluster, c client.Client) (bool, error) {
+	isFlatcar := func(host kubeoneapi.HostConfig) bool {
+		return host.OperatingSystem == kubeoneapi.OperatingSystemNameFlatcar
+	}
+
+	if slices.ContainsFunc(cluster.ControlPlane.Hosts, isFlatcar) || slices.ContainsFunc(cluster.StaticWorkers.Hosts, isFlatcar) {
+		return true, nil
+	}
+
+	for _, dw := range cluster.DynamicWorkers {
+		if dw.Config.OperatingSystem == string(kubeoneapi.OperatingSystemNameFlatcar) {
+			return true, nil
+		}
+	}
+
+	if !cluster.MachineController.Deploy {
+		return false, nil
+	}
+
+	var machineDeployments clusterv1alpha1.MachineDeploymentList
+	if err := c.List(ctx, &machineDeployments, client.InNamespace(metav1.NamespaceSystem)); err != nil {
+		// machine-controller (and its CRDs) might not be deployed yet
+		if k8serrors.IsNotFound(err) || meta.IsNoMatchError(err) {
+			return false, nil
+		}
+
+		return false, fail.KubeClient(err, "listing %T", machineDeployments)
+	}
+
+	for _, md := range machineDeployments.Items {
+		if md.Spec.Template.Spec.ProviderSpec.Value == nil {
+			continue
+		}
+
+		var providerSpec struct {
+			OperatingSystem string `json:"operatingSystem"`
+		}
+
+		if err := json.Unmarshal(md.Spec.Template.Spec.ProviderSpec.Value.Raw, &providerSpec); err != nil {
+			return false, fail.Runtime(err, "decoding providerSpec of MachineDeployment %q", md.Name)
+		}
+
+		if providerSpec.OperatingSystem == string(kubeoneapi.OperatingSystemNameFlatcar) {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }

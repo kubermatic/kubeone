@@ -26,6 +26,7 @@ import (
 	"maps"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -67,6 +68,15 @@ func (a *applier) getManifestsFromDirectory(st *state.State, fsys fs.FS, addonNa
 
 				break
 			}
+		}
+	}
+
+	if addonName == resources.AddonUnattendedUpgrades {
+		var err error
+
+		addonParams, err = withFlatcarNodesPresentParam(st, addonParams)
+		if err != nil {
+			return "", err
 		}
 	}
 
@@ -285,6 +295,28 @@ func (a *applier) loadAddonsManifests(
 	}
 
 	return manifests, nil
+}
+
+// withFlatcarNodesPresentParam returns a copy of the addon params with the
+// flatcarNodesPresent param set, unless the user already set it.
+func withFlatcarNodesPresentParam(st *state.State, addonParams map[string]string) (map[string]string, error) {
+	if _, ok := addonParams[paramFlatcarNodesPresent]; ok {
+		return addonParams, nil
+	}
+
+	present, err := flatcarNodesPresent(st.Context, st.Cluster, st.DynamicClient)
+	if err != nil {
+		return nil, err
+	}
+
+	params := maps.Clone(addonParams)
+	if params == nil {
+		params = map[string]string{}
+	}
+
+	params[paramFlatcarNodesPresent] = strconv.FormatBool(present)
+
+	return params, nil
 }
 
 func defaultAddonParams(k1cluster *kubeoneapi.KubeOneCluster, addonName string, tplDataParams map[string]string) {
