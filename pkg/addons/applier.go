@@ -82,7 +82,6 @@ type templateData struct {
 	CCMClusterName                           string
 	CalicoIptablesBackend                    string
 	DeployCSIAddon                           bool
-	FlatcarNodesPresent                      bool
 	SnapshotterWebhookFailurePolicy          string
 	MachineControllerCredentialsEnvVars      string
 	MachineControllerCredentialsHash         string
@@ -198,7 +197,6 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		CCMClusterName:                      s.LiveCluster.CCMClusterName,
 		CalicoIptablesBackend:               calicoIptablesBackend,
 		DeployCSIAddon:                      deployCSI,
-		FlatcarNodesPresent:                 flatcarNodesPresent(s.Cluster, s.LiveCluster),
 		SnapshotterWebhookFailurePolicy:     "Fail",
 		MachineControllerCredentialsEnvVars: string(credsEnvVarsMC),
 		MachineControllerCredentialsHash:    mcCredsHash,

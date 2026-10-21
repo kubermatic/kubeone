@@ -35,14 +35,25 @@ addons:
 ## Flatcar Linux Update Operator
 
 The Flatcar Linux Update Operator is deployed only if at least one node of the
-cluster runs Flatcar Linux. KubeOne looks at the control plane hosts, the static
-workers and the operating system of the `dynamicWorkers`. If none of them is
-Flatcar Linux, none of the operator resources (namespace, RBAC, Deployment and
-DaemonSet) are rendered.
+cluster runs Flatcar Linux. KubeOne looks at the control plane hosts and the
+static workers from the KubeOne manifest, at the `dynamicWorkers` from the
+KubeOne manifest and at the MachineDeployments that exist in the cluster. If
+none of them is Flatcar Linux, none of the operator resources (namespace, RBAC,
+Deployment and DaemonSet) are rendered.
 
 If you add Flatcar Linux nodes later, the operator is deployed on the next
-`kubeone apply`. MachineDeployments that are created outside of the KubeOne
-configuration (e.g. with `kubectl`) are not taken into account.
+`kubeone apply`.
+
+The result can be overridden with the `flatcarNodesPresent` addon parameter:
+
+```yaml
+addons:
+  enable: true
+  addons:
+    - name: "unattended-upgrades"
+      params:
+        flatcarNodesPresent: "true"
+```
 
 On clusters where the operator was deployed by an earlier KubeOne version, the
 namespace and the workloads in it are removed on the next `kubeone apply`. The
@@ -61,7 +72,7 @@ machine.
 ### Generate Flatcar Linux Update Operator YAML
 ```shell
 {
-  echo '{{ if .FlatcarNodesPresent }}'
+  echo '{{ if eq .Params.flatcarNodesPresent "true" }}'
   kubectl kustomize ./fluo
   echo '{{ end }}'
 } > fluo.yaml

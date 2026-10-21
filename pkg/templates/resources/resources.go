@@ -61,6 +61,7 @@ const (
 	AddonOperatingSystemManager = "operating-system-manager"
 	AddonBackupsRestic          = "backups-restic"
 	AddonEtcdDefrag             = "etcd-defrag"
+	AddonUnattendedUpgrades     = "unattended-upgrades"
 )
 
 func CloudAddons() []string {

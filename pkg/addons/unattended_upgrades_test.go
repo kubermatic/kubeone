@@ -17,18 +17,45 @@ limitations under the License.
 package addons
 
 import (
+	"context"
 	"testing"
 
 	embeddedaddons "k8c.io/kubeone/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/images"
+	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
 
 	"github.com/sirupsen/logrus"
 
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 	"sigs.k8s.io/yaml"
 )
+
+func machineDeployment(name, operatingSystem string) *clusterv1alpha1.MachineDeployment {
+	md := &clusterv1alpha1.MachineDeployment{
+		ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: metav1.NamespaceSystem},
+	}
+	md.Spec.Template.Spec.ProviderSpec.Value = &runtime.RawExtension{
+		Raw: []byte(`{"operatingSystem":"` + operatingSystem + `"}`),
+	}
+
+	return md
+}
+
+func newFakeClient(t *testing.T, objs ...client.Object) client.Client {
+	t.Helper()
+
+	scheme := runtime.NewScheme()
+	if err := clusterv1alpha1.AddToScheme(scheme); err != nil {
+		t.Fatalf("unable to build scheme: %v", err)
+	}
+
+	return fake.NewClientBuilder().WithScheme(scheme).WithObjects(objs...).Build()
+}
 
 func Test_flatcarNodesPresent(t *testing.T) {
 	t.Parallel()
@@ -37,69 +64,69 @@ func Test_flatcarNodesPresent(t *testing.T) {
 		return kubeoneapi.HostConfig{OperatingSystem: os}
 	}
 
+	ubuntuCluster := func() *kubeoneapi.KubeOneCluster {
+		return &kubeoneapi.KubeOneCluster{
+			ControlPlane:      kubeoneapi.ControlPlaneConfig{Hosts: []kubeoneapi.HostConfig{host(kubeoneapi.OperatingSystemNameUbuntu)}},
+			MachineController: &kubeoneapi.MachineControllerConfig{Deploy: true},
+		}
+	}
+
 	tests := []struct {
 		name     string
-		cluster  *kubeoneapi.KubeOneCluster
-		live     *state.Cluster
+		cluster  func() *kubeoneapi.KubeOneCluster
+		objs     []client.Object
 		expected bool
 	}{
 		{
-			name:     "nil cluster and nil live cluster",
-			expected: false,
-		},
-		{
-			name: "no flatcar nodes",
-			cluster: &kubeoneapi.KubeOneCluster{
-				ControlPlane:  kubeoneapi.ControlPlaneConfig{Hosts: []kubeoneapi.HostConfig{host(kubeoneapi.OperatingSystemNameUbuntu)}},
-				StaticWorkers: kubeoneapi.StaticWorkersConfig{Hosts: []kubeoneapi.HostConfig{host(kubeoneapi.OperatingSystemNameRockyLinux)}},
-				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
-					{Config: kubeoneapi.ProviderSpec{OperatingSystem: "ubuntu"}},
-				},
-			},
-			expected: false,
+			name:    "no flatcar nodes",
+			cluster: ubuntuCluster,
+			objs:    []client.Object{machineDeployment("md-ubuntu", "ubuntu")},
 		},
 		{
 			name: "flatcar control plane",
-			cluster: &kubeoneapi.KubeOneCluster{
-				ControlPlane: kubeoneapi.ControlPlaneConfig{Hosts: []kubeoneapi.HostConfig{host(kubeoneapi.OperatingSystemNameFlatcar)}},
+			cluster: func() *kubeoneapi.KubeOneCluster {
+				c := ubuntuCluster()
+				c.ControlPlane.Hosts = append(c.ControlPlane.Hosts, host(kubeoneapi.OperatingSystemNameFlatcar))
+
+				return c
 			},
 			expected: true,
 		},
 		{
 			name: "flatcar static worker",
-			cluster: &kubeoneapi.KubeOneCluster{
-				ControlPlane:  kubeoneapi.ControlPlaneConfig{Hosts: []kubeoneapi.HostConfig{host(kubeoneapi.OperatingSystemNameUbuntu)}},
-				StaticWorkers: kubeoneapi.StaticWorkersConfig{Hosts: []kubeoneapi.HostConfig{host(kubeoneapi.OperatingSystemNameFlatcar)}},
+			cluster: func() *kubeoneapi.KubeOneCluster {
+				c := ubuntuCluster()
+				c.StaticWorkers.Hosts = []kubeoneapi.HostConfig{host(kubeoneapi.OperatingSystemNameFlatcar)}
+
+				return c
 			},
 			expected: true,
 		},
 		{
-			name: "flatcar dynamic worker",
-			cluster: &kubeoneapi.KubeOneCluster{
-				ControlPlane: kubeoneapi.ControlPlaneConfig{Hosts: []kubeoneapi.HostConfig{host(kubeoneapi.OperatingSystemNameUbuntu)}},
-				DynamicWorkers: []kubeoneapi.DynamicWorkerConfig{
-					{Config: kubeoneapi.ProviderSpec{OperatingSystem: "ubuntu"}},
-					{Config: kubeoneapi.ProviderSpec{OperatingSystem: "flatcar"}},
-				},
+			name: "flatcar dynamic worker in the manifest, not created yet",
+			cluster: func() *kubeoneapi.KubeOneCluster {
+				c := ubuntuCluster()
+				c.DynamicWorkers = []kubeoneapi.DynamicWorkerConfig{{Config: kubeoneapi.ProviderSpec{OperatingSystem: "flatcar"}}}
+
+				return c
 			},
 			expected: true,
 		},
 		{
-			name: "flatcar only known from the live cluster",
-			cluster: &kubeoneapi.KubeOneCluster{
-				ControlPlane: kubeoneapi.ControlPlaneConfig{Hosts: []kubeoneapi.HostConfig{host(kubeoneapi.OperatingSystemNameUbuntu)}},
-			},
-			live: &state.Cluster{
-				ControlPlane:  []state.Host{{Config: &kubeoneapi.HostConfig{OperatingSystem: kubeoneapi.OperatingSystemNameUbuntu}}},
-				StaticWorkers: []state.Host{{Config: &kubeoneapi.HostConfig{OperatingSystem: kubeoneapi.OperatingSystemNameFlatcar}}},
-			},
+			name:     "flatcar MachineDeployment that only exists in the cluster",
+			cluster:  ubuntuCluster,
+			objs:     []client.Object{machineDeployment("md-ubuntu", "ubuntu"), machineDeployment("md-flatcar", "flatcar")},
 			expected: true,
 		},
 		{
-			name:     "live cluster hosts without config",
-			cluster:  &kubeoneapi.KubeOneCluster{},
-			live:     &state.Cluster{ControlPlane: []state.Host{{}}},
-			expected: false,
+			name: "flatcar MachineDeployment is ignored if machine-controller is not deployed",
+			cluster: func() *kubeoneapi.KubeOneCluster {
+				c := ubuntuCluster()
+				c.MachineController.Deploy = false
+
+				return c
+			},
+			objs: []client.Object{machineDeployment("md-flatcar", "flatcar")},
 		},
 	}
 
@@ -107,11 +134,76 @@ func Test_flatcarNodesPresent(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			if got := flatcarNodesPresent(tc.cluster, tc.live); got != tc.expected {
+			got, err := flatcarNodesPresent(context.Background(), tc.cluster(), newFakeClient(t, tc.objs...))
+			if err != nil {
+				t.Fatalf("flatcarNodesPresent() returned an error: %v", err)
+			}
+
+			if got != tc.expected {
 				t.Errorf("flatcarNodesPresent() = %v, want %v", got, tc.expected)
 			}
 		})
 	}
+}
+
+func Test_withFlatcarNodesPresentParam(t *testing.T) {
+	t.Parallel()
+
+	newState := func(objs ...client.Object) *state.State {
+		return &state.State{
+			Context: context.Background(),
+			Cluster: &kubeoneapi.KubeOneCluster{
+				ControlPlane:      kubeoneapi.ControlPlaneConfig{Hosts: []kubeoneapi.HostConfig{{OperatingSystem: kubeoneapi.OperatingSystemNameUbuntu}}},
+				MachineController: &kubeoneapi.MachineControllerConfig{Deploy: true},
+			},
+			DynamicClient: newFakeClient(t, objs...),
+		}
+	}
+
+	t.Run("param is derived and the passed params are not modified", func(t *testing.T) {
+		t.Parallel()
+
+		in := map[string]string{"other": "value"}
+
+		got, err := withFlatcarNodesPresentParam(newState(machineDeployment("md-flatcar", "flatcar")), in)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if got[paramFlatcarNodesPresent] != "true" || got["other"] != "value" {
+			t.Errorf("unexpected params: %v", got)
+		}
+
+		if _, ok := in[paramFlatcarNodesPresent]; ok {
+			t.Errorf("the passed params were modified: %v", in)
+		}
+	})
+
+	t.Run("nil params without flatcar nodes", func(t *testing.T) {
+		t.Parallel()
+
+		got, err := withFlatcarNodesPresentParam(newState(), nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if got[paramFlatcarNodesPresent] != "false" {
+			t.Errorf("unexpected params: %v", got)
+		}
+	})
+
+	t.Run("param set by the user wins", func(t *testing.T) {
+		t.Parallel()
+
+		got, err := withFlatcarNodesPresentParam(newState(), map[string]string{paramFlatcarNodesPresent: "true"})
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if got[paramFlatcarNodesPresent] != "true" {
+			t.Errorf("unexpected params: %v", got)
+		}
+	})
 }
 
 func TestUnattendedUpgradesFluoOnlyWithFlatcarNodes(t *testing.T) {
@@ -120,19 +212,24 @@ func TestUnattendedUpgradesFluoOnlyWithFlatcarNodes(t *testing.T) {
 	const fluoNamespace = "reboot-coordinator"
 
 	tests := []struct {
-		name         string
-		flatcarNodes bool
-		expectFluo   bool
+		name       string
+		params     map[string]string
+		expectFluo bool
 	}{
 		{
-			name:         "without flatcar nodes fluo is not rendered",
-			flatcarNodes: false,
-			expectFluo:   false,
+			name:       "fluo is not rendered without flatcar nodes",
+			params:     map[string]string{paramFlatcarNodesPresent: "false"},
+			expectFluo: false,
 		},
 		{
-			name:         "with flatcar nodes fluo is rendered",
-			flatcarNodes: true,
-			expectFluo:   true,
+			name:       "fluo is not rendered if the param is missing",
+			params:     nil,
+			expectFluo: false,
+		},
+		{
+			name:       "fluo is rendered with flatcar nodes",
+			params:     map[string]string{paramFlatcarNodesPresent: "true"},
+			expectFluo: true,
 		},
 	}
 
@@ -142,8 +239,7 @@ func TestUnattendedUpgradesFluoOnlyWithFlatcarNodes(t *testing.T) {
 
 			a := &applier{
 				TemplateData: templateData{
-					Config:              &kubeoneapi.KubeOneCluster{Name: "kubeone-test"},
-					FlatcarNodesPresent: tc.flatcarNodes,
+					Config: &kubeoneapi.KubeOneCluster{Name: "kubeone-test"},
 					InternalImages: &internalImages{
 						resolver: func(images.Resource, ...images.GetOpt) string { return "registry.example.com/image:tag" },
 					},
@@ -152,7 +248,7 @@ func TestUnattendedUpgradesFluoOnlyWithFlatcarNodes(t *testing.T) {
 				EmbeddedFS: embeddedaddons.FS,
 			}
 
-			manifests, err := a.loadAddonsManifests(a.EmbeddedFS, "unattended-upgrades", nil, logrus.New(), false, &kubeoneapi.KubeOneCluster{}, false)
+			manifests, err := a.loadAddonsManifests(a.EmbeddedFS, "unattended-upgrades", tc.params, logrus.New(), false, &kubeoneapi.KubeOneCluster{}, false)
 			if err != nil {
 				t.Fatalf("unable to load manifests: %v", err)
 			}
