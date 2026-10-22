@@ -78,7 +78,7 @@ func (p *Provider) GenerateMachines(clusterName string, nodeSet []kubeoneapi.Nod
 	return generateAWSControlPlaneMachines(clusterName, nodeSet, kubeletVersion)
 }
 
-func (p *Provider) EnsureVM(s *state.State, capimachine clusterv1alpha1.Machine) error {
+func (p *Provider) EnsureVM(s *state.State, nodeSet kubeoneapi.NodeSet, capimachine clusterv1alpha1.Machine) error {
 	awsConfig, err := awsRawConfigFromCAPI(capimachine.Spec.ProviderSpec)
 	if err != nil {
 		return err
@@ -90,7 +90,7 @@ func (p *Provider) EnsureVM(s *state.State, capimachine clusterv1alpha1.Machine)
 		return err
 	}
 
-	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, cloudprovider.HostConfigsFromMachines(provMachines, s.Cluster.ControlPlane.NodeSets)...)
+	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, cloudprovider.HostConfigsFromMachines(provMachines, []kubeoneapi.NodeSet{nodeSet})...)
 
 	client, err := awsELBv2Client(s)
 	if err != nil {

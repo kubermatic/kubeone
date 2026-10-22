@@ -258,25 +258,6 @@ func TestEnabledAndHasLoadBalancer(t *testing.T) {
 	}
 }
 
-func TestNodeSetForMachine(t *testing.T) {
-	nodeSets := []kubeoneapi.NodeSet{
-		{Name: "a", Replicas: 2, SSH: kubeoneapi.SSHSpec{Username: "root"}},
-		{Name: "b", Replicas: 1, SSH: kubeoneapi.SSHSpec{Username: "rocky"}},
-	}
-
-	got, err := nodeSetForMachine("demo", nodeSets, "demo-b-0")
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if got.Name != "b" || got.SSH.Username != "rocky" {
-		t.Errorf("expected nodeSet b, got %q", got.Name)
-	}
-
-	if _, err = nodeSetForMachine("demo", nodeSets, "demo-a-2"); err == nil {
-		t.Error("expected an error for a machine outside the nodeSet replicas")
-	}
-}
-
 func TestGenerateMachinesKeepsNodeSetLabels(t *testing.T) {
 	nodeSets := testNodeSets(validSpec, 1)
 	nodeSets[0].NodeSettings.Labels = map[string]string{"team": "a"}

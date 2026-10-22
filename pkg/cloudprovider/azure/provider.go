@@ -88,7 +88,7 @@ func (p *Provider) GenerateMachines(clusterName string, nodeSet []kubeoneapi.Nod
 	return generateAzureControlPlaneMachines(clusterName, nodeSet, kubeletVersion)
 }
 
-func (p *Provider) EnsureVM(s *state.State, capimachine clusterv1alpha1.Machine) error {
+func (p *Provider) EnsureVM(s *state.State, nodeSet kubeoneapi.NodeSet, capimachine clusterv1alpha1.Machine) error {
 	if err := prepareAzureEnv(s); err != nil {
 		return err
 	}
@@ -102,7 +102,7 @@ func (p *Provider) EnsureVM(s *state.State, capimachine clusterv1alpha1.Machine)
 		return err
 	}
 
-	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, cloudprovider.HostConfigsFromMachines(provMachines, s.Cluster.ControlPlane.NodeSets)...)
+	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, cloudprovider.HostConfigsFromMachines(provMachines, []kubeoneapi.NodeSet{nodeSet})...)
 
 	return nil
 }

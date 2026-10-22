@@ -79,13 +79,18 @@ func WithEnsureControlPlane(steps Tasks, cluster *kubeoneapi.KubeOneCluster) (Ta
 			})
 		}
 
-		for _, machine := range machines {
-			m := machine
+		nodeSets, err := cloudprovider.MachineNodeSets(machines, cluster.ControlPlane.NodeSets)
+		if err != nil {
+			return nil, err
+		}
+
+		for i, m := range machines {
+			nodeSet := nodeSets[i]
 			steps = steps.append(Task{
 				Description: fmt.Sprintf("Ensure %s control-plane %q VM", p.Name(), m.Name),
 				Predicate:   p.Enabled,
 				Fn: func(s *state.State) error {
-					return p.EnsureVM(s, m)
+					return p.EnsureVM(s, nodeSet, m)
 				},
 			})
 		}
