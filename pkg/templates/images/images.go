@@ -307,7 +307,7 @@ func optionalResources() map[Resource]map[string]string {
 		DigitalOceanCSISnapshotter:        {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.6.0"},
 
 		// Hetzner CCM
-		HetznerCCM: {"*": "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.39.1"},
+		HetznerCCM: {"*": "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.39.2"},
 
 		// Hetzner CSI
 		HetznerCSI:                   {"*": "docker.io/hetznercloud/hcloud-csi-driver:v2.24.1"},
