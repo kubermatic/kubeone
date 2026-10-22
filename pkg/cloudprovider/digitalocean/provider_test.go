@@ -17,12 +17,16 @@ limitations under the License.
 package digitalocean
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"reflect"
 	"slices"
+	"strconv"
 	"strings"
 	"testing"
 
+	"github.com/digitalocean/godo"
 	"github.com/sirupsen/logrus"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -86,7 +90,7 @@ func TestGenerateMachines(t *testing.T) {
 		if m.Name != wantName || m.Spec.Name != wantName {
 			t.Errorf("machine %d: expected name %q, got %q/%q", i, wantName, m.Name, m.Spec.Name)
 		}
-		if want := wantName + "-fra1"; string(m.UID) != want {
+		if want := wantName; string(m.UID) != want {
 			t.Errorf("machine %d: expected UID %q, got %q", i, want, m.UID)
 		}
 		if m.Spec.Versions.Kubelet != "v1.36.0" {
@@ -209,7 +213,7 @@ func TestGenerateMachinesSanitizesUID(t *testing.T) {
 	if machines[0].Name != "my.cluster-cp-0" {
 		t.Errorf("unexpected name %q", machines[0].Name)
 	}
-	if string(machines[0].UID) != "my_cluster-cp-0-fra1" {
+	if string(machines[0].UID) != "my_cluster-cp-0" {
 		t.Errorf("expected sanitized UID, got %q", machines[0].UID)
 	}
 }
@@ -275,9 +279,10 @@ func TestGenerateMachinesKeepsNodeSetLabels(t *testing.T) {
 	}
 }
 
-// machine-controller finds droplets by name and UID tag across all regions, so
-// clusters with the same name in different regions need different UIDs.
-func TestGenerateMachinesUIDDiffersByRegion(t *testing.T) {
+// machine-controller finds droplets by name and UID tag across all regions,
+// the UID must not depend on the region, or droplets are lost when the region
+// changes.
+func TestGenerateMachinesUIDIgnoresRegion(t *testing.T) {
 	fra1, err := generateControlPlaneMachines("demo", testNodeSets(`{"region":"fra1","size":"s-2vcpu-4gb"}`, 1), "v1.36.0")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -287,10 +292,83 @@ func TestGenerateMachinesUIDDiffersByRegion(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if fra1[0].Name != ams3[0].Name {
-		t.Errorf("expected the same machine name, got %q and %q", fra1[0].Name, ams3[0].Name)
+	if fra1[0].Name != ams3[0].Name || fra1[0].UID != ams3[0].UID {
+		t.Errorf("expected the same name and UID, got %q/%q and %q/%q", fra1[0].Name, fra1[0].UID, ams3[0].Name, ams3[0].UID)
 	}
-	if fra1[0].UID == ams3[0].UID {
-		t.Errorf("expected different UIDs per region, both are %q", fra1[0].UID)
+}
+
+// fakeDropletLister returns the given droplets for the tag, one slice per
+// page.
+type fakeDropletLister struct {
+	pages [][]godo.Droplet
+	err   error
+
+	tags []string
+}
+
+func (f *fakeDropletLister) ListByTag(_ context.Context, tag string, opts *godo.ListOptions) ([]godo.Droplet, *godo.Response, error) {
+	f.tags = append(f.tags, tag)
+	if f.err != nil {
+		return nil, nil, f.err
+	}
+	if len(f.pages) == 0 {
+		return nil, &godo.Response{Links: &godo.Links{}}, nil
+	}
+
+	page := 1
+	if opts != nil && opts.Page > 0 {
+		page = opts.Page
+	}
+
+	pages := &godo.Pages{}
+	if page > 1 {
+		pages.Prev = "https://api.digitalocean.com/v2/droplets?page=" + strconv.Itoa(page-1)
+	}
+	if page < len(f.pages) {
+		pages.Next = "https://api.digitalocean.com/v2/droplets?page=" + strconv.Itoa(page+1)
+	}
+
+	return f.pages[page-1], &godo.Response{Links: &godo.Links{Pages: pages}}, nil
+}
+
+func droplet(name, region string) godo.Droplet {
+	return godo.Droplet{Name: name, Region: &godo.Region{Slug: region}}
+}
+
+func TestCheckDropletRegion(t *testing.T) {
+	tests := []struct {
+		name    string
+		pages   [][]godo.Droplet
+		listErr error
+		wantErr string
+	}{
+		{name: "no droplets"},
+		{name: "same region", pages: [][]godo.Droplet{{droplet("demo-cp-0", "fra1"), droplet("demo-cp-1", "fra1")}}},
+		{name: "droplet without region", pages: [][]godo.Droplet{{{Name: "demo-cp-0"}}}},
+		{name: "other region", pages: [][]godo.Droplet{{droplet("demo-cp-0", "ams3")}}, wantErr: `in region(s) [ams3], but the control plane nodeSets use region "fra1"`},
+		{name: "other region on second page", pages: [][]godo.Droplet{{droplet("demo-cp-0", "fra1")}, {droplet("demo-cp-1", "nyc1"), droplet("demo-cp-2", "ams3")}}, wantErr: "in region(s) [ams3 nyc1]"},
+		{name: "list error", listErr: errors.New("boom"), wantErr: "boom"},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			client := &fakeDropletLister{pages: tc.pages, err: tc.listErr}
+			s := testState(nil, testNodeSets(validSpec, 3))
+
+			err := checkDropletRegion(context.Background(), client, s.Cluster)
+			switch {
+			case tc.wantErr == "" && err != nil:
+				t.Fatalf("unexpected error: %v", err)
+			case tc.wantErr != "" && (err == nil || !strings.Contains(err.Error(), tc.wantErr)):
+				t.Fatalf("expected error containing %q, got %v", tc.wantErr, err)
+			}
+
+			if len(client.tags) == 0 || client.tags[0] != OwnedTag("demo") {
+				t.Errorf("expected droplets listed by tag %q, got %v", OwnedTag("demo"), client.tags)
+			}
+			if want := max(len(tc.pages), 1); tc.listErr == nil && len(client.tags) != want {
+				t.Errorf("expected %d list calls, got %d", want, len(client.tags))
+			}
+		})
 	}
 }

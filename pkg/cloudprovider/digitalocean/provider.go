@@ -17,12 +17,15 @@ limitations under the License.
 package digitalocean
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"maps"
 	"os"
 	"regexp"
 	"slices"
+
+	"github.com/digitalocean/godo"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/cloudprovider"
@@ -38,21 +41,37 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/util/sets"
 )
 
 const (
 	// maxTagLength is the max length DigitalOcean accepts for tag names
 	maxTagLength = 255
+
+	dropletPageSize = 200
 )
 
 var (
 	_ cloudprovider.ControlPlaneCloudProvider = &provider{}
 	_ cloudprovider.LoadBalancerProvider      = &provider{}
 	_ cloudprovider.CleanupPreparer           = &provider{}
+	_ cloudprovider.Preflighter               = &provider{}
 
 	// invalidTagChars matches characters not allowed in DigitalOcean tag names
 	invalidTagChars = regexp.MustCompile(`[^a-zA-Z0-9:_-]`)
+
+	// newDropletsClient builds the droplets client. Variable to allow
+	// injecting fakes in tests.
+	newDropletsClient = func(token string) dropletLister {
+		return godo.NewFromToken(token).Droplets
+	}
 )
+
+// dropletLister is the part of godo.DropletsService used to find the droplets
+// of the cluster.
+type dropletLister interface {
+	ListByTag(ctx context.Context, tag string, opts *godo.ListOptions) ([]godo.Droplet, *godo.Response, error)
+}
 
 func init() {
 	cloudprovider.Register(&provider{})
@@ -96,14 +115,6 @@ func controlPlaneMachineName(clusterName, nodeSetName string, idx int) string {
 	return fmt.Sprintf("%s-%s-%d", clusterName, nodeSetName, idx)
 }
 
-// controlPlaneMachineUID is the machine UID, which machine-controller adds as
-// droplet tag and uses together with the name to find the droplet. Droplets of
-// all regions are searched, so the region is part of the UID to keep clusters
-// with the same name in different regions apart.
-func controlPlaneMachineUID(machineName, region string) types.UID {
-	return types.UID(sanitizeTag(machineName + "-" + region))
-}
-
 func (p *provider) LookupVMs(s *state.State) error {
 	if err := exportCredentials(s); err != nil {
 		return err
@@ -130,6 +141,83 @@ func (p *provider) LookupVMs(s *state.State) error {
 
 func (p *provider) PrepareCleanup(s *state.State) error {
 	return exportCredentials(s)
+}
+
+func (p *provider) Preflight(s *state.State) error {
+	token, err := apiToken(s)
+	if err != nil {
+		return err
+	}
+
+	return checkDropletRegion(s.Context, newDropletsClient(token), s.Cluster)
+}
+
+// checkDropletRegion fails if droplets of the cluster exist outside the
+// nodeSets region. DigitalOcean can't move droplets between regions, so after
+// a region change apply would create a second control plane next to the old
+// droplets, which reset would then no longer find. The cluster name is the
+// only identity of the droplets, so this also keeps a cluster from adopting
+// the droplets of a cluster with the same name in another region.
+func checkDropletRegion(ctx context.Context, client dropletLister, cluster *kubeoneapi.KubeOneCluster) error {
+	region, err := nodeSetsRegion(cluster.ControlPlane.NodeSets)
+	if err != nil || region == "" {
+		return err
+	}
+
+	tag := OwnedTag(cluster.Name)
+	otherRegions := sets.New[string]()
+	opts := &godo.ListOptions{Page: 1, PerPage: dropletPageSize}
+
+	for {
+		droplets, resp, err := client.ListByTag(ctx, tag, opts)
+		if err != nil {
+			return fail.Cloud(err, "digitalocean", "listing droplets tagged %q", tag)
+		}
+
+		for _, droplet := range droplets {
+			if droplet.Region != nil && droplet.Region.Slug != region {
+				otherRegions.Insert(droplet.Region.Slug)
+			}
+		}
+
+		if resp == nil || resp.Links == nil || resp.Links.IsLastPage() {
+			break
+		}
+
+		page, err := resp.Links.CurrentPage()
+		if err != nil {
+			return fail.Cloud(err, "digitalocean", "paginating droplets")
+		}
+		opts.Page = page + 1
+	}
+
+	if otherRegions.Len() > 0 {
+		return fail.Config(
+			fmt.Errorf(
+				"cluster %q has droplets tagged %q in region(s) %v, but the control plane nodeSets use region %q; "+
+					"DigitalOcean can't move droplets between regions, revert the nodeSets region or reset the cluster first",
+				cluster.Name, tag, sets.List(otherRegions), region,
+			),
+			"checking control plane droplet regions",
+		)
+	}
+
+	return nil
+}
+
+// nodeSetsRegion returns the region of the control plane nodeSets, validation
+// ensures all nodeSets use the same one.
+func nodeSetsRegion(nodeSets []kubeoneapi.NodeSet) (string, error) {
+	if len(nodeSets) == 0 {
+		return "", nil
+	}
+
+	var doConfig digitaloceantypes.RawConfig
+	if err := jsonutil.StrictUnmarshal(nodeSets[0].CloudProviderSpec, &doConfig); err != nil {
+		return "", fail.Config(err, "decode digitalocean config")
+	}
+
+	return doConfig.Region.Value, nil
 }
 
 // exportCredentials exports the DigitalOcean token for the in-process
@@ -255,7 +343,11 @@ func generateControlPlaneMachines(clusterName string, nodeSets []kubeoneapi.Node
 			machines = append(machines, clusterv1alpha1.Machine{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: name,
-					UID:  controlPlaneMachineUID(name, doConfig.Region.Value),
+					// machine-controller tags the droplet with the UID and
+					// finds it by name and UID in all regions. The region is
+					// left out, so a changed region still finds the existing
+					// droplets and Preflight can refuse the change.
+					UID: types.UID(sanitizeTag(name)),
 				},
 				Spec: clusterv1alpha1.MachineSpec{
 					ObjectMeta: metav1.ObjectMeta{

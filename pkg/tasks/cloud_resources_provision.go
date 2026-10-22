@@ -35,6 +35,7 @@ import (
 
 func WithFindControlPlane(t Tasks) Tasks {
 	for _, p := range cloudprovider.ControlPlaneProviders() {
+		t = t.append(preflightTasks(p)...)
 		if lb, ok := p.(cloudprovider.LoadBalancerProvider); ok {
 			t = t.append(Task{
 				Description: fmt.Sprintf("Find %s load balancer", p.Name()),
@@ -71,6 +72,8 @@ func WithEnsureControlPlane(steps Tasks, cluster *kubeoneapi.KubeOneCluster) (Ta
 			return nil, err
 		}
 
+		steps = steps.append(preflightTasks(p)...)
+
 		if lb, ok := p.(cloudprovider.LoadBalancerProvider); ok {
 			steps = steps.append(Task{
 				Description: fmt.Sprintf("Ensure %s load balancer", p.Name()),
@@ -103,6 +106,23 @@ func WithEnsureControlPlane(steps Tasks, cluster *kubeoneapi.KubeOneCluster) (Ta
 		Predicate: func(s *state.State) bool { return len(s.Cluster.ControlPlane.NodeSets) != 0 },
 		Fn:        defaultCluster,
 	}), nil
+}
+
+// preflightTasks returns the preflight check of the provider, if it has one.
+// The check has no Description, so it's not listed as a change by apply.
+func preflightTasks(p cloudprovider.ControlPlaneCloudProvider) []Task {
+	pf, ok := p.(cloudprovider.Preflighter)
+	if !ok {
+		return nil
+	}
+
+	return []Task{{
+		Operation: fmt.Sprintf("checking existing %s resources", p.Name()),
+		Predicate: p.Enabled,
+		Fn:        pf.Preflight,
+		// Failed checks are mostly config errors, retrying won't help
+		Retries: 3,
+	}}
 }
 
 func defaultCluster(st *state.State) error {

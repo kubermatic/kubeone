@@ -77,6 +77,12 @@ type CleanupPreparer interface {
 	PrepareCleanup(*state.State) error
 }
 
+// Preflighter checks the existing cloud resources before the control plane is
+// looked up or ensured, e.g. to refuse changes that can't be applied in place.
+type Preflighter interface {
+	Preflight(*state.State) error
+}
+
 type LoadBalancerProvider interface {
 	HasLoadBalancer(*state.State) bool
 

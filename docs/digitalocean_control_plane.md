@@ -79,6 +79,13 @@ controlPlane:
 rejected. The `token` field must not be set, KubeOne passes the token from the credentials. All nodeSets must use the
 same region.
 
+The region can't be changed after the droplets are created, DigitalOcean can't move droplets between regions. Before
+looking up or provisioning the control plane, KubeOne lists the droplets tagged `kubeone-owned:<CLUSTER_NAME>` and fails
+if any of them is in another region than the nodeSets. To move a cluster to another region, reset it and apply it again.
+
+The cluster name identifies the control-plane droplets and the load balancer, so it must be unique per DigitalOcean
+account, also across regions.
+
 ## Load Balancer Configuration
 
 The `controlPlane.loadBalancer` section supports:
@@ -98,9 +105,8 @@ deleted if `apiEndpoint.host` is its IP address.
 
 During `kubeone apply`, KubeOne uses the DigitalOcean API to:
 
-1. Look up the named load balancer in the nodeSets region. Names are matched together with the region, so clusters with
-   the same name can run in different regions. DigitalOcean doesn't enforce unique names; if several load balancers
-   match, the one targeting `kubeone-cluster:<CLUSTER_NAME>` is used.
+1. Look up the named load balancer in the nodeSets region. DigitalOcean doesn't enforce unique names; if several load
+   balancers match, the one targeting `kubeone-cluster:<CLUSTER_NAME>` is used.
 
 2. If the load balancer exists, it's reused only if it targets droplets tagged `kubeone-cluster:<CLUSTER_NAME>`.
    Otherwise `kubeone apply` fails, because the load balancer wasn't created by KubeOne for this cluster or was
@@ -158,10 +164,9 @@ Characters that DigitalOcean doesn't allow in tags (e.g. `.`) are replaced with 
 
 During `kubeone reset --destroy-control-plane --destroy-control-plane-load-balancer`, the load balancer is deleted only
 if it targets the cluster tag, isn't referenced by `id`, and `apiEndpoint.host` is unset or is the load balancer IP.
-Control-plane droplets are found by name (`<CLUSTER_NAME>-<NODESET>-<INDEX>`) and machine UID tag
-(`<CLUSTER_NAME>-<NODESET>-<INDEX>-<REGION>`), so the cluster `name`, the nodeSet names and the region must not change
-between `apply` and `reset`. machine-controller searches droplets in all regions; the region in the UID tag keeps
-clusters with the same name in different regions apart.
+Control-plane droplets are found by name and machine UID tag (both `<CLUSTER_NAME>-<NODESET>-<INDEX>`, the tag with
+invalid characters replaced) in all regions, so the cluster `name` and the nodeSet names must not change between `apply`
+and `reset`. A changed region is detected and refused, see [Configuration](#configuration).
 
 KubeOne doesn't create a DigitalOcean cloud firewall. If you add one, the control-plane droplets must allow SSH (22)
 from the machine running KubeOne, kube-apiserver (6443) from the load balancer and nodes, and the ports required by

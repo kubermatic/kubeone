@@ -489,11 +489,10 @@ func getLoadBalancer(ctx context.Context, client godo.LoadBalancersService, id s
 }
 
 // findLoadBalancerByName lists all load balancers and returns the one with the
-// given name in the given region (any region if empty). The same name can be
-// used in different regions (e.g. by clusters with the same name), and
-// DigitalOcean doesn't enforce unique names, so if several load balancers
-// match, the one owned by the cluster is preferred. The DigitalOcean API
-// doesn't support filtering by name.
+// given name in the given region (any region if empty). DigitalOcean doesn't
+// enforce unique names, so if several load balancers match, the one owned by
+// the cluster is preferred. The DigitalOcean API doesn't support filtering by
+// name.
 func findLoadBalancerByName(ctx context.Context, client godo.LoadBalancersService, name, region, clusterName string) (*godo.LoadBalancer, error) {
 	opts := &godo.ListOptions{Page: 1, PerPage: lbPageSize}
 
