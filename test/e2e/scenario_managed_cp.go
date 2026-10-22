@@ -25,6 +25,7 @@ import (
 	"strings"
 	"testing"
 	"text/template"
+	"time"
 
 	"sigs.k8s.io/yaml"
 )
@@ -108,7 +109,10 @@ func (scenario *scenarioManagedControlPlane) Run(ctx context.Context, t *testing
 	// delete anything that reset left behind (e.g. if apply failed midway)
 	t.Cleanup(func() {
 		if err := retryFn(func() error {
-			return cloud.Janitor(context.Background())
+			cleanupCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 15*time.Minute)
+			defer cancel()
+
+			return cloud.Janitor(cleanupCtx)
 		}); err != nil {
 			t.Errorf("janitor failed, resources of cluster %q might be leaked: %v", clusterName, err)
 		}
