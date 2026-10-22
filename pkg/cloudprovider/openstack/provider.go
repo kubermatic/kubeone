@@ -78,13 +78,13 @@ func (p *Provider) GenerateMachines(clusterName string, nodeSet []kubeoneapi.Nod
 	return generateOpenstackControlPlaneMachines(clusterName, nodeSet, kubeletVersion)
 }
 
-func (p *Provider) EnsureVM(s *state.State, capimachine clusterv1alpha1.Machine) error {
+func (p *Provider) EnsureVM(s *state.State, nodeSet kubeoneapi.NodeSet, capimachine clusterv1alpha1.Machine) error {
 	provMachines, err := provisioner.FindOrCreateMachines(s.Context, []clusterv1alpha1.Machine{capimachine}, s.Logger)
 	if err != nil {
 		return err
 	}
 
-	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, cloudprovider.HostConfigsFromMachines(provMachines, s.Cluster.ControlPlane.NodeSets)...)
+	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, cloudprovider.HostConfigsFromMachines(provMachines, []kubeoneapi.NodeSet{nodeSet})...)
 
 	return nil
 }
@@ -426,7 +426,7 @@ func generateOpenstackControlPlaneMachines(clusterName string, nodeSet []kubeone
 				return nil, fail.Cloud(err, "openstack", "json marshaling provider config")
 			}
 
-			name := fmt.Sprintf("%s-%s-%d", clusterName, node.Name, idx)
+			name := node.MachineName(clusterName, idx)
 			machines = append(machines, clusterv1alpha1.Machine{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: name,

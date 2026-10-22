@@ -21,6 +21,40 @@ import (
 	"testing"
 )
 
+func TestNodeSet_MachineName(t *testing.T) {
+	tests := []struct {
+		name        string
+		clusterName string
+		nodeSetName string
+		idx         int
+		want        string
+	}{
+		{
+			name:        "first replica",
+			clusterName: "cluster",
+			nodeSetName: "cp",
+			idx:         0,
+			want:        "cluster-cp-0",
+		},
+		{
+			name:        "two digit index",
+			clusterName: "cluster",
+			nodeSetName: "cp",
+			idx:         12,
+			want:        "cluster-cp-12",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ns := NodeSet{Name: tt.nodeSetName}
+			if got := ns.MachineName(tt.clusterName, tt.idx); got != tt.want {
+				t.Errorf("NodeSet.MachineName() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestContainerRuntimeConfig_MachineControllerFlags(t *testing.T) {
 	type fields struct {
 		Containerd *ContainerRuntimeContainerd

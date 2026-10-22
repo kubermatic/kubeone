@@ -166,3 +166,78 @@ func Test_setRegistriesAuth(t *testing.T) {
 		})
 	}
 }
+
+func TestDigitalOceanControlPlaneDefaults(t *testing.T) {
+	nodeSets := []kubeoneapi.NodeSet{
+		{Name: "cp", Replicas: 3, CloudProviderSpec: []byte(`{"region":"fra1","size":"s-2vcpu-4gb"}`)},
+	}
+
+	tests := []struct {
+		name     string
+		in       kubeoneapi.DigitalOceanLoadBalancer
+		nodeSets []kubeoneapi.NodeSet
+		want     kubeoneapi.DigitalOceanLoadBalancer
+	}{
+		{
+			name: "create mode defaults",
+			in:   kubeoneapi.DigitalOceanLoadBalancer{},
+			want: kubeoneapi.DigitalOceanLoadBalancer{Name: "demo-kubeapi", Region: "fra1", SizeUnit: 1},
+		},
+		{
+			name: "user values are kept",
+			in:   kubeoneapi.DigitalOceanLoadBalancer{Name: "custom", Region: "ams3", SizeUnit: 2},
+			want: kubeoneapi.DigitalOceanLoadBalancer{Name: "custom", Region: "ams3", SizeUnit: 2},
+		},
+		{
+			name: "existing mode only gets the region",
+			in:   kubeoneapi.DigitalOceanLoadBalancer{ID: "lb-x"},
+			want: kubeoneapi.DigitalOceanLoadBalancer{ID: "lb-x", Region: "fra1"},
+		},
+		{
+			name:     "region given as ConfigVar object",
+			in:       kubeoneapi.DigitalOceanLoadBalancer{},
+			nodeSets: []kubeoneapi.NodeSet{{Name: "cp", Replicas: 1, CloudProviderSpec: []byte(`{"region":{"value":"ams3"},"size":"s-2vcpu-4gb"}`)}},
+			want:     kubeoneapi.DigitalOceanLoadBalancer{Name: "demo-kubeapi", Region: "ams3", SizeUnit: 1},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			cp := &kubeoneapi.DigitalOceanControlPlane{LoadBalancer: tc.in}
+			ns := nodeSets
+			if tc.nodeSets != nil {
+				ns = tc.nodeSets
+			}
+			setDefaultDigitalOceanControlPlane("demo", ns, cp)
+
+			if !reflect.DeepEqual(cp.LoadBalancer, tc.want) {
+				t.Errorf("got %+v, want %+v", cp.LoadBalancer, tc.want)
+			}
+		})
+	}
+}
+
+func TestDigitalOceanManagedControlPlaneIsSupported(t *testing.T) {
+	cluster := &kubeoneapi.KubeOneCluster{
+		Name: "demo",
+		CloudProvider: kubeoneapi.CloudProviderSpec{
+			DigitalOcean: &kubeoneapi.DigitalOceanSpec{
+				ControlPlane: &kubeoneapi.DigitalOceanControlPlane{},
+			},
+		},
+		ControlPlane: kubeoneapi.ControlPlaneConfig{
+			NodeSets: []kubeoneapi.NodeSet{
+				{Name: "cp", Replicas: 1, CloudProviderSpec: []byte(`{"region":"fra1","size":"s-2vcpu-4gb"}`)},
+			},
+		},
+	}
+
+	if err := SetKubeOneClusterDynamicDefaults(cluster, "", ""); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	cp := cluster.CloudProvider.DigitalOcean.ControlPlane
+	if cp == nil || cp.LoadBalancer.Name != "demo-kubeapi" {
+		t.Fatalf("expected control plane load balancer to be defaulted, got %+v", cp)
+	}
+}

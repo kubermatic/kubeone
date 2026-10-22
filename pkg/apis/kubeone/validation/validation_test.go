@@ -17,6 +17,7 @@ limitations under the License.
 package validation
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -3324,5 +3325,142 @@ func withCiliumSpec(ciliumSpec *kubeoneapi.CiliumSpec) func(*kubeoneapi.KubeOneC
 			cls.ClusterNetwork.CNI = &kubeoneapi.CNI{}
 		}
 		cls.ClusterNetwork.CNI.Cilium = ciliumSpec
+	}
+}
+
+func TestValidateDigitalOceanSpec(t *testing.T) {
+	const validSpec = `{"region":"fra1","size":"s-2vcpu-4gb"}`
+
+	nodeSet := func(os kubeoneapi.OperatingSystemName, spec string) kubeoneapi.NodeSet {
+		return kubeoneapi.NodeSet{Name: "cp", Replicas: 3, OperatingSystem: os, CloudProviderSpec: []byte(spec)}
+	}
+
+	tests := []struct {
+		name          string
+		clusterName   string
+		lb            *kubeoneapi.DigitalOceanLoadBalancer
+		nodeSets      []kubeoneapi.NodeSet
+		expectedError bool
+	}{
+		{
+			name: "no nodeSets",
+			lb:   &kubeoneapi.DigitalOceanLoadBalancer{SizeUnit: 500},
+		},
+		{
+			// "<50>-cp-2" = 55
+			name:        "droplet name within the hostname limit",
+			clusterName: strings.Repeat("a", 50),
+			nodeSets:    []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, validSpec)},
+		},
+		{
+			// "<58>-cp-2" = 63
+			name:        "droplet name at the hostname limit",
+			clusterName: strings.Repeat("a", 58),
+			nodeSets:    []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, validSpec)},
+		},
+		{
+			// "<59>-cp-2" = 64
+			name:          "droplet name over the hostname limit",
+			clusterName:   strings.Repeat("a", 59),
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, validSpec)},
+			expectedError: true,
+		},
+		{
+			// The highest index of 11 replicas has two digits: "<58>-cp-10" = 64
+			name:          "droplet name over the hostname limit with a two digit index",
+			clusterName:   strings.Repeat("a", 58),
+			nodeSets:      []kubeoneapi.NodeSet{{Name: "cp", Replicas: 11, OperatingSystem: kubeoneapi.OperatingSystemNameUbuntu, CloudProviderSpec: []byte(validSpec)}},
+			expectedError: true,
+		},
+		{
+			name:     "valid create mode",
+			lb:       &kubeoneapi.DigitalOceanLoadBalancer{Name: "demo-kubeapi", Region: "fra1", SizeUnit: 1},
+			nodeSets: []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, validSpec)},
+		},
+		{
+			name:     "valid without controlPlane",
+			nodeSets: []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameRockyLinux, validSpec)},
+		},
+		{
+			name:     "valid existing mode",
+			lb:       &kubeoneapi.DigitalOceanLoadBalancer{ID: "lb-x"},
+			nodeSets: []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, validSpec)},
+		},
+		{
+			name:          "sizeUnit too big",
+			lb:            &kubeoneapi.DigitalOceanLoadBalancer{SizeUnit: 101},
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, validSpec)},
+			expectedError: true,
+		},
+		{
+			name:          "lb region mismatch",
+			lb:            &kubeoneapi.DigitalOceanLoadBalancer{Region: "ams3"},
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, validSpec)},
+			expectedError: true,
+		},
+		{
+			name:          "existing mode lb region mismatch",
+			lb:            &kubeoneapi.DigitalOceanLoadBalancer{ID: "lb-x", Region: "ams3"},
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, validSpec)},
+			expectedError: true,
+		},
+		{
+			name:          "unsupported operating system",
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameFlatcar, validSpec)},
+			expectedError: true,
+		},
+		{
+			name:          "missing region",
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, `{"size":"s-2vcpu-4gb"}`)},
+			expectedError: true,
+		},
+		{
+			name:          "missing size",
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, `{"region":"fra1"}`)},
+			expectedError: true,
+		},
+		{
+			name:          "token in spec",
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, `{"region":"fra1","size":"s-2vcpu-4gb","token":"secret"}`)},
+			expectedError: true,
+		},
+		{
+			name:          "private networking disabled",
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, `{"region":"fra1","size":"s-2vcpu-4gb","private_networking":false}`)},
+			expectedError: true,
+		},
+		{
+			name:          "unknown field",
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet(kubeoneapi.OperatingSystemNameUbuntu, `{"region":"fra1","size":"s-2vcpu-4gb","image":"x"}`)},
+			expectedError: true,
+		},
+		{
+			name: "nodeSets in different regions",
+			nodeSets: []kubeoneapi.NodeSet{
+				nodeSet(kubeoneapi.OperatingSystemNameUbuntu, validSpec),
+				nodeSet(kubeoneapi.OperatingSystemNameUbuntu, `{"region":"ams3","size":"s-2vcpu-4gb"}`),
+			},
+			expectedError: true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			spec := &kubeoneapi.DigitalOceanSpec{}
+			if tc.lb != nil {
+				spec.ControlPlane = &kubeoneapi.DigitalOceanControlPlane{LoadBalancer: *tc.lb}
+			}
+
+			cluster := kubeoneapi.KubeOneCluster{
+				Name:          tc.clusterName,
+				CloudProvider: kubeoneapi.CloudProviderSpec{DigitalOcean: spec},
+				ControlPlane:  kubeoneapi.ControlPlaneConfig{NodeSets: tc.nodeSets},
+			}
+
+			errs := ValidateCloudProviderSpec(cluster, field.NewPath("cloudProvider"))
+			if (len(errs) != 0) != tc.expectedError {
+				t.Errorf("expected error %v, got %v", tc.expectedError, errs)
+			}
+		})
 	}
 }

@@ -84,7 +84,7 @@ func (p *Provider) PrepareCleanup(s *state.State) error {
 	return prepareKubevirtEnv(s)
 }
 
-func (p *Provider) EnsureVM(st *state.State, capimachine clusterv1alpha1.Machine) error {
+func (p *Provider) EnsureVM(st *state.State, nodeSet kubeoneapi.NodeSet, capimachine clusterv1alpha1.Machine) error {
 	if err := prepareKubevirtEnv(st); err != nil {
 		return err
 	}
@@ -94,7 +94,7 @@ func (p *Provider) EnsureVM(st *state.State, capimachine clusterv1alpha1.Machine
 		return err
 	}
 
-	st.Cluster.ControlPlane.Hosts = append(st.Cluster.ControlPlane.Hosts, hostConfigsFromKubevirtMachines(provMachines, st.Cluster.ControlPlane.NodeSets)...)
+	st.Cluster.ControlPlane.Hosts = append(st.Cluster.ControlPlane.Hosts, hostConfigsFromKubevirtMachines(provMachines, []kubeoneapi.NodeSet{nodeSet})...)
 
 	return nil
 }
@@ -413,7 +413,7 @@ func generateKubevirtControlPlaneMachines(clusterName string, nodeSet []kubeonea
 				return nil, fail.Cloud(err, "kubevirt", "json marshaling provider config")
 			}
 
-			name := fmt.Sprintf("%s-%s-%d", clusterName, node.Name, idx)
+			name := node.MachineName(clusterName, idx)
 			machines = append(machines, clusterv1alpha1.Machine{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:   name,
@@ -444,48 +444,12 @@ func generateKubevirtControlPlaneMachines(clusterName string, nodeSet []kubeonea
 }
 
 func hostConfigsFromKubevirtMachines(machines []provisioner.Machine, nodeSets []kubeoneapi.NodeSet) []kubeoneapi.HostConfig {
-	var hosts []kubeoneapi.HostConfig
-	idx := 0
+	hosts := cloudprovider.HostConfigsFromMachines(machines, nodeSets)
 
-	for _, nodeSet := range nodeSets {
-		sshUsername := nodeSet.SSH.Username
-		if sshUsername == "" {
-			sshUsername = "root"
-		}
-
-		for range nodeSet.Replicas {
-			if idx >= len(machines) {
-				break
-			}
-
-			m := machines[idx]
-			address := m.PublicAddress
-			if address == "" {
-				address = m.PrivateAddress
-			}
-
-			host := kubeoneapi.HostConfig{
-				PublicAddress:        address,
-				PrivateAddress:       m.PrivateAddress,
-				Hostname:             m.Hostname,
-				SSHUsername:          sshUsername,
-				SSHPort:              nodeSet.SSH.Port,
-				SSHPrivateKeyFile:    nodeSet.SSH.PrivateKeyFile,
-				SSHCertFile:          nodeSet.SSH.CertFile,
-				SSHHostPublicKey:     nodeSet.SSH.HostPublicKey,
-				SSHAgentSocket:       nodeSet.SSH.AgentSocket,
-				Bastion:              nodeSet.SSH.Bastion,
-				BastionPort:          nodeSet.SSH.BastionPort,
-				BastionUser:          nodeSet.SSH.BastionUser,
-				BastionHostPublicKey: nodeSet.SSH.BastionHostPublicKey,
-				OperatingSystem:      nodeSet.OperatingSystem,
-				Labels:               nodeSet.NodeSettings.Labels,
-				Annotations:          nodeSet.NodeSettings.Annotations,
-				Taints:               nodeSet.NodeSettings.Taints,
-			}
-
-			hosts = append(hosts, host)
-			idx++
+	// KubeVirt VMs might only have an in-cluster (private) address.
+	for i := range hosts {
+		if hosts[i].PublicAddress == "" {
+			hosts[i].PublicAddress = hosts[i].PrivateAddress
 		}
 	}
 

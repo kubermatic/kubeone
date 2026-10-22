@@ -334,6 +334,25 @@
   infrastructures:
     - name: aws_default
 
+#########################
+# MANAGED CONTROL PLANE #
+#########################
+
+- scenario: install_managed_cp
+  initVersion: v1.35
+  infrastructures:
+    - name: digitalocean
+
+- scenario: install_managed_cp
+  initVersion: v1.36
+  infrastructures:
+    - name: digitalocean
+
+- scenario: install_managed_cp
+  initVersion: v1.37
+  infrastructures:
+    - name: digitalocean
+
 ####################
 # CONFORMANCE TEST #
 ####################
