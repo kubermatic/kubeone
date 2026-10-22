@@ -27,7 +27,7 @@ control-plane host IPs yourself (e.g. via Terraform's `kubeone_hosts` and `kubeo
 ## Configuration
 
 ```yaml
-apiVersion: kubeone.k8c.io/v1beta3
+apiVersion: kubeone.k8c.io/v1beta2
 kind: KubeOneCluster
 name: my-cluster
 
