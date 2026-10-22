@@ -221,7 +221,9 @@ func TestDigitalOceanManagedControlPlaneIsSupported(t *testing.T) {
 	cluster := &kubeoneapi.KubeOneCluster{
 		Name: "demo",
 		CloudProvider: kubeoneapi.CloudProviderSpec{
-			DigitalOcean: &kubeoneapi.DigitalOceanSpec{},
+			DigitalOcean: &kubeoneapi.DigitalOceanSpec{
+				ControlPlane: &kubeoneapi.DigitalOceanControlPlane{},
+			},
 		},
 		ControlPlane: kubeoneapi.ControlPlaneConfig{
 			NodeSets: []kubeoneapi.NodeSet{

@@ -334,9 +334,6 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 		case cluster.CloudProvider.Azure != nil:
 			setDefaultAzureControlPlane(cluster.Name, cluster.CloudProvider.Azure.ControlPlane)
 		case cluster.CloudProvider.DigitalOcean != nil:
-			if cluster.CloudProvider.DigitalOcean.ControlPlane == nil {
-				cluster.CloudProvider.DigitalOcean.ControlPlane = &kubeoneapi.DigitalOceanControlPlane{}
-			}
 			setDefaultDigitalOceanControlPlane(cluster.Name, cluster.ControlPlane.NodeSets, cluster.CloudProvider.DigitalOcean.ControlPlane)
 		default:
 			return fail.ConfigError{
