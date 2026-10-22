@@ -522,7 +522,7 @@ func generateAWSControlPlaneMachines(clusterName string, nodeSet []kubeoneapi.No
 				return nil, fail.Cloud(err, "aws", "json marshaling provider config")
 			}
 
-			name := fmt.Sprintf("%s-%s-%d", clusterName, node.Name, idx)
+			name := node.MachineName(clusterName, idx)
 			machines = append(machines, clusterv1alpha1.Machine{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: name,

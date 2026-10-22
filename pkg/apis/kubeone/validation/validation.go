@@ -490,9 +490,8 @@ func validateDigitalOceanSpec(doSpec *kubeoneapi.DigitalOceanSpec, clusterName s
 	for i, ns := range nodeSets {
 		nsFld := nodeSetsFld.Index(i)
 
-		// Same format as the droplet names the provider generates, for the
-		// highest replica index
-		if dropletName := fmt.Sprintf("%s-%s-%d", clusterName, ns.Name, max(ns.Replicas-1, 0)); len(dropletName) > digitalOceanDropletNameMaxLength {
+		// The droplet name the provider generates for the highest replica index
+		if dropletName := ns.MachineName(clusterName, max(ns.Replicas-1, 0)); len(dropletName) > digitalOceanDropletNameMaxLength {
 			allErrs = append(allErrs, field.Invalid(nsFld, dropletName, fmt.Sprintf("control plane droplet name \"<cluster name>-<nodeSet name>-<replica index>\" must not exceed %d characters, it's used as hostname; shorten the cluster or nodeSet name", digitalOceanDropletNameMaxLength)))
 		}
 

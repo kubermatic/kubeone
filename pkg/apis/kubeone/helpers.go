@@ -124,6 +124,14 @@ func (h *HostConfig) SetLeader(leader bool) {
 	h.IsLeader = leader
 }
 
+// MachineName is the deterministic machine (and VM) name of the idx-th replica
+// of the NodeSet. Cloud providers regenerate it on reset to find the VMs to
+// delete, and validation uses it to check provider hostname length limits, so
+// it must not change between apply and reset.
+func (ns NodeSet) MachineName(clusterName string, idx int) string {
+	return fmt.Sprintf("%s-%s-%d", clusterName, ns.Name, idx)
+}
+
 func (crc ContainerRuntimeConfig) MachineControllerFlags() []string {
 	var mcFlags []string
 

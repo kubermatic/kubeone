@@ -108,13 +108,6 @@ func (p *provider) EnsureVM(s *state.State, nodeSet kubeoneapi.NodeSet, capimach
 	return nil
 }
 
-// controlPlaneMachineName is the deterministic machine (and droplet) name of
-// the idx-th replica of a nodeSet. CleanupVMs regenerates the machines to find
-// the droplets to delete, so it must not change between apply and reset.
-func controlPlaneMachineName(clusterName, nodeSetName string, idx int) string {
-	return fmt.Sprintf("%s-%s-%d", clusterName, nodeSetName, idx)
-}
-
 func (p *provider) LookupVMs(s *state.State) error {
 	if err := exportCredentials(s); err != nil {
 		return err
@@ -339,7 +332,7 @@ func generateControlPlaneMachines(clusterName string, nodeSets []kubeoneapi.Node
 				return nil, fail.Cloud(err, "digitalocean", "json marshaling provider config")
 			}
 
-			name := controlPlaneMachineName(clusterName, node.Name, idx)
+			name := node.MachineName(clusterName, idx)
 			machines = append(machines, clusterv1alpha1.Machine{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: name,
