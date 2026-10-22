@@ -638,7 +638,8 @@ type DigitalOceanControlPlane struct {
 // Load balancer management is skipped when .apiEndpoint.host is set.
 type DigitalOceanLoadBalancer struct {
 	// ID of a pre-existing load balancer to use.
-	// KubeOne never deletes a load balancer referenced by ID.
+	// KubeOne never deletes a load balancer referenced by ID, nor changes its
+	// health check, which must check TCP or HTTPS /readyz on port 6443.
 	ID string `json:"id,omitempty"`
 
 	// Name of the load balancer to create. Default: "<CLUSTER_NAME>-kubeapi"

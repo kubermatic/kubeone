@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 	"time"
 
 	"github.com/digitalocean/godo"
@@ -125,16 +126,13 @@ func (p *provider) LookupLoadBalancer(s *state.State) error {
 }
 
 func (p *provider) CleanupLoadBalancer(s *state.State) error {
-	spec := lbSpec(s.Cluster)
-	if spec.ID != "" {
-		s.Logger.Infof("load balancer %q is not managed by KubeOne, skipping deletion", spec.ID)
-
-		return nil
-	}
-
 	client, _, err := lbClient(s)
 	if err != nil {
 		return err
+	}
+
+	if lbSpec(s.Cluster).ID != "" {
+		return releaseLoadBalancer(s.Context, client, s.Cluster, s.Logger)
 	}
 
 	return cleanupLoadBalancer(s.Context, client, s.Cluster, s.Logger)
@@ -183,7 +181,7 @@ func ensureLoadBalancer(ctx context.Context, client godo.LoadBalancersService, v
 		}
 
 		// Restore a missing kube-apiserver rule and the health check
-		return reconcileLoadBalancer(ctx, client, lb, "", logger)
+		return reconcileLoadBalancer(ctx, client, lb, "", true, logger)
 	case errors.Is(err, errLBNotFound):
 		logger.Infof("creating load balancer %q", spec.Name)
 		lb, _, err = client.Create(ctx, createRequest(cluster))
@@ -243,38 +241,41 @@ func ensureExistingLoadBalancer(ctx context.Context, client godo.LoadBalancersSe
 		)
 	}
 
-	return reconcileLoadBalancer(ctx, client, lb, setTag, logger)
+	// KubeOne can't restore the user's health check, so it never changes it
+	if !checksKubeAPI(lb.HealthCheck) {
+		return nil, fail.Cloud(
+			fmt.Errorf("load balancer %q health checks %s, it must health check kube-apiserver with TCP on port %d (or HTTPS on port %d with path /readyz, /livez or /healthz)",
+				lb.Name, describeHealthCheck(lb.HealthCheck), kubeAPIPort, kubeAPIPort),
+			"digitalocean",
+			"configuring load balancer %q", spec.ID,
+		)
+	}
+
+	return reconcileLoadBalancer(ctx, client, lb, setTag, false, logger)
 }
 
 // reconcileLoadBalancer makes the active load balancer forward TCP 6443 to the
-// control plane droplets and health check them on that port, setting setTag
-// as backend selector if it's not empty. All changes are applied in
-// a single Update, DigitalOcean rejects changes while a previous one is still
-// being applied.
-func reconcileLoadBalancer(ctx context.Context, client godo.LoadBalancersService, lb *godo.LoadBalancer, setTag string, logger logrus.FieldLogger) (*godo.LoadBalancer, error) {
+// control plane droplets, setting setTag as backend selector if it's not
+// empty. If restoreHealthCheck is true, the health check is also set to TCP
+// on port 6443. All changes are applied in a single Update, DigitalOcean
+// rejects changes while a previous one is still being applied.
+func reconcileLoadBalancer(ctx context.Context, client godo.LoadBalancersService, lb *godo.LoadBalancer, setTag string, restoreHealthCheck bool, logger logrus.FieldLogger) (*godo.LoadBalancer, error) {
 	hasRule, err := hasKubeAPIForwardingRule(lb)
 	if err != nil {
 		return nil, fail.Cloud(err, "digitalocean", "configuring load balancer %q", lb.ID)
 	}
 
-	needsHealthCheck := !isKubeAPIHealthCheck(lb.HealthCheck)
+	needsHealthCheck := restoreHealthCheck && !isKubeAPIHealthCheck(lb.HealthCheck)
 
 	if setTag == "" && !needsHealthCheck && hasRule {
 		return lb, nil
 	}
 
-	req := lb.AsRequest()
-	// AsRequest copies both size fields, but they're mutually exclusive
-	if req.SizeUnit > 0 {
-		req.SizeSlug = ""
-	}
+	req := updateRequest(lb)
 	if setTag != "" {
 		logger.Infof("configuring load balancer %q to target droplets tagged %q", lb.Name, setTag)
 		req.Tag = setTag
 	}
-	// AsRequest also copies the droplets DigitalOcean resolved from the tag,
-	// but tag and droplet_ids are mutually exclusive
-	req.DropletIDs = nil
 	if needsHealthCheck {
 		logger.Infof("configuring load balancer %q to health check kube-apiserver on port %d", lb.Name, kubeAPIPort)
 		req.HealthCheck = kubeAPIHealthCheck()
@@ -291,6 +292,20 @@ func reconcileLoadBalancer(ctx context.Context, client godo.LoadBalancersService
 	}
 
 	return waitForLoadBalancer(ctx, client, updated, false, logger)
+}
+
+// updateRequest returns a request that keeps the load balancer configuration.
+func updateRequest(lb *godo.LoadBalancer) *godo.LoadBalancerRequest {
+	req := lb.AsRequest()
+	// AsRequest copies both size fields, but they're mutually exclusive
+	if req.SizeUnit > 0 {
+		req.SizeSlug = ""
+	}
+	// AsRequest also copies the droplets DigitalOcean resolved from the tag,
+	// but tag and droplet_ids are mutually exclusive
+	req.DropletIDs = nil
+
+	return req
 }
 
 // checkRegion fails if the load balancer isn't in the nodeSets region.
@@ -379,6 +394,49 @@ func cleanupLoadBalancer(ctx context.Context, client godo.LoadBalancersService, 
 	return nil
 }
 
+// releaseLoadBalancer removes the cluster tag backend selector from a load
+// balancer referenced by ID, which KubeOne sets when configuring it. Otherwise
+// the load balancer would keep targeting the cluster tag and be considered
+// owned by KubeOne if it's later referenced by name. KubeOne only sets the
+// selector on a load balancer without backends, so this restores that. The
+// forwarding rule and the health check are kept.
+func releaseLoadBalancer(ctx context.Context, client godo.LoadBalancersService, cluster *kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) error {
+	id := lbSpec(cluster).ID
+
+	lb, resp, err := client.Get(ctx, id)
+	if err != nil {
+		if isNotFound(resp) {
+			logger.Debugf("no load balancer found with id: %s, skipping release", id)
+
+			return nil
+		}
+
+		return fail.Cloud(err, "digitalocean", "getting load balancer %q", id)
+	}
+
+	if lb.Tag != ClusterTag(cluster.Name) {
+		logger.Infof("load balancer %q is not managed by KubeOne, skipping deletion", lb.Name)
+
+		return nil
+	}
+
+	// DigitalOcean rejects updates while the load balancer is provisioning
+	if lb, err = waitForLoadBalancer(ctx, client, lb, false, logger); err != nil {
+		return err
+	}
+
+	logger.Infof("load balancer %q is not managed by KubeOne, removing its %q backends instead of deleting it", lb.Name, lb.Tag)
+
+	req := updateRequest(lb)
+	req.Tag = ""
+
+	if _, _, err = client.Update(ctx, lb.ID, req); err != nil {
+		return fail.Cloud(err, "digitalocean", "updating load balancer %q", lb.ID)
+	}
+
+	return nil
+}
+
 func createRequest(cluster *kubeoneapi.KubeOneCluster) *godo.LoadBalancerRequest {
 	spec := lbSpec(cluster)
 
@@ -405,6 +463,28 @@ func kubeAPIHealthCheck() *godo.HealthCheck {
 
 func isKubeAPIHealthCheck(hc *godo.HealthCheck) bool {
 	return hc != nil && hc.Protocol == "tcp" && hc.Port == kubeAPIPort
+}
+
+// checksKubeAPI reports whether the health check can tell if kube-apiserver
+// is up. Anonymous requests are allowed to its health endpoints.
+func checksKubeAPI(hc *godo.HealthCheck) bool {
+	if isKubeAPIHealthCheck(hc) {
+		return true
+	}
+
+	return hc != nil && hc.Protocol == "https" && hc.Port == kubeAPIPort &&
+		slices.Contains([]string{"/readyz", "/livez", "/healthz"}, hc.Path)
+}
+
+func describeHealthCheck(hc *godo.HealthCheck) string {
+	switch {
+	case hc == nil:
+		return "nothing"
+	case hc.Path != "":
+		return fmt.Sprintf("%s on port %d with path %s", hc.Protocol, hc.Port, hc.Path)
+	default:
+		return fmt.Sprintf("%s on port %d", hc.Protocol, hc.Port)
+	}
 }
 
 func kubeAPIForwardingRule() godo.ForwardingRule {
@@ -570,7 +650,7 @@ func describeBackends(lb *godo.LoadBalancer) string {
 // DigitalOcean doesn't persist tags on load balancers, so ownership is derived
 // from the backend selector tag. KubeOne also sets that selector on a load
 // balancer referenced by ID, but such a load balancer is never deleted as long
-// as it's referenced by ID.
+// as it's referenced by ID, and reset removes the selector.
 func ownedByKubeOne(lb *godo.LoadBalancer, clusterName string) bool {
 	return lb.Tag == ClusterTag(clusterName)
 }

@@ -51,7 +51,7 @@ cloudProvider:
         sizeUnit: 1
 
         # Use a pre-existing load balancer instead of creating one. It's never
-        # deleted by KubeOne. When set, name and sizeUnit aren't used, but are
+        # deleted by KubeOne, and must health check TCP on port 6443. When set, name and sizeUnit aren't used, but are
         # still validated (name at most 255 characters, sizeUnit at most 100).
         # id: 4de7ac8b-495b-4884-9a69-1050c6793cd6
 
@@ -139,13 +139,17 @@ When `loadBalancer.id` is set, KubeOne gets the load balancer by ID and checks t
 - Not targeting other droplets or tags. A load balancer without backends is configured to target droplets tagged
   `kubeone-cluster:<CLUSTER_NAME>`.
 - Not forwarding port 6443 to another port or protocol.
+- Health checking kube-apiserver: TCP on port 6443, or HTTPS on port 6443 with path `/readyz`, `/livez` or `/healthz`.
+  KubeOne never changes the health check, so configure it before running `kubeone apply`. The DigitalOcean default
+  checks HTTP on port 80, which control-plane droplets don't serve, and is rejected.
 
-KubeOne then adds the TCP 6443 forwarding rule if it's missing, and sets the health check to TCP on port 6443 (the
-DigitalOcean default checks HTTP on port 80, which control-plane droplets don't serve).
+KubeOne then adds the TCP 6443 forwarding rule if it's missing.
 
-The load balancer is never deleted by KubeOne. Note that, once configured, it targets the `kubeone-cluster:<CLUSTER_NAME>`
-tag. If you later replace `id` with a `name` pointing to this load balancer, KubeOne treats it as its own and
-`kubeone reset --destroy-control-plane-load-balancer` deletes it.
+The load balancer is never deleted by KubeOne. Once configured, it targets the `kubeone-cluster:<CLUSTER_NAME>` tag.
+`kubeone reset --destroy-control-plane --destroy-control-plane-load-balancer` removes that backend selector again,
+leaving the load balancer without backends; the forwarding rule and the health check are kept. Don't replace `id` with a
+`name` pointing to this load balancer before resetting the cluster: while it targets the cluster tag, KubeOne treats it as
+its own and deletes it on reset.
 
 ### Tag-based target selection
 
@@ -163,7 +167,9 @@ provisioned control-plane droplet, in addition to the tags from `cloudProviderSp
 Characters that DigitalOcean doesn't allow in tags (e.g. `.`) are replaced with `_`.
 
 During `kubeone reset --destroy-control-plane --destroy-control-plane-load-balancer`, the load balancer is deleted only
-if it targets the cluster tag, isn't referenced by `id`, and `apiEndpoint.host` is unset or is the load balancer IP.
+if it targets the cluster tag, isn't referenced by `id`, and `apiEndpoint.host` is unset or is the load balancer IP. A
+load balancer referenced by `id` only stops targeting the cluster tag, see
+[Using an existing load balancer](#using-an-existing-load-balancer).
 Control-plane droplets are found by name and machine UID tag (both `<CLUSTER_NAME>-<NODESET>-<INDEX>`, the tag with
 invalid characters replaced) in all regions, so the cluster `name` and the nodeSet names must not change between `apply`
 and `reset`. A changed region is detected and refused, see [Configuration](#configuration).

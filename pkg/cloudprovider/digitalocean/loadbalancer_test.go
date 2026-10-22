@@ -418,7 +418,7 @@ func TestReconcileLoadBalancerUpdateError(t *testing.T) {
 	fake := &fakeLBService{updateErr: errors.New("load balancer is being updated")}
 	lb := &godo.LoadBalancer{ID: "lb-1", Name: "demo-kubeapi", Region: fra1Region, Tag: "kubeone-cluster:demo", Status: lbStatusUp, IP: "203.0.113.10"}
 
-	_, err := reconcileLoadBalancer(context.Background(), fake, lb, "", testLogger())
+	_, err := reconcileLoadBalancer(context.Background(), fake, lb, "", true, testLogger())
 	if err == nil || !strings.Contains(err.Error(), "lb-1") || !strings.Contains(err.Error(), "being updated") {
 		t.Fatalf("expected update error for lb-1, got: %v", err)
 	}
@@ -476,31 +476,45 @@ func TestEnsureLoadBalancerTimeout(t *testing.T) {
 func TestEnsureExistingLoadBalancer(t *testing.T) {
 	kubeAPIRules := []godo.ForwardingRule{kubeAPIForwardingRule()}
 	defaultHealthCheck := &godo.HealthCheck{Protocol: "http", Port: 80, Path: "/"}
+	readyzHealthCheck := &godo.HealthCheck{Protocol: "https", Port: kubeAPIPort, Path: "/readyz", CheckIntervalSeconds: 10}
 	fra1 := &godo.Region{Slug: "fra1"}
 
 	tests := []struct {
-		name            string
-		existing        godo.LoadBalancer
-		wantErr         string
-		wantTag         bool
-		wantHealthCheck bool
-		wantAddRules    bool
+		name         string
+		existing     godo.LoadBalancer
+		wantErr      string
+		wantTag      bool
+		wantAddRules bool
 	}{
 		{
 			name:     "already configured",
 			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, Tag: "kubeone-cluster:demo", ForwardingRules: kubeAPIRules, HealthCheck: kubeAPIHealthCheck(), Status: lbStatusUp, IP: "203.0.113.20"},
 		},
 		{
-			name:            "no backends, no rule, default health check",
-			existing:        godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, ForwardingRules: []godo.ForwardingRule{{EntryProtocol: "http", EntryPort: 80, TargetProtocol: "http", TargetPort: 80}}, HealthCheck: defaultHealthCheck, Status: lbStatusUp, IP: "203.0.113.20"},
-			wantTag:         true,
-			wantHealthCheck: true,
-			wantAddRules:    true,
+			name:         "no backends, no rule",
+			existing:     godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, ForwardingRules: []godo.ForwardingRule{{EntryProtocol: "http", EntryPort: 80, TargetProtocol: "http", TargetPort: 80}}, HealthCheck: kubeAPIHealthCheck(), Status: lbStatusUp, IP: "203.0.113.20"},
+			wantTag:      true,
+			wantAddRules: true,
 		},
 		{
-			name:            "tagged but default health check",
-			existing:        godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, Tag: "kubeone-cluster:demo", ForwardingRules: kubeAPIRules, HealthCheck: defaultHealthCheck, Status: lbStatusUp, IP: "203.0.113.20"},
-			wantHealthCheck: true,
+			name:     "https readyz health check is kept",
+			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, ForwardingRules: kubeAPIRules, HealthCheck: readyzHealthCheck, Status: lbStatusUp, IP: "203.0.113.20"},
+			wantTag:  true,
+		},
+		{
+			name:     "default health check",
+			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, ForwardingRules: kubeAPIRules, HealthCheck: defaultHealthCheck, Status: lbStatusUp, IP: "203.0.113.20"},
+			wantErr:  "health checks http on port 80 with path /",
+		},
+		{
+			name:     "tagged but custom health check",
+			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, Tag: "kubeone-cluster:demo", ForwardingRules: kubeAPIRules, HealthCheck: &godo.HealthCheck{Protocol: "http", Port: 8080, Path: "/status"}, Status: lbStatusUp, IP: "203.0.113.20"},
+			wantErr:  "must health check kube-apiserver",
+		},
+		{
+			name:     "https health check on another path",
+			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, ForwardingRules: kubeAPIRules, HealthCheck: &godo.HealthCheck{Protocol: "https", Port: kubeAPIPort, Path: "/"}, Status: lbStatusUp, IP: "203.0.113.20"},
+			wantErr:  "must health check kube-apiserver",
 		},
 		{
 			name:     "other backends",
@@ -514,7 +528,7 @@ func TestEnsureExistingLoadBalancer(t *testing.T) {
 		},
 		{
 			name:     "6443 forwarded to another port",
-			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, ForwardingRules: []godo.ForwardingRule{{EntryProtocol: "tcp", EntryPort: kubeAPIPort, TargetProtocol: "tcp", TargetPort: 443}}, Status: lbStatusUp, IP: "203.0.113.20"},
+			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, ForwardingRules: []godo.ForwardingRule{{EntryProtocol: "tcp", EntryPort: kubeAPIPort, TargetProtocol: "tcp", TargetPort: 443}}, HealthCheck: kubeAPIHealthCheck(), Status: lbStatusUp, IP: "203.0.113.20"},
 			wantErr:  "kube-apiserver requires tcp/6443 to tcp/6443",
 		},
 		{
@@ -527,15 +541,15 @@ func TestEnsureExistingLoadBalancer(t *testing.T) {
 			wantErr:  "default VPC",
 		},
 		{
-			name:            "size slug and size unit",
-			existing:        godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, SizeSlug: "lb-small", SizeUnit: 1, Tag: "kubeone-cluster:demo", ForwardingRules: kubeAPIRules, HealthCheck: defaultHealthCheck, Status: lbStatusUp, IP: "203.0.113.20"},
-			wantHealthCheck: true,
+			name:     "size slug and size unit",
+			existing: godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, SizeSlug: "lb-small", SizeUnit: 1, ForwardingRules: kubeAPIRules, HealthCheck: kubeAPIHealthCheck(), Status: lbStatusUp, IP: "203.0.113.20"},
+			wantTag:  true,
 		},
 		{
 			// DigitalOcean resolves the tag to droplet IDs in GET responses
-			name:            "tagged with resolved droplets",
-			existing:        godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, Tag: "kubeone-cluster:demo", DropletIDs: []int{1, 2, 3}, ForwardingRules: kubeAPIRules, HealthCheck: defaultHealthCheck, Status: lbStatusUp, IP: "203.0.113.20"},
-			wantHealthCheck: true,
+			name:         "tagged with resolved droplets",
+			existing:     godo.LoadBalancer{ID: "lb-x", Name: "byo", Region: fra1, Tag: "kubeone-cluster:demo", DropletIDs: []int{1, 2, 3}, HealthCheck: kubeAPIHealthCheck(), Status: lbStatusUp, IP: "203.0.113.20"},
+			wantAddRules: true,
 		},
 		{
 			name:     "global load balancer",
@@ -575,7 +589,7 @@ func TestEnsureExistingLoadBalancer(t *testing.T) {
 			if tc.existing.VPCUUID == "" && vpcs.getCalls != 0 {
 				t.Error("must not look up a VPC for a load balancer without one")
 			}
-			wantUpdate := tc.wantTag || tc.wantHealthCheck || tc.wantAddRules
+			wantUpdate := tc.wantTag || tc.wantAddRules
 			if got := len(fake.updated) == 1; got != wantUpdate {
 				t.Fatalf("update called = %v, want %v", got, wantUpdate)
 			}
@@ -584,8 +598,8 @@ func TestEnsureExistingLoadBalancer(t *testing.T) {
 				if req.Tag != "kubeone-cluster:demo" {
 					t.Errorf("expected update to target the cluster tag, got %q", req.Tag)
 				}
-				if !isKubeAPIHealthCheck(req.HealthCheck) {
-					t.Errorf("expected update to health check tcp/6443, got %+v", req.HealthCheck)
+				if req.HealthCheck == nil || *req.HealthCheck != *tc.existing.HealthCheck {
+					t.Errorf("update must keep the health check %+v, got %+v", tc.existing.HealthCheck, req.HealthCheck)
 				}
 			}
 			for _, req := range fake.updated {
@@ -612,7 +626,7 @@ func TestEnsureExistingLoadBalancerWaitsBeforeUpdate(t *testing.T) {
 
 	fake := &fakeLBService{getResponses: []*godo.LoadBalancer{
 		{ID: "lb-x", Name: "byo", Region: &godo.Region{Slug: "fra1"}, Status: "new"},
-		{ID: "lb-x", Name: "byo", Region: &godo.Region{Slug: "fra1"}, Status: lbStatusUp, IP: "203.0.113.20"},
+		{ID: "lb-x", Name: "byo", Region: &godo.Region{Slug: "fra1"}, HealthCheck: kubeAPIHealthCheck(), Status: lbStatusUp, IP: "203.0.113.20"},
 	}}
 
 	if _, err := ensureLoadBalancer(context.Background(), fake, testVPCs(), testCluster(kubeoneapi.DigitalOceanLoadBalancer{ID: "lb-x", Region: "fra1"}), testLogger()); err != nil {
@@ -809,19 +823,125 @@ func TestCleanupLoadBalancer(t *testing.T) {
 	}
 }
 
-func TestCleanupLoadBalancerSkipsExistingMode(t *testing.T) {
-	p := &provider{}
+// A load balancer referenced by ID is never deleted, reset only removes the
+// cluster tag backend selector KubeOne set when configuring it.
+func TestCleanupLoadBalancerReleasesExistingMode(t *testing.T) {
+	readyzHealthCheck := &godo.HealthCheck{Protocol: "https", Port: kubeAPIPort, Path: "/readyz"}
+	rules := []godo.ForwardingRule{kubeAPIForwardingRule()}
 
-	fake := &fakeLBService{}
-	fakeClient(t, fake)
+	tests := []struct {
+		name        string
+		existing    *godo.LoadBalancer
+		getStatus   int
+		wantRelease bool
+	}{
+		{
+			name:        "cluster tag is removed",
+			existing:    &godo.LoadBalancer{ID: "lb-x", Name: "byo", SizeSlug: "lb-small", SizeUnit: 1, Tag: "kubeone-cluster:demo", DropletIDs: []int{1, 2}, ForwardingRules: rules, HealthCheck: readyzHealthCheck, Status: lbStatusUp, IP: "203.0.113.20"},
+			wantRelease: true,
+		},
+		{
+			name:     "other tag is kept",
+			existing: &godo.LoadBalancer{ID: "lb-x", Name: "byo", Tag: "someone-else", Status: lbStatusUp, IP: "203.0.113.20"},
+		},
+		{
+			name:     "no backends",
+			existing: &godo.LoadBalancer{ID: "lb-x", Name: "byo", Status: lbStatusUp, IP: "203.0.113.20"},
+		},
+		{
+			name:      "missing load balancer is a no-op",
+			getStatus: http.StatusNotFound,
+		},
+	}
 
-	s := testState(&kubeoneapi.DigitalOceanLoadBalancer{ID: "lb-x"}, testNodeSets(validSpec, 1))
-	s.Logger = testLogger()
-	if err := p.CleanupLoadBalancer(s); err != nil {
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			p := &provider{}
+
+			fake := &fakeLBService{getResponses: []*godo.LoadBalancer{tc.existing}}
+			if tc.getStatus != 0 {
+				fake.getErr, fake.getStatus = errors.New(http.StatusText(tc.getStatus)), tc.getStatus
+			}
+			fakeClient(t, fake)
+
+			s := testState(&kubeoneapi.DigitalOceanLoadBalancer{ID: "lb-x"}, testNodeSets(validSpec, 1))
+			s.Logger = testLogger()
+			if err := p.CleanupLoadBalancer(s); err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if len(fake.deleted) != 0 || len(fake.listRequests) != 0 {
+				t.Error("must never list or delete a load balancer referenced by ID")
+			}
+			if got := len(fake.updated) == 1; got != tc.wantRelease {
+				t.Fatalf("update called = %v, want %v", got, tc.wantRelease)
+			}
+			if !tc.wantRelease {
+				return
+			}
+
+			req := fake.updated[0]
+			if req.Tag != "" || len(req.DropletIDs) != 0 {
+				t.Errorf("expected update to remove the backends, got tag %q and droplets %v", req.Tag, req.DropletIDs)
+			}
+			if req.HealthCheck == nil || *req.HealthCheck != *readyzHealthCheck || !slices.Equal(req.ForwardingRules, rules) {
+				t.Errorf("update must keep the health check and forwarding rules, got %+v and %+v", req.HealthCheck, req.ForwardingRules)
+			}
+			if req.SizeSlug != "" && req.SizeUnit != 0 {
+				t.Errorf("update must not set both size %q and size_unit %d", req.SizeSlug, req.SizeUnit)
+			}
+		})
+	}
+}
+
+// TestReleaseLoadBalancerWire checks the update request body sent to the
+// DigitalOcean API when releasing a load balancer referenced by ID.
+func TestReleaseLoadBalancerWire(t *testing.T) {
+	var body map[string]any
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		switch {
+		case r.Method == http.MethodGet && r.URL.Path == "/v2/load_balancers/lb-x":
+			// DigitalOcean returns the droplets resolved from the tag
+			_, _ = w.Write([]byte(`{"load_balancer":{"id":"lb-x","name":"byo","status":"active","ip":"203.0.113.20",` +
+				`"size_unit":1,"region":{"slug":"fra1"},"tag":"kubeone-cluster:demo","droplet_ids":[1,2],` +
+				`"forwarding_rules":[{"entry_protocol":"tcp","entry_port":6443,"target_protocol":"tcp","target_port":6443}],` +
+				`"health_check":{"protocol":"tcp","port":6443}}}`))
+		case r.Method == http.MethodPut && r.URL.Path == "/v2/load_balancers/lb-x":
+			if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+
+				return
+			}
+			_, _ = w.Write([]byte(`{"load_balancer":{"id":"lb-x","name":"byo","status":"active","ip":"203.0.113.20"}}`))
+		default:
+			http.Error(w, "unexpected request", http.StatusBadRequest)
+		}
+	}))
+	defer srv.Close()
+
+	client, err := godo.New(srv.Client(), godo.SetBaseURL(srv.URL+"/"))
+	if err != nil {
+		t.Fatalf("creating client: %v", err)
+	}
+
+	cluster := testCluster(kubeoneapi.DigitalOceanLoadBalancer{ID: "lb-x", Region: "fra1"})
+	if err = releaseLoadBalancer(context.Background(), client.LoadBalancers, cluster, testLogger()); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if len(fake.deleted) != 0 || len(fake.listRequests) != 0 || fake.getCalls != 0 {
-		t.Error("expected no API calls for a load balancer referenced by ID")
+
+	if body == nil {
+		t.Fatal("expected an update request")
+	}
+	for _, key := range []string{"tag", "droplet_ids"} {
+		if _, ok := body[key]; ok {
+			t.Errorf("update must not send %s, got %v", key, body)
+		}
+	}
+	hc, _ := body["health_check"].(map[string]any)
+	if hc["protocol"] != "tcp" || hc["port"] != float64(kubeAPIPort) {
+		t.Errorf("unexpected health check %v", hc)
 	}
 }
 
@@ -882,7 +1002,7 @@ func TestExistingLoadBalancerUpdateWire(t *testing.T) {
 			_, _ = w.Write([]byte(`{"load_balancer":{"id":"lb-x","name":"byo","status":"active","ip":"203.0.113.20",` +
 				`"size":"lb-small","size_unit":1,"region":{"slug":"fra1"},"droplet_ids":[],` +
 				`"forwarding_rules":[{"entry_protocol":"http","entry_port":80,"target_protocol":"http","target_port":80}],` +
-				`"health_check":{"protocol":"http","port":80,"path":"/"}}}`))
+				`"health_check":{"protocol":"https","port":6443,"path":"/readyz"}}}`))
 		case r.Method == http.MethodPut && r.URL.Path == "/v2/load_balancers/lb-x":
 			if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
@@ -919,7 +1039,7 @@ func TestExistingLoadBalancerUpdateWire(t *testing.T) {
 		t.Errorf("unexpected update body %v", body)
 	}
 	hc, _ := body["health_check"].(map[string]any)
-	if hc["protocol"] != "tcp" || hc["port"] != float64(kubeAPIPort) {
-		t.Errorf("unexpected health check %v", hc)
+	if hc["protocol"] != "https" || hc["port"] != float64(kubeAPIPort) || hc["path"] != "/readyz" {
+		t.Errorf("update must keep the health check, got %v", hc)
 	}
 }
