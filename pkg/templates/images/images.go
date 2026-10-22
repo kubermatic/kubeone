@@ -310,7 +310,7 @@ func optionalResources() map[Resource]map[string]string {
 		HetznerCCM: {"*": "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.39.1"},
 
 		// Hetzner CSI
-		HetznerCSI:                   {"*": "docker.io/hetznercloud/hcloud-csi-driver:v2.24.0"},
+		HetznerCSI:                   {"*": "docker.io/hetznercloud/hcloud-csi-driver:v2.24.1"},
 		HetznerCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.13.0"},
 		HetznerCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v2.2.1"},
 		HetznerCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v6.3.0"},
