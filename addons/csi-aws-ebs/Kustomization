@@ -1,0 +1,50 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+helmCharts:
+- name: aws-ebs-csi-driver
+  repo: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
+  version: 2.67.0
+  releaseName: aws-ebs-csi-driver
+  namespace: kube-system
+  valuesFile: generated-values-csi
+
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: ebs-csi-node
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: ebs-plugin
+                image: '{{ .InternalImages.Get "AwsEbsCSI" }}'
+              - name: node-driver-registrar
+                image: '{{ .InternalImages.Get "AwsEbsCSINodeDriverRegistrar" }}'
+              - name: liveness-probe
+                image: '{{ .InternalImages.Get "AwsEbsCSILivenessProbe" }}'
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: ebs-csi-controller
+        namespace: kube-system
+      spec:
+        template:
+          spec:
+            containers:
+              - name: ebs-plugin
+                image: '{{ .InternalImages.Get "AwsEbsCSI" }}'
+              - name: csi-provisioner
+                image: '{{ .InternalImages.Get "AwsEbsCSIProvisioner" }}'
+              - name: csi-attacher
+                image: '{{ .InternalImages.Get "AwsEbsCSIAttacher" }}'
+              - name: csi-snapshotter
+                image: '{{ .InternalImages.Get "AwsEbsCSISnapshotter" }}'
+              - name: csi-resizer
+                image: '{{ .InternalImages.Get "AwsEbsCSIResizer" }}'
+              - name: liveness-probe
+                image: '{{ .InternalImages.Get "AwsEbsCSILivenessProbe" }}'

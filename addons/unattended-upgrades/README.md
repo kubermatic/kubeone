@@ -71,11 +71,7 @@ machine.
 
 ### Generate Flatcar Linux Update Operator YAML
 ```shell
-{
-  echo '{{ if eq .Params.flatcarNodesPresent "true" }}'
-  kubectl kustomize ./fluo
-  echo '{{ end }}'
-} > fluo.yaml
+make update
 ```
 
 The surrounding template condition makes sure the operator is only deployed on

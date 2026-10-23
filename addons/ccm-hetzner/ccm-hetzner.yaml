@@ -111,9 +111,7 @@ spec:
             - --route-reconciliation-period=30s
             - --webhook-secure-port=0
             - --leader-elect=false
-            {{- with .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
-            - --concurrent-service-syncs={{ . }}
-            {{- end }}
+            - --concurrent-service-syncs={{ default 1 .Params.CCM_CONCURRENT_SERVICE_SYNCS }}
           env:
             - name: HCLOUD_TOKEN
               valueFrom:
@@ -132,12 +130,10 @@ spec:
                   key: robot-user
                   name: hcloud
                   optional: true
-            {{ with .Config.CloudProvider.Hetzner.NetworkID -}}
             - name: HCLOUD_LOAD_BALANCERS_USE_PRIVATE_IP
-              value: "true"
+              value: '{{ if .Config.CloudProvider.Hetzner.NetworkID }}true{{ else }}false{{ end }}'
             - name: HCLOUD_NETWORK
-              value: "{{ . }}"
-            {{- end }}
+              value: '{{ .Config.CloudProvider.Hetzner.NetworkID }}'
           image: '{{ .InternalImages.Get "HetznerCCM" }}'
           name: hcloud-cloud-controller-manager
           ports:

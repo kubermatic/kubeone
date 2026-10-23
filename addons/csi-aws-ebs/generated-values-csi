@@ -21,3 +21,9 @@ sidecars:
   snapshotter:
     # Enables the snapshotter sidecar even if the snapshot CRDs are not installed
     forceEnable: true
+
+node:
+  enableWindows: false
+
+helmTester:
+  enabled: false

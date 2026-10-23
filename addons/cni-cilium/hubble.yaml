@@ -148,7 +148,6 @@ rules:
       - ""
     resources:
       - componentstatuses
-      - endpoints
       - namespaces
       - nodes
       - pods
@@ -376,6 +375,8 @@ spec:
             - mountPath: /var/lib/hubble-relay/tls
               name: tls
               readOnly: true
+            - mountPath: /tmp
+              name: tmp-volume
       nodeSelector:
         kubernetes.io/os: linux
       priorityClassName: null
@@ -387,6 +388,8 @@ spec:
       serviceAccountName: hubble-relay
       terminationGracePeriodSeconds: 1
       volumes:
+        - emptyDir: {}
+          name: tmp-volume
         - configMap:
             items:
               - key: config.yaml

@@ -5,7 +5,7 @@ namespace: kube-system
 helmCharts:
 - name: hcloud-cloud-controller-manager
   repo: https://charts.hetzner.cloud
-  version: 1.34.0
+  version: 1.39.2
   releaseName: hccm
   namespace: kube-system
   valuesFile: generate-values-ccm
@@ -31,3 +31,20 @@ patches:
             containers:
               - name: hcloud-cloud-controller-manager
                 image: '{{ .InternalImages.Get "HetznerCCM" }}'
+  - target:
+      kind: Deployment
+      name: hcloud-cloud-controller-manager
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: '--concurrent-service-syncs={{ default 1 .Params.CCM_CONCURRENT_SERVICE_SYNCS }}'
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: HCLOUD_LOAD_BALANCERS_USE_PRIVATE_IP
+          value: '{{ if .Config.CloudProvider.Hetzner.NetworkID }}true{{ else }}false{{ end }}'
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: HCLOUD_NETWORK
+          value: '{{ .Config.CloudProvider.Hetzner.NetworkID }}'

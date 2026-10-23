@@ -2,6 +2,6 @@
 
 ## Development
 
-```
-kubectl kustomize . | yq > ccm-kubevirt.yaml
+```shell
+make update
 ```

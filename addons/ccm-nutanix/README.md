@@ -2,6 +2,6 @@
 
 ## Development
 
-```
-kubectl kustomize --enable-helm . | yq > nutanix-ccm.yaml
+```shell
+make update
 ```

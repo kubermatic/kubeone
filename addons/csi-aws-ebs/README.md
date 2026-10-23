@@ -1,22 +1,14 @@
 # AWS EBS CSI driver chart
 
-The AWS EBS CSI manifest is generated from the [official Helm chart][helm-chart].
+The AWS EBS CSI manifest is generated from the [official Helm chart][helm-chart]
+via Kustomize (see `Kustomization`), which also patches images to
+`{{ .InternalImages.Get "..." }}`.
 
 ```shell
-helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver
-helm repo update
-
-helm template \
-    --namespace="kube-system" \
-    --values="generated-values-csi" \
-    --skip-tests \
-    --version=2.61.1 \
-    aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver > aws-csi.yaml
+make update
 ```
 
-Required manual modifications include:
-
-* Images must be changed to `{{ .InternalImages.Get "..." }}` as appropriate
-  * Make sure that you update the appropriate entries in images list
+To bump the driver, update the chart `version` in `Kustomization` and the
+appropriate entries in the images list.
 
 [helm-chart]: https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/charts/aws-ebs-csi-driver
