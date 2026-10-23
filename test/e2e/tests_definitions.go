@@ -614,9 +614,6 @@ var (
 			},
 			terraform: terraformBin{
 				path: "../../examples/terraform/hetzner",
-				vars: []string{
-					"disable_kubeapi_loadbalancer=true",
-				},
 			},
 			protokol: protokolBin{
 				namespaces: []string{"kube-system"},
