@@ -36,16 +36,16 @@ import (
 
 var (
 	links = map[string]string{
-		"corev1.Taint":             "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#taint-v1-core",
+		"corev1.Taint":             "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.37/#taint-v1-core",
 		"json.RawMessage":          "https://golang.org/pkg/encoding/json/#RawMessage",
-		"metav1.LabelSelector":     "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#labelselector-v1-meta",
-		"metav1.ListMeta":          "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#listmeta-v1-meta",
-		"metav1.ObjectMeta":        "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#objectmeta-v1-meta",
-		"v1.EmptyDirVolumeSource":  "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#emptydirvolumesource-v1-core",
-		"v1.LocalObjectReference":  "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#localobjectreference-v1-core",
-		"v1.PersistentVolumeClaim": "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#persistentvolumeclaim-v1-core",
-		"v1.ResourceRequirements":  "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#resourcerequirements-v1-core",
-		"v1.SecretKeySelector":     "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#secretkeyselector-v1-core",
+		"metav1.LabelSelector":     "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.37/#labelselector-v1-meta",
+		"metav1.ListMeta":          "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.37/#listmeta-v1-meta",
+		"metav1.ObjectMeta":        "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.37/#objectmeta-v1-meta",
+		"v1.EmptyDirVolumeSource":  "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.37/#emptydirvolumesource-v1-core",
+		"v1.LocalObjectReference":  "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.37/#localobjectreference-v1-core",
+		"v1.PersistentVolumeClaim": "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.37/#persistentvolumeclaim-v1-core",
+		"v1.ResourceRequirements":  "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.37/#resourcerequirements-v1-core",
+		"v1.SecretKeySelector":     "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.37/#secretkeyselector-v1-core",
 	}
 
 	selfLinks = map[string]string{}
