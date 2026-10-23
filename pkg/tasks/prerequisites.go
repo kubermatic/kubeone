@@ -96,6 +96,13 @@ func generateConfigurationFiles(s *state.State) error {
 			return err
 		}
 	}
+	if features.AuthenticationConfigurationEnabled(s.Cluster.Features) {
+		authenticationCfg, err := LoadAuthenticationConfiguration(s)
+		if err != nil {
+			return err
+		}
+		s.Configuration.AddFile(authenticationConfigFilename, authenticationCfg)
+	}
 	if features.RequiresAdmissionConfig(s.Cluster.Features) {
 		admissionCfg, err := admissionconfig.NewAdmissionConfig(s.Cluster.Versions.Kubernetes, s.Cluster.Features.PodNodeSelector, s.Cluster.Features.EventRateLimit)
 		if err != nil {
@@ -248,6 +255,16 @@ func uploadConfigurationFilesToNode(s *state.State, _ *kubeoneapi.HostConfig, co
 	_, _, err = s.Runner.RunRaw(cmd)
 	if err != nil {
 		return fail.SSH(err, "saving audit-webhook-config")
+	}
+
+	cmd, err = scripts.SaveAuthenticationConfig(s.WorkDir)
+	if err != nil {
+		return err
+	}
+
+	_, _, err = s.Runner.RunRaw(cmd)
+	if err != nil {
+		return fail.SSH(err, "saving authentication configuration")
 	}
 
 	cmd, err = scripts.SaveAdmissionControlConfigs(s.WorkDir)

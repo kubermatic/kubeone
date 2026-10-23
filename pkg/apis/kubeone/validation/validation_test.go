@@ -2204,6 +2204,49 @@ func TestValidateFeatures(t *testing.T) {
 			expectedError: true,
 		},
 		{
+			name: "authenticationConfiguration enabled",
+			features: kubeoneapi.Features{
+				AuthenticationConfiguration: &kubeoneapi.AuthenticationConfiguration{
+					Enable:         true,
+					ConfigFilePath: "auth.yaml",
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "authenticationConfiguration without configFilePath",
+			features: kubeoneapi.Features{
+				AuthenticationConfiguration: &kubeoneapi.AuthenticationConfiguration{
+					Enable: true,
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "authenticationConfiguration disabled without configFilePath",
+			features: kubeoneapi.Features{
+				AuthenticationConfiguration: &kubeoneapi.AuthenticationConfiguration{},
+			},
+			expectedError: false,
+		},
+		{
+			name: "authenticationConfiguration together with oidc",
+			features: kubeoneapi.Features{
+				AuthenticationConfiguration: &kubeoneapi.AuthenticationConfiguration{
+					Enable:         true,
+					ConfigFilePath: "auth.yaml",
+				},
+				OpenIDConnect: &kubeoneapi.OpenIDConnect{
+					Enable: true,
+					Config: kubeoneapi.OpenIDConnectConfig{
+						IssuerURL: "test.cluster.local",
+						ClientID:  "123",
+					},
+				},
+			},
+			expectedError: true,
+		},
+		{
 			name: "invalid eventRateLimit config",
 			features: kubeoneapi.Features{
 				EventRateLimit: &kubeoneapi.EventRateLimit{
@@ -3460,6 +3503,58 @@ func TestValidateDigitalOceanSpec(t *testing.T) {
 			errs := ValidateCloudProviderSpec(cluster, field.NewPath("cloudProvider"))
 			if (len(errs) != 0) != tc.expectedError {
 				t.Errorf("expected error %v, got %v", tc.expectedError, errs)
+			}
+		})
+	}
+}
+
+func TestValidateAuthenticationConfigurationFlags(t *testing.T) {
+	enabled := kubeoneapi.Features{
+		AuthenticationConfiguration: &kubeoneapi.AuthenticationConfiguration{Enable: true, ConfigFilePath: "auth.yaml"},
+	}
+	apiServerFlags := func(flags map[string]string) *kubeoneapi.ControlPlaneComponents {
+		return &kubeoneapi.ControlPlaneComponents{APIServer: &kubeoneapi.ControlPlaneComponentConfig{Flags: flags}}
+	}
+
+	tests := []struct {
+		name          string
+		features      kubeoneapi.Features
+		components    *kubeoneapi.ControlPlaneComponents
+		expectedError bool
+	}{
+		{
+			name:     "no control plane components",
+			features: enabled,
+		},
+		{
+			name:       "unrelated flags",
+			features:   enabled,
+			components: apiServerFlags(map[string]string{"anonymous-auth": "false", "v": "4"}),
+		},
+		{
+			name:          "authentication-config flag",
+			features:      enabled,
+			components:    apiServerFlags(map[string]string{"authentication-config": "/etc/auth.yaml"}),
+			expectedError: true,
+		},
+		{
+			name:          "oidc flag",
+			features:      enabled,
+			components:    apiServerFlags(map[string]string{"oidc-issuer-url": "https://issuer.example.com"}),
+			expectedError: true,
+		},
+		{
+			name:       "feature disabled",
+			features:   kubeoneapi.Features{},
+			components: apiServerFlags(map[string]string{"authentication-config": "/etc/auth.yaml"}),
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			errs := ValidateAuthenticationConfigurationFlags(tc.features, tc.components, field.NewPath("controlPlaneComponents", "apiServer", "flags"))
+			if (len(errs) != 0) != tc.expectedError {
+				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, errs)
 			}
 		})
 	}

@@ -73,15 +73,16 @@ type printOpts struct {
 	HTTPSProxy string `longflag:"proxy-https"`
 	NoProxy    string `longflag:"proxy-no-proxy"`
 
-	EnableAlwaysPullImages    bool `longflag:"enable-always-pull-images"`
-	EnableEventRateLimit      bool `longflag:"enable-event-rate-limit"`
-	EnablePodNodeSelector     bool `longflag:"enable-pod-node-selector"`
-	EnablePodSecurityPolicy   bool `longflag:"enable-pod-security-policy"` // TODO: remove in future release
-	EnableStaticAuditLog      bool `longflag:"enable-static-audit-log"`
-	EnableDynamicAuditLog     bool `longflag:"enable-dynamic-audit-log"`
-	EnableMetricsServer       bool `longflag:"enable-metrics-server"`
-	EnableOpenIDConnect       bool `longflag:"enable-openid-connect"`
-	EnableEncryptionProviders bool `longflag:"enable-encryption-providers"`
+	EnableAlwaysPullImages            bool `longflag:"enable-always-pull-images"`
+	EnableEventRateLimit              bool `longflag:"enable-event-rate-limit"`
+	EnablePodNodeSelector             bool `longflag:"enable-pod-node-selector"`
+	EnablePodSecurityPolicy           bool `longflag:"enable-pod-security-policy"` // TODO: remove in future release
+	EnableStaticAuditLog              bool `longflag:"enable-static-audit-log"`
+	EnableDynamicAuditLog             bool `longflag:"enable-dynamic-audit-log"`
+	EnableMetricsServer               bool `longflag:"enable-metrics-server"`
+	EnableOpenIDConnect               bool `longflag:"enable-openid-connect"`
+	EnableAuthenticationConfiguration bool `longflag:"enable-authentication-configuration"`
+	EnableEncryptionProviders         bool `longflag:"enable-encryption-providers"`
 
 	DeployMachineController bool `longflag:"deploy-machine-controller"`
 
@@ -185,6 +186,7 @@ func configPrintCmd() *cobra.Command {
 	cmd.Flags().BoolVar(&opts.EnableDynamicAuditLog, longFlagName(opts, "EnableDynamicAuditLog"), false, "enable DynamicAuditLog")
 	cmd.Flags().BoolVar(&opts.EnableMetricsServer, longFlagName(opts, "EnableMetricsServer"), true, "enable metrics-server")
 	cmd.Flags().BoolVar(&opts.EnableOpenIDConnect, longFlagName(opts, "EnableOpenIDConnect"), false, "enable OpenID Connect authentication")
+	cmd.Flags().BoolVar(&opts.EnableAuthenticationConfiguration, longFlagName(opts, "EnableAuthenticationConfiguration"), false, "enable structured kube-apiserver AuthenticationConfiguration")
 	cmd.Flags().BoolVar(&opts.EnableEncryptionProviders, longFlagName(opts, "EnableEncryptionProviders"), false, "enable Encryption Providers")
 
 	// MachineController
@@ -441,6 +443,10 @@ func printFeatures(cfg *yamled.Document, printOptions *printOpts) {
 		cfg.Set(yamled.Path{"features", "openidConnect", "config", "signingAlgs"}, "")
 		cfg.Set(yamled.Path{"features", "openidConnect", "config", "requiredClaim"}, "")
 		cfg.Set(yamled.Path{"features", "openidConnect", "config", "caFile"}, "")
+	}
+	if printOptions.EnableAuthenticationConfiguration {
+		cfg.Set(yamled.Path{"features", "authenticationConfiguration", "enable"}, printOptions.EnableAuthenticationConfiguration)
+		cfg.Set(yamled.Path{"features", "authenticationConfiguration", "configFilePath"}, "")
 	}
 	if printOptions.EnableEncryptionProviders {
 		cfg.Set(yamled.Path{"features", "encryptionProviders", "enable"}, printOptions.EnableEncryptionProviders)

@@ -17,6 +17,8 @@ limitations under the License.
 package configupload
 
 import (
+	"crypto/sha256"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -46,29 +48,47 @@ func NewConfiguration() *Configuration {
 
 // AddFile save file contents for future references
 func (c *Configuration) AddFile(filename, content string) {
-	c.files[filename] = strings.TrimSpace(content) + "\n"
+	c.files[filename] = normalize(content)
+}
+
+func normalize(content string) string {
+	return strings.TrimSpace(content) + "\n"
 }
 
 // AddFilePath saves file contents from a file on filesystem for future references
 func (c *Configuration) AddFilePath(filename, filePath, manifestFilePath string) error {
-	// Normalize the file path. In the case when the relative path is provided,
-	// the path is relative to the KubeOne configuration file.
+	b, err := ReadFilePath(filePath, manifestFilePath)
+	if err != nil {
+		return err
+	}
+
+	c.AddFile(filename, string(b))
+
+	return nil
+}
+
+// ReadFilePath reads a file from filesystem. In the case when the relative path is provided,
+// the path is relative to the KubeOne configuration file.
+func ReadFilePath(filePath, manifestFilePath string) ([]byte, error) {
 	if !filepath.IsAbs(filePath) && manifestFilePath != "" {
 		manifestAbsPath, err := filepath.Abs(filepath.Dir(manifestFilePath))
 		if err != nil {
-			return fail.Runtime(err, "getting absolute path to the manifest file")
+			return nil, fail.Runtime(err, "getting absolute path to the manifest file")
 		}
 		filePath = filepath.Join(manifestAbsPath, filePath)
 	}
 
 	b, err := os.ReadFile(filePath)
 	if err != nil {
-		return fail.Runtime(err, "reading file")
+		return nil, fail.Runtime(err, "reading file")
 	}
 
-	c.AddFile(filename, string(b))
+	return b, nil
+}
 
-	return nil
+// Checksum returns the sha256 checksum of the content as it would be stored by AddFile
+func Checksum(content string) string {
+	return fmt.Sprintf("%x", sha256.Sum256([]byte(normalize(content))))
 }
 
 // UploadTo directory all the files

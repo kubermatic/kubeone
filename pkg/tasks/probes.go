@@ -30,6 +30,7 @@ import (
 	"k8c.io/kubeone/pkg/clusterstatus/etcdstatus"
 	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/kubeconfig"
 	"k8c.io/kubeone/pkg/state"
 	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
@@ -49,7 +50,8 @@ const (
 	systemdShowStatusCMD    = `systemctl show %s -p LoadState,ActiveState,SubState`
 	systemdShowExecStartCMD = `systemctl show %s -p ExecStart`
 
-	kubeletInitializedCMD = `test -f /etc/kubernetes/kubelet.conf`
+	kubeletInitializedCMD           = `test -f /etc/kubernetes/kubelet.conf`
+	authenticationConfigChecksumCMD = "sudo sha256sum " + features.AuthenticationConfigPath
 
 	k8sAppLabel               = "k8s-app"
 	openstackCCMAppLabelValue = "openstack-cloud-controller-manager"
@@ -433,6 +435,11 @@ func investigateHost(s *state.State, node *kubeoneapi.HostConfig, conn executor.
 		if err != nil {
 			return err
 		}
+
+		foundHost.AuthenticationConfigChecksum, err = authenticationConfigChecksum(conn)
+		if err != nil {
+			return err
+		}
 	}
 
 	s.LiveCluster.Lock.Lock()
@@ -576,6 +583,15 @@ func investigateCluster(s *state.State) error {
 		}
 	}
 	s.LiveCluster.Lock.Unlock()
+
+	authenticationConfigEnabled, err := detectAuthenticationConfigEnabled(s)
+	if err != nil {
+		return err
+	}
+	s.LiveCluster.Lock.Lock()
+	s.LiveCluster.AuthenticationConfigEnabled = authenticationConfigEnabled
+	s.LiveCluster.Lock.Unlock()
+
 	encryptionEnabled, err := detectEncryptionProvidersEnabled(s)
 	if err != nil {
 		return err
@@ -737,23 +753,32 @@ type encryptionEnabledStatus struct {
 	Custom  bool
 }
 
-func detectEncryptionProvidersEnabled(s *state.State) (ees encryptionEnabledStatus, err error) {
+func listKubeAPIServerPods(s *state.State) ([]corev1.Pod, error) {
 	if s.DynamicClient == nil {
-		return ees, fail.NoKubeClient()
+		return nil, fail.NoKubeClient()
 	}
 
 	pods := corev1.PodList{}
-	err = s.DynamicClient.List(s.Context, &pods, &dynclient.ListOptions{
+	err := s.DynamicClient.List(s.Context, &pods, &dynclient.ListOptions{
 		Namespace: "kube-system",
 		LabelSelector: labels.SelectorFromSet(map[string]string{
 			"component": "kube-apiserver",
 		}),
 	})
 	if err != nil {
-		return ees, fail.KubeClient(err, "listing kube-apiserver pods")
+		return nil, fail.KubeClient(err, "listing kube-apiserver pods")
 	}
 
-	for _, pod := range pods.Items {
+	return pods.Items, nil
+}
+
+func detectEncryptionProvidersEnabled(s *state.State) (ees encryptionEnabledStatus, err error) {
+	pods, err := listKubeAPIServerPods(s)
+	if err != nil {
+		return ees, err
+	}
+
+	for _, pod := range pods {
 		for _, c := range pod.Spec.Containers[0].Command {
 			if strings.HasPrefix(c, "--encryption-provider") {
 				ees.Enabled = true
@@ -765,6 +790,41 @@ func detectEncryptionProvidersEnabled(s *state.State) (ees encryptionEnabledStat
 	}
 
 	return ees, nil
+}
+
+func detectAuthenticationConfigEnabled(s *state.State) (bool, error) {
+	pods, err := listKubeAPIServerPods(s)
+	if err != nil {
+		return false, err
+	}
+
+	for _, pod := range pods {
+		for _, c := range pod.Spec.Containers[0].Command {
+			if strings.HasPrefix(c, "--authentication-config=") {
+				return true, nil
+			}
+		}
+	}
+
+	return false, nil
+}
+
+func authenticationConfigChecksum(conn executor.Interface) (string, error) {
+	stdout, _, exitcode, err := conn.Exec(authenticationConfigChecksumCMD)
+	if err != nil && exitcode <= 0 {
+		// If there's an error and exit code is 0, there's mostly like a connection
+		// error. If exit code is -1, there might be a session problem.
+		return "", err
+	}
+
+	if exitcode != 0 {
+		// file doesn't exist
+		return "", nil
+	}
+
+	checksum, _, _ := strings.Cut(strings.TrimSpace(stdout), " ")
+
+	return checksum, nil
 }
 
 // detectClusterName is used to detect the value that should be passed to the
