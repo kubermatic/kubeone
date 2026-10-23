@@ -32,7 +32,6 @@ import (
 	cloudprovidererrors "k8c.io/machine-controller/pkg/cloudprovider/errors"
 	cloud "k8c.io/machine-controller/pkg/cloudprovider/instance"
 	cloudprovidertypes "k8c.io/machine-controller/pkg/cloudprovider/types"
-	machinecontrollerlog "k8c.io/machine-controller/pkg/log"
 	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
 	"k8c.io/machine-controller/sdk/providerconfig"
 	"k8c.io/machine-controller/sdk/providerconfig/configvar"
@@ -101,8 +100,7 @@ func newProviderData(ctx context.Context) *cloudprovidertypes.ProviderData {
 func FindMachines(ctx context.Context, machines []clusterv1alpha1.Machine, logger logrus.FieldLogger) ([]Machine, error) {
 	providerData := newProviderData(ctx)
 
-	rawLog := machinecontrollerlog.New(false, machinecontrollerlog.FormatConsole)
-	log := rawLog.Sugar()
+	log := newMachineControllerLogger(logger)
 
 	var instances []cloud.Instance
 
@@ -139,8 +137,7 @@ func FindMachines(ctx context.Context, machines []clusterv1alpha1.Machine, logge
 func CleanupMachines(ctx context.Context, machines []clusterv1alpha1.Machine, logger logrus.FieldLogger) error {
 	providerData := newProviderData(ctx)
 
-	rawLog := machinecontrollerlog.New(false, machinecontrollerlog.FormatConsole)
-	log := rawLog.Sugar()
+	log := newMachineControllerLogger(logger)
 
 	for _, machine := range machines {
 		prov, err := getProvider(ctx, machine)
@@ -161,8 +158,7 @@ func CleanupMachines(ctx context.Context, machines []clusterv1alpha1.Machine, lo
 func FindOrCreateMachines(ctx context.Context, machines []clusterv1alpha1.Machine, logger logrus.FieldLogger) ([]Machine, error) {
 	providerData := newProviderData(ctx)
 
-	rawLog := machinecontrollerlog.New(false, machinecontrollerlog.FormatConsole)
-	log := rawLog.Sugar()
+	log := newMachineControllerLogger(logger)
 
 	var instances []cloud.Instance
 
