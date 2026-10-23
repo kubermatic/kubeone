@@ -1,0 +1,20 @@
+{{- /* On KubeVirt, machine-controller and its webhook run in the infra cluster and use kubeconfigs built from these tokens */}}
+{{ if .Config.CloudProvider.Kubevirt }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: machine-controller-token
+  namespace: kube-system
+  annotations:
+    kubernetes.io/service-account.name: machine-controller
+type: kubernetes.io/service-account-token
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: machine-controller-webhook-token
+  namespace: kube-system
+  annotations:
+    kubernetes.io/service-account.name: machine-controller-webhook
+type: kubernetes.io/service-account-token
+{{ end }}

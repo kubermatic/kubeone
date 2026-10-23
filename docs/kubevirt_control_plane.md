@@ -25,6 +25,44 @@ preserved — you must supply `apiEndpoint` and control-plane host IPs yourself.
   environment variable or base64-encoded in the credentials file.
 - An `infraNamespace` where KubeOne will create resources (VMs, services, etc.).
 
+### Infra kubeconfig permissions
+
+KubeOne creates least-privilege identities in `infraNamespace` for the
+components that talk to the infra cluster (machine-controller, CCM, CSI
+controller); see the
+[proposal](proposals/20261015-kubevirt-infra-side-components.md).
+
+The infra kubeconfig must therefore be allowed to create, update, list and
+delete the following objects in `infraNamespace`:
+
+- `ServiceAccounts`, `Secrets` and `ConfigMaps`
+- `Roles` and `RoleBindings`
+- `Deployments`
+- `Services`
+
+It must also be allowed to create, update, list and delete `ClusterRoles` and
+`ClusterRoleBindings`. machine-controller gets read-only cluster-wide access to
+`StorageClasses`, CDI `StorageProfiles` and cluster instancetypes and
+preferences, which a namespaced Role cannot grant. These objects are named
+`kubeone:<infraNamespace>:<cluster name>-<component>`.
+
+Kubernetes RBAC only lets a user grant permissions they hold themselves, so the
+infra kubeconfig must also hold every permission granted to the components'
+Roles and ClusterRoles (KubeVirt `VirtualMachines`, `VirtualMachineInstances`
+and their subresources, CDI `DataVolumes`, `PersistentVolumeClaims`,
+`VolumeSnapshots`, `Secrets`, `StorageClasses`, `StorageProfiles`,
+instancetypes and preferences), or be granted the `escalate` and `bind` verbs
+on `roles` and `clusterroles`.
+
+The machine-controller webhook runs in the infra cluster as well. The tenant
+API server must reach its Service: by default a `ClusterIP` Service when the
+control plane runs on KubeVirt, and a `LoadBalancer` Service otherwise. Set
+`cloudProvider.kubevirt.machineController.webhook.serviceType` to override it.
+
+Several KubeOne clusters can share one `infraNamespace`. Every object KubeOne
+creates there is prefixed with the cluster name and labelled
+`kubeone_cluster_name=<cluster name>`.
+
 ## Configuration
 
 ```yaml
@@ -121,3 +159,11 @@ kubeconfig YAML.
 
 The `KUBEVIRT_KUBECONFIG` environment variable is also supported for
 convenience during development.
+
+The infra kubeconfig is used only by KubeOne itself and is never stored in the
+tenant cluster. machine-controller, the CCM and the CSI controller run in
+`InfraNamespace` with their own ServiceAccounts. KubeOne does not create the
+`kubeone-ccm-credentials`, `kubeone-machine-controller-credentials` and
+`kubeone-operating-system-manager-credentials` Secrets for KubeVirt, and
+`kubeone apply` deletes them from existing clusters once the infra-side
+components are running.

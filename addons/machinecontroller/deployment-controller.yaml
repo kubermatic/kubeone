@@ -1,3 +1,5 @@
+{{- /* On KubeVirt, machine-controller runs in the infra cluster, see pkg/cloudprovider/kubevirt/machinecontroller */}}
+{{ if not .Config.CloudProvider.Kubevirt }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -54,12 +56,6 @@ spec:
             {{ end -}}
             - -join-cluster-timeout={{ default "15m" .Params.JOIN_TIMEOUT }}
           env:
-  {{ with .Config.CloudProvider.Kubevirt -}}
-  {{ with .InfraNamespace }}
-            - name: POD_NAMESPACE
-              value: "{{ . }}"
-  {{ end }}
-  {{ end }}
             - name: HTTPS_PROXY
               value: "{{ .Config.Proxy.HTTPS }}"
             - name: NO_PROXY
@@ -85,3 +81,4 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
+{{ end }}

@@ -24,6 +24,7 @@ import (
 	"encoding/pem"
 	"fmt"
 	"io/fs"
+	"net"
 	"os"
 	"slices"
 	"strings"
@@ -98,11 +99,13 @@ func NewSignedKubernetesServiceTLSCert(name, namespace, domain string, caKey cry
 	serviceCommonName := strings.Join([]string{name, namespace, "svc"}, ".")
 	serviceFQDNCommonName := strings.Join([]string{serviceCommonName, domain}, ".")
 
-	altdnsNames := []string{
-		serviceFQDNCommonName,
-		serviceCommonName,
-	}
+	return NewSignedTLSCert(serviceCommonName, []string{serviceFQDNCommonName, serviceCommonName}, nil, caKey, caCert)
+}
 
+// NewSignedTLSCert generates a serving certificate for the given DNS names and
+// IPs, signed by the given CA. The result is keyed like
+// NewSignedKubernetesServiceTLSCert.
+func NewSignedTLSCert(commonName string, dnsNames []string, ips []net.IP, caKey crypto.Signer, caCert *x509.Certificate) (map[string]string, error) {
 	newKPKey, err := NewPrivateKey()
 	if err != nil {
 		return nil, fail.Runtime(err, "generating RSA private key")
@@ -110,9 +113,10 @@ func NewSignedKubernetesServiceTLSCert(name, namespace, domain string, caKey cry
 
 	certCfg := certutil.Config{
 		AltNames: certutil.AltNames{
-			DNSNames: altdnsNames,
+			DNSNames: dnsNames,
+			IPs:      ips,
 		},
-		CommonName: serviceCommonName,
+		CommonName: commonName,
 		Usages:     []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
 	}
 
