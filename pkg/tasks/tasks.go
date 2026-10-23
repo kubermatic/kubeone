@@ -578,6 +578,15 @@ func WithCustomEncryptionConfigUpdated(t Tasks) Tasks {
 	}...)
 }
 
+// WithAuthenticationConfigUpdated uploads the changed AuthenticationConfiguration to the control plane nodes.
+func WithAuthenticationConfigUpdated(t Tasks) Tasks {
+	return t.append(Task{
+		Fn:          updateAuthenticationConfig,
+		Operation:   "updating authentication configuration",
+		Description: "upload changed AuthenticationConfiguration to control plane nodes",
+	})
+}
+
 func WithRotateKey(t Tasks) Tasks {
 	return WithHostnameOSAndProbes(t).
 		append(Tasks{

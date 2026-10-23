@@ -94,6 +94,7 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateAddons(c.Addons, field.NewPath("addons"))...)
 	allErrs = append(allErrs, ValidateRegistryConfiguration(c.RegistryConfiguration, field.NewPath("registryConfiguration"))...)
 	allErrs = append(allErrs, ValidateControlPlaneComponents(c.ControlPlaneComponents, field.NewPath("controlPlaneComponents"))...)
+	allErrs = append(allErrs, ValidateAuthenticationConfigurationFlags(c.Features, c.ControlPlaneComponents, field.NewPath("controlPlaneComponents", "apiServer", "flags"))...)
 
 	return allErrs
 }
@@ -937,6 +938,12 @@ func ValidateFeatures(f kubeoneapi.Features, fldPath *field.Path) field.ErrorLis
 	if f.OpenIDConnect != nil && f.OpenIDConnect.Enable {
 		allErrs = append(allErrs, ValidateOIDCConfig(f.OpenIDConnect.Config, fldPath.Child("openidConnect"))...)
 	}
+	if f.AuthenticationConfiguration != nil && f.AuthenticationConfiguration.Enable {
+		allErrs = append(allErrs, ValidateAuthenticationConfiguration(*f.AuthenticationConfiguration, fldPath.Child("authenticationConfiguration"))...)
+		if f.OpenIDConnect != nil && f.OpenIDConnect.Enable {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Child("authenticationConfiguration"), ".authenticationConfiguration and .openidConnect features are mutually exclusive"))
+		}
+	}
 
 	return allErrs
 }
@@ -1009,6 +1016,38 @@ func ValidateOIDCConfig(o kubeoneapi.OpenIDConnectConfig, fldPath *field.Path) f
 	}
 	if len(o.ClientID) == 0 {
 		allErrs = append(allErrs, field.Required(fldPath.Child("clientID"), ".openidConnect.config.clientID is a required field"))
+	}
+
+	return allErrs
+}
+
+// ValidateAuthenticationConfiguration validates the AuthenticationConfiguration structure
+func ValidateAuthenticationConfiguration(a kubeoneapi.AuthenticationConfiguration, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if len(a.ConfigFilePath) == 0 {
+		allErrs = append(allErrs, field.Required(fldPath.Child("configFilePath"), ".authenticationConfiguration.configFilePath is a required field"))
+	}
+
+	return allErrs
+}
+
+// ValidateAuthenticationConfigurationFlags ensures that kube-apiserver flags conflicting with the
+// AuthenticationConfiguration feature are not set via .controlPlaneComponents.apiServer.flags
+func ValidateAuthenticationConfigurationFlags(f kubeoneapi.Features, c *kubeoneapi.ControlPlaneComponents, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if f.AuthenticationConfiguration == nil || !f.AuthenticationConfiguration.Enable {
+		return allErrs
+	}
+	if c == nil || c.APIServer == nil {
+		return allErrs
+	}
+
+	for flag := range c.APIServer.Flags {
+		if flag == "authentication-config" || strings.HasPrefix(flag, "oidc-") {
+			allErrs = append(allErrs, field.Forbidden(fldPath.Key(flag), "can't be used together with the .features.authenticationConfiguration feature"))
+		}
 	}
 
 	return allErrs

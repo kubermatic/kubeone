@@ -17,6 +17,8 @@ limitations under the License.
 package config
 
 import (
+	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -239,5 +241,87 @@ func TestDigitalOceanManagedControlPlaneIsSupported(t *testing.T) {
 	cp := cluster.CloudProvider.DigitalOcean.ControlPlane
 	if cp == nil || cp.LoadBalancer.Name != "demo-kubeapi" {
 		t.Fatalf("expected control plane load balancer to be defaulted, got %+v", cp)
+	}
+}
+
+func TestValidateAuthenticationConfigurationFile(t *testing.T) {
+	baseDir := t.TempDir()
+
+	files := map[string]string{
+		"valid.yaml": heredoc.Doc(`
+			apiVersion: apiserver.config.k8s.io/v1
+			kind: AuthenticationConfiguration
+			jwt:
+			- issuer:
+			    url: https://issuer.example.com
+			    audiences:
+			    - kubernetes
+			  claimMappings:
+			    username:
+			      claim: sub
+			      prefix: "oidc:"
+		`),
+		"malformed.yaml": "apiVersion: apiserver.config.k8s.io/v1\nkind: AuthenticationConfiguration\njwt: [\n",
+		"unknown-field.yaml": heredoc.Doc(`
+			apiVersion: apiserver.config.k8s.io/v1
+			kind: AuthenticationConfiguration
+			jwts: []
+		`),
+	}
+	for name, content := range files {
+		if err := os.WriteFile(filepath.Join(baseDir, name), []byte(content), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	tests := []struct {
+		name    string
+		feature *kubeoneapi.AuthenticationConfiguration
+		wantErr bool
+	}{
+		{
+			name: "feature not configured",
+		},
+		{
+			name:    "feature disabled",
+			feature: &kubeoneapi.AuthenticationConfiguration{ConfigFilePath: "missing.yaml"},
+		},
+		{
+			name:    "relative path",
+			feature: &kubeoneapi.AuthenticationConfiguration{Enable: true, ConfigFilePath: "valid.yaml"},
+		},
+		{
+			name:    "absolute path",
+			feature: &kubeoneapi.AuthenticationConfiguration{Enable: true, ConfigFilePath: filepath.Join(baseDir, "valid.yaml")},
+		},
+		{
+			name:    "missing file",
+			feature: &kubeoneapi.AuthenticationConfiguration{Enable: true, ConfigFilePath: "missing.yaml"},
+			wantErr: true,
+		},
+		{
+			name:    "malformed yaml",
+			feature: &kubeoneapi.AuthenticationConfiguration{Enable: true, ConfigFilePath: "malformed.yaml"},
+			wantErr: true,
+		},
+		{
+			name:    "unknown field",
+			feature: &kubeoneapi.AuthenticationConfiguration{Enable: true, ConfigFilePath: "unknown-field.yaml"},
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cluster := &kubeoneapi.KubeOneCluster{
+				ClusterNetwork: kubeoneapi.ClusterNetworkConfig{ServiceDomainName: "cluster.local"},
+				Features:       kubeoneapi.Features{AuthenticationConfiguration: tt.feature},
+			}
+
+			err := validateAuthenticationConfigurationFile(cluster, baseDir)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("validateAuthenticationConfigurationFile() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
 	}
 }
