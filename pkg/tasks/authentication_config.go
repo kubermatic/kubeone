@@ -21,7 +21,6 @@ import (
 	"k8c.io/kubeone/pkg/configupload"
 	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
-	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/scripts"
 	"k8c.io/kubeone/pkg/state"
 )
@@ -33,10 +32,6 @@ const authenticationConfigFilename = "cfg/authentication-config.yaml"
 func LoadAuthenticationConfiguration(s *state.State) (string, error) {
 	b, err := configupload.ReadFilePath(s.Cluster.Features.AuthenticationConfiguration.ConfigFilePath, s.ManifestFilePath)
 	if err != nil {
-		return "", err
-	}
-
-	if err = features.ValidateAuthenticationConfiguration(b, s.Cluster); err != nil {
 		return "", err
 	}
 
