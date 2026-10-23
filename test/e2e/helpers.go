@@ -197,6 +197,10 @@ type manifestData struct {
 	// output for the cluster name and hosts
 	ClusterName  string
 	SSHPublicKey string
+	// Terraform holds the output values of the infrastructure Terraform
+	// configs (if any) of managed control plane manifests, keyed by the
+	// output name
+	Terraform map[string]any
 }
 
 func renderManifest(t *testing.T, templatePath string, data manifestData) string {

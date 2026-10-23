@@ -33,17 +33,28 @@ import (
 type managedControlPlaneCloud interface {
 	// ControlPlaneVMs returns the number of control plane VMs of the cluster
 	ControlPlaneVMs(ctx context.Context) (int, error)
-	// LoadBalancers returns the IP addresses of the load balancers created by KubeOne
+	// LoadBalancers returns the addresses (IP or DNS name) of the load
+	// balancers created by KubeOne
 	LoadBalancers(ctx context.Context) ([]string, error)
 	// Janitor deletes all leftover resources of the cluster
 	Janitor(ctx context.Context) error
 }
 
-func newManagedControlPlaneCloud(provider, clusterName string) (managedControlPlaneCloud, error) {
-	if provider != "digitalocean" {
+// newManagedControlPlaneCloud returns the managedControlPlaneCloud of the
+// provider. tfOutput holds the output values of the infrastructure Terraform
+// configs, nil if the infrastructure has none.
+func newManagedControlPlaneCloud(ctx context.Context, provider, clusterName string, tfOutput map[string]any) (managedControlPlaneCloud, error) {
+	switch provider {
+	case "aws":
+		return newAWSCloud(ctx, clusterName, tfOutput)
+	case "digitalocean":
+		return newDigitaloceanCloud(clusterName)
+	default:
 		return nil, fmt.Errorf("managed control plane is not supported for provider %q", provider)
 	}
+}
 
+func newDigitaloceanCloud(clusterName string) (*digitaloceanCloud, error) {
 	token := os.Getenv(credentials.DigitalOceanTokenKey)
 	if token == "" {
 		return nil, fmt.Errorf("%s is not set", credentials.DigitalOceanTokenKey)

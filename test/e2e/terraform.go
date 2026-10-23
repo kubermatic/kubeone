@@ -17,7 +17,9 @@ limitations under the License.
 package e2e
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"syscall"
@@ -72,6 +74,31 @@ func (tf *terraformBin) Destroy() error {
 	args = append(args, tf.varFlags()...)
 
 	return tf.run(args...)
+}
+
+// Output returns the values of the terraform outputs, keyed by the output name
+func (tf *terraformBin) Output() (map[string]any, error) {
+	var buf bytes.Buffer
+
+	exe := testexec.StdoutTo(&buf)(tf.build("output", "-json"))
+	if err := exe.Run(); err != nil {
+		return nil, fmt.Errorf("terraform output: %w", err)
+	}
+
+	var outputs map[string]struct {
+		Value any `json:"value"`
+	}
+
+	if err := json.Unmarshal(buf.Bytes(), &outputs); err != nil {
+		return nil, fmt.Errorf("decoding terraform output: %w", err)
+	}
+
+	values := make(map[string]any, len(outputs))
+	for name, output := range outputs {
+		values[name] = output.Value
+	}
+
+	return values, nil
 }
 
 func (tf *terraformBin) varFlags() []string {
