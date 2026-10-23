@@ -45,8 +45,15 @@ variable "vpc_id" {
 }
 
 variable "public_cidr" {
-  description = "CIDR for public subnet"
+  default     = ""
+  description = "CIDR for public subnet, a random free subnet of the VPC (sized by subnets_cidr) is used if empty"
   type        = string
+}
+
+variable "subnets_cidr" {
+  default     = 24
+  description = "CIDR mask bits of the public subnet, used only if public_cidr is empty"
+  type        = number
 }
 
 variable "os" {

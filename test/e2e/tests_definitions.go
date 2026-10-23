@@ -46,6 +46,27 @@ var (
 				outputDir:  "/logs/artifacts/logs",
 			},
 		},
+		"aws": {
+			name:                "aws",
+			osName:              "Ubuntu",
+			managedControlPlane: true,
+			labels: map[string]string{
+				"preset-goproxy":         "true",
+				"preset-aws-e2e-kubeone": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "aws",
+			},
+			// supporting infrastructure only, the control plane is provisioned by KubeOne
+			terraform: terraformBin{
+				path:    "../../examples/terraform/aws-managed-control-plane",
+				varFile: "testdata/aws_managed_cp.tfvars",
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
+		},
 		"aws_default_stable": {
 			name:   "aws_default_stable",
 			osName: "Ubuntu",
@@ -1033,6 +1054,7 @@ var (
 			Name:              "install_managed_cp",
 			HumanReadableName: "Cluster Provisioning (Managed Control Plane)",
 			ManifestTemplatePaths: map[string]string{
+				"aws":          "testdata/managed_cp_aws.yaml",
 				"digitalocean": "testdata/managed_cp_digitalocean.yaml",
 			},
 		},
@@ -1043,8 +1065,9 @@ type Infra struct {
 	name              string
 	osName            string
 	discludeFromIssue bool
-	// managedControlPlane infrastructures have no Terraform, KubeOne
-	// provisions the control plane itself from .controlPlane.nodeSets
+	// managedControlPlane infrastructures use Terraform (if at all) only for
+	// the supporting infrastructure, KubeOne provisions the control plane
+	// itself from .controlPlane.nodeSets
 	managedControlPlane bool
 	environ             map[string]string
 	terraform           terraformBin

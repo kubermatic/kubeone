@@ -22,6 +22,9 @@ locals {
   kube_cluster_tag = "kubernetes.io/cluster/${var.name}"
   ami              = var.ami == "" ? data.aws_ami.ami.id : var.ami
   zoneA            = data.aws_availability_zones.available.names[0]
+  vpc_mask         = parseint(split("/", data.aws_vpc.selected.cidr_block)[1], 10)
+  subnet_newbits   = var.subnets_cidr - local.vpc_mask
+  subnet_total     = pow(2, local.subnet_newbits)
   subnets = {
     (local.zoneA) = length(aws_subnet.public[*].id) > 0 ? aws_subnet.public[0].id : ""
   }
@@ -59,6 +62,12 @@ data "aws_vpc" "selected" {
 
 resource "aws_default_vpc" "default" {}
 
+resource "random_integer" "cidr_block" {
+  count = var.public_cidr == "" ? 1 : 0
+  min   = 0
+  max   = local.subnet_total - 1
+}
+
 ############################### NETWORKING SETUP ###############################
 
 resource "aws_subnet" "public" {
@@ -67,7 +76,11 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
   vpc_id                  = data.aws_vpc.selected.id
 
-  cidr_block = var.public_cidr
+  cidr_block = var.public_cidr != "" ? var.public_cidr : cidrsubnet(
+    data.aws_vpc.selected.cidr_block,
+    local.subnet_newbits,
+    random_integer.cidr_block[0].result,
+  )
 
   tags = tomap({
     "Name"                   = "${var.name}-${data.aws_availability_zones.available.names[count.index]}",
