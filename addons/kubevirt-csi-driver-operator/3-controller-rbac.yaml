@@ -1,0 +1,77 @@
+# Tenant cluster identity of the KubeVirt CSI controller. The controller itself
+# runs in the infra cluster and uses a kubeconfig built from this token.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubevirt-csi-controller
+  namespace: kube-system
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kubevirt-csi-controller-token
+  namespace: kube-system
+  annotations:
+    kubernetes.io/service-account.name: kubevirt-csi-controller
+type: kubernetes.io/service-account-token
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubevirt-csi-controller
+rules:
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["create", "delete", "get", "list", "watch", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims/status"]
+    verbs: ["update", "patch"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["list", "watch", "create", "update", "patch"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses", "csinodes"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["csidrivers"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["volumeattachments", "volumeattachments/status"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshotclasses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshots"]
+    verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshots/status"]
+    verbs: ["update"]
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshotcontents"]
+    verbs: ["create", "get", "list", "watch", "update", "patch", "delete"]
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshotcontents/status"]
+    verbs: ["update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubevirt-csi-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubevirt-csi-controller
+subjects:
+  - kind: ServiceAccount
+    name: kubevirt-csi-controller
+    namespace: kube-system

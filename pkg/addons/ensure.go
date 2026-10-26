@@ -24,6 +24,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	kubevirtcsi "k8c.io/kubeone/pkg/cloudprovider/kubevirt/csi"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
@@ -41,42 +42,45 @@ const (
 // embeddedAddons is a list of addons that are embedded in the KubeOne
 // binary. Those addons are skipped when applying a user-provided addon with the same name.
 var embeddedAddons = map[string]string{
-	resources.AddonCCMAws:                 "",
-	resources.AddonCCMAzure:               "",
-	resources.AddonCCMDigitalOcean:        "",
-	resources.AddonCCMHetzner:             "",
-	resources.AddonCCMGCP:                 "",
-	resources.AddonCCMOpenStack:           "",
-	resources.AddonCCMEquinixMetal:        "",
-	resources.AddonCCMPacket:              "",
-	resources.AddonCCMVsphere:             "",
-	resources.AddonClusterAutoscaler:      "",
-	resources.AddonCNICanal:               "",
-	resources.AddonCNICilium:              "",
-	resources.AddonCNIWeavenet:            "",
-	resources.AddonCSIAwsEBS:              "",
-	resources.AddonCSIExternalSnapshotter: "",
-	resources.AddonCSIAzureDisk:           "",
-	resources.AddonCSIAzureFile:           "",
-	resources.AddonCSIDigitalOcean:        "",
-	resources.AddonCSIHetzner:             "",
-	resources.AddonCSIKubeVirt:            "",
-	resources.AddonCSIGCPComputePD:        "",
-	resources.AddonCSINutanix:             "",
-	resources.AddonCSIOpenStackCinder:     "",
-	resources.AddonCSIVMwareCloudDirector: "",
-	resources.AddonCSIVsphere:             "",
-	resources.AddonMetricsServer:          "",
-	resources.AddonNodeLocalDNS:           "",
-	resources.AddonNodeLocalDNSCilium:     "",
-	resources.AddonCCMKubeVirt:            "",
-	resources.AddonCCMNutanix:             "",
-	resources.AddonCoreDNSPDB:             "",
+	resources.AddonCCMAws:                    "",
+	resources.AddonCCMAzure:                  "",
+	resources.AddonCCMDigitalOcean:           "",
+	resources.AddonCCMEquinixMetal:           "",
+	resources.AddonCCMGCP:                    "",
+	resources.AddonCCMHetzner:                "",
+	resources.AddonCCMKubeVirt:               "",
+	resources.AddonCCMNutanix:                "",
+	resources.AddonCCMOpenStack:              "",
+	resources.AddonCCMPacket:                 "",
+	resources.AddonCCMVsphere:                "",
+	resources.AddonClusterAutoscaler:         "",
+	resources.AddonCNICanal:                  "",
+	resources.AddonCNICilium:                 "",
+	resources.AddonCNIWeavenet:               "",
+	resources.AddonCoreDNSPDB:                "",
+	resources.AddonCSIAwsEBS:                 "",
+	resources.AddonCSIAzureDisk:              "",
+	resources.AddonCSIAzureFile:              "",
+	resources.AddonCSIDigitalOcean:           "",
+	resources.AddonCSIExternalSnapshotter:    "",
+	resources.AddonCSIGCPComputePD:           "",
+	resources.AddonCSIHetzner:                "",
+	resources.AddonCSINutanix:                "",
+	resources.AddonCSIOpenStackCinder:        "",
+	resources.AddonCSIVMwareCloudDirector:    "",
+	resources.AddonCSIVsphere:                "",
+	resources.AddonKubeVirtCSIDriverOperator: "",
+	resources.AddonMetricsServer:             "",
+	resources.AddonNodeLocalDNS:              "",
+	resources.AddonNodeLocalDNSCilium:        "",
 }
 
 type addonAction struct {
-	name      string
+	name string
+	// supportFn runs before the addon is applied
 	supportFn func() error
+	// postFn runs after the addon is applied
+	postFn func() error
 }
 
 func collectAddons(s *state.State) []addonAction {
@@ -206,6 +210,11 @@ func Ensure(s *state.State) error {
 		}
 		if err := EnsureAddonByName(s, add.name); err != nil {
 			return err
+		}
+		if add.postFn != nil {
+			if err := add.postFn(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -527,7 +536,13 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 		addonsToDeploy = append(
 			addonsToDeploy,
 			addonAction{
-				name: resources.AddonCSIKubeVirt,
+				name: resources.AddonKubeVirtCSIDriverOperator,
+				supportFn: func() error {
+					return migrateKubeVirtCSI(s)
+				},
+				postFn: func() error {
+					return kubevirtcsi.Ensure(s)
+				},
 			},
 		)
 	case s.Cluster.CloudProvider.Nutanix != nil:

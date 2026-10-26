@@ -147,11 +147,14 @@ not go through the addon pipeline.
 - The operator Deployment, with `--leader-elect`, and with `--overwrite-registry` when
   `registryConfiguration.overwriteRegistry` is set. The `Tenant.spec.imageRepository` and `imageTag` fields are ignored
   by the operator and are not used.
-- The `Tenant` CR named `tenant`, rendered from the new API fields (see [API changes](#api-changes)).
 - ServiceAccount `kubevirt-csi-controller` in `kube-system`, with:
   - a ClusterRole based on today's `kubevirt-csi-controller-cr`, extended with the permissions the resizer and
     snapshotter need;
   - a token Secret.
+
+The `Tenant` CR named `tenant`, rendered from the new API fields (see [API changes](#api-changes)), is not part of the
+addon: a single `kubectl apply` cannot create a CRD and an object of that CRD before the CRD is established. KubeOne
+applies it from Go after the addon, once the CRD is established, together with the infra side.
 
 Snapshot CRDs and the snapshot controller are already deployed by `csi-external-snapshotter` for KubeVirt and are not
 duplicated.
@@ -195,12 +198,13 @@ Infra Role:
 
 **Removing `csi-kubevirt`.**
 - Delete `addons/csi-kubevirt/`.
-- Remove `AddonCSIKubeVirt` from `CloudAddons()` and `embeddedAddons`. The name stays only as a string used by the
-  migration.
-- In the KubeVirt case of `ensureCSIAddons`, the new addon replaces it. Its `supportFn` deletes the old addon first, so
-  two node plugins never register `csi.kubevirt.io` at the same time.
+- Remove `AddonCSIKubeVirt` from `CloudAddons()` and `embeddedAddons`.
+- In the KubeVirt case of `ensureCSIAddons`, the new addon replaces it. Its `supportFn` deletes the objects of the old
+  addon by name (`DeleteAddonByName` needs the old manifests, which are removed), so two node plugins never register
+  `csi.kubevirt.io` at the same time. This includes the tenant `driver-config` ConfigMap. No `CSIDriver` object existed
+  before, the operator creates it.
+- A new `postFn` of the addon action, run after the addon is applied, creates the `Tenant` CR and the infra side.
 - The addon is deployed only when `cloudProvider.kubevirt` is set and `cloudProvider.disableBundledCSIDrivers` is false.
-- The tenant `driver-config` ConfigMap goes away with the old addon.
 
 ### CCM
 
