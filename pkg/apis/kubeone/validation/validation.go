@@ -38,6 +38,8 @@ import (
 	gcetypes "k8c.io/machine-controller/sdk/cloudprovider/gce"
 	"k8c.io/machine-controller/sdk/jsonutil"
 
+	corev1 "k8s.io/api/core/v1"
+	storagev1 "k8s.io/api/storage/v1"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/validation"
 	"k8s.io/apimachinery/pkg/util/validation/field"
@@ -641,6 +643,56 @@ func validateKubevirtSpec(kubevirtSpec *kubeoneapi.KubevirtSpec, fldPath *field.
 
 	if kubevirtSpec.InfraNamespace == "" {
 		allErrs = append(allErrs, field.Required(fldPath.Child("infraNamespace"), "is required for kubevirt provider"))
+	}
+
+	defaultStorageClasses := 0
+	for i, sc := range kubevirtSpec.StorageClasses {
+		scFld := fldPath.Child("storageClasses").Index(i)
+		if sc.InfraStorageClassName == "" {
+			allErrs = append(allErrs, field.Required(scFld.Child("infraStorageClassName"), ""))
+		}
+		if sc.IsDefaultClass {
+			defaultStorageClasses++
+		}
+		switch sc.ReclaimPolicy {
+		case "", corev1.PersistentVolumeReclaimDelete, corev1.PersistentVolumeReclaimRetain:
+		case corev1.PersistentVolumeReclaimRecycle:
+			allErrs = append(allErrs, field.NotSupported(scFld.Child("reclaimPolicy"), sc.ReclaimPolicy,
+				[]corev1.PersistentVolumeReclaimPolicy{corev1.PersistentVolumeReclaimDelete, corev1.PersistentVolumeReclaimRetain}))
+		default:
+			allErrs = append(allErrs, field.NotSupported(scFld.Child("reclaimPolicy"), sc.ReclaimPolicy,
+				[]corev1.PersistentVolumeReclaimPolicy{corev1.PersistentVolumeReclaimDelete, corev1.PersistentVolumeReclaimRetain}))
+		}
+		if sc.VolumeBindingMode != nil {
+			switch *sc.VolumeBindingMode {
+			case storagev1.VolumeBindingImmediate, storagev1.VolumeBindingWaitForFirstConsumer:
+			default:
+				allErrs = append(allErrs, field.NotSupported(scFld.Child("volumeBindingMode"), *sc.VolumeBindingMode,
+					[]storagev1.VolumeBindingMode{storagev1.VolumeBindingImmediate, storagev1.VolumeBindingWaitForFirstConsumer}))
+			}
+		}
+	}
+	if defaultStorageClasses > 1 {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("storageClasses"), defaultStorageClasses, "at most one StorageClass can be the default"))
+	}
+
+	defaultSnapshotClasses := 0
+	for i, vsc := range kubevirtSpec.VolumeSnapshotClasses {
+		vscFld := fldPath.Child("volumeSnapshotClasses").Index(i)
+		if vsc.InfraVolumeSnapshotClass == "" {
+			allErrs = append(allErrs, field.Required(vscFld.Child("infraVolumeSnapshotClass"), ""))
+		}
+		if vsc.IsDefaultClass {
+			defaultSnapshotClasses++
+		}
+		switch vsc.DeletionPolicy {
+		case "", "Delete", "Retain":
+		default:
+			allErrs = append(allErrs, field.NotSupported(vscFld.Child("deletionPolicy"), vsc.DeletionPolicy, []string{"Delete", "Retain"}))
+		}
+	}
+	if defaultSnapshotClasses > 1 {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("volumeSnapshotClasses"), defaultSnapshotClasses, "at most one VolumeSnapshotClass can be the default"))
 	}
 
 	return allErrs

@@ -205,12 +205,17 @@ const (
 	// KubeVirt's CCM
 	KubeVirtCCM
 
-	// KubeVirt CSI
+	// KubeVirt CSI. KubeVirtCSINodeDriverRegistrar is not referenced by KubeOne
+	// manifests: kubevirt-csi-driver-operator deploys the node plugin with
+	// hardcoded images. It is kept so the images can be mirrored.
 	KubeVirtCSI
 	KubeVirtCSINodeDriverRegistrar
 	KubeVirtCSILivenessProbe
 	KubeVirtCSIProvisioner
 	KubeVirtCSIAttacher
+	KubeVirtCSISnapshotter
+	KubeVirtCSIResizer
+	KubeVirtCSIDriverOperator
 
 	// Backup Restic
 	BackupResticSnapshotter
@@ -431,6 +436,9 @@ func optionalResources() map[Resource]map[string]string {
 		KubeVirtCSILivenessProbe:       {"*": "quay.io/openshift/origin-csi-livenessprobe:4.20.0"},
 		KubeVirtCSIProvisioner:         {"*": "quay.io/openshift/origin-csi-external-provisioner:4.20.0"},
 		KubeVirtCSIAttacher:            {"*": "quay.io/openshift/origin-csi-external-attacher:4.20.0"},
+		KubeVirtCSISnapshotter:         {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.5.0"},
+		KubeVirtCSIResizer:             {"*": "registry.k8s.io/sig-storage/csi-resizer:v2.1.0"},
+		KubeVirtCSIDriverOperator:      {"*": "quay.io/kubermatic/kubevirt-csi-driver-operator:v0.5.3"},
 
 		// Backup Restic
 		BackupResticSnapshotter: {"*": "registry.k8s.io/etcd:3.5.32-0"},
@@ -524,6 +532,9 @@ func providerResources() map[string][]Resource {
 			KubeVirtCSILivenessProbe,
 			KubeVirtCSIProvisioner,
 			KubeVirtCSIAttacher,
+			KubeVirtCSISnapshotter,
+			KubeVirtCSIResizer,
+			KubeVirtCSIDriverOperator,
 		},
 		"nutanix": {
 			NutanixCCM,

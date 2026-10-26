@@ -289,6 +289,33 @@ func migrateHetznerCSI(s *state.State) error {
 	return clientutil.DeleteIfExists(s.Context, s.DynamicClient, genNamedObject[storagev1.CSIDriver](hetznerCSIDriverName))
 }
 
+// migrateKubeVirtCSI deletes the objects of the removed csi-kubevirt addon,
+// which ran the CSI controller in the tenant cluster with the infra
+// kubeconfig. It must run before kubevirt-csi-driver-operator deploys its
+// node plugin, so two node plugins never register csi.kubevirt.io at once.
+// The addon manifests are gone, so the objects are deleted by name.
+func migrateKubeVirtCSI(s *state.State) error {
+	objs := []client.Object{
+		genNamedObject[appsv1.Deployment]("kubevirt-csi-controller", metav1.NamespaceSystem),
+		genNamedObject[appsv1.DaemonSet]("kubevirt-csi-node", metav1.NamespaceSystem),
+		genNamedObject[corev1.ConfigMap]("driver-config", metav1.NamespaceSystem),
+		genNamedObject[rbacv1.ClusterRoleBinding]("kubevirt-csi-controller-binding"),
+		genNamedObject[rbacv1.ClusterRole]("kubevirt-csi-controller-cr"),
+		genNamedObject[corev1.ServiceAccount]("kubevirt-csi-controller-sa", metav1.NamespaceSystem),
+		genNamedObject[rbacv1.ClusterRoleBinding]("kubevirt-csi-node-binding"),
+		genNamedObject[rbacv1.ClusterRole]("kubevirt-csi-node-cr"),
+		genNamedObject[corev1.ServiceAccount]("kubevirt-csi-node-sa", metav1.NamespaceSystem),
+	}
+
+	for _, obj := range objs {
+		if err := clientutil.DeleteIfExists(s.Context, s.DynamicClient, obj); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func migrateHetznerCCM(s *state.State) error {
 	key := client.ObjectKey{
 		Name:      "hcloud-cloud-controller-manager",
