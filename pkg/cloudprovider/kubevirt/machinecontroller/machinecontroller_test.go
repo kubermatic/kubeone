@@ -479,3 +479,39 @@ func TestDeploymentReady(t *testing.T) {
 		t.Error("expected not ready while an old pod is still around")
 	}
 }
+
+func TestWaitDeploymentReady(t *testing.T) {
+	scheme := runtime.NewScheme()
+	if err := clientgoscheme.AddToScheme(scheme); err != nil {
+		t.Fatal(err)
+	}
+
+	newDeployment := func(name string, ready int32) *appsv1.Deployment {
+		d := &appsv1.Deployment{}
+		d.Name = name
+		d.Namespace = "infra-ns"
+		d.Status = appsv1.DeploymentStatus{Replicas: 1, UpdatedReplicas: 1, ReadyReplicas: ready}
+
+		return d
+	}
+
+	c := fake.NewClientBuilder().
+		WithScheme(scheme).
+		WithObjects(newDeployment("ready", 1), newDeployment("pending", 0)).
+		WithStatusSubresource(&appsv1.Deployment{}).
+		Build()
+
+	if err := waitDeploymentReady(context.Background(), c, ctrlrt.ObjectKey{Namespace: "infra-ns", Name: "ready"}); err != nil {
+		t.Errorf("ready Deployment: %v", err)
+	}
+
+	for _, name := range []string{"pending", "missing"} {
+		ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+		err := waitDeploymentReady(ctx, c, ctrlrt.ObjectKey{Namespace: "infra-ns", Name: name})
+		cancel()
+
+		if err == nil {
+			t.Errorf("%s Deployment: expected an error", name)
+		}
+	}
+}
