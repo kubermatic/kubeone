@@ -226,10 +226,17 @@ func Ensure(s *state.State) error {
 		servingCertHash:       servingCert.hash,
 	}
 
-	for _, d := range []*appsv1.Deployment{ControllerDeployment(opts), WebhookDeployment(opts)} {
+	webhookDeployment := WebhookDeployment(opts)
+	for _, d := range []*appsv1.Deployment{ControllerDeployment(opts), webhookDeployment} {
 		if err = clientutil.CreateOrReplace(ctx, infraClient, d); err != nil {
 			return err
 		}
+	}
+
+	// The webhook fails closed, so it must be serving before the tenant API
+	// server is pointed at it, or Machine writes are rejected meanwhile.
+	if err = waitDeploymentReady(ctx, infraClient, ctrlrt.ObjectKeyFromObject(webhookDeployment)); err != nil {
+		return err
 	}
 
 	return clientutil.CreateOrReplace(ctx, s.DynamicClient, MutatingWebhookConfiguration(host, servingCert.caPEM))
@@ -258,20 +265,26 @@ func WaitReady(s *state.State) error {
 	for _, comp := range []kubevirtinfra.Component{WebhookComponent, ControllerComponent} {
 		key := ctrlrt.ObjectKey{Namespace: namespace, Name: kubevirtinfra.ObjectName(s.Cluster.Name, comp.Name)}
 
-		err = wait.PollUntilContextTimeout(s.Context, readyWaitInterval, readyWaitTimeout, false, func(ctx context.Context) (bool, error) {
-			d := &appsv1.Deployment{}
-			if getErr := infraClient.Get(ctx, key, d); getErr != nil {
-				return false, ctrlrt.IgnoreNotFound(getErr)
-			}
-
-			return deploymentReady(d), nil
-		})
-		if err != nil {
-			return fail.KubeClient(err, "waiting for %s in the infra cluster to become ready", key)
+		if err = waitDeploymentReady(s.Context, infraClient, key); err != nil {
+			return err
 		}
 	}
 
 	return nil
+}
+
+// waitDeploymentReady waits for the infra cluster Deployment to become ready.
+func waitDeploymentReady(ctx context.Context, c ctrlrt.Client, key ctrlrt.ObjectKey) error {
+	err := wait.PollUntilContextTimeout(ctx, readyWaitInterval, readyWaitTimeout, true, func(ctx context.Context) (bool, error) {
+		d := &appsv1.Deployment{}
+		if err := c.Get(ctx, key, d); err != nil {
+			return false, ctrlrt.IgnoreNotFound(err)
+		}
+
+		return deploymentReady(d), nil
+	})
+
+	return fail.KubeClient(err, "waiting for %s in the infra cluster to become ready", key)
 }
 
 func deploymentReady(d *appsv1.Deployment) bool {
