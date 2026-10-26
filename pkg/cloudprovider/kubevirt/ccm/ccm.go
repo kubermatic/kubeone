@@ -128,7 +128,7 @@ func CloudConfig(clusterName string, spec *kubeoneapi.KubevirtSpec) ([]byte, err
 		// cluster. They intentionally lack kubevirtinfra.LabelComponent, so
 		// kubevirtinfra.Cleanup does not delete them; they belong to tenant
 		// Services.
-		InfraLabels: map[string]string{kubevirtinfra.LabelClusterName: clusterName},
+		InfraLabels: map[string]string{kubevirtinfra.LabelClusterName: kubevirtinfra.ClusterLabelValue(clusterName)},
 		InstancesV2: instancesV2{
 			Enabled:              true,
 			ZoneAndRegionEnabled: spec.ZoneAndRegionEnabled,

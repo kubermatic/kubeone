@@ -36,7 +36,7 @@ import (
 // It requires LabelComponent, so objects that only carry LabelClusterName,
 // such as the control plane API server Service, are not selected.
 func CleanupSelector(clusterName string) labels.Selector {
-	clusterReq, _ := labels.NewRequirement(LabelClusterName, selection.Equals, []string{clusterName})
+	clusterReq, _ := labels.NewRequirement(LabelClusterName, selection.Equals, []string{ClusterLabelValue(clusterName)})
 	componentReq, _ := labels.NewRequirement(LabelComponent, selection.Exists, nil)
 
 	return labels.NewSelector().Add(*clusterReq, *componentReq)
