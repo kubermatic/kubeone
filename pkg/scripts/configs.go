@@ -58,6 +58,15 @@ var (
 		fi
 	`)
 
+	authenticationConfigTemplate = heredoc.Doc(`
+		if sudo test -f "{{ .WORK_DIR }}/cfg/authentication-config.yaml"; then
+			sudo mkdir -p /etc/kubernetes/authentication
+			sudo mv {{ .WORK_DIR }}/cfg/authentication-config.yaml /etc/kubernetes/authentication/config.yaml
+			sudo chmod 600 /etc/kubernetes/authentication/config.yaml
+			sudo chown root:root /etc/kubernetes/authentication/config.yaml
+		fi
+	`)
+
 	caBundleTemplate = heredoc.Doc(`
 		sudo mkdir -p {{ .CA_CERTS_DIR }}
 		sudo mv {{ .WORK_DIR }}/ca-certs/{{ .CA_BUNDLE_FILENAME }} {{ .CA_CERTS_DIR }}
@@ -100,6 +109,14 @@ func SaveAdmissionControlConfigs(workdir string) (string, error) {
 	})
 
 	return result, fail.Runtime(err, "rendering script")
+}
+
+func SaveAuthenticationConfig(workdir string) (string, error) {
+	result, err := Render(authenticationConfigTemplate, Data{
+		"WORK_DIR": workdir,
+	})
+
+	return result, fail.Runtime(err, "rendering authenticationConfigTemplate script")
 }
 
 func SaveEncryptionProvidersConfig(workdir, fileName string) (string, error) {

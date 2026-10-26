@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2026-10-22T17:37:33+03:00
+date = 2026-10-23T21:59:06+03:00
 weight = 11
 +++
 ## v1beta3
@@ -13,6 +13,7 @@ weight = 11
 * [AddonRef](#addonref)
 * [Addons](#addons)
 * [AlwaysPullImages](#alwayspullimages)
+* [AuthenticationConfiguration](#authenticationconfiguration)
 * [AzureControlPlane](#azurecontrolplane)
 * [AzureLoadBalancer](#azureloadbalancer)
 * [AzureSpec](#azurespec)
@@ -186,6 +187,17 @@ every new pod to have its image pull policy set to Always.
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | enable | Enable the AlwaysPullImages admission plugin. | bool | false |
+
+[Back to Group](#v1beta3)
+
+### AuthenticationConfiguration
+
+AuthenticationConfiguration feature flag
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| enable | Enable | bool | false |
+| configFilePath | ConfigFilePath is a path on the local file system to the apiserver.config.k8s.io/v1 AuthenticationConfiguration manifest. The file is distributed to all control plane nodes and passed to the kube-apiserver via the `--authentication-config` flag. It can't be combined with the OpenIDConnect feature. ConfigFilePath is a required field. More info: https://kubernetes.io/docs/reference/access-authn-authz/authentication/#using-authentication-configuration | string | true |
 
 [Back to Group](#v1beta3)
 
@@ -574,7 +586,8 @@ Features controls what features will be enabled on the cluster
 | dynamicAuditLog | DynamicAuditLog | *[DynamicAuditLog](#dynamicauditlog) | false |
 | webhookAuditLog | WebhookAuditLog | *[WebhookAuditLog](#webhookauditlog) | false |
 | metricsServer | MetricsServer | *[MetricsServer](#metricsserver) | false |
-| openidConnect | OpenIDConnect | *[OpenIDConnect](#openidconnect) | false |
+| openidConnect | OpenIDConnect configures a single OIDC issuer using the legacy kube-apiserver `--oidc-*` flags. For multiple JWT issuers, CEL claim validation and mappings, or anonymous authentication conditions, use AuthenticationConfiguration instead. The two features are mutually exclusive. | *[OpenIDConnect](#openidconnect) | false |
+| authenticationConfiguration | AuthenticationConfiguration configures the kube-apiserver using the structured authentication configuration file (`--authentication-config`). | *[AuthenticationConfiguration](#authenticationconfiguration) | false |
 | encryptionProviders | Encryption Providers | *[EncryptionProviders](#encryptionproviders) | false |
 | nodeLocalDNS | NodeLocalDNS config | *[NodeLocalDNS](#nodelocaldns) | false |
 
@@ -907,6 +920,9 @@ NutanixSpec defines the Nutanix provider
 ### OpenIDConnect
 
 OpenIDConnect feature flag
+
+Consider using AuthenticationConfiguration instead, which supports multiple JWT issuers,
+CEL claim validation and mappings, and anonymous authentication conditions.
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |

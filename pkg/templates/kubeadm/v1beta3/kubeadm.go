@@ -272,6 +272,17 @@ func NewConfig(s *state.State, host kubeoneapi.HostConfig) (*Config, error) {
 		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, logVol)
 	}
 
+	if features.AuthenticationConfigurationEnabled(cluster.Features) {
+		authenticationVol := kubeadmv1beta3.HostPathMount{
+			Name:      "authentication-conf",
+			HostPath:  features.AuthenticationConfigDir,
+			MountPath: features.AuthenticationConfigDir,
+			ReadOnly:  true,
+			PathType:  corev1.HostPathDirectoryOrCreate,
+		}
+		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, authenticationVol)
+	}
+
 	if features.RequiresAdmissionConfig(cluster.Features) {
 		admissionVol := kubeadmv1beta3.HostPathMount{
 			Name:      "admission-conf",

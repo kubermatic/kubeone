@@ -56,3 +56,47 @@ func TestCluster_CertsToExpireInLessThen90Days(t *testing.T) {
 		})
 	}
 }
+
+func TestAuthenticationConfigOutdated(t *testing.T) {
+	initialized := func(checksum string) Host {
+		return Host{
+			ContainerRuntimeContainerd:   ComponentStatus{Status: ComponentInstalled},
+			Kubelet:                      ComponentStatus{Status: ComponentInstalled | KubeletInitialized},
+			AuthenticationConfigChecksum: checksum,
+		}
+	}
+
+	tests := []struct {
+		name         string
+		controlPlane []Host
+		want         bool
+	}{
+		{
+			name:         "all up to date",
+			controlPlane: []Host{initialized("abc"), initialized("abc")},
+		},
+		{
+			name:         "one node differs",
+			controlPlane: []Host{initialized("abc"), initialized("def")},
+			want:         true,
+		},
+		{
+			name:         "file missing on a node",
+			controlPlane: []Host{initialized("abc"), initialized("")},
+			want:         true,
+		},
+		{
+			name:         "uninitialized node is ignored",
+			controlPlane: []Host{initialized("abc"), {}},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &Cluster{ControlPlane: tt.controlPlane}
+			if got := c.AuthenticationConfigOutdated("abc"); got != tt.want {
+				t.Errorf("AuthenticationConfigOutdated() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

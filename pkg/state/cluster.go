@@ -38,7 +38,9 @@ type Cluster struct {
 	StaticWorkers             []Host
 	EncryptionConfiguration   *EncryptionConfiguration
 	CCMClusterName            string
-	Lock                      sync.Mutex
+	// AuthenticationConfigEnabled is true when the kube-apiserver runs with the --authentication-config flag
+	AuthenticationConfigEnabled bool
+	Lock                        sync.Mutex
 }
 
 type EncryptionConfiguration struct {
@@ -59,6 +61,10 @@ type Host struct {
 	Etcd      ContainerStatus
 
 	EarliestCertExpiry time.Time
+
+	// AuthenticationConfigChecksum is the sha256 checksum of the AuthenticationConfiguration file on the CP node.
+	// Empty if the file doesn't exist.
+	AuthenticationConfigChecksum string
 
 	IsInCluster bool
 	Kubeconfig  []byte
@@ -300,6 +306,18 @@ func (c *Cluster) EncryptionEnabled() bool {
 
 func (c *Cluster) CustomEncryptionEnabled() bool {
 	return c.EncryptionEnabled() && c.EncryptionConfiguration.Custom && c.EncryptionConfiguration.Config != nil
+}
+
+// AuthenticationConfigOutdated returns true if any initialized control plane node has an AuthenticationConfiguration
+// file with a checksum different from the expected one
+func (c *Cluster) AuthenticationConfigOutdated(expectedChecksum string) bool {
+	for _, host := range c.ControlPlane {
+		if host.Initialized() && host.AuthenticationConfigChecksum != expectedChecksum {
+			return true
+		}
+	}
+
+	return false
 }
 
 /*

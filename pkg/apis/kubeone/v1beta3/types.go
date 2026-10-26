@@ -1092,8 +1092,14 @@ type Features struct {
 	// MetricsServer
 	MetricsServer *MetricsServer `json:"metricsServer,omitempty"`
 
-	// OpenIDConnect
+	// OpenIDConnect configures a single OIDC issuer using the legacy kube-apiserver `--oidc-*` flags.
+	// For multiple JWT issuers, CEL claim validation and mappings, or anonymous authentication
+	// conditions, use AuthenticationConfiguration instead. The two features are mutually exclusive.
 	OpenIDConnect *OpenIDConnect `json:"openidConnect,omitempty"`
+
+	// AuthenticationConfiguration configures the kube-apiserver using the structured
+	// authentication configuration file (`--authentication-config`).
+	AuthenticationConfiguration *AuthenticationConfiguration `json:"authenticationConfiguration,omitempty"`
 
 	// Encryption Providers
 	EncryptionProviders *EncryptionProviders `json:"encryptionProviders,omitempty"`
@@ -1294,6 +1300,9 @@ type MetricsServer struct {
 }
 
 // OpenIDConnect feature flag
+//
+// Consider using AuthenticationConfiguration instead, which supports multiple JWT issuers,
+// CEL claim validation and mappings, and anonymous authentication conditions.
 type OpenIDConnect struct {
 	// Enable
 	Enable bool `json:"enable,omitempty"`
@@ -1330,6 +1339,20 @@ type OpenIDConnectConfig struct {
 
 	// CAFile
 	CAFile string `json:"caFile"`
+}
+
+// AuthenticationConfiguration feature flag
+type AuthenticationConfiguration struct {
+	// Enable
+	Enable bool `json:"enable,omitempty"`
+
+	// ConfigFilePath is a path on the local file system to the
+	// apiserver.config.k8s.io/v1 AuthenticationConfiguration manifest.
+	// The file is distributed to all control plane nodes and passed to the kube-apiserver
+	// via the `--authentication-config` flag. It can't be combined with the OpenIDConnect feature.
+	// ConfigFilePath is a required field.
+	// More info: https://kubernetes.io/docs/reference/access-authn-authz/authentication/#using-authentication-configuration
+	ConfigFilePath string `json:"configFilePath"`
 }
 
 // Addon config

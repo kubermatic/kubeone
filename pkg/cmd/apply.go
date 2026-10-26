@@ -27,8 +27,10 @@ import (
 	"github.com/spf13/pflag"
 
 	"k8c.io/kubeone/pkg/clusterstatus/etcdstatus"
+	"k8c.io/kubeone/pkg/configupload"
 	"k8c.io/kubeone/pkg/confirmation"
 	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/features"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/tasks"
 
@@ -440,6 +442,10 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 					s.Cluster.Versions.Kubernetes))
 		}
 	} else {
+		tasksToRun, err = withAuthenticationConfigIfChanged(s, tasksToRun)
+		if err != nil {
+			return err
+		}
 		tasksToRun = tasks.WithResources(tasksToRun)
 	}
 
@@ -465,6 +471,41 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 	}
 
 	return tasksToRun.Run(s)
+}
+
+// withAuthenticationConfigIfChanged adds a task to upload the AuthenticationConfiguration if it differs from the one
+// on control plane nodes. Enabling or disabling the feature changes the kube-apiserver flags and therefore requires
+// the control plane to be upgraded with --force-upgrade.
+func withAuthenticationConfigIfChanged(s *state.State, tasksToRun tasks.Tasks) (tasks.Tasks, error) {
+	enabled := features.AuthenticationConfigurationEnabled(s.Cluster.Features)
+
+	// the flag can also be set manually via .controlPlaneComponents.apiServer.flags
+	if cpc := s.Cluster.ControlPlaneComponents; !enabled && cpc != nil && cpc.APIServer != nil {
+		if _, ok := cpc.APIServer.Flags["authentication-config"]; ok {
+			return tasksToRun, nil
+		}
+	}
+
+	if enabled != s.LiveCluster.AuthenticationConfigEnabled {
+		s.Logger.Warnf("Enabling or disabling the authenticationConfiguration feature requires running 'kubeone apply --force-upgrade'")
+
+		return tasksToRun, nil
+	}
+
+	if !enabled {
+		return tasksToRun, nil
+	}
+
+	config, err := tasks.LoadAuthenticationConfiguration(s)
+	if err != nil {
+		return nil, err
+	}
+
+	if s.LiveCluster.AuthenticationConfigOutdated(configupload.Checksum(config)) {
+		tasksToRun = tasks.WithAuthenticationConfigUpdated(tasksToRun)
+	}
+
+	return tasksToRun, nil
 }
 
 func runApplyRotateKey(s *state.State, opts *applyOpts) error {

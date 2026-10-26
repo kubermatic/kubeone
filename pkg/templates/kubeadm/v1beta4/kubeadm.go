@@ -363,6 +363,17 @@ func addFeaturesExtraMounts(s *state.State, clusterConfig *kubeadmv1beta4.Cluste
 		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, logVol)
 	}
 
+	if features.AuthenticationConfigurationEnabled(cluster.Features) {
+		authenticationVol := kubeadmv1beta4.HostPathMount{
+			Name:      "authentication-conf",
+			HostPath:  features.AuthenticationConfigDir,
+			MountPath: features.AuthenticationConfigDir,
+			ReadOnly:  true,
+			PathType:  corev1.HostPathDirectoryOrCreate,
+		}
+		clusterConfig.APIServer.ExtraVolumes = append(clusterConfig.APIServer.ExtraVolumes, authenticationVol)
+	}
+
 	if features.RequiresAdmissionConfig(cluster.Features) {
 		admissionVol := kubeadmv1beta4.HostPathMount{
 			Name:      "admission-conf",

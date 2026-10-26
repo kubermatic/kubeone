@@ -38,6 +38,7 @@ import (
 	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
 	kubeonevalidation "k8c.io/kubeone/pkg/apis/kubeone/validation"
 	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/features"
 	terraformv1beta2 "k8c.io/kubeone/pkg/terraform/v1beta2"
 	terraformv1beta3 "k8c.io/kubeone/pkg/terraform/v1beta3"
 	digitaloceantypes "k8c.io/machine-controller/sdk/cloudprovider/digitalocean"
@@ -202,6 +203,10 @@ func BytesToKubeOneCluster(cluster, tfOutput []byte, credentialsFilePath string,
 	// Validate the configuration
 	if err := kubeonevalidation.ValidateKubeOneCluster(*internalCluster).ToAggregate(); err != nil {
 		return nil, fail.ConfigValidation(err)
+	}
+
+	if err := validateAuthenticationConfigurationFile(internalCluster, baseDir); err != nil {
+		return nil, err
 	}
 
 	// Check for deprecated fields/features for a cluster
@@ -562,6 +567,26 @@ func isDir(dirname string) bool {
 }
 
 // checkClusterConfiguration checks clusters for usage of alpha, deprecated fields, flags, unrecommended features etc. and print a warning if any are found.
+// validateAuthenticationConfigurationFile ensures that the file referenced by
+// .features.authenticationConfiguration.configFilePath can be read and unmarshals into a valid AuthenticationConfiguration
+func validateAuthenticationConfigurationFile(cluster *kubeoneapi.KubeOneCluster, baseDir string) error {
+	if !features.AuthenticationConfigurationEnabled(cluster.Features) {
+		return nil
+	}
+
+	configFilePath := cluster.Features.AuthenticationConfiguration.ConfigFilePath
+	if !filepath.IsAbs(configFilePath) {
+		configFilePath = filepath.Join(baseDir, configFilePath)
+	}
+
+	buf, err := os.ReadFile(configFilePath)
+	if err != nil {
+		return fail.ConfigValidation(fmt.Errorf("reading .features.authenticationConfiguration.configFilePath: %w", err))
+	}
+
+	return features.ValidateAuthenticationConfiguration(buf, cluster)
+}
+
 func checkClusterConfiguration(cluster kubeoneapi.KubeOneCluster, logger logrus.FieldLogger) {
 	if cluster.CloudProvider.Nutanix != nil {
 		logger.Warnf("Nutanix support is considered as alpha, so the implementation might be changed in the future")
