@@ -21,7 +21,10 @@ package csi
 
 import (
 	"context"
+	"maps"
 	"time"
+
+	"github.com/sirupsen/logrus"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clientutil"
@@ -29,7 +32,10 @@ import (
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 
+	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
+	storagev1 "k8s.io/api/storage/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/util/wait"
 	ctrlrt "sigs.k8s.io/controller-runtime/pkg/client"
@@ -107,6 +113,10 @@ func Ensure(s *state.State) error {
 		return err
 	}
 
+	if err := reconcileStorageClasses(ctx, s.DynamicClient, s.Logger, spec); err != nil {
+		return err
+	}
+
 	infraClient, namespace, err := kubevirtinfra.Client(s)
 	if err != nil {
 		return err
@@ -132,6 +142,88 @@ func Ensure(s *state.State) error {
 	return clientutil.CreateOrReplace(ctx, infraClient, Deployment(s.Cluster.Name, namespace, s.Images.Get))
 }
 
+// StorageClassName returns the name of the tenant StorageClass that
+// kubevirt-csi-driver-operator creates for the infra StorageClass.
+func StorageClassName(infraStorageClassName string) string {
+	return "kubevirt-" + infraStorageClassName
+}
+
+// reconcileStorageClasses updates the mutable fields of existing tenant
+// StorageClasses that kubevirt-csi-driver-operator sets only on creation:
+// allowVolumeExpansion and labels. Labels are added or updated, but never
+// removed, since other labels might be set by someone else. StorageClasses
+// that don't exist yet are left to the operator.
+//
+// Bus, volumeBindingMode and reclaimPolicy can't be changed on an existing
+// StorageClass; changes to them are only reported.
+func reconcileStorageClasses(ctx context.Context, c ctrlrt.Client, logger logrus.FieldLogger, spec *kubeoneapi.KubevirtSpec) error {
+	for _, want := range spec.StorageClasses {
+		sc := &storagev1.StorageClass{}
+		key := ctrlrt.ObjectKey{Name: StorageClassName(want.InfraStorageClassName)}
+
+		if err := c.Get(ctx, key, sc); err != nil {
+			if apierrors.IsNotFound(err) {
+				continue
+			}
+
+			return fail.KubeClient(err, "getting StorageClass %s", key.Name)
+		}
+
+		for _, field := range immutableStorageClassChanges(sc, want) {
+			logger.Warnf("StorageClass %q: %s can't be changed on an existing StorageClass, delete it to have it recreated by the operator", sc.Name, field)
+		}
+
+		patch := ctrlrt.MergeFrom(sc.DeepCopy())
+		sc.AllowVolumeExpansion = new(want.AllowVolumeExpansion)
+		if len(want.Labels) > 0 && sc.Labels == nil {
+			sc.Labels = map[string]string{}
+		}
+		maps.Copy(sc.Labels, want.Labels)
+
+		if err := c.Patch(ctx, sc, patch); err != nil {
+			return fail.KubeClient(err, "patching StorageClass %s", sc.Name)
+		}
+	}
+
+	return nil
+}
+
+// immutableStorageClassChanges returns the immutable fields of the existing
+// StorageClass that differ from the configuration.
+func immutableStorageClassChanges(sc *storagev1.StorageClass, want kubeoneapi.KubevirtInfraStorageClass) []string {
+	var changed []string
+
+	if sc.Parameters["bus"] != storageClassBus(want) {
+		changed = append(changed, "bus")
+	}
+
+	wantBindingMode := storagev1.VolumeBindingImmediate
+	if want.VolumeBindingMode != nil {
+		wantBindingMode = *want.VolumeBindingMode
+	}
+	if sc.VolumeBindingMode != nil && *sc.VolumeBindingMode != wantBindingMode {
+		changed = append(changed, "volumeBindingMode")
+	}
+
+	wantReclaimPolicy := corev1.PersistentVolumeReclaimDelete
+	if want.ReclaimPolicy != "" {
+		wantReclaimPolicy = want.ReclaimPolicy
+	}
+	if sc.ReclaimPolicy != nil && *sc.ReclaimPolicy != wantReclaimPolicy {
+		changed = append(changed, "reclaimPolicy")
+	}
+
+	return changed
+}
+
+func storageClassBus(sc kubeoneapi.KubevirtInfraStorageClass) string {
+	if sc.Bus == "" {
+		return "scsi"
+	}
+
+	return sc.Bus
+}
+
 func waitCRDEstablished(ctx context.Context, c ctrlrt.Client, name string) error {
 	condFn := clientutil.CRDsReadyCondition(ctx, c, []string{name})
 
@@ -148,15 +240,10 @@ func waitCRDEstablished(ctx context.Context, c ctrlrt.Client, name string) error
 func Tenant(spec *kubeoneapi.KubevirtSpec) *unstructured.Unstructured {
 	storageClasses := []any{}
 	for _, sc := range spec.StorageClasses {
-		bus := sc.Bus
-		if bus == "" {
-			bus = "scsi"
-		}
-
 		obj := map[string]any{
 			"infraStorageClassName": sc.InfraStorageClassName,
 			"isDefaultClass":        sc.IsDefaultClass,
-			"bus":                   bus,
+			"bus":                   storageClassBus(sc),
 		}
 		if sc.VolumeBindingMode != nil {
 			obj["volumeBindingMode"] = string(*sc.VolumeBindingMode)

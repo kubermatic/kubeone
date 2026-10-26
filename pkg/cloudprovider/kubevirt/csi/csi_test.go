@@ -17,9 +17,14 @@ limitations under the License.
 package csi
 
 import (
+	"context"
+	"maps"
 	"slices"
 	"strings"
 	"testing"
+
+	"github.com/sirupsen/logrus"
+	logrustest "github.com/sirupsen/logrus/hooks/test"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	kubevirtinfra "k8c.io/kubeone/pkg/cloudprovider/kubevirt/infra"
@@ -27,7 +32,13 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	storagev1 "k8s.io/api/storage/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
+	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+	ctrlrt "sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 )
 
 func fakeImage(res images.Resource, _ ...images.GetOpt) string {
@@ -212,5 +223,78 @@ func TestTenantEmpty(t *testing.T) {
 	scs, found, err := unstructured.NestedSlice(tenant.Object, "spec", "storageClasses")
 	if err != nil || !found || len(scs) != 0 {
 		t.Errorf("storageClasses = %v (found=%v, err=%v), want an empty list", scs, found, err)
+	}
+}
+
+func TestReconcileStorageClasses(t *testing.T) {
+	ctx := context.Background()
+	immediate := storagev1.VolumeBindingImmediate
+	deletePolicy := corev1.PersistentVolumeReclaimDelete
+	wffc := storagev1.VolumeBindingWaitForFirstConsumer
+
+	existing := &storagev1.StorageClass{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:   "kubevirt-standard",
+			Labels: map[string]string{"a": "old", "foreign": "keep"},
+		},
+		Provisioner:          "csi.kubevirt.io",
+		Parameters:           map[string]string{"infraStorageClassName": "standard", "bus": "scsi"},
+		AllowVolumeExpansion: new(false),
+		VolumeBindingMode:    &immediate,
+		ReclaimPolicy:        &deletePolicy,
+	}
+
+	scheme := runtime.NewScheme()
+	if err := clientgoscheme.AddToScheme(scheme); err != nil {
+		t.Fatal(err)
+	}
+	c := fake.NewClientBuilder().WithScheme(scheme).WithObjects(existing).Build()
+	logger, hook := logrustest.NewNullLogger()
+
+	spec := &kubeoneapi.KubevirtSpec{
+		StorageClasses: []kubeoneapi.KubevirtInfraStorageClass{
+			{
+				InfraStorageClassName: "standard",
+				AllowVolumeExpansion:  true,
+				Labels:                map[string]string{"a": "new", "b": "added"},
+				Bus:                   "virtio",
+				VolumeBindingMode:     &wffc,
+			},
+			// not created by the operator yet
+			{InfraStorageClassName: "fast"},
+		},
+	}
+
+	if err := reconcileStorageClasses(ctx, c, logger, spec); err != nil {
+		t.Fatal(err)
+	}
+
+	got := &storagev1.StorageClass{}
+	if err := c.Get(ctx, ctrlrt.ObjectKey{Name: "kubevirt-standard"}, got); err != nil {
+		t.Fatal(err)
+	}
+
+	if got.AllowVolumeExpansion == nil || !*got.AllowVolumeExpansion {
+		t.Errorf("allowVolumeExpansion = %v, want true", got.AllowVolumeExpansion)
+	}
+	if want := map[string]string{"a": "new", "b": "added", "foreign": "keep"}; !maps.Equal(got.Labels, want) {
+		t.Errorf("labels = %v, want %v", got.Labels, want)
+	}
+	if got.Parameters["bus"] != "scsi" || *got.VolumeBindingMode != immediate {
+		t.Error("immutable fields must not be changed")
+	}
+
+	if err := c.Get(ctx, ctrlrt.ObjectKey{Name: "kubevirt-fast"}, &storagev1.StorageClass{}); !apierrors.IsNotFound(err) {
+		t.Errorf("missing StorageClass must be left to the operator, got err %v", err)
+	}
+
+	var warned []string
+	for _, e := range hook.AllEntries() {
+		if e.Level == logrus.WarnLevel {
+			warned = append(warned, e.Message)
+		}
+	}
+	if len(warned) != 2 || !strings.Contains(warned[0], "bus") || !strings.Contains(warned[1], "volumeBindingMode") {
+		t.Errorf("warnings = %q, want one for bus and one for volumeBindingMode", warned)
 	}
 }
