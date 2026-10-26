@@ -1,0 +1,78 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+name: '{{ required ".ClusterName is required" .ClusterName }}'
+
+versions:
+  kubernetes: '{{ required ".VERSION is required" .VERSION }}'
+
+# Networking, security groups and the instance profile are provided by
+# examples/terraform/aws-managed-control-plane, see .Terraform
+
+cloudProvider:
+  external: true
+  aws:
+    region: '{{ required ".Terraform.networking.region is required" .Terraform.networking.region }}'
+    controlPlane:
+      loadBalancer:
+        securityGroupIDs:
+        # allow tcp/6443 to the load balancer
+        - '{{ .Terraform.loadbalancer.securityGroupIDs.elb }}'
+        # allow the load balancer to reach the control plane instances
+        - '{{ .Terraform.networking.securityGroupIDs.common }}'
+
+controlPlane:
+  nodeSets:
+  - name: cp
+    replicas: 3
+    operatingSystem: ubuntu
+    ssh:
+      publicKeys:
+      - '{{ required ".SSHPublicKey is required" .SSHPublicKey }}'
+      username: ubuntu
+    cloudProviderSpec:
+      region: '{{ .Terraform.networking.region }}'
+      ami: '{{ .Terraform.vm.ami }}'
+      availabilityZone: '{{ .Terraform.vm.availabilityZone }}'
+      instanceProfile: '{{ .Terraform.vm.instanceProfile }}'
+      vpcId: '{{ .Terraform.networking.vpcId }}'
+      subnetId: '{{ .Terraform.networking.subnetId }}'
+      securityGroupIDs:
+      - '{{ .Terraform.networking.securityGroupIDs.common }}'
+      - '{{ .Terraform.networking.securityGroupIDs.ssh }}'
+      instanceType: t3a.medium
+      assignPublicIP: true
+      diskSize: 25
+      diskType: gp3
+
+dynamicWorkers:
+- name: '{{ .ClusterName }}-pool1'
+  # Conformance requires at least two untainted (worker) nodes
+  replicas: 2
+  providerSpec:
+    sshPublicKeys:
+    - '{{ .SSHPublicKey }}'
+    operatingSystem: ubuntu
+    cloudProviderSpec:
+      region: '{{ .Terraform.networking.region }}'
+      ami: '{{ .Terraform.vm.ami }}'
+      availabilityZone: '{{ .Terraform.vm.availabilityZone }}'
+      instanceProfile: '{{ .Terraform.vm.instanceProfile }}'
+      vpcId: '{{ .Terraform.networking.vpcId }}'
+      subnetId: '{{ .Terraform.networking.subnetId }}'
+      securityGroupIDs:
+      - '{{ .Terraform.networking.securityGroupIDs.common }}'
+      instanceType: t3a.medium
+      assignPublicIP: true
+      diskSize: 25
+      diskType: gp3
+      tags:
+        # used by the AWS CCM and the e2e janitor
+        'kubernetes.io/cluster/{{ .ClusterName }}': "shared"
+
+containerRuntime:
+  containerd: {}
+
+addons:
+  enable: true
+  addons:
+  - name: default-storage-class

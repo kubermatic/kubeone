@@ -37,8 +37,9 @@ const (
 )
 
 // scenarioManagedControlPlane provisions a cluster whose control plane VMs
-// (and load balancer) are created by KubeOne from .controlPlane.nodeSets,
-// without Terraform.
+// (and load balancer) are created by KubeOne from .controlPlane.nodeSets.
+// Terraform is used only for the supporting infrastructure (e.g. networking),
+// if the infrastructure needs it.
 type scenarioManagedControlPlane struct {
 	Name              string
 	HumanReadableName string
@@ -98,15 +99,18 @@ func (scenario *scenarioManagedControlPlane) Run(ctx context.Context, t *testing
 		t.Fatalf("%s is required", envClusterName)
 	}
 
-	cloud, err := newManagedControlPlaneCloud(scenario.infra.Provider(), clusterName)
+	tfOutput := scenario.provisionInfra(ctx, t, clusterName)
+
+	cloud, err := newManagedControlPlaneCloud(ctx, scenario.infra.Provider(), clusterName, tfOutput)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	k1 := scenario.kubeone(t, clusterName)
+	k1 := scenario.kubeone(t, clusterName, tfOutput)
 
 	// Cleanups run in reverse order: the janitor runs after kubeone reset, to
-	// delete anything that reset left behind (e.g. if apply failed midway)
+	// delete anything that reset left behind (e.g. if apply failed midway),
+	// and before terraform destroy, as the leftovers might block it
 	t.Cleanup(func() {
 		if err := retryFn(func() error {
 			cleanupCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 15*time.Minute)
@@ -144,6 +148,42 @@ func (scenario *scenarioManagedControlPlane) Run(ctx context.Context, t *testing
 	runClusterTests(ctx, t, k1, scenario.infra)
 }
 
+// provisionInfra applies the Terraform configs of the infrastructure, if any,
+// and returns their output values. Those configs provide only the supporting
+// infrastructure (e.g. networking), the control plane is provisioned by KubeOne.
+func (scenario *scenarioManagedControlPlane) provisionInfra(ctx context.Context, t *testing.T, clusterName string) map[string]any {
+	if scenario.infra.terraform.path == "" {
+		return nil
+	}
+
+	tf := scenario.infra.terraform
+	// the managed control plane Terraform configs name the resources after var.name
+	tf.vars = append(slices.Clone(tf.vars), "name="+clusterName)
+
+	if err := tf.Init(); err != nil {
+		t.Fatalf("terraform init failed: %v", err)
+	}
+
+	t.Cleanup(func() {
+		if err := retryFn(tf.Destroy); err != nil {
+			t.Errorf("terraform destroy failed: %v", err)
+		}
+	})
+
+	if err := retryFn(func() error {
+		return tf.Apply(ctx)
+	}); err != nil {
+		t.Fatalf("terraform apply failed: %v", err)
+	}
+
+	tfOutput, err := tf.Output()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return tfOutput
+}
+
 func (scenario *scenarioManagedControlPlane) verifyControlPlane(ctx context.Context, t *testing.T, k1 *kubeoneBin, cloud managedControlPlaneCloud) {
 	t.Helper()
 
@@ -169,22 +209,22 @@ func (scenario *scenarioManagedControlPlane) verifyControlPlane(ctx context.Cont
 		t.Fatalf("expected %d control plane VMs at the cloud provider, got %d", expectedVMs, vms)
 	}
 
-	lbIPs, err := cloud.LoadBalancers(ctx)
+	lbAddresses, err := cloud.LoadBalancers(ctx)
 	if err != nil {
 		t.Fatalf("listing load balancers: %v", err)
 	}
 
 	endpoint := manifest.APIEndpoint.Host
 
-	if len(lbIPs) != 1 {
-		t.Fatalf("expected exactly one load balancer, got %v", lbIPs)
+	if len(lbAddresses) != 1 {
+		t.Fatalf("expected exactly one load balancer, got %v", lbAddresses)
 	}
-	if !slices.Contains(lbIPs, endpoint) {
-		t.Fatalf("expected endpoint %q to be the load balancer IP %v", endpoint, lbIPs)
+	if !slices.Contains(lbAddresses, endpoint) {
+		t.Fatalf("expected endpoint %q to be the load balancer address %v", endpoint, lbAddresses)
 	}
 }
 
-func (scenario *scenarioManagedControlPlane) kubeone(t *testing.T, clusterName string) *kubeoneBin {
+func (scenario *scenarioManagedControlPlane) kubeone(t *testing.T, clusterName string, tfOutput map[string]any) *kubeoneBin {
 	templatePath, ok := scenario.ManifestTemplatePaths[scenario.infra.Provider()]
 	if !ok {
 		t.Fatalf("no manifest template for provider %q", scenario.infra.Provider())
@@ -221,12 +261,14 @@ func (scenario *scenarioManagedControlPlane) kubeone(t *testing.T, clusterName s
 				INFRA:        scenario.infra.name,
 				ClusterName:  clusterName,
 				SSHPublicKey: strings.TrimSpace(string(sshPublicKey)),
+				Terraform:    tfOutput,
 			},
 		),
 		k1Opts...,
 	)
 
-	// no Terraform output, hosts are provisioned by KubeOne
+	// hosts are provisioned by KubeOne, the Terraform output (if any) is
+	// rendered into the manifest instead
 	k1.tfjsonPath = ""
 
 	return k1
