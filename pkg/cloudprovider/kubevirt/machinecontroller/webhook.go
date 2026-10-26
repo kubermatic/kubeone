@@ -95,7 +95,7 @@ func WebhookService(clusterName, namespace string, spec *kubeoneapi.KubevirtSpec
 
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:        kubevirtinfra.ObjectName(clusterName, WebhookComponent.Name),
+			Name:        kubevirtinfra.ServiceName(clusterName, WebhookComponent.Name),
 			Namespace:   namespace,
 			Labels:      kubevirtinfra.Labels(clusterName, WebhookComponent.Name),
 			Annotations: annotations,

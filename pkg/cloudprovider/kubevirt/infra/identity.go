@@ -18,6 +18,9 @@ package infra
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"strings"
 	"time"
 
 	"k8c.io/kubeone/pkg/clientutil"
@@ -26,6 +29,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/validation"
 	"k8s.io/apimachinery/pkg/util/wait"
 	ctrlrt "sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -43,6 +47,8 @@ const (
 
 	tokenWaitInterval = 2 * time.Second
 	tokenWaitTimeout  = 2 * time.Minute
+
+	nameHashLength = 8
 )
 
 // Component describes a KubeOne component that runs in the infra cluster.
@@ -68,10 +74,50 @@ func ObjectName(clusterName, component string) string {
 	return clusterName + "-" + component
 }
 
+// ServiceName returns the name of an infra-side Service of the component.
+// Service names must be DNS-1035 labels, while cluster names are DNS-1123
+// subdomains, so names that are too long or otherwise invalid are shortened
+// and suffixed with a hash of the full name.
+func ServiceName(clusterName, component string) string {
+	name := ObjectName(clusterName, component)
+	if len(validation.IsDNS1035Label(name)) == 0 {
+		return name
+	}
+
+	label := strings.ReplaceAll(name, ".", "-")
+	if label[0] < 'a' || label[0] > 'z' {
+		label = "k" + label
+	}
+
+	return shortenWithHash(label, name, validation.DNS1035LabelMaxLength)
+}
+
+// ClusterLabelValue returns the value of LabelClusterName for the cluster.
+// Label values are limited to 63 characters, so longer cluster names are
+// shortened and suffixed with a hash of the full name.
+func ClusterLabelValue(clusterName string) string {
+	if len(clusterName) <= validation.LabelValueMaxLength {
+		return clusterName
+	}
+
+	return shortenWithHash(clusterName, clusterName, validation.LabelValueMaxLength)
+}
+
+// shortenWithHash truncates s so that s, a dash and a hash of key fit in
+// maxLen characters.
+func shortenWithHash(s, key string, maxLen int) string {
+	sum := sha256.Sum256([]byte(key))
+	suffix := "-" + hex.EncodeToString(sum[:])[:nameHashLength]
+
+	s = s[:min(len(s), maxLen-len(suffix))]
+
+	return strings.TrimRight(s, "-.") + suffix
+}
+
 // Labels returns the labels set on every infra-side object of the component.
 func Labels(clusterName, component string) map[string]string {
 	return map[string]string{
-		LabelClusterName: clusterName,
+		LabelClusterName: ClusterLabelValue(clusterName),
 		LabelComponent:   component,
 	}
 }

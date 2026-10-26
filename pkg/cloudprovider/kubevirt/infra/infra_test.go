@@ -18,6 +18,7 @@ package infra
 
 import (
 	"context"
+	"strings"
 	"testing"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -29,6 +30,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/util/validation"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/clientcmd"
 	ctrlrt "sigs.k8s.io/controller-runtime/pkg/client"
@@ -58,6 +60,61 @@ func newFakeClient(t *testing.T, objs ...ctrlrt.Object) ctrlrt.Client {
 	}
 
 	return fake.NewClientBuilder().WithScheme(scheme).WithObjects(objs...).Build()
+}
+
+func TestServiceName(t *testing.T) {
+	const component = "machine-controller-webhook"
+
+	tests := []struct {
+		name        string
+		clusterName string
+		want        string
+	}{
+		{name: "short name kept", clusterName: "c1", want: "c1-machine-controller-webhook"},
+		{name: "too long", clusterName: strings.Repeat("a", 40)},
+		{name: "dots", clusterName: "prod.example.com"},
+		{name: "leading digit", clusterName: "1cluster"},
+		{name: "dashes and dots at truncation point", clusterName: strings.Repeat("a", 53) + ".-.-b"},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			got := ServiceName(tc.clusterName, component)
+
+			if errs := validation.IsDNS1035Label(got); len(errs) > 0 {
+				t.Errorf("ServiceName(%q) = %q is not a DNS-1035 label: %v", tc.clusterName, got, errs)
+			}
+			if tc.want != "" && got != tc.want {
+				t.Errorf("ServiceName(%q) = %q, want %q", tc.clusterName, got, tc.want)
+			}
+			if again := ServiceName(tc.clusterName, component); again != got {
+				t.Errorf("ServiceName(%q) not stable: %q != %q", tc.clusterName, got, again)
+			}
+		})
+	}
+
+	if ServiceName("a.b", component) == ServiceName("a-b", component) {
+		t.Error("ServiceName collides for cluster names a.b and a-b")
+	}
+}
+
+func TestClusterLabelValue(t *testing.T) {
+	short := strings.Repeat("a", validation.LabelValueMaxLength)
+	if got := ClusterLabelValue(short); got != short {
+		t.Errorf("ClusterLabelValue(%q) = %q, want unchanged", short, got)
+	}
+
+	long := strings.Repeat("a", 60) + ".example.com"
+	got := ClusterLabelValue(long)
+	if errs := validation.IsValidLabelValue(got); len(errs) > 0 {
+		t.Errorf("ClusterLabelValue(%q) = %q is not a valid label value: %v", long, got, errs)
+	}
+	if got == ClusterLabelValue(strings.Repeat("a", 60)+".example.org") {
+		t.Errorf("ClusterLabelValue collides for long names sharing a prefix")
+	}
+	if Labels(long, "x")[LabelClusterName] != got {
+		t.Errorf("Labels does not use ClusterLabelValue")
+	}
 }
 
 func populatedToken(namespace, name, saName string) *corev1.Secret {

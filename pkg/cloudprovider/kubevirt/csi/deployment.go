@@ -91,7 +91,7 @@ func Deployment(clusterName, namespace string, image ImageGetter) *appsv1.Deploy
 							Args: []string{
 								"--endpoint=" + csiEndpoint,
 								"--infra-cluster-namespace=" + namespace,
-								fmt.Sprintf("--infra-cluster-labels=%s=%s", kubevirtinfra.LabelClusterName, clusterName),
+								fmt.Sprintf("--infra-cluster-labels=%s=%s", kubevirtinfra.LabelClusterName, kubevirtinfra.ClusterLabelValue(clusterName)),
 								"--tenant-cluster-kubeconfig=" + tenantKubeconfig,
 								"--run-node-service=false",
 								"--run-controller-service=true",
