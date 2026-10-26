@@ -21,13 +21,18 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/sirupsen/logrus"
+	logrustest "github.com/sirupsen/logrus/hooks/test"
+
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	kubevirtmc "k8c.io/kubeone/pkg/cloudprovider/kubevirt/machinecontroller"
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/state"
 
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -72,6 +77,50 @@ func TestMigrateKubeVirtCredentials(t *testing.T) {
 		if err := c.Get(s.Context, client.ObjectKeyFromObject(obj), obj); err != nil {
 			t.Errorf("%T %s: expected to be kept, got %v", obj, obj.GetName(), err)
 		}
+	}
+}
+
+func TestMigrateKubeVirtCredentialsLegacyCSI(t *testing.T) {
+	t.Parallel()
+
+	scheme := runtime.NewScheme()
+	if err := clientgoscheme.AddToScheme(scheme); err != nil {
+		t.Fatal(err)
+	}
+
+	ns := credentials.SecretNamespace
+	ccm := &corev1.Secret{Name: credentials.SecretNameCCM, Namespace: ns}
+	mc := &corev1.Secret{Name: credentials.SecretNameMC, Namespace: ns}
+	// left behind with .cloudProvider.disableBundledCSIDrivers, mounts the CCM Secret
+	legacyCSI := &appsv1.Deployment{Name: kubevirtLegacyCSIControllerName, Namespace: metav1.NamespaceSystem}
+
+	c := fake.NewClientBuilder().WithScheme(scheme).WithObjects(ccm, mc, legacyCSI).Build()
+	logger, hook := logrustest.NewNullLogger()
+	s := &state.State{Context: context.Background(), DynamicClient: c, Logger: logger}
+
+	if err := migrateKubeVirtCredentials(s); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := c.Get(s.Context, client.ObjectKeyFromObject(ccm), ccm); err != nil {
+		t.Errorf("CCM Secret must be kept while the legacy CSI controller exists, got %v", err)
+	}
+	if err := c.Get(s.Context, client.ObjectKeyFromObject(mc), mc); !apierrors.IsNotFound(err) {
+		t.Errorf("machine-controller Secret: expected NotFound, got %v", err)
+	}
+	if e := hook.LastEntry(); e == nil || e.Level != logrus.WarnLevel || !strings.Contains(e.Message, credentials.SecretNameCCM) {
+		t.Errorf("expected a warning about the kept CCM Secret, got %v", e)
+	}
+
+	// once the legacy CSI controller is gone, the CCM Secret is removed too
+	if err := c.Delete(s.Context, legacyCSI); err != nil {
+		t.Fatal(err)
+	}
+	if err := migrateKubeVirtCredentials(s); err != nil {
+		t.Fatal(err)
+	}
+	if err := c.Get(s.Context, client.ObjectKeyFromObject(ccm), ccm); !apierrors.IsNotFound(err) {
+		t.Errorf("CCM Secret: expected NotFound, got %v", err)
 	}
 }
 

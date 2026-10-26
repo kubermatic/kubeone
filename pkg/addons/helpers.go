@@ -292,6 +292,10 @@ func migrateHetznerCSI(s *state.State) error {
 	return clientutil.DeleteIfExists(s.Context, s.DynamicClient, genNamedObject[storagev1.CSIDriver](hetznerCSIDriverName))
 }
 
+// kubevirtLegacyCSIControllerName is the tenant cluster Deployment of the
+// removed csi-kubevirt addon.
+const kubevirtLegacyCSIControllerName = "kubevirt-csi-controller"
+
 // kubevirtCSIDeleteTimeout bounds the wait for the legacy KubeVirt CSI pods
 // to terminate, including their preStop hooks.
 const kubevirtCSIDeleteTimeout = 5 * time.Minute
@@ -308,7 +312,7 @@ const kubevirtCSIDeleteTimeout = 5 * time.Minute
 func migrateKubeVirtCSI(s *state.State) error {
 	workloads := []client.Object{
 		genNamedObject[appsv1.DaemonSet]("kubevirt-csi-node", metav1.NamespaceSystem),
-		genNamedObject[appsv1.Deployment]("kubevirt-csi-controller", metav1.NamespaceSystem),
+		genNamedObject[appsv1.Deployment](kubevirtLegacyCSIControllerName, metav1.NamespaceSystem),
 	}
 
 	for _, obj := range workloads {
@@ -385,8 +389,27 @@ func migrateKubeVirtMachineController(s *state.State) error {
 // infra kubeconfig in the tenant cluster. It runs after all addons and their
 // infra components are deployed, so nothing in the tenant cluster uses them
 // anymore.
+//
+// The exception is the legacy CSI controller, which mounts the CCM Secret. It
+// is only migrated by migrateKubeVirtCSI when the bundled CSI driver is
+// deployed, so with .cloudProvider.disableBundledCSIDrivers it might still be
+// around, and the CCM Secret is kept for it.
 func migrateKubeVirtCredentials(s *state.State) error {
+	legacyCSIKey := client.ObjectKey{Namespace: metav1.NamespaceSystem, Name: kubevirtLegacyCSIControllerName}
+	legacyCSIErr := s.DynamicClient.Get(s.Context, legacyCSIKey, &appsv1.Deployment{})
+	if legacyCSIErr != nil && !k8serrors.IsNotFound(legacyCSIErr) {
+		return fail.KubeClient(legacyCSIErr, "getting Deployment %s", legacyCSIKey)
+	}
+
 	for _, name := range []string{credentials.SecretNameCCM, credentials.SecretNameMC, credentials.SecretNameOSM} {
+		if name == credentials.SecretNameCCM && legacyCSIErr == nil {
+			s.Logger.Warnf("Keeping Secret %s/%s, it's used by the legacy KubeVirt CSI controller (Deployment %s). "+
+				"Delete the Deployment, or enable the bundled CSI driver to have it migrated, and the Secret is removed on the next apply.",
+				credentials.SecretNamespace, name, legacyCSIKey)
+
+			continue
+		}
+
 		secret := genNamedObject[corev1.Secret](name, credentials.SecretNamespace)
 		if err := clientutil.DeleteIfExists(s.Context, s.DynamicClient, secret); err != nil {
 			return err
