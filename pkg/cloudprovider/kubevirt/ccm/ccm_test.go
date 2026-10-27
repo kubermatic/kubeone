@@ -41,18 +41,33 @@ func allows(comp kubevirtinfra.Component, group, resource, verb string) bool {
 	return false
 }
 
+func allowsCluster(comp kubevirtinfra.Component, group, resource, verb string) bool {
+	for _, r := range comp.ClusterRules {
+		if slices.Contains(r.APIGroups, group) && slices.Contains(r.Resources, resource) && slices.Contains(r.Verbs, verb) {
+			return true
+		}
+	}
+
+	return false
+}
+
 func TestComponent(t *testing.T) {
 	tests := []struct {
-		name         string
-		loadBalancer bool
+		name          string
+		loadBalancer  bool
+		zoneAndRegion bool
 	}{
 		{name: "load balancer disabled"},
 		{name: "load balancer enabled", loadBalancer: true},
+		{name: "zone and region enabled", zoneAndRegion: true},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			comp := Component(&kubeoneapi.KubevirtSpec{LoadBalancerEnabled: tc.loadBalancer})
+			comp := Component(&kubeoneapi.KubevirtSpec{
+				LoadBalancerEnabled:  tc.loadBalancer,
+				ZoneAndRegionEnabled: tc.zoneAndRegion,
+			})
 
 			if comp.NeedsKubeconfig {
 				t.Error("the CCM uses in-cluster config, no infra kubeconfig must be generated")
@@ -64,6 +79,14 @@ func TestComponent(t *testing.T) {
 
 			if got := allows(comp, "", "services", "create"); got != tc.loadBalancer {
 				t.Errorf("services create allowed = %v, want %v", got, tc.loadBalancer)
+			}
+
+			// getRegionAndZone reads the infra Node hosting the VMI.
+			if got := allowsCluster(comp, "", "nodes", "get"); got != tc.zoneAndRegion {
+				t.Errorf("nodes get allowed cluster-wide = %v, want %v", got, tc.zoneAndRegion)
+			}
+			if !tc.zoneAndRegion && len(comp.ClusterRules) > 0 {
+				t.Errorf("no ClusterRules expected without zone and region discovery, got %v", comp.ClusterRules)
 			}
 		})
 	}
