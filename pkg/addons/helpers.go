@@ -342,8 +342,8 @@ func migrateKubeVirtCSI(s *state.State) error {
 
 // migrateKubeVirtCCM deletes the tenant cluster objects of the KubeVirt CCM
 // from when it ran in the tenant cluster with the infra kubeconfig. It runs
-// after the CCM is deployed in the infra cluster. kubectl prune removes the
-// Deployment and the ConfigMap already, but not RBAC objects.
+// after the CCM is deployed in the infra cluster, before the addon is applied
+// with pruning, which would not remove the RBAC objects.
 func migrateKubeVirtCCM(s *state.State) error {
 	objs := []client.Object{
 		genNamedObject[appsv1.Deployment]("kubevirt-cloud-controller-manager", metav1.NamespaceSystem),
@@ -364,8 +364,8 @@ func migrateKubeVirtCCM(s *state.State) error {
 // migrateKubeVirtMachineController deletes the tenant cluster objects of
 // machine-controller and its webhook from when they ran in the tenant cluster
 // with the infra kubeconfig. It runs after they are deployed in the infra
-// cluster. kubectl prune removes the Deployments, the Service and the serving
-// certificate Secret already, but not PodDisruptionBudgets.
+// cluster, before the addon is applied with pruning, which would not remove
+// the PodDisruptionBudgets.
 func migrateKubeVirtMachineController(s *state.State) error {
 	objs := []client.Object{
 		genNamedObject[appsv1.Deployment](resources.MachineControllerName, resources.MachineControllerNameSpace),
