@@ -365,10 +365,13 @@ func isNotFound(err error) bool {
 	return errors.As(err, &gerr) && gerr.Code == http.StatusNotFound
 }
 
+// ClusterNameLabel is set to the cluster name on the control plane instances.
+const ClusterNameLabel = "kubeone_cluster_name"
+
 func gceLabels(clusterName string) map[string]string {
 	return map[string]string{
-		"kubeone_cluster_name": clusterName,
-		"kubeone_role":         "control-plane",
+		ClusterNameLabel: clusterName,
+		"kubeone_role":   "control-plane",
 	}
 }
 

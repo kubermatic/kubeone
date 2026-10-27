@@ -83,7 +83,13 @@ type lbConfig struct {
 // owner is the description set on every load balancer resource KubeOne
 // creates. Resources with another description are never changed or deleted.
 func (c *lbConfig) owner() string {
-	return "kubeone:" + c.ClusterName
+	return OwnerDescription(c.ClusterName)
+}
+
+// OwnerDescription is the description of the load balancer resources and
+// firewall rules KubeOne creates for the cluster.
+func OwnerDescription(clusterName string) string {
+	return "kubeone:" + clusterName
 }
 
 func (c *lbConfig) regionalPath(collection, name string) string {

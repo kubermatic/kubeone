@@ -581,6 +581,22 @@ var (
 				outputDir:  "/logs/artifacts/logs",
 			},
 		},
+		"gce": {
+			name:                "gce",
+			osName:              "Ubuntu",
+			managedControlPlane: true,
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-gce":     "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "gce",
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
+		},
 		"gce_default": {
 			name:   "gce_default",
 			osName: "Ubuntu",
@@ -1056,6 +1072,7 @@ var (
 			ManifestTemplatePaths: map[string]string{
 				"aws":          "testdata/managed_cp_aws.yaml",
 				"digitalocean": "testdata/managed_cp_digitalocean.yaml",
+				"gce":          "testdata/managed_cp_gce.yaml",
 			},
 		},
 	}
