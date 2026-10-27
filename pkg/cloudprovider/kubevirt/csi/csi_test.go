@@ -39,6 +39,7 @@ import (
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	ctrlrt "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
+	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
 )
 
 func fakeImage(res images.Resource, _ ...images.GetOpt) string {
@@ -226,75 +227,152 @@ func TestTenantEmpty(t *testing.T) {
 	}
 }
 
-func TestReconcileStorageClasses(t *testing.T) {
-	ctx := context.Background()
-	immediate := storagev1.VolumeBindingImmediate
-	deletePolicy := corev1.PersistentVolumeReclaimDelete
-	wffc := storagev1.VolumeBindingWaitForFirstConsumer
+// operatorStorageClass returns the StorageClass kubevirt-csi-driver-operator
+// creates for the configured class, with the API server defaults applied.
+func operatorStorageClass(want kubeoneapi.KubevirtInfraStorageClass) *storagev1.StorageClass {
+	bindingMode := storagev1.VolumeBindingImmediate
+	if want.VolumeBindingMode != nil {
+		bindingMode = *want.VolumeBindingMode
+	}
 
-	existing := &storagev1.StorageClass{
+	reclaimPolicy := corev1.PersistentVolumeReclaimDelete
+	if want.ReclaimPolicy != "" {
+		reclaimPolicy = want.ReclaimPolicy
+	}
+
+	return &storagev1.StorageClass{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:   "kubevirt-standard",
-			Labels: map[string]string{"a": "old", "foreign": "keep"},
+			Name:   StorageClassName(want.InfraStorageClassName),
+			Labels: maps.Clone(want.Labels),
 		},
 		Provisioner:          "csi.kubevirt.io",
-		Parameters:           map[string]string{"infraStorageClassName": "standard", "bus": "scsi"},
-		AllowVolumeExpansion: new(false),
-		VolumeBindingMode:    &immediate,
-		ReclaimPolicy:        &deletePolicy,
+		Parameters:           map[string]string{"infraStorageClassName": want.InfraStorageClassName, "bus": storageClassBus(want)},
+		AllowVolumeExpansion: new(want.AllowVolumeExpansion),
+		VolumeBindingMode:    &bindingMode,
+		ReclaimPolicy:        &reclaimPolicy,
 	}
+}
 
-	scheme := runtime.NewScheme()
-	if err := clientgoscheme.AddToScheme(scheme); err != nil {
-		t.Fatal(err)
+func TestReconcileStorageClasses(t *testing.T) {
+	ctx := context.Background()
+	wffc := storagev1.VolumeBindingWaitForFirstConsumer
+
+	ssd := kubeoneapi.KubevirtInfraStorageClass{InfraStorageClassName: "ssd", ReclaimPolicy: corev1.PersistentVolumeReclaimRetain}
+	standard := kubeoneapi.KubevirtInfraStorageClass{
+		InfraStorageClassName: "standard",
+		AllowVolumeExpansion:  true,
+		Labels:                map[string]string{"a": "new", "b": "added"},
+		Bus:                   "virtio",
+		VolumeBindingMode:     &wffc,
 	}
-	c := fake.NewClientBuilder().WithScheme(scheme).WithObjects(existing).Build()
-	logger, hook := logrustest.NewNullLogger()
-
+	slow := kubeoneapi.KubevirtInfraStorageClass{
+		InfraStorageClassName: "slow",
+		AllowVolumeExpansion:  true,
+		Labels:                map[string]string{"a": "new"},
+	}
 	spec := &kubeoneapi.KubevirtSpec{
 		StorageClasses: []kubeoneapi.KubevirtInfraStorageClass{
-			{
-				InfraStorageClassName: "standard",
-				AllowVolumeExpansion:  true,
-				Labels:                map[string]string{"a": "new", "b": "added"},
-				Bus:                   "virtio",
-				VolumeBindingMode:     &wffc,
-			},
+			ssd,
+			standard,
+			slow,
 			// not created by the operator yet
 			{InfraStorageClassName: "fast"},
 		},
 	}
 
+	// The StorageClasses as created by the operator from the previous configuration.
+	existingSSD := operatorStorageClass(kubeoneapi.KubevirtInfraStorageClass{InfraStorageClassName: "ssd"})
+	existingStandard := operatorStorageClass(kubeoneapi.KubevirtInfraStorageClass{InfraStorageClassName: "standard"})
+	existingStandard.Labels = map[string]string{"a": "old", "foreign": "keep"}
+	existingSlow := operatorStorageClass(kubeoneapi.KubevirtInfraStorageClass{InfraStorageClassName: "slow"})
+	existingSlow.Labels = map[string]string{"a": "old", "foreign": "keep"}
+
+	scheme := runtime.NewScheme()
+	if err := clientgoscheme.AddToScheme(scheme); err != nil {
+		t.Fatal(err)
+	}
+
+	var deleted []string
+	recreate := []kubeoneapi.KubevirtInfraStorageClass{ssd, standard}
+
+	c := fake.NewClientBuilder().
+		WithScheme(scheme).
+		WithObjects(existingSSD, existingStandard, existingSlow).
+		WithInterceptorFuncs(interceptor.Funcs{
+			Delete: func(ctx context.Context, cl ctrlrt.WithWatch, obj ctrlrt.Object, opts ...ctrlrt.DeleteOption) error {
+				if err := cl.Delete(ctx, obj, opts...); err != nil {
+					return err
+				}
+				deleted = append(deleted, obj.GetName())
+
+				// The operator stops at the first StorageClass whose update is
+				// rejected, so it only recreates them once all are deleted.
+				if len(deleted) < len(recreate) {
+					return nil
+				}
+				for _, want := range recreate {
+					if err := cl.Create(ctx, operatorStorageClass(want)); err != nil {
+						return err
+					}
+				}
+
+				return nil
+			},
+		}).
+		Build()
+	logger, hook := logrustest.NewNullLogger()
+
 	if err := reconcileStorageClasses(ctx, c, logger, spec); err != nil {
 		t.Fatal(err)
+	}
+
+	if want := []string{"kubevirt-ssd", "kubevirt-standard"}; !slices.Equal(deleted, want) {
+		t.Errorf("deleted StorageClasses = %v, want %v", deleted, want)
 	}
 
 	got := &storagev1.StorageClass{}
 	if err := c.Get(ctx, ctrlrt.ObjectKey{Name: "kubevirt-standard"}, got); err != nil {
 		t.Fatal(err)
 	}
-
+	if got.Parameters["bus"] != "virtio" || *got.VolumeBindingMode != wffc {
+		t.Errorf("bus = %q, volumeBindingMode = %q, want the configured values", got.Parameters["bus"], *got.VolumeBindingMode)
+	}
 	if got.AllowVolumeExpansion == nil || !*got.AllowVolumeExpansion {
 		t.Errorf("allowVolumeExpansion = %v, want true", got.AllowVolumeExpansion)
 	}
-	if want := map[string]string{"a": "new", "b": "added", "foreign": "keep"}; !maps.Equal(got.Labels, want) {
+	if want := map[string]string{"a": "new", "b": "added"}; !maps.Equal(got.Labels, want) {
 		t.Errorf("labels = %v, want %v", got.Labels, want)
 	}
-	if got.Parameters["bus"] != "scsi" || *got.VolumeBindingMode != immediate {
-		t.Error("immutable fields must not be changed")
+
+	if err := c.Get(ctx, ctrlrt.ObjectKey{Name: "kubevirt-ssd"}, got); err != nil {
+		t.Fatal(err)
+	}
+	if *got.ReclaimPolicy != corev1.PersistentVolumeReclaimRetain {
+		t.Errorf("reclaimPolicy = %q, want %q", *got.ReclaimPolicy, corev1.PersistentVolumeReclaimRetain)
+	}
+
+	if err := c.Get(ctx, ctrlrt.ObjectKey{Name: "kubevirt-slow"}, got); err != nil {
+		t.Fatal(err)
+	}
+	if got.AllowVolumeExpansion == nil || !*got.AllowVolumeExpansion {
+		t.Errorf("allowVolumeExpansion = %v, want true", got.AllowVolumeExpansion)
+	}
+	if want := map[string]string{"a": "new", "foreign": "keep"}; !maps.Equal(got.Labels, want) {
+		t.Errorf("labels = %v, want %v", got.Labels, want)
 	}
 
 	if err := c.Get(ctx, ctrlrt.ObjectKey{Name: "kubevirt-fast"}, &storagev1.StorageClass{}); !apierrors.IsNotFound(err) {
 		t.Errorf("missing StorageClass must be left to the operator, got err %v", err)
 	}
 
-	var warned []string
+	var recreated []string
 	for _, e := range hook.AllEntries() {
-		if e.Level == logrus.WarnLevel {
-			warned = append(warned, e.Message)
+		if e.Level == logrus.InfoLevel && strings.HasPrefix(e.Message, "Recreating") {
+			recreated = append(recreated, e.Message)
 		}
 	}
-	if len(warned) != 2 || !strings.Contains(warned[0], "bus") || !strings.Contains(warned[1], "volumeBindingMode") {
-		t.Errorf("warnings = %q, want one for bus and one for volumeBindingMode", warned)
+	if len(recreated) != 2 || !strings.Contains(recreated[0], "reclaimPolicy") ||
+		!strings.Contains(recreated[1], "bus, volumeBindingMode") {
+		t.Errorf("recreate messages = %q, want reclaimPolicy for ssd and bus, volumeBindingMode for standard", recreated)
 	}
 }
