@@ -177,9 +177,9 @@ func StorageClassName(infraStorageClassName string) string {
 // operator stops at the first one that is still there. Existing
 // PersistentVolumes are not affected.
 //
-// The operator sets allowVolumeExpansion and labels only on creation, so they
-// are patched. Labels are added or updated, but never removed, since other
-// labels might be set by someone else.
+// The operator sets allowVolumeExpansion, allowedTopologies and labels only on
+// creation, so they are patched. Labels are added or updated, but never
+// removed, since other labels might be set by someone else.
 func reconcileStorageClasses(ctx context.Context, dynClient ctrlrt.Client, logger logrus.FieldLogger, spec *kubeoneapi.KubevirtSpec) error {
 	recreated := map[string]bool{}
 
@@ -227,6 +227,7 @@ func reconcileStorageClasses(ctx context.Context, dynClient ctrlrt.Client, logge
 
 		patch := ctrlrt.MergeFrom(sc.DeepCopy())
 		sc.AllowVolumeExpansion = new(want.AllowVolumeExpansion)
+		sc.AllowedTopologies = storageClassAllowedTopologies(want)
 		if len(want.Labels) > 0 && sc.Labels == nil {
 			sc.Labels = map[string]string{}
 		}
@@ -309,6 +310,33 @@ func storageClassBus(sc kubeoneapi.KubevirtInfraStorageClass) string {
 	}
 
 	return sc.Bus
+}
+
+// storageClassAllowedTopologies returns the allowedTopologies that
+// kubevirt-csi-driver-operator sets on creation: a zone term, then a region
+// term, each only if configured.
+func storageClassAllowedTopologies(sc kubeoneapi.KubevirtInfraStorageClass) []corev1.TopologySelectorTerm {
+	var terms []corev1.TopologySelectorTerm
+
+	for _, req := range []struct {
+		key    string
+		values []string
+	}{
+		{corev1.LabelTopologyZone, sc.Zones},
+		{corev1.LabelTopologyRegion, sc.Regions},
+	} {
+		if len(req.values) == 0 {
+			continue
+		}
+
+		terms = append(terms, corev1.TopologySelectorTerm{
+			MatchLabelExpressions: []corev1.TopologySelectorLabelRequirement{
+				{Key: req.key, Values: req.values},
+			},
+		})
+	}
+
+	return terms
 }
 
 func waitCRDEstablished(ctx context.Context, dynClient ctrlrt.Client, name string) error {
