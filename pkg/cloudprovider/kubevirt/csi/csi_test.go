@@ -32,6 +32,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	storagev1 "k8s.io/api/storage/v1"
+	"k8s.io/apimachinery/pkg/api/equality"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -248,6 +249,7 @@ func operatorStorageClass(want kubeoneapi.KubevirtInfraStorageClass) *storagev1.
 		Provisioner:          "csi.kubevirt.io",
 		Parameters:           map[string]string{"infraStorageClassName": want.InfraStorageClassName, "bus": storageClassBus(want)},
 		AllowVolumeExpansion: new(want.AllowVolumeExpansion),
+		AllowedTopologies:    storageClassAllowedTopologies(want),
 		VolumeBindingMode:    &bindingMode,
 		ReclaimPolicy:        &reclaimPolicy,
 	}
@@ -269,12 +271,16 @@ func TestReconcileStorageClasses(t *testing.T) {
 		InfraStorageClassName: "slow",
 		AllowVolumeExpansion:  true,
 		Labels:                map[string]string{"a": "new"},
+		Zones:                 []string{"z1", "z2"},
+		Regions:               []string{"r1"},
 	}
+	unzoned := kubeoneapi.KubevirtInfraStorageClass{InfraStorageClassName: "unzoned"}
 	spec := &kubeoneapi.KubevirtSpec{
 		StorageClasses: []kubeoneapi.KubevirtInfraStorageClass{
 			ssd,
 			standard,
 			slow,
+			unzoned,
 			// not created by the operator yet
 			{InfraStorageClassName: "fast"},
 		},
@@ -284,8 +290,9 @@ func TestReconcileStorageClasses(t *testing.T) {
 	existingSSD := operatorStorageClass(kubeoneapi.KubevirtInfraStorageClass{InfraStorageClassName: "ssd"})
 	existingStandard := operatorStorageClass(kubeoneapi.KubevirtInfraStorageClass{InfraStorageClassName: "standard"})
 	existingStandard.Labels = map[string]string{"a": "old", "foreign": "keep"}
-	existingSlow := operatorStorageClass(kubeoneapi.KubevirtInfraStorageClass{InfraStorageClassName: "slow"})
+	existingSlow := operatorStorageClass(kubeoneapi.KubevirtInfraStorageClass{InfraStorageClassName: "slow", Zones: []string{"z1"}})
 	existingSlow.Labels = map[string]string{"a": "old", "foreign": "keep"}
+	existingUnzoned := operatorStorageClass(kubeoneapi.KubevirtInfraStorageClass{InfraStorageClassName: "unzoned", Regions: []string{"r1"}})
 
 	scheme := runtime.NewScheme()
 	if err := clientgoscheme.AddToScheme(scheme); err != nil {
@@ -297,7 +304,7 @@ func TestReconcileStorageClasses(t *testing.T) {
 
 	c := fake.NewClientBuilder().
 		WithScheme(scheme).
-		WithObjects(existingSSD, existingStandard, existingSlow).
+		WithObjects(existingSSD, existingStandard, existingSlow, existingUnzoned).
 		WithInterceptorFuncs(interceptor.Funcs{
 			Delete: func(ctx context.Context, cl ctrlrt.WithWatch, obj ctrlrt.Object, opts ...ctrlrt.DeleteOption) error {
 				if err := cl.Delete(ctx, obj, opts...); err != nil {
@@ -359,6 +366,20 @@ func TestReconcileStorageClasses(t *testing.T) {
 	}
 	if want := map[string]string{"a": "new", "foreign": "keep"}; !maps.Equal(got.Labels, want) {
 		t.Errorf("labels = %v, want %v", got.Labels, want)
+	}
+	wantTopologies := []corev1.TopologySelectorTerm{
+		{MatchLabelExpressions: []corev1.TopologySelectorLabelRequirement{{Key: corev1.LabelTopologyZone, Values: []string{"z1", "z2"}}}},
+		{MatchLabelExpressions: []corev1.TopologySelectorLabelRequirement{{Key: corev1.LabelTopologyRegion, Values: []string{"r1"}}}},
+	}
+	if !equality.Semantic.DeepEqual(got.AllowedTopologies, wantTopologies) {
+		t.Errorf("allowedTopologies = %v, want %v", got.AllowedTopologies, wantTopologies)
+	}
+
+	if err := c.Get(ctx, ctrlrt.ObjectKey{Name: "kubevirt-unzoned"}, got); err != nil {
+		t.Fatal(err)
+	}
+	if got.AllowedTopologies != nil {
+		t.Errorf("allowedTopologies = %v, want none", got.AllowedTopologies)
 	}
 
 	if err := c.Get(ctx, ctrlrt.ObjectKey{Name: "kubevirt-fast"}, &storagev1.StorageClass{}); !apierrors.IsNotFound(err) {
