@@ -66,8 +66,10 @@ type ImageGetter func(images.Resource, ...images.GetOpt) string
 
 // Component returns the infra cluster identity of the CCM. The Role follows
 // the upstream "isolated" overlay. Services are only granted when the CCM
-// manages load balancers. The CCM uses in-cluster configuration, so no infra
-// kubeconfig is generated.
+// manages load balancers. Nodes are only granted when the CCM discovers zones
+// and regions, which it reads from the labels of the infra Node running the
+// VMI. The CCM uses in-cluster configuration, so no infra kubeconfig is
+// generated.
 func Component(spec *kubeoneapi.KubevirtSpec) kubevirtinfra.Component {
 	rules := []rbacv1.PolicyRule{
 		{
@@ -95,9 +97,19 @@ func Component(spec *kubeoneapi.KubevirtSpec) kubevirtinfra.Component {
 		})
 	}
 
+	var clusterRules []rbacv1.PolicyRule
+	if spec.ZoneAndRegionEnabled {
+		clusterRules = append(clusterRules, rbacv1.PolicyRule{
+			APIGroups: []string{""},
+			Resources: []string{"nodes"},
+			Verbs:     []string{"get"},
+		})
+	}
+
 	return kubevirtinfra.Component{
-		Name:  componentName,
-		Rules: rules,
+		Name:         componentName,
+		Rules:        rules,
+		ClusterRules: clusterRules,
 	}
 }
 
@@ -248,6 +260,20 @@ func Ensure(s *state.State) error {
 
 	if err = comp.EnsureIdentity(ctx, infraClient, s.Cluster.Name, namespace); err != nil {
 		return err
+	}
+
+	// EnsureIdentity doesn't remove the cluster-wide objects once
+	// ClusterRules is empty, so they are deleted here when zone and region
+	// discovery is disabled.
+	if len(comp.ClusterRules) == 0 {
+		for _, obj := range []ctrlrt.Object{
+			comp.ClusterRoleBinding(s.Cluster.Name, namespace),
+			comp.ClusterRole(s.Cluster.Name, namespace),
+		} {
+			if err = clientutil.DeleteIfExists(ctx, infraClient, obj); err != nil {
+				return err
+			}
+		}
 	}
 
 	err = comp.EnsureTenantKubeconfig(

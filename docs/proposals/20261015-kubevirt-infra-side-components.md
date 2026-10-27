@@ -233,6 +233,9 @@ This follows the upstream `config/isolated` overlay of `cloud-provider-kubevirt`
 - The infra Role follows upstream `isolated`: VMs read, VMIs read and update, pods read, and create, read, update and
   delete on `services` only when `loadBalancerEnabled` is set. The EPS controller is disabled by default, so no
   `endpointslices` permissions are needed in the infra cluster.
+- With `zoneAndRegionEnabled`, the CCM reads the zone and region labels of the infra Node running each VMI. Nodes are
+  cluster-scoped, so a read-only ClusterRole (`nodes` get) and its ClusterRoleBinding are added, named and labelled like
+  the machine-controller ones. They are deleted when `zoneAndRegionEnabled` is turned off.
 
 **Migration:** a `postFn` deploys the infra side, then deletes the old tenant Deployment, `cloud-config` ConfigMap,
 `kccm` Role and `kccm-sa` RoleBinding. `kubectl apply --prune` removes the Deployment and ConfigMap already, when the
