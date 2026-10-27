@@ -28,6 +28,7 @@ import (
 	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/provisioner"
 	"k8c.io/kubeone/pkg/state"
+	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
 	gcetypes "k8c.io/machine-controller/sdk/cloudprovider/gce"
 	"k8c.io/machine-controller/sdk/providerconfig"
 )
@@ -222,15 +223,6 @@ func TestResourcePath(t *testing.T) {
 	}
 }
 
-func TestSameSet(t *testing.T) {
-	if !sameSet([]string{"b", "a"}, []string{"a", "b", "a"}) {
-		t.Error("expected equal sets")
-	}
-	if sameSet([]string{"a"}, []string{"a", "b"}) {
-		t.Error("expected different sets")
-	}
-}
-
 func TestCheckInstancesOwned(t *testing.T) {
 	machines, err := generateGCEControlPlaneMachines("demo", testNodeSets(), "1.36.0")
 	if err != nil {
@@ -299,7 +291,7 @@ func TestCheckInstancesOwned(t *testing.T) {
 				f.put(p, obj)
 			}
 
-			err := checkInstancesOwned(context.Background(), svc, "proj", "demo", machines)
+			err := checkInstancesOwned(context.Background(), svc, testLBConfig(), "demo", machines)
 			switch {
 			case tc.wantErr == "" && err != nil:
 				t.Fatalf("unexpected error: %v", err)
@@ -311,5 +303,132 @@ func TestCheckInstancesOwned(t *testing.T) {
 				t.Errorf("check must not change anything, got %v", got)
 			}
 		})
+	}
+}
+
+func TestLeaderMachineName(t *testing.T) {
+	nodeSets := testNodeSets()
+
+	machines, err := generateGCEControlPlaneMachines("demo", nodeSets, "1.36.0")
+	if err != nil {
+		t.Fatalf("generating machines: %v", err)
+	}
+
+	// KubeOne makes the first control plane host the leader, the hosts are
+	// added in the order of the generated machines
+	if got := leaderMachineName("demo", nodeSets); got != machines[0].Name {
+		t.Errorf("got leader %q, want the first machine %q", got, machines[0].Name)
+	}
+
+	nodeSets[0].Replicas = 0
+	if got := leaderMachineName("demo", nodeSets); got != "demo-cp-b-0" {
+		t.Errorf("got leader %q with an empty first nodeSet, want demo-cp-b-0", got)
+	}
+
+	if got := leaderMachineName("demo", nil); got != "" {
+		t.Errorf("got leader %q without nodeSets, want none", got)
+	}
+}
+
+func TestMachineZoneProject(t *testing.T) {
+	machine := func(spec string) clusterv1alpha1.Machine {
+		machines, err := generateGCEControlPlaneMachines("demo", []kubeoneapi.NodeSet{{Name: "cp", Replicas: 1, CloudProviderSpec: []byte(spec)}}, "1.36.0")
+		if err != nil {
+			t.Fatalf("generating machines: %v", err)
+		}
+
+		return machines[0]
+	}
+
+	tests := []struct {
+		name      string
+		lbProject string
+		spec      string
+		wantErr   bool
+	}{
+		{
+			name:      "VM and load balancer in the service account project",
+			lbProject: "proj",
+			spec:      `{"zone":"europe-west3-a"}`,
+		},
+		{
+			// The VM is created in the service account project "proj"
+			name:      "load balancer in another project than the service account",
+			lbProject: "other",
+			spec:      `{"zone":"europe-west3-a"}`,
+			wantErr:   true,
+		},
+		{
+			name:      "nodeSet in the load balancer project",
+			lbProject: "other",
+			spec:      `{"zone":"europe-west3-a","projectID":"other"}`,
+		},
+		{
+			name:      "nodeSet in another project than the load balancer",
+			lbProject: "proj",
+			spec:      `{"zone":"europe-west3-a","projectID":"other"}`,
+			wantErr:   true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			cfg := testLBConfig()
+			cfg.ProjectID = tc.lbProject
+
+			zone, err := machineZone(machine(tc.spec), cfg)
+			switch {
+			case tc.wantErr && err == nil:
+				t.Fatal("expected a project error")
+			case !tc.wantErr && err != nil:
+				t.Fatalf("unexpected error: %v", err)
+			case !tc.wantErr && zone != "europe-west3-a":
+				t.Errorf("got zone %q", zone)
+			}
+		})
+	}
+}
+
+func TestCheckInstancesOwnedInVMProject(t *testing.T) {
+	machines, err := generateGCEControlPlaneMachines("demo", testNodeSets()[1:], "1.36.0")
+	if err != nil {
+		t.Fatalf("generating machines: %v", err)
+	}
+
+	// The load balancer is in another project than the service account, the
+	// VM was created in the service account project. Reset must still find
+	// and check it there instead of failing on the project mismatch.
+	f, svc := newFakeCompute(t)
+	f.put("projects/proj/zones/europe-west3-b/instances/demo-cp-b-0", map[string]any{"labels": map[string]any{
+		"kubeone_cluster_name": "other",
+		"kubeone_role":         "control-plane",
+		"machine_uid":          "demo-cp-b-0",
+	}})
+
+	cfg := testLBConfig()
+	cfg.ProjectID = "lb-project"
+
+	err = checkInstancesOwned(context.Background(), svc, cfg, "demo", machines)
+	if err == nil || !strings.Contains(err.Error(), "kubeone_cluster_name") {
+		t.Fatalf("expected the foreign VM in the service account project to be found, got %v", err)
+	}
+}
+
+func TestGenerateMachinesKeepsNodeSetLabels(t *testing.T) {
+	nodeSets := testNodeSets()
+
+	for range 2 {
+		if _, err := generateGCEControlPlaneMachines("demo", nodeSets, "1.36.0"); err != nil {
+			t.Fatalf("generating machines: %v", err)
+		}
+	}
+
+	// The labels of the cluster config become node labels, the kubeone_*
+	// machine labels (with a new timestamp every time) must not leak into them
+	if got := nodeSets[0].NodeSettings.Labels; len(got) != 1 || got["user"] != "label" {
+		t.Errorf("nodeSet labels were modified: %v", got)
+	}
+	if nodeSets[1].NodeSettings.Labels != nil {
+		t.Errorf("nodeSet without labels got labels: %v", nodeSets[1].NodeSettings.Labels)
 	}
 }

@@ -3668,6 +3668,20 @@ func TestValidateGCESpec(t *testing.T) {
 			nodeSets:    []kubeoneapi.NodeSet{nodeSet("cp-a", validSpec), nodeSet("cp-b", `{"zone":"europe-west3-b"}`)},
 		},
 		{
+			name:          "nodeSet in another project than the load balancer",
+			clusterName:   "demo",
+			lb:            withLB(func(lb *kubeoneapi.GCELoadBalancer) { lb.ProjectID = "proj" }),
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet("cp", `{"zone":"europe-west3-a","projectID":"other"}`)},
+			expectedError: true,
+		},
+		{
+			name:          "IPv6 allowed source range",
+			clusterName:   "demo",
+			lb:            withLB(func(lb *kubeoneapi.GCELoadBalancer) { lb.AllowedSourceRanges = []string{"0.0.0.0/0", "::/0"} }),
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet("cp", validSpec)},
+			expectedError: true,
+		},
+		{
 			name:          "unknown cloudProviderSpec field",
 			clusterName:   "demo",
 			lb:            &defaultLB,

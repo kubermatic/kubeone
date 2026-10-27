@@ -140,3 +140,65 @@ func defaultCluster(st *state.State) error {
 
 	return nil
 }
+
+// ensureLoadBalancerMembers adds the control plane VMs to the load balancer of
+// providers that can do so only after they joined the cluster, see
+// cloudprovider.LoadBalancerMemberProvider.
+func ensureLoadBalancerMembers(s *state.State) error {
+	for _, p := range cloudprovider.ControlPlaneProviders() {
+		lb, ok := p.(cloudprovider.LoadBalancerMemberProvider)
+		if !ok || !p.Enabled(s) {
+			continue
+		}
+
+		if err := lb.EnsureLoadBalancerMembers(s); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// removeJoiningLoadBalancerMembers removes the followers about to join from
+// the load balancer of providers that can add them only after they joined,
+// see cloudprovider.LoadBalancerMemberProvider.
+func removeJoiningLoadBalancerMembers(s *state.State) error {
+	joining := joiningFollowers(s)
+
+	for _, p := range cloudprovider.ControlPlaneProviders() {
+		lb, ok := p.(cloudprovider.LoadBalancerMemberProvider)
+		if !ok || !p.Enabled(s) {
+			continue
+		}
+
+		if err := lb.RemoveJoiningLoadBalancerMembers(s, joining); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// joiningFollowers returns the followers that aren't part of the cluster, they
+// are joined by joinControlplaneNode.
+func joiningFollowers(s *state.State) []kubeoneapi.HostConfig {
+	// Hosts are matched by ID, the public address is empty for VMs without
+	// external IP that are reached through a bastion
+	inCluster := map[int]bool{}
+	if s.LiveCluster != nil {
+		for _, host := range s.LiveCluster.ControlPlane {
+			if host.IsInCluster && host.Config != nil {
+				inCluster[host.Config.ID] = true
+			}
+		}
+	}
+
+	var joining []kubeoneapi.HostConfig
+	for _, follower := range s.Cluster.Followers() {
+		if !inCluster[follower.ID] {
+			joining = append(joining, follower)
+		}
+	}
+
+	return joining
+}

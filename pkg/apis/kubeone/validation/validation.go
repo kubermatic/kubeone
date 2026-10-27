@@ -470,8 +470,12 @@ func validateGCESpec(gceSpec *kubeoneapi.GCESpec, clusterName string, nodeSets [
 	}
 
 	for i, cidr := range lb.AllowedSourceRanges {
-		if _, _, err := net.ParseCIDR(cidr); err != nil {
+		ip, _, err := net.ParseCIDR(cidr)
+		switch {
+		case err != nil:
 			allErrs = append(allErrs, field.Invalid(lbFld.Child("allowedSourceRanges").Index(i), cidr, "must be a valid CIDR"))
+		case ip.To4() == nil:
+			allErrs = append(allErrs, field.Invalid(lbFld.Child("allowedSourceRanges").Index(i), cidr, "must be an IPv4 CIDR, the load balancer is IPv4 only"))
 		}
 	}
 
@@ -492,6 +496,11 @@ func validateGCESpec(gceSpec *kubeoneapi.GCESpec, clusterName string, nodeSets [
 		}
 
 		specFld := nsFld.Child("cloudProviderSpec")
+		// The load balancer can only reference VMs of its own project
+		if p := rawConfig.ProjectID.Value; p != "" && lb.ProjectID != "" && p != lb.ProjectID {
+			allErrs = append(allErrs, field.Invalid(specFld.Child("projectID"), p, fmt.Sprintf("must be the load balancer project %q", lb.ProjectID)))
+		}
+
 		zone := rawConfig.Zone.Value
 		switch {
 		case zone == "":
@@ -502,6 +511,9 @@ func validateGCESpec(gceSpec *kubeoneapi.GCESpec, clusterName string, nodeSets [
 			allErrs = append(allErrs, field.Invalid(lbFld.Child("name"), lb.Name+"-"+zone, "network endpoint group name \"<load balancer name>-<zone>\": "+gceResourceNameMsg))
 		}
 	}
+
+	// The networks of the nodeSets are checked when the load balancer is
+	// ensured, subnetworks have to be looked up for that
 
 	return allErrs
 }

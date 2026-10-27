@@ -58,9 +58,10 @@ const (
 )
 
 var (
-	_ cloudprovider.ControlPlaneCloudProvider = &Provider{}
-	_ cloudprovider.LoadBalancerProvider      = &Provider{}
-	_ cloudprovider.CleanupPreparer           = &Provider{}
+	_ cloudprovider.ControlPlaneCloudProvider  = &Provider{}
+	_ cloudprovider.LoadBalancerProvider       = &Provider{}
+	_ cloudprovider.CleanupPreparer            = &Provider{}
+	_ cloudprovider.LoadBalancerMemberProvider = &Provider{}
 )
 
 func init() {
@@ -101,7 +102,13 @@ func (p *Provider) EnsureVM(s *state.State, nodeSet kubeoneapi.NodeSet, capimach
 
 	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, hostConfigsFromMachines(provMachines, []clusterv1alpha1.Machine{capimachine}, []kubeoneapi.NodeSet{nodeSet})...)
 
-	return ensureLoadBalancerEndpoint(s, capimachine)
+	// Followers are added by EnsureLoadBalancerMembers after they joined,
+	// see ensureLoadBalancerEndpoints
+	if capimachine.Name != leaderMachineName(s.Cluster.Name, s.Cluster.ControlPlane.NodeSets) {
+		return nil
+	}
+
+	return ensureLeaderEndpoint(s, capimachine)
 }
 
 func (p *Provider) LookupVMs(s *state.State) error {
@@ -153,12 +160,12 @@ func lookupExistingVMs(s *state.State, capimachines []clusterv1alpha1.Machine) e
 	}
 
 	for i, machine := range capimachines {
-		zone, err := machineZone(machine, cfg.ProjectID)
+		zone, project, err := machineLocation(machine, cfg)
 		if err != nil {
 			return err
 		}
 
-		_, err = svc.Instances.Get(cfg.ProjectID, zone, machine.Name).Context(s.Context).Do()
+		_, err = svc.Instances.Get(project, zone, machine.Name).Context(s.Context).Do()
 		switch {
 		case isNotFound(err):
 			s.Logger.Warnf("control plane instance %q not found in zone %q, skipping it", machine.Name, zone)
@@ -206,14 +213,14 @@ func (p *Provider) PrepareCleanup(s *state.State) error {
 		return err
 	}
 
-	return checkInstancesOwned(s.Context, svc, cfg.ProjectID, s.Cluster.Name, machines)
+	return checkInstancesOwned(s.Context, svc, cfg, s.Cluster.Name, machines)
 }
 
 // checkInstancesOwned fails if an instance with the name of one of the
 // machines exists, but wasn't created by KubeOne for the cluster.
-func checkInstancesOwned(ctx context.Context, svc *compute.Service, projectID, clusterName string, machines []clusterv1alpha1.Machine) error {
+func checkInstancesOwned(ctx context.Context, svc *compute.Service, cfg *lbConfig, clusterName string, machines []clusterv1alpha1.Machine) error {
 	for _, machine := range machines {
-		zone, err := machineZone(machine, projectID)
+		zone, projectID, err := machineLocation(machine, cfg)
 		if err != nil {
 			return err
 		}
@@ -323,9 +330,16 @@ func exportCredentials(s *state.State) error {
 // waitForOperation waits until the given Compute Engine operation is DONE and
 // returns its error, if any. The operations' Wait methods return once the
 // operation is DONE or the request approaches its deadline (about 2 minutes),
-// so they are called in a loop.
+// so they are called in a loop. The operation is waited for in the project of
+// its selfLink, projectID is only used if the operation has none.
 func waitForOperation(ctx context.Context, svc *compute.Service, projectID string, op *compute.Operation) error {
 	name := op.Name
+
+	// The operation is in the project of its resource, e.g. the host project
+	// of a Shared VPC firewall rule
+	if parts := strings.Split(resourcePath(op.SelfLink), "/"); len(parts) >= 2 && parts[0] == "projects" {
+		projectID = parts[1]
+	}
 
 	for op.Status != "DONE" {
 		var err error
@@ -385,6 +399,8 @@ func generateGCEControlPlaneMachines(clusterName string, nodeSet []kubeoneapi.No
 		}
 		maps.Copy(nodeLabels, gceLabels(clusterName))
 
+		// node is a copy, but the labels map is the one of the cluster config
+		node.NodeSettings.Labels = maps.Clone(node.NodeSettings.Labels)
 		if node.NodeSettings.Labels == nil {
 			node.NodeSettings.Labels = map[string]string{}
 		}

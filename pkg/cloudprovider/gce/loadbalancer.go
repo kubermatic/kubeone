@@ -42,6 +42,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"maps"
 	"path"
 	"slices"
 	"strconv"
@@ -50,11 +51,15 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/api/compute/v1"
 
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
 	gcetypes "k8c.io/machine-controller/sdk/cloudprovider/gce"
+	"k8c.io/machine-controller/sdk/jsonutil"
 	"k8c.io/machine-controller/sdk/providerconfig"
+
+	"k8s.io/apimachinery/pkg/util/sets"
 )
 
 const (
@@ -72,10 +77,16 @@ var healthCheckSourceRanges = []string{"35.191.0.0/16", "209.85.204.0/22"}
 
 // lbConfig is the resolved load balancer configuration.
 type lbConfig struct {
-	ClusterName         string
-	ProjectID           string
-	Region              string
-	Name                string
+	ClusterName string
+	ProjectID   string
+	// ServiceAccountProjectID is the project of the service account, the
+	// machine-controller driver creates the VMs there unless the nodeSet
+	// sets a project.
+	ServiceAccountProjectID string
+	Region                  string
+	Name                    string
+	// Network of the control plane VMs and the firewall rules, as
+	// projects/<project>/global/networks/<name>, set by resolveNetwork.
 	Network             string
 	AllowedSourceRanges []string
 }
@@ -96,6 +107,17 @@ func (c *lbConfig) regionalPath(collection, name string) string {
 	return fmt.Sprintf("projects/%s/regions/%s/%s/%s", c.ProjectID, c.Region, collection, name)
 }
 
+// firewallProject is the project of the network, the firewall rules of a
+// Shared VPC network are in its host project.
+func (c *lbConfig) firewallProject() string {
+	parts := strings.Split(resourcePath(c.Network), "/")
+	if len(parts) >= 2 && parts[0] == "projects" {
+		return parts[1]
+	}
+
+	return c.ProjectID
+}
+
 func (c *lbConfig) negName(zone string) string {
 	return c.Name + "-" + zone
 }
@@ -112,15 +134,17 @@ func resolveLB(s *state.State) (*lbConfig, error) {
 		AllowedSourceRanges: lb.AllowedSourceRanges,
 	}
 
-	if cfg.ProjectID == "" {
-		serviceAccount, err := serviceAccountJSON(s)
-		if err != nil {
-			return nil, err
-		}
+	serviceAccount, err := serviceAccountJSON(s)
+	if err != nil {
+		return nil, err
+	}
 
-		if cfg.ProjectID, err = serviceAccountProjectID(serviceAccount); err != nil {
-			return nil, err
-		}
+	if cfg.ServiceAccountProjectID, err = serviceAccountProjectID(serviceAccount); err != nil {
+		return nil, err
+	}
+
+	if cfg.ProjectID == "" {
+		cfg.ProjectID = cfg.ServiceAccountProjectID
 	}
 
 	switch {
@@ -144,6 +168,28 @@ func (p *Provider) EnsureLoadBalancer(s *state.State) error {
 	svc, err := newComputeService(s)
 	if err != nil {
 		return err
+	}
+
+	// Fail before anything is created if a VM would be created in another
+	// project than the load balancer
+	machines, err := p.GenerateMachines(s.Cluster.Name, s.Cluster.ControlPlane.NodeSets, s.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return err
+	}
+	for _, machine := range machines {
+		if _, err = machineZone(machine, cfg); err != nil {
+			return err
+		}
+	}
+
+	if err = resolveNetwork(s.Context, svc, cfg, s.Cluster.ControlPlane.NodeSets); err != nil {
+		return err
+	}
+
+	if !slices.Contains(cfg.AllowedSourceRanges, "0.0.0.0/0") {
+		s.Logger.Warnf("allowedSourceRanges %v must include the public IPs (or Cloud NAT IPs) of all control plane and worker nodes, "+
+			"they reach kube-apiserver through the load balancer from them; otherwise control plane nodes can't join and workers can't register",
+			cfg.AllowedSourceRanges)
 	}
 
 	// The control plane VMs need the firewall rules even when the user brings
@@ -214,22 +260,207 @@ func (p *Provider) CleanupLoadBalancer(s *state.State) error {
 		return err
 	}
 
+	// The firewall rules of a Shared VPC network are in its host project.
+	// A misconfiguration or a deleted subnetwork must not block the cleanup.
+	if err = resolveNetwork(s.Context, svc, cfg, s.Cluster.ControlPlane.NodeSets); err != nil {
+		s.Logger.Warnf("resolving the network of the control plane failed, looking for the firewall rules in project %q: %v", cfg.firewallProject(), err)
+	}
+
 	return cleanupLoadBalancer(s.Context, svc, cfg, s.Cluster.APIEndpoint.Host, s.Logger)
 }
 
-// ensureLoadBalancerEndpoint adds the VM of the machine as endpoint to the
-// network endpoint group of its zone, creating the group and adding it to the
-// backend service as needed. Nothing is done if KubeOne doesn't manage the
-// load balancer, i.e. the user provides the kube-apiserver endpoint.
-func ensureLoadBalancerEndpoint(s *state.State, machine clusterv1alpha1.Machine) error {
-	cfg, err := resolveLB(s)
+// EnsureLoadBalancerMembers adds all control plane VMs to the load balancer,
+// see cloudprovider.LoadBalancerMemberProvider. It runs after the followers
+// joined the cluster, EnsureVM adds only the leader.
+func (p *Provider) EnsureLoadBalancerMembers(s *state.State) error {
+	machines, err := p.GenerateMachines(s.Cluster.Name, s.Cluster.ControlPlane.NodeSets, s.Cluster.Versions.Kubernetes)
 	if err != nil {
 		return err
 	}
 
-	svc, err := newComputeService(s)
+	return ensureLoadBalancerEndpoints(s, machines)
+}
+
+// ensureLoadBalancerEndpoints adds the VMs of the machines as endpoints to the
+// network endpoint groups of their zones, creating the groups and adding them
+// to the backend service as needed. Nothing is done if KubeOne doesn't manage
+// the load balancer, i.e. the user provides the kube-apiserver endpoint.
+//
+// A VM must only be added once it serves kube-apiserver: the guest
+// environment of every VM behind a passthrough load balancer routes the
+// load balancer address to the VM itself, so a VM added before it joined the
+// cluster would reach itself instead of the control plane and never join.
+func ensureLoadBalancerEndpoints(s *state.State, machines []clusterv1alpha1.Machine) error {
+	cfg, svc, bs, err := managedBackendService(s)
+	if err != nil || bs == nil {
+		return err
+	}
+
+	for _, machine := range machines {
+		zone, err := machineZone(machine, cfg)
+		if err != nil {
+			return err
+		}
+
+		if err = ensureEndpoint(s.Context, svc, cfg, bs, zone, machine.Name); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ensureLeaderEndpoint adds the VM of the leader machine to the load balancer
+// while the cluster is created, so that it can initialize the cluster and the
+// followers can join through the load balancer.
+func ensureLeaderEndpoint(s *state.State, machine clusterv1alpha1.Machine) error {
+	cfg, svc, bs, err := managedBackendService(s)
+	if err != nil || bs == nil {
+		return err
+	}
+
+	return ensureLeaderEndpointWith(s.Context, svc, cfg, bs, machine, s.Logger)
+}
+
+// ensureLeaderEndpointWith adds the leader VM unless another member of the
+// load balancer is healthy. In that case a cluster is serving through the load
+// balancer and the VM joins it, e.g. the replacement of a lost VM, so it's
+// added by EnsureLoadBalancerMembers after it joined. Health is the deciding
+// signal: endpoints of VMs that were reset but kept stay in the load balancer,
+// but are unhealthy.
+func ensureLeaderEndpointWith(ctx context.Context, svc *compute.Service, cfg *lbConfig, bs *compute.BackendService, machine clusterv1alpha1.Machine, logger logrus.FieldLogger) error {
+	healthy, err := healthyMembers(ctx, svc, cfg, bs)
 	if err != nil {
 		return err
+	}
+	delete(healthy, machine.Name)
+
+	if len(healthy) > 0 {
+		logger.Debugf("load balancer %q has healthy members %v, %q is added after it joined the cluster", cfg.Name, slices.Sorted(maps.Keys(healthy)), machine.Name)
+
+		return nil
+	}
+
+	zone, err := machineZone(machine, cfg)
+	if err != nil {
+		return err
+	}
+
+	return ensureEndpoint(ctx, svc, cfg, bs, zone, machine.Name)
+}
+
+// RemoveJoiningLoadBalancerMembers ensures the leader is a member of the load
+// balancer and removes the joining hosts from it, see
+// cloudprovider.LoadBalancerMemberProvider. The hostnames are the instance
+// names, see hostConfigsFromMachines.
+func (p *Provider) RemoveJoiningLoadBalancerMembers(s *state.State, joining []kubeoneapi.HostConfig) error {
+	cfg, svc, bs, err := managedBackendService(s)
+	if err != nil || bs == nil {
+		return err
+	}
+
+	machines, err := p.GenerateMachines(s.Cluster.Name, s.Cluster.ControlPlane.NodeSets, s.Cluster.Versions.Kubernetes)
+	if err != nil {
+		return err
+	}
+
+	// The elected leader serves kube-apiserver at this point: on a new cluster
+	// it's the first nodeSet machine EnsureVM added, on a repaired cluster a
+	// healthy node, while the first nodeSet machine might be a new VM joining
+	leader, err := s.Cluster.Leader()
+	if err != nil {
+		return fail.Config(err, "finding the control plane leader")
+	}
+
+	var joiningNames []string
+	for _, host := range joining {
+		joiningNames = append(joiningNames, host.Hostname)
+	}
+
+	return removeJoiningEndpoints(s.Context, svc, cfg, bs, machines, leader.Hostname, joiningNames, s.Logger)
+}
+
+// removeJoiningEndpoints adds the leader VM, which serves kube-apiserver at
+// this point, and removes the endpoints of the joining VMs.
+func removeJoiningEndpoints(ctx context.Context, svc *compute.Service, cfg *lbConfig, bs *compute.BackendService, machines []clusterv1alpha1.Machine, leaderName string, joining []string, logger logrus.FieldLogger) error {
+	for _, machine := range machines {
+		// A joining host is never added, it's added after it joined
+		if machine.Name != leaderName || slices.Contains(joining, leaderName) {
+			continue
+		}
+
+		zone, err := machineZone(machine, cfg)
+		if err != nil {
+			return err
+		}
+
+		if err = ensureEndpoint(ctx, svc, cfg, bs, zone, machine.Name); err != nil {
+			return err
+		}
+	}
+
+	if len(joining) == 0 {
+		return nil
+	}
+
+	// Adding the leader might have added its network endpoint group
+	bs, err := svc.RegionBackendServices.Get(cfg.ProjectID, cfg.Region, bs.Name).Context(ctx).Do()
+	if err != nil {
+		return fail.Cloud(err, "gce", "getting backend service %q", cfg.Name)
+	}
+
+	for _, neg := range backendNEGs(bs) {
+		var detach []*compute.NetworkEndpoint
+
+		err := svc.NetworkEndpointGroups.ListNetworkEndpoints(neg.project, neg.zone, neg.name, &compute.NetworkEndpointGroupsListEndpointsRequest{}).Pages(ctx,
+			func(page *compute.NetworkEndpointGroupsListNetworkEndpoints) error {
+				for _, item := range page.Items {
+					if item.NetworkEndpoint != nil && slices.Contains(joining, path.Base(item.NetworkEndpoint.Instance)) {
+						detach = append(detach, item.NetworkEndpoint)
+					}
+				}
+
+				return nil
+			})
+		switch {
+		case isNotFound(err):
+			continue
+		case err != nil:
+			return fail.Cloud(err, "gce", "listing endpoints of network endpoint group %q", neg.name)
+		case len(detach) == 0:
+			continue
+		}
+
+		for _, ep := range detach {
+			logger.Infof("removing %q from the load balancer until it joined the cluster", path.Base(ep.Instance))
+		}
+
+		op, err := svc.NetworkEndpointGroups.DetachNetworkEndpoints(neg.project, neg.zone, neg.name, &compute.NetworkEndpointGroupsDetachEndpointsRequest{
+			NetworkEndpoints: detach,
+		}).Context(ctx).Do()
+		if err != nil {
+			return fail.Cloud(err, "gce", "removing endpoints from network endpoint group %q", neg.name)
+		}
+
+		if err = waitForOperation(ctx, svc, neg.project, op); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// managedBackendService returns the backend service of the load balancer, or
+// nil if KubeOne doesn't manage the load balancer.
+func managedBackendService(s *state.State) (*lbConfig, *compute.Service, *compute.BackendService, error) {
+	cfg, err := resolveLB(s)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	svc, err := newComputeService(s)
+	if err != nil {
+		return nil, nil, nil, err
 	}
 
 	bs, err := svc.RegionBackendServices.Get(cfg.ProjectID, cfg.Region, cfg.Name).Context(s.Context).Do()
@@ -237,46 +468,203 @@ func ensureLoadBalancerEndpoint(s *state.State, machine clusterv1alpha1.Machine)
 	case isNotFound(err):
 		s.Logger.Debugf("no backend service %q, the kube-apiserver load balancer is not managed by KubeOne", cfg.Name)
 
-		return nil
+		return cfg, svc, nil, nil
 	case err != nil:
-		return fail.Cloud(err, "gce", "getting backend service %q", cfg.Name)
+		return nil, nil, nil, fail.Cloud(err, "gce", "getting backend service %q", cfg.Name)
 	case bs.Description != cfg.owner():
-		s.Logger.Debugf("backend service %q is not owned by KubeOne, not adding %q", cfg.Name, machine.Name)
+		s.Logger.Debugf("backend service %q is not owned by KubeOne, not adding control plane VMs", cfg.Name)
 
-		return nil
+		return cfg, svc, nil, nil
 	}
 
-	zone, err := machineZone(machine, cfg.ProjectID)
-	if err != nil {
-		return err
-	}
-
-	return ensureEndpoint(s.Context, svc, cfg, bs, zone, machine.Name)
+	return cfg, svc, bs, nil
 }
 
-// machineZone returns the zone of the machine and checks that it's in the
-// project of the load balancer, network endpoint groups can't reference VMs
-// of other projects.
-func machineZone(machine clusterv1alpha1.Machine, projectID string) (string, error) {
+type negRef struct {
+	project, zone, name string
+}
+
+// backendNEGs returns the network endpoint groups of the backend service.
+func backendNEGs(bs *compute.BackendService) []negRef {
+	var negs []negRef
+
+	for _, backend := range bs.Backends {
+		// projects/<project>/zones/<zone>/networkEndpointGroups/<name>
+		parts := strings.Split(resourcePath(backend.Group), "/")
+		if len(parts) == 6 && parts[0] == "projects" && parts[2] == "zones" && parts[4] == "networkEndpointGroups" {
+			negs = append(negs, negRef{project: parts[1], zone: parts[3], name: parts[5]})
+		}
+	}
+
+	return negs
+}
+
+// healthyMembers returns the instance names of the healthy members of the
+// load balancer, as seen by its health check.
+func healthyMembers(ctx context.Context, svc *compute.Service, cfg *lbConfig, bs *compute.BackendService) (map[string]bool, error) {
+	healthy := map[string]bool{}
+
+	for _, backend := range bs.Backends {
+		health, err := svc.RegionBackendServices.GetHealth(cfg.ProjectID, cfg.Region, bs.Name, &compute.ResourceGroupReference{
+			Group: backend.Group,
+		}).Context(ctx).Do()
+		if err != nil {
+			return nil, fail.Cloud(err, "gce", "getting health of backend service %q", bs.Name)
+		}
+
+		for _, status := range health.HealthStatus {
+			if status.HealthState == "HEALTHY" {
+				healthy[path.Base(status.Instance)] = true
+			}
+		}
+	}
+
+	return healthy, nil
+}
+
+// resolveNetwork sets the network of the control plane VMs, where the
+// firewall rules are created, from the nodeSets: their network, or the
+// network of their subnetwork. All nodeSets must be in the same network, and
+// a configured loadBalancer.network must be that network. Networks are
+// compared as projects/<project>/global/networks/<name>, the network of a
+// Shared VPC is in its host project.
+func resolveNetwork(ctx context.Context, svc *compute.Service, cfg *lbConfig, nodeSets []kubeoneapi.NodeSet) error {
+	networks := map[string][]string{}
+	for _, ns := range nodeSets {
+		network, err := nodeSetNetwork(ctx, svc, cfg, ns)
+		if err != nil {
+			return err
+		}
+		networks[network] = append(networks[network], ns.Name)
+	}
+
+	if len(networks) > 1 {
+		return fail.ConfigValidation(fmt.Errorf("all control plane nodeSets must be in the same network, got %v", networks))
+	}
+
+	resolved := networkFullPath(cfg.ProjectID, "default")
+	for network := range networks {
+		resolved = network
+	}
+
+	if cfg.Network != "" {
+		if configured := networkFullPath(cfg.ProjectID, cfg.Network); configured != resolved {
+			return fail.ConfigValidation(fmt.Errorf(".cloudProvider.gce.controlPlane.loadBalancer.network %q must be the network %q of the control plane nodeSets", configured, resolved))
+		}
+	}
+
+	cfg.Network = resolved
+
+	return nil
+}
+
+// networkFullPath returns the network name or (partial) URL as
+// projects/<project>/global/networks/<name>, names are in the given project.
+func networkFullPath(project, network string) string {
+	network = resourcePath(network)
+
+	switch {
+	case strings.HasPrefix(network, "projects/"):
+		return network
+	case strings.Contains(network, "/"):
+		return fmt.Sprintf("projects/%s/%s", project, network)
+	default:
+		return fmt.Sprintf("projects/%s/global/networks/%s", project, network)
+	}
+}
+
+// nodeSetNetwork returns the network of the nodeSet VMs as projects/<p>/global/networks/<n>.
+// Without network and subnetwork the VMs are in the default network.
+func nodeSetNetwork(ctx context.Context, svc *compute.Service, cfg *lbConfig, ns kubeoneapi.NodeSet) (string, error) {
+	var spec gcetypes.RawConfig
+	if err := jsonutil.StrictUnmarshal(ns.CloudProviderSpec, &spec); err != nil {
+		return "", fail.Config(err, "decode gce config")
+	}
+
+	switch {
+	case spec.Network.Value != "":
+		return networkFullPath(cfg.ProjectID, spec.Network.Value), nil
+	case spec.Subnetwork.Value == "":
+		return networkFullPath(cfg.ProjectID, "default"), nil
+	}
+
+	// The subnetwork is a name or a (partial) URL, possibly of a Shared VPC host project
+	subnetwork := spec.Subnetwork.Value
+	project, region := cfg.ProjectID, cfg.Region
+	parts := strings.Split(resourcePath(subnetwork), "/")
+	for i := 0; i+1 < len(parts); i++ {
+		switch parts[i] {
+		case "projects":
+			project = parts[i+1]
+		case "regions":
+			region = parts[i+1]
+		}
+	}
+
+	sn, err := svc.Subnetworks.Get(project, region, path.Base(subnetwork)).Context(ctx).Do()
+	if err != nil {
+		return "", fail.Cloud(err, "gce", "getting subnetwork %q", subnetwork)
+	}
+
+	return networkFullPath(cfg.ProjectID, sn.Network), nil
+}
+
+// leaderMachineName returns the name of the machine of the leader, the first
+// control plane host, which initializes the cluster.
+func leaderMachineName(clusterName string, nodeSets []kubeoneapi.NodeSet) string {
+	for _, ns := range nodeSets {
+		if ns.Replicas > 0 {
+			return ns.MachineName(clusterName, 0)
+		}
+	}
+
+	return ""
+}
+
+// machineLocation returns the zone and project of the machine's VM. The
+// machine-controller driver creates the VM in the project of the nodeSet, or
+// of the service account if the nodeSet sets none.
+func machineLocation(machine clusterv1alpha1.Machine, cfg *lbConfig) (zone, project string, err error) {
 	pconfig, err := providerconfig.GetConfig(machine.Spec.ProviderSpec)
 	if err != nil {
-		return "", fail.Config(err, "reading provider config")
+		return "", "", fail.Config(err, "reading provider config")
 	}
 
 	gceConfig, err := gcetypes.GetConfig(*pconfig)
 	if err != nil {
-		return "", fail.Config(err, "decode gce config")
-	}
-
-	if p := gceConfig.ProjectID.Value; p != "" && p != projectID {
-		return "", fail.ConfigValidation(fmt.Errorf("control plane machine %q is in project %q, but the load balancer is in project %q", machine.Name, p, projectID))
+		return "", "", fail.Config(err, "decode gce config")
 	}
 
 	if gceConfig.Zone.Value == "" {
-		return "", fail.ConfigValidation(fmt.Errorf("control plane machine %q has no zone", machine.Name))
+		return "", "", fail.ConfigValidation(fmt.Errorf("control plane machine %q has no zone", machine.Name))
 	}
 
-	return gceConfig.Zone.Value, nil
+	project = gceConfig.ProjectID.Value
+	if project == "" {
+		project = cfg.ServiceAccountProjectID
+	}
+
+	return gceConfig.Zone.Value, project, nil
+}
+
+// machineZone returns the zone of the machine and checks that its VM is in
+// the project of the load balancer, network endpoint groups can't reference
+// VMs of other projects. It's only used to add VMs to the load balancer, so a
+// misconfigured project doesn't block reset.
+func machineZone(machine clusterv1alpha1.Machine, cfg *lbConfig) (string, error) {
+	zone, project, err := machineLocation(machine, cfg)
+	if err != nil {
+		return "", err
+	}
+
+	if project != cfg.ProjectID {
+		const msg = "control plane machine %q is created in project %q (cloudProviderSpec.projectID or the project of the service account), " +
+			"but the load balancer is in project %q; set cloudProviderSpec.projectID of the control plane nodeSets to %q"
+
+		return "", fail.ConfigValidation(fmt.Errorf(msg, machine.Name, project, cfg.ProjectID, cfg.ProjectID))
+	}
+
+	return zone, nil
 }
 
 func ensureFirewalls(ctx context.Context, svc *compute.Service, cfg *lbConfig) error {
@@ -319,15 +707,15 @@ func ensureFirewalls(ctx context.Context, svc *compute.Service, cfg *lbConfig) e
 // ensureFirewall creates the firewall rule, or updates the source ranges of
 // an existing one, e.g. after allowedSourceRanges changed.
 func ensureFirewall(ctx context.Context, svc *compute.Service, cfg *lbConfig, want *compute.Firewall) error {
-	existing, err := svc.Firewalls.Get(cfg.ProjectID, want.Name).Context(ctx).Do()
+	existing, err := svc.Firewalls.Get(cfg.firewallProject(), want.Name).Context(ctx).Do()
 	switch {
 	case isNotFound(err):
-		op, insertErr := svc.Firewalls.Insert(cfg.ProjectID, want).Context(ctx).Do()
+		op, insertErr := svc.Firewalls.Insert(cfg.firewallProject(), want).Context(ctx).Do()
 		if insertErr != nil {
 			return fail.Cloud(insertErr, "gce", "creating firewall rule %q", want.Name)
 		}
 
-		return waitForOperation(ctx, svc, cfg.ProjectID, op)
+		return waitForOperation(ctx, svc, cfg.firewallProject(), op)
 	case err != nil:
 		return fail.Cloud(err, "gce", "getting firewall rule %q", want.Name)
 	}
@@ -336,16 +724,28 @@ func ensureFirewall(ctx context.Context, svc *compute.Service, cfg *lbConfig, wa
 		return err
 	}
 
-	if sameSet(existing.SourceRanges, want.SourceRanges) {
+	// The network of a firewall rule can't be changed
+	if have, wantNetwork := networkFullPath(cfg.ProjectID, existing.Network), networkFullPath(cfg.ProjectID, want.Network); have != wantNetwork {
+		return fail.Cloud(
+			fmt.Errorf("firewall rule %q is in network %q, but the control plane is in network %q; delete the firewall rule to have it recreated", want.Name, have, wantNetwork),
+			"gce", "ensuring firewall rule %q", want.Name,
+		)
+	}
+
+	if sets.New(existing.SourceRanges...).Equal(sets.New(want.SourceRanges...)) &&
+		sets.New(existing.TargetTags...).Equal(sets.New(want.TargetTags...)) {
 		return nil
 	}
 
-	op, err := svc.Firewalls.Patch(cfg.ProjectID, want.Name, &compute.Firewall{SourceRanges: want.SourceRanges}).Context(ctx).Do()
+	op, err := svc.Firewalls.Patch(cfg.firewallProject(), want.Name, &compute.Firewall{
+		SourceRanges: want.SourceRanges,
+		TargetTags:   want.TargetTags,
+	}).Context(ctx).Do()
 	if err != nil {
-		return fail.Cloud(err, "gce", "updating source ranges of firewall rule %q", want.Name)
+		return fail.Cloud(err, "gce", "updating firewall rule %q", want.Name)
 	}
 
-	return waitForOperation(ctx, svc, cfg.ProjectID, op)
+	return waitForOperation(ctx, svc, cfg.firewallProject(), op)
 }
 
 // ensureLoadBalancer ensures the address, health check, backend service and
@@ -499,12 +899,20 @@ func ensureEndpoint(ctx context.Context, svc *compute.Service, cfg *lbConfig, bs
 		return err
 	}
 
+	// An endpoint of a former VM with the same name, e.g. a recreated VM, has
+	// another IP address and is replaced
+	var stale []*compute.NetworkEndpoint
 	attached := false
 	err = svc.NetworkEndpointGroups.ListNetworkEndpoints(cfg.ProjectID, zone, negName, &compute.NetworkEndpointGroupsListEndpointsRequest{}).Pages(ctx,
 		func(page *compute.NetworkEndpointGroupsListNetworkEndpoints) error {
 			for _, item := range page.Items {
-				if item.NetworkEndpoint != nil && path.Base(item.NetworkEndpoint.Instance) == instanceName {
+				ep := item.NetworkEndpoint
+				switch {
+				case ep == nil || path.Base(ep.Instance) != instanceName:
+				case ep.IpAddress == "" || ep.IpAddress == nic.NetworkIP:
 					attached = true
+				default:
+					stale = append(stale, ep)
 				}
 			}
 
@@ -515,6 +923,18 @@ func ensureEndpoint(ctx context.Context, svc *compute.Service, cfg *lbConfig, bs
 	}
 	if attached {
 		return nil
+	}
+
+	if len(stale) > 0 {
+		op, detachErr := svc.NetworkEndpointGroups.DetachNetworkEndpoints(cfg.ProjectID, zone, negName, &compute.NetworkEndpointGroupsDetachEndpointsRequest{
+			NetworkEndpoints: stale,
+		}).Context(ctx).Do()
+		if detachErr != nil {
+			return fail.Cloud(detachErr, "gce", "removing stale endpoints of %q from network endpoint group %q", instanceName, negName)
+		}
+		if err = waitForOperation(ctx, svc, cfg.ProjectID, op); err != nil {
+			return err
+		}
 	}
 
 	op, err := svc.NetworkEndpointGroups.AttachNetworkEndpoints(cfg.ProjectID, zone, negName, &compute.NetworkEndpointGroupsAttachEndpointsRequest{
@@ -625,7 +1045,7 @@ func cleanupLoadBalancer(ctx context.Context, svc *compute.Service, cfg *lbConfi
 	for _, name := range []string{cfg.Name + apiFirewallSuffix, cfg.Name + healthCheckFirewallSuffix} {
 		err := deleteResource(ctx, svc, cfg, logger, "firewall rule", name,
 			func() (string, error) {
-				fw, getErr := svc.Firewalls.Get(cfg.ProjectID, name).Context(ctx).Do()
+				fw, getErr := svc.Firewalls.Get(cfg.firewallProject(), name).Context(ctx).Do()
 				if getErr != nil {
 					return "", getErr
 				}
@@ -633,7 +1053,7 @@ func cleanupLoadBalancer(ctx context.Context, svc *compute.Service, cfg *lbConfi
 				return fw.Description, nil
 			},
 			func() (*compute.Operation, error) {
-				return svc.Firewalls.Delete(cfg.ProjectID, name).Context(ctx).Do()
+				return svc.Firewalls.Delete(cfg.firewallProject(), name).Context(ctx).Do()
 			},
 		)
 		if err != nil {
@@ -783,12 +1203,4 @@ func resourcePath(url string) string {
 	}
 
 	return url
-}
-
-func sameSet(a, b []string) bool {
-	a, b = slices.Clone(a), slices.Clone(b)
-	slices.Sort(a)
-	slices.Sort(b)
-
-	return slices.Equal(slices.Compact(a), slices.Compact(b))
 }

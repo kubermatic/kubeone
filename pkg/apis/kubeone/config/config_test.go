@@ -261,7 +261,6 @@ func TestGCEControlPlaneDefaults(t *testing.T) {
 			want: kubeoneapi.GCELoadBalancer{
 				Name:                "demo-kubeapi",
 				Region:              "europe-west3",
-				Network:             "global/networks/default",
 				AllowedSourceRanges: []string{"0.0.0.0/0"},
 			},
 		},
@@ -289,7 +288,27 @@ func TestGCEControlPlaneDefaults(t *testing.T) {
 			want: kubeoneapi.GCELoadBalancer{
 				Name:                "demo-kubeapi",
 				Region:              "us-east1",
-				Network:             "global/networks/default",
+				AllowedSourceRanges: []string{"0.0.0.0/0"},
+			},
+		},
+		{
+			// The network is resolved from all nodeSets when the load balancer is ensured
+			name:     "network of the nodeSet isn't defaulted",
+			in:       kubeoneapi.GCELoadBalancer{},
+			nodeSets: []kubeoneapi.NodeSet{{Name: "cp", Replicas: 1, CloudProviderSpec: []byte(`{"zone":"europe-west3-a","network":"my-vpc"}`)}},
+			want: kubeoneapi.GCELoadBalancer{
+				Name:                "demo-kubeapi",
+				Region:              "europe-west3",
+				AllowedSourceRanges: []string{"0.0.0.0/0"},
+			},
+		},
+		{
+			name:     "only a subnetwork",
+			in:       kubeoneapi.GCELoadBalancer{},
+			nodeSets: []kubeoneapi.NodeSet{{Name: "cp", Replicas: 1, CloudProviderSpec: []byte(`{"zone":"europe-west3-a","subnetwork":"my-subnet"}`)}},
+			want: kubeoneapi.GCELoadBalancer{
+				Name:                "demo-kubeapi",
+				Region:              "europe-west3",
 				AllowedSourceRanges: []string{"0.0.0.0/0"},
 			},
 		},
@@ -299,7 +318,6 @@ func TestGCEControlPlaneDefaults(t *testing.T) {
 			nodeSets: []kubeoneapi.NodeSet{{Name: "cp", Replicas: 1, CloudProviderSpec: []byte(`{}`)}},
 			want: kubeoneapi.GCELoadBalancer{
 				Name:                "demo-kubeapi",
-				Network:             "global/networks/default",
 				AllowedSourceRanges: []string{"0.0.0.0/0"},
 			},
 		},

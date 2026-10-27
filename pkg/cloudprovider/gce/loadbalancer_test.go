@@ -31,6 +31,9 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/option"
+
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	clusterv1alpha1 "k8c.io/machine-controller/sdk/apis/cluster/v1alpha1"
 )
 
 const (
@@ -56,12 +59,15 @@ type fakeCompute struct {
 	opError string
 	// deleted are the paths of the deleted resources, in order.
 	deleted []string
+	// healthy are the instances the backend service health check reports
+	// as HEALTHY, all others are UNHEALTHY.
+	healthy map[string]bool
 }
 
 func newFakeCompute(t *testing.T) (*fakeCompute, *compute.Service) {
 	t.Helper()
 
-	f := &fakeCompute{objects: map[string]map[string]any{}}
+	f := &fakeCompute{objects: map[string]map[string]any{}, healthy: map[string]bool{}}
 	srv := httptest.NewServer(http.HandlerFunc(f.serveHTTP))
 	t.Cleanup(srv.Close)
 
@@ -116,21 +122,11 @@ func (f *fakeCompute) serveHTTP(w http.ResponseWriter, r *http.Request) {
 		_ = json.NewDecoder(r.Body).Decode(&body)
 	}
 
+	if r.Method == http.MethodPost && f.serveAction(w, p, body) {
+		return
+	}
+
 	switch {
-	case r.Method == http.MethodPost && strings.HasSuffix(p, "/wait"):
-		f.writeOperation(w, path.Base(path.Dir(p)), true)
-	case r.Method == http.MethodPost && strings.HasSuffix(p, "/listNetworkEndpoints"):
-		neg := f.objects[path.Dir(p)]
-		items, _ := neg["_endpoints"].([]any)
-		writeJSON(w, map[string]any{"items": items})
-	case r.Method == http.MethodPost && strings.HasSuffix(p, "/attachNetworkEndpoints"):
-		neg := f.objects[path.Dir(p)]
-		items, _ := neg["_endpoints"].([]any)
-		for _, ep := range field[[]any](body, "networkEndpoints") {
-			items = append(items, map[string]any{"networkEndpoint": ep})
-		}
-		neg["_endpoints"] = items
-		f.writeOperation(w, "attach", false)
 	case r.Method == http.MethodGet && strings.HasSuffix(p, "/aggregated/networkEndpointGroups"):
 		items := map[string]any{}
 		for key, obj := range f.objects {
@@ -204,6 +200,67 @@ func (f *fakeCompute) serveHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// serveAction serves the custom methods (POST <resource>/<method>), it
+// returns false for other requests.
+func (f *fakeCompute) serveAction(w http.ResponseWriter, p string, body map[string]any) bool {
+	switch {
+	case strings.HasSuffix(p, "/wait"):
+		f.writeOperation(w, path.Base(path.Dir(p)), true)
+	case strings.HasSuffix(p, "/listNetworkEndpoints"):
+		neg := f.objects[path.Dir(p)]
+		items, _ := neg["_endpoints"].([]any)
+		writeJSON(w, map[string]any{"items": items})
+	case strings.HasSuffix(p, "/getHealth"):
+		neg := f.objects[resourcePath(field[string](body, "group"))]
+		items, _ := neg["_endpoints"].([]any)
+		var statuses []any
+		for _, item := range items {
+			itemObj, _ := item.(map[string]any)
+			ep := field[map[string]any](itemObj, "networkEndpoint")
+			name := field[string](ep, "instance")
+			state := "UNHEALTHY"
+			if f.healthy[name] {
+				state = "HEALTHY"
+			}
+			statuses = append(statuses, map[string]any{
+				"instance":    "https://www.googleapis.com/compute/v1/projects/proj/zones/z/instances/" + name,
+				"ipAddress":   ep["ipAddress"],
+				"healthState": state,
+			})
+		}
+		writeJSON(w, map[string]any{"healthStatus": statuses})
+	case strings.HasSuffix(p, "/detachNetworkEndpoints"):
+		neg := f.objects[path.Dir(p)]
+		remove := map[string]bool{}
+		for _, ep := range field[[]any](body, "networkEndpoints") {
+			epObj, _ := ep.(map[string]any)
+			remove[path.Base(field[string](epObj, "instance"))] = true
+		}
+		items, _ := neg["_endpoints"].([]any)
+		var kept []any
+		for _, item := range items {
+			itemObj, _ := item.(map[string]any)
+			if !remove[path.Base(field[string](field[map[string]any](itemObj, "networkEndpoint"), "instance"))] {
+				kept = append(kept, item)
+			}
+		}
+		neg["_endpoints"] = kept
+		f.writeOperation(w, "detach", false)
+	case strings.HasSuffix(p, "/attachNetworkEndpoints"):
+		neg := f.objects[path.Dir(p)]
+		items, _ := neg["_endpoints"].([]any)
+		for _, ep := range field[[]any](body, "networkEndpoints") {
+			items = append(items, map[string]any{"networkEndpoint": ep})
+		}
+		neg["_endpoints"] = items
+		f.writeOperation(w, "attach", false)
+	default:
+		return false
+	}
+
+	return true
+}
+
 // usedBy returns the path of a resource referencing the resource at p, like
 // GCE refuses to delete a backend service used by a forwarding rule.
 func (f *fakeCompute) usedBy(p string, obj map[string]any) string {
@@ -259,12 +316,13 @@ func field[T any](obj map[string]any, key string) T {
 
 func testLBConfig() *lbConfig {
 	return &lbConfig{
-		ClusterName:         "demo",
-		ProjectID:           testProject,
-		Region:              testRegion,
-		Name:                "demo-kubeapi",
-		Network:             "global/networks/default",
-		AllowedSourceRanges: []string{"0.0.0.0/0"},
+		ClusterName:             "demo",
+		ProjectID:               testProject,
+		ServiceAccountProjectID: testProject,
+		Region:                  testRegion,
+		Name:                    "demo-kubeapi",
+		Network:                 "global/networks/default",
+		AllowedSourceRanges:     []string{"0.0.0.0/0"},
 	}
 }
 
@@ -666,5 +724,367 @@ func TestFakeRefusesDeletingUsedResources(t *testing.T) {
 	_, err := svc.RegionBackendServices.Delete(cfg.ProjectID, cfg.Region, cfg.Name).Do()
 	if err == nil || !strings.Contains(err.Error(), "resourceInUseByAnotherResource") {
 		t.Fatalf("expected in-use error, got %v", err)
+	}
+}
+
+func TestResolveNetwork(t *testing.T) {
+	f, svc := newFakeCompute(t)
+	f.put("projects/host/regions/europe-west3/subnetworks/shared", map[string]any{
+		"network": "https://www.googleapis.com/compute/v1/projects/host/global/networks/shared-vpc",
+	})
+	f.put("projects/proj/regions/europe-west3/subnetworks/own", map[string]any{
+		"network": "https://www.googleapis.com/compute/v1/projects/proj/global/networks/my-vpc",
+	})
+	f.put("projects/proj/regions/europe-west3/subnetworks/other", map[string]any{
+		"network": "https://www.googleapis.com/compute/v1/projects/proj/global/networks/other-vpc",
+	})
+
+	tests := []struct {
+		name    string
+		network string
+		specs   []string
+		want    string
+		wantErr bool
+	}{
+		{
+			name:    "configured network of the nodeSets",
+			network: "my-vpc",
+			specs:   []string{`{"zone":"europe-west3-a","subnetwork":"own"}`},
+			want:    "projects/proj/global/networks/my-vpc",
+		},
+		{
+			name:    "configured network isn't the network of the nodeSets",
+			network: "global/networks/configured",
+			specs:   []string{`{"zone":"europe-west3-a","subnetwork":"own"}`},
+			wantErr: true,
+		},
+		{
+			// Same name, but the service project's network, not the host project's
+			name:    "configured Shared VPC network of another project",
+			network: "projects/host/global/networks/my-vpc",
+			specs:   []string{`{"zone":"europe-west3-a","network":"my-vpc"}`},
+			wantErr: true,
+		},
+		{
+			name:    "subnetwork-only and default network nodeSets",
+			specs:   []string{`{"zone":"europe-west3-a","subnetwork":"own"}`, `{"zone":"europe-west3-b"}`},
+			wantErr: true,
+		},
+		{
+			name:  "no network and subnetwork",
+			specs: []string{`{"zone":"europe-west3-a"}`},
+			want:  "projects/proj/global/networks/default",
+		},
+		{
+			name:  "subnetwork name",
+			specs: []string{`{"zone":"europe-west3-a","subnetwork":"own"}`},
+			want:  "projects/proj/global/networks/my-vpc",
+		},
+		{
+			name:  "shared VPC subnetwork of a host project",
+			specs: []string{`{"zone":"europe-west3-a","subnetwork":"projects/host/regions/europe-west3/subnetworks/shared"}`},
+			want:  "projects/host/global/networks/shared-vpc",
+		},
+		{
+			name:  "network and subnetwork of the same network",
+			specs: []string{`{"zone":"europe-west3-a","subnetwork":"own"}`, `{"zone":"europe-west3-b","network":"my-vpc"}`},
+			want:  "projects/proj/global/networks/my-vpc",
+		},
+		{
+			name:    "subnetworks of different networks",
+			specs:   []string{`{"zone":"europe-west3-a","subnetwork":"own"}`, `{"zone":"europe-west3-b","subnetwork":"other"}`},
+			wantErr: true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			cfg := testLBConfig()
+			cfg.Network = tc.network
+
+			var nodeSets []kubeoneapi.NodeSet
+			for i, spec := range tc.specs {
+				nodeSets = append(nodeSets, kubeoneapi.NodeSet{Name: fmt.Sprintf("cp-%d", i), Replicas: 1, CloudProviderSpec: []byte(spec)})
+			}
+
+			err := resolveNetwork(context.Background(), svc, cfg, nodeSets)
+			switch {
+			case tc.wantErr && err == nil:
+				t.Fatalf("expected an error, got network %q", cfg.Network)
+			case !tc.wantErr && err != nil:
+				t.Fatalf("resolveNetwork: %v", err)
+			case !tc.wantErr && cfg.Network != tc.want:
+				t.Errorf("got network %q, want %q", cfg.Network, tc.want)
+			}
+		})
+	}
+}
+
+// controlPlane creates the load balancer and the VMs of testNodeSets:
+// demo-cp-a-0, demo-cp-a-1 (europe-west3-a) and demo-cp-b-0 (europe-west3-b).
+func controlPlane(t *testing.T) (*fakeCompute, *compute.Service, *lbConfig, []clusterv1alpha1.Machine) {
+	t.Helper()
+
+	f, svc := newFakeCompute(t)
+	cfg := testLBConfig()
+	ensureAll(t, svc, cfg)
+
+	machines, err := generateGCEControlPlaneMachines("demo", testNodeSets(), "1.36.0")
+	if err != nil {
+		t.Fatalf("generating machines: %v", err)
+	}
+
+	putInstance(f, testZone, "demo-cp-a-0", "10.156.0.2", testSubnet)
+	putInstance(f, testZone, "demo-cp-a-1", "10.156.0.3", testSubnet)
+	putInstance(f, "europe-west3-b", "demo-cp-b-0", "10.156.0.4", testSubnet)
+
+	return f, svc, cfg, machines
+}
+
+func backendService(t *testing.T, svc *compute.Service, cfg *lbConfig) *compute.BackendService {
+	t.Helper()
+
+	bs, err := svc.RegionBackendServices.Get(cfg.ProjectID, cfg.Region, cfg.Name).Do()
+	if err != nil {
+		t.Fatalf("getting backend service: %v", err)
+	}
+
+	return bs
+}
+
+func members(f *fakeCompute) []string {
+	all := append(negEndpoints(f, testZone), negEndpoints(f, "europe-west3-b")...)
+	var names []string
+	for _, ep := range all {
+		names = append(names, strings.SplitN(ep, "/", 2)[0])
+	}
+	slices.Sort(names)
+
+	return names
+}
+
+func TestEnsureLeaderEndpoint(t *testing.T) {
+	tests := []struct {
+		name string
+		// members are attached before, healthy are the healthy ones of them
+		members []string
+		healthy []string
+		want    []string
+	}{
+		{
+			name: "new load balancer",
+			want: []string{"demo-cp-a-0"},
+		},
+		{
+			// kubeone reset without destroying the VMs keeps the endpoints,
+			// the cluster is created again
+			name:    "members of a reset cluster",
+			members: []string{"demo-cp-a-1", "demo-cp-b-0"},
+			want:    []string{"demo-cp-a-0", "demo-cp-a-1", "demo-cp-b-0"},
+		},
+		{
+			// the first VM was lost and recreated, it joins the serving cluster
+			name:    "other healthy members",
+			members: []string{"demo-cp-a-1", "demo-cp-b-0"},
+			healthy: []string{"demo-cp-a-1", "demo-cp-b-0"},
+			want:    []string{"demo-cp-a-1", "demo-cp-b-0"},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			f, svc, cfg, machines := controlPlane(t)
+			for _, m := range tc.members {
+				zone := testZone
+				if m == "demo-cp-b-0" {
+					zone = "europe-west3-b"
+				}
+				if err := ensureVMEndpoint(t, svc, cfg, zone, m); err != nil {
+					t.Fatalf("attaching %s: %v", m, err)
+				}
+			}
+			for _, h := range tc.healthy {
+				f.healthy[h] = true
+			}
+
+			if err := ensureLeaderEndpointWith(context.Background(), svc, cfg, backendService(t, svc, cfg), machines[0], logrus.New()); err != nil {
+				t.Fatalf("ensureLeaderEndpointWith: %v", err)
+			}
+
+			if got := members(f); !slices.Equal(got, tc.want) {
+				t.Errorf("got members %v, want %v", got, tc.want)
+			}
+		})
+	}
+}
+
+func TestRemoveJoiningEndpoints(t *testing.T) {
+	f, svc, cfg, machines := controlPlane(t)
+
+	// A reset cluster: all VMs kept their endpoints, the followers join again
+	for _, m := range []struct{ zone, name string }{{testZone, "demo-cp-a-1"}, {"europe-west3-b", "demo-cp-b-0"}} {
+		if err := ensureVMEndpoint(t, svc, cfg, m.zone, m.name); err != nil {
+			t.Fatalf("attaching %s: %v", m.name, err)
+		}
+	}
+
+	joining := []string{"demo-cp-a-1", "demo-cp-b-0"}
+	if err := removeJoiningEndpoints(context.Background(), svc, cfg, backendService(t, svc, cfg), machines, "demo-cp-a-0", joining, logrus.New()); err != nil {
+		t.Fatalf("removeJoiningEndpoints: %v", err)
+	}
+
+	// Only the leader, which serves kube-apiserver, stays
+	if got := members(f); !slices.Equal(got, []string{"demo-cp-a-0"}) {
+		t.Errorf("got members %v, want only the leader", got)
+	}
+
+	// No joining hosts: nothing is removed, running it again changes nothing
+	before := len(f.mutations())
+	if err := removeJoiningEndpoints(context.Background(), svc, cfg, backendService(t, svc, cfg), machines, "demo-cp-a-0", nil, logrus.New()); err != nil {
+		t.Fatalf("removeJoiningEndpoints: %v", err)
+	}
+	if got := f.mutations(); len(got) != before {
+		t.Errorf("second run made changes: %v", got[before:])
+	}
+
+	// After they joined, all are added
+	for _, m := range []struct{ zone, name string }{{testZone, "demo-cp-a-1"}, {"europe-west3-b", "demo-cp-b-0"}} {
+		if err := ensureVMEndpoint(t, svc, cfg, m.zone, m.name); err != nil {
+			t.Fatalf("attaching %s: %v", m.name, err)
+		}
+	}
+	if got := members(f); !slices.Equal(got, []string{"demo-cp-a-0", "demo-cp-a-1", "demo-cp-b-0"}) {
+		t.Errorf("got members %v after joining", got)
+	}
+}
+
+func TestSharedVPCFirewalls(t *testing.T) {
+	f, svc := newFakeCompute(t)
+	cfg := testLBConfig()
+	cfg.Network = "projects/host/global/networks/shared-vpc"
+
+	if err := ensureFirewalls(context.Background(), svc, cfg); err != nil {
+		t.Fatalf("ensureFirewalls: %v", err)
+	}
+
+	// Firewall rules of a Shared VPC network are in its host project
+	for _, name := range []string{"demo-kubeapi-6443", "demo-kubeapi-6443-hc"} {
+		if f.get("projects/host/global/firewalls/"+name) == nil {
+			t.Errorf("firewall rule %s not created in the host project", name)
+		}
+		if f.get("projects/proj/global/firewalls/"+name) != nil {
+			t.Errorf("firewall rule %s created in the service project", name)
+		}
+	}
+
+	if err := cleanupLoadBalancer(context.Background(), svc, cfg, "", logrus.New()); err != nil {
+		t.Fatalf("cleanupLoadBalancer: %v", err)
+	}
+	if left := ownedResources(f); len(left) != 0 {
+		t.Errorf("owned resources left: %v", left)
+	}
+}
+
+func TestEnsureEndpointReplacesStaleIP(t *testing.T) {
+	f, svc, cfg, _ := controlPlane(t)
+
+	if err := ensureVMEndpoint(t, svc, cfg, testZone, "demo-cp-a-0"); err != nil {
+		t.Fatalf("ensureEndpoint: %v", err)
+	}
+
+	// The VM is recreated with the same name and another IP address, the
+	// endpoint of the former VM is still there
+	putInstance(f, testZone, "demo-cp-a-0", "10.156.0.99", testSubnet)
+	if err := ensureVMEndpoint(t, svc, cfg, testZone, "demo-cp-a-0"); err != nil {
+		t.Fatalf("ensureEndpoint: %v", err)
+	}
+
+	if got := negEndpoints(f, testZone); !slices.Equal(got, []string{"demo-cp-a-0/10.156.0.99"}) {
+		t.Errorf("got endpoints %v, want only the new IP", got)
+	}
+}
+
+func TestSharedVPCSubnetworkCleanup(t *testing.T) {
+	f, svc := newFakeCompute(t)
+	f.put("projects/host/regions/europe-west3/subnetworks/shared", map[string]any{
+		"network": "https://www.googleapis.com/compute/v1/projects/host/global/networks/shared-vpc",
+	})
+	nodeSets := []kubeoneapi.NodeSet{{
+		Name: "cp", Replicas: 1,
+		CloudProviderSpec: []byte(`{"zone":"europe-west3-a","subnetwork":"projects/host/regions/europe-west3/subnetworks/shared"}`),
+	}}
+
+	// apply and reset resolve the network the same way, from the nodeSets
+	for _, step := range []string{"apply", "reset"} {
+		cfg := testLBConfig()
+		cfg.Network = ""
+		if err := resolveNetwork(context.Background(), svc, cfg, nodeSets); err != nil {
+			t.Fatalf("%s: resolveNetwork: %v", step, err)
+		}
+
+		var err error
+		if step == "apply" {
+			err = ensureFirewalls(context.Background(), svc, cfg)
+		} else {
+			err = cleanupLoadBalancer(context.Background(), svc, cfg, "", logrus.New())
+		}
+		if err != nil {
+			t.Fatalf("%s: %v", step, err)
+		}
+	}
+
+	if left := ownedResources(f); len(left) != 0 {
+		t.Errorf("firewall rules left in the host project: %v", left)
+	}
+	if !slices.Contains(f.deleted, "projects/host/global/firewalls/demo-kubeapi-6443") {
+		t.Errorf("firewall rule not deleted in the host project, deleted %v", f.deleted)
+	}
+}
+
+func TestEnsureFirewallsReconcile(t *testing.T) {
+	t.Run("target tags are updated", func(t *testing.T) {
+		f, svc := newFakeCompute(t)
+		cfg := testLBConfig()
+		ensureAll(t, svc, cfg)
+		f.get("projects/proj/global/firewalls/demo-kubeapi-6443")["targetTags"] = []any{"old-tag"}
+
+		if err := ensureFirewalls(context.Background(), svc, cfg); err != nil {
+			t.Fatalf("ensureFirewalls: %v", err)
+		}
+		if got := fmt.Sprint(f.get("projects/proj/global/firewalls/demo-kubeapi-6443")["targetTags"]); got != "[demo-control-plane]" {
+			t.Errorf("target tags not updated, got %s", got)
+		}
+	})
+
+	t.Run("rule in another network", func(t *testing.T) {
+		_, svc := newFakeCompute(t)
+		cfg := testLBConfig()
+		ensureAll(t, svc, cfg)
+
+		cfg.Network = "global/networks/other"
+		err := ensureFirewalls(context.Background(), svc, cfg)
+		if err == nil || !strings.Contains(err.Error(), "delete the firewall rule") {
+			t.Fatalf("expected a network mismatch error, got %v", err)
+		}
+	})
+}
+
+func TestRemoveJoiningEndpointsRepair(t *testing.T) {
+	f, svc, cfg, machines := controlPlane(t)
+
+	// demo-cp-a-0 was lost and recreated: the stale endpoint is still there,
+	// demo-cp-b-0 was elected leader as a healthy member
+	for _, m := range []struct{ zone, name string }{{testZone, "demo-cp-a-0"}, {"europe-west3-b", "demo-cp-b-0"}} {
+		if err := ensureVMEndpoint(t, svc, cfg, m.zone, m.name); err != nil {
+			t.Fatalf("attaching %s: %v", m.name, err)
+		}
+	}
+
+	if err := removeJoiningEndpoints(context.Background(), svc, cfg, backendService(t, svc, cfg), machines, "demo-cp-b-0", []string{"demo-cp-a-0"}, logrus.New()); err != nil {
+		t.Fatalf("removeJoiningEndpoints: %v", err)
+	}
+
+	if got := members(f); !slices.Equal(got, []string{"demo-cp-b-0"}) {
+		t.Errorf("got members %v, want only the elected leader", got)
 	}
 }

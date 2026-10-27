@@ -30,13 +30,25 @@ import (
 	"google.golang.org/api/googleapi"
 	"google.golang.org/api/option"
 
-	"k8c.io/kubeone/pkg/cloudprovider/gce"
 	"k8c.io/kubeone/pkg/credentials"
 )
 
-// gceWorkersLabel is the label applied to worker instances by the
-// managed_cp_gce*.yaml manifests, used by the janitor.
-const gceWorkersLabel = "kubeone_workers"
+const (
+	// gceWorkersLabel is the label applied to worker instances by the
+	// managed_cp_gce*.yaml manifests, used by the janitor.
+	gceWorkersLabel = "kubeone_workers"
+
+	// gceClusterNameLabel is set to the cluster name on the control plane
+	// instances by KubeOne. It's not taken from the KubeOne code, so that a
+	// change of the marker is caught instead of followed.
+	gceClusterNameLabel = "kubeone_cluster_name"
+)
+
+// gceOwnerDescription is the description KubeOne sets on the load balancer
+// resources and firewall rules of the cluster.
+func gceOwnerDescription(clusterName string) string {
+	return "kubeone:" + clusterName
+}
 
 func newGCECloud(ctx context.Context, clusterName string) (*gceCloud, error) {
 	serviceAccount := os.Getenv(credentials.GoogleServiceAccountKey)
@@ -77,13 +89,13 @@ type gceCloud struct {
 }
 
 func (g *gceCloud) ControlPlaneVMs(ctx context.Context) (int, error) {
-	instances, err := g.instancesByLabel(ctx, gce.ClusterNameLabel)
+	instances, err := g.instancesByLabel(ctx, gceClusterNameLabel)
 
 	return len(instances), err
 }
 
 func (g *gceCloud) LoadBalancers(ctx context.Context) ([]string, error) {
-	owner := gce.OwnerDescription(g.clusterName)
+	owner := gceOwnerDescription(g.clusterName)
 
 	var ips []string
 	err := g.svc.ForwardingRules.AggregatedList(g.project).Pages(ctx, func(page *compute.ForwardingRuleAggregatedList) error {
@@ -104,12 +116,63 @@ func (g *gceCloud) LoadBalancers(ctx context.Context) ([]string, error) {
 	return ips, nil
 }
 
+func (g *gceCloud) HealthyLoadBalancerMembers(ctx context.Context) (int, error) {
+	owner := gceOwnerDescription(g.clusterName)
+	healthy := 0
+
+	var services []*compute.BackendService
+	err := g.svc.BackendServices.AggregatedList(g.project).Pages(ctx, func(page *compute.BackendServiceAggregatedList) error {
+		for _, scoped := range page.Items {
+			for _, bs := range scoped.BackendServices {
+				if bs.Description == owner && bs.Region != "" {
+					services = append(services, bs)
+				}
+			}
+		}
+
+		return nil
+	})
+	if err != nil {
+		return 0, fmt.Errorf("listing backend services: %w", err)
+	}
+
+	for _, bs := range services {
+		for _, backend := range bs.Backends {
+			health, err := g.svc.RegionBackendServices.GetHealth(g.project, path.Base(bs.Region), bs.Name, &compute.ResourceGroupReference{
+				Group: backend.Group,
+			}).Context(ctx).Do()
+			if err != nil {
+				return 0, fmt.Errorf("getting health of backend service %q: %w", bs.Name, err)
+			}
+
+			for _, status := range health.HealthStatus {
+				if status.HealthState == "HEALTHY" {
+					healthy++
+				}
+			}
+		}
+	}
+
+	return healthy, nil
+}
+
+func (g *gceCloud) LeftoverResources(ctx context.Context) ([]string, error) {
+	resources, err := g.ownedLoadBalancerResources(ctx)
+
+	var names []string
+	for _, r := range resources {
+		names = append(names, r.kind+" "+r.name)
+	}
+
+	return names, err
+}
+
 // Janitor deletes the instances first and then the load balancer resources,
 // in reverse order of their dependencies, waiting for each step.
 func (g *gceCloud) Janitor(ctx context.Context) error {
 	var errs []error
 
-	for _, label := range []string{gce.ClusterNameLabel, gceWorkersLabel} {
+	for _, label := range []string{gceClusterNameLabel, gceWorkersLabel} {
 		instances, err := g.instancesByLabel(ctx, label)
 		if err != nil {
 			errs = append(errs, err)
@@ -166,7 +229,7 @@ type gceResource struct {
 // ownedLoadBalancerResources returns the owned resources in the order they
 // have to be deleted.
 func (g *gceCloud) ownedLoadBalancerResources(ctx context.Context) ([]gceResource, error) {
-	owner := gce.OwnerDescription(g.clusterName)
+	owner := gceOwnerDescription(g.clusterName)
 	var (
 		resources []gceResource
 		errs      []error

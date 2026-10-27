@@ -33,6 +33,22 @@ type managedControlPlaneCloud interface {
 	Janitor(ctx context.Context) error
 }
 
+// loadBalancerMembersCloud is implemented by clouds where KubeOne adds the
+// control plane VMs to the load balancer one by one, e.g. GCE where they are
+// added only after they joined the cluster.
+type loadBalancerMembersCloud interface {
+	// HealthyLoadBalancerMembers returns the number of control plane VMs that
+	// are healthy members of the load balancers created by KubeOne
+	HealthyLoadBalancerMembers(ctx context.Context) (int, error)
+}
+
+// leftoverResourcesCloud is implemented by clouds where the load balancer
+// consists of several resources, it returns the ones of the cluster that
+// still exist (e.g. "firewall rule k1-123-kubeapi-6443").
+type leftoverResourcesCloud interface {
+	LeftoverResources(ctx context.Context) ([]string, error)
+}
+
 // newManagedControlPlaneCloud returns the managedControlPlaneCloud of the
 // provider. tfOutput holds the output values of the infrastructure Terraform
 // configs, nil if the infrastructure has none.

@@ -181,6 +181,11 @@ func WithFullInstall(t Tasks) Tasks {
 				Operation: "approving leader's kubelet CSR",
 			},
 			{Fn: repairClusterIfNeeded, Operation: "repairing cluster"},
+			{
+				Fn:        removeJoiningLoadBalancerMembers,
+				Operation: "removing joining control plane nodes from the load balancer",
+				Predicate: func(s *state.State) bool { return len(s.Cluster.ControlPlane.NodeSets) != 0 },
+			},
 			{Fn: joinControlplaneNode, Operation: "joining followers control plane nodes"},
 			{Fn: restartKubeAPIServer, Operation: "restarting unhealthy kube-apiserver"},
 		}...).
@@ -222,6 +227,13 @@ func WithFullInstall(t Tasks) Tasks {
 func WithResources(t Tasks) Tasks {
 	return t.append(
 		Tasks{
+			{
+				// WithResources runs once the control plane serves, after
+				// the followers joined, so all of them can be added
+				Fn:        ensureLoadBalancerMembers,
+				Operation: "adding control plane nodes to the load balancer",
+				Predicate: func(s *state.State) bool { return len(s.Cluster.ControlPlane.NodeSets) != 0 },
+			},
 			{
 				Fn: saveCABundle,
 				Predicate: func(s *state.State) bool {

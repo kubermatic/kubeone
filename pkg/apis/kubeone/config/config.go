@@ -458,21 +458,23 @@ func setDefaultAzureControlPlane(clusterName string, azCP *kubeoneapi.AzureContr
 }
 
 func setDefaultGCEControlPlane(clusterName string, nodeSets []kubeoneapi.NodeSet, gceCP *kubeoneapi.GCEControlPlane) {
-	if gceCP.LoadBalancer.Region == "" && len(nodeSets) > 0 {
-		// Errors are ignored on purpose, malformed specs are reported by the validation
-		var spec gcetypes.RawConfig
-		if err := jsonutil.StrictUnmarshal(nodeSets[0].CloudProviderSpec, &spec); err == nil {
-			gceCP.LoadBalancer.Region = gceZoneRegion(spec.Zone.Value)
-		}
+	// Errors are ignored on purpose, malformed specs are reported by the validation
+	var spec gcetypes.RawConfig
+	if len(nodeSets) > 0 {
+		_ = jsonutil.StrictUnmarshal(nodeSets[0].CloudProviderSpec, &spec)
 	}
+
+	if gceCP.LoadBalancer.Region == "" {
+		gceCP.LoadBalancer.Region = gceZoneRegion(spec.Zone.Value)
+	}
+
+	// The network isn't defaulted: it's resolved from all control plane
+	// nodeSets when the load balancer is ensured, which might require
+	// looking up their subnetworks.
 
 	gceCP.LoadBalancer.Name = defaults(
 		gceCP.LoadBalancer.Name,
 		clusterName+"-kubeapi",
-	)
-	gceCP.LoadBalancer.Network = defaults(
-		gceCP.LoadBalancer.Network,
-		"global/networks/default",
 	)
 	if len(gceCP.LoadBalancer.AllowedSourceRanges) == 0 {
 		gceCP.LoadBalancer.AllowedSourceRanges = []string{"0.0.0.0/0"}

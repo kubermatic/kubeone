@@ -77,6 +77,11 @@ dynamicWorkers:
       labels:
         # used by the e2e janitor to find leftover workers
         kubeone_workers: '{{ .ClusterName }}'
+      # The GCP cloud controller manager targets the firewall rules of
+      # LoadBalancer Services at a network tag of each node that is a prefix
+      # of its instance name
+      tags:
+      - '{{ .ClusterName }}-pool1'
 
 containerRuntime:
   containerd: {}
