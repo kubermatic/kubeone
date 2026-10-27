@@ -62,6 +62,14 @@ cluster. It only talks to the tenant API server and never needs infra credential
 
 It also copies zone and region labels from the selected node onto the `nodeAffinity` of bound PVs.
 
+On existing StorageClasses the operator only updates `parameters` and `volumeBindingMode`, which are immutable. A
+changed `bus` or `volumeBindingMode` therefore makes it fail at that StorageClass on every reconcile, skipping the
+remaining StorageClasses and the VolumeSnapshotClasses. KubeOne handles this after writing the `Tenant`: it deletes
+every StorageClass whose `bus`, `volumeBindingMode` or `reclaimPolicy` differs from the configuration, waits until the
+operator has recreated them from the `Tenant`, and then patches `allowVolumeExpansion` and labels, which the operator
+sets only on creation. All of them are deleted before waiting, because the operator stops at the first one still
+there. Existing PVs are not affected; new PVCs of these classes wait for the recreation.
+
 The operator does **not** deploy the CSI controller (provisioner/attacher). It also deletes any Deployment
 `kubevirt-csi-driver/kubevirt-csi-controller`, which is a leftover from older versions. The integrator has to run the
 controller. The driver supports this with `--tenant-cluster-kubeconfig` and `--infra-cluster-kubeconfig`, and the CSI

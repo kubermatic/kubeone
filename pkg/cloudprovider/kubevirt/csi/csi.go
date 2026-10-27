@@ -22,6 +22,7 @@ package csi
 import (
 	"context"
 	"maps"
+	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -58,6 +59,9 @@ const (
 
 	crdWaitInterval = 2 * time.Second
 	crdWaitTimeout  = 2 * time.Minute
+
+	storageClassWaitInterval = 2 * time.Second
+	storageClassWaitTimeout  = 2 * time.Minute
 )
 
 // Component is the infra cluster identity of the CSI controller. The driver
@@ -160,29 +164,65 @@ func StorageClassName(infraStorageClassName string) string {
 	return "kubevirt-" + infraStorageClassName
 }
 
-// reconcileStorageClasses updates the mutable fields of existing tenant
-// StorageClasses that kubevirt-csi-driver-operator sets only on creation:
-// allowVolumeExpansion and labels. Labels are added or updated, but never
-// removed, since other labels might be set by someone else. StorageClasses
-// that don't exist yet are left to the operator.
+// reconcileStorageClasses reconciles the existing tenant StorageClasses,
+// which kubevirt-csi-driver-operator doesn't fully update. StorageClasses
+// that don't exist yet are left to the operator. It runs after the Tenant
+// with the configured values is written.
 //
 // Bus, volumeBindingMode and reclaimPolicy can't be changed on an existing
-// StorageClass; changes to them are only reported.
-func reconcileStorageClasses(ctx context.Context, c ctrlrt.Client, logger logrus.FieldLogger, spec *kubeoneapi.KubevirtSpec) error {
+// StorageClass. The operator tries to update the first two anyway and stops
+// reconciling at the rejected update, and never updates reclaimPolicy.
+// StorageClasses with changes to them are deleted, so the operator recreates
+// them from the Tenant. All of them are deleted before waiting, because the
+// operator stops at the first one that is still there. Existing
+// PersistentVolumes are not affected.
+//
+// The operator sets allowVolumeExpansion and labels only on creation, so they
+// are patched. Labels are added or updated, but never removed, since other
+// labels might be set by someone else.
+func reconcileStorageClasses(ctx context.Context, dynClient ctrlrt.Client, logger logrus.FieldLogger, spec *kubeoneapi.KubevirtSpec) error {
+	recreated := map[string]bool{}
+
 	for _, want := range spec.StorageClasses {
-		sc := &storagev1.StorageClass{}
-		key := ctrlrt.ObjectKey{Name: StorageClassName(want.InfraStorageClassName)}
-
-		if err := c.Get(ctx, key, sc); err != nil {
-			if apierrors.IsNotFound(err) {
-				continue
-			}
-
-			return fail.KubeClient(err, "getting StorageClass %s", key.Name)
+		sc, found, err := getStorageClass(ctx, dynClient, StorageClassName(want.InfraStorageClassName))
+		if err != nil {
+			return err
+		}
+		if !found {
+			continue
 		}
 
-		for _, field := range immutableStorageClassChanges(sc, want) {
-			logger.Warnf("StorageClass %q: %s can't be changed on an existing StorageClass, delete it to have it recreated by the operator", sc.Name, field)
+		changed := immutableStorageClassChanges(sc, want)
+		if len(changed) == 0 {
+			continue
+		}
+
+		logger.Infof("Recreating StorageClass %q to change %s...", sc.Name, strings.Join(changed, ", "))
+
+		if err = clientutil.DeleteIfExists(ctx, dynClient, sc); err != nil {
+			return err
+		}
+		recreated[sc.Name] = true
+	}
+
+	for _, want := range spec.StorageClasses {
+		var (
+			name  = StorageClassName(want.InfraStorageClassName)
+			sc    *storagev1.StorageClass
+			found = true
+			err   error
+		)
+
+		if recreated[name] {
+			sc, err = waitStorageClassRecreated(ctx, dynClient, name, want)
+		} else {
+			sc, found, err = getStorageClass(ctx, dynClient, name)
+		}
+		if err != nil {
+			return err
+		}
+		if !found {
+			continue
 		}
 
 		patch := ctrlrt.MergeFrom(sc.DeepCopy())
@@ -192,12 +232,47 @@ func reconcileStorageClasses(ctx context.Context, c ctrlrt.Client, logger logrus
 		}
 		maps.Copy(sc.Labels, want.Labels)
 
-		if err := c.Patch(ctx, sc, patch); err != nil {
+		if err := dynClient.Patch(ctx, sc, patch); err != nil {
 			return fail.KubeClient(err, "patching StorageClass %s", sc.Name)
 		}
 	}
 
 	return nil
+}
+
+// getStorageClass returns the StorageClass and whether it exists.
+func getStorageClass(ctx context.Context, dynClient ctrlrt.Client, name string) (*storagev1.StorageClass, bool, error) {
+	sc := &storagev1.StorageClass{}
+	if err := dynClient.Get(ctx, ctrlrt.ObjectKey{Name: name}, sc); err != nil {
+		if apierrors.IsNotFound(err) {
+			return nil, false, nil
+		}
+
+		return nil, false, fail.KubeClient(err, "getting StorageClass %s", name)
+	}
+
+	return sc, true, nil
+}
+
+// waitStorageClassRecreated waits until kubevirt-csi-driver-operator has
+// recreated the deleted StorageClass with the configured immutable fields.
+func waitStorageClassRecreated(ctx context.Context, dynClient ctrlrt.Client, name string, want kubeoneapi.KubevirtInfraStorageClass) (*storagev1.StorageClass, error) {
+	var sc *storagev1.StorageClass
+
+	err := wait.PollUntilContextTimeout(ctx, storageClassWaitInterval, storageClassWaitTimeout, true, func(ctx context.Context) (bool, error) {
+		var (
+			found bool
+			err   error
+		)
+		sc, found, err = getStorageClass(ctx, dynClient, name)
+		if err != nil || !found {
+			return false, err
+		}
+
+		return sc.DeletionTimestamp == nil && len(immutableStorageClassChanges(sc, want)) == 0, nil
+	})
+
+	return sc, fail.KubeClient(err, "waiting for kubevirt-csi-driver-operator to recreate StorageClass %s", name)
 }
 
 // immutableStorageClassChanges returns the immutable fields of the existing
@@ -236,8 +311,8 @@ func storageClassBus(sc kubeoneapi.KubevirtInfraStorageClass) string {
 	return sc.Bus
 }
 
-func waitCRDEstablished(ctx context.Context, c ctrlrt.Client, name string) error {
-	condFn := clientutil.CRDsReadyCondition(ctx, c, []string{name})
+func waitCRDEstablished(ctx context.Context, dynClient ctrlrt.Client, name string) error {
+	condFn := clientutil.CRDsReadyCondition(ctx, dynClient, []string{name})
 
 	err := wait.PollUntilContextTimeout(ctx, crdWaitInterval, crdWaitTimeout, true, func(context.Context) (bool, error) {
 		ok, err := condFn()
