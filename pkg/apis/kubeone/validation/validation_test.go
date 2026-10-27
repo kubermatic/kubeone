@@ -3559,3 +3559,140 @@ func TestValidateAuthenticationConfigurationFlags(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateGCESpec(t *testing.T) {
+	const validSpec = `{"zone":"europe-west3-a","machineType":"e2-standard-2"}`
+
+	nodeSet := func(name, spec string) kubeoneapi.NodeSet {
+		return kubeoneapi.NodeSet{Name: name, Replicas: 3, CloudProviderSpec: []byte(spec)}
+	}
+	defaultLB := kubeoneapi.GCELoadBalancer{Name: "demo-kubeapi", Region: "europe-west3", AllowedSourceRanges: []string{"0.0.0.0/0"}}
+	withLB := func(modify func(*kubeoneapi.GCELoadBalancer)) *kubeoneapi.GCELoadBalancer {
+		lb := defaultLB
+		modify(&lb)
+
+		return &lb
+	}
+
+	tests := []struct {
+		name          string
+		clusterName   string
+		lb            *kubeoneapi.GCELoadBalancer
+		nodeSets      []kubeoneapi.NodeSet
+		expectedError bool
+	}{
+		{
+			name:        "no nodeSets",
+			clusterName: "Not_Valid",
+		},
+		{
+			name:        "valid",
+			clusterName: "demo",
+			lb:          &defaultLB,
+			nodeSets:    []kubeoneapi.NodeSet{nodeSet("cp", validSpec)},
+		},
+		{
+			name:        "projectID and region are optional",
+			clusterName: "demo",
+			lb:          withLB(func(lb *kubeoneapi.GCELoadBalancer) { lb.Region = "" }),
+			nodeSets:    []kubeoneapi.NodeSet{nodeSet("cp", validSpec)},
+		},
+		{
+			name:          "uppercase cluster name",
+			clusterName:   "Demo",
+			lb:            &defaultLB,
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet("cp", validSpec)},
+			expectedError: true,
+		},
+		{
+			// "<57>-cp-2" = 62, "<57>-control-plane" = 71
+			name:          "control plane network tag over the limit",
+			clusterName:   strings.Repeat("a", 57),
+			lb:            &defaultLB,
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet("cp", validSpec)},
+			expectedError: true,
+		},
+		{
+			name:          "instance name with invalid characters",
+			clusterName:   "demo",
+			lb:            &defaultLB,
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet("CP_1", validSpec)},
+			expectedError: true,
+		},
+		{
+			name:          "invalid load balancer name",
+			clusterName:   "demo",
+			lb:            withLB(func(lb *kubeoneapi.GCELoadBalancer) { lb.Name = "1-kubeapi" }),
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet("cp", validSpec)},
+			expectedError: true,
+		},
+		{
+			// "<48>-europe-west3-a" = 63
+			name:        "network endpoint group name at the limit",
+			clusterName: "demo",
+			lb:          withLB(func(lb *kubeoneapi.GCELoadBalancer) { lb.Name = strings.Repeat("a", 48) }),
+			nodeSets:    []kubeoneapi.NodeSet{nodeSet("cp", validSpec)},
+		},
+		{
+			name:          "network endpoint group name over the limit",
+			clusterName:   "demo",
+			lb:            withLB(func(lb *kubeoneapi.GCELoadBalancer) { lb.Name = strings.Repeat("a", 49) }),
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet("cp", validSpec)},
+			expectedError: true,
+		},
+		{
+			name:          "invalid allowed source range",
+			clusterName:   "demo",
+			lb:            withLB(func(lb *kubeoneapi.GCELoadBalancer) { lb.AllowedSourceRanges = []string{"10.0.0.0"} }),
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet("cp", validSpec)},
+			expectedError: true,
+		},
+		{
+			name:          "zone missing",
+			clusterName:   "demo",
+			lb:            &defaultLB,
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet("cp", `{"machineType":"e2-standard-2"}`)},
+			expectedError: true,
+		},
+		{
+			name:          "zone outside the load balancer region",
+			clusterName:   "demo",
+			lb:            &defaultLB,
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet("cp-a", validSpec), nodeSet("cp-b", `{"zone":"us-central1-a"}`)},
+			expectedError: true,
+		},
+		{
+			name:        "zones in the load balancer region",
+			clusterName: "demo",
+			lb:          &defaultLB,
+			nodeSets:    []kubeoneapi.NodeSet{nodeSet("cp-a", validSpec), nodeSet("cp-b", `{"zone":"europe-west3-b"}`)},
+		},
+		{
+			name:          "unknown cloudProviderSpec field",
+			clusterName:   "demo",
+			lb:            &defaultLB,
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet("cp", `{"zone":"europe-west3-a","foo":"bar"}`)},
+			expectedError: true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			spec := &kubeoneapi.GCESpec{}
+			if tc.lb != nil {
+				spec.ControlPlane = &kubeoneapi.GCEControlPlane{LoadBalancer: *tc.lb}
+			}
+
+			cluster := kubeoneapi.KubeOneCluster{
+				Name:          tc.clusterName,
+				CloudProvider: kubeoneapi.CloudProviderSpec{GCE: spec},
+				ControlPlane:  kubeoneapi.ControlPlaneConfig{NodeSets: tc.nodeSets},
+			}
+
+			errs := ValidateCloudProviderSpec(cluster, field.NewPath("cloudProvider"))
+			if (len(errs) != 0) != tc.expectedError {
+				t.Errorf("expected error %v, got %v", tc.expectedError, errs)
+			}
+		})
+	}
+}

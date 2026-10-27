@@ -244,6 +244,108 @@ func TestDigitalOceanManagedControlPlaneIsSupported(t *testing.T) {
 	}
 }
 
+func TestGCEControlPlaneDefaults(t *testing.T) {
+	nodeSets := []kubeoneapi.NodeSet{
+		{Name: "cp", Replicas: 3, CloudProviderSpec: []byte(`{"zone":"europe-west3-a","machineType":"e2-standard-2"}`)},
+	}
+
+	tests := []struct {
+		name     string
+		in       kubeoneapi.GCELoadBalancer
+		nodeSets []kubeoneapi.NodeSet
+		want     kubeoneapi.GCELoadBalancer
+	}{
+		{
+			name: "defaults",
+			in:   kubeoneapi.GCELoadBalancer{},
+			want: kubeoneapi.GCELoadBalancer{
+				Name:                "demo-kubeapi",
+				Region:              "europe-west3",
+				Network:             "global/networks/default",
+				AllowedSourceRanges: []string{"0.0.0.0/0"},
+			},
+		},
+		{
+			name: "user values are kept",
+			in: kubeoneapi.GCELoadBalancer{
+				ProjectID:           "proj",
+				Name:                "custom",
+				Region:              "us-central1",
+				Network:             "global/networks/vpc",
+				AllowedSourceRanges: []string{"10.0.0.0/8"},
+			},
+			want: kubeoneapi.GCELoadBalancer{
+				ProjectID:           "proj",
+				Name:                "custom",
+				Region:              "us-central1",
+				Network:             "global/networks/vpc",
+				AllowedSourceRanges: []string{"10.0.0.0/8"},
+			},
+		},
+		{
+			name:     "zone given as ConfigVar object",
+			in:       kubeoneapi.GCELoadBalancer{},
+			nodeSets: []kubeoneapi.NodeSet{{Name: "cp", Replicas: 1, CloudProviderSpec: []byte(`{"zone":{"value":"us-east1-b"}}`)}},
+			want: kubeoneapi.GCELoadBalancer{
+				Name:                "demo-kubeapi",
+				Region:              "us-east1",
+				Network:             "global/networks/default",
+				AllowedSourceRanges: []string{"0.0.0.0/0"},
+			},
+		},
+		{
+			name:     "no zone, no region",
+			in:       kubeoneapi.GCELoadBalancer{},
+			nodeSets: []kubeoneapi.NodeSet{{Name: "cp", Replicas: 1, CloudProviderSpec: []byte(`{}`)}},
+			want: kubeoneapi.GCELoadBalancer{
+				Name:                "demo-kubeapi",
+				Network:             "global/networks/default",
+				AllowedSourceRanges: []string{"0.0.0.0/0"},
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			cp := &kubeoneapi.GCEControlPlane{LoadBalancer: tc.in}
+			ns := nodeSets
+			if tc.nodeSets != nil {
+				ns = tc.nodeSets
+			}
+			setDefaultGCEControlPlane("demo", ns, cp)
+
+			if !reflect.DeepEqual(cp.LoadBalancer, tc.want) {
+				t.Errorf("got %+v, want %+v", cp.LoadBalancer, tc.want)
+			}
+		})
+	}
+}
+
+func TestGCEManagedControlPlaneIsSupported(t *testing.T) {
+	cluster := &kubeoneapi.KubeOneCluster{
+		Name: "demo",
+		CloudProvider: kubeoneapi.CloudProviderSpec{
+			GCE: &kubeoneapi.GCESpec{
+				ControlPlane: &kubeoneapi.GCEControlPlane{},
+			},
+		},
+		ControlPlane: kubeoneapi.ControlPlaneConfig{
+			NodeSets: []kubeoneapi.NodeSet{
+				{Name: "cp", Replicas: 1, CloudProviderSpec: []byte(`{"zone":"europe-west3-a"}`)},
+			},
+		},
+	}
+
+	if err := SetKubeOneClusterDynamicDefaults(cluster, "", ""); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	lb := cluster.CloudProvider.GCE.ControlPlane.LoadBalancer
+	if lb.Name != "demo-kubeapi" || lb.Region != "europe-west3" {
+		t.Fatalf("expected control plane load balancer to be defaulted, got %+v", lb)
+	}
+}
+
 func TestValidateAuthenticationConfigurationFile(t *testing.T) {
 	baseDir := t.TempDir()
 

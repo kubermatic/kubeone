@@ -23,6 +23,7 @@ import (
 	"net"
 	"os"
 	"reflect"
+	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -34,6 +35,7 @@ import (
 	helm "k8c.io/kubeone/pkg/localhelm"
 	"k8c.io/kubeone/pkg/semverutil"
 	digitaloceantypes "k8c.io/machine-controller/sdk/cloudprovider/digitalocean"
+	gcetypes "k8c.io/machine-controller/sdk/cloudprovider/gce"
 	"k8c.io/machine-controller/sdk/jsonutil"
 
 	"k8s.io/apimachinery/pkg/util/sets"
@@ -296,14 +298,7 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 			allErrs = append(allErrs, field.Forbidden(gceFld, "only one provider can be used at the same time"))
 		}
 		providerFound = true
-		allErrs = append(allErrs, validateGCESpec(providerSpec.GCE, gceFld)...)
-
-		// GCE control plane provisioning requires an explicit load balancer
-		// config since ProjectID/Region can't be sensibly defaulted.
-		if len(cluster.ControlPlane.NodeSets) > 0 && providerSpec.GCE.ControlPlane == nil {
-			allErrs = append(allErrs, field.Required(gceFld.Child("controlPlane"),
-				".cloudProvider.gce.controlPlane is required when using .controlPlane.nodeSets with GCE"))
-		}
+		allErrs = append(allErrs, validateGCESpec(providerSpec.GCE, cluster.Name, cluster.ControlPlane.NodeSets, gceFld)...)
 	}
 	if providerSpec.Hetzner != nil {
 		hetznerFld := fldPath.Child("hetzner")
@@ -442,20 +437,81 @@ func validateHetznerSpec(hetznerSpec *kubeoneapi.HetznerSpec, fldPath *field.Pat
 	return allErrs
 }
 
-func validateGCESpec(gceSpec *kubeoneapi.GCESpec, fldPath *field.Path) field.ErrorList {
+// validateGCESpec validates the GCE managed control plane. GCE resource names
+// must match gceResourceNameRegex, see
+// https://docs.cloud.google.com/compute/docs/naming-resources
+func validateGCESpec(gceSpec *kubeoneapi.GCESpec, clusterName string, nodeSets []kubeoneapi.NodeSet, fldPath *field.Path) field.ErrorList {
 	var allErrs field.ErrorList
 
+	if len(nodeSets) == 0 {
+		return allErrs
+	}
+
+	var lb kubeoneapi.GCELoadBalancer
 	if gceSpec.ControlPlane != nil {
-		lbFld := fldPath.Child("controlPlane").Child("loadBalancer")
-		if gceSpec.ControlPlane.LoadBalancer.ProjectID == "" {
-			allErrs = append(allErrs, field.Required(lbFld.Child("projectID"), "loadBalancer projectID is required when controlPlane is specified"))
+		lb = gceSpec.ControlPlane.LoadBalancer
+	}
+	lbFld := fldPath.Child("controlPlane", "loadBalancer")
+
+	// Label values allow the same characters as resource names, plus "_"
+	if !isGCEResourceName(clusterName) {
+		allErrs = append(allErrs, field.Invalid(field.NewPath("name"), clusterName, "cluster name is used in GCE resource names and labels, it "+gceResourceNameMsg))
+	}
+
+	if lb.Name != "" {
+		for _, name := range []string{lb.Name, lb.Name + "-6443", lb.Name + "-6443-hc"} {
+			if !isGCEResourceName(name) {
+				allErrs = append(allErrs, field.Invalid(lbFld.Child("name"), name, gceResourceNameMsg))
+			}
 		}
-		if gceSpec.ControlPlane.LoadBalancer.Region == "" {
-			allErrs = append(allErrs, field.Required(lbFld.Child("region"), "loadBalancer region is required when controlPlane is specified"))
+	}
+	if tag := clusterName + "-control-plane"; !isGCEResourceName(tag) {
+		allErrs = append(allErrs, field.Invalid(field.NewPath("name"), tag, "control plane network tag \"<cluster name>-control-plane\": "+gceResourceNameMsg))
+	}
+
+	for i, cidr := range lb.AllowedSourceRanges {
+		if _, _, err := net.ParseCIDR(cidr); err != nil {
+			allErrs = append(allErrs, field.Invalid(lbFld.Child("allowedSourceRanges").Index(i), cidr, "must be a valid CIDR"))
+		}
+	}
+
+	nodeSetsFld := field.NewPath("controlPlane", "nodeSets")
+	for i, ns := range nodeSets {
+		nsFld := nodeSetsFld.Index(i)
+
+		// The instance name the provider generates for the highest replica index
+		if name := ns.MachineName(clusterName, max(ns.Replicas-1, 0)); !isGCEResourceName(name) {
+			allErrs = append(allErrs, field.Invalid(nsFld, name, "control plane instance name \"<cluster name>-<nodeSet name>-<replica index>\": "+gceResourceNameMsg))
+		}
+
+		var rawConfig gcetypes.RawConfig
+		if err := jsonutil.StrictUnmarshal(ns.CloudProviderSpec, &rawConfig); err != nil {
+			allErrs = append(allErrs, field.Invalid(nsFld.Child("cloudProviderSpec"), string(ns.CloudProviderSpec), fmt.Sprintf("invalid gce cloudProviderSpec: %v", err)))
+
+			continue
+		}
+
+		specFld := nsFld.Child("cloudProviderSpec")
+		zone := rawConfig.Zone.Value
+		switch {
+		case zone == "":
+			allErrs = append(allErrs, field.Required(specFld.Child("zone"), "zone is required for control plane nodeSets"))
+		case lb.Region != "" && !strings.HasPrefix(zone, lb.Region+"-"):
+			allErrs = append(allErrs, field.Invalid(specFld.Child("zone"), zone, fmt.Sprintf("zone must be in the load balancer region %q", lb.Region)))
+		case lb.Name != "" && !isGCEResourceName(lb.Name+"-"+zone):
+			allErrs = append(allErrs, field.Invalid(lbFld.Child("name"), lb.Name+"-"+zone, "network endpoint group name \"<load balancer name>-<zone>\": "+gceResourceNameMsg))
 		}
 	}
 
 	return allErrs
+}
+
+const gceResourceNameMsg = "must be 1-63 lowercase letters, digits or \"-\", start with a letter and not end with \"-\""
+
+var gceResourceNameRegex = regexp.MustCompile(`^[a-z]([-a-z0-9]*[a-z0-9])?$`)
+
+func isGCEResourceName(name string) bool {
+	return len(name) <= 63 && gceResourceNameRegex.MatchString(name)
 }
 
 func validateOpenstackSpec(openstackSpec *kubeoneapi.OpenstackSpec, fldPath *field.Path) field.ErrorList {

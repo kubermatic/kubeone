@@ -671,17 +671,27 @@ type GCEControlPlane struct {
 
 // GCELoadBalancer defines a GCE Target Pool + Forwarding Rule for the kube-apiserver endpoint
 type GCELoadBalancer struct {
-	// ProjectID of the GCE project to create the load balancer resources in
-	ProjectID string `json:"projectID"`
+	// ProjectID of the GCE project to create the load balancer resources in.
+	// Default: project of the service account in the credentials
+	ProjectID string `json:"projectID,omitempty"`
 
-	// Region to create the load balancer resources in
-	Region string `json:"region"`
+	// Region to create the load balancer resources in, must contain the zones
+	// of the control plane nodeSets. Default: region of the first control plane nodeSet zone
+	Region string `json:"region,omitempty"`
 
-	// Network self-link or name to attach the firewall rule and forwarding rule to. Default: "default"
+	// Network to create the firewall rules in, must be the network of the
+	// control plane VMs. Default: "global/networks/default"
 	Network string `json:"network,omitempty"`
 
-	// Name of the target pool/forwarding rule/firewall rule to create. Default: "<CLUSTER_NAME>-kubeapi"
+	// Name of the load balancer resources (address, health check, backend
+	// service, forwarding rule) and prefix of the network endpoint groups and
+	// firewall rules. Default: "<CLUSTER_NAME>-kubeapi"
 	Name string `json:"name,omitempty"`
+
+	// AllowedSourceRanges are the CIDRs allowed to reach the kube-apiserver
+	// through the load balancer. The load balancer preserves the client source
+	// IP, so this firewall rule is the only access control. Default: ["0.0.0.0/0"]
+	AllowedSourceRanges []string `json:"allowedSourceRanges,omitempty"`
 }
 
 // HetznerSpec defines the Hetzner cloud provider
