@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2026-10-26T23:45:52+05:30
+date = 2026-10-27T17:45:15+05:30
 weight = 11
 +++
 ## v1beta2
@@ -45,6 +45,8 @@ weight = 11
 * [EventRateLimitConfig](#eventratelimitconfig)
 * [ExternalCNISpec](#externalcnispec)
 * [Features](#features)
+* [GCEControlPlane](#gcecontrolplane)
+* [GCELoadBalancer](#gceloadbalancer)
 * [GCESpec](#gcespec)
 * [HelmAuth](#helmauth)
 * [HelmRelease](#helmrelease)
@@ -591,12 +593,37 @@ Features controls what features will be enabled on the cluster
 
 [Back to Group](#v1beta2)
 
+### GCEControlPlane
+
+GCEControlPlane control plane config on GCE
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| loadBalancer | LoadBalancer config of a network load balancer to create for the kube-apiserver endpoint | [GCELoadBalancer](#gceloadbalancer) | true |
+
+[Back to Group](#v1beta2)
+
+### GCELoadBalancer
+
+GCELoadBalancer defines the kube-apiserver load balancer, a regional external passthrough Network Load Balancer with a backend service
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| projectID | ProjectID of the GCE project to create the load balancer resources in. Default: project of the service account in the credentials | string | false |
+| region | Region to create the load balancer resources in, must contain the zones of the control plane nodeSets. Default: region of the first control plane nodeSet zone | string | false |
+| network | Network to create the firewall rules in, must be the network of the control plane VMs. Default: the network of the control plane nodeSets (cloudProviderSpec.network, or the network of their subnetwork, else the \"default\" network), resolved when the load balancer is ensured. The firewall rules of a Shared VPC network are created in its host project. | string | false |
+| name | Name of the load balancer resources (address, health check, backend service, forwarding rule) and prefix of the network endpoint groups and firewall rules. Default: \"<CLUSTER_NAME>-kubeapi\" | string | false |
+| allowedSourceRanges | AllowedSourceRanges are the CIDRs allowed to reach the kube-apiserver through the load balancer. The load balancer preserves the client source IP, so this firewall rule is the only access control. The nodes reach kube-apiserver through the load balancer from their public (or Cloud NAT) IPs, so these must be included, otherwise control plane nodes can't join and workers can't register. IPv4 only, like the load balancer. Default: [\"0.0.0.0/0\"] | []string | false |
+
+[Back to Group](#v1beta2)
+
 ### GCESpec
 
 GCESpec defines the GCE cloud provider
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
+| controlPlane | ControlPlane configures control plane provisioning on GCE | *[GCEControlPlane](#gcecontrolplane) | false |
 
 [Back to Group](#v1beta2)
 
