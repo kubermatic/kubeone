@@ -34,18 +34,26 @@ import (
 	"strings"
 )
 
+const kubernetesAPIReferenceURL = "https://kubernetes.io/docs/reference/generated/kubernetes-api/%s/#%s"
+
 var (
 	links = map[string]string{
-		"corev1.Taint":             "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#taint-v1-core",
-		"json.RawMessage":          "https://golang.org/pkg/encoding/json/#RawMessage",
-		"metav1.LabelSelector":     "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#labelselector-v1-meta",
-		"metav1.ListMeta":          "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#listmeta-v1-meta",
-		"metav1.ObjectMeta":        "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#objectmeta-v1-meta",
-		"v1.EmptyDirVolumeSource":  "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#emptydirvolumesource-v1-core",
-		"v1.LocalObjectReference":  "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#localobjectreference-v1-core",
-		"v1.PersistentVolumeClaim": "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#persistentvolumeclaim-v1-core",
-		"v1.ResourceRequirements":  "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#resourcerequirements-v1-core",
-		"v1.SecretKeySelector":     "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#secretkeyselector-v1-core",
+		"json.RawMessage": "https://golang.org/pkg/encoding/json/#RawMessage",
+	}
+
+	// kubernetesAPIAnchors maps Kubernetes types to their anchors in the Kubernetes
+	// API reference. The links are built in main() for the version passed via
+	// -kubernetes-api-version.
+	kubernetesAPIAnchors = map[string]string{
+		"corev1.Taint":             "taint-v1-core",
+		"metav1.LabelSelector":     "labelselector-v1-meta",
+		"metav1.ListMeta":          "listmeta-v1-meta",
+		"metav1.ObjectMeta":        "objectmeta-v1-meta",
+		"v1.EmptyDirVolumeSource":  "emptydirvolumesource-v1-core",
+		"v1.LocalObjectReference":  "localobjectreference-v1-core",
+		"v1.PersistentVolumeClaim": "persistentvolumeclaim-v1-core",
+		"v1.ResourceRequirements":  "resourcerequirements-v1-core",
+		"v1.SecretKeySelector":     "secretkeyselector-v1-core",
 	}
 
 	selfLinks = map[string]string{}
@@ -320,7 +328,17 @@ func printAPIDocs(paths []string, sectionLink string) {
 
 func main() {
 	sectionLink := flag.String("section-link", "", "Link to get back to the current section")
+	kubernetesAPIVersion := flag.String("kubernetes-api-version", "", "Kubernetes API reference version to link to, e.g. v1.37")
 	flag.Parse()
+
+	if *kubernetesAPIVersion == "" {
+		_, _ = fmt.Fprintln(os.Stderr, "-kubernetes-api-version is required")
+		os.Exit(1)
+	}
+
+	for typeName, anchor := range kubernetesAPIAnchors {
+		links[typeName] = fmt.Sprintf(kubernetesAPIReferenceURL, *kubernetesAPIVersion, anchor)
+	}
 
 	args := flag.Args()
 	// args := os.Args[1:]

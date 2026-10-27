@@ -25,6 +25,13 @@ fi
 basedir="./docs/api_reference"
 mkdir -p "${basedir}"
 
+stable_kubernetes_url=$(cat hack/stable-kubernetes-url.txt)
+if [[ ! ${stable_kubernetes_url} =~ stable-([0-9]+\.[0-9]+)\.txt ]]; then
+  echo "cannot parse Kubernetes minor version from '${stable_kubernetes_url}'" >&2
+  exit 1
+fi
+kubernetes_api_version="v${BASH_REMATCH[1]}"
+
 genVersionedDoc() {
   local version=$1
   local docfile="${basedir}/${version}.en.md"
@@ -44,7 +51,7 @@ EOF
 EOF
 
   find ./pkg/apis/kubeone/"${version}" -name '*types.go' -print0 |
-    xargs -0 go run ./hack/apidoc-gen/main.go -section-link="#${version}" >> "${docfile}"
+    xargs -0 go run ./hack/apidoc-gen/main.go -section-link="#${version}" -kubernetes-api-version="${kubernetes_api_version}" >> "${docfile}"
 }
 
 genVersionedDoc "v1beta2"
