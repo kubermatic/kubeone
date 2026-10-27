@@ -159,4 +159,8 @@ func TestKubeVirtCCMAddonSelection(t *testing.T) {
 	if actions[0].postFn == nil {
 		t.Error("ccm-kubevirt must deploy the infra side in a postFn")
 	}
+
+	if !actions[0].deferPrune {
+		t.Error("ccm-kubevirt must defer pruning the tenant CCM until the infra side is deployed")
+	}
 }

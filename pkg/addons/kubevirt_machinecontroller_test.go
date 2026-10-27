@@ -186,11 +186,12 @@ func TestMachineControllerAddonPostFn(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name       string
-		kubevirt   bool
-		wantPostFn bool
+		name           string
+		kubevirt       bool
+		wantPostFn     bool
+		wantDeferPrune bool
 	}{
-		{name: "kubevirt", kubevirt: true, wantPostFn: true},
+		{name: "kubevirt", kubevirt: true, wantPostFn: true, wantDeferPrune: true},
 		{name: "other provider"},
 	}
 
@@ -224,6 +225,9 @@ func TestMachineControllerAddonPostFn(t *testing.T) {
 
 				if (a.postFn != nil) != tc.wantPostFn {
 					t.Errorf("postFn set = %v, want %v", a.postFn != nil, tc.wantPostFn)
+				}
+				if a.deferPrune != tc.wantDeferPrune {
+					t.Errorf("deferPrune = %v, want %v", a.deferPrune, tc.wantDeferPrune)
 				}
 			}
 
