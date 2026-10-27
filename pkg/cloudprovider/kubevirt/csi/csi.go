@@ -27,6 +27,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/certificate/cabundle"
 	"k8c.io/kubeone/pkg/clientutil"
 	kubevirtinfra "k8c.io/kubeone/pkg/cloudprovider/kubevirt/infra"
 	"k8c.io/kubeone/pkg/fail"
@@ -48,6 +49,9 @@ const (
 	TenantTokenSecretName = "kubevirt-csi-controller-token"
 	// TenantNamespace is the tenant cluster namespace of TenantServiceAccountName.
 	TenantNamespace = "kube-system"
+	// OperatorNamespace is the tenant cluster namespace of
+	// kubevirt-csi-driver-operator, created by its addon.
+	OperatorNamespace = "kubevirt-csi-driver"
 
 	tenantCRDName = "tenants.csiprovisioner.kubevirt.io"
 	tenantName    = "tenant"
@@ -94,9 +98,11 @@ var Component = kubevirtinfra.Component{
 	},
 }
 
-// Ensure deploys everything the tenant addon cannot: the Tenant CR (its CRD
-// is applied by the same addon and has to be established first), the CSI
-// controller identities and the CSI controller Deployment in the infra cluster.
+// Ensure deploys everything the tenant addon cannot: the ca-bundle ConfigMap
+// mounted by the operator (its namespace is created by the addon), the Tenant
+// CR (its CRD is applied by the same addon and has to be established first),
+// the CSI controller identities and the CSI controller Deployment in the infra
+// cluster.
 func Ensure(s *state.State) error {
 	if s.DynamicClient == nil {
 		return fail.NoKubeClient()
@@ -104,6 +110,12 @@ func Ensure(s *state.State) error {
 
 	ctx := s.Context
 	spec := s.Cluster.CloudProvider.Kubevirt
+
+	if bundle := s.Cluster.CertificateAuthority.Bundle; bundle != "" {
+		if err := clientutil.CreateOrUpdate(ctx, s.DynamicClient, cabundle.ConfigMap(bundle, OperatorNamespace)); err != nil {
+			return err
+		}
+	}
 
 	if err := waitCRDEstablished(ctx, s.DynamicClient, tenantCRDName); err != nil {
 		return err

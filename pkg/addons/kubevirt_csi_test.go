@@ -134,6 +134,12 @@ func TestKubeVirtCSIDriverOperatorAddon(t *testing.T) {
 				t.Fatal("operator Deployment not found")
 			}
 
+			// The ca-bundle ConfigMap mounted by the operator is created in
+			// kubevirtcsi.OperatorNamespace.
+			if deployment.Namespace != kubevirtcsi.OperatorNamespace {
+				t.Errorf("operator namespace = %q, want %q", deployment.Namespace, kubevirtcsi.OperatorNamespace)
+			}
+
 			if got := deployment.Spec.Template.Spec.Containers[0].Args; !slices.Equal(got, tc.wantArgs) {
 				t.Errorf("operator args = %v, want %v", got, tc.wantArgs)
 			}
