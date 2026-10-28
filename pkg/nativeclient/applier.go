@@ -20,8 +20,12 @@ package nativeclient
 
 import (
 	"context"
+	"errors"
 	"slices"
+	"strings"
 	"time"
+
+	"golang.org/x/sync/errgroup"
 
 	"k8c.io/kubeone/pkg/clientutil"
 	"k8c.io/kubeone/pkg/fail"
@@ -40,6 +44,9 @@ import (
 const (
 	// DefaultFieldManager is the server-side apply field manager used unless overridden with WithFieldManager.
 	DefaultFieldManager = "kubeone"
+
+	// DefaultConcurrency is the default number of objects applied in parallel.
+	DefaultConcurrency = 8
 
 	crdEstablishTimeout = 1 * time.Minute
 )
@@ -76,6 +83,7 @@ var protectedNamespaces = sets.New(
 type Applier struct {
 	client       client.Client
 	fieldManager string
+	concurrency  int
 }
 
 type Option func(*Applier)
@@ -87,10 +95,18 @@ func WithFieldManager(name string) Option {
 	}
 }
 
+// WithConcurrency sets how many objects are applied in parallel once CRDs and Namespaces are in place.
+func WithConcurrency(n int) Option {
+	return func(a *Applier) {
+		a.concurrency = max(n, 1)
+	}
+}
+
 func New(c client.Client, opts ...Option) *Applier {
 	a := &Applier{
 		client:       c,
 		fieldManager: DefaultFieldManager,
+		concurrency:  DefaultConcurrency,
 	}
 
 	for _, opt := range opts {
@@ -109,7 +125,11 @@ type ApplyOptions struct {
 	// CustomResourceDefinitions are pruned only when listed here.
 	PruneTypes []schema.GroupVersionKind
 
-	// DryRun sends all requests with dryRun=All and skips managed fields migration.
+	// Inventory, when set, is a ConfigMap recording the types of the applied objects. Types recorded by a previous
+	// Apply are pruned too, so objects are cleaned up even when their whole type disappears from the manifest.
+	Inventory *client.ObjectKey
+
+	// DryRun sends all requests with dryRun=All and skips managed fields migration and inventory updates.
 	DryRun bool
 }
 
@@ -122,57 +142,105 @@ type Result struct {
 	Pruned   []ObjectRef
 }
 
+type applyOutcome struct {
+	ref      ObjectRef
+	migrated bool
+	ok       bool
+}
+
 // Apply server-side applies objs, migrating objects previously managed by client-side apply, and prunes stale
 // objects if opts.PruneSelector is set. objs are not modified.
+//
+// CRDs are applied first and waited for, then Namespaces, then all remaining objects in parallel. Like kubectl,
+// a failing object doesn't stop the others in its phase; all errors are returned joined and pruning is skipped.
 func (a *Applier) Apply(ctx context.Context, objs []*unstructured.Unstructured, opts ApplyOptions) (*Result, error) {
-	var (
-		result  = &Result{}
-		applied = sets.New[ObjectRef]()
-		crds    []string
-	)
+	result := &Result{}
 
-	for _, obj := range sortForApply(objs) {
-		// CRDs sort first; wait for them before applying anything that might be a custom resource.
-		if len(crds) > 0 && obj.GroupVersionKind().GroupKind() != crdGroupKind {
-			if err := a.waitForCRDs(ctx, crds, opts.DryRun); err != nil {
-				return result, err
-			}
-
-			crds = nil
-		}
-
-		desired := obj.DeepCopy()
-
-		migrated, err := a.applyOne(ctx, desired, opts.DryRun)
-		if err != nil {
-			return result, err
-		}
-
-		ref := RefOf(desired)
-		applied.Insert(ref)
-		result.Applied = append(result.Applied, ref)
-
-		if migrated {
-			result.Migrated = append(result.Migrated, ref)
-		}
-
-		if ref.GroupKind == crdGroupKind {
-			crds = append(crds, ref.Name)
-		}
-	}
-
-	if err := a.waitForCRDs(ctx, crds, opts.DryRun); err != nil {
+	previousKinds, err := a.prepareInventory(ctx, objs, opts)
+	if err != nil {
 		return result, err
 	}
 
-	if opts.PruneSelector == nil {
-		return result, nil
+	crds, namespaces, rest := splitPhases(objs)
+
+	if err = a.applyPhase(ctx, crds, 1, opts.DryRun, result); err != nil {
+		return result, err
 	}
 
-	pruned, err := a.prune(ctx, objs, applied, opts)
-	result.Pruned = pruned
+	crdNames := make([]string, 0, len(crds))
+	for _, crd := range crds {
+		crdNames = append(crdNames, crd.GetName())
+	}
 
-	return result, err
+	if err = a.waitForCRDs(ctx, crdNames, opts.DryRun); err != nil {
+		return result, err
+	}
+
+	if err = a.applyPhase(ctx, namespaces, 1, opts.DryRun, result); err != nil {
+		return result, err
+	}
+
+	if err = a.applyPhase(ctx, rest, a.concurrency, opts.DryRun, result); err != nil {
+		return result, err
+	}
+
+	if opts.PruneSelector != nil {
+		applied := sets.New(result.Applied...)
+		if opts.Inventory != nil {
+			applied.Insert(inventoryRef(*opts.Inventory))
+		}
+
+		result.Pruned, err = a.prune(ctx, a.pruneGVKs(objs, previousKinds, opts), applied, opts)
+		if err != nil {
+			return result, err
+		}
+	}
+
+	return result, a.finalizeInventory(ctx, objs, opts)
+}
+
+// applyPhase applies objs with up to concurrency requests in flight, recording successes in result in the order
+// of objs.
+func (a *Applier) applyPhase(ctx context.Context, objs []*unstructured.Unstructured, concurrency int, dryRun bool, result *Result) error {
+	var (
+		outcomes = make([]applyOutcome, len(objs))
+		errs     = make([]error, len(objs))
+		group    errgroup.Group
+	)
+
+	group.SetLimit(concurrency)
+
+	for i, obj := range objs {
+		group.Go(func() error {
+			desired := obj.DeepCopy()
+
+			migrated, err := a.applyOne(ctx, desired, dryRun)
+			if err != nil {
+				errs[i] = err
+
+				return nil
+			}
+
+			outcomes[i] = applyOutcome{ref: RefOf(desired), migrated: migrated, ok: true}
+
+			return nil
+		})
+	}
+
+	_ = group.Wait()
+
+	for _, outcome := range outcomes {
+		if !outcome.ok {
+			continue
+		}
+
+		result.Applied = append(result.Applied, outcome.ref)
+		if outcome.migrated {
+			result.Migrated = append(result.Migrated, outcome.ref)
+		}
+	}
+
+	return errors.Join(errs...)
 }
 
 // applyOne applies obj, defaulting its namespace, and reports whether its managed fields had to be migrated from
@@ -267,31 +335,52 @@ func (a *Applier) waitForCRDs(ctx context.Context, names []string, dryRun bool) 
 	return fail.KubeClient(err, "waiting for CRDs %v to become established", names)
 }
 
-func (a *Applier) prune(ctx context.Context, objs []*unstructured.Unstructured, applied sets.Set[ObjectRef], opts ApplyOptions) ([]ObjectRef, error) {
+// pruneGVKs returns the types to look for stale objects in: explicitly requested types, the kubectl defaults, the
+// types of objs, and the types recorded in the inventory, deduplicated by GroupKind.
+func (a *Applier) pruneGVKs(objs []*unstructured.Unstructured, previousKinds sets.Set[schema.GroupKind], opts ApplyOptions) []schema.GroupVersionKind {
 	var (
-		pruned    []ObjectRef
 		seen      = sets.New[schema.GroupKind]()
 		pruneGVKs []schema.GroupVersionKind
 	)
 
-	// Explicitly requested types first, so they win over defaults sharing a GroupKind.
-	for _, gvk := range opts.PruneTypes {
+	add := func(gvk schema.GroupVersionKind) {
 		if !seen.Has(gvk.GroupKind()) {
 			seen.Insert(gvk.GroupKind())
 			pruneGVKs = append(pruneGVKs, gvk)
 		}
+	}
+
+	// Explicitly requested types first, so they win over defaults sharing a GroupKind.
+	for _, gvk := range opts.PruneTypes {
+		add(gvk)
 	}
 
 	// Never prune CRDs implicitly; that would cascade to all their custom resources.
 	seen.Insert(crdGroupKind)
 
-	candidates := slices.Concat(DefaultPruneTypes, objectGVKs(objs))
-	for _, gvk := range candidates {
-		if !seen.Has(gvk.GroupKind()) {
-			seen.Insert(gvk.GroupKind())
-			pruneGVKs = append(pruneGVKs, gvk)
-		}
+	for _, gvk := range slices.Concat(DefaultPruneTypes, objectGVKs(objs)) {
+		add(gvk)
 	}
+
+	// Recorded kinds have no version; use whatever version the API server prefers now. Kinds the server no longer
+	// serves can't have objects left to prune.
+	previous := previousKinds.Difference(seen).UnsortedList()
+	slices.SortFunc(previous, func(a, b schema.GroupKind) int { return strings.Compare(a.String(), b.String()) })
+
+	for _, gk := range previous {
+		mapping, err := a.client.RESTMapper().RESTMapping(gk)
+		if err != nil {
+			continue
+		}
+
+		add(mapping.GroupVersionKind)
+	}
+
+	return pruneGVKs
+}
+
+func (a *Applier) prune(ctx context.Context, pruneGVKs []schema.GroupVersionKind, applied sets.Set[ObjectRef], opts ApplyOptions) ([]ObjectRef, error) {
+	var pruned []ObjectRef
 
 	for _, gvk := range pruneGVKs {
 		list := &unstructured.UnstructuredList{}
@@ -328,9 +417,17 @@ func (a *Applier) prune(ctx context.Context, objs []*unstructured.Unstructured, 
 	return pruned, nil
 }
 
-// Delete deletes objs that exist and match selector (nil matches everything), the equivalent of
+type DeleteOptions struct {
+	// Selector restricts deletion to live objects matching it; nil matches everything.
+	Selector labels.Selector
+
+	// Inventory is the ConfigMap written by Apply, deleted once all objects are gone.
+	Inventory *client.ObjectKey
+}
+
+// Delete deletes objs that exist and match opts.Selector, the equivalent of
 // "kubectl delete -f - -l <selector> --ignore-not-found". Objects whose types aren't served are skipped.
-func (a *Applier) Delete(ctx context.Context, objs []*unstructured.Unstructured, selector labels.Selector) ([]ObjectRef, error) {
+func (a *Applier) Delete(ctx context.Context, objs []*unstructured.Unstructured, opts DeleteOptions) ([]ObjectRef, error) {
 	var deleted []ObjectRef
 
 	for _, obj := range sortForDelete(objs) {
@@ -354,7 +451,7 @@ func (a *Applier) Delete(ctx context.Context, objs []*unstructured.Unstructured,
 			return deleted, fail.KubeClient(err, "getting %s", ref)
 		}
 
-		if selector != nil && !selector.Matches(labels.Set(live.GetLabels())) {
+		if opts.Selector != nil && !opts.Selector.Matches(labels.Set(live.GetLabels())) {
 			continue
 		}
 
@@ -363,6 +460,10 @@ func (a *Applier) Delete(ctx context.Context, objs []*unstructured.Unstructured,
 		}
 
 		deleted = append(deleted, ref)
+	}
+
+	if opts.Inventory != nil {
+		return deleted, a.deleteInventory(ctx, *opts.Inventory)
 	}
 
 	return deleted, nil

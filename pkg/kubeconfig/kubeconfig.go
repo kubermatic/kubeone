@@ -156,6 +156,11 @@ func catKubernetesAdminConf(conn executor.Interface) ([]byte, error) {
 }
 
 // BuildKubernetesClientset builds core kubernetes and apiextensions clientsets
+const (
+	clientQPS   = 50
+	clientBurst = 100
+)
+
 func BuildKubernetesClientset(s *state.State) error {
 	s.Logger.Infoln("Building Kubernetes clientset...")
 
@@ -173,6 +178,10 @@ func BuildKubernetesClientset(s *state.State) error {
 	if err != nil {
 		return err
 	}
+
+	// client-go defaults to 5 QPS, which throttles applying addons with many objects in parallel.
+	s.RESTConfig.QPS = clientQPS
+	s.RESTConfig.Burst = clientBurst
 
 	dynamicClient, err := client.New(s.RESTConfig, client.Options{})
 	if err != nil {

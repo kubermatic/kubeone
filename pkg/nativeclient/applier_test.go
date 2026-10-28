@@ -18,6 +18,7 @@ package nativeclient
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"testing"
 
@@ -148,7 +149,7 @@ metadata: {name: unserved}
 		t.Fatal(err)
 	}
 
-	deleted, err := New(c).Delete(ctx, objs, labels.SelectorFromSet(labels.Set{addonLabel: "foo"}))
+	deleted, err := New(c).Delete(ctx, objs, DeleteOptions{Selector: labels.SelectorFromSet(labels.Set{addonLabel: "foo"})})
 	if err != nil {
 		t.Fatalf("Delete() error = %v", err)
 	}
@@ -164,5 +165,126 @@ metadata: {name: unserved}
 
 	if err := c.Get(ctx, client.ObjectKey{Namespace: "kube-system", Name: "nomatch"}, &corev1.ConfigMap{}); err != nil {
 		t.Errorf("expected ConfigMap nomatch to be kept: %v", err)
+	}
+}
+
+func TestApplyPrunesInventoryKinds(t *testing.T) {
+	ctx := context.Background()
+	inventory := client.ObjectKey{Namespace: metav1.NamespaceSystem, Name: "kubeone-addon-foo"}
+
+	staleSA := &corev1.ServiceAccount{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "stale",
+			Namespace: metav1.NamespaceSystem,
+			Labels:    map[string]string{addonLabel: "foo"},
+		},
+	}
+
+	objs, err := ParseManifest(strings.NewReader(`
+apiVersion: v1
+kind: ConfigMap
+metadata: {name: kept, namespace: kube-system, labels: {kubeone.io/addon: foo}}
+`))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	opts := ApplyOptions{
+		PruneSelector: labels.SelectorFromSet(labels.Set{addonLabel: "foo"}),
+		Inventory:     &inventory,
+	}
+
+	t.Run("kind not in inventory is kept", func(t *testing.T) {
+		c := newFakeClient(staleSA.DeepCopy())
+
+		if _, err := New(c).Apply(ctx, objs, opts); err != nil {
+			t.Fatalf("Apply() error = %v", err)
+		}
+
+		if err := c.Get(ctx, client.ObjectKeyFromObject(staleSA), &corev1.ServiceAccount{}); err != nil {
+			t.Errorf("ServiceAccount is not a prune type and not in the inventory, expected it to be kept: %v", err)
+		}
+
+		var cm corev1.ConfigMap
+		if err := c.Get(ctx, inventory, &cm); err != nil {
+			t.Fatalf("expected inventory to be written: %v", err)
+		}
+
+		if got := cm.Data[InventoryGroupKindsKey]; got != "ConfigMap" {
+			t.Errorf("inventory kinds = %q, want %q", got, "ConfigMap")
+		}
+	})
+
+	t.Run("kind recorded in inventory is pruned", func(t *testing.T) {
+		c := newFakeClient(
+			staleSA.DeepCopy(),
+			&corev1.ConfigMap{
+				ObjectMeta: metav1.ObjectMeta{Name: inventory.Name, Namespace: inventory.Namespace},
+				Data:       map[string]string{InventoryGroupKindsKey: "ConfigMap\nServiceAccount"},
+			},
+		)
+
+		result, err := New(c).Apply(ctx, objs, opts)
+		if err != nil {
+			t.Fatalf("Apply() error = %v", err)
+		}
+
+		if len(result.Pruned) != 1 || result.Pruned[0].String() != "ServiceAccount/kube-system/stale" {
+			t.Errorf("Pruned = %v, want [ServiceAccount/kube-system/stale]", result.Pruned)
+		}
+
+		var cm corev1.ConfigMap
+		if err := c.Get(ctx, inventory, &cm); err != nil {
+			t.Fatal(err)
+		}
+
+		if got := cm.Data[InventoryGroupKindsKey]; got != "ConfigMap" {
+			t.Errorf("inventory kinds = %q, want %q", got, "ConfigMap")
+		}
+	})
+
+	t.Run("delete removes inventory", func(t *testing.T) {
+		c := newFakeClient()
+		applier := New(c)
+
+		if _, err := applier.Apply(ctx, objs, opts); err != nil {
+			t.Fatal(err)
+		}
+
+		if _, err := applier.Delete(ctx, objs, DeleteOptions{Selector: opts.PruneSelector, Inventory: &inventory}); err != nil {
+			t.Fatalf("Delete() error = %v", err)
+		}
+
+		if err := c.Get(ctx, inventory, &corev1.ConfigMap{}); !k8serrors.IsNotFound(err) {
+			t.Errorf("expected inventory to be deleted, got %v", err)
+		}
+	})
+}
+
+func TestApplyConcurrentKeepsOrder(t *testing.T) {
+	var manifest strings.Builder
+	for i := range 50 {
+		fmt.Fprintf(&manifest, "---\napiVersion: v1\nkind: ConfigMap\nmetadata: {name: cm-%02d, namespace: kube-system}\n", i)
+	}
+	manifest.WriteString("---\napiVersion: v1\nkind: Namespace\nmetadata: {name: ns}\n")
+
+	objs, err := ParseManifest(strings.NewReader(manifest.String()))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := New(newFakeClient(), WithConcurrency(16)).Apply(context.Background(), objs, ApplyOptions{})
+	if err != nil {
+		t.Fatalf("Apply() error = %v", err)
+	}
+
+	want := refs(sortForApply(objs))
+	got := make([]string, 0, len(result.Applied))
+	for _, ref := range result.Applied {
+		got = append(got, ref.String())
+	}
+
+	if strings.Join(got, ",") != strings.Join(want, ",") {
+		t.Errorf("Applied = %v, want %v", got, want)
 	}
 }

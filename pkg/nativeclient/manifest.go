@@ -127,6 +127,22 @@ func applyPriority(obj *unstructured.Unstructured) int {
 	}
 }
 
+// splitPhases splits objs into CRDs, Namespaces, and everything else, keeping the original order within each.
+func splitPhases(objs []*unstructured.Unstructured) (crds, namespaces, rest []*unstructured.Unstructured) {
+	for _, obj := range objs {
+		switch obj.GroupVersionKind().GroupKind() {
+		case crdGroupKind:
+			crds = append(crds, obj)
+		case namespaceGroupKind:
+			namespaces = append(namespaces, obj)
+		default:
+			rest = append(rest, obj)
+		}
+	}
+
+	return crds, namespaces, rest
+}
+
 // sortForApply returns a copy of objs with CRDs first, Namespaces second, and everything else afterwards, keeping
 // the original order within each group.
 func sortForApply(objs []*unstructured.Unstructured) []*unstructured.Unstructured {

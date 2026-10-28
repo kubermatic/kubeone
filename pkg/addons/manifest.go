@@ -55,7 +55,7 @@ const (
 	ParamsEnvPrefix = "env:"
 )
 
-func (a *applier) getManifestsFromDirectory(st *state.State, fsys fs.FS, addonName string) (string, error) {
+func (a *applier) getManifestsFromDirectory(st *state.State, fsys fs.FS, addonName string) ([]*metav1unstructured.Unstructured, error) {
 	var (
 		addonParams       map[string]string
 		disableTemplating = false
@@ -76,13 +76,13 @@ func (a *applier) getManifestsFromDirectory(st *state.State, fsys fs.FS, addonNa
 
 		addonParams, err = withFlatcarNodesPresentParam(st, addonParams)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 	}
 
 	manifests, err := a.loadAddonsManifests(fsys, addonName, addonParams, st.Logger, st.Verbose, st.Cluster, disableTemplating)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	addonsToMutate := sets.NewString(
@@ -99,7 +99,7 @@ func (a *applier) getManifestsFromDirectory(st *state.State, fsys fs.FS, addonNa
 			if err = mutatePodTemplateSpec(manifests, func(podTpl *corev1.PodTemplateSpec) {
 				cabundle.Inject(st.Cluster.CertificateAuthority.Bundle, podTpl)
 			}); err != nil {
-				return "", err
+				return nil, err
 			}
 		}
 
@@ -129,19 +129,12 @@ func (a *applier) getManifestsFromDirectory(st *state.State, fsys fs.FS, addonNa
 					podSpec.Spec.Containers[i].VolumeMounts = append(podSpec.Spec.Containers[i].VolumeMounts, volumeMount)
 				}
 			}); err != nil {
-				return "", err
+				return nil, err
 			}
 		}
 	}
 
-	rawManifests, err := ensureAddonsLabelsOnResources(manifests, addonName)
-	if err != nil {
-		return "", err
-	}
-
-	combinedManifests := combineManifests(rawManifests, disableTemplating)
-
-	return combinedManifests.String(), nil
+	return ensureAddonsLabelsOnResources(manifests, addonName, disableTemplating)
 }
 
 // loadAddonsManifests loads all YAML files from a given directory and runs the templating logic
@@ -336,9 +329,11 @@ func defaultIfaceParam(tplDataParams map[string]string, reg string) {
 	}
 }
 
-// ensureAddonsLabelsOnResources applies the addons label on all resources in the manifest
-func ensureAddonsLabelsOnResources(manifests []runtime.RawExtension, addonName string) ([]*bytes.Buffer, error) {
-	var rawManifests []*bytes.Buffer
+// ensureAddonsLabelsOnResources decodes the manifests, flattening List objects, and applies the addons label on
+// all resulting objects. With templating disabled, the escaping of template delimiters done when loading the
+// manifests is reverted.
+func ensureAddonsLabelsOnResources(manifests []runtime.RawExtension, addonName string, disableTemplating bool) ([]*metav1unstructured.Unstructured, error) {
+	var objs []*metav1unstructured.Unstructured
 
 	for _, rawManifest := range manifests {
 		parsedUnstructuredObj := &metav1unstructured.Unstructured{}
@@ -346,50 +341,63 @@ func ensureAddonsLabelsOnResources(manifests []runtime.RawExtension, addonName s
 			return nil, fail.Runtime(err, "parsing unstructured fields")
 		}
 
-		existingLabels := parsedUnstructuredObj.GetLabels()
-		if existingLabels == nil {
-			existingLabels = map[string]string{}
-		}
-		existingLabels[addonLabel] = addonName
-		parsedUnstructuredObj.SetLabels(existingLabels)
+		items := []*metav1unstructured.Unstructured{parsedUnstructuredObj}
 
-		jsonBuffer := &bytes.Buffer{}
-		if err := metav1unstructured.UnstructuredJSONScheme.Encode(parsedUnstructuredObj, jsonBuffer); err != nil {
-			return nil, fail.Runtime(err, "marshalling unstructured fields")
-		}
+		if parsedUnstructuredObj.IsList() {
+			list, err := parsedUnstructuredObj.ToList()
+			if err != nil {
+				return nil, fail.Runtime(err, "parsing list items")
+			}
 
-		// Must be encoded back to YAML, otherwise kubectl fails to apply because it tries to parse the whole
-		// thing as json
-		yamlBytes, err := yaml.JSONToYAML(jsonBuffer.Bytes())
-		if err != nil {
-			return nil, fail.Runtime(err, "recoding JSON to YAML")
+			items = items[:0]
+			for i := range list.Items {
+				items = append(items, &list.Items[i])
+			}
 		}
 
-		rawManifests = append(rawManifests, bytes.NewBuffer(yamlBytes))
+		for _, obj := range items {
+			if disableTemplating {
+				obj.Object, _ = unescapeTemplateDelimiters(obj.Object).(map[string]any)
+			}
+
+			existingLabels := obj.GetLabels()
+			if existingLabels == nil {
+				existingLabels = map[string]string{}
+			}
+			existingLabels[addonLabel] = addonName
+			obj.SetLabels(existingLabels)
+
+			objs = append(objs, obj)
+		}
 	}
 
-	return rawManifests, nil
+	return objs, nil
 }
 
-// combineManifests combines all manifest into a single one.
-// This is needed so we can properly utilize kubectl apply --prune
-func combineManifests(manifests []*bytes.Buffer, disablingTemplating bool) *bytes.Buffer {
-	parts := make([]string, len(manifests))
-	for i, m := range manifests {
-		s := m.String()
+// templateDelimitersUnescaper reverts the "^{{" and "}}^" escaping that loadAddonsManifests applies when
+// templating is disabled, so YAML to JSON conversion doesn't choke on unquoted template delimiters.
+var templateDelimitersUnescaper = strings.NewReplacer("^{{", "{{", "}}^", "}}")
 
-		if disablingTemplating {
-			// When templating is disabled we append "^" to avoid YAML to JSON conversion issues. We revert that change here.
-			s = strings.ReplaceAll(s, "^{{", "{{")
-			s = strings.ReplaceAll(s, "}}^", "}}")
+func unescapeTemplateDelimiters(v any) any {
+	switch v := v.(type) {
+	case string:
+		return templateDelimitersUnescaper.Replace(v)
+	case map[string]any:
+		out := make(map[string]any, len(v))
+		for key, val := range v {
+			out[templateDelimitersUnescaper.Replace(key)] = unescapeTemplateDelimiters(val)
 		}
 
-		s = strings.TrimSuffix(s, "\n")
-		s = strings.TrimSpace(s)
-		parts[i] = s
-	}
+		return out
+	case []any:
+		for i := range v {
+			v[i] = unescapeTemplateDelimiters(v[i])
+		}
 
-	return bytes.NewBufferString(strings.Join(parts, "\n---\n") + "\n")
+		return v
+	default:
+		return v
+	}
 }
 
 type vsphereCSIWebhookConfig struct {

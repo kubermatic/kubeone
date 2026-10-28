@@ -25,39 +25,30 @@ import (
 	"io/fs"
 	"net/url"
 	"os"
+	"regexp"
 	"sort"
 	"strings"
-
-	"github.com/MakeNowJust/heredoc/v2"
 
 	embeddedaddons "k8c.io/kubeone/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/certificate"
 	"k8c.io/kubeone/pkg/containerruntime"
 	"k8c.io/kubeone/pkg/credentials"
-	"k8c.io/kubeone/pkg/executor"
 	"k8c.io/kubeone/pkg/fail"
+	"k8c.io/kubeone/pkg/nativeclient"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/images"
 	"k8c.io/kubeone/pkg/templates/resources"
 
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/apimachinery/pkg/util/validation"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/yaml"
 )
 
 const (
 	webhookCertsCSI = "CSI"
-)
-
-var (
-	kubectlApplyScript = heredoc.Doc(`
-		sudo KUBECONFIG=/etc/kubernetes/admin.conf \
-		kubectl apply -f - --prune -l "%s=%s"
-	`)
-
-	kubectlDeleteScript = heredoc.Doc(`
-		sudo KUBECONFIG=/etc/kubernetes/admin.conf \
-		kubectl delete -f - -l "%s=%s" --ignore-not-found=true || true
-	`)
 )
 
 // Applier holds structure used to fetch, parse, and apply addons
@@ -413,16 +404,17 @@ func addonsLocalFS(clusterAddons *kubeoneapi.Addons, manifestFilePath string) (f
 	return localFS, nil
 }
 
-// loadAndApplyAddon parses the addons manifests and runs kubectl apply.
+// loadAndApplyAddon parses the addon manifests and server-side applies them, pruning objects that were removed
+// from the addon.
 func (a *applier) loadAndApplyAddon(s *state.State, fsys fs.FS, addonName string) error {
 	s.Logger.Infof("Applying addon %s...", addonName)
 
-	manifest, err := a.getManifestsFromDirectory(s, fsys, addonName)
+	objs, err := a.getManifestsFromDirectory(s, fsys, addonName)
 	if err != nil {
 		return err
 	}
 
-	if len(strings.TrimSpace(manifest)) == 0 {
+	if len(objs) == 0 {
 		if len(addonName) != 0 {
 			s.Logger.Warnf("Addon directory %q is empty, skipping...", addonName)
 		}
@@ -430,19 +422,31 @@ func (a *applier) loadAndApplyAddon(s *state.State, fsys fs.FS, addonName string
 		return nil
 	}
 
-	return runKubectlApply(s, manifest, addonName)
+	if s.DynamicClient == nil {
+		return fail.NoKubeClient()
+	}
+
+	inventory := addonInventoryKey(addonName)
+
+	result, err := nativeclient.New(s.DynamicClient).Apply(s.Context, objs, nativeclient.ApplyOptions{
+		PruneSelector: addonSelector(addonName),
+		Inventory:     &inventory,
+	})
+	logApplyResult(s, addonName, result)
+
+	return err
 }
 
-// loadAndApplyAddon parses the addons manifests and runs kubectl apply.
+// loadAndDeleteAddon parses the addon manifests and deletes the objects they describe.
 func (a *applier) loadAndDeleteAddon(s *state.State, fsys fs.FS, addonName string) error {
 	s.Logger.Infof("Deleting addon %q...", addonName)
 
-	manifest, err := a.getManifestsFromDirectory(s, fsys, addonName)
+	objs, err := a.getManifestsFromDirectory(s, fsys, addonName)
 	if err != nil {
 		return err
 	}
 
-	if len(strings.TrimSpace(manifest)) == 0 {
+	if len(objs) == 0 {
 		if len(addonName) != 0 {
 			s.Logger.Warnf("Addon directory %q is empty, skipping...", addonName)
 		}
@@ -450,47 +454,72 @@ func (a *applier) loadAndDeleteAddon(s *state.State, fsys fs.FS, addonName strin
 		return nil
 	}
 
-	return runKubectlDelete(s, manifest, addonName)
+	if s.DynamicClient == nil {
+		return fail.NoKubeClient()
+	}
+
+	inventory := addonInventoryKey(addonName)
+
+	deleted, err := nativeclient.New(s.DynamicClient).Delete(s.Context, objs, nativeclient.DeleteOptions{
+		Selector:  addonSelector(addonName),
+		Inventory: &inventory,
+	})
+	if s.Verbose {
+		for _, ref := range deleted {
+			s.Logger.Infof("Addon %q: deleted %s", addonName, ref)
+		}
+	}
+
+	return err
 }
 
-// runKubectlApply runs kubectl apply command
-func runKubectlApply(s *state.State, manifest, addonName string) error {
-	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
-		var (
-			cmd            = fmt.Sprintf(kubectlApplyScript, addonLabel, addonName)
-			stdin          = strings.NewReader(manifest)
-			stdout, stderr strings.Builder
-		)
-
-		_, err := conn.POpen(cmd, stdin, &stdout, &stderr)
-		if s.Verbose {
-			fmt.Printf("+ %s\n", cmd)
-			fmt.Printf("%s", stderr.String())
-			fmt.Printf("%s", stdout.String())
-		}
-
-		return err
-	})
+func addonSelector(addonName string) labels.Selector {
+	return labels.SelectorFromSet(labels.Set{addonLabel: addonName})
 }
 
-// runKubectlDelete runs kubectl delete command
-func runKubectlDelete(s *state.State, manifest, addonName string) error {
-	return s.RunTaskOnLeader(func(s *state.State, _ *kubeoneapi.HostConfig, conn executor.Interface) error {
-		var (
-			cmd            = fmt.Sprintf(kubectlDeleteScript, addonLabel, addonName)
-			stdin          = strings.NewReader(manifest)
-			stdout, stderr strings.Builder
-		)
+var invalidInventoryNameChars = regexp.MustCompile(`[^a-z0-9.-]+`)
 
-		_, err := conn.POpen(cmd, stdin, &stdout, &stderr)
-		if s.Verbose {
-			fmt.Printf("+ %s\n", cmd)
-			fmt.Printf("%s", stderr.String())
-			fmt.Printf("%s", stdout.String())
+// addonInventoryKey returns the ConfigMap recording which kinds the addon has applied. Addon names that aren't
+// valid object names are sanitized and suffixed with a hash to keep them unique.
+func addonInventoryKey(addonName string) client.ObjectKey {
+	key := client.ObjectKey{Namespace: metav1.NamespaceSystem}
+
+	if addonName == "" {
+		// Addons from the root of the addons directory. "kubeone-addons-" can't collide with "kubeone-addon-<name>".
+		key.Name = "kubeone-addons-root"
+
+		return key
+	}
+
+	name := "kubeone-addon-" + invalidInventoryNameChars.ReplaceAllString(strings.ToLower(addonName), "-")
+	if name != "kubeone-addon-"+addonName || len(name) > validation.DNS1123SubdomainMaxLength {
+		sum := sha256.Sum256([]byte(addonName))
+		name = fmt.Sprintf("%s-%s", name[:min(len(name), validation.DNS1123SubdomainMaxLength-9)], hex.EncodeToString(sum[:4]))
+	}
+
+	key.Name = strings.Trim(name, ".-")
+
+	return key
+}
+
+func logApplyResult(s *state.State, addonName string, result *nativeclient.Result) {
+	if result == nil {
+		return
+	}
+
+	for _, ref := range result.Migrated {
+		s.Logger.Infof("Addon %q: migrated %s from kubectl client-side apply to server-side apply", addonName, ref)
+	}
+
+	for _, ref := range result.Pruned {
+		s.Logger.Infof("Addon %q: pruned %s", addonName, ref)
+	}
+
+	if s.Verbose {
+		for _, ref := range result.Applied {
+			s.Logger.Infof("Addon %q: applied %s", addonName, ref)
 		}
-
-		return err
-	})
+	}
 }
 
 type internalImages struct {
