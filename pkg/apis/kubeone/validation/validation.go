@@ -496,6 +496,13 @@ func validateGCESpec(gceSpec *kubeoneapi.GCESpec, clusterName string, nodeSets [
 		}
 
 		specFld := nsFld.Child("cloudProviderSpec")
+		// KubeOne checks the ownership of the VMs before deleting them with the
+		// credentials service account and its project. An inline service account
+		// can point the driver at another project, where that check doesn't run.
+		if sa := rawConfig.ServiceAccount; sa.Value != "" || sa.SecretKeyRef.Name != "" || sa.ConfigMapKeyRef.Name != "" {
+			allErrs = append(allErrs, field.Forbidden(specFld.Child("serviceAccount"), "serviceAccount must not be set in the config, use GOOGLE_CREDENTIALS credentials instead"))
+		}
+
 		// The load balancer can only reference VMs of its own project
 		if p := rawConfig.ProjectID.Value; p != "" && lb.ProjectID != "" && p != lb.ProjectID {
 			allErrs = append(allErrs, field.Invalid(specFld.Child("projectID"), p, fmt.Sprintf("must be the load balancer project %q", lb.ProjectID)))

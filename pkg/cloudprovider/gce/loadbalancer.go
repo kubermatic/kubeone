@@ -72,7 +72,9 @@ const (
 )
 
 // healthCheckSourceRanges are the health check probe ranges of regional
-// backend service-based external passthrough Network Load Balancers.
+// backend service-based external passthrough Network Load Balancers. The docs
+// list 209.85.152.0/22 only "for target pools", so it isn't allowed, see
+// https://docs.cloud.google.com/load-balancing/docs/health-check-concepts
 var healthCheckSourceRanges = []string{"35.191.0.0/16", "209.85.204.0/22"}
 
 // lbConfig is the resolved load balancer configuration.

@@ -3682,6 +3682,20 @@ func TestValidateGCESpec(t *testing.T) {
 			expectedError: true,
 		},
 		{
+			name:          "inline service account",
+			clusterName:   "demo",
+			lb:            &defaultLB,
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet("cp", `{"zone":"europe-west3-a","serviceAccount":"e30="}`)},
+			expectedError: true,
+		},
+		{
+			name:          "service account from a secret",
+			clusterName:   "demo",
+			lb:            &defaultLB,
+			nodeSets:      []kubeoneapi.NodeSet{nodeSet("cp", `{"zone":"europe-west3-a","serviceAccount":{"secretKeyRef":{"name":"sa","namespace":"kube-system","key":"sa"}}}`)},
+			expectedError: true,
+		},
+		{
 			name:          "unknown cloudProviderSpec field",
 			clusterName:   "demo",
 			lb:            &defaultLB,
