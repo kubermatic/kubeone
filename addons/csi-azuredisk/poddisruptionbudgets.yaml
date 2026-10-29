@@ -18,4 +18,4 @@ spec:
   maxUnavailable: 1
   selector:
     matchLabels:
-      app: csi-snapshot-controller
+      app.kubernetes.io/name: snapshot-controller

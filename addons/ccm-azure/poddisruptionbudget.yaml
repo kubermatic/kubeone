@@ -7,4 +7,5 @@ spec:
   maxUnavailable: 1
   selector:
     matchLabels:
-      component: azure-cloud-controller-manager
+      component: cloud-controller-manager
+      tier: control-plane
