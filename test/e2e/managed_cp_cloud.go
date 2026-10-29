@@ -60,6 +60,8 @@ func newManagedControlPlaneCloud(ctx context.Context, provider, clusterName stri
 		return newDigitaloceanCloud(clusterName)
 	case "gce":
 		return newGCECloud(ctx, clusterName)
+	case "hetzner":
+		return newHetznerCloud(clusterName)
 	default:
 		return nil, fmt.Errorf("managed control plane is not supported for provider %q", provider)
 	}

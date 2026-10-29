@@ -1,0 +1,61 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+name: '{{ required ".ClusterName is required" .ClusterName }}'
+
+versions:
+  kubernetes: '{{ required ".VERSION is required" .VERSION }}'
+
+# The network and the firewall are provided by
+# examples/terraform/hetzner-managed-control-plane, see .Terraform
+
+cloudProvider:
+  external: true
+  hetzner:
+    networkID: '{{ required ".Terraform.networking.networkName is required" .Terraform.networking.networkName }}'
+    controlPlane:
+      # The default location is nbg1, in the eu-central network zone of the
+      # subnet
+      loadBalancer: {}
+
+controlPlane:
+  nodeSets:
+  - name: cp
+    replicas: 3
+    operatingSystem: ubuntu
+    ssh:
+      publicKeys:
+      - '{{ required ".SSHPublicKey is required" .SSHPublicKey }}'
+      username: root
+    cloudProviderSpec:
+      serverType: cx23
+      location: nbg1
+      image: ubuntu-24.04
+      # the load balancer reaches the control plane over the private network
+      networks:
+      - '{{ .Terraform.networking.networkName }}'
+
+dynamicWorkers:
+- name: '{{ .ClusterName }}-pool1'
+  # Conformance requires at least two untainted (worker) nodes
+  replicas: 2
+  providerSpec:
+    sshPublicKeys:
+    - '{{ .SSHPublicKey }}'
+    operatingSystem: ubuntu
+    cloudProviderSpec:
+      serverType: cx23
+      location: nbg1
+      image: ubuntu-24.04
+      networks:
+      - '{{ .Terraform.networking.networkName }}'
+      labels:
+        # used by the firewall and the e2e janitor
+        kubeone_cluster_name: '{{ .ClusterName }}'
+
+containerRuntime:
+  containerd: {}
+
+addons:
+  enable: true
+  addons:
+  - name: default-storage-class

@@ -122,7 +122,7 @@ both the load balancer and each provisioned server:
 | Label | Value | Purpose |
 |-------|-------|---------|
 | `kubeone_cluster_name` | Cluster name | Identifies the cluster |
-| `kubeone_role` | `control-plane` / `api` | Identifies node role |
+| `kubeone_role` | `api` | Identifies the API servers, the load balancer targets the servers by it |
 | `kubeone_own_since_timestamp` | Unix timestamp | Tracks when the resource was created |
 
 This means newly provisioned servers are automatically added as load

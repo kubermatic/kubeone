@@ -344,6 +344,7 @@
     - name: aws
     - name: digitalocean
     - name: gce
+    - name: hetzner
 
 - scenario: install_managed_cp
   initVersion: v1.36
@@ -351,6 +352,7 @@
     - name: aws
     - name: digitalocean
     - name: gce
+    - name: hetzner
 
 - scenario: install_managed_cp
   initVersion: v1.37
@@ -358,6 +360,7 @@
     - name: aws
     - name: digitalocean
     - name: gce
+    - name: hetzner
 
 ####################
 # CONFORMANCE TEST #

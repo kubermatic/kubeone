@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"maps"
+	"os"
 	"strconv"
 	"time"
 
@@ -46,6 +47,7 @@ import (
 var (
 	_ cloudprovider.ControlPlaneCloudProvider = &Provider{}
 	_ cloudprovider.LoadBalancerProvider      = &Provider{}
+	_ cloudprovider.CleanupPreparer           = &Provider{}
 )
 
 func init() {
@@ -73,6 +75,10 @@ func (p *Provider) GenerateMachines(clusterName string, nodeSet []kubeoneapi.Nod
 }
 
 func (p *Provider) EnsureVM(s *state.State, nodeSet kubeoneapi.NodeSet, capimachine clusterv1alpha1.Machine) error {
+	if err := exportCredentials(s); err != nil {
+		return err
+	}
+
 	provMachines, err := provisioner.FindOrCreateMachines(s.Context, []clusterv1alpha1.Machine{capimachine}, s.Logger)
 	if err != nil {
 		return err
@@ -84,6 +90,10 @@ func (p *Provider) EnsureVM(s *state.State, nodeSet kubeoneapi.NodeSet, capimach
 }
 
 func (p *Provider) LookupVMs(s *state.State) error {
+	if err := exportCredentials(s); err != nil {
+		return err
+	}
+
 	capimachines, err := p.GenerateMachines(
 		s.Cluster.Name,
 		s.Cluster.ControlPlane.NodeSets,
@@ -99,6 +109,26 @@ func (p *Provider) LookupVMs(s *state.State) error {
 	}
 
 	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, cloudprovider.HostConfigsFromMachines(provMachines, s.Cluster.ControlPlane.NodeSets)...)
+
+	return nil
+}
+
+func (p *Provider) PrepareCleanup(s *state.State) error {
+	return exportCredentials(s)
+}
+
+// exportCredentials exports the Hetzner token for the in-process
+// machine-controller driver, which reads it from the HZ_TOKEN environment
+// variable.
+func exportCredentials(s *state.State) error {
+	providerCreds, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeUniversal)
+	if err != nil {
+		return err
+	}
+
+	if err := os.Setenv(credentials.HetznerTokenKeyMC, providerCreds[credentials.HetznerTokenKeyMC]); err != nil {
+		return fail.Runtime(err, "setting %s", credentials.HetznerTokenKeyMC)
+	}
 
 	return nil
 }
@@ -233,7 +263,7 @@ func createHetznerLoadBalancer(
 	cluster *kubeoneapi.KubeOneCluster,
 	networkID int64,
 ) (*hcloud.LoadBalancer, error) {
-	vmsLabelSelector := labels.SelectorFromSet(hetznerLabels(cluster.Name)).String()
+	vmsLabelSelector := labels.SelectorFromSet(ControlPlaneLabels(cluster.Name)).String()
 	now := time.Now().UTC()
 	timestamp := strconv.FormatInt(now.Unix(), 10)
 	newLabels := map[string]string{
@@ -277,7 +307,9 @@ func createHetznerLoadBalancer(
 	return result.LoadBalancer, nil
 }
 
-func hetznerLabels(clusterName string) map[string]string {
+// ControlPlaneLabels are the labels of the control plane servers created by
+// KubeOne for the cluster, the API load balancer targets them by these labels.
+func ControlPlaneLabels(clusterName string) map[string]string {
 	return map[string]string{
 		"kubeone_cluster_name": clusterName,
 		"kubeone_role":         "api",
@@ -291,9 +323,8 @@ func generateHetznerControlPlaneMachines(clusterName string, nodeSet []kubeoneap
 		timestamp := strconv.FormatInt(time.Now().UTC().Unix(), 10)
 		labels := map[string]string{
 			"kubeone_own_since_timestamp": timestamp,
-			"kubeone_role":                "control-plane",
 		}
-		maps.Copy(labels, hetznerLabels(clusterName))
+		maps.Copy(labels, ControlPlaneLabels(clusterName))
 
 		if node.NodeSettings.Labels == nil {
 			node.NodeSettings.Labels = map[string]string{}
