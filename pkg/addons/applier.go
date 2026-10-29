@@ -431,9 +431,9 @@ func addonsLocalFS(clusterAddons *kubeoneapi.Addons, manifestFilePath string) (f
 	return localFS, nil
 }
 
-// loadAndApplyAddon parses the addon manifests and server-side applies them, pruning objects that were removed
-// from the addon.
-func (a *applier) loadAndApplyAddon(s *state.State, fsys fs.FS, addonName string) error {
+// loadAndApplyAddon parses the addon manifests and server-side applies them. With prune, objects that were removed
+// from the addon are deleted.
+func (a *applier) loadAndApplyAddon(s *state.State, fsys fs.FS, addonName string, prune bool) error {
 	s.Logger.Infof("Applying addon %s...", addonName)
 
 	objs, err := a.getManifestsFromDirectory(s, fsys, addonName)
@@ -454,11 +454,17 @@ func (a *applier) loadAndApplyAddon(s *state.State, fsys fs.FS, addonName string
 	}
 
 	inventory := addonInventoryKey(addonName)
+	opts := nativeclient.ApplyOptions{
+		Inventory: &inventory,
+	}
 
-	result, err := nativeclient.New(s.DynamicClient).Apply(s.Context, objs, nativeclient.ApplyOptions{
-		PruneSelector: addonSelector(addonName),
-		Inventory:     &inventory,
-	})
+	// Without pruning, the inventory keeps the kinds recorded so far, so the next pruning apply still removes
+	// objects of kinds that were dropped from the addon.
+	if prune {
+		opts.PruneSelector = addonSelector(addonName)
+	}
+
+	result, err := nativeclient.New(s.DynamicClient).Apply(s.Context, objs, opts)
 	logApplyResult(s, addonName, result)
 
 	return err
