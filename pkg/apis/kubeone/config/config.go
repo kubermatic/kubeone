@@ -42,6 +42,7 @@ import (
 	terraformv1beta2 "k8c.io/kubeone/pkg/terraform/v1beta2"
 	terraformv1beta3 "k8c.io/kubeone/pkg/terraform/v1beta3"
 	digitaloceantypes "k8c.io/machine-controller/sdk/cloudprovider/digitalocean"
+	gcetypes "k8c.io/machine-controller/sdk/cloudprovider/gce"
 	"k8c.io/machine-controller/sdk/jsonutil"
 
 	"k8s.io/apimachinery/pkg/runtime"
@@ -340,6 +341,8 @@ func SetKubeOneClusterDynamicDefaults(cluster *kubeoneapi.KubeOneCluster, creden
 			setDefaultAzureControlPlane(cluster.Name, cluster.CloudProvider.Azure.ControlPlane)
 		case cluster.CloudProvider.DigitalOcean != nil:
 			setDefaultDigitalOceanControlPlane(cluster.Name, cluster.ControlPlane.NodeSets, cluster.CloudProvider.DigitalOcean.ControlPlane)
+		case cluster.CloudProvider.GCE != nil:
+			setDefaultGCEControlPlane(cluster.Name, cluster.ControlPlane.NodeSets, cluster.CloudProvider.GCE.ControlPlane)
 		default:
 			return fail.ConfigError{
 				Op:  "cloud provider checking",
@@ -452,6 +455,41 @@ func setDefaultAzureControlPlane(clusterName string, azCP *kubeoneapi.AzureContr
 		azCP.LoadBalancer.PublicIPName,
 		azCP.LoadBalancer.Name+"-pubip",
 	)
+}
+
+func setDefaultGCEControlPlane(clusterName string, nodeSets []kubeoneapi.NodeSet, gceCP *kubeoneapi.GCEControlPlane) {
+	// Errors are ignored on purpose, malformed specs are reported by the validation
+	var spec gcetypes.RawConfig
+	if len(nodeSets) > 0 {
+		_ = jsonutil.StrictUnmarshal(nodeSets[0].CloudProviderSpec, &spec)
+	}
+
+	if gceCP.LoadBalancer.Region == "" {
+		gceCP.LoadBalancer.Region = gceZoneRegion(spec.Zone.Value)
+	}
+
+	// The network isn't defaulted: it's resolved from all control plane
+	// nodeSets when the load balancer is ensured, which might require
+	// looking up their subnetworks.
+
+	gceCP.LoadBalancer.Name = defaults(
+		gceCP.LoadBalancer.Name,
+		clusterName+"-kubeapi",
+	)
+	if len(gceCP.LoadBalancer.AllowedSourceRanges) == 0 {
+		gceCP.LoadBalancer.AllowedSourceRanges = []string{"0.0.0.0/0"}
+	}
+}
+
+// gceZoneRegion returns the region of a GCE zone, e.g. "europe-west3" for
+// "europe-west3-a", or "" if the zone is empty.
+func gceZoneRegion(zone string) string {
+	idx := strings.LastIndex(zone, "-")
+	if idx <= 0 {
+		return ""
+	}
+
+	return zone[:idx]
 }
 
 // SetDefaultsCloudConfig sets default values for the CloudConfig field in the KubeOneCluster object.

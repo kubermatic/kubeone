@@ -343,18 +343,21 @@
   infrastructures:
     - name: aws
     - name: digitalocean
+    - name: gce
 
 - scenario: install_managed_cp
   initVersion: v1.36
   infrastructures:
     - name: aws
     - name: digitalocean
+    - name: gce
 
 - scenario: install_managed_cp
   initVersion: v1.37
   infrastructures:
     - name: aws
     - name: digitalocean
+    - name: gce
 
 ####################
 # CONFORMANCE TEST #

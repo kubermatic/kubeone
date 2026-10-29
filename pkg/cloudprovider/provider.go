@@ -93,6 +93,24 @@ type LoadBalancerProvider interface {
 	CleanupLoadBalancer(*state.State) error
 }
 
+// LoadBalancerMemberProvider is implemented by providers whose control plane
+// VMs must not be members of the load balancer while they join, e.g. because
+// the VMs behind the load balancer route its address to themselves, so a
+// joining node would reach itself instead of the cluster. Their EnsureVM adds
+// at most the leader.
+type LoadBalancerMemberProvider interface {
+	// RemoveJoiningLoadBalancerMembers runs after the leader initialized the
+	// cluster and before the followers join. It ensures the leader is a member
+	// of the load balancer and the joining hosts are not, e.g. hosts that
+	// were reset but kept their VMs.
+	RemoveJoiningLoadBalancerMembers(s *state.State, joining []kubeoneapi.HostConfig) error
+
+	// EnsureLoadBalancerMembers runs on every apply once the control plane
+	// serves, after the followers joined, and adds all control plane VMs to
+	// the load balancer.
+	EnsureLoadBalancerMembers(*state.State) error
+}
+
 // MachineNodeSets returns the nodeSet each machine was generated from.
 // GenerateMachines emits the replicas of each nodeSet in order, so the i-th
 // machine belongs to the i-th replica slot across nodeSets.

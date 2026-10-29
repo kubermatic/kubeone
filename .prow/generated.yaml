@@ -7077,6 +7077,31 @@ presubmits:
   decoration_config:
     timeout: 210m
   labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-install-managed-cp-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceInstallManagedCpV1_35
+      env:
+      - name: PROVIDER
+        value: gce
+      image: docker.io/golang:1.27
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-install-managed-cp-v1.36
@@ -7127,6 +7152,31 @@ presubmits:
   decoration_config:
     timeout: 210m
   labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-install-managed-cp-v1.36
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceInstallManagedCpV1_36
+      env:
+      - name: PROVIDER
+        value: gce
+      image: docker.io/golang:1.27
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-install-managed-cp-v1.37
@@ -7165,6 +7215,31 @@ presubmits:
       env:
       - name: PROVIDER
         value: digitalocean
+      image: docker.io/golang:1.27
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
+    preset-gce: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-gce-install-managed-cp-v1.37
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestGceInstallManagedCpV1_37
+      env:
+      - name: PROVIDER
+        value: gce
       image: docker.io/golang:1.27
       imagePullPolicy: Always
       name: ""

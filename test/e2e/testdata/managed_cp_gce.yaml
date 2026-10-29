@@ -1,0 +1,92 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+name: '{{ required ".ClusterName is required" .ClusterName }}'
+
+versions:
+  kubernetes: '{{ required ".VERSION is required" .VERSION }}'
+
+# The project is the one of the service account in GOOGLE_CREDENTIALS, the
+# cloudConfig comes from the credentials file written by test/go-test-e2e.sh.
+cloudProvider:
+  external: true
+  gce:
+    controlPlane:
+      loadBalancer: {}
+
+controlPlane:
+  # One control plane node per zone of the load balancer region
+  nodeSets:
+  - name: cp-a
+    replicas: 1
+    operatingSystem: ubuntu
+    ssh:
+      publicKeys:
+      - '{{ required ".SSHPublicKey is required" .SSHPublicKey }}'
+      username: ubuntu
+    cloudProviderSpec:
+      zone: europe-west3-a
+      machineType: e2-standard-2
+      diskSize: 50
+      diskType: pd-ssd
+      assignPublicIPAddress: true
+      multizone: true
+  - name: cp-b
+    replicas: 1
+    operatingSystem: ubuntu
+    ssh:
+      publicKeys:
+      - '{{ .SSHPublicKey }}'
+      username: ubuntu
+    cloudProviderSpec:
+      zone: europe-west3-b
+      machineType: e2-standard-2
+      diskSize: 50
+      diskType: pd-ssd
+      assignPublicIPAddress: true
+      multizone: true
+  - name: cp-c
+    replicas: 1
+    operatingSystem: ubuntu
+    ssh:
+      publicKeys:
+      - '{{ .SSHPublicKey }}'
+      username: ubuntu
+    cloudProviderSpec:
+      zone: europe-west3-c
+      machineType: e2-standard-2
+      diskSize: 50
+      diskType: pd-ssd
+      assignPublicIPAddress: true
+      multizone: true
+
+dynamicWorkers:
+- name: '{{ .ClusterName }}-pool1'
+  # Conformance requires at least two untainted (worker) nodes
+  replicas: 2
+  providerSpec:
+    sshPublicKeys:
+    - '{{ .SSHPublicKey }}'
+    operatingSystem: ubuntu
+    cloudProviderSpec:
+      zone: europe-west3-a
+      machineType: e2-standard-2
+      diskSize: 50
+      diskType: pd-ssd
+      assignPublicIPAddress: true
+      multizone: true
+      labels:
+        # used by the e2e janitor to find leftover workers
+        kubeone_workers: '{{ .ClusterName }}'
+      # The GCP cloud controller manager targets the firewall rules of
+      # LoadBalancer Services at a network tag of each node that is a prefix
+      # of its instance name
+      tags:
+      - '{{ .ClusterName }}-pool1'
+
+containerRuntime:
+  containerd: {}
+
+addons:
+  enable: true
+  addons:
+  - name: default-storage-class

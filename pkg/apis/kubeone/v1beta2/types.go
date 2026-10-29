@@ -658,7 +658,48 @@ type DigitalOceanLoadBalancer struct {
 }
 
 // GCESpec defines the GCE cloud provider
-type GCESpec struct{}
+type GCESpec struct {
+	// ControlPlane configures control plane provisioning on GCE
+	ControlPlane *GCEControlPlane `json:"controlPlane,omitempty"`
+}
+
+// GCEControlPlane control plane config on GCE
+type GCEControlPlane struct {
+	// LoadBalancer config of a network load balancer to create for the kube-apiserver endpoint
+	LoadBalancer GCELoadBalancer `json:"loadBalancer"`
+}
+
+// GCELoadBalancer defines the kube-apiserver load balancer, a regional external passthrough Network Load Balancer with a backend service
+type GCELoadBalancer struct {
+	// ProjectID of the GCE project to create the load balancer resources in.
+	// Default: project of the service account in the credentials
+	ProjectID string `json:"projectID,omitempty"`
+
+	// Region to create the load balancer resources in, must contain the zones
+	// of the control plane nodeSets. Default: region of the first control plane nodeSet zone
+	Region string `json:"region,omitempty"`
+
+	// Network to create the firewall rules in, must be the network of the
+	// control plane VMs. Default: the network of the control plane nodeSets
+	// (cloudProviderSpec.network, or the network of their subnetwork, else the
+	// "default" network), resolved when the load balancer is ensured. The
+	// firewall rules of a Shared VPC network are created in its host project.
+	Network string `json:"network,omitempty"`
+
+	// Name of the load balancer resources (address, health check, backend
+	// service, forwarding rule) and prefix of the network endpoint groups and
+	// firewall rules. Default: "<CLUSTER_NAME>-kubeapi"
+	Name string `json:"name,omitempty"`
+
+	// AllowedSourceRanges are the CIDRs allowed to reach the kube-apiserver
+	// through the load balancer. The load balancer preserves the client source
+	// IP, so this firewall rule is the only access control. The nodes reach
+	// kube-apiserver through the load balancer from their public (or Cloud
+	// NAT) IPs, so these must be included, otherwise control plane nodes
+	// can't join and workers can't register. IPv4 only, like the load
+	// balancer. Default: ["0.0.0.0/0"]
+	AllowedSourceRanges []string `json:"allowedSourceRanges,omitempty"`
+}
 
 // HetznerSpec defines the Hetzner cloud provider
 type HetznerSpec struct {

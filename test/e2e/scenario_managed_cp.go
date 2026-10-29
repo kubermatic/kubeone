@@ -129,7 +129,14 @@ func (scenario *scenarioManagedControlPlane) Run(ctx context.Context, t *testing
 		force := t.Failed()
 		if err := retryFn(func() error { return k1.ResetManagedControlPlane(force) }); err != nil {
 			t.Errorf("kubeone reset failed: %v", err)
+
+			return
 		}
+
+		// reset must delete everything it created, the janitor would hide leaks
+		checkCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 10*time.Minute)
+		defer cancel()
+		verifyNothingLeft(checkCtx, t, cloud)
 	})
 
 	if err := k1.Apply(ctx); err != nil {
@@ -145,7 +152,59 @@ func (scenario *scenarioManagedControlPlane) Run(ctx context.Context, t *testing
 
 	scenario.verifyControlPlane(ctx, t, k1, cloud)
 
+	// Where KubeOne manages the load balancer membership (GCE), a reset that
+	// keeps the VMs keeps their membership; installing again must remove the
+	// followers before they join, or they never join
+	if _, ok := cloud.(loadBalancerMembersCloud); ok {
+		if err := k1.Reset(); err != nil {
+			t.Fatalf("kubeone reset (keeping the control plane) failed: %v", err)
+		}
+
+		if err := k1.Apply(ctx); err != nil {
+			t.Fatalf("kubeone apply after reset failed: %v", err)
+		}
+
+		scenario.verifyControlPlane(ctx, t, k1, cloud)
+	}
+
 	runClusterTests(ctx, t, k1, scenario.infra)
+}
+
+// verifyNothingLeft fails the test if control plane VMs or load balancers of
+// the cluster are left at the cloud provider. Deletions might still be in
+// progress, so it waits for them.
+func verifyNothingLeft(ctx context.Context, t *testing.T, cloud managedControlPlaneCloud) {
+	t.Helper()
+
+	var (
+		vms int
+		lbs []string
+		err error
+	)
+
+	leftovers, hasLeftovers := cloud.(leftoverResourcesCloud)
+	var resources []string
+
+	for {
+		if vms, err = cloud.ControlPlaneVMs(ctx); err == nil && vms == 0 {
+			if lbs, err = cloud.LoadBalancers(ctx); err == nil && len(lbs) == 0 {
+				if !hasLeftovers {
+					return
+				}
+				if resources, err = leftovers.LeftoverResources(ctx); err == nil && len(resources) == 0 {
+					return
+				}
+			}
+		}
+
+		select {
+		case <-ctx.Done():
+			t.Errorf("kubeone reset left %d control plane VMs, load balancers %v and resources %v behind (last error: %v)", vms, lbs, resources, err)
+
+			return
+		case <-time.After(15 * time.Second):
+		}
+	}
 }
 
 // provisionInfra applies the Terraform configs of the infrastructure, if any,
@@ -221,6 +280,28 @@ func (scenario *scenarioManagedControlPlane) verifyControlPlane(ctx context.Cont
 	}
 	if !slices.Contains(lbAddresses, endpoint) {
 		t.Fatalf("expected endpoint %q to be the load balancer address %v", endpoint, lbAddresses)
+	}
+
+	members, ok := cloud.(loadBalancerMembersCloud)
+	if !ok {
+		return
+	}
+
+	// The health check needs a few intervals to mark new members healthy
+	waitCtx, cancel := context.WithTimeout(ctx, 5*time.Minute)
+	defer cancel()
+
+	var healthy int
+	for {
+		if healthy, err = members.HealthyLoadBalancerMembers(waitCtx); err == nil && healthy == expectedVMs {
+			return
+		}
+
+		select {
+		case <-waitCtx.Done():
+			t.Fatalf("expected %d healthy load balancer members, got %d (last error: %v)", expectedVMs, healthy, err)
+		case <-time.After(15 * time.Second):
+		}
 	}
 }
 
