@@ -216,8 +216,8 @@ func (scenario *scenarioManagedControlPlane) provisionInfra(ctx context.Context,
 	}
 
 	tf := scenario.infra.terraform
-	// the managed control plane Terraform configs name the resources after var.name
-	tf.vars = append(slices.Clone(tf.vars), "name="+clusterName)
+	// the managed control plane Terraform configs name the resources after var.cluster_name
+	tf.vars = append(slices.Clone(tf.vars), "cluster_name="+clusterName)
 
 	if err := tf.Init(); err != nil {
 		t.Fatalf("terraform init failed: %v", err)

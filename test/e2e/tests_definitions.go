@@ -304,6 +304,27 @@ var (
 				outputDir:  "/logs/artifacts/logs",
 			},
 		},
+		"azure": {
+			name:                "azure",
+			osName:              "Ubuntu",
+			managedControlPlane: true,
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-azure":   "true",
+			},
+			environ: map[string]string{
+				"PROVIDER":     "azure",
+				"TEST_TIMEOUT": "180m",
+			},
+			// supporting infrastructure only, the control plane is provisioned by KubeOne
+			terraform: terraformBin{
+				path: "../../examples/terraform/azure-managed-control-plane",
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
+		},
 		"azure_default": {
 			name:   "azure_default",
 			osName: "Ubuntu",
@@ -1091,6 +1112,7 @@ var (
 			HumanReadableName: "Cluster Provisioning (Managed Control Plane)",
 			ManifestTemplatePaths: map[string]string{
 				"aws":          "testdata/managed_cp_aws.yaml",
+				"azure":        "testdata/managed_cp_azure.yaml",
 				"digitalocean": "testdata/managed_cp_digitalocean.yaml",
 				"gce":          "testdata/managed_cp_gce.yaml",
 				"hetzner":      "testdata/managed_cp_hetzner.yaml",

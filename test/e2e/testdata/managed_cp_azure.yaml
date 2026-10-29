@@ -1,0 +1,77 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+name: '{{ required ".ClusterName is required" .ClusterName }}'
+
+versions:
+  kubernetes: '{{ required ".VERSION is required" .VERSION }}'
+
+# Networking is provided by examples/terraform/azure-managed-control-plane,
+# see .Terraform. The cloudConfig comes from the credentials file written by
+# test/go-test-e2e.sh.
+cloudProvider:
+  external: true
+  azure:
+    controlPlane:
+      # resourceGroup and location default to the ones of the first nodeSet
+      loadBalancer: {}
+
+controlPlane:
+  nodeSets:
+  - name: cp
+    replicas: 3
+    operatingSystem: ubuntu
+    ssh:
+      publicKeys:
+      - '{{ required ".SSHPublicKey is required" .SSHPublicKey }}'
+      username: ubuntu
+    cloudProviderSpec:
+      location: '{{ required ".Terraform.networking.location is required" .Terraform.networking.location }}'
+      resourceGroup: '{{ .Terraform.networking.resourceGroup }}'
+      vnetName: '{{ .Terraform.networking.vnetName }}'
+      subnetName: '{{ .Terraform.networking.subnetName }}'
+      securityGroupName: '{{ .Terraform.networking.securityGroupName }}'
+      routeTableName: '{{ .Terraform.networking.routeTableName }}'
+      availabilitySet: '{{ .Terraform.networking.availabilitySet }}'
+      loadBalancerSku: '{{ .Terraform.networking.loadBalancerSku }}'
+      imageReference:
+        publisher: '{{ .Terraform.vm.imageReference.publisher }}'
+        offer: '{{ .Terraform.vm.imageReference.offer }}'
+        sku: '{{ .Terraform.vm.imageReference.sku }}'
+        version: '{{ .Terraform.vm.imageReference.version }}'
+      vmSize: Standard_F2s_v2
+      assignPublicIP: true
+      publicIPSKU: Standard
+
+dynamicWorkers:
+- name: '{{ .ClusterName }}-pool1'
+  # Conformance requires at least two untainted (worker) nodes
+  replicas: 2
+  providerSpec:
+    sshPublicKeys:
+    - '{{ .SSHPublicKey }}'
+    operatingSystem: ubuntu
+    cloudProviderSpec:
+      location: '{{ .Terraform.networking.location }}'
+      resourceGroup: '{{ .Terraform.networking.resourceGroup }}'
+      vnetName: '{{ .Terraform.networking.vnetName }}'
+      subnetName: '{{ .Terraform.networking.subnetName }}'
+      securityGroupName: '{{ .Terraform.networking.securityGroupName }}'
+      routeTableName: '{{ .Terraform.networking.routeTableName }}'
+      availabilitySet: '{{ .Terraform.networking.availabilitySet }}'
+      loadBalancerSku: '{{ .Terraform.networking.loadBalancerSku }}'
+      imageReference:
+        publisher: '{{ .Terraform.vm.imageReference.publisher }}'
+        offer: '{{ .Terraform.vm.imageReference.offer }}'
+        sku: '{{ .Terraform.vm.imageReference.sku }}'
+        version: '{{ .Terraform.vm.imageReference.version }}'
+      vmSize: Standard_F2s_v2
+      assignPublicIP: true
+      publicIPSKU: Standard
+
+containerRuntime:
+  containerd: {}
+
+addons:
+  enable: true
+  addons:
+  - name: default-storage-class

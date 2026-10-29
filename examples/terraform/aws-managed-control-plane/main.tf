@@ -19,7 +19,7 @@ provider "aws" {
 }
 
 locals {
-  kube_cluster_tag = "kubernetes.io/cluster/${var.name}"
+  kube_cluster_tag = "kubernetes.io/cluster/${var.cluster_name}"
   ami              = var.ami == "" ? data.aws_ami.ami.id : var.ami
   zoneA            = data.aws_availability_zones.available.names[0]
   vpc_mask         = parseint(split("/", data.aws_vpc.selected.cidr_block)[1], 10)
@@ -83,8 +83,8 @@ resource "aws_subnet" "public" {
   )
 
   tags = tomap({
-    "Name"                   = "${var.name}-${data.aws_availability_zones.available.names[count.index]}",
-    "Cluster"                = var.name,
+    "Name"                   = "${var.cluster_name}-${data.aws_availability_zones.available.names[count.index]}",
+    "Cluster"                = var.cluster_name,
     (local.kube_cluster_tag) = "shared",
     "keep"                   = "true",
   })
@@ -93,12 +93,12 @@ resource "aws_subnet" "public" {
 ################################### FIREWALL ###################################
 
 resource "aws_security_group" "common" {
-  name        = "${var.name}-common"
+  name        = "${var.cluster_name}-common"
   description = "cluster common rules"
   vpc_id      = data.aws_vpc.selected.id
 
   tags = tomap({
-    "Cluster"                = var.name,
+    "Cluster"                = var.cluster_name,
     (local.kube_cluster_tag) = "shared",
     "keep"                   = "true",
   })
@@ -138,7 +138,7 @@ resource "aws_security_group_rule" "nodeports" {
 }
 
 resource "aws_security_group" "elb" {
-  name        = "${var.name}-api-lb"
+  name        = "${var.cluster_name}-api-lb"
   description = "kube-api firewall"
   vpc_id      = data.aws_vpc.selected.id
 
@@ -159,13 +159,13 @@ resource "aws_security_group" "elb" {
   }
 
   tags = tomap({
-    "Cluster" = var.name,
+    "Cluster" = var.cluster_name,
     "keep"    = "true",
   })
 }
 
 resource "aws_security_group" "ssh" {
-  name        = "${var.name}-ssh"
+  name        = "${var.cluster_name}-ssh"
   description = "ssh access"
   vpc_id      = data.aws_vpc.selected.id
 
@@ -178,14 +178,14 @@ resource "aws_security_group" "ssh" {
   }
 
   tags = tomap({
-    "Cluster" = var.name,
+    "Cluster" = var.cluster_name,
     "keep"    = "true",
   })
 }
 
 ##################################### IAM ######################################
 resource "aws_iam_role" "role" {
-  name = "${var.name}-host"
+  name = "${var.cluster_name}-host"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -202,12 +202,12 @@ resource "aws_iam_role" "role" {
 }
 
 resource "aws_iam_instance_profile" "profile" {
-  name = "${var.name}-host"
+  name = "${var.cluster_name}-host"
   role = aws_iam_role.role.name
 }
 
 resource "aws_iam_role_policy" "policy" {
-  name = "${var.name}-host"
+  name = "${var.cluster_name}-host"
   role = aws_iam_role.role.id
 
   policy = jsonencode({
