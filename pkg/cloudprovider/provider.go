@@ -93,11 +93,11 @@ type LoadBalancerProvider interface {
 	CleanupLoadBalancer(*state.State) error
 }
 
-// LoadBalancerMemberProvider is implemented by providers that can add a
-// control plane VM to the load balancer only once it serves kube-apiserver,
-// e.g. because the VMs behind the load balancer route its address to
-// themselves, so a joining node would reach itself instead of the cluster.
-// Their EnsureVM adds at most the leader.
+// LoadBalancerMemberProvider is implemented by providers whose control plane
+// VMs must not be members of the load balancer while they join, e.g. because
+// the VMs behind the load balancer route its address to themselves, so a
+// joining node would reach itself instead of the cluster. Their EnsureVM adds
+// at most the leader.
 type LoadBalancerMemberProvider interface {
 	// RemoveJoiningLoadBalancerMembers runs after the leader initialized the
 	// cluster and before the followers join. It ensures the leader is a member
@@ -105,8 +105,9 @@ type LoadBalancerMemberProvider interface {
 	// were reset but kept their VMs.
 	RemoveJoiningLoadBalancerMembers(s *state.State, joining []kubeoneapi.HostConfig) error
 
-	// EnsureLoadBalancerMembers runs after the followers joined and adds all
-	// control plane VMs to the load balancer.
+	// EnsureLoadBalancerMembers runs on every apply once the control plane
+	// serves, after the followers joined, and adds all control plane VMs to
+	// the load balancer.
 	EnsureLoadBalancerMembers(*state.State) error
 }
 

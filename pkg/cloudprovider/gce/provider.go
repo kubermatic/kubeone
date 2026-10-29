@@ -103,7 +103,7 @@ func (p *Provider) EnsureVM(s *state.State, nodeSet kubeoneapi.NodeSet, capimach
 	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, hostConfigsFromMachines(provMachines, []clusterv1alpha1.Machine{capimachine}, []kubeoneapi.NodeSet{nodeSet})...)
 
 	// Followers are added by EnsureLoadBalancerMembers after they joined,
-	// see ensureLoadBalancerEndpoints
+	// see RemoveJoiningLoadBalancerMembers
 	if capimachine.Name != leaderMachineName(s.Cluster.Name, s.Cluster.ControlPlane.NodeSets) {
 		return nil
 	}
@@ -422,7 +422,7 @@ func generateGCEControlPlaneMachines(clusterName string, nodeSet []kubeoneapi.No
 			}
 			maps.Copy(gceConfig.Labels, nodeLabels)
 
-			// Links the VM to the :6443 firewall rule created by EnsureLoadBalancer.
+			// Links the VM to the :6443 firewall rules created by EnsureLoadBalancer.
 			gceConfig.Tags = append(gceConfig.Tags, controlPlaneTag(clusterName))
 
 			gceSpec, err := json.Marshal(gceConfig)

@@ -72,10 +72,9 @@ const (
 )
 
 // healthCheckSourceRanges are the health check probe ranges of regional
-// backend service-based external passthrough Network Load Balancers. The docs
-// list 209.85.152.0/22 only "for target pools", so it isn't allowed, see
+// external passthrough Network Load Balancers, see
 // https://docs.cloud.google.com/load-balancing/docs/health-check-concepts
-var healthCheckSourceRanges = []string{"35.191.0.0/16", "209.85.204.0/22"}
+var healthCheckSourceRanges = []string{"35.191.0.0/16", "209.85.152.0/22", "209.85.204.0/22"}
 
 // lbConfig is the resolved load balancer configuration.
 type lbConfig struct {
@@ -248,9 +247,9 @@ func (p *Provider) LookupLoadBalancer(s *state.State) error {
 	return nil
 }
 
-// CleanupLoadBalancer deletes the load balancer resources and the firewall
-// rules created by EnsureLoadBalancer and EnsureVM. Only resources owned by
-// the cluster are deleted, see lbConfig.owner.
+// CleanupLoadBalancer deletes the load balancer resources, including the
+// network endpoint groups created when VMs were added, and the firewall rules.
+// Only resources owned by the cluster are deleted, see lbConfig.owner.
 func (p *Provider) CleanupLoadBalancer(s *state.State) error {
 	cfg, err := resolveLB(s)
 	if err != nil {
@@ -273,7 +272,7 @@ func (p *Provider) CleanupLoadBalancer(s *state.State) error {
 
 // EnsureLoadBalancerMembers adds all control plane VMs to the load balancer,
 // see cloudprovider.LoadBalancerMemberProvider. It runs after the followers
-// joined the cluster, EnsureVM adds only the leader.
+// joined the cluster, EnsureVM adds at most the leader.
 func (p *Provider) EnsureLoadBalancerMembers(s *state.State) error {
 	machines, err := p.GenerateMachines(s.Cluster.Name, s.Cluster.ControlPlane.NodeSets, s.Cluster.Versions.Kubernetes)
 	if err != nil {
@@ -283,15 +282,10 @@ func (p *Provider) EnsureLoadBalancerMembers(s *state.State) error {
 	return ensureLoadBalancerEndpoints(s, machines)
 }
 
-// ensureLoadBalancerEndpoints adds the VMs of the machines as endpoints to the
+// ensureLoadBalancerEndpoints adds the VMs of all machines as endpoints to the
 // network endpoint groups of their zones, creating the groups and adding them
 // to the backend service as needed. Nothing is done if KubeOne doesn't manage
 // the load balancer, i.e. the user provides the kube-apiserver endpoint.
-//
-// A VM must only be added once it serves kube-apiserver: the guest
-// environment of every VM behind a passthrough load balancer routes the
-// load balancer address to the VM itself, so a VM added before it joined the
-// cluster would reach itself instead of the control plane and never join.
 func ensureLoadBalancerEndpoints(s *state.State, machines []clusterv1alpha1.Machine) error {
 	cfg, svc, bs, err := managedBackendService(s)
 	if err != nil || bs == nil {
@@ -313,8 +307,8 @@ func ensureLoadBalancerEndpoints(s *state.State, machines []clusterv1alpha1.Mach
 }
 
 // ensureLeaderEndpoint adds the VM of the leader machine to the load balancer
-// while the cluster is created, so that it can initialize the cluster and the
-// followers can join through the load balancer.
+// while the cluster is created, so that the followers can join through the
+// load balancer, see ensureLeaderEndpointWith.
 func ensureLeaderEndpoint(s *state.State, machine clusterv1alpha1.Machine) error {
 	cfg, svc, bs, err := managedBackendService(s)
 	if err != nil || bs == nil {
@@ -355,6 +349,11 @@ func ensureLeaderEndpointWith(ctx context.Context, svc *compute.Service, cfg *lb
 // balancer and removes the joining hosts from it, see
 // cloudprovider.LoadBalancerMemberProvider. The hostnames are the instance
 // names, see hostConfigsFromMachines.
+//
+// The guest environment of every VM behind a passthrough load balancer routes
+// the load balancer address to the VM itself, so a joining VM that is a member
+// would reach itself instead of the control plane and never join. A member is
+// e.g. a VM that was reset but kept.
 func (p *Provider) RemoveJoiningLoadBalancerMembers(s *state.State, joining []kubeoneapi.HostConfig) error {
 	cfg, svc, bs, err := managedBackendService(s)
 	if err != nil || bs == nil {
@@ -386,7 +385,7 @@ func (p *Provider) RemoveJoiningLoadBalancerMembers(s *state.State, joining []ku
 // this point, and removes the endpoints of the joining VMs.
 func removeJoiningEndpoints(ctx context.Context, svc *compute.Service, cfg *lbConfig, bs *compute.BackendService, machines []clusterv1alpha1.Machine, leaderName string, joining []string, logger logrus.FieldLogger) error {
 	for _, machine := range machines {
-		// A joining host is never added, it's added after it joined
+		// Only the leader is added, unless it's joining itself
 		if machine.Name != leaderName || slices.Contains(joining, leaderName) {
 			continue
 		}
@@ -611,8 +610,8 @@ func nodeSetNetwork(ctx context.Context, svc *compute.Service, cfg *lbConfig, ns
 	return networkFullPath(cfg.ProjectID, sn.Network), nil
 }
 
-// leaderMachineName returns the name of the machine of the leader, the first
-// control plane host, which initializes the cluster.
+// leaderMachineName returns the name of the first machine of the first
+// nodeSet with replicas, the host that initializes a new cluster.
 func leaderMachineName(clusterName string, nodeSets []kubeoneapi.NodeSet) string {
 	for _, ns := range nodeSets {
 		if ns.Replicas > 0 {
@@ -651,8 +650,8 @@ func machineLocation(machine clusterv1alpha1.Machine, cfg *lbConfig) (zone, proj
 
 // machineZone returns the zone of the machine and checks that its VM is in
 // the project of the load balancer, network endpoint groups can't reference
-// VMs of other projects. It's only used to add VMs to the load balancer, so a
-// misconfigured project doesn't block reset.
+// VMs of other projects. It's only used when the load balancer is ensured and
+// VMs are added to it, so a misconfigured project doesn't block reset.
 func machineZone(machine clusterv1alpha1.Machine, cfg *lbConfig) (string, error) {
 	zone, project, err := machineLocation(machine, cfg)
 	if err != nil {
@@ -706,8 +705,9 @@ func ensureFirewalls(ctx context.Context, svc *compute.Service, cfg *lbConfig) e
 	return nil
 }
 
-// ensureFirewall creates the firewall rule, or updates the source ranges of
-// an existing one, e.g. after allowedSourceRanges changed.
+// ensureFirewall creates the firewall rule, or updates the source ranges and
+// target tags of an existing one, e.g. after allowedSourceRanges changed. The
+// network of an existing rule can't be changed, a mismatch is an error.
 func ensureFirewall(ctx context.Context, svc *compute.Service, cfg *lbConfig, want *compute.Firewall) error {
 	existing, err := svc.Firewalls.Get(cfg.firewallProject(), want.Name).Context(ctx).Do()
 	switch {
@@ -809,7 +809,7 @@ func ensureLoadBalancer(ctx context.Context, svc *compute.Service, cfg *lbConfig
 			return bs.Description, nil
 		},
 		func() (*compute.Operation, error) {
-			// Backends are added by ensureEndpoint as the VMs are created
+			// Backends are added by ensureEndpoint as the VMs are added
 			return svc.RegionBackendServices.Insert(cfg.ProjectID, cfg.Region, &compute.BackendService{
 				Name:                cfg.Name,
 				Description:         cfg.owner(),

@@ -361,7 +361,7 @@ func TestEnsureLoadBalancerCreatesResources(t *testing.T) {
 	}
 
 	hcFW := f.get("projects/proj/global/firewalls/demo-kubeapi-6443-hc")
-	if hcFW == nil || fmt.Sprint(hcFW["sourceRanges"]) != "[35.191.0.0/16 209.85.204.0/22]" {
+	if hcFW == nil || fmt.Sprint(hcFW["sourceRanges"]) != "[35.191.0.0/16 209.85.152.0/22 209.85.204.0/22]" {
 		t.Errorf("unexpected health check firewall rule: %v", hcFW)
 	}
 
@@ -430,7 +430,7 @@ func TestEnsureFirewallsUpdatesSourceRanges(t *testing.T) {
 	if got := fmt.Sprint(f.get("projects/proj/global/firewalls/demo-kubeapi-6443")["sourceRanges"]); got != "[10.0.0.0/8]" {
 		t.Errorf("source ranges not updated, got %s", got)
 	}
-	if got := fmt.Sprint(f.get("projects/proj/global/firewalls/demo-kubeapi-6443-hc")["sourceRanges"]); got != "[35.191.0.0/16 209.85.204.0/22]" {
+	if got := fmt.Sprint(f.get("projects/proj/global/firewalls/demo-kubeapi-6443-hc")["sourceRanges"]); got != "[35.191.0.0/16 209.85.152.0/22 209.85.204.0/22]" {
 		t.Errorf("health check source ranges changed, got %s", got)
 	}
 }

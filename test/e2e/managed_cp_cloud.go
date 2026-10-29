@@ -34,8 +34,8 @@ type managedControlPlaneCloud interface {
 }
 
 // loadBalancerMembersCloud is implemented by clouds where KubeOne adds the
-// control plane VMs to the load balancer one by one, e.g. GCE where they are
-// added only after they joined the cluster.
+// control plane VMs to the load balancer itself, e.g. GCE where the followers
+// are added only after they joined the cluster.
 type loadBalancerMembersCloud interface {
 	// HealthyLoadBalancerMembers returns the number of control plane VMs that
 	// are healthy members of the load balancers created by KubeOne
