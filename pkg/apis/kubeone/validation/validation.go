@@ -59,6 +59,8 @@ var (
 	maxVersionConstraint = semverutil.MustParseConstraint(fmt.Sprintf("<= %s", MaximumSupportedVersion))
 	// dualstackProviders defines the cloud providers that support dualstack networking.
 	dualstackProviders = []string{"aws", "openstack", "vsphere", "none"}
+	// journaldSizeRegex matches sizes accepted by journald, e.g. 500M or 5G.
+	journaldSizeRegex = regexp.MustCompile(`^[0-9]+[KMGTPE]?$`)
 )
 
 // ValidateKubeOneCluster validates the KubeOneCluster object
@@ -68,6 +70,7 @@ func ValidateKubeOneCluster(c kubeoneapi.KubeOneCluster) field.ErrorList {
 	allErrs = append(allErrs, ValidateName(c.Name, field.NewPath("name"))...)
 	allErrs = append(allErrs, ValidateControlPlaneConfig(c.ControlPlane, c.ClusterNetwork, field.NewPath("controlPlane"))...)
 	allErrs = append(allErrs, ValidateKubeletConfig(c.KubeletConfig, field.NewPath("kubeletConfig"))...)
+	allErrs = append(allErrs, ValidateJournaldConfig(c.Journald, field.NewPath("journald"))...)
 	allErrs = append(allErrs, ValidateAPIEndpoint(c.APIEndpoint, c.ControlPlane.NodeSets, field.NewPath("apiEndpoint"))...)
 	allErrs = append(allErrs, ValidateCloudProviderSpec(c, field.NewPath("cloudProvider"))...)
 	allErrs = append(allErrs, ValidateVersionConfig(c.Versions, field.NewPath("versions"))...)
@@ -1399,6 +1402,17 @@ func ValidateOperatingSystemManager(mc *kubeoneapi.MachineControllerConfig, fldP
 
 	if mc == nil || !mc.Deploy {
 		allErrs = append(allErrs, field.Invalid(fldPath, "", "machineController needs to be enabled to use operatingSystemManager"))
+	}
+
+	return allErrs
+}
+
+// ValidateJournaldConfig validates the JournaldConfig structure
+func ValidateJournaldConfig(jc kubeoneapi.JournaldConfig, fldPath *field.Path) field.ErrorList {
+	allErrs := field.ErrorList{}
+
+	if jc.SystemMaxUse != "" && !journaldSizeRegex.MatchString(jc.SystemMaxUse) {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("systemMaxUse"), jc.SystemMaxUse, "must be a number with an optional K, M, G, T, P or E suffix, e.g. 500M or 5G"))
 	}
 
 	return allErrs

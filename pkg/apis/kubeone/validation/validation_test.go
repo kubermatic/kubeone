@@ -3004,6 +3004,48 @@ func TestValidateRegistryConfiguration(t *testing.T) {
 	}
 }
 
+func TestValidateJournaldConfig(t *testing.T) {
+	tests := []struct {
+		name          string
+		journald      kubeoneapi.JournaldConfig
+		expectedError bool
+	}{
+		{
+			name:          "valid journald config (empty)",
+			journald:      kubeoneapi.JournaldConfig{},
+			expectedError: false,
+		},
+		{
+			name:          "valid journald systemMaxUse with suffix",
+			journald:      kubeoneapi.JournaldConfig{SystemMaxUse: "500M"},
+			expectedError: false,
+		},
+		{
+			name:          "valid journald systemMaxUse without suffix",
+			journald:      kubeoneapi.JournaldConfig{SystemMaxUse: "1073741824"},
+			expectedError: false,
+		},
+		{
+			name:          "invalid journald systemMaxUse (unsupported suffix)",
+			journald:      kubeoneapi.JournaldConfig{SystemMaxUse: "5GB"},
+			expectedError: true,
+		},
+		{
+			name:          "invalid journald systemMaxUse (lowercase suffix)",
+			journald:      kubeoneapi.JournaldConfig{SystemMaxUse: "5g"},
+			expectedError: true,
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			errs := ValidateJournaldConfig(tc.journald, field.NewPath("journald"))
+			if (len(errs) == 0) == tc.expectedError {
+				t.Errorf("test case failed: expected %v, but got %v", tc.expectedError, (len(errs) != 0))
+			}
+		})
+	}
+}
+
 func TestValidateAssetConfiguration(t *testing.T) {
 	tests := []struct {
 		name               string

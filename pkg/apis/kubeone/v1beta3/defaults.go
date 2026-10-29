@@ -21,6 +21,7 @@ import (
 	"strings"
 	"time"
 
+	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/containerruntime"
 	"k8c.io/kubeone/pkg/templates/kubernetesconfigs"
 
@@ -68,6 +69,7 @@ func SetDefaults_KubeOneCluster(obj *KubeOneCluster) {
 	SetDefaults_ClusterNetwork(obj)
 	SetDefaults_Proxy(obj)
 	SetDefaults_LoggingConfig(obj)
+	SetDefaults_Journald(obj)
 	SetDefaults_MachineController(obj)
 	SetDefaults_OperatingSystemManager(obj)
 	SetDefaults_Addons(obj)
@@ -271,6 +273,12 @@ func SetDefaults_LoggingConfig(obj *KubeOneCluster) {
 	}
 	if obj.LoggingConfig.ContainerLogMaxFiles == 0 {
 		obj.LoggingConfig.ContainerLogMaxFiles = containerruntime.DefaultContainerLogMaxFiles
+	}
+}
+
+func SetDefaults_Journald(obj *KubeOneCluster) {
+	if obj.Journald.SystemMaxUse == "" {
+		obj.Journald.SystemMaxUse = kubeoneapi.DefaultJournaldSystemMaxUse
 	}
 }
 

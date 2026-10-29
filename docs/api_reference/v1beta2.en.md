@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2026-10-29T13:55:25+05:30
+date = 2026-11-02T12:59:38+05:30
 weight = 11
 +++
 ## v1beta2
@@ -57,6 +57,7 @@ weight = 11
 * [HostConfig](#hostconfig)
 * [IPTables](#iptables)
 * [IPVSConfig](#ipvsconfig)
+* [JournaldConfig](#journaldconfig)
 * [KubeOneCluster](#kubeonecluster)
 * [KubeProxyConfig](#kubeproxyconfig)
 * [KubeletConfig](#kubeletconfig)
@@ -758,6 +759,16 @@ IPVSConfig contains different options to configure IPVS kube-proxy mode
 
 [Back to Group](#v1beta2)
 
+### JournaldConfig
+
+JournaldConfig configures systemd-journald
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| systemMaxUse | SystemMaxUse configures the maximum disk space the persistent journal can use, e.g. 500M or 2G. Supported suffixes are K, M, G, T, P and E (base 1024). Default value is 5G. See more at: https://www.freedesktop.org/software/systemd/man/latest/journald.conf.html#SystemMaxUse= | string | false |
+
+[Back to Group](#v1beta2)
+
 ### KubeOneCluster
 
 KubeOneCluster is KubeOne Cluster API Schema
@@ -785,6 +796,7 @@ KubeOneCluster is KubeOne Cluster API Schema
 | systemPackages | SystemPackages configure kubeone behaviour regarding OS packages. | *[SystemPackages](#systempackages) | false |
 | registryConfiguration | RegistryConfiguration configures how Docker images are pulled from an image registry | *[RegistryConfiguration](#registryconfiguration) | false |
 | loggingConfig | LoggingConfig configures the Kubelet's log rotation | [LoggingConfig](#loggingconfig) | false |
+| journald | Journald configures systemd-journald on all nodes | [JournaldConfig](#journaldconfig) | false |
 | tlsCipherSuites | TLSCipherSuites allows to configure TLS cipher suites for different components. See https://pkg.go.dev/crypto/tls#pkg-constants for possible values. | [TLSCipherSuites](#tlsciphersuites) | true |
 | controlPlaneComponents | ControlPlaneComponents configures the Kubernetes control plane components | *[ControlPlaneComponents](#controlplanecomponents) | false |
 

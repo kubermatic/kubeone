@@ -30,7 +30,7 @@ source /etc/kubeone/proxy-env
 
 {{ template "detect-host-cpu-architecture" }}
 {{ template "sysctl-k8s" . }}
-{{ template "journald-config" }}
+{{ template "journald-config" . }}
 
 {{- with .KUBERNETES_CNI_VERSION }}
 sudo mkdir -p /opt/bin /opt/cni/bin /etc/kubernetes/pki /etc/kubernetes/manifests
@@ -130,17 +130,18 @@ func FlatcarScript(cluster *kubeoneapi.KubeOneCluster, params Params) (string, e
 	}
 
 	data := Data{
-		"UPGRADE":                params.Upgrade,
-		"KUBELET":                params.Kubelet,
-		"KUBECTL":                params.Kubectl,
-		"KUBEADM":                params.Kubeadm,
-		"FORCE":                  params.Force,
-		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
-		"KUBERNETES_CNI_VERSION": flatcarCNIVersion,
-		"CRITOOLS_VERSION":       criToolsVersion(cluster.Versions.Kubernetes),
-		"PROXY":                  proxy,
-		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
+		"UPGRADE":                 params.Upgrade,
+		"KUBELET":                 params.Kubelet,
+		"KUBECTL":                 params.Kubectl,
+		"KUBEADM":                 params.Kubeadm,
+		"FORCE":                   params.Force,
+		"KUBERNETES_VERSION":      cluster.Versions.Kubernetes,
+		"KUBERNETES_CNI_VERSION":  flatcarCNIVersion,
+		"CRITOOLS_VERSION":        criToolsVersion(cluster.Versions.Kubernetes),
+		"PROXY":                   proxy,
+		"INSTALL_CONTAINERD":      cluster.ContainerRuntime.Containerd,
+		"IPV6_ENABLED":            cluster.ClusterNetwork.HasIPv6(),
+		"JOURNALD_SYSTEM_MAX_USE": cluster.Journald.SystemMaxUse,
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {

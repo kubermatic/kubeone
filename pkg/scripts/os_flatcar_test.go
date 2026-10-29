@@ -46,6 +46,11 @@ func TestFlatcarScript(t *testing.T) {
 			params:  Params{Kubeadm: true, Kubectl: true, Kubelet: true},
 		},
 		{
+			name:    "install all with custom journald system max use",
+			cluster: genCluster(withJournaldSystemMaxUse("2G")),
+			params:  Params{Kubeadm: true, Kubectl: true, Kubelet: true},
+		},
+		{
 			name:    "upgrade kubeadm and kubectl",
 			cluster: genCluster(),
 			params:  Params{Upgrade: true, Kubeadm: true, Kubectl: true},
