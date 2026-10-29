@@ -97,7 +97,9 @@ authenticate against the OpenStack API and:
 2. Discovers the associated pool (unless `poolID` is explicitly set).
 
 3. Registers each control-plane node's private (or public, as fallback) IP
-   address as a member of the pool on port 6443. Only members not already
+   address as a member of the pool on port 6443, as soon as its VM is
+   provisioned, so the leader is reachable through the load balancer when the
+   cluster is initialized. Only members not already
    registered are added — the operation is idempotent.
 
 When the load balancer VIP is already known (e.g. from a previous
@@ -114,6 +116,10 @@ networking, but control-plane VMs are provisioned by KubeOne instead of
 Terraform. The `kubeone_hosts` output from Terraform is **not** used in this
 mode — KubeOne populates `controlPlane.hosts` automatically from the
 provisioned VMs.
+
+The `examples/terraform/openstack-managed-control-plane/` configs create only
+the supporting infrastructure for the managed control plane (networking,
+security group, bastion, and the Octavia LB), without control-plane VMs.
 
 The LB name in Terraform must match the configured
 `controlPlane.loadBalancer.name`. The default in both is

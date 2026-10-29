@@ -152,9 +152,10 @@ func (scenario *scenarioManagedControlPlane) Run(ctx context.Context, t *testing
 
 	scenario.verifyControlPlane(ctx, t, k1, cloud)
 
-	// Where KubeOne manages the load balancer membership (GCE), a reset that
-	// keeps the VMs keeps their membership; installing again must remove the
-	// followers before they join, or they never join
+	// Where KubeOne manages the load balancer membership (GCE, OpenStack), a
+	// reset that keeps the VMs keeps their membership; installing again must
+	// work with it, e.g. on GCE the followers must be removed before they
+	// join, or they never join
 	if _, ok := cloud.(loadBalancerMembersCloud); ok {
 		if err := k1.Reset(); err != nil {
 			t.Fatalf("kubeone reset (keeping the control plane) failed: %v", err)

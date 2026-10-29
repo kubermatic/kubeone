@@ -45,7 +45,11 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-const protocolPort = 6443
+const (
+	protocolPort = 6443
+
+	poolActiveTimeout = 10 * time.Minute
+)
 
 var (
 	_ cloudprovider.ControlPlaneCloudProvider = &Provider{}
@@ -86,7 +90,11 @@ func (p *Provider) EnsureVM(s *state.State, nodeSet kubeoneapi.NodeSet, capimach
 
 	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, cloudprovider.HostConfigsFromMachines(provMachines, []kubeoneapi.NodeSet{nodeSet})...)
 
-	return nil
+	// The VM is added to the load balancer right away, the leader has to be
+	// reachable through it when the cluster is initialized. Octavia proxies
+	// the traffic, so joining nodes reach the cluster through the load
+	// balancer even if they are its members, unhealthy members get no traffic.
+	return ensureOpenstackLBMembers(s)
 }
 
 func (p *Provider) LookupVMs(s *state.State) error {
@@ -109,12 +117,10 @@ func (p *Provider) LookupVMs(s *state.State) error {
 	return nil
 }
 
+// EnsureLoadBalancer looks up the pre-existing load balancer, the control
+// plane VMs are added to it by EnsureVM once they exist.
 func (p *Provider) EnsureLoadBalancer(s *state.State) error {
-	if err := p.LookupLoadBalancer(s); err != nil {
-		return err
-	}
-
-	return ensureOpenstackLBMembers(s)
+	return p.LookupLoadBalancer(s)
 }
 
 func (p *Provider) LookupLoadBalancer(s *state.State) error {
@@ -194,7 +200,9 @@ func (p *Provider) CleanupLoadBalancer(s *state.State) error {
 
 	s.Logger.Debugf("deleting loadbalancer %q with id: %s", lbName, lbID)
 
-	if err := loadbalancers.Delete(lbClient, lbID, loadbalancers.DeleteOpts{}).ExtractErr(); err != nil {
+	// Octavia refuses to delete a load balancer that still has listeners or
+	// pools, cascade deletes them as well
+	if err := loadbalancers.Delete(lbClient, lbID, loadbalancers.DeleteOpts{Cascade: true}).ExtractErr(); err != nil {
 		return fail.Cloud(err, "openstack", "deleting load balancer")
 	}
 
@@ -250,6 +258,10 @@ func ensureOpenstackLBMembers(s *state.State) error {
 
 		s.Logger.Infof("Adding control plane node %s (%s) to LB pool", host.Hostname, addr)
 
+		if err = waitForPoolActive(lbClient, poolID); err != nil {
+			return err
+		}
+
 		_, err = pools.CreateMember(lbClient, poolID, pools.CreateMemberOpts{
 			Address:      addr,
 			ProtocolPort: protocolPort,
@@ -259,6 +271,31 @@ func ensureOpenstackLBMembers(s *state.State) error {
 		if err != nil {
 			return fail.Cloud(err, "openstack", "adding member %s to LB pool", addr)
 		}
+	}
+
+	return nil
+}
+
+// waitForPoolActive waits until Octavia applied the previous change of the
+// pool, the load balancer rejects further changes (409 Conflict) until then.
+func waitForPoolActive(lbClient *gophercloud.ServiceClient, poolID string) error {
+	err := gophercloud.WaitFor(int(poolActiveTimeout.Seconds()), func() (bool, error) {
+		pool, err := pools.Get(lbClient, poolID).Extract()
+		if err != nil {
+			return false, err
+		}
+
+		switch pool.ProvisioningStatus {
+		case "ACTIVE":
+			return true, nil
+		case "ERROR":
+			return false, fmt.Errorf("LB pool %s is in ERROR state", poolID)
+		default:
+			return false, nil
+		}
+	})
+	if err != nil {
+		return fail.Cloud(err, "openstack", "waiting for LB pool %s to become active", poolID)
 	}
 
 	return nil
