@@ -18,9 +18,13 @@ package addons
 
 import (
 	"reflect"
+	"strings"
 	"testing"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/validation"
 )
 
 func Test_containerdRegistryCredentials(t *testing.T) {
@@ -238,5 +242,34 @@ func Test_csiWebhookCerts(t *testing.T) {
 	}
 	if !reflect.DeepEqual(data.Certificates, expected) {
 		t.Errorf("csiWebhookCerts() certificates =\n  %#v\nwant:\n  %#v", data.Certificates, expected)
+	}
+}
+
+func Test_addonInventoryKey(t *testing.T) {
+	tests := map[string]string{
+		"":                       "kubeone-addons-root",
+		"cni-canal":              "kubeone-addon-cni-canal",
+		"My_Addon":               "kubeone-addon-my-addon-",
+		strings.Repeat("a", 300): "kubeone-addon-" + strings.Repeat("a", 230) + "-",
+	}
+
+	for addonName, wantPrefix := range tests {
+		key := addonInventoryKey(addonName)
+
+		if key.Namespace != metav1.NamespaceSystem {
+			t.Errorf("addonInventoryKey(%q).Namespace = %q, want kube-system", addonName, key.Namespace)
+		}
+
+		if !strings.HasPrefix(key.Name, wantPrefix) {
+			t.Errorf("addonInventoryKey(%q).Name = %q, want prefix %q", addonName, key.Name, wantPrefix)
+		}
+
+		if errs := validation.IsDNS1123Subdomain(key.Name); len(errs) > 0 {
+			t.Errorf("addonInventoryKey(%q).Name = %q is not a valid name: %v", addonName, key.Name, errs)
+		}
+	}
+
+	if addonInventoryKey("My_Addon") == addonInventoryKey("my-addon") {
+		t.Error("sanitized addon names must not collide with valid ones")
 	}
 }

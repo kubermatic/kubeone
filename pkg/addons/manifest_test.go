@@ -17,7 +17,6 @@ limitations under the License.
 package addons
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"path"
@@ -35,40 +34,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/yaml"
 )
-
-var testManifests = []string{
-	`kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: test1
-  namespace: kube-system
-  labels:
-    app: test
-data:
-  foo: bar
-`,
-
-	`kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: test2
-  namespace: kube-system
-  labels:
-    app: test
-data:
-  foo: bar`,
-
-	`kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: test3
-  namespace: kube-system
-  labels:
-    app: test
-data:
-  foo: bar
-`,
-}
 
 const (
 	testManifest1WithoutLabel = `apiVersion: v1
@@ -103,7 +68,7 @@ kind: ConfigMap
 metadata:
   labels:
     app: test
-    cluster: {{ .Config.Name }}
+    cluster: '{{ .Config.Name }}'
     kubeone.io/addon: ""
   name: test1
   namespace: kube-system
@@ -138,6 +103,21 @@ spec:
   - image: {{ Registry "registry.k8s.io" }}/kube-apiserver:v1.19.3
 `
 
+	// With templating disabled, template delimiters end up as literal strings.
+	testManifest1WithImageTemplateDisabled = `apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: test
+    cluster: kubeone-test
+    kubeone.io/addon: ""
+  name: test1
+  namespace: kube-system
+spec:
+  containers:
+  - image: '{{ Registry "registry.k8s.io" }}/kube-apiserver:v1.19.3'
+`
+
 	testManifest1WithImageParsed = `apiVersion: v1
 kind: Pod
 metadata:
@@ -168,7 +148,6 @@ spec:
 )
 
 // testManifest1 & testManifest3 have a linebreak at the end, testManifest2 not
-var combinedTestManifest = fmt.Sprintf("%s---\n%s\n---\n%s", testManifests[0], testManifests[1], testManifests[2])
 
 func TestEnsureAddonsLabelsOnResources(t *testing.T) {
 	t.Parallel()
@@ -221,29 +200,16 @@ func TestEnsureAddonsLabelsOnResources(t *testing.T) {
 				t.Fatalf("expected to load 1 manifest, got %d", len(manifests))
 			}
 
-			b, err := ensureAddonsLabelsOnResources(manifests, tc.addonName)
+			objs, err := ensureAddonsLabelsOnResources(manifests, tc.addonName, false)
 			if err != nil {
 				t.Fatalf("unable to ensure labels: %v", err)
 			}
-			manifest := b[0].String()
+			manifest := mustToYAML(t, objs[0].Object)
 
 			if manifest != tc.expectedManifest {
 				t.Fatalf("invalid manifest returned. expected \n%s, got \n%s", tc.expectedManifest, manifest)
 			}
 		})
-	}
-}
-
-func TestCombineManifests(t *testing.T) {
-	var manifests []*bytes.Buffer
-	for _, m := range testManifests {
-		manifests = append(manifests, bytes.NewBufferString(m))
-	}
-
-	manifest := combineManifests(manifests, false)
-
-	if manifest.String() != combinedTestManifest {
-		t.Fatalf("invalid combined manifest returned. expected \n%s, got \n%s", combinedTestManifest, manifest.String())
 	}
 }
 
@@ -308,11 +274,11 @@ func TestImageRegistryParsing(t *testing.T) {
 				t.Fatalf("expected to load 1 manifest, got %d", len(manifests))
 			}
 
-			b, err := ensureAddonsLabelsOnResources(manifests, "")
+			objs, err := ensureAddonsLabelsOnResources(manifests, "", false)
 			if err != nil {
 				t.Fatalf("unable to ensure labels: %v", err)
 			}
-			manifest := b[0].String()
+			manifest := mustToYAML(t, objs[0].Object)
 
 			if manifest != tc.expectedManifest {
 				t.Fatalf("invalid manifest returned. expected \n%s, got \n%s", tc.expectedManifest, manifest)
@@ -569,7 +535,7 @@ func TestDisableTemplateForLoadManifests(t *testing.T) {
 			name:              "addon with registry path and templatization disabled",
 			addonName:         "",
 			addonManifest:     testManifest1WithImage,
-			expectedManifest:  testManifest1WithImage,
+			expectedManifest:  testManifest1WithImageTemplateDisabled,
 			disableTemplating: true,
 		},
 		{
@@ -610,17 +576,11 @@ func TestDisableTemplateForLoadManifests(t *testing.T) {
 				t.Fatalf("expected to load 1 manifest, got %d", len(manifests))
 			}
 
-			b, err := ensureAddonsLabelsOnResources(manifests, tc.addonName)
+			objs, err := ensureAddonsLabelsOnResources(manifests, tc.addonName, tc.disableTemplating)
 			if err != nil {
 				t.Fatalf("unable to ensure labels: %v", err)
 			}
-			manifest := b[0].String()
-
-			if tc.disableTemplating {
-				// When templating is disabled we append "^" to avoid YAML to JSON conversion issues. We revert that change here.
-				manifest = strings.ReplaceAll(manifest, "^{{", "{{")
-				manifest = strings.ReplaceAll(manifest, "}}^", "}}")
-			}
+			manifest := mustToYAML(t, objs[0].Object)
 
 			if manifest != tc.expectedManifest {
 				t.Fatalf("invalid manifest returned. expected \n%s, got \n%s", tc.expectedManifest, manifest)
@@ -765,5 +725,37 @@ stringData:
 
 	if !strings.Contains(err.Error(), "resticPassword") || !strings.Contains(err.Error(), "backups-restic") {
 		t.Fatalf("expected error to mention the conflicting key and addon name, got: %v", err)
+	}
+}
+
+func mustToYAML(t *testing.T, obj map[string]any) string {
+	t.Helper()
+
+	b, err := yaml.Marshal(obj)
+	if err != nil {
+		t.Fatalf("unable to marshal object: %v", err)
+	}
+
+	return string(b)
+}
+
+func TestEnsureAddonsLabelsOnResourcesFlattensLists(t *testing.T) {
+	list := `{"apiVersion":"v1","kind":"List","items":[` +
+		`{"apiVersion":"v1","kind":"ConfigMap","metadata":{"name":"a","namespace":"kube-system"}},` +
+		`{"apiVersion":"v1","kind":"Secret","metadata":{"name":"b","namespace":"kube-system"}}]}`
+
+	objs, err := ensureAddonsLabelsOnResources([]runtime.RawExtension{{Raw: []byte(list)}}, "test-addon", false)
+	if err != nil {
+		t.Fatalf("unable to ensure labels: %v", err)
+	}
+
+	if len(objs) != 2 {
+		t.Fatalf("expected List to be flattened into 2 objects, got %d", len(objs))
+	}
+
+	for _, obj := range objs {
+		if obj.GetLabels()[addonLabel] != "test-addon" {
+			t.Errorf("%s/%s is missing the addon label", obj.GetKind(), obj.GetName())
+		}
 	}
 }
