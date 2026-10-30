@@ -18,12 +18,17 @@ package clientutil
 
 import (
 	"context"
+	"time"
 
 	"k8c.io/kubeone/pkg/fail"
 
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/wait"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
+
+const deleteWaitInterval = 2 * time.Second
 
 // DeleteIfExists makes it easy to "delete" Kubernetes objects if they exist
 func DeleteIfExists(ctx context.Context, c client.Client, obj client.Object) error {
@@ -34,4 +39,30 @@ func DeleteIfExists(ctx context.Context, c client.Client, obj client.Object) err
 	}
 
 	return nil
+}
+
+// DeleteAndWait deletes the object, if it exists, with foreground propagation
+// and waits until it's gone. With foreground propagation the object is removed
+// only after all its dependents, e.g. the pods of a DaemonSet, are deleted.
+func DeleteAndWait(ctx context.Context, c client.Client, obj client.Object, timeout time.Duration) error {
+	key := client.ObjectKeyFromObject(obj)
+
+	err := c.Delete(ctx, obj, client.PropagationPolicy(metav1.DeletePropagationForeground))
+	if k8serrors.IsNotFound(err) {
+		return nil
+	}
+	if err != nil {
+		return fail.KubeClient(err, "deleting %T %s", obj, key)
+	}
+
+	err = wait.PollUntilContextTimeout(ctx, deleteWaitInterval, timeout, true, func(ctx context.Context) (bool, error) {
+		getErr := c.Get(ctx, key, obj)
+		if k8serrors.IsNotFound(getErr) {
+			return true, nil
+		}
+
+		return false, getErr
+	})
+
+	return fail.KubeClient(err, "waiting for %T %s to be deleted", obj, key)
 }

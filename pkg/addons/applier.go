@@ -111,12 +111,7 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 		return nil, err
 	}
 
-	credsEnvVarsMC, err := mcCredentialsEnvVars(s)
-	if err != nil {
-		return nil, err
-	}
-
-	mcCredsHash, err := credentialsHash(s, credentials.TypeMC)
+	credsEnvVarsMC, mcCredsHash, err := mcCredentials(s)
 	if err != nil {
 		return nil, err
 	}
@@ -223,24 +218,9 @@ func newAddonsApplier(s *state.State) (*applier, error) {
 			return nil, err
 		}
 
-		credsOSM, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeOSM)
-		if err != nil {
+		if err := osmCredentials(s, &data); err != nil {
 			return nil, err
 		}
-
-		envVarsOSM := credentials.EnvVarBindings(credentials.SecretNameOSM, credsOSM)
-		credsEnvVarsOSM, err := yaml.Marshal(envVarsOSM)
-		if err != nil {
-			return nil, fail.Runtime(err, "marshalling OSM credentials env variables")
-		}
-
-		osmCredsHash, err := credentialsHash(s, credentials.TypeOSM)
-		if err != nil {
-			return nil, err
-		}
-
-		data.OperatingSystemManagerCredentialsEnvVars = string(credsEnvVarsOSM)
-		data.OperatingSystemManagerCredentialsHash = osmCredsHash
 	}
 
 	return &applier{
@@ -345,23 +325,70 @@ func containerdRegistryCredentials(containerdConfig *kubeoneapi.ContainerRuntime
 	return regCredentials
 }
 
-func mcCredentialsEnvVars(s *state.State) ([]byte, error) {
+// tenantCredentials reports whether the cloud provider credentials are stored
+// in the tenant cluster. On KubeVirt, machine-controller and the CCM run in
+// the infra cluster, and OSM does not use the credentials.
+func tenantCredentials(s *state.State) bool {
+	return s.Cluster.CloudProvider.Kubevirt == nil
+}
+
+// mcCredentials returns the machine-controller credentials env variables and
+// their hash.
+func mcCredentials(s *state.State) ([]byte, string, error) {
+	if !tenantCredentials(s) {
+		return nil, "", nil
+	}
+
 	var credsEnvVarsMC []byte
 
 	if s.Cluster.MachineController.Deploy {
 		credsMC, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeMC)
 		if err != nil {
-			return nil, err
+			return nil, "", err
 		}
 
 		envVarsMC := credentials.EnvVarBindings(credentials.SecretNameMC, credsMC)
 		credsEnvVarsMC, err = yaml.Marshal(envVarsMC)
 		if err != nil {
-			return nil, fail.Runtime(err, "marshalling machine-controller credentials env variables")
+			return nil, "", fail.Runtime(err, "marshalling machine-controller credentials env variables")
 		}
 	}
 
-	return credsEnvVarsMC, nil
+	mcCredsHash, err := credentialsHash(s, credentials.TypeMC)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return credsEnvVarsMC, mcCredsHash, nil
+}
+
+// osmCredentials sets the operating-system-manager credentials env variables
+// and their hash.
+func osmCredentials(s *state.State, data *templateData) error {
+	if !tenantCredentials(s) {
+		return nil
+	}
+
+	credsOSM, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeOSM)
+	if err != nil {
+		return err
+	}
+
+	envVarsOSM := credentials.EnvVarBindings(credentials.SecretNameOSM, credsOSM)
+	credsEnvVarsOSM, err := yaml.Marshal(envVarsOSM)
+	if err != nil {
+		return fail.Runtime(err, "marshalling OSM credentials env variables")
+	}
+
+	osmCredsHash, err := credentialsHash(s, credentials.TypeOSM)
+	if err != nil {
+		return err
+	}
+
+	data.OperatingSystemManagerCredentialsEnvVars = string(credsEnvVarsOSM)
+	data.OperatingSystemManagerCredentialsHash = osmCredsHash
+
+	return nil
 }
 
 func credentialsHash(s *state.State, credsType credentials.Type) (string, error) {
@@ -404,9 +431,9 @@ func addonsLocalFS(clusterAddons *kubeoneapi.Addons, manifestFilePath string) (f
 	return localFS, nil
 }
 
-// loadAndApplyAddon parses the addon manifests and server-side applies them, pruning objects that were removed
-// from the addon.
-func (a *applier) loadAndApplyAddon(s *state.State, fsys fs.FS, addonName string) error {
+// loadAndApplyAddon parses the addon manifests and server-side applies them. With prune, objects that were removed
+// from the addon are deleted.
+func (a *applier) loadAndApplyAddon(s *state.State, fsys fs.FS, addonName string, prune bool) error {
 	s.Logger.Infof("Applying addon %s...", addonName)
 
 	objs, err := a.getManifestsFromDirectory(s, fsys, addonName)
@@ -427,11 +454,17 @@ func (a *applier) loadAndApplyAddon(s *state.State, fsys fs.FS, addonName string
 	}
 
 	inventory := addonInventoryKey(addonName)
+	opts := nativeclient.ApplyOptions{
+		Inventory: &inventory,
+	}
 
-	result, err := nativeclient.New(s.DynamicClient).Apply(s.Context, objs, nativeclient.ApplyOptions{
-		PruneSelector: addonSelector(addonName),
-		Inventory:     &inventory,
-	})
+	// Without pruning, the inventory keeps the kinds recorded so far, so the next pruning apply still removes
+	// objects of kinds that were dropped from the addon.
+	if prune {
+		opts.PruneSelector = addonSelector(addonName)
+	}
+
+	result, err := nativeclient.New(s.DynamicClient).Apply(s.Context, objs, opts)
 	logApplyResult(s, addonName, result)
 
 	return err

@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 
 	corev1 "k8s.io/api/core/v1"
+	storagev1 "k8s.io/api/storage/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -748,6 +749,77 @@ type KubevirtSpec struct {
 
 	// ControlPlane configures control plane provisioning on KubeVirt
 	ControlPlane *KubevirtControlPlane `json:"controlPlane,omitempty"`
+
+	// StorageClasses are infra cluster StorageClasses exposed in the tenant cluster by the KubeVirt CSI driver.
+	// For each entry, a tenant StorageClass named "kubevirt-<infraStorageClassName>" is created.
+	StorageClasses []KubevirtInfraStorageClass `json:"storageClasses,omitempty"`
+
+	// VolumeSnapshotClasses are infra cluster VolumeSnapshotClasses exposed in the tenant cluster by the KubeVirt CSI
+	// driver. For each entry, a tenant VolumeSnapshotClass named "kubevirt-<infraVolumeSnapshotClass>" is created.
+	VolumeSnapshotClasses []KubevirtInfraVolumeSnapshotClass `json:"volumeSnapshotClasses,omitempty"`
+
+	// MachineController configures machine-controller, which runs in the infra cluster's InfraNamespace.
+	MachineController *KubevirtMachineController `json:"machineController,omitempty"`
+}
+
+// KubevirtMachineController configures machine-controller running in the infra cluster
+type KubevirtMachineController struct {
+	// Webhook configures how the tenant cluster API server reaches the machine-controller webhook running in the
+	// infra cluster.
+	Webhook KubevirtMachineControllerWebhook `json:"webhook,omitempty"`
+}
+
+// KubevirtMachineControllerWebhook configures the infra cluster Service of the machine-controller webhook
+type KubevirtMachineControllerWebhook struct {
+	// ServiceType of the webhook Service, either ClusterIP or LoadBalancer. The tenant cluster API server must be able
+	// to reach it. Default: ClusterIP when controlPlane is set (the control plane runs as VMs in the infra cluster),
+	// LoadBalancer otherwise.
+	ServiceType corev1.ServiceType `json:"serviceType,omitempty"`
+
+	// Annotations to be applied to the webhook Service
+	Annotations map[string]string `json:"annotations,omitempty"`
+}
+
+// KubevirtInfraStorageClass defines an infra cluster StorageClass exposed in the tenant cluster
+type KubevirtInfraStorageClass struct {
+	// InfraStorageClassName is the name of the StorageClass in the infra cluster
+	InfraStorageClassName string `json:"infraStorageClassName"`
+
+	// IsDefaultClass marks the tenant StorageClass as the default StorageClass
+	IsDefaultClass bool `json:"isDefaultClass,omitempty"`
+
+	// VolumeBindingMode of the tenant StorageClass
+	VolumeBindingMode *storagev1.VolumeBindingMode `json:"volumeBindingMode,omitempty"`
+
+	// AllowVolumeExpansion of the tenant StorageClass
+	AllowVolumeExpansion bool `json:"allowVolumeExpansion,omitempty"`
+
+	// ReclaimPolicy of the tenant StorageClass. Default: Delete
+	ReclaimPolicy corev1.PersistentVolumeReclaimPolicy `json:"reclaimPolicy,omitempty"`
+
+	// Bus is the disk bus used to attach volumes to the VMs. Default: scsi
+	Bus string `json:"bus,omitempty"`
+
+	// Zones restricts the tenant StorageClass topology to the given zones
+	Zones []string `json:"zones,omitempty"`
+
+	// Regions restricts the tenant StorageClass topology to the given regions
+	Regions []string `json:"regions,omitempty"`
+
+	// Labels to be applied to the tenant StorageClass
+	Labels map[string]string `json:"labels,omitempty"`
+}
+
+// KubevirtInfraVolumeSnapshotClass defines an infra cluster VolumeSnapshotClass exposed in the tenant cluster
+type KubevirtInfraVolumeSnapshotClass struct {
+	// InfraVolumeSnapshotClass is the name of the VolumeSnapshotClass in the infra cluster
+	InfraVolumeSnapshotClass string `json:"infraVolumeSnapshotClass"`
+
+	// IsDefaultClass marks the tenant VolumeSnapshotClass as the default VolumeSnapshotClass
+	IsDefaultClass bool `json:"isDefaultClass,omitempty"`
+
+	// DeletionPolicy of the tenant VolumeSnapshotClass, either Delete or Retain. Default: Delete
+	DeletionPolicy string `json:"deletionPolicy,omitempty"`
 }
 
 // KubevirtControlPlane control plane config on KubeVirt

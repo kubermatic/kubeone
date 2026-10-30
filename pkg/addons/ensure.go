@@ -24,6 +24,9 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	kubevirtccm "k8c.io/kubeone/pkg/cloudprovider/kubevirt/ccm"
+	kubevirtcsi "k8c.io/kubeone/pkg/cloudprovider/kubevirt/csi"
+	kubevirtmc "k8c.io/kubeone/pkg/cloudprovider/kubevirt/machinecontroller"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
@@ -41,39 +44,46 @@ const (
 // embeddedAddons is a list of addons that are embedded in the KubeOne
 // binary. Those addons are skipped when applying a user-provided addon with the same name.
 var embeddedAddons = map[string]string{
-	resources.AddonCCMAws:                 "",
-	resources.AddonCCMAzure:               "",
-	resources.AddonCCMDigitalOcean:        "",
-	resources.AddonCCMHetzner:             "",
-	resources.AddonCCMGCP:                 "",
-	resources.AddonCCMOpenStack:           "",
-	resources.AddonCCMEquinixMetal:        "",
-	resources.AddonCCMPacket:              "",
-	resources.AddonCCMVsphere:             "",
-	resources.AddonClusterAutoscaler:      "",
-	resources.AddonCNICanal:               "",
-	resources.AddonCNICilium:              "",
-	resources.AddonCNIWeavenet:            "",
-	resources.AddonCSIAwsEBS:              "",
-	resources.AddonCSIExternalSnapshotter: "",
-	resources.AddonCSIAzureDisk:           "",
-	resources.AddonCSIAzureFile:           "",
-	resources.AddonCSIDigitalOcean:        "",
-	resources.AddonCSIHetzner:             "",
-	resources.AddonCSIKubeVirt:            "",
-	resources.AddonCSIGCPComputePD:        "",
-	resources.AddonCSINutanix:             "",
-	resources.AddonCSIOpenStackCinder:     "",
-	resources.AddonCSIVMwareCloudDirector: "",
-	resources.AddonCSIVsphere:             "",
-	resources.AddonMetricsServer:          "",
-	resources.AddonNodeLocalDNS:           "",
-	resources.AddonNodeLocalDNSCilium:     "",
+	resources.AddonCCMAws:                    "",
+	resources.AddonCCMAzure:                  "",
+	resources.AddonCCMDigitalOcean:           "",
+	resources.AddonCCMHetzner:                "",
+	resources.AddonCCMGCP:                    "",
+	resources.AddonCCMOpenStack:              "",
+	resources.AddonCCMEquinixMetal:           "",
+	resources.AddonCCMPacket:                 "",
+	resources.AddonCCMVsphere:                "",
+	resources.AddonClusterAutoscaler:         "",
+	resources.AddonCNICanal:                  "",
+	resources.AddonCNICilium:                 "",
+	resources.AddonCNIWeavenet:               "",
+	resources.AddonCSIAwsEBS:                 "",
+	resources.AddonCSIExternalSnapshotter:    "",
+	resources.AddonCSIAzureDisk:              "",
+	resources.AddonCSIAzureFile:              "",
+	resources.AddonCSIDigitalOcean:           "",
+	resources.AddonCSIHetzner:                "",
+	resources.AddonKubeVirtCSIDriverOperator: "",
+	resources.AddonCSIGCPComputePD:           "",
+	resources.AddonCSINutanix:                "",
+	resources.AddonCSIOpenStackCinder:        "",
+	resources.AddonCSIVMwareCloudDirector:    "",
+	resources.AddonCSIVsphere:                "",
+	resources.AddonMetricsServer:             "",
+	resources.AddonNodeLocalDNS:              "",
+	resources.AddonNodeLocalDNSCilium:        "",
 }
 
 type addonAction struct {
-	name      string
+	name string
+	// supportFn runs before the addon is applied
 	supportFn func() error
+	// postFn runs after the addon is applied
+	postFn func() error
+	// deferPrune applies the addon without pruning before postFn, and with
+	// pruning after it. Objects dropped from the addon in favor of ones
+	// created by postFn are then only deleted once postFn succeeded.
+	deferPrune bool
 }
 
 func collectAddons(s *state.State) []addonAction {
@@ -134,9 +144,22 @@ func collectAddons(s *state.State) []addonAction {
 	}
 
 	if s.Cluster.MachineController.Deploy {
-		addonsToDeploy = append(addonsToDeploy, addonAction{
+		mc := addonAction{
 			name: resources.AddonMachineController,
-		})
+		}
+		if s.Cluster.CloudProvider.Kubevirt != nil {
+			// The tenant machine-controller and its webhook keep running
+			// until their infra cluster replacements are ready.
+			mc.deferPrune = true
+			mc.postFn = func() error {
+				if err := kubevirtmc.Ensure(s); err != nil {
+					return err
+				}
+
+				return migrateKubeVirtMachineController(s)
+			}
+		}
+		addonsToDeploy = append(addonsToDeploy, mc)
 	}
 
 	if s.Cluster.OperatingSystemManager.Deploy {
@@ -189,6 +212,12 @@ func cleanupAddons(s *state.State) error {
 		}
 	}
 
+	if s.Cluster.CloudProvider.Kubevirt != nil {
+		if err := migrateKubeVirtCredentials(s); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -201,8 +230,18 @@ func Ensure(s *state.State) error {
 				return err
 			}
 		}
-		if err := EnsureAddonByName(s, add.name); err != nil {
+		if err := ensureAddonByName(s, add.name, !add.deferPrune); err != nil {
 			return err
+		}
+		if add.postFn != nil {
+			if err := add.postFn(); err != nil {
+				return err
+			}
+		}
+		if add.deferPrune {
+			if err := ensureAddonByName(s, add.name, true); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -275,7 +314,7 @@ func EnsureUserAddons(s *state.State) error {
 
 	if applier.LocalFS != nil {
 		s.Logger.Info("Applying addons from the root directory...")
-		if err := applier.loadAndApplyAddon(s, applier.LocalFS, ""); err != nil {
+		if err := applier.loadAndApplyAddon(s, applier.LocalFS, "", true); err != nil {
 			return err
 		}
 	}
@@ -287,6 +326,10 @@ func EnsureUserAddons(s *state.State) error {
 // in the addons directory, or if the addons are not enabled, it will search
 // for the embedded addons.
 func EnsureAddonByName(s *state.State, addonName string) error {
+	return ensureAddonByName(s, addonName, true)
+}
+
+func ensureAddonByName(s *state.State, addonName string, prune bool) error {
 	applier, err := newAddonsApplier(s)
 	if err != nil {
 		return err
@@ -303,7 +346,7 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 				continue
 			}
 			if a.Name() == addonName {
-				return applier.loadAndApplyAddon(s, applier.LocalFS, a.Name())
+				return applier.loadAndApplyAddon(s, applier.LocalFS, a.Name(), prune)
 			}
 		}
 	}
@@ -318,7 +361,7 @@ func EnsureAddonByName(s *state.State, addonName string) error {
 			continue
 		}
 		if a.Name() == addonName {
-			return applier.loadAndApplyAddon(s, applier.EmbeddedFS, a.Name())
+			return applier.loadAndApplyAddon(s, applier.EmbeddedFS, a.Name(), prune)
 		}
 	}
 
@@ -433,7 +476,13 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 		addonsToDeploy = append(
 			addonsToDeploy,
 			addonAction{
-				name: resources.AddonCSIKubeVirt,
+				name: resources.AddonKubeVirtCSIDriverOperator,
+				supportFn: func() error {
+					return migrateKubeVirtCSI(s)
+				},
+				postFn: func() error {
+					return kubevirtcsi.Ensure(s)
+				},
 			},
 		)
 	case s.Cluster.CloudProvider.Nutanix != nil:
@@ -529,6 +578,16 @@ func ensureCCMAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 			addonsToDeploy,
 			addonAction{
 				name: resources.AddonCCMKubeVirt,
+				// The tenant CCM keeps running until its infra cluster
+				// replacement is deployed.
+				deferPrune: true,
+				postFn: func() error {
+					if err := kubevirtccm.Ensure(s); err != nil {
+						return err
+					}
+
+					return migrateKubeVirtCCM(s)
+				},
 			},
 		)
 	case s.Cluster.CloudProvider.Nutanix != nil:

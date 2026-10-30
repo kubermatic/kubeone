@@ -22,10 +22,12 @@ import (
 	"io/fs"
 	"reflect"
 	"slices"
+	"time"
 
 	embeddedaddons "k8c.io/kubeone/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/clientutil"
+	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
@@ -35,6 +37,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
+	policyv1 "k8s.io/api/policy/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	storagev1 "k8s.io/api/storage/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
@@ -287,6 +290,133 @@ func migrateHetznerCSI(s *state.State) error {
 	}
 
 	return clientutil.DeleteIfExists(s.Context, s.DynamicClient, genNamedObject[storagev1.CSIDriver](hetznerCSIDriverName))
+}
+
+// kubevirtLegacyCSIControllerName is the tenant cluster Deployment of the
+// removed csi-kubevirt addon.
+const kubevirtLegacyCSIControllerName = "kubevirt-csi-controller"
+
+// kubevirtCSIDeleteTimeout bounds the wait for the legacy KubeVirt CSI pods
+// to terminate, including their preStop hooks.
+const kubevirtCSIDeleteTimeout = 5 * time.Minute
+
+// migrateKubeVirtCSI deletes the objects of the removed csi-kubevirt addon,
+// which ran the CSI controller in the tenant cluster with the infra
+// kubeconfig. It must run before kubevirt-csi-driver-operator deploys its
+// node plugin, so two node plugins never register csi.kubevirt.io at once.
+// The addon manifests are gone, so the objects are deleted by name.
+//
+// The workloads are deleted first and waited for: the registrar preStop hook
+// of the legacy node plugin removes the plugin sockets from the host, so a
+// still terminating legacy pod would remove the sockets of the new one.
+func migrateKubeVirtCSI(s *state.State) error {
+	workloads := []client.Object{
+		genNamedObject[appsv1.DaemonSet]("kubevirt-csi-node", metav1.NamespaceSystem),
+		genNamedObject[appsv1.Deployment](kubevirtLegacyCSIControllerName, metav1.NamespaceSystem),
+	}
+
+	for _, obj := range workloads {
+		if err := clientutil.DeleteAndWait(s.Context, s.DynamicClient, obj, kubevirtCSIDeleteTimeout); err != nil {
+			return err
+		}
+	}
+
+	objs := []client.Object{
+		genNamedObject[corev1.ConfigMap]("driver-config", metav1.NamespaceSystem),
+		genNamedObject[rbacv1.ClusterRoleBinding]("kubevirt-csi-controller-binding"),
+		genNamedObject[rbacv1.ClusterRole]("kubevirt-csi-controller-cr"),
+		genNamedObject[corev1.ServiceAccount]("kubevirt-csi-controller-sa", metav1.NamespaceSystem),
+		genNamedObject[rbacv1.ClusterRoleBinding]("kubevirt-csi-node-binding"),
+		genNamedObject[rbacv1.ClusterRole]("kubevirt-csi-node-cr"),
+		genNamedObject[corev1.ServiceAccount]("kubevirt-csi-node-sa", metav1.NamespaceSystem),
+	}
+
+	for _, obj := range objs {
+		if err := clientutil.DeleteIfExists(s.Context, s.DynamicClient, obj); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// migrateKubeVirtCCM deletes the tenant cluster objects of the KubeVirt CCM
+// from when it ran in the tenant cluster with the infra kubeconfig. It runs
+// after the CCM is deployed in the infra cluster, before the addon is applied
+// with pruning, which would not remove the RBAC objects.
+func migrateKubeVirtCCM(s *state.State) error {
+	objs := []client.Object{
+		genNamedObject[appsv1.Deployment]("kubevirt-cloud-controller-manager", metav1.NamespaceSystem),
+		genNamedObject[corev1.ConfigMap]("cloud-config", metav1.NamespaceSystem),
+		genNamedObject[rbacv1.RoleBinding]("kccm-sa", metav1.NamespaceSystem),
+		genNamedObject[rbacv1.Role]("kccm", metav1.NamespaceSystem),
+	}
+
+	for _, obj := range objs {
+		if err := clientutil.DeleteIfExists(s.Context, s.DynamicClient, obj); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// migrateKubeVirtMachineController deletes the tenant cluster objects of
+// machine-controller and its webhook from when they ran in the tenant cluster
+// with the infra kubeconfig. It runs after they are deployed in the infra
+// cluster, before the addon is applied with pruning, which would not remove
+// the PodDisruptionBudgets.
+func migrateKubeVirtMachineController(s *state.State) error {
+	objs := []client.Object{
+		genNamedObject[appsv1.Deployment](resources.MachineControllerName, resources.MachineControllerNameSpace),
+		genNamedObject[appsv1.Deployment](resources.MachineControllerWebhookName, resources.MachineControllerNameSpace),
+		genNamedObject[corev1.Service](resources.MachineControllerWebhookName, resources.MachineControllerNameSpace),
+		genNamedObject[corev1.Secret]("machinecontroller-webhook-serving-cert", resources.MachineControllerNameSpace),
+		genNamedObject[policyv1.PodDisruptionBudget](resources.MachineControllerName, resources.MachineControllerNameSpace),
+		genNamedObject[policyv1.PodDisruptionBudget](resources.MachineControllerWebhookName, resources.MachineControllerNameSpace),
+	}
+
+	for _, obj := range objs {
+		if err := clientutil.DeleteIfExists(s.Context, s.DynamicClient, obj); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// migrateKubeVirtCredentials deletes the credentials Secrets that held the
+// infra kubeconfig in the tenant cluster. It runs after all addons and their
+// infra components are deployed, so nothing in the tenant cluster uses them
+// anymore.
+//
+// The exception is the legacy CSI controller, which mounts the CCM Secret. It
+// is only migrated by migrateKubeVirtCSI when the bundled CSI driver is
+// deployed, so with .cloudProvider.disableBundledCSIDrivers it might still be
+// around, and the CCM Secret is kept for it.
+func migrateKubeVirtCredentials(s *state.State) error {
+	legacyCSIKey := client.ObjectKey{Namespace: metav1.NamespaceSystem, Name: kubevirtLegacyCSIControllerName}
+	legacyCSIErr := s.DynamicClient.Get(s.Context, legacyCSIKey, &appsv1.Deployment{})
+	if legacyCSIErr != nil && !k8serrors.IsNotFound(legacyCSIErr) {
+		return fail.KubeClient(legacyCSIErr, "getting Deployment %s", legacyCSIKey)
+	}
+
+	for _, name := range []string{credentials.SecretNameCCM, credentials.SecretNameMC, credentials.SecretNameOSM} {
+		if name == credentials.SecretNameCCM && legacyCSIErr == nil {
+			s.Logger.Warnf("Keeping Secret %s/%s, it's used by the legacy KubeVirt CSI controller (Deployment %s). "+
+				"Delete the Deployment, or enable the bundled CSI driver to have it migrated, and the Secret is removed on the next apply.",
+				credentials.SecretNamespace, name, legacyCSIKey)
+
+			continue
+		}
+
+		secret := genNamedObject[corev1.Secret](name, credentials.SecretNamespace)
+		if err := clientutil.DeleteIfExists(s.Context, s.DynamicClient, secret); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func migrateHetznerCCM(s *state.State) error {
