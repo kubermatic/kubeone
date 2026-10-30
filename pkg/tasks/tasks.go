@@ -497,6 +497,60 @@ func WithContainerDMigration(t Tasks) Tasks {
 		}...)
 }
 
+// WithUserAddons appends the tasks needed to apply user addons and helm
+// releases to an already provisioned cluster, without reconciling the rest of
+// the cluster. If names is not empty, only the addons and helm releases with
+// the given names are applied.
+func WithUserAddons(t Tasks, names ...string) Tasks {
+	return WithHostnameOSAndProbes(t).
+		append(Tasks{
+			{
+				Fn: func(s *state.State) error {
+					if !s.LiveCluster.IsProvisioned() {
+						return fail.RuntimeError{
+							Op:  "checking the cluster",
+							Err: errors.New("cluster is not provisioned, run 'kubeone apply' first"),
+						}
+					}
+
+					return nil
+				},
+				Operation: "checking the cluster",
+			},
+			{
+				Fn: func(s *state.State) error {
+					return s.RunTaskOnLeader(certificate.DownloadKubePKI)
+				},
+				Operation: "downloading Kubernetes PKI from the leader",
+			},
+			{Fn: kubeconfig.BuildKubernetesClientset, Operation: "building Kubernetes clientset"},
+			{
+				// Validate the names before anything is changed. The task must not
+				// be retried, a wrong name is not going to fix itself.
+				Fn: func(s *state.State) error {
+					installed, err := localhelm.InstalledReleaseNames(s)
+					if err != nil {
+						return err
+					}
+
+					return addons.ValidateAddonNames(s, names, installed)
+				},
+				Operation: "validating addon names",
+				Predicate: func(*state.State) bool { return len(names) > 0 },
+				Retries:   1,
+			},
+			{
+				Fn:          addons.EnsureUserAddonsByName(names...),
+				Operation:   "applying addons",
+				Description: "ensure custom addons",
+			},
+			{
+				Fn:        localhelm.DeployByName(names...),
+				Operation: "releasing helm charts",
+			},
+		}...)
+}
+
 func WithClusterStatus(t Tasks) Tasks {
 	return WithHostnameOS(t).
 		append(Tasks{
