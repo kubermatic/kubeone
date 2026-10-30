@@ -62,6 +62,8 @@ func newManagedControlPlaneCloud(ctx context.Context, provider, clusterName stri
 		return newGCECloud(ctx, clusterName)
 	case "hetzner":
 		return newHetznerCloud(clusterName)
+	case "openstack":
+		return newOpenstackCloud(clusterName, tfOutput)
 	default:
 		return nil, fmt.Errorf("managed control plane is not supported for provider %q", provider)
 	}

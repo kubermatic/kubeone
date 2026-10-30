@@ -3118,6 +3118,18 @@ func TestHetznerInstallManagedCpV1_35(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestOpenstackInstallManagedCpV1_35(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["openstack"]
+	scenario := Scenarios["install_managed_cp"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.35")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
 func TestAwsInstallManagedCpV1_36(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws"]
@@ -3166,6 +3178,18 @@ func TestHetznerInstallManagedCpV1_36(t *testing.T) {
 	scenario.Run(ctx, t)
 }
 
+func TestOpenstackInstallManagedCpV1_36(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["openstack"]
+	scenario := Scenarios["install_managed_cp"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.36")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
 func TestAwsInstallManagedCpV1_37(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["aws"]
@@ -3205,6 +3229,18 @@ func TestGceInstallManagedCpV1_37(t *testing.T) {
 func TestHetznerInstallManagedCpV1_37(t *testing.T) {
 	ctx := NewSignalContext(t.Context(), t.Logf)
 	infra := Infrastructures["hetzner"]
+	scenario := Scenarios["install_managed_cp"]
+	scenario.SetInfra(infra)
+	scenario.SetVersions("v1.37")
+	if err := scenario.FetchVersions(); err != nil {
+		t.Fatal(err)
+	}
+	scenario.Run(ctx, t)
+}
+
+func TestOpenstackInstallManagedCpV1_37(t *testing.T) {
+	ctx := NewSignalContext(t.Context(), t.Logf)
+	infra := Infrastructures["openstack"]
 	scenario := Scenarios["install_managed_cp"]
 	scenario.SetInfra(infra)
 	scenario.SetVersions("v1.37")

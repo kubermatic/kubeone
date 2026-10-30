@@ -1,0 +1,68 @@
+apiVersion: kubeone.k8c.io/v1beta2
+kind: KubeOneCluster
+name: '{{ required ".ClusterName is required" .ClusterName }}'
+
+versions:
+  kubernetes: '{{ required ".VERSION is required" .VERSION }}'
+
+# Networking, the security group, the bastion and the Octavia load balancer are
+# provided by examples/terraform/openstack-managed-control-plane, see .Terraform.
+# cloudConfig is provided by the credentials file.
+
+cloudProvider:
+  external: true
+  openstack:
+    controlPlane:
+      loadBalancer:
+        name: '{{ required ".Terraform.loadbalancer.name is required" .Terraform.loadbalancer.name }}'
+
+controlPlane:
+  nodeSets:
+  - name: cp
+    replicas: 3
+    operatingSystem: ubuntu
+    ssh:
+      publicKeys:
+      - '{{ required ".SSHPublicKey is required" .SSHPublicKey }}'
+      username: ubuntu
+      # the control plane VMs have no floating IPs
+      bastion: '{{ .Terraform.bastion.address }}'
+      bastionPort: {{ .Terraform.bastion.port }}
+      bastionUser: '{{ .Terraform.bastion.user }}'
+    cloudProviderSpec:
+      image: '{{ .Terraform.vm.image }}'
+      flavor: m1.small
+      network: '{{ .Terraform.networking.networkID }}'
+      # by ID, KubeOne adds the VMs on it to the load balancer pool
+      subnet: '{{ .Terraform.networking.subnetID }}'
+      securityGroups:
+      - '{{ .Terraform.networking.securityGroup }}'
+      configDrive: false
+
+dynamicWorkers:
+- name: '{{ .ClusterName }}-pool1'
+  # Conformance requires at least two untainted (worker) nodes
+  replicas: 2
+  providerSpec:
+    sshPublicKeys:
+    - '{{ .SSHPublicKey }}'
+    operatingSystem: ubuntu
+    cloudProviderSpec:
+      image: '{{ .Terraform.vm.image }}'
+      flavor: l1c.small
+      network: '{{ .Terraform.networking.networkID }}'
+      subnet: '{{ .Terraform.networking.subnetID }}'
+      securityGroups:
+      - '{{ .Terraform.networking.securityGroup }}'
+      configDrive: false
+      tags:
+        # used by the e2e janitor
+        kubeone_workers: '{{ .ClusterName }}'
+
+containerRuntime:
+  containerd: {}
+
+addons:
+  enable: true
+  addons:
+  - name: default-storage-class

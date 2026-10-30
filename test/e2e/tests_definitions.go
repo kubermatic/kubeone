@@ -743,6 +743,27 @@ var (
 				outputDir:  "/logs/artifacts/logs",
 			},
 		},
+		"openstack": {
+			name:                "openstack",
+			osName:              "Ubuntu",
+			managedControlPlane: true,
+			labels: map[string]string{
+				"preset-goproxy":   "true",
+				"preset-openstack": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "openstack",
+			},
+			// supporting infrastructure only, the control plane is provisioned by KubeOne
+			terraform: terraformBin{
+				path:    "../../examples/terraform/openstack-managed-control-plane",
+				varFile: "testdata/openstack_managed_cp.tfvars",
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
+		},
 		"openstack_default": {
 			name:   "openstack_default",
 			osName: "Ubuntu",
@@ -1094,6 +1115,7 @@ var (
 				"digitalocean": "testdata/managed_cp_digitalocean.yaml",
 				"gce":          "testdata/managed_cp_gce.yaml",
 				"hetzner":      "testdata/managed_cp_hetzner.yaml",
+				"openstack":    "testdata/managed_cp_openstack.yaml",
 			},
 		},
 	}
