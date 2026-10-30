@@ -115,14 +115,14 @@ In order for CI checks to pass, the code must pass linting checks. We're using [
 This is mostly copied from [Kubernetes Code Conventions](https://github.com/kubernetes/community/blob/master/contributors/guide/coding-conventions.md#code-conventions).
 
 * Bash
-  * [Google Bash Style guide](https://google.github.io/styleguide/shell.xml)
+  * [Google Bash Style guide](https://google.github.io/styleguide/shellguide.html)
   * Ensure that build, release, test, and cluster-management scripts run on macOS
 * Go
   * [Go Code Review Comments](https://github.com/golang/go/wiki/CodeReviewComments)
   * [Effective Go](https://golang.org/doc/effective_go.html)
   * Know and avoid [Go landmines](https://gist.github.com/lavalamp/4bd23295a9f32706a48f)
   * Comment your code.
-  * [Go's commenting conventions](http://blog.golang.org/godoc-documenting-go-code)
+  * [Go's commenting conventions](https://go.dev/blog/godoc)
     * If reviewers ask questions about why the code is the way it is, that's a sign that comments might be helpful.
   * Command-line flags should use dashes, not underscores
   * Naming
