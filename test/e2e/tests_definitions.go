@@ -639,6 +639,26 @@ var (
 				outputDir:  "/logs/artifacts/logs",
 			},
 		},
+		"hetzner": {
+			name:                "hetzner",
+			osName:              "Ubuntu",
+			managedControlPlane: true,
+			labels: map[string]string{
+				"preset-goproxy": "true",
+				"preset-hetzner": "true",
+			},
+			environ: map[string]string{
+				"PROVIDER": "hetzner",
+			},
+			// supporting infrastructure only, the control plane is provisioned by KubeOne
+			terraform: terraformBin{
+				path: "../../examples/terraform/hetzner-managed-control-plane",
+			},
+			protokol: protokolBin{
+				namespaces: []string{"kube-system"},
+				outputDir:  "/logs/artifacts/logs",
+			},
+		},
 		"hetzner_default": {
 			name:   "hetzner_default",
 			osName: "Ubuntu",
@@ -1073,6 +1093,7 @@ var (
 				"aws":          "testdata/managed_cp_aws.yaml",
 				"digitalocean": "testdata/managed_cp_digitalocean.yaml",
 				"gce":          "testdata/managed_cp_gce.yaml",
+				"hetzner":      "testdata/managed_cp_hetzner.yaml",
 			},
 		},
 	}

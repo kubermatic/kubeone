@@ -398,7 +398,7 @@ func setDefaultHetznerControlPlane(clusterName string, hzCP *kubeoneapi.HetznerC
 	maps.Copy(
 		hzCP.LoadBalancer.Labels,
 		map[string]string{
-			"kubeone_cluster_name": hzCP.LoadBalancer.Name,
+			"kubeone_cluster_name": clusterName,
 			"kubeone_role":         "api",
 		},
 	)

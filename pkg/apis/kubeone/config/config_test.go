@@ -219,6 +219,54 @@ func TestDigitalOceanControlPlaneDefaults(t *testing.T) {
 	}
 }
 
+func TestHetznerControlPlaneDefaults(t *testing.T) {
+	tests := []struct {
+		name string
+		in   kubeoneapi.HetznerLoadBalancer
+		want kubeoneapi.HetznerLoadBalancer
+	}{
+		{
+			name: "defaults",
+			in:   kubeoneapi.HetznerLoadBalancer{},
+			want: kubeoneapi.HetznerLoadBalancer{
+				Name:     "demo-kubeapi",
+				Type:     "lb11",
+				Location: "nbg1",
+				PublicIP: new(true),
+				Labels:   map[string]string{"kubeone_cluster_name": "demo", "kubeone_role": "api"},
+			},
+		},
+		{
+			name: "cluster name label is the cluster name, not the load balancer name",
+			in: kubeoneapi.HetznerLoadBalancer{
+				Name:     "custom",
+				Type:     "lb21",
+				Location: "fsn1",
+				PublicIP: new(false),
+				Labels:   map[string]string{"kubeone_cluster_name": "other", "team": "infra"},
+			},
+			want: kubeoneapi.HetznerLoadBalancer{
+				Name:     "custom",
+				Type:     "lb21",
+				Location: "fsn1",
+				PublicIP: new(false),
+				Labels:   map[string]string{"kubeone_cluster_name": "demo", "kubeone_role": "api", "team": "infra"},
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			cp := &kubeoneapi.HetznerControlPlane{LoadBalancer: tc.in}
+			setDefaultHetznerControlPlane("demo", cp)
+
+			if !reflect.DeepEqual(cp.LoadBalancer, tc.want) {
+				t.Errorf("got %+v, want %+v", cp.LoadBalancer, tc.want)
+			}
+		})
+	}
+}
+
 func TestDigitalOceanManagedControlPlaneIsSupported(t *testing.T) {
 	cluster := &kubeoneapi.KubeOneCluster{
 		Name: "demo",
