@@ -74,6 +74,10 @@ func newOpenstackCloud(clusterName string, tfOutput map[string]any) (*openstackC
 		return nil, fmt.Errorf("reading OpenStack credentials: %w", err)
 	}
 
+	// the client lives for the whole test, which outlasts the Keystone token,
+	// so the cleanups would fail with "Authentication failed" without reauth
+	opts.AllowReauth = true
+
 	provider, err := openstack.AuthenticatedClient(opts)
 	if err != nil {
 		return nil, fmt.Errorf("authenticating to OpenStack: %w", err)
