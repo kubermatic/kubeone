@@ -24,6 +24,7 @@ import (
 	"maps"
 	"net/http"
 	"os"
+	"slices"
 	"strconv"
 	"time"
 
@@ -57,9 +58,23 @@ const (
 	ruleName             = "apiserver-rule"
 )
 
+// cleanupFinalizers are the finalizers the machine-controller Azure driver
+// adds to a Machine while creating its resources. Its Cleanup deletes only
+// the resources whose finalizer the Machine carries, and the Machines KubeOne
+// generates for reset don't remember the ones added on creation, so they're
+// set upfront. Each deletion looks resources up by the machine UID tag, so
+// the ones that don't exist are skipped.
+var cleanupFinalizers = []string{
+	"kubermatic.io/cleanup-azure-vm",
+	"kubermatic.io/cleanup-azure-disks",
+	"kubermatic.io/cleanup-azure-nic",
+	"kubermatic.io/cleanup-azure-public-ip",
+}
+
 var (
 	_ cloudprovider.ControlPlaneCloudProvider = &Provider{}
 	_ cloudprovider.LoadBalancerProvider      = &Provider{}
+	_ cloudprovider.CleanupPreparer           = &Provider{}
 )
 
 func init() {
@@ -129,6 +144,13 @@ func (p *Provider) LookupVMs(s *state.State) error {
 	s.Cluster.ControlPlane.Hosts = append(s.Cluster.ControlPlane.Hosts, cloudprovider.HostConfigsFromMachines(provMachines, s.Cluster.ControlPlane.NodeSets)...)
 
 	return nil
+}
+
+// PrepareCleanup satisfies cloudprovider.CleanupPreparer. CleanupVMs deletes
+// the VMs through the machine-controller driver without going through
+// EnsureVM or LookupVMs, so the credentials have to be exported here too.
+func (p *Provider) PrepareCleanup(s *state.State) error {
+	return prepareAzureEnv(s)
 }
 
 func (p *Provider) EnsureLoadBalancer(s *state.State) error {
@@ -644,8 +666,9 @@ func generateAzureControlPlaneMachines(clusterName string, nodeSet []kubeoneapi.
 			name := node.MachineName(clusterName, idx)
 			machines = append(machines, clusterv1alpha1.Machine{
 				ObjectMeta: metav1.ObjectMeta{
-					Name: name,
-					UID:  types.UID(name),
+					Name:       name,
+					UID:        types.UID(name),
+					Finalizers: slices.Clone(cleanupFinalizers),
 				},
 				Spec: clusterv1alpha1.MachineSpec{
 					ObjectMeta: metav1.ObjectMeta{
