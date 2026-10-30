@@ -27,10 +27,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2022-07-01/network" //nolint:staticcheck
-	"github.com/Azure/go-autorest/autorest"
-	"github.com/Azure/go-autorest/autorest/azure/auth"
-	"github.com/Azure/go-autorest/autorest/to"
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore/to"
+	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v7"
 	"github.com/sirupsen/logrus"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -235,7 +235,7 @@ type azureLBConfig struct {
 	ResourceGroup  string
 	Location       string
 	Name           string
-	SkuName        network.LoadBalancerSkuName
+	SkuName        armnetwork.LoadBalancerSKUName
 	PublicIPName   string
 	lbID           string
 }
@@ -244,12 +244,12 @@ func (c *azureLBConfig) backendPoolID() string {
 	return c.lbID + "/backendAddressPools/" + backendPoolName
 }
 
-func (c *azureLBConfig) publicIPSkuName() network.PublicIPAddressSkuName {
-	if c.SkuName == network.LoadBalancerSkuNameBasic {
-		return network.PublicIPAddressSkuNameBasic
+func (c *azureLBConfig) publicIPSkuName() armnetwork.PublicIPAddressSKUName {
+	if c.SkuName == armnetwork.LoadBalancerSKUNameBasic {
+		return armnetwork.PublicIPAddressSKUNameBasic
 	}
 
-	return network.PublicIPAddressSkuNameStandard
+	return armnetwork.PublicIPAddressSKUNameStandard
 }
 
 func resolveAzureLB(s *state.State) (*azureLBConfig, error) {
@@ -285,9 +285,9 @@ func resolveAzureLB(s *state.State) (*azureLBConfig, error) {
 		return nil, fail.Config(errors.New("location is empty"), "azure control plane loadBalancer.location")
 	}
 
-	skuName := network.LoadBalancerSkuNameStandard
-	if lb.Sku == string(network.LoadBalancerSkuNameBasic) {
-		skuName = network.LoadBalancerSkuNameBasic
+	skuName := armnetwork.LoadBalancerSKUNameStandard
+	if lb.Sku == string(armnetwork.LoadBalancerSKUNameBasic) {
+		skuName = armnetwork.LoadBalancerSKUNameBasic
 	}
 
 	return &azureLBConfig{
@@ -306,7 +306,7 @@ func resolveAzureLB(s *state.State) (*azureLBConfig, error) {
 	}, nil
 }
 
-func azureNetworkClients(s *state.State) (*network.LoadBalancersClient, *network.PublicIPAddressesClient, *network.InterfacesClient, error) {
+func azureNetworkClients(s *state.State) (*armnetwork.LoadBalancersClient, *armnetwork.PublicIPAddressesClient, *armnetwork.InterfacesClient, error) {
 	providerCreds, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeUniversal)
 	if err != nil {
 		return nil, nil, nil, err
@@ -317,21 +317,17 @@ func azureNetworkClients(s *state.State) (*network.LoadBalancersClient, *network
 	tenantID := providerCreds[credentials.AzureTenantIDMC]
 	subscriptionID := providerCreds[credentials.AzureSubscriptionIDMC]
 
-	authorizer, err := auth.NewClientCredentialsConfig(clientID, clientSecret, tenantID).Authorizer()
+	cred, err := azidentity.NewClientSecretCredential(tenantID, clientID, clientSecret, nil)
 	if err != nil {
-		return nil, nil, nil, fail.Runtime(err, "creating azure authorizer")
+		return nil, nil, nil, fail.Runtime(err, "creating azure credential")
 	}
 
-	lbClient := network.NewLoadBalancersClient(subscriptionID)
-	lbClient.Authorizer = authorizer
+	factory, err := armnetwork.NewClientFactory(subscriptionID, cred, nil)
+	if err != nil {
+		return nil, nil, nil, fail.Runtime(err, "creating azure network clients")
+	}
 
-	ipClient := network.NewPublicIPAddressesClient(subscriptionID)
-	ipClient.Authorizer = authorizer
-
-	ifClient := network.NewInterfacesClient(subscriptionID)
-	ifClient.Authorizer = authorizer
-
-	return &lbClient, &ipClient, &ifClient, nil
+	return factory.NewLoadBalancersClient(), factory.NewPublicIPAddressesClient(), factory.NewInterfacesClient(), nil
 }
 
 func prepareAzureEnv(s *state.State) error {
@@ -354,45 +350,42 @@ func prepareAzureEnv(s *state.State) error {
 	return nil
 }
 
-func ensureAzurePublicIP(ctx context.Context, ipClient *network.PublicIPAddressesClient, cfg *azureLBConfig) (*network.PublicIPAddress, error) {
-	existing, err := ipClient.Get(ctx, cfg.ResourceGroup, cfg.PublicIPName, "")
+func ensureAzurePublicIP(ctx context.Context, ipClient *armnetwork.PublicIPAddressesClient, cfg *azureLBConfig) (*armnetwork.PublicIPAddress, error) {
+	existing, err := ipClient.Get(ctx, cfg.ResourceGroup, cfg.PublicIPName, nil)
 	if err == nil {
-		return &existing, nil
+		return &existing.PublicIPAddress, nil
 	}
 	if !azureErrorNotFound(err) {
 		return nil, fail.Cloud(err, "azure", "getting public IP %q", cfg.PublicIPName)
 	}
 
-	params := network.PublicIPAddress{
-		Name:     to.StringPtr(cfg.PublicIPName),
-		Location: to.StringPtr(cfg.Location),
-		Sku: &network.PublicIPAddressSku{
-			Name: cfg.publicIPSkuName(),
+	params := armnetwork.PublicIPAddress{
+		Name:     new(cfg.PublicIPName),
+		Location: new(cfg.Location),
+		SKU: &armnetwork.PublicIPAddressSKU{
+			Name: to.Ptr(cfg.publicIPSkuName()),
 		},
-		PublicIPAddressPropertiesFormat: &network.PublicIPAddressPropertiesFormat{
-			PublicIPAllocationMethod: network.Static,
-			PublicIPAddressVersion:   network.IPv4,
+		Properties: &armnetwork.PublicIPAddressPropertiesFormat{
+			PublicIPAllocationMethod: to.Ptr(armnetwork.IPAllocationMethodStatic),
+			PublicIPAddressVersion:   to.Ptr(armnetwork.IPVersionIPv4),
 		},
 	}
 
-	future, err := ipClient.CreateOrUpdate(ctx, cfg.ResourceGroup, cfg.PublicIPName, params)
+	poller, err := ipClient.BeginCreateOrUpdate(ctx, cfg.ResourceGroup, cfg.PublicIPName, params, nil)
 	if err != nil {
 		return nil, fail.Cloud(err, "azure", "creating public IP %q", cfg.PublicIPName)
 	}
-	if err = future.WaitForCompletionRef(ctx, ipClient.Client); err != nil {
+
+	result, err := poller.PollUntilDone(ctx, nil)
+	if err != nil {
 		return nil, fail.Cloud(err, "azure", "waiting for public IP %q", cfg.PublicIPName)
 	}
 
-	result, err := future.Result(*ipClient)
-	if err != nil {
-		return nil, fail.Cloud(err, "azure", "creating public IP %q", cfg.PublicIPName)
-	}
-
-	return &result, nil
+	return &result.PublicIPAddress, nil
 }
 
-func ensureAzureLoadBalancer(ctx context.Context, lbClient *network.LoadBalancersClient, cfg *azureLBConfig, publicIP *network.PublicIPAddress) error {
-	_, err := lbClient.Get(ctx, cfg.ResourceGroup, cfg.Name, "")
+func ensureAzureLoadBalancer(ctx context.Context, lbClient *armnetwork.LoadBalancersClient, cfg *azureLBConfig, publicIP *armnetwork.PublicIPAddress) error {
+	_, err := lbClient.Get(ctx, cfg.ResourceGroup, cfg.Name, nil)
 	if err == nil {
 		return nil
 	}
@@ -402,64 +395,61 @@ func ensureAzureLoadBalancer(ctx context.Context, lbClient *network.LoadBalancer
 
 	frontendID := cfg.lbID + "/frontendIPConfigurations/" + frontendIPConfigName
 
-	params := network.LoadBalancer{
-		Name:     to.StringPtr(cfg.Name),
-		Location: to.StringPtr(cfg.Location),
-		Sku: &network.LoadBalancerSku{
-			Name: cfg.SkuName,
+	params := armnetwork.LoadBalancer{
+		Name:     new(cfg.Name),
+		Location: new(cfg.Location),
+		SKU: &armnetwork.LoadBalancerSKU{
+			Name: new(cfg.SkuName),
 		},
-		LoadBalancerPropertiesFormat: &network.LoadBalancerPropertiesFormat{
-			FrontendIPConfigurations: &[]network.FrontendIPConfiguration{
+		Properties: &armnetwork.LoadBalancerPropertiesFormat{
+			FrontendIPConfigurations: []*armnetwork.FrontendIPConfiguration{
 				{
-					Name: to.StringPtr(frontendIPConfigName),
-					FrontendIPConfigurationPropertiesFormat: &network.FrontendIPConfigurationPropertiesFormat{
-						PublicIPAddress: &network.PublicIPAddress{
+					Name: new(frontendIPConfigName),
+					Properties: &armnetwork.FrontendIPConfigurationPropertiesFormat{
+						PublicIPAddress: &armnetwork.PublicIPAddress{
 							ID: publicIP.ID,
 						},
 					},
 				},
 			},
-			BackendAddressPools: &[]network.BackendAddressPool{
+			BackendAddressPools: []*armnetwork.BackendAddressPool{
 				{
-					Name: to.StringPtr(backendPoolName),
+					Name: new(backendPoolName),
 				},
 			},
-			Probes: &[]network.Probe{
+			Probes: []*armnetwork.Probe{
 				{
-					Name: to.StringPtr(probeName),
-					ProbePropertiesFormat: &network.ProbePropertiesFormat{
-						Protocol:          network.ProbeProtocolTCP,
-						Port:              to.Int32Ptr(apiserverPort),
-						IntervalInSeconds: to.Int32Ptr(5),
-						NumberOfProbes:    to.Int32Ptr(2),
+					Name: new(probeName),
+					Properties: &armnetwork.ProbePropertiesFormat{
+						Protocol:          to.Ptr(armnetwork.ProbeProtocolTCP),
+						Port:              to.Ptr[int32](apiserverPort),
+						IntervalInSeconds: to.Ptr[int32](5),
+						NumberOfProbes:    to.Ptr[int32](2),
 					},
 				},
 			},
-			LoadBalancingRules: &[]network.LoadBalancingRule{
+			LoadBalancingRules: []*armnetwork.LoadBalancingRule{
 				{
-					Name: to.StringPtr(ruleName),
-					LoadBalancingRulePropertiesFormat: &network.LoadBalancingRulePropertiesFormat{
-						FrontendIPConfiguration: &network.SubResource{ID: to.StringPtr(frontendID)},
-						BackendAddressPool:      &network.SubResource{ID: to.StringPtr(cfg.backendPoolID())},
-						Probe:                   &network.SubResource{ID: to.StringPtr(cfg.lbID + "/probes/" + probeName)},
-						Protocol:                network.TransportProtocolTCP,
-						FrontendPort:            to.Int32Ptr(apiserverPort),
-						BackendPort:             to.Int32Ptr(apiserverPort),
+					Name: new(ruleName),
+					Properties: &armnetwork.LoadBalancingRulePropertiesFormat{
+						FrontendIPConfiguration: &armnetwork.SubResource{ID: new(frontendID)},
+						BackendAddressPool:      &armnetwork.SubResource{ID: new(cfg.backendPoolID())},
+						Probe:                   &armnetwork.SubResource{ID: new(cfg.lbID + "/probes/" + probeName)},
+						Protocol:                to.Ptr(armnetwork.TransportProtocolTCP),
+						FrontendPort:            to.Ptr[int32](apiserverPort),
+						BackendPort:             to.Ptr[int32](apiserverPort),
 					},
 				},
 			},
 		},
 	}
 
-	future, err := lbClient.CreateOrUpdate(ctx, cfg.ResourceGroup, cfg.Name, params)
+	poller, err := lbClient.BeginCreateOrUpdate(ctx, cfg.ResourceGroup, cfg.Name, params, nil)
 	if err != nil {
 		return fail.Cloud(err, "azure", "creating load balancer %q", cfg.Name)
 	}
-	if err := future.WaitForCompletionRef(ctx, lbClient.Client); err != nil {
+	if _, err := poller.PollUntilDone(ctx, nil); err != nil {
 		return fail.Cloud(err, "azure", "waiting for load balancer %q", cfg.Name)
-	}
-	if _, err := future.Result(*lbClient); err != nil {
-		return fail.Cloud(err, "azure", "creating load balancer %q", cfg.Name)
 	}
 
 	return nil
@@ -467,11 +457,11 @@ func ensureAzureLoadBalancer(ctx context.Context, lbClient *network.LoadBalancer
 
 func deleteAzureLoadBalancer(
 	ctx context.Context,
-	lbClient *network.LoadBalancersClient,
+	lbClient *armnetwork.LoadBalancersClient,
 	cfg *azureLBConfig,
 	logger logrus.FieldLogger,
 ) error {
-	if _, err := lbClient.Get(ctx, cfg.ResourceGroup, cfg.Name, ""); err != nil {
+	if _, err := lbClient.Get(ctx, cfg.ResourceGroup, cfg.Name, nil); err != nil {
 		if azureErrorNotFound(err) {
 			logger.Debugf("no load balancer %q found, skipping deletion", cfg.Name)
 
@@ -483,15 +473,12 @@ func deleteAzureLoadBalancer(
 
 	logger.Debugf("deleting load balancer %q", cfg.Name)
 
-	future, err := lbClient.Delete(ctx, cfg.ResourceGroup, cfg.Name)
+	poller, err := lbClient.BeginDelete(ctx, cfg.ResourceGroup, cfg.Name, nil)
 	if err != nil {
 		return fail.Cloud(err, "azure", "deleting load balancer %q", cfg.Name)
 	}
-	if err := future.WaitForCompletionRef(ctx, lbClient.Client); err != nil {
+	if _, err := poller.PollUntilDone(ctx, nil); err != nil {
 		return fail.Cloud(err, "azure", "waiting for load balancer %q deletion", cfg.Name)
-	}
-	if _, err := future.Result(*lbClient); err != nil {
-		return fail.Cloud(err, "azure", "deleting load balancer %q", cfg.Name)
 	}
 
 	return nil
@@ -499,11 +486,11 @@ func deleteAzureLoadBalancer(
 
 func deleteAzurePublicIP(
 	ctx context.Context,
-	ipClient *network.PublicIPAddressesClient,
+	ipClient *armnetwork.PublicIPAddressesClient,
 	cfg *azureLBConfig,
 	logger logrus.FieldLogger,
 ) error {
-	if _, err := ipClient.Get(ctx, cfg.ResourceGroup, cfg.PublicIPName, ""); err != nil {
+	if _, err := ipClient.Get(ctx, cfg.ResourceGroup, cfg.PublicIPName, nil); err != nil {
 		if azureErrorNotFound(err) {
 			logger.Debugf("no public IP %q found, skipping deletion", cfg.PublicIPName)
 
@@ -515,90 +502,80 @@ func deleteAzurePublicIP(
 
 	logger.Debugf("deleting public IP %q", cfg.PublicIPName)
 
-	future, err := ipClient.Delete(ctx, cfg.ResourceGroup, cfg.PublicIPName)
+	poller, err := ipClient.BeginDelete(ctx, cfg.ResourceGroup, cfg.PublicIPName, nil)
 	if err != nil {
 		return fail.Cloud(err, "azure", "deleting public IP %q", cfg.PublicIPName)
 	}
-	if err := future.WaitForCompletionRef(ctx, ipClient.Client); err != nil {
+	if _, err := poller.PollUntilDone(ctx, nil); err != nil {
 		return fail.Cloud(err, "azure", "waiting for public IP %q deletion", cfg.PublicIPName)
-	}
-	if _, err := future.Result(*ipClient); err != nil {
-		return fail.Cloud(err, "azure", "deleting public IP %q", cfg.PublicIPName)
 	}
 
 	return nil
 }
 
-func azureLoadBalancerEndpoint(ctx context.Context, ipClient *network.PublicIPAddressesClient, cfg *azureLBConfig) (string, error) {
-	publicIP, err := ipClient.Get(ctx, cfg.ResourceGroup, cfg.PublicIPName, "")
+func azureLoadBalancerEndpoint(ctx context.Context, ipClient *armnetwork.PublicIPAddressesClient, cfg *azureLBConfig) (string, error) {
+	publicIP, err := ipClient.Get(ctx, cfg.ResourceGroup, cfg.PublicIPName, nil)
 	if err != nil {
 		return "", fail.Cloud(err, "azure", "getting public IP %q", cfg.PublicIPName)
 	}
 
-	if publicIP.IPAddress == nil || *publicIP.IPAddress == "" {
+	if publicIP.Properties == nil || publicIP.Properties.IPAddress == nil || *publicIP.Properties.IPAddress == "" {
 		return "", fail.Cloud(errors.New("public IP address is empty"), "azure", "resolving load balancer endpoint")
 	}
 
-	return *publicIP.IPAddress, nil
+	return *publicIP.Properties.IPAddress, nil
 }
 
 func addNICToBackendPool(
 	ctx context.Context,
-	ifClient *network.InterfacesClient,
+	ifClient *armnetwork.InterfacesClient,
 	resourceGroup, nicName, backendPoolID string,
 	logger logrus.FieldLogger,
 ) error {
-	nic, err := ifClient.Get(ctx, resourceGroup, nicName, "")
+	resp, err := ifClient.Get(ctx, resourceGroup, nicName, nil)
 	if err != nil {
 		return fail.Cloud(err, "azure", "getting network interface %q", nicName)
 	}
 
-	if nic.IPConfigurations == nil {
+	nic := resp.Interface
+	if nic.Properties == nil || nic.Properties.IPConfigurations == nil {
 		return fail.Cloud(errors.New("no IP configurations found"), "azure", "getting network interface %q", nicName)
 	}
 
-	for i := range *nic.IPConfigurations {
-		ipConfig := &(*nic.IPConfigurations)[i]
-		if ipConfig.Primary == nil || !*ipConfig.Primary {
+	for _, ipConfig := range nic.Properties.IPConfigurations {
+		if ipConfig == nil || ipConfig.Properties == nil || ipConfig.Properties.Primary == nil || !*ipConfig.Properties.Primary {
 			continue
 		}
 
-		if ipConfig.LoadBalancerBackendAddressPools != nil {
-			for _, pool := range *ipConfig.LoadBalancerBackendAddressPools {
-				if pool.ID != nil && *pool.ID == backendPoolID {
-					logger.Debugf("network interface %q already associated with backend pool", nicName)
+		for _, pool := range ipConfig.Properties.LoadBalancerBackendAddressPools {
+			if pool != nil && pool.ID != nil && *pool.ID == backendPoolID {
+				logger.Debugf("network interface %q already associated with backend pool", nicName)
 
-					return nil
-				}
+				return nil
 			}
 		}
 
-		pool := network.BackendAddressPool{ID: to.StringPtr(backendPoolID)}
-		if ipConfig.LoadBalancerBackendAddressPools == nil {
-			ipConfig.LoadBalancerBackendAddressPools = &[]network.BackendAddressPool{pool}
-		} else {
-			*ipConfig.LoadBalancerBackendAddressPools = append(*ipConfig.LoadBalancerBackendAddressPools, pool)
-		}
+		ipConfig.Properties.LoadBalancerBackendAddressPools = append(
+			ipConfig.Properties.LoadBalancerBackendAddressPools,
+			&armnetwork.BackendAddressPool{ID: to.Ptr(backendPoolID)},
+		)
 	}
 
-	future, err := ifClient.CreateOrUpdate(ctx, resourceGroup, nicName, nic)
+	poller, err := ifClient.BeginCreateOrUpdate(ctx, resourceGroup, nicName, nic, nil)
 	if err != nil {
 		return fail.Cloud(err, "azure", "associating network interface %q with backend pool", nicName)
 	}
-	if err := future.WaitForCompletionRef(ctx, ifClient.Client); err != nil {
+	if _, err := poller.PollUntilDone(ctx, nil); err != nil {
 		return fail.Cloud(err, "azure", "waiting for network interface %q association", nicName)
-	}
-	if _, err := future.Result(*ifClient); err != nil {
-		return fail.Cloud(err, "azure", "associating network interface %q with backend pool", nicName)
 	}
 
 	return nil
 }
 
 func azureErrorNotFound(err error) bool {
-	var detailed autorest.DetailedError
-	if errors.As(err, &detailed) {
-		return detailed.Response != nil && detailed.Response.StatusCode == http.StatusNotFound
+	var respErr *azcore.ResponseError
+	if errors.As(err, &respErr) {
+		return respErr.StatusCode == http.StatusNotFound
 	}
 
 	return false
