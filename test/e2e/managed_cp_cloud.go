@@ -56,6 +56,8 @@ func newManagedControlPlaneCloud(ctx context.Context, provider, clusterName stri
 	switch provider {
 	case "aws":
 		return newAWSCloud(ctx, clusterName, tfOutput)
+	case "azure":
+		return newAzureCloud(clusterName, tfOutput)
 	case "digitalocean":
 		return newDigitaloceanCloud(clusterName)
 	case "gce":
