@@ -7,4 +7,5 @@ spec:
   maxUnavailable: 1
   selector:
     matchLabels:
-      app: hcloud-cloud-controller-manager
+      app.kubernetes.io/instance: hccm
+      app.kubernetes.io/name: hcloud-cloud-controller-manager
