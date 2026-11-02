@@ -31,7 +31,7 @@ sudo systemctl disable --now ufw || true
 source /etc/kubeone/proxy-env
 
 {{ template "sysctl-k8s" . }}
-{{ template "journald-config" }}
+{{ template "journald-config" . }}
 
 sudo mkdir -p /etc/apt/apt.conf.d
 cat <<EOF | sudo tee /etc/apt/apt.conf.d/proxy.conf
@@ -131,19 +131,20 @@ sudo systemctl daemon-reload
 
 func DebScript(cluster *kubeoneapi.KubeOneCluster, params Params) (string, error) {
 	data := Data{
-		"UPGRADE":                params.Upgrade,
-		"KUBELET":                params.Kubelet,
-		"KUBECTL":                params.Kubectl,
-		"KUBEADM":                params.Kubeadm,
-		"FORCE":                  params.Force,
-		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
-		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
-		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
-		"HTTP_PROXY":             cluster.Proxy.HTTP,
-		"HTTPS_PROXY":            cluster.Proxy.HTTPS,
-		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
-		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
+		"UPGRADE":                 params.Upgrade,
+		"KUBELET":                 params.Kubelet,
+		"KUBECTL":                 params.Kubectl,
+		"KUBEADM":                 params.Kubeadm,
+		"FORCE":                   params.Force,
+		"KUBERNETES_VERSION":      cluster.Versions.Kubernetes,
+		"KUBERNETES_MAJOR_MINOR":  cluster.Versions.KubernetesMajorMinorVersion(),
+		"CONFIGURE_REPOSITORIES":  cluster.SystemPackages.ConfigureRepositories,
+		"HTTP_PROXY":              cluster.Proxy.HTTP,
+		"HTTPS_PROXY":             cluster.Proxy.HTTPS,
+		"INSTALL_CONTAINERD":      cluster.ContainerRuntime.Containerd,
+		"INSTALL_ISCSI_AND_NFS":   installISCSIAndNFS(cluster),
+		"IPV6_ENABLED":            cluster.ClusterNetwork.HasIPv6(),
+		"JOURNALD_SYSTEM_MAX_USE": cluster.Journald.SystemMaxUse,
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {

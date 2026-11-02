@@ -54,8 +54,8 @@ require (
 	google.golang.org/grpc v1.83.2
 	gopkg.in/yaml.v2 v2.4.0
 	helm.sh/helm/v4 v4.2.2
-	k8c.io/machine-controller v1.66.3-0.20261007071551-86813a09db8b
-	k8c.io/machine-controller/sdk v1.66.3-0.20261007071551-86813a09db8b
+	k8c.io/machine-controller v1.66.3-0.20261030100858-5830b037c4ab
+	k8c.io/machine-controller/sdk v1.66.3-0.20261030100858-5830b037c4ab
 	k8s.io/api v0.37.1
 	k8s.io/apiextensions-apiserver v0.37.1
 	k8s.io/apimachinery v0.37.1

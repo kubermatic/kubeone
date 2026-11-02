@@ -33,6 +33,12 @@ func withProxy(proxy string) genClusterOpts {
 	}
 }
 
+func withJournaldSystemMaxUse(size string) genClusterOpts {
+	return func(cls *kubeoneapi.KubeOneCluster) {
+		cls.Journald.SystemMaxUse = size
+	}
+}
+
 func withInsecureRegistry(registry string) genClusterOpts {
 	return func(cls *kubeoneapi.KubeOneCluster) {
 		cls.RegistryConfiguration = &kubeoneapi.RegistryConfiguration{
@@ -61,6 +67,9 @@ func genCluster(opts ...genClusterOpts) kubeoneapi.KubeOneCluster {
 		LoggingConfig: kubeoneapi.LoggingConfig{
 			ContainerLogMaxSize:  "100Mi",
 			ContainerLogMaxFiles: 5,
+		},
+		Journald: kubeoneapi.JournaldConfig{
+			SystemMaxUse: kubeoneapi.DefaultJournaldSystemMaxUse,
 		},
 	}
 

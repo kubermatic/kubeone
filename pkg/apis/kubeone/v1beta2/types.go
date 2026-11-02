@@ -95,6 +95,9 @@ type KubeOneCluster struct {
 	// LoggingConfig configures the Kubelet's log rotation
 	LoggingConfig LoggingConfig `json:"loggingConfig,omitempty"`
 
+	// Journald configures systemd-journald on all nodes
+	Journald JournaldConfig `json:"journald,omitempty"`
+
 	// TLSCipherSuites allows to configure TLS cipher suites for different components. See
 	// https://pkg.go.dev/crypto/tls#pkg-constants for possible values.
 	TLSCipherSuites TLSCipherSuites `json:"tlsCipherSuites"`
@@ -244,6 +247,15 @@ type LoggingConfig struct {
 	// ContainerLogMaxFiles configures the maximum number of container log files that can be present for a container
 	// See more at: https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/
 	ContainerLogMaxFiles int32 `json:"containerLogMaxFiles,omitempty"`
+}
+
+// JournaldConfig configures systemd-journald
+type JournaldConfig struct {
+	// SystemMaxUse configures the maximum disk space the persistent journal can use, e.g. 500M or 2G.
+	// Supported suffixes are K, M, G, T, P and E (base 1024).
+	// Default value is 5G.
+	// See more at: https://www.freedesktop.org/software/systemd/man/latest/journald.conf.html#SystemMaxUse=
+	SystemMaxUse string `json:"systemMaxUse,omitempty"`
 }
 
 // ContainerRuntimeConfig

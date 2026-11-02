@@ -141,6 +141,7 @@ func createMachineDeployment(cluster *kubeoneapi.KubeOneCluster, workerset kubeo
 	}
 
 	machineAnnotations := getKubeletConfigurationAnnotations(cluster)
+	maps.Copy(machineAnnotations, getJournaldConfigurationAnnotations(cluster))
 
 	return &clusterv1alpha1.MachineDeployment{
 		ObjectMeta: metav1.ObjectMeta{
@@ -197,6 +198,18 @@ func getKubeletConfigurationAnnotations(cluster *kubeoneapi.KubeOneCluster) map[
 	}
 	if cluster.LoggingConfig.ContainerLogMaxFiles != containerruntime.DefaultContainerLogMaxFiles {
 		annotations[clustercommon.KubeletConfigAnnotationPrefixV1+"/"+clustercommon.ContainerLogMaxFilesKubeletConfig] = strconv.Itoa(int(cluster.LoggingConfig.ContainerLogMaxFiles))
+	}
+
+	return annotations
+}
+
+func getJournaldConfigurationAnnotations(cluster *kubeoneapi.KubeOneCluster) map[string]string {
+	annotations := make(map[string]string)
+
+	// Journald configuration is passed on to machine's provisioning configuration(user-data) by annotating machines
+	// There is no need to propagate journald configuration via annotations if default or empty values are set
+	if cluster.Journald.SystemMaxUse != "" && cluster.Journald.SystemMaxUse != kubeoneapi.DefaultJournaldSystemMaxUse {
+		annotations[clustercommon.JournaldConfigAnnotationPrefixV1+"/"+clustercommon.JournaldSystemMaxUse] = cluster.Journald.SystemMaxUse
 	}
 
 	return annotations
