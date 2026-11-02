@@ -811,14 +811,14 @@ spec:
             httpGet:
               host: localhost
               path: /healthz
-              port: healthz
+              port: healthz-reg
             initialDelaySeconds: 20
             periodSeconds: 20
             timeoutSeconds: 10
           name: node-driver-registrar
           ports:
             - containerPort: 29607
-              name: healthz
+              name: healthz-reg
               protocol: TCP
           resources:
             limits:
