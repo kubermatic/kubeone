@@ -346,6 +346,7 @@
     - name: digitalocean
     - name: gce
     - name: hetzner
+    - name: openstack
 
 - scenario: install_managed_cp
   initVersion: v1.36
@@ -355,6 +356,7 @@
     - name: digitalocean
     - name: gce
     - name: hetzner
+    - name: openstack
 
 - scenario: install_managed_cp
   initVersion: v1.37
@@ -364,6 +366,7 @@
     - name: digitalocean
     - name: gce
     - name: hetzner
+    - name: openstack
 
 ####################
 # CONFORMANCE TEST #
