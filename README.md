@@ -1,5 +1,7 @@
 # Kubermatic KubeOne
 
+v1.15 pre-release e2e testing for OpenStack
+
 <p align="center">
   <img src="docs/img/kubeone-logo-text.png#gh-light-mode-only" width="700px" />
   <img src="docs/img/kubeone-logo-text-dark.png#gh-dark-mode-only" width="700px" />
@@ -33,12 +35,12 @@ The fastest way to deploy a KubeOne kubernetes cluster is to use the installatio
 ```bash
 curl -sfL get.kubeone.io | sh
 kubeone local
-# Wait 
+# Wait
 export KUBECONFIG=local-kubeconfig
 kubectl get pod -A
 ```
 
-Check out, 
+Check out,
 [All-in-one Cluster][docs-kubeone-local].
 
 
