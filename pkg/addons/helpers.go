@@ -85,9 +85,9 @@ var (
 		"app":     "openstack-cinder-csi",
 		"release": "cinder-csi",
 	}
-	// expectedExternalSnapshotterSelectors = map[string]string{
-	// 	"app.kubernetes.io/name": "snapshot-controller",
-	// }
+	expectedExternalSnapshotterSelectors = map[string]string{
+		"app.kubernetes.io/name": "snapshot-controller",
+	}
 )
 
 func migrateCiliumHubbleCertsJob(s *state.State) error {
@@ -155,14 +155,17 @@ func migrateOpenStackCCM(s *state.State) error {
 	return migrateDaemonsetIfPodSelectorDifferent(s, key, expectedOpenStackCCMPodSelectors)
 }
 
-// func migrateExternalSnapshotterController(st *state.State) error {
-// 	key := client.ObjectKey{
-// 		Name:      "snapshot-controller",
-// 		Namespace: metav1.NamespaceSystem,
-// 	}
+// migrateExternalSnapshotterController deletes the snapshot-controller
+// Deployment if it was created with the legacy "app: snapshot-controller"
+// selector (external-snapshotter <= v8.1), because spec.selector is immutable.
+func migrateExternalSnapshotterController(s *state.State) error {
+	key := client.ObjectKey{
+		Name:      "snapshot-controller",
+		Namespace: metav1.NamespaceSystem,
+	}
 
-// 	return migrateDeploymentIfPodSelectorDifferent(st, key, expectedExternalSnapshotterSelectors)
-// }
+	return migrateDeploymentIfPodSelectorDifferent(s, key, expectedExternalSnapshotterSelectors)
+}
 
 func migrateOpenStackCSIDriver(s *state.State) error {
 	if err := migrateOpenStackCSIController(s); err != nil {
