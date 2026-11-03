@@ -139,6 +139,20 @@ func (scenario *scenarioManagedControlPlane) Run(ctx context.Context, t *testing
 		verifyNothingLeft(checkCtx, t, cloud)
 	})
 
+	// Registered after reset, so it runs before it: dump kube-system while the
+	// cluster still exists if apply or the control plane verification failed
+	// (protokol only runs from runClusterTests onwards).
+	t.Cleanup(func() {
+		if !t.Failed() {
+			return
+		}
+
+		dumpCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 10*time.Minute)
+		defer cancel()
+
+		dumpClusterLogs(dumpCtx, t, k1, scenario.infra, "test-failed")
+	})
+
 	if err := k1.Apply(ctx); err != nil {
 		t.Fatalf("kubeone apply failed: %v", err)
 	}

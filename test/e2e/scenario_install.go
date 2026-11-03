@@ -120,6 +120,7 @@ func (scenario *scenarioInstall) install(ctx context.Context, t *testing.T) {
 	})
 
 	if err := k1.Apply(ctx); err != nil {
+		dumpClusterLogs(ctx, t, k1, scenario.infra, "apply-failed")
 		t.Fatalf("kubeone apply failed: %v", err)
 	}
 }
@@ -152,6 +153,41 @@ func (scenario *scenarioInstall) kubeone(t *testing.T) *kubeoneBin {
 
 func (scenario *scenarioInstall) test(ctx context.Context, t *testing.T) {
 	runClusterTests(ctx, t, scenario.kubeone(t), scenario.infra)
+}
+
+// dumpClusterLogs makes a best-effort one-shot dump of the container logs and
+// events in the protokol namespaces (kube-system). It's used when a test fails
+// before runClusterTests has started protokol, e.g. when `kubeone apply` fails.
+func dumpClusterLogs(ctx context.Context, t *testing.T, k1 *kubeoneBin, infra Infra, subdir string) {
+	t.Helper()
+
+	proxyCtx, killProxy := context.WithCancel(ctx)
+	defer killProxy()
+
+	proxyURL, waitK1, err := k1.AsyncProxy(proxyCtx)
+	if err != nil {
+		t.Logf("dumping cluster logs: starting kubeone proxy: %v", err)
+
+		return
+	}
+	defer func() {
+		killProxy()
+		_ = waitK1()
+	}()
+
+	// let kubeone proxy start and open the port
+	time.Sleep(5 * time.Second)
+
+	kubeconfigPath, err := k1.kubeconfigPath(t.TempDir())
+	if err != nil {
+		t.Logf("dumping cluster logs: fetching kubeconfig: %v", err)
+
+		return
+	}
+
+	if err = infra.protokol.Dump(ctx, subdir, kubeconfigPath, proxyURL); err != nil {
+		t.Logf("dumping cluster logs: %v", err)
+	}
 }
 
 // runClusterTests waits for the cluster nodes to be ready and runs the cloud
