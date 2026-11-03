@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-variable "name" {
+variable "cluster_name" {
   description = "common name for the resources, use the cluster name to match the default load balancer name of KubeOne"
   type        = string
 
   validation {
-    condition     = can(regex("^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$", var.name))
-    error_message = "Value of name should be lowercase and can only contain alphanumeric characters and hyphens(-)."
+    condition     = can(regex("^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$", var.cluster_name))
+    error_message = "Value of cluster_name should be lowercase and can only contain alphanumeric characters and hyphens(-)."
   }
 }
 

@@ -26,8 +26,8 @@ details.
 
 When using the managed control plane:
 
-- Set `name` to the cluster name, so the load balancer is named
-  `<name>-kube-apiserver`, which is the default
+- Set `cluster_name` to the cluster name, so the load balancer is named
+  `<cluster_name>-kube-apiserver`, which is the default
   `cloudProvider.openstack.controlPlane.loadBalancer.name` of KubeOne. Otherwise
   set that field to the `loadbalancer.name` output.
 - KubeOne uses the private VIP of the load balancer as the API endpoint. It

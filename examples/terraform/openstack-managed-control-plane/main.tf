@@ -21,7 +21,7 @@ data "openstack_images_image_v2" "image" {
 }
 
 resource "openstack_compute_keypair_v2" "deployer" {
-  name       = "${var.name}-deployer-key"
+  name       = "${var.cluster_name}-deployer-key"
   public_key = file(pathexpand(var.ssh_public_key_file))
 }
 
@@ -33,12 +33,12 @@ data "openstack_networking_network_v2" "external_network" {
 }
 
 resource "openstack_networking_network_v2" "network" {
-  name           = "${var.name}-cluster"
+  name           = "${var.cluster_name}-cluster"
   admin_state_up = "true"
 }
 
 resource "openstack_networking_subnet_v2" "subnet" {
-  name            = "${var.name}-cluster"
+  name            = "${var.cluster_name}-cluster"
   network_id      = openstack_networking_network_v2.network.id
   cidr            = var.subnet_cidr
   ip_version      = 4
@@ -46,7 +46,7 @@ resource "openstack_networking_subnet_v2" "subnet" {
 }
 
 resource "openstack_networking_router_v2" "router" {
-  name                = "${var.name}-cluster"
+  name                = "${var.cluster_name}-cluster"
   admin_state_up      = true
   external_network_id = data.openstack_networking_network_v2.external_network.id
 }
@@ -59,8 +59,8 @@ resource "openstack_networking_router_interface_v2" "router_subnet_link" {
 # Security group of all the nodes, the bastion and the load balancer
 
 resource "openstack_networking_secgroup_v2" "securitygroup" {
-  name        = "${var.name}-cluster"
-  description = "Security group for the Kubeone Kubernetes cluster ${var.name}"
+  name        = "${var.cluster_name}-cluster"
+  description = "Security group for the Kubeone Kubernetes cluster ${var.cluster_name}"
 }
 
 resource "openstack_networking_secgroup_rule_v2" "secgroup_allow_internal_ipv4" {
@@ -107,7 +107,7 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_apiserver" {
 # Bastion, the control plane VMs created by KubeOne have no floating IPs
 
 resource "openstack_networking_port_v2" "bastion" {
-  name               = "${var.name}-bastion"
+  name               = "${var.cluster_name}-bastion"
   admin_state_up     = "true"
   network_id         = openstack_networking_network_v2.network.id
   security_group_ids = [openstack_networking_secgroup_v2.securitygroup.id]
@@ -118,7 +118,7 @@ resource "openstack_networking_port_v2" "bastion" {
 }
 
 resource "openstack_compute_instance_v2" "bastion" {
-  name            = "${var.name}-bastion"
+  name            = "${var.cluster_name}-bastion"
   image_name      = data.openstack_images_image_v2.image.name
   flavor_name     = var.bastion_flavor
   key_pair        = openstack_compute_keypair_v2.deployer.name
@@ -144,7 +144,7 @@ resource "openstack_networking_floatingip_associate_v2" "bastion" {
 # kube-apiserver load balancer, KubeOne adds the control plane VMs to the pool
 
 resource "openstack_lb_loadbalancer_v2" "kube_apiserver" {
-  name               = "${var.name}-kube-apiserver"
+  name               = "${var.cluster_name}-kube-apiserver"
   admin_state_up     = true
   security_group_ids = [openstack_networking_secgroup_v2.securitygroup.id]
   vip_network_id     = openstack_networking_network_v2.network.id
@@ -152,14 +152,14 @@ resource "openstack_lb_loadbalancer_v2" "kube_apiserver" {
 }
 
 resource "openstack_lb_pool_v2" "kube_apiservers" {
-  name            = "${var.name}-kube-apiservers"
+  name            = "${var.cluster_name}-kube-apiservers"
   protocol        = "TCP"
   lb_method       = "ROUND_ROBIN"
   loadbalancer_id = openstack_lb_loadbalancer_v2.kube_apiserver.id
 }
 
 resource "openstack_lb_listener_v2" "kube_apiserver" {
-  name            = "${var.name}-kube-apiserver"
+  name            = "${var.cluster_name}-kube-apiserver"
   protocol        = "TCP"
   protocol_port   = 6443
   admin_state_up  = true
@@ -168,7 +168,7 @@ resource "openstack_lb_listener_v2" "kube_apiserver" {
 }
 
 resource "openstack_lb_monitor_v2" "lb_monitor_tcp" {
-  name        = "${var.name}-kube-apiserver"
+  name        = "${var.cluster_name}-kube-apiserver"
   pool_id     = openstack_lb_pool_v2.kube_apiservers.id
   type        = "TCP"
   delay       = 10
