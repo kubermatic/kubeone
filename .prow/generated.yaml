@@ -1049,7 +1049,6 @@ presubmits:
   name: pull-kubeone-e2e-aws-default-install-containerd-external-v1.37
   optional: false
   path_alias: k8c.io/kubeone
-  run_if_changed: (.prow/|addons/|examples/|hack/|pkg/|test/)
   spec:
     containers:
     - command:
