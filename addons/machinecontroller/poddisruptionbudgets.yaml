@@ -1,3 +1,5 @@
+{{- /* On KubeVirt, machine-controller runs in the infra cluster, see pkg/cloudprovider/kubevirt/machinecontroller */}}
+{{ if not .Config.CloudProvider.Kubevirt }}
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
@@ -19,3 +21,4 @@ spec:
   selector:
     matchLabels:
       app: machine-controller-webhook
+{{ end }}

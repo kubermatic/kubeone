@@ -28,42 +28,43 @@ import (
 
 // Names of the internal addons
 const (
-	AddonCCMAws                 = "ccm-aws"
-	AddonCCMAzure               = "ccm-azure"
-	AddonCCMDigitalOcean        = "ccm-digitalocean"
-	AddonCCMEquinixMetal        = "ccm-equinixmetal"
-	AddonCCMHetzner             = "ccm-hetzner"
-	AddonCCMKubeVirt            = "ccm-kubevirt"
-	AddonCCMGCP                 = "ccm-gcp"
-	AddonCCMNutanix             = "ccm-nutanix"
-	AddonCCMOpenStack           = "ccm-openstack"
-	AddonCCMPacket              = "ccm-packet" // TODO: Remove after deprecation period.
-	AddonCCMVsphere             = "ccm-vsphere"
-	AddonClusterAutoscaler      = "cluster-autoscaler"
-	AddonCNICanal               = "cni-canal"
-	AddonCNICilium              = "cni-cilium"
-	AddonCNIWeavenet            = "cni-weavenet"
-	AddonCoreDNSPDB             = "coredns-pdb"
-	AddonCSIExternalSnapshotter = "csi-external-snapshotter"
-	AddonCSIAwsEBS              = "csi-aws-ebs"
-	AddonCSIAzureDisk           = "csi-azuredisk"
-	AddonCSIAzureFile           = "csi-azurefile"
-	AddonCSIDigitalOcean        = "csi-digitalocean"
-	AddonCSIGCPComputePD        = "csi-gcp-compute-persistent"
-	AddonCSIHetzner             = "csi-hetzner"
-	AddonCSIKubeVirt            = "csi-kubevirt"
-	AddonCSINutanix             = "csi-nutanix"
-	AddonCSIOpenStackCinder     = "csi-openstack-cinder"
-	AddonCSIVMwareCloudDirector = "csi-vmware-cloud-director"
-	AddonCSIVsphere             = "csi-vsphere"
-	AddonMachineController      = "machinecontroller"
-	AddonMetricsServer          = "metrics-server"
-	AddonNodeLocalDNS           = "nodelocaldns"
-	AddonNodeLocalDNSCilium     = "nodelocaldns-cilium"
-	AddonOperatingSystemManager = "operating-system-manager"
-	AddonBackupsRestic          = "backups-restic"
-	AddonEtcdDefrag             = "etcd-defrag"
-	AddonUnattendedUpgrades     = "unattended-upgrades"
+	AddonCCMAws                    = "ccm-aws"
+	AddonCCMAzure                  = "ccm-azure"
+	AddonCCMDigitalOcean           = "ccm-digitalocean"
+	AddonCCMEquinixMetal           = "ccm-equinixmetal"
+	AddonCCMHetzner                = "ccm-hetzner"
+	AddonCCMKubeVirt               = "ccm-kubevirt"
+	AddonCCMGCP                    = "ccm-gcp"
+	AddonCCMNutanix                = "ccm-nutanix"
+	AddonCCMOpenStack              = "ccm-openstack"
+	AddonCCMPacket                 = "ccm-packet" // TODO: Remove after deprecation period.
+	AddonCCMVsphere                = "ccm-vsphere"
+	AddonClusterAutoscaler         = "cluster-autoscaler"
+	AddonCNICanal                  = "cni-canal"
+	AddonCNICilium                 = "cni-cilium"
+	AddonCNIWeavenet               = "cni-weavenet"
+	AddonCoreDNSPDB                = "coredns-pdb"
+	AddonCSIExternalSnapshotter    = "csi-external-snapshotter"
+	AddonCSIAwsEBS                 = "csi-aws-ebs"
+	AddonCSIAzureDisk              = "csi-azuredisk"
+	AddonCSIAzureFile              = "csi-azurefile"
+	AddonCSIDigitalOcean           = "csi-digitalocean"
+	AddonCSIGCPComputePD           = "csi-gcp-compute-persistent"
+	AddonCSIHetzner                = "csi-hetzner"
+	AddonCSIKubeVirt               = "csi-kubevirt"
+	AddonCSINutanix                = "csi-nutanix"
+	AddonCSIOpenStackCinder        = "csi-openstack-cinder"
+	AddonCSIVMwareCloudDirector    = "csi-vmware-cloud-director"
+	AddonCSIVsphere                = "csi-vsphere"
+	AddonMachineController         = "machinecontroller"
+	AddonMetricsServer             = "metrics-server"
+	AddonNodeLocalDNS              = "nodelocaldns"
+	AddonNodeLocalDNSCilium        = "nodelocaldns-cilium"
+	AddonOperatingSystemManager    = "operating-system-manager"
+	AddonBackupsRestic             = "backups-restic"
+	AddonEtcdDefrag                = "etcd-defrag"
+	AddonUnattendedUpgrades        = "unattended-upgrades"
+	AddonKubeVirtCSIDriverOperator = "kubevirt-csi-driver-operator"
 )
 
 func CloudAddons() []string {
@@ -84,7 +85,7 @@ func CloudAddons() []string {
 		AddonCSIDigitalOcean,
 		AddonCSIGCPComputePD,
 		AddonCSIHetzner,
-		AddonCSIKubeVirt,
+		AddonKubeVirtCSIDriverOperator,
 		AddonCSINutanix,
 		AddonCSIOpenStackCinder,
 		AddonCSIVMwareCloudDirector,

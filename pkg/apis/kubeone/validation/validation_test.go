@@ -668,6 +668,116 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 			expectedError: true,
 		},
 		{
+			name: "valid Kubevirt storage and snapshot classes",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Kubevirt: &kubeoneapi.KubevirtSpec{
+					InfraNamespace: "tenant-xyz",
+					StorageClasses: []kubeoneapi.KubevirtInfraStorageClass{
+						{InfraStorageClassName: "standard", IsDefaultClass: true, ReclaimPolicy: corev1.PersistentVolumeReclaimRetain},
+						{InfraStorageClassName: "fast"},
+					},
+					VolumeSnapshotClasses: []kubeoneapi.KubevirtInfraVolumeSnapshotClass{
+						{InfraVolumeSnapshotClass: "csi-snapclass", IsDefaultClass: true, DeletionPolicy: "Retain"},
+					},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "Kubevirt storage class missing infraStorageClassName",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Kubevirt: &kubeoneapi.KubevirtSpec{
+					InfraNamespace: "tenant-xyz",
+					StorageClasses: []kubeoneapi.KubevirtInfraStorageClass{{}},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "Kubevirt multiple default storage classes",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Kubevirt: &kubeoneapi.KubevirtSpec{
+					InfraNamespace: "tenant-xyz",
+					StorageClasses: []kubeoneapi.KubevirtInfraStorageClass{
+						{InfraStorageClassName: "a", IsDefaultClass: true},
+						{InfraStorageClassName: "b", IsDefaultClass: true},
+					},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "Kubevirt storage class invalid reclaimPolicy",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Kubevirt: &kubeoneapi.KubevirtSpec{
+					InfraNamespace: "tenant-xyz",
+					StorageClasses: []kubeoneapi.KubevirtInfraStorageClass{
+						{InfraStorageClassName: "a", ReclaimPolicy: "Recycle"},
+					},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "Kubevirt snapshot class missing infraVolumeSnapshotClass",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Kubevirt: &kubeoneapi.KubevirtSpec{
+					InfraNamespace:        "tenant-xyz",
+					VolumeSnapshotClasses: []kubeoneapi.KubevirtInfraVolumeSnapshotClass{{}},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "Kubevirt multiple default snapshot classes",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Kubevirt: &kubeoneapi.KubevirtSpec{
+					InfraNamespace: "tenant-xyz",
+					VolumeSnapshotClasses: []kubeoneapi.KubevirtInfraVolumeSnapshotClass{
+						{InfraVolumeSnapshotClass: "a", IsDefaultClass: true},
+						{InfraVolumeSnapshotClass: "b", IsDefaultClass: true},
+					},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "valid Kubevirt machine-controller webhook service type",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Kubevirt: &kubeoneapi.KubevirtSpec{
+					InfraNamespace: "tenant-xyz",
+					MachineController: &kubeoneapi.KubevirtMachineController{
+						Webhook: kubeoneapi.KubevirtMachineControllerWebhook{ServiceType: corev1.ServiceTypeLoadBalancer},
+					},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "Kubevirt machine-controller webhook NodePort is not supported",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Kubevirt: &kubeoneapi.KubevirtSpec{
+					InfraNamespace: "tenant-xyz",
+					MachineController: &kubeoneapi.KubevirtMachineController{
+						Webhook: kubeoneapi.KubevirtMachineControllerWebhook{ServiceType: corev1.ServiceTypeNodePort},
+					},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "Kubevirt snapshot class invalid deletionPolicy",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				Kubevirt: &kubeoneapi.KubevirtSpec{
+					InfraNamespace: "tenant-xyz",
+					VolumeSnapshotClasses: []kubeoneapi.KubevirtInfraVolumeSnapshotClass{
+						{InfraVolumeSnapshotClass: "a", DeletionPolicy: "Keep"},
+					},
+				},
+			},
+			expectedError: true,
+		},
+		{
 			name: "valid Nutanix provider config",
 			providerConfig: kubeoneapi.CloudProviderSpec{
 				Nutanix: &kubeoneapi.NutanixSpec{},
