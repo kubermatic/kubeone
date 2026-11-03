@@ -1,10 +1,12 @@
+{{ if eq .Params.flatcarNodesPresent "true" }}
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: flatcar-linux-update-operator
-  namespace: kube-system
+  namespace: reboot-coordinator
 spec:
   maxUnavailable: 1
   selector:
     matchLabels:
       app: flatcar-linux-update-operator
+{{ end }}

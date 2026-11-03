@@ -7,15 +7,4 @@ spec:
   maxUnavailable: 1
   selector:
     matchLabels:
-      app: csi-azurefile-controller
----
-apiVersion: policy/v1
-kind: PodDisruptionBudget
-metadata:
-  name: csi-snapshot-controller
-  namespace: kube-system
-spec:
-  maxUnavailable: 1
-  selector:
-    matchLabels:
-      app: csi-snapshot-controller
+      app: csi-azurefile-controllermanager
