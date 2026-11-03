@@ -72,8 +72,6 @@ var embeddedAddons = map[string]string{
 	resources.AddonCCMKubeVirt:            "",
 	resources.AddonCCMNutanix:             "",
 	resources.AddonCoreDNSPDB:             "",
-	resources.AddonMachineController:      "",
-	resources.AddonOperatingSystemManager: "",
 }
 
 type addonAction struct {

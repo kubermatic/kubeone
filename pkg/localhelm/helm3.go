@@ -204,7 +204,13 @@ func deploy(st *state.State, onlyNames []string) error {
 	seen := map[string]struct{}{}
 	releasesToUninstall = slices.DeleteFunc(releasesToUninstall, func(rel helmrelease.Releaser) bool {
 		acc, accErr := helmrelease.NewAccessor(rel)
-		if accErr != nil || !selected(acc.Name()) {
+		if accErr != nil {
+			st.Logger.Warnf("Skipping a helm release that can't be read: %v", accErr)
+
+			return true
+		}
+
+		if !selected(acc.Name()) {
 			return true
 		}
 

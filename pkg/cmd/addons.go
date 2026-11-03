@@ -17,11 +17,14 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
 	"k8c.io/kubeone/pkg/addons"
+	"k8c.io/kubeone/pkg/confirmation"
 	"k8c.io/kubeone/pkg/tasks"
 )
 
@@ -80,7 +83,8 @@ func addonsListCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 
 type addonsApplyOpts struct {
 	globalOptions
-	Names []string `longflag:"name"`
+	Names       []string `longflag:"name"`
+	AutoApprove bool     `longflag:"auto-approve" shortflag:"y"`
 }
 
 func addonsApplyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
@@ -119,6 +123,23 @@ func addonsApplyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 				return err
 			}
 
+			fmt.Println("The following changes will be made to the cluster:")
+			fmt.Println("\t- install or update the user addons and helm releases from the manifest")
+			fmt.Println("\t- remove the addons marked with 'delete: true'")
+			fmt.Println("\t- uninstall the helm releases that are not declared in the manifest anymore")
+			fmt.Println()
+
+			approved, err := confirmation.Approved(opts.AutoApprove)
+			if err != nil {
+				return err
+			}
+
+			if !approved {
+				s.Logger.Println("Operation canceled.")
+
+				return nil
+			}
+
 			return tasks.WithUserAddons(nil, opts.Names...).Run(s)
 		},
 	}
@@ -128,6 +149,14 @@ func addonsApplyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		longFlagName(opts, "Names"),
 		nil,
 		"apply only the user addons and helm releases with the given names (can be repeated).",
+	)
+
+	cmd.Flags().BoolVarP(
+		&opts.AutoApprove,
+		longFlagName(opts, "AutoApprove"),
+		shortFlagName(opts, "AutoApprove"),
+		false,
+		"auto approve the changes",
 	)
 
 	return cmd
