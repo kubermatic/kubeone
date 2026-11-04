@@ -140,11 +140,13 @@ func (scenario *scenarioUpgrade) upgrade(ctx context.Context, t *testing.T) {
 	waitKubeOneNodesReady(ctx, t, k1)
 
 	if err := k1.Apply(ctx); err != nil {
+		dumpClusterLogs(ctx, t, k1, scenario.infra, "pre-upgrade-apply-failed")
 		t.Fatalf("kubeone apply failed: %v", err)
 	}
 
 	k1 = scenario.kubeone(t, scenario.versions[1])
 	if err := k1.Apply(ctx); err != nil {
+		dumpClusterLogs(ctx, t, k1, scenario.infra, "upgrade-apply-failed")
 		t.Fatalf("kubeone apply failed: %v", err)
 	}
 }
