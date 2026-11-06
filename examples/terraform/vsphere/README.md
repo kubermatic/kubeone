@@ -7,11 +7,12 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 
 These Terraform configs are supposed to be used with Debian-based operating
 systems that support vApp (e.g. Ubuntu). For more information on how to prepare
-a template VM to be used with these configs, check out our [Ubuntu Template VM]
-guide.
+a template VM to be used with these configs, check out our [vSphere requirements]
+and [Ubuntu Template VM] guides.
 
 We also provide Terraform configs for [Flatcar Linux](../vsphere_flatcar).
 
+[vSphere requirements]: https://docs.kubermatic.com/kubeone/main/architecture/requirements/machine-controller/vsphere/
 [Ubuntu Template VM]: https://docs.kubermatic.com/machine-controller/main/references/cloud-providers/vsphere/template-vm/ubuntu/
 
 ## Required environment variables
