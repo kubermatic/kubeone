@@ -23,6 +23,7 @@ import (
 	"io/fs"
 	"reflect"
 	"slices"
+	"time"
 
 	embeddedaddons "k8c.io/kubeone/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
