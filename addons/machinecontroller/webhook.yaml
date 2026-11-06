@@ -1,5 +1,3 @@
-{{- /* On KubeVirt, machine-controller runs in the infra cluster, see pkg/cloudprovider/kubevirt/machinecontroller */}}
-{{ if not .Config.CloudProvider.Kubevirt }}
 apiVersion: v1
 kind: Secret
 metadata:
@@ -12,7 +10,6 @@ data:
 {{ .Certificates.MachineControllerWebhookKey | b64enc | indent 4 }}
   "ca.crt": |
 {{ .Certificates.KubernetesCA | b64enc | indent 4 }}
-{{ end }}
 
 {{ if .RegistryCredentials }}
 ---
@@ -28,8 +25,6 @@ data:
 {{ end }}
 {{ end }}
 
-{{- /* On KubeVirt, machine-controller runs in the infra cluster, see pkg/cloudprovider/kubevirt/machinecontroller */}}
-{{ if not .Config.CloudProvider.Kubevirt }}
 ---
 apiVersion: v1
 kind: Service
@@ -107,6 +102,12 @@ spec:
               value: "{{ .Config.Proxy.HTTPS }}"
             - name: NO_PROXY
               value: "{{ .Config.Proxy.NoProxy }}"
+{{ with .Config.CloudProvider.Kubevirt -}}
+{{ with .InfraNamespace }}
+            - name: POD_NAMESPACE
+              value: "{{ . }}"
+{{ end }}
+{{ end }}
 {{ .MachineControllerCredentialsEnvVars | indent 12 }}
           volumeMounts:
             - name: machinecontroller-webhook-serving-cert
@@ -178,4 +179,3 @@ webhooks:
         path: /machines
       caBundle: |
 {{ .Certificates.KubernetesCA | b64enc | indent 8 }}
-{{ end }}

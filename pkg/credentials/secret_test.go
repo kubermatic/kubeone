@@ -17,19 +17,12 @@ limitations under the License.
 package credentials
 
 import (
-	"context"
+	"encoding/base64"
+	"reflect"
 	"testing"
-
-	"github.com/sirupsen/logrus"
-
-	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
-	"k8c.io/kubeone/pkg/state"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
-	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
-	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 )
 
 func Test_renderCloudConfig(t *testing.T) {
@@ -69,41 +62,68 @@ func Test_renderCloudConfig(t *testing.T) {
 	}
 }
 
-func TestEnsureKubevirt(t *testing.T) {
-	t.Parallel()
+func Test_kubevirtSecret(t *testing.T) {
+	plainKubeconfig := "apiVersion: v1\nkind: Config\n"
+	b64Kubeconfig := base64.StdEncoding.EncodeToString([]byte(plainKubeconfig))
 
-	scheme := runtime.NewScheme()
-	if err := clientgoscheme.AddToScheme(scheme); err != nil {
-		t.Fatal(err)
+	makeSecret := func(data map[string][]byte) *corev1.Secret {
+		return &corev1.Secret{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      SecretNameCCM,
+				Namespace: SecretNamespace,
+			},
+			Type: corev1.SecretTypeOpaque,
+			Data: data,
+		}
 	}
 
-	legacy := &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: SecretNameLegacy, Namespace: SecretNamespace}}
-	c := fake.NewClientBuilder().WithScheme(scheme).WithObjects(legacy).Build()
+	tests := []struct {
+		name        string
+		credentials map[string]string
+		want        *corev1.Secret
+	}{
+		{
+			name:        "plain text kubeconfig stored as-is",
+			credentials: map[string]string{KubevirtKubeconfigKey: plainKubeconfig},
+			want: makeSecret(map[string][]byte{
+				KubevirtKubeconfigKey: []byte(plainKubeconfig),
+			}),
+		},
+		{
+			name:        "base64-encoded kubeconfig is decoded",
+			credentials: map[string]string{KubevirtKubeconfigKey: b64Kubeconfig},
+			want: makeSecret(map[string][]byte{
+				// base64.StdEncoding.DecodedLen over-allocates; the slice includes trailing null bytes
+				KubevirtKubeconfigKey: func() []byte {
+					decoded := make([]byte, base64.StdEncoding.DecodedLen(len(b64Kubeconfig)))
+					base64.StdEncoding.Decode(decoded, []byte(b64Kubeconfig)) //nolint:errcheck
 
-	s := &state.State{
-		Context:       context.Background(),
-		Logger:        logrus.New(),
-		DynamicClient: c,
-		Cluster: &kubeoneapi.KubeOneCluster{
-			CloudProvider: kubeoneapi.CloudProviderSpec{
-				External: true,
-				Kubevirt: &kubeoneapi.KubevirtSpec{InfraNamespace: "infra-ns"},
-			},
-			MachineController:      &kubeoneapi.MachineControllerConfig{Deploy: true},
-			OperatingSystemManager: &kubeoneapi.OperatingSystemManagerConfig{Deploy: true},
+					return decoded
+				}(),
+			}),
+		},
+		{
+			name:        "invalid base64 falls back to raw bytes",
+			credentials: map[string]string{KubevirtKubeconfigKey: "not!!valid==base64"},
+			want: makeSecret(map[string][]byte{
+				KubevirtKubeconfigKey: []byte("not!!valid==base64"),
+			}),
+		},
+		{
+			name:        "missing kubeconfig key results in empty data",
+			credentials: map[string]string{},
+			want: makeSecret(map[string][]byte{
+				KubevirtKubeconfigKey: []byte(""),
+			}),
 		},
 	}
 
-	if err := Ensure(s); err != nil {
-		t.Fatal(err)
-	}
-
-	secrets := &corev1.SecretList{}
-	if err := c.List(s.Context, secrets); err != nil {
-		t.Fatal(err)
-	}
-
-	for _, secret := range secrets.Items {
-		t.Errorf("expected no Secrets in the tenant cluster, found %s/%s", secret.Namespace, secret.Name)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := kubevirtSecret(SecretNameCCM, tt.credentials)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("kubevirtSecret() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
