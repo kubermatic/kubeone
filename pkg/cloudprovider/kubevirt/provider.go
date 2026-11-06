@@ -28,7 +28,7 @@ import (
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
 	"k8c.io/kubeone/pkg/cloudprovider"
-	kubevirtinfra "k8c.io/kubeone/pkg/cloudprovider/kubevirt/infra"
+	"k8c.io/kubeone/pkg/credentials"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/provisioner"
 	"k8c.io/kubeone/pkg/state"
@@ -44,6 +44,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/retry"
 	ctrlrt "sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -127,7 +128,7 @@ func (p *Provider) EnsureLoadBalancer(st *state.State) error {
 		return nil
 	}
 
-	infraClient, ns, err := kubevirtinfra.Client(st)
+	infraClient, ns, err := kubevirtInfraClient(st)
 	if err != nil {
 		return err
 	}
@@ -166,7 +167,7 @@ func (p *Provider) LookupLoadBalancer(st *state.State) error {
 		return nil
 	}
 
-	infraClient, ns, err := kubevirtinfra.Client(st)
+	infraClient, ns, err := kubevirtInfraClient(st)
 	if err != nil {
 		return err
 	}
@@ -189,7 +190,7 @@ func (p *Provider) LookupLoadBalancer(st *state.State) error {
 }
 
 func (p *Provider) CleanupLoadBalancer(st *state.State) error {
-	infraClient, ns, err := kubevirtinfra.Client(st)
+	infraClient, ns, err := kubevirtInfraClient(st)
 	if err != nil {
 		return err
 	}
@@ -230,7 +231,7 @@ func prepareKubevirtEnv(s *state.State) error {
 	}
 
 	if os.Getenv("KUBEVIRT_KUBECONFIG") == "" {
-		kubeconfig, err := kubevirtinfra.UserKubeconfig(s)
+		kubeconfig, err := kubevirtKubeconfig(s)
 		if err != nil {
 			return err
 		}
@@ -241,6 +242,39 @@ func prepareKubevirtEnv(s *state.State) error {
 	}
 
 	return nil
+}
+
+func kubevirtKubeconfig(s *state.State) ([]byte, error) {
+	providerCreds, err := credentials.ProviderCredentials(s.Cluster.CloudProvider, s.CredentialsFilePath, credentials.TypeUniversal)
+	if err != nil {
+		return nil, err
+	}
+
+	raw := providerCreds[credentials.KubevirtKubeconfigKey]
+	if raw == "" {
+		return nil, fail.Config(fmt.Errorf("kubevirt kubeconfig is empty"), "reading kubevirt kubeconfig")
+	}
+
+	if decoded, decErr := base64.StdEncoding.DecodeString(raw); decErr == nil {
+		return decoded, nil
+	}
+
+	return []byte(raw), nil
+}
+
+func kubevirtInfraClient(st *state.State) (ctrlrt.Client, string, error) {
+	kubeconfig, err := kubevirtKubeconfig(st)
+	if err != nil {
+		return nil, "", err
+	}
+
+	restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeconfig)
+	if err != nil {
+		return nil, "", fail.Config(err, "parsing kubevirt kubeconfig")
+	}
+	infraClient, err := ctrlrt.New(restConfig, ctrlrt.Options{})
+
+	return infraClient, st.Cluster.CloudProvider.Kubevirt.InfraNamespace, fail.Runtime(err, "creating kubevirt infra cluster client")
 }
 
 func createKubevirtLoadBalancer(

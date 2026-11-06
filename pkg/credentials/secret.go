@@ -17,6 +17,7 @@ limitations under the License.
 package credentials
 
 import (
+	"encoding/base64"
 	"fmt"
 	"slices"
 	"strings"
@@ -71,21 +72,13 @@ func Ensure(s *state.State) error {
 		return err
 	}
 
-	// On KubeVirt, every component that uses KUBEVIRT_KUBECONFIG runs in the
-	// infra cluster, so the tenant cluster gets no credentials Secrets. The
-	// Secrets created by earlier KubeOne versions are deleted by the addons
-	// once the infra side is ready.
-	if s.Cluster.CloudProvider.Kubevirt != nil {
-		s.Logger.Info("Skipping creating credentials secrets because KubeVirt components run in the infra cluster.")
-
-		return nil
-	}
-
 	// Ensure that we remove credentials secret for OSM if it's queued for deletion
 	if !s.Cluster.OperatingSystemManager.Deploy {
 		osmSecret := &corev1.Secret{
-			Name:      SecretNameOSM,
-			Namespace: SecretNamespace,
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      SecretNameOSM,
+				Namespace: SecretNamespace,
+			},
 		}
 		if err := clientutil.DeleteIfExists(s.Context, s.DynamicClient, osmSecret); err != nil {
 			return err
@@ -152,6 +145,13 @@ func Ensure(s *state.State) error {
 		if err := clientutil.CreateOrReplace(s.Context, s.DynamicClient, vsecret); err != nil {
 			return err
 		}
+	case s.Cluster.CloudProvider.Kubevirt != nil:
+		s.Logger.Infoln("Creating KubeVirt CCM credentials secret...")
+
+		kubevirtKubeconfigSecret := kubevirtSecret(SecretNameCCM, ccmCreds)
+		if err := clientutil.CreateOrReplace(s.Context, s.DynamicClient, kubevirtKubeconfigSecret); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -190,8 +190,10 @@ func EnvVarBindings(secretName string, creds map[string]string) []corev1.EnvVar 
 			Name: key,
 			ValueFrom: &corev1.EnvVarSource{
 				SecretKeyRef: &corev1.SecretKeySelector{
-					Name: secretName,
-					Key:  key,
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: secretName,
+					},
+					Key: key,
 				},
 			},
 		})
@@ -202,8 +204,10 @@ func EnvVarBindings(secretName string, creds map[string]string) []corev1.EnvVar 
 
 func credentialsSecret(secretName string, credentials map[string]string) *corev1.Secret {
 	return &corev1.Secret{
-		Name:       secretName,
-		Namespace:  SecretNamespace,
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      secretName,
+			Namespace: SecretNamespace,
+		},
 		Type:       corev1.SecretTypeOpaque,
 		StringData: credentials,
 	}
@@ -221,18 +225,46 @@ func vsphereSecret(credentials map[string]string) *corev1.Secret {
 	vscreds[fmt.Sprintf("%s.password", vcenterPrefix)] = credentials[VSpherePassword]
 
 	return &corev1.Secret{
-		Name:       VsphereSecretName,
-		Namespace:  VsphereSecretNamespace,
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      VsphereSecretName,
+			Namespace: VsphereSecretNamespace,
+		},
 		Type:       corev1.SecretTypeOpaque,
 		StringData: vscreds,
 	}
 }
 
+func kubevirtSecret(secretName string, credentials map[string]string) *corev1.Secret {
+	kubevirtCreds := map[string][]byte{
+		KubevirtKubeconfigKey: []byte(credentials[KubevirtKubeconfigKey]),
+	}
+
+	if b64, ok := credentials[KubevirtKubeconfigKey]; ok {
+		decoded := make([]byte, base64.StdEncoding.DecodedLen(len(b64)))
+		_, err := base64.StdEncoding.Decode(decoded, []byte(b64))
+		if err == nil {
+			// we've got base64 encoded KUBEVIRT_KUBECONFIG
+			kubevirtCreds[KubevirtKubeconfigKey] = decoded
+		}
+	}
+
+	return &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      secretName,
+			Namespace: SecretNamespace,
+		},
+		Type: corev1.SecretTypeOpaque,
+		Data: kubevirtCreds,
+	}
+}
+
 func cloudConfigSecret(cloudConfig string) *corev1.Secret {
 	return &corev1.Secret{
-		Name:      CloudConfigSecretName,
-		Namespace: CloudConfigSecretNamespace,
-		Type:      corev1.SecretTypeOpaque,
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      CloudConfigSecretName,
+			Namespace: CloudConfigSecretNamespace,
+		},
+		Type: corev1.SecretTypeOpaque,
 		StringData: map[string]string{
 			"cloud-config": cloudConfig,
 		},
