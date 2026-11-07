@@ -59,7 +59,7 @@ func (opts *applyOpts) BuildState() (*state.State, error) {
 		return nil, err
 	}
 
-	s.BackupFile = defaultBackupPath(opts.BackupFile, opts.ManifestFile, s.Cluster.Name)
+	s.BackupFile = opts.BackupFile
 	s.ForceInstall = opts.ForceInstall
 	s.ForceUpgrade = opts.ForceUpgrade
 	s.UpgradeMachineDeployments = opts.UpgradeMachineDeployments
@@ -113,7 +113,7 @@ func applyCmd(rootFlags *pflag.FlagSet) *cobra.Command {
 		longFlagName(opts, "BackupFile"),
 		shortFlagName(opts, "BackupFile"),
 		"",
-		"path to where the PKI backup .tar.gz file should be placed (default: location of cluster config file)",
+		"path to where the PKI backup .tar.gz file should be placed (no backup is created if not set)",
 	)
 
 	cmd.Flags().BoolVar(
