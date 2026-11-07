@@ -82,6 +82,5 @@ release-notes generate \
   --branch="$branch" \
   --go-template="go-template:$tpl" \
   --output="$output" \
-  --required-author "" \
   --markdown-links \
   --dependencies=false

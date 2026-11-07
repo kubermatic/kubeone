@@ -1,12 +1,12 @@
 {{- $CurrentRevision := .CurrentRevision -}}
 {{- $PreviousRevision := .PreviousRevision -}}
 
-# v1.x.y
+# [v1.x.y](https://github.com/kubermatic/kubeone/releases/tag/v1.x.y) - YYYY-MM-DD
 
 ## Changelog since {{ $PreviousRevision }}
 
 {{with .NotesWithActionRequired -}}
-## Urgent Upgrade Notes 
+## Urgent Upgrade Notes
 
 ### (No, really, you MUST read this before you upgrade)
 
