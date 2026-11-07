@@ -61,33 +61,33 @@ func TestResolveAddons(t *testing.T) {
 		},
 	}
 
-	items, err := ResolveAddons(s)
+	items, err := resolveAddons(s)
 	if err != nil {
-		t.Fatalf("ResolveAddons() returned an error: %v", err)
+		t.Fatalf("resolveAddons() returned an error: %v", err)
 	}
 
-	if !slices.IsSortedFunc(items, func(a, b AddonItem) int {
+	if !slices.IsSortedFunc(items, func(a, b addonItem) int {
 		return strings.Compare(a.Name, b.Name)
 	}) {
-		t.Errorf("ResolveAddons() result is not sorted by name: %v", items)
+		t.Errorf("resolveAddons() result is not sorted by name: %v", items)
 	}
 
-	expected := map[string]AddonItem{
+	expected := map[string]addonItem{
 		// embedded addon, enabled by the cluster configuration, overridden by a directory
-		resources.AddonMetricsServer: {Name: resources.AddonMetricsServer, Status: AddonStatusInstall, Source: AddonSourceOverridden},
+		resources.AddonMetricsServer: {Name: resources.AddonMetricsServer, Status: addonStatusInstall, Source: addonSourceOverridden},
 		// only in the addons directory
-		"my-custom-ingress": {Name: "my-custom-ingress", Status: AddonStatusInstall, Source: AddonSourceCustom},
+		"my-custom-ingress": {Name: "my-custom-ingress", Status: addonStatusInstall, Source: addonSourceCustom},
 		// embedded addon, declared in the manifest
-		"unattended-upgrades": {Name: "unattended-upgrades", Status: AddonStatusInstall, Source: AddonSourceEmbedded},
+		"unattended-upgrades": {Name: "unattended-upgrades", Status: addonStatusInstall, Source: addonSourceEmbedded},
 		// embedded addon, declared in the manifest with delete: true
-		resources.AddonCCMAws: {Name: resources.AddonCCMAws, Status: AddonStatusDelete, Source: AddonSourceEmbedded},
+		resources.AddonCCMAws: {Name: resources.AddonCCMAws, Status: addonStatusDelete, Source: addonSourceEmbedded},
 		// embedded addon, not used
-		resources.AddonCCMAzure: {Name: resources.AddonCCMAzure, Status: AddonStatusInactive, Source: AddonSourceEmbedded},
+		resources.AddonCCMAzure: {Name: resources.AddonCCMAzure, Status: addonStatusInactive, Source: addonSourceEmbedded},
 		// declared in the manifest, but neither embedded nor in the addons directory
-		"not-existing": {Name: "not-existing", Status: AddonStatusInstall},
+		"not-existing": {Name: "not-existing", Status: addonStatusInstall},
 	}
 
-	got := map[string]AddonItem{}
+	got := map[string]addonItem{}
 	for _, item := range items {
 		got[item.Name] = item
 	}

@@ -34,43 +34,43 @@ import (
 )
 
 const (
-	AddonStatusInstall  = AddonStatus("install")
-	AddonStatusInactive = AddonStatus("inactive")
-	AddonStatusDelete   = AddonStatus("delete")
+	addonStatusInstall  = addonStatus("install")
+	addonStatusInactive = addonStatus("inactive")
+	addonStatusDelete   = addonStatus("delete")
 
-	// AddonSourceEmbedded is an addon embedded in the KubeOne binary.
-	AddonSourceEmbedded = AddonSource("embedded")
-	// AddonSourceOverridden is an embedded addon that is overridden by a
+	// addonSourceEmbedded is an addon embedded in the KubeOne binary.
+	addonSourceEmbedded = addonSource("embedded")
+	// addonSourceOverridden is an embedded addon that is overridden by a
 	// custom addon of the same name from the addons directory.
-	AddonSourceOverridden = AddonSource("overridden")
-	// AddonSourceCustom is an addon that exists only in the addons directory.
-	AddonSourceCustom = AddonSource("custom")
+	addonSourceOverridden = addonSource("overridden")
+	// addonSourceCustom is an addon that exists only in the addons directory.
+	addonSourceCustom = addonSource("custom")
 )
 
 type (
-	AddonStatus string
-	AddonSource string
+	addonStatus string
+	addonSource string
 )
 
-type AddonItem struct {
+type addonItem struct {
 	Name   string      `json:"name"`
-	Status AddonStatus `json:"status"`
+	Status addonStatus `json:"status"`
 	// Source is empty for an addon that is declared in the manifest, but is
 	// neither embedded nor present in the addons directory.
-	Source AddonSource `json:"source"`
+	Source addonSource `json:"source"`
 }
 
-// ResolveAddons returns all known addons sorted by name: the embedded ones,
+// resolveAddons returns all known addons sorted by name: the embedded ones,
 // the ones found in the addons directory and the ones declared in the
 // manifest, together with their status and the source they are applied from.
-func ResolveAddons(s *state.State) ([]AddonItem, error) {
+func resolveAddons(s *state.State) ([]addonItem, error) {
 	embeddedEntries, err := fs.ReadDir(embeddedaddons.FS, ".")
 	if err != nil {
 		return nil, fail.Runtime(err, "reading embedded addons directory")
 	}
 
 	embeddedNames := map[string]struct{}{}
-	combinedAddons := map[string]AddonItem{}
+	combinedAddons := map[string]addonItem{}
 
 	for _, addon := range embeddedEntries {
 		if !addon.IsDir() {
@@ -78,9 +78,9 @@ func ResolveAddons(s *state.State) ([]AddonItem, error) {
 		}
 
 		embeddedNames[addon.Name()] = struct{}{}
-		combinedAddons[addon.Name()] = AddonItem{
+		combinedAddons[addon.Name()] = addonItem{
 			Name:   addon.Name(),
-			Status: AddonStatusInactive,
+			Status: addonStatusInactive,
 		}
 	}
 
@@ -90,7 +90,7 @@ func ResolveAddons(s *state.State) ([]AddonItem, error) {
 			continue
 		}
 
-		add.Status = AddonStatusInstall
+		add.Status = addonStatusInstall
 		combinedAddons[activeAddon.name] = add
 	}
 
@@ -114,29 +114,29 @@ func ResolveAddons(s *state.State) ([]AddonItem, error) {
 				}
 
 				localNames[useraddon.Name()] = struct{}{}
-				combinedAddons[useraddon.Name()] = AddonItem{
+				combinedAddons[useraddon.Name()] = addonItem{
 					Name:   useraddon.Name(),
-					Status: AddonStatusInstall,
+					Status: addonStatusInstall,
 				}
 			}
 		}
 
 		for _, declaredAddon := range s.Cluster.Addons.DeclaredAddonsOnly() {
-			combinedAddons[declaredAddon.Name] = AddonItem{
+			combinedAddons[declaredAddon.Name] = addonItem{
 				Name:   declaredAddon.Name,
-				Status: AddonStatusInstall,
+				Status: addonStatusInstall,
 			}
 
 			if declaredAddon.Delete {
-				combinedAddons[declaredAddon.Name] = AddonItem{
+				combinedAddons[declaredAddon.Name] = addonItem{
 					Name:   declaredAddon.Name,
-					Status: AddonStatusDelete,
+					Status: addonStatusDelete,
 				}
 			}
 		}
 	}
 
-	items := make([]AddonItem, 0, len(combinedAddons))
+	items := make([]addonItem, 0, len(combinedAddons))
 
 	for name, item := range combinedAddons {
 		_, isEmbedded := embeddedNames[name]
@@ -144,17 +144,17 @@ func ResolveAddons(s *state.State) ([]AddonItem, error) {
 
 		switch {
 		case isEmbedded && isLocal:
-			item.Source = AddonSourceOverridden
+			item.Source = addonSourceOverridden
 		case isEmbedded:
-			item.Source = AddonSourceEmbedded
+			item.Source = addonSourceEmbedded
 		case isLocal:
-			item.Source = AddonSourceCustom
+			item.Source = addonSourceCustom
 		}
 
 		items = append(items, item)
 	}
 
-	slices.SortFunc(items, func(a, b AddonItem) int {
+	slices.SortFunc(items, func(a, b addonItem) int {
 		return strings.Compare(a.Name, b.Name)
 	})
 
@@ -171,7 +171,7 @@ func List(s *state.State, outputFormat string) error {
 		}
 	}
 
-	items, err := ResolveAddons(s)
+	items, err := resolveAddons(s)
 	if err != nil {
 		return err
 	}
