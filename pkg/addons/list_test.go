@@ -32,7 +32,7 @@ func TestResolveAddons(t *testing.T) {
 	t.Parallel()
 
 	addonsDir := t.TempDir()
-	for _, dir := range []string{resources.AddonMetricsServer, "my-custom-ingress"} {
+	for _, dir := range []string{resources.AddonMetricsServer, resources.AddonCCMHetzner, "backups-restic", "my-custom-ingress"} {
 		if err := os.Mkdir(filepath.Join(addonsDir, dir), 0o750); err != nil {
 			t.Fatalf("unable to create addon directory: %v", err)
 		}
@@ -54,7 +54,10 @@ func TestResolveAddons(t *testing.T) {
 				Path: addonsDir,
 				Addons: []kubeoneapi.AddonRef{
 					{Addon: &kubeoneapi.Addon{Name: "unattended-upgrades"}},
+					{Addon: &kubeoneapi.Addon{Name: "secrets-store-csi-driver", Delete: true}},
 					{Addon: &kubeoneapi.Addon{Name: resources.AddonCCMAws, Delete: true}},
+					{Addon: &kubeoneapi.Addon{Name: resources.AddonCCMAzure}},
+					{Addon: &kubeoneapi.Addon{Name: resources.AddonClusterAutoscaler}},
 					{Addon: &kubeoneapi.Addon{Name: "not-existing"}},
 				},
 			},
@@ -79,10 +82,23 @@ func TestResolveAddons(t *testing.T) {
 		"my-custom-ingress": {Name: "my-custom-ingress", Status: addonStatusInstall, Source: addonSourceCustom},
 		// embedded addon, declared in the manifest
 		"unattended-upgrades": {Name: "unattended-upgrades", Status: addonStatusInstall, Source: addonSourceEmbedded},
-		// embedded addon, declared in the manifest with delete: true
-		resources.AddonCCMAws: {Name: resources.AddonCCMAws, Status: addonStatusDelete, Source: addonSourceEmbedded},
-		// embedded addon, not used
+		// embedded addon, not managed by KubeOne, overridden by a directory
+		"backups-restic": {Name: "backups-restic", Status: addonStatusInstall, Source: addonSourceOverridden},
+		// embedded addon, not managed by KubeOne, declared in the manifest with delete: true
+		"secrets-store-csi-driver": {Name: "secrets-store-csi-driver", Status: addonStatusDelete, Source: addonSourceEmbedded},
+		// managed embedded addon, declared in the manifest with delete: true;
+		// apply ignores declared managed addons, so it's not deleted
+		resources.AddonCCMAws: {Name: resources.AddonCCMAws, Status: addonStatusInactive, Source: addonSourceEmbedded},
+		// managed embedded addon, declared in the manifest, but not enabled by
+		// the cluster configuration
 		resources.AddonCCMAzure: {Name: resources.AddonCCMAzure, Status: addonStatusInactive, Source: addonSourceEmbedded},
+		// managed embedded addon, overridden by a directory, but not enabled by
+		// the cluster configuration
+		resources.AddonCCMHetzner: {Name: resources.AddonCCMHetzner, Status: addonStatusInactive, Source: addonSourceOverridden},
+		// managed embedded addon, enabled by declaring it in the manifest
+		resources.AddonClusterAutoscaler: {Name: resources.AddonClusterAutoscaler, Status: addonStatusInstall, Source: addonSourceEmbedded},
+		// embedded addon, not used
+		resources.AddonCCMGCP: {Name: resources.AddonCCMGCP, Status: addonStatusInactive, Source: addonSourceEmbedded},
 		// declared in the manifest, but neither embedded nor in the addons directory
 		"not-existing": {Name: "not-existing", Status: addonStatusInstall},
 	}

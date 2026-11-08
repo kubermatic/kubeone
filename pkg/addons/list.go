@@ -62,77 +62,59 @@ type addonItem struct {
 // resolveAddons returns all known addons sorted by name: the embedded ones,
 // the ones found in the addons directory and the ones declared in the
 // manifest, together with their status and the source they are applied from.
+// The status is derived from the same functions that decide what
+// 'kubeone apply' deploys (collectAddons) and what it deploys or deletes as
+// user addons (userAddons).
 func resolveAddons(s *state.State) ([]addonItem, error) {
-	embeddedEntries, err := fs.ReadDir(embeddedaddons.FS, ".")
+	embeddedNames, err := addonDirNames(embeddedaddons.FS)
 	if err != nil {
 		return nil, fail.Runtime(err, "reading embedded addons directory")
 	}
 
-	embeddedNames := map[string]struct{}{}
+	localNames := map[string]struct{}{}
+
+	localFS, err := addonsLocalFS(s.Cluster.Addons, s.ManifestFilePath)
+	if err != nil {
+		return nil, err
+	}
+
+	if localFS != nil {
+		localNames, err = addonDirNames(localFS)
+		if err != nil {
+			return nil, fail.Runtime(err, "reading local addons directory")
+		}
+	}
+
 	combinedAddons := map[string]addonItem{}
 
-	for _, addon := range embeddedEntries {
-		if !addon.IsDir() {
-			continue
-		}
+	for name := range embeddedNames {
+		combinedAddons[name] = addonItem{Name: name, Status: addonStatusInactive}
+	}
 
-		embeddedNames[addon.Name()] = struct{}{}
-		combinedAddons[addon.Name()] = addonItem{
-			Name:   addon.Name(),
-			Status: addonStatusInactive,
-		}
+	// every local addon starts as inactive: a directory that overrides a managed
+	// embedded addon is applied only if collectAddons selects that addon, while
+	// all other local addons are user addons and are set below
+	for name := range localNames {
+		combinedAddons[name] = addonItem{Name: name, Status: addonStatusInactive}
 	}
 
 	for _, activeAddon := range collectAddons(s) {
-		add, ok := combinedAddons[activeAddon.name]
-		if !ok {
-			continue
+		if _, ok := combinedAddons[activeAddon.name]; ok {
+			combinedAddons[activeAddon.name] = addonItem{Name: activeAddon.name, Status: addonStatusInstall}
 		}
-
-		add.Status = addonStatusInstall
-		combinedAddons[activeAddon.name] = add
 	}
 
-	localNames := map[string]struct{}{}
+	deployed, deleted, err := userAddons(s)
+	if err != nil {
+		return nil, err
+	}
 
-	if s.Cluster.Addons.Enabled() {
-		localFS, err := addonsLocalFS(s.Cluster.Addons, s.ManifestFilePath)
-		if err != nil {
-			return nil, err
-		}
+	for name := range deployed {
+		combinedAddons[name] = addonItem{Name: name, Status: addonStatusInstall}
+	}
 
-		if localFS != nil {
-			customAddons, err := fs.ReadDir(localFS, ".")
-			if err != nil {
-				return nil, fail.Runtime(err, "reading local addons directory")
-			}
-
-			for _, useraddon := range customAddons {
-				if !useraddon.IsDir() {
-					continue
-				}
-
-				localNames[useraddon.Name()] = struct{}{}
-				combinedAddons[useraddon.Name()] = addonItem{
-					Name:   useraddon.Name(),
-					Status: addonStatusInstall,
-				}
-			}
-		}
-
-		for _, declaredAddon := range s.Cluster.Addons.DeclaredAddonsOnly() {
-			combinedAddons[declaredAddon.Name] = addonItem{
-				Name:   declaredAddon.Name,
-				Status: addonStatusInstall,
-			}
-
-			if declaredAddon.Delete {
-				combinedAddons[declaredAddon.Name] = addonItem{
-					Name:   declaredAddon.Name,
-					Status: addonStatusDelete,
-				}
-			}
-		}
+	for name := range deleted {
+		combinedAddons[name] = addonItem{Name: name, Status: addonStatusDelete}
 	}
 
 	items := make([]addonItem, 0, len(combinedAddons))
@@ -158,6 +140,24 @@ func resolveAddons(s *state.State) ([]addonItem, error) {
 	})
 
 	return items, nil
+}
+
+// addonDirNames returns the names of the addon directories in the root of fsys.
+func addonDirNames(fsys fs.FS) (map[string]struct{}, error) {
+	entries, err := fs.ReadDir(fsys, ".")
+	if err != nil {
+		return nil, err
+	}
+
+	names := map[string]struct{}{}
+
+	for _, entry := range entries {
+		if entry.IsDir() {
+			names[entry.Name()] = struct{}{}
+		}
+	}
+
+	return names, nil
 }
 
 func List(s *state.State, outputFormat string) error {
