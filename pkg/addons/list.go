@@ -24,7 +24,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/iancoleman/orderedmap"
 	"github.com/pkg/errors"
 
 	embeddedaddons "k8c.io/kubeone/addons"
@@ -176,15 +175,15 @@ func List(s *state.State, outputFormat string) error {
 		return err
 	}
 
-	omap := orderedmap.New()
+	itemsByName := make(map[string]addonItem, len(items))
 
 	for _, item := range items {
-		omap.Set(item.Name, item)
+		itemsByName[item.Name] = item
 	}
 
 	switch outputFormat {
 	case "json":
-		buf, err := json.Marshal(omap)
+		buf, err := json.Marshal(itemsByName)
 		if err != nil {
 			return fail.Runtime(err, "marshalling addons list")
 		}
