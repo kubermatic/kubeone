@@ -24,6 +24,7 @@ import (
 	"github.com/pkg/errors"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/cloudprovider/kubevirt/kubevirtcsi"
 	"k8c.io/kubeone/pkg/fail"
 	"k8c.io/kubeone/pkg/state"
 	"k8c.io/kubeone/pkg/templates/resources"
@@ -75,8 +76,11 @@ var embeddedAddons = map[string]string{
 }
 
 type addonAction struct {
-	name      string
+	name string
+	// supportFn runs before the addon is applied.
 	supportFn func() error
+	// postFn runs after the addon is applied.
+	postFn func() error
 }
 
 func collectAddons(s *state.State) []addonAction {
@@ -206,6 +210,11 @@ func Ensure(s *state.State) error {
 		}
 		if err := EnsureAddonByName(s, add.name); err != nil {
 			return err
+		}
+		if add.postFn != nil {
+			if err := add.postFn(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -470,7 +479,11 @@ func DeleteAddonByName(s *state.State, addonName string) error {
 }
 
 func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction {
-	var unknownProvider bool
+	var (
+		unknownProvider bool
+		// lastAddons are applied after csi-external-snapshotter, because they need the snapshot CRDs.
+		lastAddons []addonAction
+	)
 
 	switch {
 	case s.Cluster.CloudProvider.AWS != nil:
@@ -524,10 +537,18 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 			},
 		)
 	case s.Cluster.CloudProvider.Kubevirt != nil:
-		addonsToDeploy = append(
-			addonsToDeploy,
+		// kubevirt-csi-driver-operator creates VolumeSnapshotClasses from the Tenant, and fails its reconcile until
+		// their CRD exists.
+		lastAddons = append(
+			lastAddons,
 			addonAction{
 				name: resources.AddonCSIKubeVirt,
+				supportFn: func() error {
+					return kubevirtcsi.MigrateNodePlugin(s)
+				},
+				postFn: func() error {
+					return kubevirtcsi.ReconcileClasses(s)
+				},
 			},
 		)
 	case s.Cluster.CloudProvider.Nutanix != nil:
@@ -582,7 +603,7 @@ func ensureCSIAddons(s *state.State, addonsToDeploy []addonAction) []addonAction
 		})
 	}
 
-	return addonsToDeploy
+	return append(addonsToDeploy, lastAddons...)
 }
 
 func ensureCCMAddons(s *state.State, addonsToDeploy []addonAction) []addonAction {

@@ -1,0 +1,174 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.20.1
+  name: tenants.csiprovisioner.kubevirt.io
+spec:
+  group: csiprovisioner.kubevirt.io
+  names:
+    kind: Tenant
+    listKind: TenantList
+    plural: tenants
+    singular: tenant
+  scope: Cluster
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Tenant is the Schema for the tenants API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: TenantSpec defines the desired state of Tenant.
+            properties:
+              imageRepository:
+                description: Image repository address
+                type: string
+              imageTag:
+                description: Image tag that should be used for all csi driver components
+                type: string
+              storageClasses:
+                description: StorageClasses represents storage classes that the tenant
+                  operator should create.
+                items:
+                  description: StorageClass represents a storage class that should
+                    reference a KubeVirt storage class on infra cluster.
+                  properties:
+                    allowVolumeExpansion:
+                      description: AllowVolumeExpansion shows whether the storage
+                        class allow volume expand.
+                      type: boolean
+                    bus:
+                      description: The VM bus type, defaults to scsi.
+                      type: string
+                    infraStorageClassName:
+                      description: Name of the storage class to use on the infrastructure
+                        cluster.
+                      type: string
+                    isDefaultClass:
+                      description: |-
+                        Optional: IsDefaultClass if true, the created StorageClass will be annotated with:
+                        storageclass.kubernetes.io/is-default-class : true
+                        If missing or false, annotation will be:
+                        storageclass.kubernetes.io/is-default-class : false
+                      type: boolean
+                    labels:
+                      additionalProperties:
+                        type: string
+                      description: |-
+                        Labels is a map of string keys and values that can be used to organize and categorize
+                        (scope and select) objects. May match selectors of replication controllers
+                        and services.
+                      type: object
+                    reclaimPolicy:
+                      description: |-
+                        ReclaimPolicy controls the reclaimPolicy for dynamically provisioned PersistentVolumes of this storage class.
+                        Defaults to Delete.
+                      type: string
+                    regions:
+                      description: |-
+                        Regions represents a larger domain, made up of one or more zones. It is uncommon for Kubernetes clusters
+                        to span multiple regions
+                      items:
+                        type: string
+                      type: array
+                    volumeBindingMode:
+                      description: |-
+                        VolumeBindingMode indicates how PersistentVolumeClaims should be provisioned and bound. When unset,
+                        VolumeBindingImmediate is used.
+                      type: string
+                    zones:
+                      description: |-
+                        Zones represent a logical failure domain. It is common for Kubernetes clusters to span multiple zones
+                        for increased availability
+                      items:
+                        type: string
+                      type: array
+                  required:
+                  - infraStorageClassName
+                  type: object
+                type: array
+              volumeSnapshotClasses:
+                description: VolumeSnapshotClasses represents volume snapshot classes
+                  that the tenant operator should create.
+                items:
+                  description: |-
+                    VolumeSnapshotClass contains a list of KubeVirt infra cluster VolumeSnapshotClasses names used
+                    to initialise VolumeSnapshotClasses in the tenant cluster.
+                  properties:
+                    deletionPolicy:
+                      description: 'Optional: DeletionPolicy defines how the VolumeSnapshotClass
+                        should be deleted. Defaults to Delete.'
+                      type: string
+                    infraVolumeSnapshotClass:
+                      description: InfraVolumeSnapshotClass of the volume snapshot
+                        class to use on the infrastructure cluster.
+                      type: string
+                    isDefaultClass:
+                      description: |-
+                        Optional: IsDefaultClass. If true, the created VolumeSnapshotClass in the tenant cluster will be annotated with:
+                        snapshot.storage.kubernetes.io/is-default-class: true
+                        If missing or false, annotation will be:
+                        snapshot.storage.kubernetes.io/is-default-class: false
+                      type: boolean
+                  required:
+                  - infraVolumeSnapshotClass
+                  type: object
+                type: array
+            type: object
+          status:
+            description: TenantStatus defines the observed state of Tenant.
+            properties:
+              resourceConditions:
+                description: Conditions represents resource conditions that operator
+                  reconciles.
+                items:
+                  description: ResourceStatusCondition contains details for the current
+                    condition.
+                  properties:
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    operationResult:
+                      description: OperationResult is the action result of a CreateOrUpdate
+                        call.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    resource:
+                      description: Resource represents a k8s resource that has been
+                        created/updated by the operator.
+                      type: string
+                  required:
+                  - operationResult
+                  - resource
+                  type: object
+                type: array
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

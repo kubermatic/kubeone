@@ -1,0 +1,11 @@
+# The fields of cloudProvider.kubevirt.storageClasses and volumeSnapshotClasses have the same JSON names as the Tenant
+# fields they are rendered into.
+apiVersion: csiprovisioner.kubevirt.io/v1alpha1
+kind: Tenant
+metadata:
+  name: tenant
+spec:
+{{- with .Config.CloudProvider.Kubevirt }}
+  storageClasses: {{ if .StorageClasses }}{{ toJson .StorageClasses }}{{ else }}[]{{ end }}
+  volumeSnapshotClasses: {{ if .VolumeSnapshotClasses }}{{ toJson .VolumeSnapshotClasses }}{{ else }}[]{{ end }}
+{{- end }}

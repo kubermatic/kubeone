@@ -211,6 +211,9 @@ const (
 	KubeVirtCSILivenessProbe
 	KubeVirtCSIProvisioner
 	KubeVirtCSIAttacher
+	KubeVirtCSISnapshotter
+	KubeVirtCSIResizer
+	KubeVirtCSIDriverOperator
 
 	// Backup Restic
 	BackupResticSnapshotter
@@ -426,11 +429,18 @@ func optionalResources() map[Resource]map[string]string {
 		KubeVirtCCM: {"*": "quay.io/kubevirt/kubevirt-cloud-controller-manager:v0.6.0"},
 
 		// KubeVirt CSI
+		//
+		// kubevirt-csi-driver-operator deploys the node plugin with images hard-coded in the operator release.
+		// KubeVirtCSI, KubeVirtCSINodeDriverRegistrar and KubeVirtCSILivenessProbe must match them, and are bumped
+		// together with KubeVirtCSIDriverOperator. KubeVirtCSI is also used by the CSI controller.
+		KubeVirtCSIDriverOperator:      {"*": "quay.io/kubermatic/kubevirt-csi-driver-operator:v0.5.3"},
 		KubeVirtCSI:                    {"*": "quay.io/kubermatic/kubevirt-csi-driver:v0.4.5"},
 		KubeVirtCSINodeDriverRegistrar: {"*": "quay.io/openshift/origin-csi-node-driver-registrar:4.20.0"},
 		KubeVirtCSILivenessProbe:       {"*": "quay.io/openshift/origin-csi-livenessprobe:4.20.0"},
 		KubeVirtCSIProvisioner:         {"*": "quay.io/openshift/origin-csi-external-provisioner:4.20.0"},
 		KubeVirtCSIAttacher:            {"*": "quay.io/openshift/origin-csi-external-attacher:4.20.0"},
+		KubeVirtCSISnapshotter:         {"*": "registry.k8s.io/sig-storage/csi-snapshotter:v8.6.0"},
+		KubeVirtCSIResizer:             {"*": "registry.k8s.io/sig-storage/csi-resizer:v2.2.1"},
 
 		// Backup Restic
 		BackupResticSnapshotter: {"*": "registry.k8s.io/etcd:3.5.32-0"},
@@ -524,6 +534,9 @@ func providerResources() map[string][]Resource {
 			KubeVirtCSILivenessProbe,
 			KubeVirtCSIProvisioner,
 			KubeVirtCSIAttacher,
+			KubeVirtCSISnapshotter,
+			KubeVirtCSIResizer,
+			KubeVirtCSIDriverOperator,
 		},
 		"nutanix": {
 			NutanixCCM,

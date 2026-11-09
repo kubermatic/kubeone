@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2026-11-02T15:08:44+05:30
+date = 2026-11-09T16:13:05+02:00
 weight = 11
 +++
 ## v1beta3
@@ -64,6 +64,8 @@ weight = 11
 * [KubevirtControlPlane](#kubevirtcontrolplane)
 * [KubevirtLoadBalancer](#kubevirtloadbalancer)
 * [KubevirtSpec](#kubevirtspec)
+* [KubevirtStorageClass](#kubevirtstorageclass)
+* [KubevirtVolumeSnapshotClass](#kubevirtvolumesnapshotclass)
 * [LoggingConfig](#loggingconfig)
 * [MachineControllerConfig](#machinecontrollerconfig)
 * [MetricsServer](#metricsserver)
@@ -865,6 +867,39 @@ KubevirtSpec defines the Kubevirt provider
 | zoneAndRegionEnabled | ZoneAndRegionEnabled indicates if need to get Region and zone labels from the cloud provider | bool | false |
 | loadBalancerEnabled | LoadBalancerEnabled indicates if the ccm should create and manage the clusters load balancers. | bool | false |
 | controlPlane | ControlPlane configures control plane provisioning on KubeVirt | *[KubevirtControlPlane](#kubevirtcontrolplane) | false |
+| storageClasses | StorageClasses to create in the cluster. Each one is backed by a StorageClass of the infra cluster. They are created by the kubevirt-csi-driver-operator and named \"kubevirt-<infraStorageClassName>\". | [][KubevirtStorageClass](#kubevirtstorageclass) | false |
+| volumeSnapshotClasses | VolumeSnapshotClasses to create in the cluster. Each one is backed by a VolumeSnapshotClass of the infra cluster. They are created by the kubevirt-csi-driver-operator and named \"kubevirt-<infraVolumeSnapshotClass>\". | [][KubevirtVolumeSnapshotClass](#kubevirtvolumesnapshotclass) | false |
+
+[Back to Group](#v1beta3)
+
+### KubevirtStorageClass
+
+KubevirtStorageClass defines a StorageClass of the cluster backed by a StorageClass of the infra cluster
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| infraStorageClassName | InfraStorageClassName is the name of the StorageClass in the infra cluster | string | true |
+| isDefaultClass | IsDefaultClass marks the StorageClass as the default StorageClass of the cluster | bool | false |
+| volumeBindingMode | VolumeBindingMode of the StorageClass. Default: Immediate | storagev1.VolumeBindingMode | false |
+| allowVolumeExpansion | AllowVolumeExpansion allows PersistentVolumeClaims of the StorageClass to be expanded | bool | false |
+| reclaimPolicy | ReclaimPolicy of the PersistentVolumes provisioned by the StorageClass. Default: Delete | corev1.PersistentVolumeReclaimPolicy | false |
+| bus | Bus is the type of the disk bus used to attach the volumes to the VMs: virtio, scsi or sata | string | false |
+| zones | Zones restrict the provisioned volumes to the given zones | []string | false |
+| regions | Regions restrict the provisioned volumes to the given regions | []string | false |
+| labels | Labels to be applied to the StorageClass | map[string]string | false |
+
+[Back to Group](#v1beta3)
+
+### KubevirtVolumeSnapshotClass
+
+KubevirtVolumeSnapshotClass defines a VolumeSnapshotClass of the cluster backed by a VolumeSnapshotClass of the
+infra cluster
+
+| Field | Description | Scheme | Required |
+| ----- | ----------- | ------ | -------- |
+| infraVolumeSnapshotClass | InfraVolumeSnapshotClass is the name of the VolumeSnapshotClass in the infra cluster | string | true |
+| isDefaultClass | IsDefaultClass marks the VolumeSnapshotClass as the default VolumeSnapshotClass of the cluster | bool | false |
+| deletionPolicy | DeletionPolicy of the VolumeSnapshotClass: Delete or Retain. Default: Delete | string | false |
 
 [Back to Group](#v1beta3)
 

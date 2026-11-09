@@ -661,6 +661,28 @@ func TestValidateCloudProviderSpec(t *testing.T) {
 			expectedError: false,
 		},
 		{
+			name: "Kubevirt storageClasses with disableBundledCSIDrivers",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				DisableBundledCSIDrivers: true,
+				Kubevirt: &kubeoneapi.KubevirtSpec{
+					InfraNamespace: "tenant-xyz",
+					StorageClasses: []kubeoneapi.KubevirtStorageClass{{InfraStorageClassName: "standard"}},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "Kubevirt volumeSnapshotClasses with disableBundledCSIDrivers",
+			providerConfig: kubeoneapi.CloudProviderSpec{
+				DisableBundledCSIDrivers: true,
+				Kubevirt: &kubeoneapi.KubevirtSpec{
+					InfraNamespace:        "tenant-xyz",
+					VolumeSnapshotClasses: []kubeoneapi.KubevirtVolumeSnapshotClass{{InfraVolumeSnapshotClass: "snap"}},
+				},
+			},
+			expectedError: true,
+		},
+		{
 			name: "Kubevirt provider config missing InfraNamespace",
 			providerConfig: kubeoneapi.CloudProviderSpec{
 				Kubevirt: &kubeoneapi.KubevirtSpec{},
@@ -3760,6 +3782,161 @@ func TestValidateGCESpec(t *testing.T) {
 			}
 
 			errs := ValidateCloudProviderSpec(cluster, field.NewPath("cloudProvider"))
+			if (len(errs) != 0) != tc.expectedError {
+				t.Errorf("expected error %v, got %v", tc.expectedError, errs)
+			}
+		})
+	}
+}
+
+func TestValidateKubevirtSpec(t *testing.T) {
+	tests := []struct {
+		name          string
+		spec          kubeoneapi.KubevirtSpec
+		expectedError bool
+	}{
+		{
+			name: "no classes",
+			spec: kubeoneapi.KubevirtSpec{InfraNamespace: "tenant"},
+		},
+		{
+			name: "valid classes",
+			spec: kubeoneapi.KubevirtSpec{
+				InfraNamespace: "tenant",
+				StorageClasses: []kubeoneapi.KubevirtStorageClass{
+					{
+						InfraStorageClassName: "standard",
+						IsDefaultClass:        true,
+						VolumeBindingMode:     "WaitForFirstConsumer",
+						AllowVolumeExpansion:  true,
+						ReclaimPolicy:         "Retain",
+						Bus:                   "scsi",
+						Zones:                 []string{"a"},
+						Regions:               []string{"r"},
+						Labels:                map[string]string{"k": "v"},
+					},
+					{InfraStorageClassName: "fast", Bus: "virtio", VolumeBindingMode: "Immediate", ReclaimPolicy: "Delete"},
+					{InfraStorageClassName: "slow", Bus: "sata"},
+				},
+				VolumeSnapshotClasses: []kubeoneapi.KubevirtVolumeSnapshotClass{
+					{InfraVolumeSnapshotClass: "snap", IsDefaultClass: true, DeletionPolicy: "Retain"},
+					{InfraVolumeSnapshotClass: "snap2", DeletionPolicy: "Delete"},
+				},
+			},
+		},
+		{
+			name: "storageClass without infraStorageClassName",
+			spec: kubeoneapi.KubevirtSpec{
+				InfraNamespace: "tenant",
+				StorageClasses: []kubeoneapi.KubevirtStorageClass{{}},
+			},
+			expectedError: true,
+		},
+		{
+			name: "storageClass with invalid name",
+			spec: kubeoneapi.KubevirtSpec{
+				InfraNamespace: "tenant",
+				StorageClasses: []kubeoneapi.KubevirtStorageClass{{InfraStorageClassName: "Not_Valid"}},
+			},
+			expectedError: true,
+		},
+		{
+			name: "storageClass name too long with prefix",
+			spec: kubeoneapi.KubevirtSpec{
+				InfraNamespace: "tenant",
+				StorageClasses: []kubeoneapi.KubevirtStorageClass{{InfraStorageClassName: strings.Repeat("a", 245)}},
+			},
+			expectedError: true,
+		},
+		{
+			name: "duplicate storageClasses",
+			spec: kubeoneapi.KubevirtSpec{
+				InfraNamespace: "tenant",
+				StorageClasses: []kubeoneapi.KubevirtStorageClass{
+					{InfraStorageClassName: "standard"},
+					{InfraStorageClassName: "standard", Bus: "scsi"},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "two default storageClasses",
+			spec: kubeoneapi.KubevirtSpec{
+				InfraNamespace: "tenant",
+				StorageClasses: []kubeoneapi.KubevirtStorageClass{
+					{InfraStorageClassName: "a", IsDefaultClass: true},
+					{InfraStorageClassName: "b", IsDefaultClass: true},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "invalid bus",
+			spec: kubeoneapi.KubevirtSpec{
+				InfraNamespace: "tenant",
+				StorageClasses: []kubeoneapi.KubevirtStorageClass{{InfraStorageClassName: "a", Bus: "ide"}},
+			},
+			expectedError: true,
+		},
+		{
+			name: "invalid volumeBindingMode",
+			spec: kubeoneapi.KubevirtSpec{
+				InfraNamespace: "tenant",
+				StorageClasses: []kubeoneapi.KubevirtStorageClass{{InfraStorageClassName: "a", VolumeBindingMode: "Lazy"}},
+			},
+			expectedError: true,
+		},
+		{
+			name: "invalid reclaimPolicy",
+			spec: kubeoneapi.KubevirtSpec{
+				InfraNamespace: "tenant",
+				StorageClasses: []kubeoneapi.KubevirtStorageClass{{InfraStorageClassName: "a", ReclaimPolicy: "Recycle"}},
+			},
+			expectedError: true,
+		},
+		{
+			name: "volumeSnapshotClass without infraVolumeSnapshotClass",
+			spec: kubeoneapi.KubevirtSpec{
+				InfraNamespace:        "tenant",
+				VolumeSnapshotClasses: []kubeoneapi.KubevirtVolumeSnapshotClass{{}},
+			},
+			expectedError: true,
+		},
+		{
+			name: "duplicate volumeSnapshotClasses",
+			spec: kubeoneapi.KubevirtSpec{
+				InfraNamespace: "tenant",
+				VolumeSnapshotClasses: []kubeoneapi.KubevirtVolumeSnapshotClass{
+					{InfraVolumeSnapshotClass: "snap"},
+					{InfraVolumeSnapshotClass: "snap"},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "two default volumeSnapshotClasses",
+			spec: kubeoneapi.KubevirtSpec{
+				InfraNamespace: "tenant",
+				VolumeSnapshotClasses: []kubeoneapi.KubevirtVolumeSnapshotClass{
+					{InfraVolumeSnapshotClass: "a", IsDefaultClass: true},
+					{InfraVolumeSnapshotClass: "b", IsDefaultClass: true},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "invalid deletionPolicy",
+			spec: kubeoneapi.KubevirtSpec{
+				InfraNamespace:        "tenant",
+				VolumeSnapshotClasses: []kubeoneapi.KubevirtVolumeSnapshotClass{{InfraVolumeSnapshotClass: "a", DeletionPolicy: "Keep"}},
+			},
+			expectedError: true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			errs := validateKubevirtSpec(&tc.spec, field.NewPath("kubevirt"))
 			if (len(errs) != 0) != tc.expectedError {
 				t.Errorf("expected error %v, got %v", tc.expectedError, errs)
 			}
