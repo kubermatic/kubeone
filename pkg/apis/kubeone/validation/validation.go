@@ -720,9 +720,6 @@ func validateKubevirtStorageClasses(storageClasses []kubeoneapi.KubevirtStorageC
 		case corev1.PersistentVolumeReclaimRecycle:
 			allErrs = append(allErrs, field.NotSupported(scFld.Child("reclaimPolicy"), sc.ReclaimPolicy,
 				[]corev1.PersistentVolumeReclaimPolicy{corev1.PersistentVolumeReclaimDelete, corev1.PersistentVolumeReclaimRetain}))
-		default:
-			allErrs = append(allErrs, field.NotSupported(scFld.Child("reclaimPolicy"), sc.ReclaimPolicy,
-				[]corev1.PersistentVolumeReclaimPolicy{corev1.PersistentVolumeReclaimDelete, corev1.PersistentVolumeReclaimRetain}))
 		}
 	}
 

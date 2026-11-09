@@ -22,6 +22,7 @@ import (
 	"context"
 	"maps"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 
@@ -39,6 +40,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/utils/ptr"
@@ -54,6 +56,10 @@ const (
 	tenantGroup = "csiprovisioner.kubevirt.io"
 	tenantName  = "tenant"
 
+	// defaultVolumeSnapshotClassAnnotation is set by kubevirt-csi-driver-operator on every VolumeSnapshotClass it
+	// creates, to "true" or "false".
+	defaultVolumeSnapshotClassAnnotation = "snapshot.storage.kubernetes.io/is-default-class"
+
 	// classNamePrefix is prepended by kubevirt-csi-driver-operator to the infra class name to name the StorageClass or
 	// VolumeSnapshotClass it creates.
 	classNamePrefix = "kubevirt-"
@@ -62,18 +68,24 @@ const (
 	// its pods, to be deleted.
 	nodePluginDeleteTimeout = 5 * time.Minute
 
-	// classesTimeout is how long to wait for kubevirt-csi-driver-operator to create the StorageClasses. It covers a
-	// fresh install, where the operator image has to be pulled first.
+	// classesTimeout is how long to wait for kubevirt-csi-driver-operator to create the StorageClasses, and then the
+	// VolumeSnapshotClasses. It covers a fresh install, where the operator image has to be pulled first.
 	classesTimeout = 5 * time.Minute
 
 	classesPollInterval = 2 * time.Second
 )
 
-var volumeSnapshotClassListGVK = schema.GroupVersionKind{
-	Group:   "snapshot.storage.k8s.io",
-	Version: "v1",
-	Kind:    "VolumeSnapshotClassList",
-}
+var (
+	storageClassGVK     = storagev1.SchemeGroupVersion.WithKind("StorageClass")
+	storageClassListGVK = storagev1.SchemeGroupVersion.WithKind("StorageClassList")
+
+	volumeSnapshotClassGVK = schema.GroupVersionKind{
+		Group:   "snapshot.storage.k8s.io",
+		Version: "v1",
+		Kind:    "VolumeSnapshotClass",
+	}
+	volumeSnapshotClassListGVK = volumeSnapshotClassGVK.GroupVersion().WithKind("VolumeSnapshotClassList")
+)
 
 // MigrateNodePlugin removes the node plugin of the csi-kubevirt addon from before kubevirt-csi-driver-operator. The
 // operator runs its own node plugin in the kubevirt-csi-driver namespace, which uses the same host paths, so both must
@@ -113,23 +125,31 @@ func MigrateNodePlugin(s *state.State) error {
 // field changed. It also never deletes classes removed from the Tenant. Every StorageClass owned by the Tenant that
 // differs from the manifest is deleted, and the operator recreates it from the Tenant. All of them are deleted before
 // waiting, because the operator stops at the first StorageClass it can't update.
+//
+// The operator updates all fields of an existing VolumeSnapshotClass, so only VolumeSnapshotClasses removed from the
+// Tenant are deleted. It reconciles VolumeSnapshotClasses after all StorageClasses, so they are waited for last.
 func ReconcileClasses(s *state.State) error {
 	kubevirt := s.Cluster.CloudProvider.Kubevirt
 	if kubevirt == nil {
 		return nil
 	}
 
-	desired := desiredStorageClasses(kubevirt.StorageClasses)
+	desiredSCs := desiredStorageClasses(kubevirt.StorageClasses)
+	desiredVSCs := desiredVolumeSnapshotClasses(kubevirt.VolumeSnapshotClasses)
 
-	if err := deleteStaleStorageClasses(s.Context, s.DynamicClient, desired); err != nil {
+	if err := deleteStaleStorageClasses(s.Context, s.DynamicClient, desiredSCs); err != nil {
 		return err
 	}
 
-	if err := deleteStaleVolumeSnapshotClasses(s.Context, s.DynamicClient, kubevirt.VolumeSnapshotClasses); err != nil {
+	if err := deleteStaleVolumeSnapshotClasses(s.Context, s.DynamicClient, desiredVSCs); err != nil {
 		return err
 	}
 
-	return waitForStorageClasses(s.Context, s.DynamicClient, desired, classesTimeout)
+	if err := waitForStorageClasses(s.Context, s.DynamicClient, desiredSCs, classesTimeout); err != nil {
+		return err
+	}
+
+	return waitForVolumeSnapshotClasses(s.Context, s.DynamicClient, desiredVSCs, classesTimeout)
 }
 
 // desiredStorageClasses returns the StorageClasses kubevirt-csi-driver-operator creates for the given entries, keyed by
@@ -180,6 +200,38 @@ func topologyTerm(key string, values []string) corev1.TopologySelectorTerm {
 	}
 }
 
+// desiredVolumeSnapshotClasses returns the VolumeSnapshotClasses kubevirt-csi-driver-operator creates for the given
+// entries, keyed by name.
+func desiredVolumeSnapshotClasses(volumeSnapshotClasses []kubeoneapi.KubevirtVolumeSnapshotClass) map[string]*unstructured.Unstructured {
+	desired := make(map[string]*unstructured.Unstructured, len(volumeSnapshotClasses))
+
+	for _, vsc := range volumeSnapshotClasses {
+		deletionPolicy := "Delete"
+		if vsc.DeletionPolicy != "" {
+			deletionPolicy = vsc.DeletionPolicy
+		}
+
+		obj := &unstructured.Unstructured{
+			Object: map[string]any{
+				"driver":         driverName,
+				"deletionPolicy": deletionPolicy,
+				"parameters": map[string]any{
+					"infraSnapshotClassName": vsc.InfraVolumeSnapshotClass,
+				},
+			},
+		}
+		obj.SetGroupVersionKind(volumeSnapshotClassGVK)
+		obj.SetName(classNamePrefix + vsc.InfraVolumeSnapshotClass)
+		obj.SetAnnotations(map[string]string{
+			defaultVolumeSnapshotClassAnnotation: strconv.FormatBool(vsc.IsDefaultClass),
+		})
+
+		desired[obj.GetName()] = obj
+	}
+
+	return desired
+}
+
 // storageClassMatches reports whether the fields of the StorageClass that kubevirt-csi-driver-operator doesn't update
 // match the desired ones. The default class annotation is not compared, because the operator updates it.
 func storageClassMatches(current, desired *storagev1.StorageClass) bool {
@@ -192,6 +244,33 @@ func storageClassMatches(current, desired *storagev1.StorageClass) bool {
 		ptr.Deref(current.AllowVolumeExpansion, false) == *desired.AllowVolumeExpansion
 }
 
+// unstructuredStorageClassMatches is storageClassMatches for a StorageClass read as unstructured.
+func unstructuredStorageClassMatches(obj *unstructured.Unstructured, desired *storagev1.StorageClass) (bool, error) {
+	current := &storagev1.StorageClass{}
+	if err := runtime.DefaultUnstructuredConverter.FromUnstructured(obj.Object, current); err != nil {
+		return false, fail.Runtime(err, "converting StorageClass %s", obj.GetName())
+	}
+
+	return storageClassMatches(current, desired), nil
+}
+
+// volumeSnapshotClassMatches reports whether the VolumeSnapshotClass has the fields kubevirt-csi-driver-operator sets.
+func volumeSnapshotClassMatches(current, desired *unstructured.Unstructured) bool {
+	currentParams, _, _ := unstructured.NestedStringMap(current.Object, "parameters")
+	desiredParams, _, _ := unstructured.NestedStringMap(desired.Object, "parameters")
+
+	return nestedString(current, "driver") == nestedString(desired, "driver") &&
+		nestedString(current, "deletionPolicy") == nestedString(desired, "deletionPolicy") &&
+		maps.Equal(currentParams, desiredParams) &&
+		current.GetAnnotations()[defaultVolumeSnapshotClassAnnotation] == desired.GetAnnotations()[defaultVolumeSnapshotClassAnnotation]
+}
+
+func nestedString(obj *unstructured.Unstructured, field string) string {
+	val, _, _ := unstructured.NestedString(obj.Object, field)
+
+	return val
+}
+
 // ownedByTenant reports whether kubevirt-csi-driver-operator created the object.
 func ownedByTenant(obj metav1.Object) bool {
 	ref := metav1.GetControllerOfNoCopy(obj)
@@ -202,45 +281,41 @@ func ownedByTenant(obj metav1.Object) bool {
 	return ref.Kind == "Tenant" && ref.Name == tenantName && strings.HasPrefix(ref.APIVersion, tenantGroup+"/")
 }
 
-func deleteStaleStorageClasses(ctx context.Context, c client.Client, desired map[string]*storagev1.StorageClass) error {
-	var list storagev1.StorageClassList
-	if err := c.List(ctx, &list); err != nil {
-		return fail.KubeClient(err, "listing StorageClasses")
-	}
-
-	for i := range list.Items {
-		current := &list.Items[i]
-		if !ownedByTenant(current) {
-			continue
+// deleteStaleStorageClasses deletes the StorageClasses owned by the Tenant that are not desired, or that differ from
+// the desired ones.
+func deleteStaleStorageClasses(ctx context.Context, dynClient client.Client, desired map[string]*storagev1.StorageClass) error {
+	return deleteStaleClasses(ctx, dynClient, storageClassListGVK, func(obj *unstructured.Unstructured) (bool, error) {
+		want, ok := desired[obj.GetName()]
+		if !ok {
+			return false, nil
 		}
 
-		if want, ok := desired[current.Name]; ok && storageClassMatches(current, want) {
-			continue
-		}
-
-		if err := clientutil.DeleteIfExists(ctx, c, current); err != nil {
-			return err
-		}
-	}
-
-	return nil
+		return unstructuredStorageClassMatches(obj, want)
+	})
 }
 
-func deleteStaleVolumeSnapshotClasses(ctx context.Context, c client.Client, volumeSnapshotClasses []kubeoneapi.KubevirtVolumeSnapshotClass) error {
-	desired := make(map[string]struct{}, len(volumeSnapshotClasses))
-	for _, vsc := range volumeSnapshotClasses {
-		desired[classNamePrefix+vsc.InfraVolumeSnapshotClass] = struct{}{}
-	}
+// deleteStaleVolumeSnapshotClasses deletes the VolumeSnapshotClasses owned by the Tenant that are not desired.
+// kubevirt-csi-driver-operator updates all fields of the desired ones itself.
+func deleteStaleVolumeSnapshotClasses(ctx context.Context, dynClient client.Client, desired map[string]*unstructured.Unstructured) error {
+	return deleteStaleClasses(ctx, dynClient, volumeSnapshotClassListGVK, func(obj *unstructured.Unstructured) (bool, error) {
+		_, ok := desired[obj.GetName()]
 
+		return ok, nil
+	})
+}
+
+// deleteStaleClasses deletes every object of the given list kind that is owned by the Tenant and that keep doesn't
+// keep.
+func deleteStaleClasses(ctx context.Context, dynClient client.Client, listGVK schema.GroupVersionKind, keep func(*unstructured.Unstructured) (bool, error)) error {
 	list := &unstructured.UnstructuredList{}
-	list.SetGroupVersionKind(volumeSnapshotClassListGVK)
-	if err := c.List(ctx, list); err != nil {
-		// Without the VolumeSnapshotClass CRD there is nothing to delete.
+	list.SetGroupVersionKind(listGVK)
+	if err := dynClient.List(ctx, list); err != nil {
+		// Without the CRD, e.g. the VolumeSnapshotClass one, there is nothing to delete.
 		if meta.IsNoMatchError(err) || k8serrors.IsNotFound(err) {
 			return nil
 		}
 
-		return fail.KubeClient(err, "listing VolumeSnapshotClasses")
+		return fail.KubeClient(err, "listing %s", listGVK.Kind)
 	}
 
 	for i := range list.Items {
@@ -249,11 +324,15 @@ func deleteStaleVolumeSnapshotClasses(ctx context.Context, c client.Client, volu
 			continue
 		}
 
-		if _, ok := desired[current.GetName()]; ok {
+		ok, err := keep(current)
+		if err != nil {
+			return err
+		}
+		if ok {
 			continue
 		}
 
-		if err := clientutil.DeleteIfExists(ctx, c, current); err != nil {
+		if err := clientutil.DeleteIfExists(ctx, dynClient, current); err != nil {
 			return err
 		}
 	}
@@ -261,7 +340,26 @@ func deleteStaleVolumeSnapshotClasses(ctx context.Context, c client.Client, volu
 	return nil
 }
 
-func waitForStorageClasses(ctx context.Context, c client.Client, desired map[string]*storagev1.StorageClass, timeout time.Duration) error {
+func waitForStorageClasses(ctx context.Context, dynClient client.Client, desired map[string]*storagev1.StorageClass, timeout time.Duration) error {
+	return waitForClasses(ctx, dynClient, storageClassGVK, desired, unstructuredStorageClassMatches, timeout)
+}
+
+func waitForVolumeSnapshotClasses(ctx context.Context, dynClient client.Client, desired map[string]*unstructured.Unstructured, timeout time.Duration) error {
+	return waitForClasses(ctx, dynClient, volumeSnapshotClassGVK, desired, func(current, want *unstructured.Unstructured) (bool, error) {
+		return volumeSnapshotClassMatches(current, want), nil
+	}, timeout)
+}
+
+// waitForClasses waits until kubevirt-csi-driver-operator has created every desired object of the given kind, and
+// until matches reports that it matches the desired one.
+func waitForClasses[T any](
+	ctx context.Context,
+	dynClient client.Client,
+	gvk schema.GroupVersionKind,
+	desired map[string]T,
+	matches func(current *unstructured.Unstructured, desired T) (bool, error),
+	timeout time.Duration,
+) error {
 	if len(desired) == 0 {
 		return nil
 	}
@@ -273,14 +371,24 @@ func waitForStorageClasses(ctx context.Context, c client.Client, desired map[str
 		pending = pending[:0]
 
 		for _, name := range names {
-			current := &storagev1.StorageClass{}
-			err := c.Get(ctx, client.ObjectKey{Name: name}, current)
+			current := &unstructured.Unstructured{}
+			current.SetGroupVersionKind(gvk)
+			err := dynClient.Get(ctx, client.ObjectKey{Name: name}, current)
 			switch {
-			case k8serrors.IsNotFound(err):
+			// Until the CRD, e.g. the VolumeSnapshotClass one, exists, the operator can't create the objects either.
+			case k8serrors.IsNotFound(err), meta.IsNoMatchError(err):
 				pending = append(pending, name)
+
+				continue
 			case err != nil:
 				return false, err
-			case !storageClassMatches(current, desired[name]):
+			}
+
+			ok, err := matches(current, desired[name])
+			if err != nil {
+				return false, err
+			}
+			if !ok {
 				pending = append(pending, name)
 			}
 		}
@@ -289,6 +397,6 @@ func waitForStorageClasses(ctx context.Context, c client.Client, desired map[str
 	})
 
 	return fail.KubeClient(err,
-		"waiting for kubevirt-csi-driver-operator to create StorageClasses %v, check the logs of the kubevirt-csi-driver/kubevirt-csi-driver-operator Deployment",
-		pending)
+		"waiting for kubevirt-csi-driver-operator to create %s objects %v, check the logs of the kubevirt-csi-driver/kubevirt-csi-driver-operator Deployment",
+		gvk.Kind, pending)
 }

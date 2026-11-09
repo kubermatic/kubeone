@@ -193,6 +193,10 @@ The `csi-kubevirt` `postFn`:
 5. Waits, for up to 5 minutes, until every desired StorageClass exists and matches. On a fresh install this includes
    pulling the operator image. On timeout it returns an error that tells the user to check the logs of
    `kubevirt-csi-driver/kubevirt-csi-driver-operator`.
+6. Waits the same way, for up to 5 more minutes, until every desired VolumeSnapshotClass exists and has the
+   `driver`, `deletionPolicy`, `parameters` and `snapshot.storage.kubernetes.io/is-default-class` annotation the
+   operator sets. The operator reconciles VolumeSnapshotClasses after all StorageClasses. The VolumeSnapshotClasses
+   are read as unstructured objects, because KubeOne has no typed client for the snapshot API.
 
 The comparison ignores the `storageclass.kubernetes.io/is-default-class` annotation, which the operator updates
 itself.
@@ -328,13 +332,6 @@ cluster.
 - Unit tests for validation, in `validation_test.go`.
 - Unit tests that render the addon for a KubeVirt cluster: with empty lists, with several StorageClasses and
   VolumeSnapshotClasses, and with `overwriteRegistry`. They check the `Tenant` spec and the operator arguments.
-- Unit tests for the `postFn` with a fake client:
-  - no drift: nothing is deleted;
-  - each immutable field changed;
-  - each mutable field changed;
-  - an entry removed;
-  - a StorageClass not owned by the `Tenant` is left alone;
-  - the wait times out.
 - Unit test for the `supportFn` with a fake client: the DaemonSet exists, the DaemonSet does not exist, and the old
   RBAC exists without the DaemonSet.
 - Manual test on a KubeVirt cluster, as there is no KubeVirt e2e test in `test/tests.yml`:
