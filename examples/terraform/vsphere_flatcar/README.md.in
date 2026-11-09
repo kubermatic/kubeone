@@ -7,8 +7,7 @@ use the configs and how to provision a Kubernetes cluster using KubeOne.
 
 These Terraform configs are supposed to be used with Flatcar Linux.
 
-We also provide Terraform configs for [Debian-based operating systems](../vsphere)
-and [CentOS-based operating systems](../vsphere_centos).
+We also provide Terraform configs for [Debian-based operating systems](../vsphere).
 
 ## Required environment variables
 
