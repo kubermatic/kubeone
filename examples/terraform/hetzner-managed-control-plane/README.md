@@ -45,7 +45,7 @@ When using the managed control plane:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| name | common name for the resources, should be the name of the cluster | `string` | n/a | yes |
+| cluster_name | common name for the resources, should be the name of the cluster | `string` | n/a | yes |
 | base\_network\_cidr | base cidr, resulting cidr is randomly generated depending on provided subnet\_mask | `string` | `"10.100.0.0/16"` | no |
 | ip\_range | ip range to use for private network | `string` | `""` | no |
 | network\_zone | network zone to use for private network, the servers and the load balancer must be in a location of this zone | `string` | `"eu-central"` | no |

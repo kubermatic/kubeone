@@ -33,7 +33,7 @@ sudo systemctl disable --now firewalld || true
 source /etc/kubeone/proxy-env
 
 {{ template "sysctl-k8s" . }}
-{{ template "journald-config" }}
+{{ template "journald-config" . }}
 
 yum_proxy=""
 {{- if .PROXY }}
@@ -143,18 +143,19 @@ func RHELLikeScript(cluster *kubeoneapi.KubeOneCluster, params Params) (string, 
 	}
 
 	data := Data{
-		"UPGRADE":                params.Upgrade,
-		"KUBELET":                params.Kubelet,
-		"KUBECTL":                params.Kubectl,
-		"KUBEADM":                params.Kubeadm,
-		"FORCE":                  params.Force,
-		"KUBERNETES_VERSION":     cluster.Versions.Kubernetes,
-		"KUBERNETES_MAJOR_MINOR": cluster.Versions.KubernetesMajorMinorVersion(),
-		"CONFIGURE_REPOSITORIES": cluster.SystemPackages.ConfigureRepositories,
-		"PROXY":                  proxy,
-		"INSTALL_CONTAINERD":     cluster.ContainerRuntime.Containerd,
-		"INSTALL_ISCSI_AND_NFS":  installISCSIAndNFS(cluster),
-		"IPV6_ENABLED":           cluster.ClusterNetwork.HasIPv6(),
+		"UPGRADE":                 params.Upgrade,
+		"KUBELET":                 params.Kubelet,
+		"KUBECTL":                 params.Kubectl,
+		"KUBEADM":                 params.Kubeadm,
+		"FORCE":                   params.Force,
+		"KUBERNETES_VERSION":      cluster.Versions.Kubernetes,
+		"KUBERNETES_MAJOR_MINOR":  cluster.Versions.KubernetesMajorMinorVersion(),
+		"CONFIGURE_REPOSITORIES":  cluster.SystemPackages.ConfigureRepositories,
+		"PROXY":                   proxy,
+		"INSTALL_CONTAINERD":      cluster.ContainerRuntime.Containerd,
+		"INSTALL_ISCSI_AND_NFS":   installISCSIAndNFS(cluster),
+		"IPV6_ENABLED":            cluster.ClusterNetwork.HasIPv6(),
+		"JOURNALD_SYSTEM_MAX_USE": cluster.Journald.SystemMaxUse,
 	}
 
 	if err := containerruntime.UpdateDataMap(cluster, data); err != nil {

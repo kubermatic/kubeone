@@ -20,7 +20,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"path/filepath"
 	"reflect"
 	"sort"
 	"strings"
@@ -212,6 +211,11 @@ func validateCredentials(s *state.State, credentialsFile string) error {
 }
 
 func initBackup(backupPath string) error {
+	// the backup is opt-in, nothing to do if no path was requested
+	if backupPath == "" {
+		return nil
+	}
+
 	// refuse to overwrite existing backups (NB: since we attempt to
 	// write to the file later on to check for write permissions, we
 	// inadvertently create a zero byte file even if the first step
@@ -232,15 +236,6 @@ func initBackup(backupPath string) error {
 	}
 
 	return fail.Runtime(backup.Close(), "closing backup file")
-}
-
-func defaultBackupPath(backupPath, manifestPath, clusterName string) string {
-	if backupPath == "" {
-		fullPath, _ := filepath.Abs(manifestPath)
-		backupPath = filepath.Join(filepath.Dir(fullPath), fmt.Sprintf("%s.tar.gz", clusterName))
-	}
-
-	return backupPath
 }
 
 func newImageResolver(kubernetesVersion, manifestFile string) (*images.Resolver, error) {

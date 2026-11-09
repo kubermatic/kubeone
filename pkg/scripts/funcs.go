@@ -75,7 +75,7 @@ var libraryTemplate = heredoc.Doc(`
 		sudo mkdir -p /etc/systemd/journald.conf.d
 		cat <<EOF | sudo tee /etc/systemd/journald.conf.d/max_disk_use.conf
 		[Journal]
-		SystemMaxUse=5G
+		SystemMaxUse={{ .JOURNALD_SYSTEM_MAX_USE }}
 		EOF
 		sudo systemctl force-reload systemd-journald
 		{{ end }}

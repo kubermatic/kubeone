@@ -48,3 +48,17 @@ patches:
                 image: '{{ .InternalImages.Get "AzureDiskCSILivenessProbe" }}'
               - name: azuredisk
                 image: '{{ .InternalImages.Get "AzureDiskCSI" }}'
+  # upstream names the node-driver-registrar port "healthz", clashing with the azuredisk container port
+  - target:
+      kind: DaemonSet
+      name: csi-azuredisk-node
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/1/name
+        value: node-driver-registrar
+      - op: replace
+        path: /spec/template/spec/containers/1/ports/0/name
+        value: healthz-reg
+      - op: replace
+        path: /spec/template/spec/containers/1/livenessProbe/httpGet/port
+        value: healthz-reg

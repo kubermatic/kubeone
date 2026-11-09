@@ -40,11 +40,11 @@ resource "random_integer" "random_subnet_netnum" {
 # KubeOne looks the network up by its name (cloudProvider.hetzner.networkID)
 # and attaches the API load balancer to it
 resource "hcloud_network" "net" {
-  name     = var.name
+  name     = var.cluster_name
   ip_range = local.ip_range
 
   labels = {
-    "kubeone_cluster_name" = var.name
+    "kubeone_cluster_name" = var.cluster_name
   }
 }
 
@@ -61,14 +61,14 @@ resource "hcloud_network_subnet" "kubeone" {
 # both are labeled with kubeone_cluster_name. Hetzner firewalls filter only the
 # public interfaces, the private network and the load balancer are not affected.
 resource "hcloud_firewall" "cluster" {
-  name = "${var.name}-fw"
+  name = "${var.cluster_name}-fw"
 
   labels = {
-    "kubeone_cluster_name" = var.name
+    "kubeone_cluster_name" = var.cluster_name
   }
 
   apply_to {
-    label_selector = "kubeone_cluster_name=${var.name}"
+    label_selector = "kubeone_cluster_name=${var.cluster_name}"
   }
 
   rule {

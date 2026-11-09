@@ -54,7 +54,6 @@
   initVersion: v1.37
   infrastructures:
     - name: aws_default
-      runIfChanged: "(.prow/|addons/|examples/|hack/|pkg/|test/)"
     - name: aws_ubuntu_previous_lts
     - name: aws_flatcar
     - name: aws_rhel
@@ -342,25 +341,31 @@
   initVersion: v1.35
   infrastructures:
     - name: aws
+    - name: azure
     - name: digitalocean
     - name: gce
     - name: hetzner
+    - name: openstack
 
 - scenario: install_managed_cp
   initVersion: v1.36
   infrastructures:
     - name: aws
+    - name: azure
     - name: digitalocean
     - name: gce
     - name: hetzner
+    - name: openstack
 
 - scenario: install_managed_cp
   initVersion: v1.37
   infrastructures:
     - name: aws
+    - name: azure
     - name: digitalocean
     - name: gce
     - name: hetzner
+    - name: openstack
 
 ####################
 # CONFORMANCE TEST #

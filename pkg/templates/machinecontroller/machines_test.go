@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	clustercommon "k8c.io/machine-controller/sdk/apis/cluster/common"
 )
 
 func TestMachineSpec(t *testing.T) {
@@ -103,6 +104,45 @@ func TestMachineSpec(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, want) {
 				t.Errorf("got %v, want %v", got, want)
+			}
+		})
+	}
+}
+
+func TestGetJournaldConfigurationAnnotations(t *testing.T) {
+	journaldAnnotation := clustercommon.JournaldConfigAnnotationPrefixV1 + "/" + clustercommon.JournaldSystemMaxUse
+
+	tests := []struct {
+		name     string
+		journald kubeoneapi.JournaldConfig
+		want     map[string]string
+	}{
+		{
+			name:     "empty value is not propagated",
+			journald: kubeoneapi.JournaldConfig{},
+			want:     map[string]string{},
+		},
+		{
+			name:     "default value is not propagated",
+			journald: kubeoneapi.JournaldConfig{SystemMaxUse: kubeoneapi.DefaultJournaldSystemMaxUse},
+			want:     map[string]string{},
+		},
+		{
+			name:     "custom systemMaxUse is propagated",
+			journald: kubeoneapi.JournaldConfig{SystemMaxUse: "2G"},
+			want:     map[string]string{journaldAnnotation: "2G"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cluster := &kubeoneapi.KubeOneCluster{
+				Journald: tt.journald,
+			}
+
+			got := getJournaldConfigurationAnnotations(cluster)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("got %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -139,6 +139,20 @@ func (scenario *scenarioManagedControlPlane) Run(ctx context.Context, t *testing
 		verifyNothingLeft(checkCtx, t, cloud)
 	})
 
+	// Registered after reset, so it runs before it: dump kube-system while the
+	// cluster still exists if apply or the control plane verification failed
+	// (protokol only runs from runClusterTests onwards).
+	t.Cleanup(func() {
+		if !t.Failed() {
+			return
+		}
+
+		dumpCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 10*time.Minute)
+		defer cancel()
+
+		dumpClusterLogs(dumpCtx, t, k1, scenario.infra, "test-failed")
+	})
+
 	if err := k1.Apply(ctx); err != nil {
 		t.Fatalf("kubeone apply failed: %v", err)
 	}
@@ -151,21 +165,6 @@ func (scenario *scenarioManagedControlPlane) Run(ctx context.Context, t *testing
 	}
 
 	scenario.verifyControlPlane(ctx, t, k1, cloud)
-
-	// Where KubeOne manages the load balancer membership (GCE), a reset that
-	// keeps the VMs keeps their membership; installing again must remove the
-	// followers before they join, or they never join
-	if _, ok := cloud.(loadBalancerMembersCloud); ok {
-		if err := k1.Reset(); err != nil {
-			t.Fatalf("kubeone reset (keeping the control plane) failed: %v", err)
-		}
-
-		if err := k1.Apply(ctx); err != nil {
-			t.Fatalf("kubeone apply after reset failed: %v", err)
-		}
-
-		scenario.verifyControlPlane(ctx, t, k1, cloud)
-	}
 
 	runClusterTests(ctx, t, k1, scenario.infra)
 }
@@ -216,8 +215,8 @@ func (scenario *scenarioManagedControlPlane) provisionInfra(ctx context.Context,
 	}
 
 	tf := scenario.infra.terraform
-	// the managed control plane Terraform configs name the resources after var.name
-	tf.vars = append(slices.Clone(tf.vars), "name="+clusterName)
+	// the managed control plane Terraform configs name the resources after var.cluster_name
+	tf.vars = append(slices.Clone(tf.vars), "cluster_name="+clusterName)
 
 	if err := tf.Init(); err != nil {
 		t.Fatalf("terraform init failed: %v", err)

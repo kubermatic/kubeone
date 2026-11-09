@@ -1,17 +1,6 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: vsphere-csi-webhook
-  namespace: vmware-system-csi
-spec:
-  maxUnavailable: 1
-  selector:
-    matchLabels:
-      app: vsphere-csi-webhook
----
-apiVersion: policy/v1
-kind: PodDisruptionBudget
-metadata:
   name: vsphere-csi-controller
   namespace: vmware-system-csi
 spec:

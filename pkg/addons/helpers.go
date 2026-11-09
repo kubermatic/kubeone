@@ -19,9 +19,11 @@ package addons
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/fs"
 	"reflect"
 	"slices"
+	"time"
 
 	embeddedaddons "k8c.io/kubeone/addons"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -37,9 +39,11 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	storagev1 "k8s.io/api/storage/v1"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -79,9 +83,9 @@ var (
 		"app":     "openstack-cinder-csi",
 		"release": "cinder-csi",
 	}
-	// expectedExternalSnapshotterSelectors = map[string]string{
-	// 	"app.kubernetes.io/name": "snapshot-controller",
-	// }
+	expectedExternalSnapshotterSelectors = map[string]string{
+		"app.kubernetes.io/name": "snapshot-controller",
+	}
 )
 
 func migrateCiliumHubbleCertsJob(s *state.State) error {
@@ -149,14 +153,17 @@ func migrateOpenStackCCM(s *state.State) error {
 	return migrateDaemonsetIfPodSelectorDifferent(s, key, expectedOpenStackCCMPodSelectors)
 }
 
-// func migrateExternalSnapshotterController(st *state.State) error {
-// 	key := client.ObjectKey{
-// 		Name:      "snapshot-controller",
-// 		Namespace: metav1.NamespaceSystem,
-// 	}
+// migrateExternalSnapshotterController deletes the snapshot-controller
+// Deployment if it was created with the legacy "app: snapshot-controller"
+// selector (external-snapshotter <= v8.1), because spec.selector is immutable.
+func migrateExternalSnapshotterController(s *state.State) error {
+	key := client.ObjectKey{
+		Name:      "snapshot-controller",
+		Namespace: metav1.NamespaceSystem,
+	}
 
-// 	return migrateDeploymentIfPodSelectorDifferent(st, key, expectedExternalSnapshotterSelectors)
-// }
+	return migrateDeploymentIfPodSelectorDifferent(s, key, expectedExternalSnapshotterSelectors)
+}
 
 func migrateOpenStackCSIDriver(s *state.State) error {
 	if err := migrateOpenStackCSIController(s); err != nil {
@@ -315,6 +322,98 @@ func migrateVsphereCSIDriver(s *state.State) error {
 		s.DynamicClient,
 		genNamedObject[admissionregistrationv1.ValidatingWebhookConfiguration](vsphereCSIValidatingWebhookConfigurationName),
 	)
+}
+
+// groupSnapshotCRDs are the VolumeGroupSnapshot CRDs of the
+// csi-external-snapshotter addon.
+var groupSnapshotCRDs = []string{
+	"volumegroupsnapshotclasses.groupsnapshot.storage.k8s.io",
+	"volumegroupsnapshotcontents.groupsnapshot.storage.k8s.io",
+	"volumegroupsnapshots.groupsnapshot.storage.k8s.io",
+}
+
+// groupSnapshotRemovedVersion is the VolumeGroupSnapshot API version that
+// external-snapshotter v8.2.0 removed from the CRDs without a conversion path.
+const groupSnapshotRemovedVersion = "v1alpha1"
+
+// groupSnapshotCRDDeleteTimeout bounds the wait for a VolumeGroupSnapshot CRD
+// to be removed by the API server.
+const groupSnapshotCRDDeleteTimeout = 2 * time.Minute
+
+// migrateGroupSnapshotCRDs deletes the VolumeGroupSnapshot CRDs that still
+// list v1alpha1 in status.storedVersions, so the addon can recreate them.
+//
+// The CRDs of external-snapshotter v8.1.0 and older only had v1alpha1. Newer
+// CRDs don't have v1alpha1 anymore, and the API server rejects any CRD update
+// that drops a version listed in status.storedVersions. There is no conversion
+// from v1alpha1, so the storage migration can't be done and upstream requires
+// deleting the CRDs.
+//
+// Deleting a CRD deletes all of its objects. Group snapshots were alpha and
+// disabled by default, so the CRDs are expected to be empty. If they aren't,
+// fail and let the user decide what to do with the objects.
+func migrateGroupSnapshotCRDs(s *state.State) error {
+	for _, name := range groupSnapshotCRDs {
+		crd := &apiextensionsv1.CustomResourceDefinition{}
+		if err := s.DynamicClient.Get(s.Context, client.ObjectKey{Name: name}, crd); err != nil {
+			if k8serrors.IsNotFound(err) {
+				continue
+			}
+
+			return fail.KubeClient(err, "getting CustomResourceDefinition %s", name)
+		}
+
+		if !slices.Contains(crd.Status.StoredVersions, groupSnapshotRemovedVersion) {
+			continue
+		}
+
+		empty, err := crdHasNoObjects(s, crd)
+		if err != nil {
+			return err
+		}
+		if !empty {
+			return fail.Runtime(
+				fmt.Errorf("CustomResourceDefinition %s stores objects in %s, which csi-external-snapshotter doesn't support anymore. "+
+					"Back up and delete all %s objects, then delete the CustomResourceDefinition and run kubeone apply again",
+					name, groupSnapshotRemovedVersion, crd.Spec.Names.Kind),
+				"migrating VolumeGroupSnapshot CustomResourceDefinitions",
+			)
+		}
+
+		s.Logger.Infof("Deleting CustomResourceDefinition %s, it stores the removed %s version and will be recreated", name, groupSnapshotRemovedVersion)
+
+		if err := clientutil.DeleteAndWait(s.Context, s.DynamicClient, crd, groupSnapshotCRDDeleteTimeout); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// crdHasNoObjects reports whether no objects of the CRD exist, in any
+// namespace. It lists them using the storage version of the CRD.
+func crdHasNoObjects(s *state.State, crd *apiextensionsv1.CustomResourceDefinition) (bool, error) {
+	version := ""
+	for _, ver := range crd.Spec.Versions {
+		if ver.Served && (version == "" || ver.Storage) {
+			version = ver.Name
+		}
+	}
+	if version == "" {
+		// Not served, so nothing can be listed. Objects still in etcd are
+		// removed together with the CRD.
+		return true, nil
+	}
+
+	list := &unstructured.UnstructuredList{}
+	list.SetAPIVersion(crd.Spec.Group + "/" + version)
+	list.SetKind(crd.Spec.Names.ListKind)
+
+	if err := s.DynamicClient.List(s.Context, list, client.Limit(1)); err != nil {
+		return false, fail.KubeClient(err, "listing %s objects", crd.Name)
+	}
+
+	return len(list.Items) == 0, nil
 }
 
 func migratePacketToEquinixCCM(s *state.State) error {

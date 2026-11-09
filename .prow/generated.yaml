@@ -1049,7 +1049,6 @@ presubmits:
   name: pull-kubeone-e2e-aws-default-install-containerd-external-v1.37
   optional: false
   path_alias: k8c.io/kubeone
-  run_if_changed: (.prow/|addons/|examples/|hack/|pkg/|test/)
   spec:
     containers:
     - command:
@@ -1564,7 +1563,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1594,7 +1593,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1624,7 +1623,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1654,7 +1653,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1686,7 +1685,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1718,7 +1717,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1748,7 +1747,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1778,7 +1777,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1808,7 +1807,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1840,7 +1839,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1872,7 +1871,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1904,7 +1903,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1936,7 +1935,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1966,7 +1965,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -1996,7 +1995,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2029,7 +2028,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2061,7 +2060,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2091,7 +2090,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2121,7 +2120,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2153,7 +2152,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2185,7 +2184,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2215,7 +2214,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2245,7 +2244,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2275,7 +2274,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2307,7 +2306,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2339,7 +2338,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2369,7 +2368,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2399,7 +2398,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2429,7 +2428,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2461,7 +2460,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2493,7 +2492,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2525,7 +2524,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2557,7 +2556,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2587,7 +2586,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2617,7 +2616,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2650,7 +2649,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2682,7 +2681,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2712,7 +2711,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2742,7 +2741,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -2774,7 +2773,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -5770,7 +5769,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -5800,7 +5799,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -5830,7 +5829,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -5862,7 +5861,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -5894,7 +5893,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -5924,7 +5923,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -5954,7 +5953,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -5984,7 +5983,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6016,7 +6015,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6048,7 +6047,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6080,7 +6079,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6112,7 +6111,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6142,7 +6141,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6172,7 +6171,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6205,7 +6204,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6237,7 +6236,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6267,7 +6266,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6297,7 +6296,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6329,7 +6328,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6361,7 +6360,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6391,7 +6390,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6421,7 +6420,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6453,7 +6452,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6485,7 +6484,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6515,7 +6514,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6545,7 +6544,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6575,7 +6574,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6607,7 +6606,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6639,7 +6638,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6671,7 +6670,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6703,7 +6702,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6733,7 +6732,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6763,7 +6762,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6796,7 +6795,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6828,7 +6827,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6858,7 +6857,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6888,7 +6887,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -6920,7 +6919,7 @@ presubmits:
   decoration_config:
     timeout: 210m
   extra_refs:
-  - base_ref: release/v1.13
+  - base_ref: release/v1.14
     org: kubermatic
     path_alias: k8c.io/kubeone-stable
     repo: kubeone
@@ -7052,6 +7051,33 @@ presubmits:
   decoration_config:
     timeout: 210m
   labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-install-managed-cp-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureInstallManagedCpV1_35
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 180m
+      image: docker.io/golang:1.27
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
     preset-digitalocean: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-digitalocean-install-managed-cp-v1.35
@@ -7127,6 +7153,31 @@ presubmits:
   decoration_config:
     timeout: 210m
   labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-install-managed-cp-v1.35
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackInstallManagedCpV1_35
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: docker.io/golang:1.27
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-install-managed-cp-v1.36
@@ -7140,6 +7191,33 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
+      image: docker.io/golang:1.27
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-install-managed-cp-v1.36
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureInstallManagedCpV1_36
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 180m
       image: docker.io/golang:1.27
       imagePullPolicy: Always
       name: ""
@@ -7227,6 +7305,31 @@ presubmits:
   decoration_config:
     timeout: 210m
   labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-install-managed-cp-v1.36
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackInstallManagedCpV1_36
+      env:
+      - name: PROVIDER
+        value: openstack
+      image: docker.io/golang:1.27
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
     preset-aws-e2e-kubeone: "true"
     preset-goproxy: "true"
   name: pull-kubeone-e2e-aws-install-managed-cp-v1.37
@@ -7240,6 +7343,33 @@ presubmits:
       env:
       - name: PROVIDER
         value: aws
+      image: docker.io/golang:1.27
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
+    preset-azure: "true"
+    preset-goproxy: "true"
+  name: pull-kubeone-e2e-azure-install-managed-cp-v1.37
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestAzureInstallManagedCpV1_37
+      env:
+      - name: PROVIDER
+        value: azure
+      - name: TEST_TIMEOUT
+        value: 180m
       image: docker.io/golang:1.27
       imagePullPolicy: Always
       name: ""
@@ -7315,6 +7445,31 @@ presubmits:
       env:
       - name: PROVIDER
         value: hetzner
+      image: docker.io/golang:1.27
+      imagePullPolicy: Always
+      name: ""
+      resources:
+        requests:
+          cpu: "1"
+- always_run: false
+  clone_uri: ssh://git@github.com/kubermatic/kubeone.git
+  decorate: true
+  decoration_config:
+    timeout: 210m
+  labels:
+    preset-goproxy: "true"
+    preset-openstack: "true"
+  name: pull-kubeone-e2e-openstack-install-managed-cp-v1.37
+  optional: false
+  path_alias: k8c.io/kubeone
+  spec:
+    containers:
+    - command:
+      - ./test/go-test-e2e.sh
+      - TestOpenstackInstallManagedCpV1_37
+      env:
+      - name: PROVIDER
+        value: openstack
       image: docker.io/golang:1.27
       imagePullPolicy: Always
       name: ""
