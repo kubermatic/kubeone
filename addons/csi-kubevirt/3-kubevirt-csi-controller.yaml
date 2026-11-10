@@ -17,7 +17,7 @@ rules:
     verbs: ['get', 'list']
   - apiGroups: ['']
     resources: ['persistentvolumeclaims']
-    verbs: ['get', 'list', 'watch', 'update']
+    verbs: ['get', 'list', 'watch', 'update', 'patch']
   - apiGroups: [""]
     resources: ["persistentvolumeclaims/status"]
     verbs: ["update", "patch"]
@@ -41,7 +41,13 @@ rules:
     verbs: ["get", "list", "watch"]
   - apiGroups: ["snapshot.storage.k8s.io"]
     resources: ["volumesnapshotcontents"]
-    verbs: ["create", "get", "list", "watch", "update", "delete"]
+    verbs: ["create", "get", "list", "watch", "update", "patch", "delete"]
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshotcontents/status"]
+    verbs: ["update", "patch"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["volumeattributesclasses"]
+    verbs: ["get", "list", "watch"]
   - apiGroups: ["snapshot.storage.k8s.io"]
     resources: ["volumesnapshots"]
     verbs: ["get", "list", "watch", "update"]
@@ -108,8 +114,8 @@ spec:
           image: '{{ .InternalImages.Get "KubeVirtCSI" }}'
           args:
             - "--endpoint=$(CSI_ENDPOINT)"
-            - "--infra-cluster-namespace=$(INFRACLUSTER_NAMESPACE)"
-            - "--infra-cluster-labels=$(INFRACLUSTER_LABELS)"
+            - "--infra-cluster-namespace={{ .Config.CloudProvider.Kubevirt.InfraNamespace }}"
+            - "--infra-cluster-labels=csi-driver/cluster=tenant"
             - "--infra-cluster-kubeconfig=/var/run/secrets/infracluster/KUBEVIRT_KUBECONFIG"
             - "--run-node-service=false"
             - "--run-controller-service=true"
@@ -125,22 +131,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-            - name: INFRACLUSTER_NAMESPACE
-              valueFrom:
-                configMapKeyRef:
-                  name: driver-config
-                  key: infraClusterNamespace
-            - name: INFRACLUSTER_LABELS
-              valueFrom:
-                configMapKeyRef:
-                  name: driver-config
-                  key: infraClusterLabels
-            - name: INFRA_STORAGE_CLASS_ENFORCEMENT
-              valueFrom:
-                configMapKeyRef:
-                  name: driver-config
-                  key: infraStorageClassEnforcement
-                  optional: true
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
@@ -171,6 +161,39 @@ spec:
             - "--v=5"
             - "--timeout=3m"
             - "--retry-interval-max=1m"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+          resources:
+            requests:
+              memory: 50Mi
+              cpu: 10m
+        - name: csi-snapshotter
+          image: '{{ .InternalImages.Get "KubeVirtCSISnapshotter" }}'
+          args:
+            - "--csi-address=$(ADDRESS)"
+            - "--v=5"
+            - "--timeout=3m"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+          resources:
+            requests:
+              memory: 50Mi
+              cpu: 10m
+        - name: csi-resizer
+          image: '{{ .InternalImages.Get "KubeVirtCSIResizer" }}'
+          args:
+            - "--csi-address=$(ADDRESS)"
+            - "--v=5"
+            - "--timeout=3m"
+            - "--handle-volume-inuse-error=false"
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock

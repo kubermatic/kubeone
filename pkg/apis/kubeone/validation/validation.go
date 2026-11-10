@@ -38,6 +38,8 @@ import (
 	gcetypes "k8c.io/machine-controller/sdk/cloudprovider/gce"
 	"k8c.io/machine-controller/sdk/jsonutil"
 
+	corev1 "k8s.io/api/core/v1"
+	storagev1 "k8s.io/api/storage/v1"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/validation"
 	"k8s.io/apimachinery/pkg/util/validation/field"
@@ -318,6 +320,17 @@ func ValidateCloudProviderSpec(cluster kubeoneapi.KubeOneCluster, fldPath *field
 		}
 		providerFound = true
 		allErrs = append(allErrs, validateKubevirtSpec(providerSpec.Kubevirt, kubevirtFld)...)
+
+		if providerSpec.DisableBundledCSIDrivers {
+			if len(providerSpec.Kubevirt.StorageClasses) > 0 {
+				allErrs = append(allErrs, field.Forbidden(kubevirtFld.Child("storageClasses"),
+					"can't be used together with .cloudProvider.disableBundledCSIDrivers"))
+			}
+			if len(providerSpec.Kubevirt.VolumeSnapshotClasses) > 0 {
+				allErrs = append(allErrs, field.Forbidden(kubevirtFld.Child("volumeSnapshotClasses"),
+					"can't be used together with .cloudProvider.disableBundledCSIDrivers"))
+			}
+		}
 
 		// When KubeVirt managed control plane is used without a load balancer
 		// (cloudProvider.kubevirt.controlPlane is nil), the user must provide
@@ -644,6 +657,104 @@ func validateKubevirtSpec(kubevirtSpec *kubeoneapi.KubevirtSpec, fldPath *field.
 
 	if kubevirtSpec.InfraNamespace == "" {
 		allErrs = append(allErrs, field.Required(fldPath.Child("infraNamespace"), "is required for kubevirt provider"))
+	}
+
+	allErrs = append(allErrs, validateKubevirtStorageClasses(kubevirtSpec.StorageClasses, fldPath.Child("storageClasses"))...)
+	allErrs = append(allErrs, validateKubevirtVolumeSnapshotClasses(kubevirtSpec.VolumeSnapshotClasses, fldPath.Child("volumeSnapshotClasses"))...)
+
+	return allErrs
+}
+
+// kubevirtClassNamePrefix is prepended by kubevirt-csi-driver-operator to the infra class name to name the class it
+// creates in the cluster.
+const kubevirtClassNamePrefix = "kubevirt-"
+
+func validateKubevirtClassName(name string, fldPath *field.Path, seen sets.Set[string]) field.ErrorList {
+	var allErrs field.ErrorList
+
+	if name == "" {
+		return append(allErrs, field.Required(fldPath, "is required"))
+	}
+	for _, msg := range validation.IsDNS1123Subdomain(kubevirtClassNamePrefix + name) {
+		allErrs = append(allErrs, field.Invalid(fldPath, name, msg))
+	}
+	if seen.Has(name) {
+		allErrs = append(allErrs, field.Duplicate(fldPath, name))
+	}
+	seen.Insert(name)
+
+	return allErrs
+}
+
+func validateKubevirtStorageClasses(storageClasses []kubeoneapi.KubevirtStorageClass, fldPath *field.Path) field.ErrorList {
+	var (
+		allErrs  field.ErrorList
+		seen     = sets.New[string]()
+		defaults int
+	)
+
+	for i, sc := range storageClasses {
+		scFld := fldPath.Index(i)
+
+		allErrs = append(allErrs, validateKubevirtClassName(sc.InfraStorageClassName, scFld.Child("infraStorageClassName"), seen)...)
+
+		if sc.IsDefaultClass {
+			defaults++
+		}
+
+		switch sc.Bus {
+		case "", "virtio", "scsi", "sata":
+		default:
+			allErrs = append(allErrs, field.NotSupported(scFld.Child("bus"), sc.Bus, []string{"virtio", "scsi", "sata"}))
+		}
+
+		switch sc.VolumeBindingMode {
+		case "", storagev1.VolumeBindingImmediate, storagev1.VolumeBindingWaitForFirstConsumer:
+		default:
+			allErrs = append(allErrs, field.NotSupported(scFld.Child("volumeBindingMode"), sc.VolumeBindingMode,
+				[]storagev1.VolumeBindingMode{storagev1.VolumeBindingImmediate, storagev1.VolumeBindingWaitForFirstConsumer}))
+		}
+
+		switch sc.ReclaimPolicy {
+		case "", corev1.PersistentVolumeReclaimDelete, corev1.PersistentVolumeReclaimRetain:
+		case corev1.PersistentVolumeReclaimRecycle:
+			allErrs = append(allErrs, field.NotSupported(scFld.Child("reclaimPolicy"), sc.ReclaimPolicy,
+				[]corev1.PersistentVolumeReclaimPolicy{corev1.PersistentVolumeReclaimDelete, corev1.PersistentVolumeReclaimRetain}))
+		}
+	}
+
+	if defaults > 1 {
+		allErrs = append(allErrs, field.Invalid(fldPath, defaults, "only one StorageClass can have isDefaultClass set"))
+	}
+
+	return allErrs
+}
+
+func validateKubevirtVolumeSnapshotClasses(volumeSnapshotClasses []kubeoneapi.KubevirtVolumeSnapshotClass, fldPath *field.Path) field.ErrorList {
+	var (
+		allErrs  field.ErrorList
+		seen     = sets.New[string]()
+		defaults int
+	)
+
+	for i, vsc := range volumeSnapshotClasses {
+		vscFld := fldPath.Index(i)
+
+		allErrs = append(allErrs, validateKubevirtClassName(vsc.InfraVolumeSnapshotClass, vscFld.Child("infraVolumeSnapshotClass"), seen)...)
+
+		if vsc.IsDefaultClass {
+			defaults++
+		}
+
+		switch vsc.DeletionPolicy {
+		case "", "Delete", "Retain":
+		default:
+			allErrs = append(allErrs, field.NotSupported(vscFld.Child("deletionPolicy"), vsc.DeletionPolicy, []string{"Delete", "Retain"}))
+		}
+	}
+
+	if defaults > 1 {
+		allErrs = append(allErrs, field.Invalid(fldPath, defaults, "only one VolumeSnapshotClass can have isDefaultClass set"))
 	}
 
 	return allErrs

@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 
 	corev1 "k8s.io/api/core/v1"
+	storagev1 "k8s.io/api/storage/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -760,6 +761,57 @@ type KubevirtSpec struct {
 
 	// ControlPlane configures control plane provisioning on KubeVirt
 	ControlPlane *KubevirtControlPlane `json:"controlPlane,omitempty"`
+
+	// StorageClasses to create in the cluster. Each one is backed by a StorageClass of the infra cluster. They are
+	// created by the kubevirt-csi-driver-operator and named "kubevirt-<infraStorageClassName>".
+	StorageClasses []KubevirtStorageClass `json:"storageClasses,omitempty"`
+
+	// VolumeSnapshotClasses to create in the cluster. Each one is backed by a VolumeSnapshotClass of the infra
+	// cluster. They are created by the kubevirt-csi-driver-operator and named "kubevirt-<infraVolumeSnapshotClass>".
+	VolumeSnapshotClasses []KubevirtVolumeSnapshotClass `json:"volumeSnapshotClasses,omitempty"`
+}
+
+// KubevirtStorageClass defines a StorageClass of the cluster backed by a StorageClass of the infra cluster
+type KubevirtStorageClass struct {
+	// InfraStorageClassName is the name of the StorageClass in the infra cluster
+	InfraStorageClassName string `json:"infraStorageClassName"`
+
+	// IsDefaultClass marks the StorageClass as the default StorageClass of the cluster
+	IsDefaultClass bool `json:"isDefaultClass,omitempty"`
+
+	// VolumeBindingMode of the StorageClass. Default: Immediate
+	VolumeBindingMode storagev1.VolumeBindingMode `json:"volumeBindingMode,omitempty"`
+
+	// AllowVolumeExpansion allows PersistentVolumeClaims of the StorageClass to be expanded
+	AllowVolumeExpansion bool `json:"allowVolumeExpansion,omitempty"`
+
+	// ReclaimPolicy of the PersistentVolumes provisioned by the StorageClass. Default: Delete
+	ReclaimPolicy corev1.PersistentVolumeReclaimPolicy `json:"reclaimPolicy,omitempty"`
+
+	// Bus is the type of the disk bus used to attach the volumes to the VMs: virtio, scsi or sata
+	Bus string `json:"bus,omitempty"`
+
+	// Zones restrict the provisioned volumes to the given zones
+	Zones []string `json:"zones,omitempty"`
+
+	// Regions restrict the provisioned volumes to the given regions
+	Regions []string `json:"regions,omitempty"`
+
+	// Labels to be applied to the StorageClass
+	Labels map[string]string `json:"labels,omitempty"`
+}
+
+// KubevirtVolumeSnapshotClass defines a VolumeSnapshotClass of the cluster backed by a VolumeSnapshotClass of the
+// infra cluster
+type KubevirtVolumeSnapshotClass struct {
+	// InfraVolumeSnapshotClass is the name of the VolumeSnapshotClass in the infra cluster
+	InfraVolumeSnapshotClass string `json:"infraVolumeSnapshotClass"`
+
+	// IsDefaultClass marks the VolumeSnapshotClass as the default VolumeSnapshotClass of the cluster
+	IsDefaultClass bool `json:"isDefaultClass,omitempty"`
+
+	// DeletionPolicy of the VolumeSnapshotClass: Delete or Retain. Default: Delete
+	DeletionPolicy string `json:"deletionPolicy,omitempty"`
 }
 
 // KubevirtControlPlane control plane config on KubeVirt
