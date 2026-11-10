@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2026-11-09T16:13:05+02:00
+date = 2026-11-10T18:20:53+02:00
 weight = 11
 +++
 ## v1beta3
@@ -883,7 +883,7 @@ KubevirtStorageClass defines a StorageClass of the cluster backed by a StorageCl
 | volumeBindingMode | VolumeBindingMode of the StorageClass. Default: Immediate | storagev1.VolumeBindingMode | false |
 | allowVolumeExpansion | AllowVolumeExpansion allows PersistentVolumeClaims of the StorageClass to be expanded | bool | false |
 | reclaimPolicy | ReclaimPolicy of the PersistentVolumes provisioned by the StorageClass. Default: Delete | corev1.PersistentVolumeReclaimPolicy | false |
-| bus | Bus is the type of the disk bus used to attach the volumes to the VMs: virtio, scsi or sata | string | false |
+| bus | Bus is the type of the disk bus used to attach the volumes to the VMs: virtio, scsi or sata. Default: scsi | string | false |
 | zones | Zones restrict the provisioned volumes to the given zones | []string | false |
 | regions | Regions restrict the provisioned volumes to the given regions | []string | false |
 | labels | Labels to be applied to the StorageClass | map[string]string | false |

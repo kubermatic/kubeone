@@ -42,6 +42,10 @@ const (
 	DefaultStaticNoProxy = "127.0.0.1/8,localhost"
 	// DefaultCanalMTU defines default VXLAN MTU for Canal CNI
 	DefaultCanalMTU = 1450
+	// DefaultKubevirtStorageClassBus is the disk bus of the KubeVirt StorageClasses. kubevirt-csi-driver-operator
+	// copies an empty bus into the StorageClass parameters, and the CSI driver then hotplugs the volumes with an
+	// empty bus instead of its own scsi default.
+	DefaultKubevirtStorageClassBus = "scsi"
 )
 
 const (
@@ -92,6 +96,13 @@ func SetDefaults_CloudProvider(obj *KubeOneCluster) {
 		// to prevent kubelet --cloud-provider=external situation where
 		// there will be no CCM to initialize the Node
 		obj.CloudProvider.External = true
+	}
+
+	if obj.CloudProvider.Kubevirt != nil {
+		for i := range obj.CloudProvider.Kubevirt.StorageClasses {
+			sc := &obj.CloudProvider.Kubevirt.StorageClasses[i]
+			sc.Bus = defaults(sc.Bus, DefaultKubevirtStorageClassBus)
+		}
 	}
 }
 
