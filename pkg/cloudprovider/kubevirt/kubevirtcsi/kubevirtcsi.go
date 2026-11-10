@@ -20,8 +20,6 @@ package kubevirtcsi
 
 import (
 	"context"
-	"maps"
-	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -42,7 +40,6 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -67,16 +64,9 @@ const (
 	// nodePluginDeleteTimeout is how long to wait for the node plugin DaemonSet of the old csi-kubevirt addon, and
 	// its pods, to be deleted.
 	nodePluginDeleteTimeout = 5 * time.Minute
-
-	// classesTimeout is how long to wait for kubevirt-csi-driver-operator to create the StorageClasses, and then the
-	// VolumeSnapshotClasses. It covers a fresh install, where the operator image has to be pulled first.
-	classesTimeout = 5 * time.Minute
-
-	classesPollInterval = 2 * time.Second
 )
 
 var (
-	storageClassGVK     = storagev1.SchemeGroupVersion.WithKind("StorageClass")
 	storageClassListGVK = storagev1.SchemeGroupVersion.WithKind("StorageClassList")
 
 	volumeSnapshotClassGVK = schema.GroupVersionKind{
@@ -97,17 +87,17 @@ func MigrateNodePlugin(s *state.State) error {
 	ctx, c := s.Context, s.DynamicClient
 
 	nodeDaemonSet := &appsv1.DaemonSet{
-		ObjectMeta: metav1.ObjectMeta{Name: "kubevirt-csi-node", Namespace: metav1.NamespaceSystem},
+		Name: "kubevirt-csi-node", Namespace: metav1.NamespaceSystem,
 	}
 	if err := clientutil.DeleteAndWait(ctx, c, nodeDaemonSet, nodePluginDeleteTimeout); err != nil {
 		return err
 	}
 
 	leftovers := []client.Object{
-		&corev1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: "kubevirt-csi-node-sa", Namespace: metav1.NamespaceSystem}},
-		&rbacv1.ClusterRole{ObjectMeta: metav1.ObjectMeta{Name: "kubevirt-csi-node-cr"}},
-		&rbacv1.ClusterRoleBinding{ObjectMeta: metav1.ObjectMeta{Name: "kubevirt-csi-node-binding"}},
-		&corev1.ConfigMap{ObjectMeta: metav1.ObjectMeta{Name: "driver-config", Namespace: metav1.NamespaceSystem}},
+		&corev1.ServiceAccount{Name: "kubevirt-csi-node-sa", Namespace: metav1.NamespaceSystem},
+		&rbacv1.ClusterRole{Name: "kubevirt-csi-node-cr"},
+		&rbacv1.ClusterRoleBinding{Name: "kubevirt-csi-node-binding"},
+		&corev1.ConfigMap{Name: "driver-config", Namespace: metav1.NamespaceSystem},
 	}
 	for _, obj := range leftovers {
 		if err := clientutil.DeleteIfExists(ctx, c, obj); err != nil {
@@ -145,11 +135,7 @@ func ReconcileClasses(s *state.State) error {
 		return err
 	}
 
-	if err := waitForStorageClasses(s.Context, s.DynamicClient, desiredSCs, classesTimeout); err != nil {
-		return err
-	}
-
-	return waitForVolumeSnapshotClasses(s.Context, s.DynamicClient, desiredVSCs, classesTimeout)
+	return nil
 }
 
 // desiredStorageClasses returns the StorageClasses kubevirt-csi-driver-operator creates for the given entries, keyed by
@@ -254,23 +240,6 @@ func unstructuredStorageClassMatches(obj *unstructured.Unstructured, desired *st
 	return storageClassMatches(current, desired), nil
 }
 
-// volumeSnapshotClassMatches reports whether the VolumeSnapshotClass has the fields kubevirt-csi-driver-operator sets.
-func volumeSnapshotClassMatches(current, desired *unstructured.Unstructured) bool {
-	currentParams, _, _ := unstructured.NestedStringMap(current.Object, "parameters")
-	desiredParams, _, _ := unstructured.NestedStringMap(desired.Object, "parameters")
-
-	return nestedString(current, "driver") == nestedString(desired, "driver") &&
-		nestedString(current, "deletionPolicy") == nestedString(desired, "deletionPolicy") &&
-		maps.Equal(currentParams, desiredParams) &&
-		current.GetAnnotations()[defaultVolumeSnapshotClassAnnotation] == desired.GetAnnotations()[defaultVolumeSnapshotClassAnnotation]
-}
-
-func nestedString(obj *unstructured.Unstructured, field string) string {
-	val, _, _ := unstructured.NestedString(obj.Object, field)
-
-	return val
-}
-
 // ownedByTenant reports whether kubevirt-csi-driver-operator created the object.
 func ownedByTenant(obj metav1.Object) bool {
 	ref := metav1.GetControllerOfNoCopy(obj)
@@ -338,65 +307,4 @@ func deleteStaleClasses(ctx context.Context, dynClient client.Client, listGVK sc
 	}
 
 	return nil
-}
-
-func waitForStorageClasses(ctx context.Context, dynClient client.Client, desired map[string]*storagev1.StorageClass, timeout time.Duration) error {
-	return waitForClasses(ctx, dynClient, storageClassGVK, desired, unstructuredStorageClassMatches, timeout)
-}
-
-func waitForVolumeSnapshotClasses(ctx context.Context, dynClient client.Client, desired map[string]*unstructured.Unstructured, timeout time.Duration) error {
-	return waitForClasses(ctx, dynClient, volumeSnapshotClassGVK, desired, func(current, want *unstructured.Unstructured) (bool, error) {
-		return volumeSnapshotClassMatches(current, want), nil
-	}, timeout)
-}
-
-// waitForClasses waits until kubevirt-csi-driver-operator has created every desired object of the given kind, and
-// until matches reports that it matches the desired one.
-func waitForClasses[T any](
-	ctx context.Context,
-	dynClient client.Client,
-	gvk schema.GroupVersionKind,
-	desired map[string]T,
-	matches func(current *unstructured.Unstructured, desired T) (bool, error),
-	timeout time.Duration,
-) error {
-	if len(desired) == 0 {
-		return nil
-	}
-
-	names := slices.Sorted(maps.Keys(desired))
-	var pending []string
-
-	err := wait.PollUntilContextTimeout(ctx, classesPollInterval, timeout, true, func(ctx context.Context) (bool, error) {
-		pending = pending[:0]
-
-		for _, name := range names {
-			current := &unstructured.Unstructured{}
-			current.SetGroupVersionKind(gvk)
-			err := dynClient.Get(ctx, client.ObjectKey{Name: name}, current)
-			switch {
-			// Until the CRD, e.g. the VolumeSnapshotClass one, exists, the operator can't create the objects either.
-			case k8serrors.IsNotFound(err), meta.IsNoMatchError(err):
-				pending = append(pending, name)
-
-				continue
-			case err != nil:
-				return false, err
-			}
-
-			ok, err := matches(current, desired[name])
-			if err != nil {
-				return false, err
-			}
-			if !ok {
-				pending = append(pending, name)
-			}
-		}
-
-		return len(pending) == 0, nil
-	})
-
-	return fail.KubeClient(err,
-		"waiting for kubevirt-csi-driver-operator to create %s objects %v, check the logs of the kubevirt-csi-driver/kubevirt-csi-driver-operator Deployment",
-		gvk.Kind, pending)
 }

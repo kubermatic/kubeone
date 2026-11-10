@@ -780,7 +780,7 @@ type KubevirtStorageClass struct {
 	// ReclaimPolicy of the PersistentVolumes provisioned by the StorageClass. Default: Delete
 	ReclaimPolicy corev1.PersistentVolumeReclaimPolicy `json:"reclaimPolicy,omitempty"`
 
-	// Bus is the type of the disk bus used to attach the volumes to the VMs: virtio, scsi or sata
+	// Bus is the type of the disk bus used to attach the volumes to the VMs: virtio, scsi or sata. Default: scsi
 	Bus string `json:"bus,omitempty"`
 
 	// Zones restrict the provisioned volumes to the given zones
