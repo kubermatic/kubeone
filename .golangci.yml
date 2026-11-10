@@ -28,6 +28,7 @@ linters:
     - makezero
     - misspell
     - nakedret
+    - nilnesserr
     - nilnil
     - nlreturn
     - noctx

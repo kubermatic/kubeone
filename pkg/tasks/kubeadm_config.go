@@ -121,28 +121,31 @@ func uploadKubeadmToConfigMaps(s *state.State) error {
 		return err
 	}
 
-	s.Logger.Debug("Updating kube-system/kubeadm-config ConfigMap...")
-	updateErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
-		return updateConfigMap(s, "kubeadm-config", metav1.NamespaceSystem, "ClusterConfiguration", kubeadmConfig.ClusterConfiguration)
-	})
-	if updateErr != nil {
-		return fail.Runtime(err, "updating kubeadm ConfigMaps")
+	return updateKubeadmConfigMaps(s, kubeadmConfig)
+}
+
+// updateKubeadmConfigMaps writes the generated kubeadm, kubelet and kube-proxy
+// configurations to their kube-system ConfigMaps. Any failure is returned, so
+// the caller does not continue with stale ConfigMaps.
+func updateKubeadmConfigMaps(s *state.State, kubeadmConfig *kubeadm.Config) error {
+	configMaps := []struct {
+		name  string
+		key   string
+		value string
+	}{
+		{name: "kubeadm-config", key: "ClusterConfiguration", value: kubeadmConfig.ClusterConfiguration},
+		{name: "kubelet-config", key: "kubelet", value: kubeadmConfig.KubeletConfiguration},
+		{name: "kube-proxy", key: "config.conf", value: kubeadmConfig.KubeProxyConfiguration},
 	}
 
-	s.Logger.Debug("Updating kube-system/kubelet-config ConfigMap...")
-	updateErr = retry.RetryOnConflict(retry.DefaultRetry, func() error {
-		return updateConfigMap(s, "kubelet-config", metav1.NamespaceSystem, "kubelet", kubeadmConfig.KubeletConfiguration)
-	})
-	if updateErr != nil {
-		return fail.Runtime(err, "updating kubeadm ConfigMaps")
-	}
-
-	s.Logger.Debug("Updating kube-system/kube-proxy ConfigMap...")
-	updateErr = retry.RetryOnConflict(retry.DefaultRetry, func() error {
-		return updateConfigMap(s, "kube-proxy", metav1.NamespaceSystem, "config.conf", kubeadmConfig.KubeProxyConfiguration)
-	})
-	if updateErr != nil {
-		return fail.Runtime(err, "updating kubeadm ConfigMaps")
+	for _, cm := range configMaps {
+		s.Logger.Debugf("Updating %s/%s ConfigMap...", metav1.NamespaceSystem, cm.name)
+		updateErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
+			return updateConfigMap(s, cm.name, metav1.NamespaceSystem, cm.key, cm.value)
+		})
+		if updateErr != nil {
+			return fail.Runtime(updateErr, "updating kubeadm ConfigMaps")
+		}
 	}
 
 	return nil
