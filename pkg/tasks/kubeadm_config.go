@@ -17,7 +17,6 @@ limitations under the License.
 package tasks
 
 import (
-	"context"
 	"fmt"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
@@ -30,6 +29,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/util/retry"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -124,18 +124,25 @@ func uploadKubeadmToConfigMaps(s *state.State) error {
 	return updateKubeadmConfigMaps(s, kubeadmConfig)
 }
 
-// updateKubeadmConfigMaps writes the generated kubeadm, kubelet and kube-proxy
+// updateKubeadmConfigMaps writes the generated kubeadm, kubelet and conditionally kube-proxy
 // configurations to their kube-system ConfigMaps. Any failure is returned, so
 // the caller does not continue with stale ConfigMaps.
 func updateKubeadmConfigMaps(s *state.State, kubeadmConfig *kubeadm.Config) error {
-	configMaps := []struct {
+	type nameKeyValue struct {
 		name  string
 		key   string
 		value string
-	}{
+	}
+
+	configMaps := []nameKeyValue{
 		{name: "kubeadm-config", key: "ClusterConfiguration", value: kubeadmConfig.ClusterConfiguration},
 		{name: "kubelet-config", key: "kubelet", value: kubeadmConfig.KubeletConfiguration},
-		{name: "kube-proxy", key: "config.conf", value: kubeadmConfig.KubeProxyConfiguration},
+	}
+
+	if !ptr.Deref(s.Cluster.ClusterNetwork.KubeProxy, kubeoneapi.KubeProxyConfig{}).SkipInstallation {
+		configMaps = append(configMaps, nameKeyValue{
+			name: "kube-proxy", key: "config.conf", value: kubeadmConfig.KubeProxyConfiguration,
+		})
 	}
 
 	for _, cm := range configMaps {
@@ -158,11 +165,13 @@ func updateConfigMap(s *state.State, name, namespace, key, value string) error {
 		Namespace: namespace,
 	}
 
-	err := s.DynamicClient.Get(context.Background(), objKey, &configMap)
-	if err != nil {
-		return fmt.Errorf("updating %s/%s ConfigMap: %w", objKey.Namespace, objKey.Name, err)
+	if err := s.DynamicClient.Get(s.Context, objKey, &configMap); err != nil {
+		return fmt.Errorf("getting %s/%s ConfigMap: %w", objKey.Namespace, objKey.Name, err)
 	}
 
+	if configMap.Data == nil {
+		configMap.Data = map[string]string{}
+	}
 	configMap.Data[key] = value
 
 	return s.DynamicClient.Update(s.Context, &configMap)
