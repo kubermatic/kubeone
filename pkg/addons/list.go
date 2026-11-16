@@ -142,6 +142,39 @@ func resolveAddons(s *state.State) ([]addonItem, error) {
 	return items, nil
 }
 
+// PlannedActions returns one line for every addon that 'kubeone apply' is going
+// to apply or delete, sorted by name. Addons that are not used are not included.
+func PlannedActions(s *state.State) ([]string, error) {
+	items, err := resolveAddons(s)
+	if err != nil {
+		return nil, err
+	}
+
+	var actions []string
+
+	for _, item := range items {
+		var verb string
+
+		switch item.Status {
+		case addonStatusInstall:
+			verb = "apply"
+		case addonStatusDelete:
+			verb = "delete"
+		case addonStatusInactive:
+			continue
+		}
+
+		action := fmt.Sprintf("%s addon %q", verb, item.Name)
+		if item.Source != "" {
+			action = fmt.Sprintf("%s (%s)", action, item.Source)
+		}
+
+		actions = append(actions, action)
+	}
+
+	return actions, nil
+}
+
 // addonDirNames returns the names of the addon directories in the root of fsys.
 func addonDirNames(fsys fs.FS) (map[string]struct{}, error) {
 	entries, err := fs.ReadDir(fsys, ".")

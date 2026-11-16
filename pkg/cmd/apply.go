@@ -26,6 +26,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"k8c.io/kubeone/pkg/addons"
 	"k8c.io/kubeone/pkg/clusterstatus/etcdstatus"
 	"k8c.io/kubeone/pkg/configupload"
 	"k8c.io/kubeone/pkg/confirmation"
@@ -336,10 +337,11 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 		}
 	}
 
-	if s.Cluster.Addons.Enabled() && s.Cluster.Addons.Path != "" {
-		fmt.Printf("\t+ apply embedded and custom addons defined in %q\n", s.Cluster.Addons.Path)
-	} else if s.Cluster.Addons.Enabled() {
-		fmt.Print("\t+ apply embedded addons")
+	// addons are not applied if only the binaries are installed
+	if !opts.NoInit {
+		if err := printPlannedAddons(s, "+"); err != nil {
+			return err
+		}
 	}
 
 	fmt.Println()
@@ -359,6 +361,21 @@ func runApplyInstall(s *state.State, opts *applyOpts) error { // Print the expec
 	}
 
 	return tasks.WithFullInstall(nil).Run(s)
+}
+
+// printPlannedAddons prints the addons that are going to be applied or deleted,
+// every line starts with the given marker.
+func printPlannedAddons(s *state.State, marker string) error {
+	actions, err := addons.PlannedActions(s)
+	if err != nil {
+		return err
+	}
+
+	for _, action := range actions {
+		fmt.Printf("\t%s %s\n", marker, action)
+	}
+
+	return nil
 }
 
 func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
@@ -456,6 +473,10 @@ func runApplyUpgradeIfNeeded(s *state.State, opts *applyOpts) error {
 
 	for _, op := range tasksToRun.Descriptions(s) {
 		fmt.Printf("\t~ %s\n", op)
+	}
+
+	if err = printPlannedAddons(s, "~"); err != nil {
+		return err
 	}
 
 	fmt.Println()
