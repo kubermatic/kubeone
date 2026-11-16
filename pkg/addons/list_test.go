@@ -28,8 +28,8 @@ import (
 	"k8c.io/kubeone/pkg/templates/resources"
 )
 
-func TestResolveAddons(t *testing.T) {
-	t.Parallel()
+func addonsTestState(t *testing.T) *state.State {
+	t.Helper()
 
 	addonsDir := t.TempDir()
 	for _, dir := range []string{resources.AddonMetricsServer, resources.AddonCCMHetzner, "backups-restic", "my-custom-ingress"} {
@@ -38,7 +38,7 @@ func TestResolveAddons(t *testing.T) {
 		}
 	}
 
-	s := &state.State{
+	return &state.State{
 		ManifestFilePath: filepath.Join(addonsDir, "kubeone.yaml"),
 		Cluster: &kubeoneapi.KubeOneCluster{
 			Features: kubeoneapi.Features{
@@ -63,8 +63,12 @@ func TestResolveAddons(t *testing.T) {
 			},
 		},
 	}
+}
 
-	items, err := resolveAddons(s)
+func TestResolveAddons(t *testing.T) {
+	t.Parallel()
+
+	items, err := resolveAddons(addonsTestState(t))
 	if err != nil {
 		t.Fatalf("resolveAddons() returned an error: %v", err)
 	}
@@ -112,5 +116,29 @@ func TestResolveAddons(t *testing.T) {
 		if got[name] != want {
 			t.Errorf("addon %q: got %+v, want %+v", name, got[name], want)
 		}
+	}
+}
+
+func TestPlannedActions(t *testing.T) {
+	t.Parallel()
+
+	got, err := PlannedActions(addonsTestState(t))
+	if err != nil {
+		t.Fatalf("PlannedActions() returned an error: %v", err)
+	}
+
+	// unused addons are not part of the result, the result is sorted by addon name
+	expected := []string{
+		`apply addon "backups-restic" (overridden)`,
+		`apply addon "cluster-autoscaler" (embedded)`,
+		`apply addon "metrics-server" (overridden)`,
+		`apply addon "my-custom-ingress" (custom)`,
+		`apply addon "not-existing"`,
+		`delete addon "secrets-store-csi-driver" (embedded)`,
+		`apply addon "unattended-upgrades" (embedded)`,
+	}
+
+	if !slices.Equal(got, expected) {
+		t.Errorf("PlannedActions() = %q, want %q", got, expected)
 	}
 }
