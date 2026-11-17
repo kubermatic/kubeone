@@ -384,6 +384,14 @@ func WithUpgrade(t Tasks, followers, staticWorkers []kubeoneapi.HostConfig) Task
 		).
 		append(generateUpgradeFollowersTasks(followers)...).
 		append(Task{
+			// kubeadm rolls out the kube-proxy DaemonSet only after all control plane nodes are upgraded, so
+			// the mode switch has to happen after the followers are upgraded.
+			Fn:          restartKubeProxyPods,
+			Operation:   "restarting kube-proxy pods",
+			Description: "restart all kube-proxy pods at once to switch the kube-proxy mode",
+			Predicate:   kubeProxyModeChanged,
+		}).
+		append(Task{
 			Fn: func(s *state.State) error {
 				s.Logger.Info("Downloading PKI...")
 
