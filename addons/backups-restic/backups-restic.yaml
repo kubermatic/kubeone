@@ -66,8 +66,6 @@ spec:
               capabilities:
                 drop:
                 - ALL
-              seccompProfile:
-                type: RuntimeDefault
             command:
               - etcdctl
             args:
@@ -105,8 +103,6 @@ spec:
               capabilities:
                 drop:
                 - ALL
-              seccompProfile:
-                type: RuntimeDefault
             command:
             - /bin/sh
             - -c
