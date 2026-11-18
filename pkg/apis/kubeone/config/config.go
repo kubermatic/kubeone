@@ -635,6 +635,13 @@ func checkClusterConfiguration(cluster kubeoneapi.KubeOneCluster, logger logrus.
 		logger.Warnf(".cloudProvider.csiConfig is provided, but is ignored when used with the in-tree cloud provider")
 	}
 
+	if cluster.ClusterNetwork.KubeProxy.ProxyMode() == kubeoneapi.KubeProxyModeIPVS {
+		logger.Warnf(".clusterNetwork.kubeProxy.ipvs is deprecated: the ipvs kube-proxy mode is deprecated since Kubernetes 1.35 " +
+			"and is going to be removed in Kubernetes 1.40 (https://kubernetes.io/blog/2026/11/16/ipvs-removal/). " +
+			"Remove .clusterNetwork.kubeProxy.ipvs to use the default nftables mode; " +
+			"the cluster is switched to nftables during the next Kubernetes upgrade.")
+	}
+
 	checkFlagsAndFeatureGateOverrides(cluster, logger)
 }
 
