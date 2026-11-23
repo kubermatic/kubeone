@@ -110,7 +110,7 @@ lint:
 .PHONY: verify-licence
 verify-licence: GOFLAGS = -mod=readonly
 verify-licence: vendor
-	wwhrd check
+	go run github.com/frapposelli/wwhrd@v0.4.0 check
 
 .PHONY: verify-codegen
 verify-codegen: GOFLAGS = -mod=readonly
