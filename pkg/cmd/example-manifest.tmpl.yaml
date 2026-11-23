@@ -18,23 +18,12 @@ clusterNetwork:
   kubeProxy:
     # skipInstallation will skip the installation of kube-proxy
     # skipInstallation: true
-    # if this set, kube-proxy mode will be set to ipvs
-    ipvs:
-      # different schedulers can be configured:
-      # * rr: round-robin
-      # * lc: least connection (smallest number of open connections)
-      # * dh: destination hashing
-      # * sh: source hashing
-      # * sed: shortest expected delay
-      # * nq: never queue
-      scheduler: rr
-      strictARP: false
-      tcpTimeout: "0"
-      tcpFinTimeout: "0"
-      udpTimeout: "0"
-      excludeCIDRs: []
-    # if mode is by default
-    iptables: {}
+    # kube-proxy mode, only one of nftables, iptables or ipvs can be set.
+    # nftables is the default mode, it requires kernel 5.13 or newer on all nodes.
+    nftables: {}
+    # iptables mode, use it if your nodes run a kernel older than 5.13
+    # iptables: {}
+    # ipvs mode is deprecated since Kubernetes 1.35 and is going to be removed in Kubernetes 1.40.
   # CNI plugin of choice. CNI can not be changed later at upgrade time.
   cni:
     # Only one CNI plugin can be defined at the same time

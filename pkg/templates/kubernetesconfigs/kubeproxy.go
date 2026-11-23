@@ -38,19 +38,23 @@ func NewKubeProxyConfiguration(cluster *kubeoneapi.KubeOneCluster) (runtime.Obje
 	}
 
 	if kbPrx := cluster.ClusterNetwork.KubeProxy; kbPrx != nil {
+		ipvs := kbPrx.IPVS //nolint:staticcheck // ipvs is deprecated, but still supported
+
 		switch {
-		case kbPrx.IPVS != nil:
+		case ipvs != nil:
 			kubeProxyConfig.Mode = kubeproxyv1alpha1.ProxyMode("ipvs")
 			kubeProxyConfig.IPVS = kubeproxyv1alpha1.KubeProxyIPVSConfiguration{
-				StrictARP:     kbPrx.IPVS.StrictARP,
-				Scheduler:     kbPrx.IPVS.Scheduler,
-				ExcludeCIDRs:  kbPrx.IPVS.ExcludeCIDRs,
-				TCPTimeout:    kbPrx.IPVS.TCPTimeout,
-				TCPFinTimeout: kbPrx.IPVS.TCPFinTimeout,
-				UDPTimeout:    kbPrx.IPVS.UDPTimeout,
+				StrictARP:     ipvs.StrictARP,
+				Scheduler:     ipvs.Scheduler,
+				ExcludeCIDRs:  ipvs.ExcludeCIDRs,
+				TCPTimeout:    ipvs.TCPTimeout,
+				TCPFinTimeout: ipvs.TCPFinTimeout,
+				UDPTimeout:    ipvs.UDPTimeout,
 			}
 		case kbPrx.IPTables != nil:
 			kubeProxyConfig.Mode = kubeproxyv1alpha1.ProxyMode("iptables")
+		case kbPrx.NFTables != nil:
+			kubeProxyConfig.Mode = kubeproxyv1alpha1.ProxyMode("nftables")
 		}
 	}
 

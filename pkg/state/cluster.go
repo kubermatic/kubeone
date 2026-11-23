@@ -40,7 +40,9 @@ type Cluster struct {
 	CCMClusterName            string
 	// AuthenticationConfigEnabled is true when the kube-apiserver runs with the --authentication-config flag
 	AuthenticationConfigEnabled bool
-	Lock                        sync.Mutex
+	// KubeProxyMode is the mode from the live kube-proxy ConfigMap, empty if the ConfigMap doesn't exist
+	KubeProxyMode string
+	Lock          sync.Mutex
 }
 
 type EncryptionConfiguration struct {

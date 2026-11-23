@@ -992,18 +992,30 @@ func validateCIDRs(c kubeoneapi.ClusterNetworkConfig, fldPath *field.Path) field
 
 func ValidateKubeProxy(kbPrxConf *kubeoneapi.KubeProxyConfig, fldPath *field.Path) field.ErrorList {
 	var (
-		allErrs     field.ErrorList
-		configFound bool
+		allErrs    field.ErrorList
+		modesFound int
 	)
 
-	if kbPrxConf.IPTables != nil {
-		configFound = true
+	if kbPrxConf.SkipInstallation {
+		return allErrs
 	}
 
-	if kbPrxConf.IPVS != nil {
-		if configFound {
-			allErrs = append(allErrs, field.Invalid(fldPath, "", "should have only 1, ether iptables or ipvs or none"))
-		}
+	if kbPrxConf.IPTables != nil {
+		modesFound++
+	}
+	if kbPrxConf.IPVS != nil { //nolint:staticcheck // ipvs is deprecated, but still supported
+		modesFound++
+	}
+	if kbPrxConf.NFTables != nil {
+		modesFound++
+	}
+
+	if modesFound == 0 {
+		allErrs = append(allErrs, field.Invalid(fldPath, "", "none of iptables, ipvs or nftables has been set"))
+	}
+
+	if modesFound > 1 {
+		allErrs = append(allErrs, field.Invalid(fldPath, "", "only one of iptables, ipvs or nftables can be set"))
 	}
 
 	return allErrs
