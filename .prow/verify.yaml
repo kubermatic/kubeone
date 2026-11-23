@@ -1,0 +1,67 @@
+presubmits:
+  - name: pull-kubeone-govulncheck
+    always_run: true
+    decorate: true
+    clone_uri: "https://github.com/kubermatic/kubeone.git"
+    path_alias: k8c.io/kubeone
+    labels:
+      preset-goproxy: "true"
+    spec:
+      containers:
+        - image: docker.io/golang:1.27
+          imagePullPolicy: Always
+          env:
+            - name: GOMEMLIMIT
+              value: "8Gi"
+          command:
+            - go
+          args:
+            - run
+            - golang.org/x/vuln/cmd/govulncheck@latest
+            - ./...
+          resources:
+            requests:
+              memory: 10Gi
+              cpu: 4
+            limits:
+              memory: 12Gi
+              cpu: 4
+
+periodics:
+  - name: periodic-kubeone-govulncheck
+    cron: "0 1 * * *"
+    decorate: true
+    reporter_config:
+      slack:
+        channel: dev-kubeone
+        job_states_to_report:
+          - failure
+          - error
+    extra_refs:
+      - org: kubermatic
+        repo: kubeone
+        base_ref: main
+        clone_uri: "https://github.com/kubermatic/kubeone.git"
+        path_alias: k8c.io/kubeone
+    labels:
+      preset-goproxy: "true"
+    spec:
+      containers:
+        - image: docker.io/golang:1.27
+          imagePullPolicy: Always
+          env:
+            - name: GOMEMLIMIT
+              value: "8Gi"
+          command:
+            - go
+          args:
+            - run
+            - golang.org/x/vuln/cmd/govulncheck@latest
+            - ./...
+          resources:
+            requests:
+              memory: 10Gi
+              cpu: 4
+            limits:
+              memory: 12Gi
+              cpu: 4
