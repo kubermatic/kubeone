@@ -12,7 +12,7 @@ presubmits:
           imagePullPolicy: Always
           env:
             - name: GOMEMLIMIT
-              value: "8Gi"
+              value: 8GiB
           command:
             - go
           args:
@@ -25,7 +25,53 @@ presubmits:
               cpu: 4
             limits:
               memory: 12Gi
-              cpu: 4
+
+  - name: pull-kubeone-verify
+    always_run: true
+    decorate: true
+    clone_uri: "https://github.com/kubermatic/kubeone.git"
+    path_alias: k8c.io/kubeone
+    labels:
+      preset-goproxy: "true"
+    spec:
+      containers:
+        - image: docker.io/golang:1.27
+          imagePullPolicy: Always
+          command:
+            - make
+          args:
+            - verify-boilerplate
+            - verify-licence
+            - verify-apidocs
+            - verify-codegen
+          resources:
+            requests:
+              memory: 4Gi
+              cpu: 2
+            limits:
+              memory: 4Gi
+
+  - name: pull-kubeone-test
+    always_run: true
+    decorate: true
+    clone_uri: "https://github.com/kubermatic/kubeone.git"
+    path_alias: k8c.io/kubeone
+    labels:
+      preset-goproxy: "true"
+    spec:
+      containers:
+        - image: docker.io/golang:1.27
+          imagePullPolicy: Always
+          command:
+            - make
+          args:
+            - test
+          resources:
+            requests:
+              memory: 3Gi
+              cpu: 2
+            limits:
+              memory: 3Gi
 
 periodics:
   - name: periodic-kubeone-govulncheck
@@ -51,7 +97,7 @@ periodics:
           imagePullPolicy: Always
           env:
             - name: GOMEMLIMIT
-              value: "8Gi"
+              value: 8GiB
           command:
             - go
           args:
@@ -64,4 +110,3 @@ periodics:
               cpu: 4
             limits:
               memory: 12Gi
-              cpu: 4
