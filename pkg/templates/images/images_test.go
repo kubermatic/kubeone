@@ -19,6 +19,8 @@ package images
 import (
 	"slices"
 	"testing"
+
+	"github.com/distribution/reference"
 )
 
 func TestValidateProviders(t *testing.T) {
@@ -138,6 +140,23 @@ func TestResolverListAllWithProviders(t *testing.T) {
 	for _, img := range allResources()[AwsCCM] {
 		if !slices.Contains(aws, img) {
 			t.Errorf("expected aws image %q in aws list", img)
+		}
+	}
+}
+
+func TestAllImagesPinned(t *testing.T) {
+	for res, versions := range allResources() {
+		for ver, img := range versions {
+			named, err := reference.ParseNormalizedNamed(img)
+			if err != nil {
+				t.Errorf("%s (%s): invalid reference %q: %v", res, ver, img, err)
+
+				continue
+			}
+
+			if _, ok := named.(reference.Digested); !ok {
+				t.Errorf("%s (%s): image %q is not pinned by digest", res, ver, img)
+			}
 		}
 	}
 }
