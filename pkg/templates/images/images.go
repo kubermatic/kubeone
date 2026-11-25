@@ -281,7 +281,7 @@ func optionalResources() map[Resource]map[string]string {
 		},
 
 		// AzureFile CSI driver
-		AzureFileCSI:                   {"*": "mcr.microsoft.com/oss/v2/kubernetes-csi/azurefile-csi:v1.35.10@sha256:573c2db0a5a7ebc24f587bd545bea0885fce0679f8e7f3b0d59b602d3e7e0b4a"},
+		AzureFileCSI:                   {"*": "mcr.microsoft.com/oss/v2/kubernetes-csi/azurefile-csi:v1.35.10@sha256:ed3a798088b271e72e3a043460bcf496e3089d54b3a09bbf04c8b0d0f8f58e09"},
 		AzureFileCSILivenessProbe:      {"*": "mcr.microsoft.com/oss/v2/kubernetes-csi/livenessprobe:v2.19.0@sha256:7a8812cdab00de32ca4fb9109abafbe6b844bf72803875f23cd36c6037cb6b6e"},
 		AzureFileCSINodeDriverRegistar: {"*": "mcr.microsoft.com/oss/v2/kubernetes-csi/csi-node-driver-registrar:v2.17.0@sha256:0b8469fdabc44daf993f26f0e6ad9bd493b972ef9a8be3fecef33e76c200450e"},
 		AzureFileCSIProvisioner:        {"*": "mcr.microsoft.com/oss/v2/kubernetes-csi/csi-provisioner:v6.3.0@sha256:6bfdffdbe1101db8dc803ace173c320bdf2e922ef90ab372f2d51c15a561cad2"},
