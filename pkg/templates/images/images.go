@@ -313,12 +313,12 @@ func optionalResources() map[Resource]map[string]string {
 		HetznerCCM: {"*": "docker.io/hetznercloud/hcloud-cloud-controller-manager:v1.39.2@sha256:74a757d1fa70acf06be1b84b6d5ebd73290b35d8ae2ac44f1c667565a54eca8b"},
 
 		// Hetzner CSI
-		HetznerCSI:                   {"*": "docker.io/hetznercloud/hcloud-csi-driver:v2.24.1@sha256:cc6f83a2b00f74656f23fdc25a67118b58a133184d30817a9528765b49eaca3e"},
-		HetznerCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.13.0@sha256:d1a26170efed45491074ca4545c81844eee2b9043fb885ac01fb4aed6f8b72d2"},
-		HetznerCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v2.2.1@sha256:ea1d25e23479000c7e8eeb92d827df66258df4e482ca054c5e7ce3fc0f5c41a5"},
-		HetznerCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v6.3.0@sha256:a4b0b1a37605b7b04a293e136edf7006ec1786a8eb3f4e5a945f81d667dcc371"},
-		HetznerCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.20.0@sha256:19f2cf2f40e1987c7943945deca5f65cd4e4bf5cc0657fc78a5df131861578e8"},
-		HetznerCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.18.0@sha256:b7fefd08651f00ac4df1a196ed4c621c2451fbb899297fe9fad9e36c667af0c0"},
+		HetznerCSI:                   {"*": "docker.io/hetznercloud/hcloud-csi-driver:v2.24.3@sha256:3cb24d853d637893512c5a289956c19dd9f5ecefb3ceabb79a42f95fd7614b73"},
+		HetznerCSIAttacher:           {"*": "registry.k8s.io/sig-storage/csi-attacher:v4.13.1@sha256:b398d0f5a30202b5261412023b24057bc5a493d8b2b5dad25ebf5c89966e1559"},
+		HetznerCSIResizer:            {"*": "registry.k8s.io/sig-storage/csi-resizer:v2.3.1@sha256:d5b040c2f6ffb25127169feeb845aaf1fa3279e510d71fbebe386b5becc625cc"},
+		HetznerCSIProvisioner:        {"*": "registry.k8s.io/sig-storage/csi-provisioner:v6.4.1@sha256:9e76a2c599ffd7a66f08feeb62ddec61e3545eaa442f8f8f6a495569c0b06829"},
+		HetznerCSILivenessProbe:      {"*": "registry.k8s.io/sig-storage/livenessprobe:v2.20.1@sha256:d06ac4f9242654f278d9c8a4e343b0516542bfc614218d469959c6428765e97f"},
+		HetznerCSINodeDriverRegistar: {"*": "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.18.1@sha256:f847fb218cdf1d0f0fa79772ca6f46e11d25635eb49c06efb5dccd00b5245ef5"},
 
 		// OpenStack CCM
 		OpenstackCCM: {
