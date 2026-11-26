@@ -74,7 +74,7 @@ tpl=${CHANGELOG_TPL:-"$(dirname "$0")/changelog.tpl"}
 git_branch="$(git rev-parse --abbrev-ref HEAD)"
 branch=${CHANGELOG_BRANCH:-"$git_branch"}
 
-release-notes generate \
+go run k8s.io/release/cmd/release-notes@v0.23.0 generate \
   --org="$org" \
   --repo="$repo" \
   --start-rev="$CHANGELOG_START_REV" \
@@ -82,6 +82,5 @@ release-notes generate \
   --branch="$branch" \
   --go-template="go-template:$tpl" \
   --output="$output" \
-  --required-author "" \
   --markdown-links \
   --dependencies=false
