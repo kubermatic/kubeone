@@ -492,28 +492,3 @@ func (c ClusterNetworkConfig) NthServiceSubnetIP(n int) string {
 
 	return result.String()
 }
-
-// kube-proxy modes, as used in the KubeProxyConfiguration .mode field.
-const (
-	KubeProxyModeIPTables = "iptables"
-	KubeProxyModeIPVS     = "ipvs"
-	KubeProxyModeNFTables = "nftables"
-)
-
-// ProxyMode returns the effective kube-proxy mode, or an empty string when kube-proxy installation is skipped.
-// Without any mode set, kube-proxy falls back to iptables, which is what is returned. The versioned APIs default the
-// mode to nftables, so this case only happens for internal objects that didn't go through defaulting.
-func (c *KubeProxyConfig) ProxyMode() string {
-	switch {
-	case c == nil:
-		return KubeProxyModeIPTables
-	case c.SkipInstallation:
-		return ""
-	case c.NFTables != nil:
-		return KubeProxyModeNFTables
-	case c.IPVS != nil:
-		return KubeProxyModeIPVS
-	default:
-		return KubeProxyModeIPTables
-	}
-}

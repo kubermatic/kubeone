@@ -75,10 +75,6 @@ func safeguard(s *state.State) error {
 		return err
 	}
 
-	if err := safeguardNFTablesKernel(s); err != nil {
-		return err
-	}
-
 	if !s.LiveCluster.IsProvisioned() {
 		return nil
 	}
@@ -594,14 +590,6 @@ func investigateCluster(s *state.State) error {
 	}
 	s.LiveCluster.Lock.Lock()
 	s.LiveCluster.AuthenticationConfigEnabled = authenticationConfigEnabled
-	s.LiveCluster.Lock.Unlock()
-
-	kubeProxyMode, err := detectKubeProxyMode(s)
-	if err != nil {
-		return err
-	}
-	s.LiveCluster.Lock.Lock()
-	s.LiveCluster.KubeProxyMode = kubeProxyMode
 	s.LiveCluster.Lock.Unlock()
 
 	encryptionEnabled, err := detectEncryptionProvidersEnabled(s)
