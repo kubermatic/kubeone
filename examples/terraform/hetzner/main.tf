@@ -149,6 +149,26 @@ resource "hcloud_server" "control_plane" {
     hcloud_ssh_key.kubeone.id,
   ]
 
+  # The netplan config cloud-init renders from Hetzner metadata covers only the
+  # public interface (eth0), leaving the private network NIC (enp7s0/ens10)
+  # down without an address. Configure it via DHCP explicitly.
+  user_data = <<-EOT
+    #cloud-config
+    write_files:
+      - path: /etc/netplan/60-hcloud-private.yaml
+        permissions: "0600"
+        content: |
+          network:
+            version: 2
+            ethernets:
+              hcloud-private:
+                match:
+                  name: "en*"
+                dhcp4: true
+    runcmd:
+      - [sh, -c, "if command -v netplan >/dev/null; then netplan apply; fi"]
+  EOT
+
   labels = {
     "kubeone_cluster_name" = var.cluster_name
     "role"                 = "api"
