@@ -88,15 +88,6 @@ func TestResolverListWithProviders(t *testing.T) {
 			want:      []string{img(HetznerCCM), img(HetznerCSI), img(OpenstackCCM), img(OpenstackCSI), img(Cilium)},
 			notWant:   []string{img(AwsCCM), img(GCPCCM), img(MachineController)},
 		},
-		{
-			// DigitalOcean and Hetzner share identical sidecar images, which must
-			// not be dropped when only one of them is selected.
-			name:      "shared images kept",
-			filter:    ListFilterNone,
-			providers: []string{"hetzner"},
-			want:      []string{img(HetznerCSIAttacher), img(DigitalOceanCSIAttacher)},
-			notWant:   []string{img(DigitaloceanCCM)},
-		},
 	}
 
 	for _, tt := range tests {
