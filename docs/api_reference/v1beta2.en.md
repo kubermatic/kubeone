@@ -1,6 +1,6 @@
 +++
 title = "v1beta2 API Reference"
-date = 2026-11-17T14:39:08+00:00
+date = 2026-11-10T18:20:53+02:00
 weight = 11
 +++
 ## v1beta2
@@ -69,7 +69,6 @@ weight = 11
 * [LoggingConfig](#loggingconfig)
 * [MachineControllerConfig](#machinecontrollerconfig)
 * [MetricsServer](#metricsserver)
-* [NFTables](#nftables)
 * [NodeLocalDNS](#nodelocaldns)
 * [NodeSet](#nodeset)
 * [NodeSettingsSpec](#nodesettingsspec)
@@ -807,15 +806,13 @@ KubeOneCluster is KubeOne Cluster API Schema
 
 ### KubeProxyConfig
 
-KubeProxyConfig defines configured kube-proxy mode. Only one of IPVS, IPTables and NFTables can be set.
-If none is set (and SkipInstallation is false), the nftables mode is used.
+KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
 
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | skipInstallation | SkipInstallation will skip the installation of kube-proxy default value is false | bool | true |
-| ipvs | IPVS config\n\nDeprecated: the ipvs kube-proxy mode is deprecated upstream since Kubernetes 1.35 and is going to be removed in Kubernetes 1.40. Use NFTables instead. | *[IPVSConfig](#ipvsconfig) | true |
+| ipvs | IPVS config | *[IPVSConfig](#ipvsconfig) | true |
 | iptables | IPTables config | *[IPTables](#iptables) | true |
-| nftables | NFTables config. This is the default mode if no other mode is configured. | *[NFTables](#nftables) | true |
 
 [Back to Group](#v1beta2)
 
@@ -932,15 +929,6 @@ MetricsServer feature flag
 | Field | Description | Scheme | Required |
 | ----- | ----------- | ------ | -------- |
 | enable | Enable deployment of metrics-server. Default value is true. | bool | false |
-
-[Back to Group](#v1beta2)
-
-### NFTables
-
-NFTables contains options to configure the nftables kube-proxy mode
-
-| Field | Description | Scheme | Required |
-| ----- | ----------- | ------ | -------- |
 
 [Back to Group](#v1beta2)
 

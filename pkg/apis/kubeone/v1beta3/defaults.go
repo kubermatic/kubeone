@@ -260,18 +260,6 @@ func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
 	if obj.ClusterNetwork.CNI.Canal != nil && obj.ClusterNetwork.CNI.Canal.MTU == 0 {
 		obj.ClusterNetwork.CNI.Canal.MTU = defaultCanal.MTU
 	}
-
-	if obj.ClusterNetwork.KubeProxy == nil {
-		obj.ClusterNetwork.KubeProxy = &KubeProxyConfig{}
-	}
-
-	if obj.ClusterNetwork.KubeProxy.SkipInstallation {
-		return
-	}
-
-	if kp := obj.ClusterNetwork.KubeProxy; kp.IPVS == nil && kp.IPTables == nil && kp.NFTables == nil {
-		kp.NFTables = &NFTables{}
-	}
 }
 
 func SetDefaults_Proxy(obj *KubeOneCluster) {

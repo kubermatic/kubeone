@@ -947,24 +947,17 @@ const (
 	IPFamilyIPv6IPv4 IPFamily = "IPv6+IPv4"
 )
 
-// KubeProxyConfig defines configured kube-proxy mode. Only one of IPVS, IPTables and NFTables can be set.
-// If none is set (and SkipInstallation is false), the nftables mode is used.
+// KubeProxyConfig defines configured kube-proxy mode, default is iptables mode
 type KubeProxyConfig struct {
 	// SkipInstallation will skip the installation of kube-proxy
 	// default value is false
 	SkipInstallation bool `json:"skipInstallation"`
 
 	// IPVS config
-	//
-	// Deprecated: the ipvs kube-proxy mode is deprecated upstream since Kubernetes 1.35 and is going to be removed
-	// in Kubernetes 1.40. Use NFTables instead.
 	IPVS *IPVSConfig `json:"ipvs"`
 
 	// IPTables config
 	IPTables *IPTables `json:"iptables"`
-
-	// NFTables config. This is the default mode if no other mode is configured.
-	NFTables *NFTables `json:"nftables"`
 }
 
 // IPVSConfig contains different options to configure IPVS kube-proxy mode
@@ -1002,9 +995,6 @@ type IPVSConfig struct {
 
 // IPTables
 type IPTables struct{}
-
-// NFTables contains options to configure the nftables kube-proxy mode
-type NFTables struct{}
 
 // CNI config. Only one CNI provider must be used at the single time.
 type CNI struct {

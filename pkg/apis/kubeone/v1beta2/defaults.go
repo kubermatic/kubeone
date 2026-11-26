@@ -272,18 +272,6 @@ func SetDefaults_ClusterNetwork(obj *KubeOneCluster) {
 	if obj.ClusterNetwork.CNI.Cilium != nil && obj.ClusterNetwork.CNI.Cilium.KubeProxyReplacement == "" {
 		obj.ClusterNetwork.CNI.Cilium.KubeProxyReplacement = "disabled"
 	}
-
-	if obj.ClusterNetwork.KubeProxy == nil {
-		obj.ClusterNetwork.KubeProxy = &KubeProxyConfig{}
-	}
-
-	if obj.ClusterNetwork.KubeProxy.SkipInstallation {
-		return
-	}
-
-	if kp := obj.ClusterNetwork.KubeProxy; kp.IPVS == nil && kp.IPTables == nil && kp.NFTables == nil {
-		kp.NFTables = &NFTables{}
-	}
 }
 
 func SetDefaults_Proxy(obj *KubeOneCluster) {
