@@ -1,3 +1,20 @@
+# [v1.15.1](https://github.com/kubermatic/kubeone/releases/tag/v1.15.1) - 2026-11-26
+
+## Changelog since v1.15.0
+
+## Changes by Kind
+
+### Bug or Regression
+
+- Don't try to update the kube-proxy ConfigMap if it wasn't created in the first place ([#4324](https://github.com/kubermatic/kubeone/pull/4324), [@kron4eg](https://github.com/kron4eg))
+- Drop the stale csi-external-snapshotter webhook ([#4323](https://github.com/kubermatic/kubeone/pull/4323), [@kron4eg](https://github.com/kron4eg))
+
+### Chore/Security updates
+
+- Update Hetzner CSI driver to v2.24.3 ([#4337](https://github.com/kubermatic/kubeone/pull/4337), [@kron4eg](https://github.com/kron4eg))
+- Update go.opentelemetry.io/otel to v1.47.0 ([#4338](https://github.com/kubermatic/kubeone/pull/4338), [@kron4eg](https://github.com/kron4eg))
+- Update golang.org/x/crypto to v0.59.0, github.com/google/cel-go to v0.31.0 and go.etcd.io/etcd/client/pkg/v3 to v3.7.3 ([#4325](https://github.com/kubermatic/kubeone/pull/4325), [@kron4eg](https://github.com/kron4eg))
+
 # [v1.15.0](https://github.com/kubermatic/kubeone/releases/tag/v1.15.0) - 2026-11-13
 
 ## Changelog since v1.14.0
