@@ -1,3 +1,5 @@
+//go:build digests
+
 /*
 Copyright 2026 The KubeOne Authors.
 
