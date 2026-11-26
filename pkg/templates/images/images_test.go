@@ -17,10 +17,13 @@ limitations under the License.
 package images
 
 import (
+	"fmt"
+	"maps"
 	"slices"
 	"testing"
 
 	"github.com/distribution/reference"
+	"github.com/google/go-containerregistry/pkg/crane"
 )
 
 func TestValidateProviders(t *testing.T) {
@@ -144,7 +147,13 @@ func TestResolverListAllWithProviders(t *testing.T) {
 	}
 }
 
-func TestAllImagesPinned(t *testing.T) {
+func TestAllPinnedImagesExist(t *testing.T) {
+	t.Parallel()
+
+	// digest reference -> resource and version it was first seen at, so that
+	// images shared between resources are checked only once.
+	refs := map[string]string{}
+
 	for res, versions := range allResources() {
 		for ver, img := range versions {
 			named, err := reference.ParseNormalizedNamed(img)
@@ -154,9 +163,27 @@ func TestAllImagesPinned(t *testing.T) {
 				continue
 			}
 
-			if _, ok := named.(reference.Digested); !ok {
+			canonical, ok := named.(reference.Canonical)
+			if !ok {
 				t.Errorf("%s (%s): image %q is not pinned by digest", res, ver, img)
+
+				continue
+			}
+
+			digestRef := canonical.Name() + "@" + canonical.Digest().String()
+			if _, ok := refs[digestRef]; !ok {
+				refs[digestRef] = fmt.Sprintf("%s (%s)", res, ver)
 			}
 		}
+	}
+
+	for _, digestRef := range slices.Sorted(maps.Keys(refs)) {
+		t.Run(digestRef, func(t *testing.T) {
+			t.Parallel()
+
+			if _, err := crane.Head(digestRef, crane.WithContext(t.Context())); err != nil {
+				t.Errorf("%s: pinned image %q does not exist in the registry: %v", refs[digestRef], digestRef, err)
+			}
+		})
 	}
 }
