@@ -425,6 +425,21 @@ func TestValidateControlPlaneConfig(t *testing.T) {
 			expectedError: false,
 		},
 		{
+			name: "noExternal is not supported on control plane hosts",
+			controlPlaneConfig: kubeoneapi.ControlPlaneConfig{
+				Hosts: []kubeoneapi.HostConfig{
+					{
+						PublicAddress:  "1.1.1.1",
+						PrivateAddress: "10.0.0.1",
+						SSHAgentSocket: "env:SSH_AUTH_SOCK",
+						SSHUsername:    "ubuntu",
+						NoExternal:     true,
+					},
+				},
+			},
+			expectedError: true,
+		},
+		{
 			name: "multiple leaders",
 			controlPlaneConfig: kubeoneapi.ControlPlaneConfig{
 				Hosts: []kubeoneapi.HostConfig{
@@ -1802,6 +1817,21 @@ func TestValidateStaticWorkersConfig(t *testing.T) {
 						PrivateAddress: "10.0.0.2",
 						SSHAgentSocket: "env:SSH_AUTH_SOCK",
 						SSHUsername:    "ubuntu",
+					},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			name: "valid StaticWorkers config with noExternal",
+			staticWorkersConfig: kubeoneapi.StaticWorkersConfig{
+				Hosts: []kubeoneapi.HostConfig{
+					{
+						PublicAddress:  "1.1.1.1",
+						PrivateAddress: "10.0.0.1",
+						SSHAgentSocket: "env:SSH_AUTH_SOCK",
+						SSHUsername:    "ubuntu",
+						NoExternal:     true,
 					},
 				},
 			},

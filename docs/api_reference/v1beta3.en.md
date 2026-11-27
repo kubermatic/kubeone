@@ -1,6 +1,6 @@
 +++
 title = "v1beta3 API Reference"
-date = 2026-11-10T18:20:53+02:00
+date = 2026-11-27T14:04:23+01:00
 weight = 11
 +++
 ## v1beta3
@@ -732,6 +732,7 @@ HostConfig describes a single control plane or worker node.
 | hostname | Hostname is the hostname(1) of the host. Default value is populated at the runtime via running `hostname -f` command over ssh. | string | false |
 | isLeader | IsLeader indicates this host as a session leader. Default value is populated at the runtime. | bool | false |
 | taints | Taints are taints applied to nodes. Those taints are only applied when the node is being provisioned. If not provided (i.e. nil) for control plane nodes, it defaults to TaintEffectNoSchedule with key\n    node-role.kubernetes.io/control-plane\nExplicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes). | [][corev1.Taint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.37/#taint-v1-core) | false |
+| noExternal | NoExternal leaves --cloud-provider=external out of the kubelet arguments of this host, so the node is not registered with the node.cloudprovider.kubernetes.io/uninitialized taint and doesn't wait for the cloud controller manager to initialize it. It's meant for hosts that don't exist at the cloud provider, e.g. bare-metal hosts in a hybrid cluster. It only has an effect if cloudProvider.external is enabled and it's valid only for static workers. No taint is added automatically, consider setting taints to keep workloads that depend on the cloud provider integration (e.g. CSI) away from such hosts. | bool | false |
 | labels | Labels to be used to apply (or remove, with minus symbol suffix, see more kubectl help label) labels to/from node | map[string]string | false |
 | annotations | Annotations to be used to apply (or remove, with minus symbol suffix, see more kubectl help annotate) annotations to/from node | map[string]string | false |
 | kubelet | Kubelet | [KubeletConfig](#kubeletconfig) | false |

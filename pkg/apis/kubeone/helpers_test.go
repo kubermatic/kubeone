@@ -393,3 +393,27 @@ func TestSandboxImage(t *testing.T) {
 		})
 	}
 }
+
+func TestKubeOneCluster_IsExternal(t *testing.T) {
+	tests := []struct {
+		name     string
+		external bool
+		noExt    bool
+		want     bool
+	}{
+		{name: "external cloud provider enabled", external: true, want: true},
+		{name: "external cloud provider enabled, host opts out", external: true, noExt: true, want: false},
+		{name: "external cloud provider disabled", external: false, want: false},
+		{name: "external cloud provider disabled, host opts out", external: false, noExt: true, want: false},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			cluster := &KubeOneCluster{CloudProvider: CloudProviderSpec{External: tc.external}}
+
+			if got := cluster.IsExternal(HostConfig{NoExternal: tc.noExt}); got != tc.want {
+				t.Errorf("IsExternal() = %v, want %v", got, tc.want)
+			}
+		})
+	}
+}

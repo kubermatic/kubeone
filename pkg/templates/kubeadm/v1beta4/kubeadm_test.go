@@ -25,6 +25,7 @@ import (
 
 	kubeadmv1beta4 "k8c.io/kubeone/pkg/apis/kubeadm/v1beta4"
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	"k8c.io/kubeone/pkg/state"
 )
 
 func TestEtcdVersionCorruptCheckExtraArgs(t *testing.T) {
@@ -317,4 +318,93 @@ func areArgsEqual(result, expected []kubeadmv1beta4.Arg) bool {
 	}
 
 	return true
+}
+
+func TestNewConfigWorkerExternalCloudProvider(t *testing.T) {
+	tests := []struct {
+		name                    string
+		external                bool
+		noExternal              bool
+		ipFamily                kubeoneapi.IPFamily
+		expectCloudProviderFlag bool
+		expectNodeIPFlag        bool
+	}{
+		{
+			name:                    "external cloud provider is set for workers by default",
+			external:                true,
+			ipFamily:                kubeoneapi.IPFamilyIPv4IPv6,
+			expectCloudProviderFlag: true,
+		},
+		{
+			name:                    "external cloud provider is left out for disabled hosts",
+			external:                true,
+			noExternal:              true,
+			ipFamily:                kubeoneapi.IPFamilyIPv4IPv6,
+			expectCloudProviderFlag: false,
+			// without CCM the kubelet has to know the node IPs in dualstack clusters
+			expectNodeIPFlag: true,
+		},
+		{
+			name:                    "no external cloud provider configured",
+			external:                false,
+			ipFamily:                kubeoneapi.IPFamilyIPv4,
+			expectCloudProviderFlag: false,
+			expectNodeIPFlag:        true,
+		},
+		{
+			name:                    "disabled host in a cluster without external cloud provider",
+			external:                false,
+			noExternal:              true,
+			ipFamily:                kubeoneapi.IPFamilyIPv4,
+			expectCloudProviderFlag: false,
+			expectNodeIPFlag:        true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			s := &state.State{
+				Cluster: &kubeoneapi.KubeOneCluster{
+					APIEndpoint:    kubeoneapi.APIEndpoint{Host: "api.example.com", Port: 6443},
+					CloudProvider:  kubeoneapi.CloudProviderSpec{External: tc.external},
+					ClusterNetwork: kubeoneapi.ClusterNetworkConfig{IPFamily: tc.ipFamily},
+				},
+				JoinToken: "abcdef.0123456789abcdef",
+			}
+			host := kubeoneapi.HostConfig{
+				PublicAddress:  "1.1.1.1",
+				PrivateAddress: "10.0.0.1",
+				IPv6Addresses:  []string{"fd00::1"},
+				NoExternal:     tc.noExternal,
+			}
+
+			cfg, err := NewConfigWorker(s, host)
+			if err != nil {
+				t.Fatalf("NewConfigWorker() error = %v", err)
+			}
+
+			var cloudProviderFlag, nodeIPFlag bool
+
+			for _, arg := range cfg.JoinConfiguration.NodeRegistration.KubeletExtraArgs {
+				switch arg.Name {
+				case "cloud-provider":
+					cloudProviderFlag = true
+
+					if arg.Value != "external" {
+						t.Errorf("cloud-provider = %q, want %q", arg.Value, "external")
+					}
+				case "node-ip":
+					nodeIPFlag = true
+				}
+			}
+
+			if cloudProviderFlag != tc.expectCloudProviderFlag {
+				t.Errorf("cloud-provider flag present = %v, want %v", cloudProviderFlag, tc.expectCloudProviderFlag)
+			}
+
+			if nodeIPFlag != tc.expectNodeIPFlag {
+				t.Errorf("node-ip flag present = %v, want %v", nodeIPFlag, tc.expectNodeIPFlag)
+			}
+		})
+	}
 }

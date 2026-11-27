@@ -211,6 +211,15 @@ func ValidateControlPlaneConfig(c kubeoneapi.ControlPlaneConfig, clusterNetwork 
 	switch {
 	case len(c.Hosts) > 0:
 		allErrs = append(allErrs, ValidateHostConfig(c.Hosts, clusterNetwork, fldPath.Child("hosts"))...)
+
+		for idx, host := range c.Hosts {
+			if host.NoExternal {
+				allErrs = append(allErrs, field.Forbidden(
+					fldPath.Child("hosts").Index(idx).Child("noExternal"),
+					"noExternal is supported only for static workers",
+				))
+			}
+		}
 	case len(c.NodeSets) > 0:
 		allErrs = append(allErrs, ValidateControlPlaneMachines(c.NodeSets, fldPath.Child("nodeSets"))...)
 	default:

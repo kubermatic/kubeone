@@ -503,7 +503,7 @@ func NewConfigWorker(s *state.State, host kubeoneapi.HostConfig) (*Config, error
 		},
 	}
 
-	if cluster.CloudProvider.External {
+	if cluster.IsExternal(host) {
 		nodeRegistration.KubeletExtraArgs = setAllArgsValue(nodeRegistration.KubeletExtraArgs, "cloud-provider", "external")
 	}
 
@@ -565,7 +565,7 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 			Value: "/var/lib/kubelet/volumeplugins",
 		},
 	}
-	if s.Cluster.CloudProvider.External {
+	if s.Cluster.IsExternal(host) {
 		kubeletCLIFlags = append(kubeletCLIFlags, kubeadmv1beta4.Arg{
 			Name:  "cloud-provider",
 			Value: "external",
@@ -576,7 +576,7 @@ func newNodeRegistration(s *state.State, host kubeoneapi.HostConfig) kubeadmv1be
 	//   - when running IPv6 Dualstack without CCM
 	//   - when IPv6 Dualstack is disabled
 	if s.Cluster.ClusterNetwork.IPFamily.IsDualstack() {
-		if !s.Cluster.CloudProvider.External {
+		if !s.Cluster.IsExternal(host) {
 			switch s.Cluster.ClusterNetwork.IPFamily { //nolint:exhaustive
 			case kubeoneapi.IPFamilyIPv4IPv6:
 				kubeletCLIFlags = setAllArgsValue(kubeletCLIFlags, "node-ip", newNodeIP(host)+","+host.IPv6Addresses[0])
