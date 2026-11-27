@@ -86,6 +86,12 @@ func (c *KubeOneCluster) IsManagedNode(nodename string) bool {
 	return false
 }
 
+// IsExternal reports whether the kubelet of the given host is started with --cloud-provider=external.
+// That is the case if the external cloud provider is enabled for the cluster and the host doesn't opt out.
+func (c *KubeOneCluster) IsExternal(host HostConfig) bool {
+	return c.CloudProvider.External && !host.NoExternal
+}
+
 // SetHostname sets the hostname for the given host
 func (h *HostConfig) SetHostname(hostname string) {
 	h.Hostname = hostname
