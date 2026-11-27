@@ -384,6 +384,14 @@ type HostConfig struct {
 	// Explicitly empty (i.e. []corev1.Taint{}) means no taints will be applied (this is default for worker nodes).
 	Taints []corev1.Taint `json:"taints,omitempty"`
 
+	// NoExternal leaves --cloud-provider=external out of the kubelet arguments of this host, so
+	// the node is not registered with the node.cloudprovider.kubernetes.io/uninitialized taint and doesn't wait
+	// for the cloud controller manager to initialize it. It's meant for hosts that don't exist at the cloud
+	// provider, e.g. bare-metal hosts in a hybrid cluster. It only has an effect if cloudProvider.external is
+	// enabled and it's valid only for static workers. No taint is added automatically, consider setting taints
+	// to keep workloads that depend on the cloud provider integration (e.g. CSI) away from such hosts.
+	NoExternal bool `json:"noExternal,omitempty"`
+
 	// Labels to be used to apply (or remove, with minus symbol suffix, see more kubectl help label) labels to/from node
 	Labels map[string]string `json:"labels,omitempty"`
 

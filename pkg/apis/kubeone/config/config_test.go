@@ -25,6 +25,11 @@ import (
 	"github.com/MakeNowJust/heredoc/v2"
 
 	kubeoneapi "k8c.io/kubeone/pkg/apis/kubeone"
+	kubeonev1beta2 "k8c.io/kubeone/pkg/apis/kubeone/v1beta2"
+	kubeonev1beta3 "k8c.io/kubeone/pkg/apis/kubeone/v1beta3"
+
+	corev1 "k8s.io/api/core/v1"
+	"sigs.k8s.io/yaml"
 )
 
 func Test_setRegistriesAuth(t *testing.T) {
@@ -489,6 +494,96 @@ func TestValidateAuthenticationConfigurationFile(t *testing.T) {
 			err := validateAuthenticationConfigurationFile(cluster, baseDir)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("validateAuthenticationConfigurationFile() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestStaticWorkerNoExternal(t *testing.T) {
+	const staticWorkerHosts = `
+staticWorkers:
+  hosts:
+    - publicAddress: "10.0.0.9"
+      privateAddress: "10.0.0.9"
+      sshUsername: ubuntu
+      sshAgentSocket: "env:SSH_AUTH_SOCK"
+      noExternal: true
+    - publicAddress: "10.0.0.10"
+      privateAddress: "10.0.0.10"
+      sshUsername: ubuntu
+      sshAgentSocket: "env:SSH_AUTH_SOCK"
+`
+
+	controlPlane := `
+name: demo
+controlPlane:
+  hosts:
+    - publicAddress: "10.0.0.1"
+      privateAddress: "10.0.0.1"
+      sshUsername: ubuntu
+      sshAgentSocket: "env:SSH_AUTH_SOCK"
+`
+
+	// no taint is added automatically
+	wantTaints := [][]corev1.Taint{{}, {}}
+
+	tests := []struct {
+		name    string
+		convert func(manifest []byte) (*kubeoneapi.KubeOneCluster, error)
+		version string
+	}{
+		{
+			name:    "v1beta2",
+			version: "kubeone.k8c.io/v1beta2",
+			convert: func(manifest []byte) (*kubeoneapi.KubeOneCluster, error) {
+				cluster := &kubeonev1beta2.KubeOneCluster{}
+				if err := yaml.Unmarshal(manifest, cluster); err != nil {
+					return nil, err
+				}
+
+				return DefaultedV1Beta2KubeOneCluster(cluster, nil)
+			},
+		},
+		{
+			name:    "v1beta3",
+			version: "kubeone.k8c.io/v1beta3",
+			convert: func(manifest []byte) (*kubeoneapi.KubeOneCluster, error) {
+				cluster := &kubeonev1beta3.KubeOneCluster{}
+				if err := yaml.Unmarshal(manifest, cluster); err != nil {
+					return nil, err
+				}
+
+				return DefaultedV1Beta3KubeOneCluster(cluster, nil)
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			manifest := "apiVersion: " + tc.version + "\nkind: KubeOneCluster" + controlPlane + staticWorkerHosts
+
+			cluster, err := tc.convert([]byte(manifest))
+			if err != nil {
+				t.Fatalf("converting manifest: %v", err)
+			}
+
+			hosts := cluster.StaticWorkers.Hosts
+			if len(hosts) != 2 {
+				t.Fatalf("got %d static workers, want 2", len(hosts))
+			}
+
+			if !hosts[0].NoExternal {
+				t.Errorf("noExternal was not read from the manifest")
+			}
+
+			if hosts[1].NoExternal {
+				t.Errorf("noExternal is set on a host that doesn't configure it")
+			}
+
+			for idx := range hosts {
+				if !reflect.DeepEqual(hosts[idx].Taints, wantTaints[idx]) {
+					t.Errorf("host %d taints = %v, want %v", idx, hosts[idx].Taints, wantTaints[idx])
+				}
 			}
 		})
 	}
